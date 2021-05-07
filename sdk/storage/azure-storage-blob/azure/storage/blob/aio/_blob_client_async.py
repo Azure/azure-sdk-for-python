@@ -379,7 +379,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
-        a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
+        a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
 
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
@@ -2449,7 +2449,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def get_container_client(self): # pylint: disable=client-method-missing-kwargs
+    def _get_container_client(self): # pylint: disable=client-method-missing-kwargs
         # type: (...) -> ContainerClient
         """Get a client to interact with the blob's parent container.
 

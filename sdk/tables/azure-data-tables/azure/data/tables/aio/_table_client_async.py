@@ -4,18 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import (
-    Union,
-    Any,
-    Dict,
-)
-
+from typing import List, Union, Any, Optional, Mapping, Iterable, Dict, overload
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import unquote  # type: ignore
 
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
@@ -23,8 +19,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
-from .._generated.models import SignedIdentifier, TableProperties
-from .._models import AccessPolicy, BatchTransactionResult
+from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
+from .._models import AccessPolicy
 from .._serialize import serialize_iso, _parameter_filter_substitution
 from .._deserialize import _return_headers_and_deserialized
 from .._error import _process_table_error, _validate_table_name
@@ -34,32 +30,36 @@ from .._serialize import _add_entity_properties, _get_match_headers
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
 from ._table_batch_async import TableBatchOperations
+from .._table_client import EntityType, TransactionOperationType
 
 
 class TableClient(AsyncTablesBaseClient):
-    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
+    """A client to interact with a specific Table in an Azure Tables account.
+
+    :ivar str account_name: The name of the Tables account.
+    :ivar str table_name: The name of the table.
+    :ivar str url: The full URL to the Tables account.
+    """
 
     def __init__(
         self,
-        account_url,  # type: str
-        table_name,  # type: str
-        credential=None,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        endpoint: str,
+        table_name: str,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
+        **kwargs
+    ) -> None:
         """Create TableClient from a Credential.
 
-        :param account_url:
-            A url to an Azure Storage account.
-        :type account_url: str
-        :param table_name: The table name.
-        :type table_name: str
+        :param str endpoint: A URL to an Azure Tables account.
+        :param str table_name: The table name.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string or an account shared access
             key.
-        :type credential: str
+        :type credential:
+            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+            :class:`~azure.core.credentials.AzureSasCredential`
 
         :returns: None
         """
@@ -67,7 +67,7 @@ class TableClient(AsyncTablesBaseClient):
             raise ValueError("Please specify a table name.")
         _validate_table_name(table_name)
         self.table_name = table_name
-        super(TableClient, self).__init__(account_url, credential=credential, **kwargs)
+        super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -78,20 +78,16 @@ class TableClient(AsyncTablesBaseClient):
     @classmethod
     def from_connection_string(
         cls,
-        conn_str,  # type: str
-        table_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> TableClient
+        conn_str: str,
+        table_name: str,
+        **kwargs
+    ) -> 'TableClient':
         """Create TableClient from a Connection string.
 
-        :param conn_str:
-            A connection string to an Azure Storage or Cosmos account.
-        :type conn_str: str
-        :param table_name: The table name.
-        :type table_name: str
+        :param str conn_str: A connection string to an Azure Tables account.
+        :param str table_name: The table name.
         :returns: A table client.
-        :rtype: ~azure.data.tables.TableClient
+        :rtype: :class:`~azure.data.tables.TableClient`
 
         .. admonition:: Example:
 
@@ -102,25 +98,30 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Creating the TableClient from a connection string.
         """
-        account_url, credential = parse_connection_str(
+        endpoint, credential = parse_connection_str(
             conn_str=conn_str, credential=None, keyword_args=kwargs
         )
-        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
+        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @classmethod
-    def from_table_url(cls, table_url, credential=None, **kwargs):
-        # type: (str, Optional[Any], Any) -> TableClient
+    def from_table_url(
+        cls,
+        table_url: str,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
+        **kwargs
+    ) -> 'TableClient':
         """A client to interact with a specific Table.
 
-        :param table_url: The full URI to the table, including SAS token if used.
-        :type table_url: str
+        :param str table_url: The full URI to the table, including SAS token if used.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, an account
             shared access key.
-        :type credential: str
+        :type credential:
+            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+            :class:`~azure.core.credentials.AzureSasCredential`
         :returns: A table client.
-        :rtype: ~azure.data.tables.TableClient
+        :rtype: :class:`~azure.data.tables.TableClient`
         """
         try:
             if not table_url.lower().startswith("http"):
@@ -136,7 +137,7 @@ class TableClient(AsyncTablesBaseClient):
         account_path = ""
         if len(table_path) > 1:
             account_path = "/" + "/".join(table_path[:-1])
-        account_url = "{}://{}{}?{}".format(
+        endpoint = "{}://{}{}?{}".format(
             parsed_url.scheme,
             parsed_url.netloc.rstrip("/"),
             account_path,
@@ -147,20 +148,17 @@ class TableClient(AsyncTablesBaseClient):
             raise ValueError(
                 "Invalid URL. Please provide a URL with a valid table name"
             )
-        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
+        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def get_table_access_policy(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> dict[str,AccessPolicy]
+    async def get_table_access_policy(self, **kwargs) -> Mapping[str, AccessPolicy]:
         """
         Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: dict[str,~azure.data.tables.AccessPolicy]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: Dict[str, :class:`~azure.data.tables.AccessPolicy`]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
         try:
@@ -181,17 +179,16 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def set_table_access_policy(
         self,
-        signed_identifiers,  # type: dict[str,AccessPolicy]
+        signed_identifiers: Mapping[str, AccessPolicy],
         **kwargs
-    ):
-        # type: (...) -> None
+    ) -> None:
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
-        :param signed_identifiers:
-        :type signed_identifiers: dict[str,AccessPolicy]
+        :param signed_identifiers: Access policies to set for the table
+        :type signed_identifiers: Dict[str, :class:`~azure.data.tables.AccessPolicy`]
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         identifiers = []
         for key, value in signed_identifiers.items():
@@ -217,15 +214,12 @@ class TableClient(AsyncTablesBaseClient):
                 raise
 
     @distributed_trace_async
-    async def create_table(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str,str]
+    async def create_table(self, **kwargs) -> None:
         """Creates a new table under the given account.
 
         :return: Dictionary of operation metadata returned from service
-        :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.ResourceExistsError: If the table already exists
+        :rtype: Dict[str,str]
+        :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
 
         .. admonition:: Example:
 
@@ -248,15 +242,13 @@ class TableClient(AsyncTablesBaseClient):
             _process_table_error(error)
 
     @distributed_trace_async
-    async def delete_table(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Deletes the table under the current account.
+    async def delete_table(self, **kwargs) -> None:
+        """Deletes the table under the current account. No error will be raised if
+            the given table name is not found.
 
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -270,27 +262,33 @@ class TableClient(AsyncTablesBaseClient):
         try:
             await self._client.table.delete(table=self.table_name, **kwargs)
         except HttpResponseError as error:
+            if error.status_code == 404:
+                return
             _process_table_error(error)
 
+    @overload
+    async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
+        ...
+
+    @overload
+    async def delete_entity(self, entity: Union[TableEntity, Mapping[str, Any]], **kwargs: Any) -> None:
+        ...
+
     @distributed_trace_async
-    async def delete_entity(
-        self,
-        partition_key,  # type: str
-        row_key,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Deletes the specified entity in a table.
+    async def delete_entity(self, *args: Union[TableEntity, str], **kwargs: Any) -> None:
+        """Deletes the specified entity in a table. No error will be raised if
+            the entity or PartitionKey-RowKey pairing is not found.
 
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
         :keyword str etag: Etag of the entity
-        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword match_condition: MatchCondition
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.ResourceNotFoundError: If the table does not exist
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -301,15 +299,38 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Adding an entity to a Table
         """
+        try:
+            entity = kwargs.pop('entity', None)
+            if not entity:
+                entity = args[0]
+            partition_key = entity['PartitionKey']
+            row_key = entity['RowKey']
+        except (TypeError, IndexError):
+            partition_key = kwargs.pop('partition_key', None)
+            if not partition_key:
+                partition_key = args[0]
+            row_key = kwargs.pop("row_key", None)
+            if not row_key:
+                row_key = args[1]
+
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if match_condition and entity and not etag:
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
+
         if_match, _ = _get_match_headers(
             kwargs=dict(
                 kwargs,
-                etag=kwargs.pop("etag", None),
-                match_condition=kwargs.pop("match_condition", None),
+                etag=etag,
+                match_condition=match_condition,
             ),
             etag_param="etag",
             match_param="match_condition",
         )
+
         try:
             await self._client.table.delete_entity(
                 table=self.table_name,
@@ -319,22 +340,24 @@ class TableClient(AsyncTablesBaseClient):
                 **kwargs
             )
         except HttpResponseError as error:
+            if error.status_code == 404:
+                return
             _process_table_error(error)
 
     @distributed_trace_async
     async def create_entity(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str,str]
+        entity: EntityType,
+        **kwargs
+    ) -> Mapping[str, Any]:
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: TableEntity or dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.ResourceExistsError: If the entity already exists
+        :rtype: Dict[str,str]
+        :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
+
 
         .. admonition:: Example:
 
@@ -363,24 +386,22 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def update_entity(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
-        mode=UpdateMode.MERGE,  # type: UpdateMode
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str,str]
+        entity: EntityType,
+        mode: Union[str, UpdateMode] = UpdateMode.MERGE,
+        **kwargs
+    ) -> Mapping[str, Any]:
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: dict[str, str]
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
-        :keyword str partition_key: The partition key of the entity.
-        :keyword str row_key: The row key of the entity.
         :keyword str etag: Etag of the entity
-        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword match_condition: MatchCondition
+        :paramtype match_condition: ~azure.core.MatchCondition
         :return: Dictionary of operation metadata returned from service
-        :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: Dict[str,str]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -391,11 +412,19 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Querying entities from a TableClient
         """
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if match_condition and entity and not etag:
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
+
         if_match, _ = _get_match_headers(
             kwargs=dict(
                 kwargs,
-                etag=kwargs.pop("etag", None),
-                match_condition=kwargs.pop("match_condition", None),
+                etag=etag,
+                match_condition=match_condition,
             ),
             etag_param="etag",
             match_param="match_condition",
@@ -433,18 +462,15 @@ class TableClient(AsyncTablesBaseClient):
             _process_table_error(error)
 
     @distributed_trace
-    def list_entities(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[TableEntity]
+    def list_entities(self, **kwargs) -> AsyncItemPaged[TableEntity]:
         """Lists entities in a table.
 
-        :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
-        :keyword select: Specify desired properties of an entity to return certain entities
-        :paramtype select: str or list[str]
-        :return: Query of table entities
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int results_per_page: Number of entities returned per service request.
+        :keyword select: Specify desired properties of an entity to return.
+        :paramtype select: str or List[str]
+        :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -472,20 +498,19 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace
     def query_entities(
         self,
-        query_filter,
+        query_filter: str,
         **kwargs
-    ):
-        # type: (...) -> AsyncItemPaged[TableEntity]
+    ) -> AsyncItemPaged[TableEntity]:
         """Lists entities in a table.
 
-        :param str filter: Specify a filter to return certain entities
-        :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
-        :keyword select: Specify desired properties of an entity to return certain entities
-        :paramtype select: str or list[str]
-        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
-        :return: Query of table entities
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :param str query_filter: Specify a filter to return certain entities
+        :keyword int results_per_page: Number of entities returned per service request.
+        :keyword select: Specify desired properties of an entity to return.
+        :paramtype select: str or List[str]
+        :keyword Dict[str, Any] parameters: Dictionary for formatting query with additional, user defined parameters
+        :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -503,7 +528,7 @@ class TableClient(AsyncTablesBaseClient):
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
-            user_select = ", ".join(user_select)
+            user_select = ",".join(user_select)
 
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return AsyncItemPaged(
@@ -518,20 +543,21 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def get_entity(
         self,
-        partition_key,  # type: str
-        row_key,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> TableEntity
+        partition_key: str,
+        row_key: str,
+        **kwargs
+    ) -> TableEntity:
         """Get a single entity in a table.
 
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
+        :keyword select: Specify desired properties of an entity to return.
+        :paramtype select: str or List[str]
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: ~azure.data.tables.TableEntity
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: :class:`~azure.data.tables.TableEntity`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -542,14 +568,17 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Getting an entity from PartitionKey and RowKey
         """
+        user_select = kwargs.pop("select", None)
+        if user_select and not isinstance(user_select, str):
+            user_select = ",".join(user_select)
         try:
             entity = await self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
+                query_options=QueryOptions(select=user_select),
                 **kwargs
             )
-
             properties = _convert_to_entity(entity)
             return properties
         except HttpResponseError as error:
@@ -558,20 +587,19 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def upsert_entity(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
-        mode=UpdateMode.MERGE,  # type: UpdateMode
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str,str]
+        entity: EntityType,
+        mode: Union[str, UpdateMode] = UpdateMode.MERGE,
+        **kwargs
+    ) -> Mapping[str, Any]:
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
         :type entity: TableEntity or dict[str,str]
-        :param mode: Merge or Replace and Insert on fail
+        :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: Dict[str,str]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -618,12 +646,23 @@ class TableClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             _process_table_error(error)
 
-    @distributed_trace
-    def create_batch(self, **kwargs: Dict[str, Any]) -> TableBatchOperations:
-        """Create a Batching object from a Table Client
+    @distributed_trace_async
+    async def submit_transaction(
+        self,
+        operations: Iterable[TransactionOperationType],
+        **kwargs
+    ) -> List[Mapping[str, Any]]:
+        """Commit a list of operations as a single transaction.
 
-        :return: Object containing requests and responses
-        :rtype: ~azure.data.tables.TableBatchOperations
+        If any one of these operations fails, the entire transaction will be rejected.
+
+        :param operations: The list of operations to commit in a transaction. This should be a list of
+         tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
+         kwargs for that operation.
+        :type operations: Iterable[Tuple[str, EntityType]]
+        :return: A list of mappings with response metadata for each operation in the transaction.
+        :rtype: List[Mapping[str, Any]]
+        :raises ~azure.data.tables.TableTransactionError:
 
         .. admonition:: Example:
 
@@ -632,37 +671,23 @@ class TableClient(AsyncTablesBaseClient):
                 :end-before: [END batching]
                 :language: python
                 :dedent: 8
-                :caption: Creating and adding an entity to a Table
+                :caption: Using transactions to send multiple requests at once
         """
-        return TableBatchOperations(
+        batched_requests = TableBatchOperations(
             self._client,
             self._client._serialize,  # pylint: disable=protected-access
             self._client._deserialize,  # pylint: disable=protected-access
             self._client._config,  # pylint: disable=protected-access
             self.table_name,
-            self,
             **kwargs
         )
-
-    @distributed_trace_async
-    async def send_batch(
-        self, batch: TableBatchOperations, **kwargs: Dict[Any, str]
-    ) -> BatchTransactionResult:
-        """Commit a TableBatchOperations to send requests to the server
-
-        :return: Object containing requests and responses
-        :rtype: ~azure.data.tables.BatchTransactionResult
-        :raises ~azure.data.tables.BatchErrorException:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_batching_async.py
-                :start-after: [START batching]
-                :end-before: [END batching]
-                :language: python
-                :dedent: 8
-                :caption: Using batches to send multiple requests at once
-        """
-        return await self._batch_send(
-            batch._entities, *batch._requests, **kwargs  # pylint: disable=protected-access
-        )
+        for operation in operations:
+            try:
+                operation_kwargs = operation[2]
+            except IndexError:
+                operation_kwargs = {}
+            try:
+                getattr(batched_requests, operation[0].lower())(operation[1], **operation_kwargs)
+            except AttributeError:
+                raise ValueError("Unrecognized operation: {}".format(operation))
+        return await self._batch_send(*batched_requests.requests, **kwargs)

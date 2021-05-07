@@ -73,6 +73,9 @@
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
 
+# PRLabel: %Models repository
+/sdk/modelsrepository/                                               @cartertinney @digimaun
+
 # PRLabel: %Machine Learning Compute
 /sdk/machinelearningcompute/                                         @shutchings
 

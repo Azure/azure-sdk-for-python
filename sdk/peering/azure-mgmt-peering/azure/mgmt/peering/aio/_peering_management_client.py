@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -16,18 +17,14 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import PeeringManagementClientConfiguration
-from .operations import CdnPeeringPrefixesOperations
 from .operations import PeeringManagementClientOperationsMixin
 from .operations import LegacyPeeringsOperations
 from .operations import Operations
 from .operations import PeerAsnsOperations
 from .operations import PeeringLocationsOperations
-from .operations import RegisteredAsnsOperations
-from .operations import RegisteredPrefixesOperations
 from .operations import PeeringsOperations
-from .operations import ReceivedRoutesOperations
-from .operations import PeeringServiceCountriesOperations
 from .operations import PeeringServiceLocationsOperations
+from .operations import PeeringServicePrefixesOperations
 from .operations import PrefixesOperations
 from .operations import PeeringServiceProvidersOperations
 from .operations import PeeringServicesOperations
@@ -37,8 +34,6 @@ from .. import models
 class PeeringManagementClient(PeeringManagementClientOperationsMixin):
     """Peering Client.
 
-    :ivar cdn_peering_prefixes: CdnPeeringPrefixesOperations operations
-    :vartype cdn_peering_prefixes: azure.mgmt.peering.aio.operations.CdnPeeringPrefixesOperations
     :ivar legacy_peerings: LegacyPeeringsOperations operations
     :vartype legacy_peerings: azure.mgmt.peering.aio.operations.LegacyPeeringsOperations
     :ivar operations: Operations operations
@@ -47,18 +42,12 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin):
     :vartype peer_asns: azure.mgmt.peering.aio.operations.PeerAsnsOperations
     :ivar peering_locations: PeeringLocationsOperations operations
     :vartype peering_locations: azure.mgmt.peering.aio.operations.PeeringLocationsOperations
-    :ivar registered_asns: RegisteredAsnsOperations operations
-    :vartype registered_asns: azure.mgmt.peering.aio.operations.RegisteredAsnsOperations
-    :ivar registered_prefixes: RegisteredPrefixesOperations operations
-    :vartype registered_prefixes: azure.mgmt.peering.aio.operations.RegisteredPrefixesOperations
     :ivar peerings: PeeringsOperations operations
     :vartype peerings: azure.mgmt.peering.aio.operations.PeeringsOperations
-    :ivar received_routes: ReceivedRoutesOperations operations
-    :vartype received_routes: azure.mgmt.peering.aio.operations.ReceivedRoutesOperations
-    :ivar peering_service_countries: PeeringServiceCountriesOperations operations
-    :vartype peering_service_countries: azure.mgmt.peering.aio.operations.PeeringServiceCountriesOperations
     :ivar peering_service_locations: PeeringServiceLocationsOperations operations
     :vartype peering_service_locations: azure.mgmt.peering.aio.operations.PeeringServiceLocationsOperations
+    :ivar peering_service_prefixes: PeeringServicePrefixesOperations operations
+    :vartype peering_service_prefixes: azure.mgmt.peering.aio.operations.PeeringServicePrefixesOperations
     :ivar prefixes: PrefixesOperations operations
     :vartype prefixes: azure.mgmt.peering.aio.operations.PrefixesOperations
     :ivar peering_service_providers: PeeringServiceProvidersOperations operations
@@ -89,8 +78,6 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.cdn_peering_prefixes = CdnPeeringPrefixesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.legacy_peerings = LegacyPeeringsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
@@ -99,17 +86,11 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin):
             self._client, self._config, self._serialize, self._deserialize)
         self.peering_locations = PeeringLocationsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.registered_asns = RegisteredAsnsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.registered_prefixes = RegisteredPrefixesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.peerings = PeeringsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.received_routes = ReceivedRoutesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.peering_service_countries = PeeringServiceCountriesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.peering_service_locations = PeeringServiceLocationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.peering_service_prefixes = PeeringServicePrefixesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.prefixes = PrefixesOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -117,6 +98,23 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin):
             self._client, self._config, self._serialize, self._deserialize)
         self.peering_services = PeeringServicesOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()

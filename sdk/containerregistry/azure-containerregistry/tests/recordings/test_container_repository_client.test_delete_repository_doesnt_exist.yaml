@@ -16,10 +16,9 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/does_not_exist
   response:
     body:
-      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"does_not_exist","Action":"delete"}]}]}
-
-        '
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "does_not_exist", "Action": "delete"}]}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -33,7 +32,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 15:58:49 GMT
+      - Wed, 28 Apr 2021 22:05:02 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -42,7 +41,7 @@ interactions:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
       www-authenticate:
-      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:does_not_exist:delete"
+      - Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
       x-content-type-options:
       - nosniff
     status:
@@ -74,7 +73,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 15:58:50 GMT
+      - Wed, 28 Apr 2021 22:05:04 GMT
       server:
       - openresty
       strict-transport-security:
@@ -82,7 +81,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '165.833333'
+      - '166.483333'
     status:
       code: 200
       message: OK
@@ -112,7 +111,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 15:58:50 GMT
+      - Wed, 28 Apr 2021 22:05:04 GMT
       server:
       - openresty
       strict-transport-security:
@@ -120,7 +119,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '165.816667'
+      - '166.2'
     status:
       code: 200
       message: OK
@@ -156,7 +155,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 15:58:50 GMT
+      - Wed, 28 Apr 2021 22:05:04 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
