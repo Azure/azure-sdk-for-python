@@ -48,11 +48,11 @@ AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
 Use the returned token credential to authenticate the client:
 
 ```python
-from azure.purview.catalog import AzurePurviewCatalogClient
+from azure.purview.catalog import PurviewCatalogClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-client = AzurePurviewCatalogClient(endpoint="https://<my-account-name>.catalog.purview.azure.com", credential=credential)
+client = PurviewCatalogClient(endpoint="https://<my-account-name>.catalog.purview.azure.com", credential=credential)
 ```
 
 ## Key concepts
@@ -71,13 +71,13 @@ The following section shows you how to initialize and authenticate your client, 
 ### Get All Type Definitions
 
 ```python
-from azure.purview.catalog import AzurePurviewCatalogClient
+from azure.purview.catalog import PurviewCatalogClient
 from azure.identity import DefaultAzureCredential
 from azure.purview.catalog.rest import types
 from azure.core.exceptions import HttpResponseError
 
 credential = DefaultAzureCredential()
-client = AzurePurviewCatalogClient(endpoint="https://<my-account-name>.catalog.purview.azure.com", credential=credential)
+client = PurviewCatalogClient(endpoint="https://<my-account-name>.catalog.purview.azure.com", credential=credential)
 
 request = types.build_get_all_type_definitions_request()
 
@@ -112,7 +112,7 @@ headers, can be enabled on a client with the `logging_enable` keyword argument:
 import sys
 import logging
 from azure.identity import DefaultAzureCredential
-from azure.purview.catalog import AzurePurviewCatalogClient
+from azure.purview.catalog import PurviewCatalogClient
 
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger('azure')
@@ -126,7 +126,7 @@ endpoint = "https://<my-account-name>.catalog.purview.azure.com"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
-client = AzurePurviewCatalogClient(endpoint=endpoint, credential=credential, logging_enable=True)
+client = PurviewCatalogClient(endpoint=endpoint, credential=credential, logging_enable=True)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single `send_request` call,

@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_purview_catalog_client import AzurePurviewCatalogClient
+from ._azure_purview_catalog_client import PurviewCatalogClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['AzurePurviewCatalogClient']
+__all__ = ['PurviewCatalogClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

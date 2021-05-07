@@ -28,7 +28,7 @@ license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 no-namespace-folders: true
 python: true
-title: AzurePurviewCatalogClient
+title: PurviewCatalogClient
 low-level-client: true
 vendor: true
 package-version: 1.0.0b1

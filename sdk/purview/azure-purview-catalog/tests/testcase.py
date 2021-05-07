@@ -6,14 +6,14 @@
 # --------------------------------------------------------------------------
 import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
-from azure.purview.catalog import AzurePurviewCatalogClient
+from azure.purview.catalog import PurviewCatalogClient
 
 class PurviewCatalogTest(AzureTestCase):
 
     def create_client(self, endpoint):
-        credential = self.get_credential(AzurePurviewCatalogClient)
+        credential = self.get_credential(PurviewCatalogClient)
         return self.create_client_from_credential(
-            AzurePurviewCatalogClient,
+            PurviewCatalogClient,
             credential=credential,
             endpoint=endpoint,
         )

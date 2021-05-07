@@ -20,10 +20,10 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.purview.catalog.core.rest import HttpRequest
 
-from ._configuration import AzurePurviewCatalogClientConfiguration
+from ._configuration import PurviewCatalogClientConfiguration
 
 
-class AzurePurviewCatalogClient(object):
+class PurviewCatalogClient(object):
     """Purview Catalog Service is a fully managed cloud service whose users can discover the data sources they need and understand the data sources they find. At the same time, Data Catalog helps organizations get more value from their existing investments. This spec defines REST API of Purview Catalog Service.
 
     :param credential: Credential needed for the client to connect to Azure.
@@ -40,7 +40,7 @@ class AzurePurviewCatalogClient(object):
     ):
         # type: (...) -> None
         base_url = '{Endpoint}/api'
-        self._config = AzurePurviewCatalogClientConfiguration(credential, endpoint, **kwargs)
+        self._config = PurviewCatalogClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -95,7 +95,7 @@ class AzurePurviewCatalogClient(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> AzurePurviewCatalogClient
+        # type: () -> PurviewCatalogClient
         self._client.__enter__()
         return self
 

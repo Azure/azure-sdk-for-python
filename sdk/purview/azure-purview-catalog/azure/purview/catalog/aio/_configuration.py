@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzurePurviewCatalogClientConfiguration(Configuration):
-    """Configuration for AzurePurviewCatalogClient.
+class PurviewCatalogClientConfiguration(Configuration):
+    """Configuration for PurviewCatalogClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -40,7 +40,7 @@ class AzurePurviewCatalogClientConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(AzurePurviewCatalogClientConfiguration, self).__init__(**kwargs)
+        super(PurviewCatalogClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint
