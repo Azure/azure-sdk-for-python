@@ -20,7 +20,6 @@ from phone_number_helper import PhoneNumberUriReplacer
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
 
-
 class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     def setUp(self):
         super(PhoneNumbersClientTestAsync, self).setUp()
