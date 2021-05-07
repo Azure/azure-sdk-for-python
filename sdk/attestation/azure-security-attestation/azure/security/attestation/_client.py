@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import List, Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
@@ -17,13 +17,23 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._generated import AzureAttestationRestClient
-from ._generated.models import AttestationResult, RuntimeData, InitTimeData, DataType, AttestSgxEnclaveRequest, AttestOpenEnclaveRequest
+from ._generated.models import (
+    AttestationResult,
+    RuntimeData,
+    InitTimeData,
+    DataType,
+    AttestSgxEnclaveRequest,
+    AttestOpenEnclaveRequest)
 from ._configuration import AttestationClientConfiguration
-from ._models import AttestationSigner, AttestationToken, AttestationResponse, AttestationData, TpmAttestationRequest, TpmAttestationResponse
+from ._models import (
+    AttestationSigner,
+    AttestationToken,
+    AttestationResponse,
+    AttestationData,
+    TpmAttestationRequest,
+    TpmAttestationResponse)
 import base64
-import cryptography
 import cryptography.x509
-from typing import List, Any
 from azure.core.tracing.decorator import distributed_trace
 from threading import Lock
 
@@ -80,36 +90,33 @@ class AttestationClient(object):
 
         :return list[AttestationSigner]: A list of :class:`AttestationSigner` objects.
 
-        For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+        For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
         """
         signing_certificates = self._client.signing_certificates.get(**kwargs)
         signers = []
         for key in signing_certificates.keys:
             # Convert the returned certificate chain into an array of X.509 Certificates.
-            certificates = []
-            for x5c in key.x5_c:
-                der_cert = base64.b64decode(x5c)
-                certificates.append(der_cert)
+            certificates = [base64.b64decode(x5c) for x5c in key.x5_c]
             signers.append(AttestationSigner(certificates, key.kid))
         return signers
 
     @distributed_trace
     def attest_sgx_enclave(self, quote, inittime_data=None, runtime_data=None, draft_policy=None, **kwargs):
-        # type:(bytes, AttestationData, AttestationData, str, Any) -> AttestationResponse[AttestationResult]
+        # type:(bytes, Optional[AttestationData], Optional[AttestationData], Optional[str], Any) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
-        :param AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :param AttestationData runtime_data: Data presented at the time that the SGX quote was created.
-        :param str draft_policy: "draft", or "experimental" policy to be used with
+        :param Optional[AttestationData] inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :param Optional[AttestationData] runtime_data: Data presented at the time that the SGX quote was created.
+        :param Optional[str] draft_policy: "draft", or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
         :return AttestationResponse[AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
 
-        For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+        For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
         """
         runtime = None
@@ -133,13 +140,13 @@ class AttestationClient(object):
 
     @distributed_trace
     def attest_open_enclave(self, report, inittime_data=None, runtime_data=None, draft_policy=None, **kwargs):
-        # type:(bytes, AttestationData, AttestationData, str, Any) -> AttestationResponse[AttestationResult]
+        # type:(bytes, Optional[AttestationData], Optional[AttestationData], Optional[str], Any) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
-        :param AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :param AttestationData runtime_data: Data presented at the time that the SGX quote was created.
-        :param str draft_policy: "draft", or "experimental" policy to be used with
+        :param Optional[AttestationData] inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :param Optional[AttestationData] runtime_data: Data presented at the time that the SGX quote was created.
+        :param Optional[str] draft_policy: "draft", or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
@@ -169,7 +176,7 @@ class AttestationClient(object):
         return AttestationResponse[AttestationResult](token, token.get_body())
 
     @distributed_trace
-    def attest_tpm(self, request):
+    def attest_tpm(self, request, **kwargs):
         #type:(TpmAttestationRequest) -> TpmAttestationResponse
         """ Attest a TPM based enclave.
 
@@ -179,11 +186,11 @@ class AttestationClient(object):
         :returns TpmAttestationResponse: A structure containing the response from the TPM attestation.
 
         """
-        response = self._client.attestation.attest_tpm(request.data)
+        response = self._client.attestation.attest_tpm(request.data, **kwargs)
         return TpmAttestationResponse(response.data)
 
     def _get_signers(self, **kwargs):
-        # type:(Any) -> List[AttestationSigner]
+        # type:(Any) -> list[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
 
