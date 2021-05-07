@@ -144,8 +144,8 @@ class AioHttpTransport(AsyncHttpTransport):
         :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
         :keyword str proxy: will define the proxy to use all the time
         """
-        auto_decompress = self.session.auto_decompress
         await self.open()
+        auto_decompress = self.session.auto_decompress
 
         proxies = config.pop('proxies', None)
         if proxies and 'proxy' not in config:
