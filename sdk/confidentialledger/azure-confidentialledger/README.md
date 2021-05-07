@@ -174,7 +174,8 @@ ledger_client.append_to_ledger(
     sub_ledger_id="sub-ledger"
 )
 
-# The ledger entry is retrieved from the default sub-ledger.
+# The ledger entry written at 'append_result.transaction_id'
+# is retrieved from the default sub-ledger.
 entry = ledger_client.get_ledger_entry(transaction_id=append_result.transaction_id)
 assert entry.contents == "Hello world 0"
 
@@ -182,9 +183,10 @@ assert entry.contents == "Hello world 0"
 latest_entry = ledger_client.get_ledger_entry()
 assert latest_entry.contents == "Hello world 1"
 
-# The ledger entry is retrieved from sub-ledger 'sub-ledger'.
+# The ledger entry written at 'subledger_append_result.transaction_id'
+# is retrieved from the sub-ledger 'sub-ledger'.
 subledger_entry = ledger_client.get_ledger_entry(
-    transaction_id=append_result.transaction_id,
+    transaction_id=subledger_append_result.transaction_id,
     sub_ledger_id="sub-ledger"
 )
 assert subledger_entry.contents == "Hello world sub-ledger 0"
