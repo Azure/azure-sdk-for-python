@@ -55,7 +55,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -126,7 +126,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -195,7 +195,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         # Construct URL
@@ -264,7 +264,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -336,7 +336,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         # Construct URL
@@ -403,7 +403,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -491,7 +491,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -583,7 +583,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         # Construct URL
@@ -653,7 +653,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -709,8 +709,8 @@ class KeyVaultClientOperationsMixin(object):
         data, the size of which is dependent on the target key and the encryption algorithm to be used.
         The ENCRYPT operation is only strictly necessary for symmetric keys stored in Azure Key Vault
         since protection with an asymmetric key can be performed using public portion of the key. This
-        operation is supported for asymmetric keys as a convenience for callers that have a key-
-        reference but do not have access to the public key material. This operation requires the
+        operation is supported for asymmetric keys as a convenience for callers that have a
+        key-reference but do not have access to the public key material. This operation requires the
         keys/encrypt permission.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -731,7 +731,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -809,7 +809,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -884,7 +884,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -961,7 +961,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1039,7 +1039,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1115,7 +1115,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1187,7 +1187,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1271,7 +1271,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         # Construct URL
@@ -1334,7 +1334,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         # Construct URL
@@ -1395,7 +1395,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         # Construct URL
