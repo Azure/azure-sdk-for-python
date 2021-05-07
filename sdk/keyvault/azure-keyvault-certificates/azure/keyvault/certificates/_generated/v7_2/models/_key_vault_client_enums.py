@@ -94,6 +94,7 @@ class JsonWebKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RSA = "RSA"
     RSA_HSM = "RSA-HSM"
     OCT = "oct"
+    OCT_HSM = "oct-HSM"
 
 class KeyUsageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

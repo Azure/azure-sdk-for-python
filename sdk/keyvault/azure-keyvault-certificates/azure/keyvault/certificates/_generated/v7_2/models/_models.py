@@ -15,7 +15,7 @@ class Action(msrest.serialization.Model):
 
     :param action_type: The type of the action. Possible values include: "EmailContacts",
      "AutoRenew".
-    :type action_type: str or ~azure.keyvault.v7_1.models.ActionType
+    :type action_type: str or ~azure.keyvault.v7_2.models.ActionType
     """
 
     _attribute_map = {
@@ -152,7 +152,7 @@ class CertificateAttributes(Attributes):
      retention interval. Possible values include: "Purgeable", "Recoverable+Purgeable",
      "Recoverable", "Recoverable+ProtectedSubscription", "CustomizedRecoverable+Purgeable",
      "CustomizedRecoverable", "CustomizedRecoverable+ProtectedSubscription".
-    :vartype recovery_level: str or ~azure.keyvault.v7_1.models.DeletionRecoveryLevel
+    :vartype recovery_level: str or ~azure.keyvault.v7_2.models.DeletionRecoveryLevel
     """
 
     _validation = {
@@ -195,13 +195,13 @@ class CertificateBundle(msrest.serialization.Model):
     :ivar x509_thumbprint: Thumbprint of the certificate.
     :vartype x509_thumbprint: bytes
     :ivar policy: The management policy.
-    :vartype policy: ~azure.keyvault.v7_1.models.CertificatePolicy
+    :vartype policy: ~azure.keyvault.v7_2.models.CertificatePolicy
     :param cer: CER contents of x509 certificate.
     :type cer: bytearray
     :param content_type: The content type of the secret.
     :type content_type: str
     :param attributes: The certificate attributes.
-    :type attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :type attributes: ~azure.keyvault.v7_2.models.CertificateAttributes
     :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
     """
@@ -246,9 +246,9 @@ class CertificateCreateParameters(msrest.serialization.Model):
     """The certificate create parameters.
 
     :param certificate_policy: The management policy for the certificate.
-    :type certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
+    :type certificate_policy: ~azure.keyvault.v7_2.models.CertificatePolicy
     :param certificate_attributes: The attributes of the certificate (optional).
-    :type certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :type certificate_attributes: ~azure.keyvault.v7_2.models.CertificateAttributes
     :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
     """
@@ -274,16 +274,16 @@ class CertificateImportParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param base64_encoded_certificate: Required. A PEM file or a base64-encoded PFX file.  PEM
-     files need to contain the private key.
+    :param base64_encoded_certificate: Required. Base64 encoded representation of the certificate
+     object to import. This certificate needs to contain the private key.
     :type base64_encoded_certificate: str
     :param password: If the private key in base64EncodedCertificate is encrypted, the password used
      for encryption.
     :type password: str
     :param certificate_policy: The management policy for the certificate.
-    :type certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
+    :type certificate_policy: ~azure.keyvault.v7_2.models.CertificatePolicy
     :param certificate_attributes: The attributes of the certificate (optional).
-    :type certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :type certificate_attributes: ~azure.keyvault.v7_2.models.CertificateAttributes
     :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
     """
@@ -342,7 +342,7 @@ class CertificateIssuerListResult(msrest.serialization.Model):
 
     :ivar value: A response message containing a list of certificate issuers in the key vault along
      with a link to the next page of certificate issuers.
-    :vartype value: list[~azure.keyvault.v7_1.models.CertificateIssuerItem]
+    :vartype value: list[~azure.keyvault.v7_2.models.CertificateIssuerItem]
     :ivar next_link: The URL to get the next set of certificate issuers.
     :vartype next_link: str
     """
@@ -374,11 +374,11 @@ class CertificateIssuerSetParameters(msrest.serialization.Model):
     :param provider: Required. The issuer provider.
     :type provider: str
     :param credentials: The credentials to be used for the issuer.
-    :type credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
+    :type credentials: ~azure.keyvault.v7_2.models.IssuerCredentials
     :param organization_details: Details of the organization as provided to the issuer.
-    :type organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
+    :type organization_details: ~azure.keyvault.v7_2.models.OrganizationDetails
     :param attributes: Attributes of the issuer object.
-    :type attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
+    :type attributes: ~azure.keyvault.v7_2.models.IssuerAttributes
     """
 
     _validation = {
@@ -409,11 +409,11 @@ class CertificateIssuerUpdateParameters(msrest.serialization.Model):
     :param provider: The issuer provider.
     :type provider: str
     :param credentials: The credentials to be used for the issuer.
-    :type credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
+    :type credentials: ~azure.keyvault.v7_2.models.IssuerCredentials
     :param organization_details: Details of the organization as provided to the issuer.
-    :type organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
+    :type organization_details: ~azure.keyvault.v7_2.models.OrganizationDetails
     :param attributes: Attributes of the issuer object.
-    :type attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
+    :type attributes: ~azure.keyvault.v7_2.models.IssuerAttributes
     """
 
     _attribute_map = {
@@ -440,7 +440,7 @@ class CertificateItem(msrest.serialization.Model):
     :param id: Certificate identifier.
     :type id: str
     :param attributes: The certificate management attributes.
-    :type attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :type attributes: ~azure.keyvault.v7_2.models.CertificateAttributes
     :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
     :param x509_thumbprint: Thumbprint of the certificate.
@@ -472,7 +472,7 @@ class CertificateListResult(msrest.serialization.Model):
 
     :ivar value: A response message containing a list of certificates in the key vault along with a
      link to the next page of certificates.
-    :vartype value: list[~azure.keyvault.v7_1.models.CertificateItem]
+    :vartype value: list[~azure.keyvault.v7_2.models.CertificateItem]
     :ivar next_link: The URL to get the next set of certificates.
     :vartype next_link: str
     """
@@ -504,7 +504,7 @@ class CertificateMergeParameters(msrest.serialization.Model):
     :param x509_certificates: Required. The certificate or the certificate chain to merge.
     :type x509_certificates: list[bytearray]
     :param certificate_attributes: The attributes of the certificate (optional).
-    :type certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :type certificate_attributes: ~azure.keyvault.v7_2.models.CertificateAttributes
     :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
     """
@@ -537,7 +537,7 @@ class CertificateOperation(msrest.serialization.Model):
     :ivar id: The certificate id.
     :vartype id: str
     :param issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
-    :type issuer_parameters: ~azure.keyvault.v7_1.models.IssuerParameters
+    :type issuer_parameters: ~azure.keyvault.v7_2.models.IssuerParameters
     :param csr: The certificate signing request (CSR) that is being used in the certificate
      operation.
     :type csr: bytearray
@@ -549,7 +549,7 @@ class CertificateOperation(msrest.serialization.Model):
     :param status_details: The status details of the certificate operation.
     :type status_details: str
     :param error: Error encountered, if any, during the certificate operation.
-    :type error: ~azure.keyvault.v7_1.models.Error
+    :type error: ~azure.keyvault.v7_2.models.Error
     :param target: Location which contains the result of the certificate operation.
     :type target: str
     :param request_id: Identifier for the certificate operation.
@@ -622,18 +622,18 @@ class CertificatePolicy(msrest.serialization.Model):
     :ivar id: The certificate id.
     :vartype id: str
     :param key_properties: Properties of the key backing a certificate.
-    :type key_properties: ~azure.keyvault.v7_1.models.KeyProperties
+    :type key_properties: ~azure.keyvault.v7_2.models.KeyProperties
     :param secret_properties: Properties of the secret backing a certificate.
-    :type secret_properties: ~azure.keyvault.v7_1.models.SecretProperties
+    :type secret_properties: ~azure.keyvault.v7_2.models.SecretProperties
     :param x509_certificate_properties: Properties of the X509 component of a certificate.
-    :type x509_certificate_properties: ~azure.keyvault.v7_1.models.X509CertificateProperties
+    :type x509_certificate_properties: ~azure.keyvault.v7_2.models.X509CertificateProperties
     :param lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a
      certificate.
-    :type lifetime_actions: list[~azure.keyvault.v7_1.models.LifetimeAction]
+    :type lifetime_actions: list[~azure.keyvault.v7_2.models.LifetimeAction]
     :param issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
-    :type issuer_parameters: ~azure.keyvault.v7_1.models.IssuerParameters
+    :type issuer_parameters: ~azure.keyvault.v7_2.models.IssuerParameters
     :param attributes: The certificate attributes.
-    :type attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :type attributes: ~azure.keyvault.v7_2.models.CertificateAttributes
     """
 
     _validation = {
@@ -694,9 +694,9 @@ class CertificateUpdateParameters(msrest.serialization.Model):
     """The certificate update parameters.
 
     :param certificate_policy: The management policy for the certificate.
-    :type certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
+    :type certificate_policy: ~azure.keyvault.v7_2.models.CertificatePolicy
     :param certificate_attributes: The attributes of the certificate (optional).
-    :type certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :type certificate_attributes: ~azure.keyvault.v7_2.models.CertificateAttributes
     :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
     """
@@ -752,7 +752,7 @@ class Contacts(msrest.serialization.Model):
     :ivar id: Identifier for the contacts collection.
     :vartype id: str
     :param contact_list: The contact list for the vault certificates.
-    :type contact_list: list[~azure.keyvault.v7_1.models.Contact]
+    :type contact_list: list[~azure.keyvault.v7_2.models.Contact]
     """
 
     _validation = {
@@ -787,13 +787,13 @@ class DeletedCertificateBundle(CertificateBundle):
     :ivar x509_thumbprint: Thumbprint of the certificate.
     :vartype x509_thumbprint: bytes
     :ivar policy: The management policy.
-    :vartype policy: ~azure.keyvault.v7_1.models.CertificatePolicy
+    :vartype policy: ~azure.keyvault.v7_2.models.CertificatePolicy
     :param cer: CER contents of x509 certificate.
     :type cer: bytearray
     :param content_type: The content type of the secret.
     :type content_type: str
     :param attributes: The certificate attributes.
-    :type attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :type attributes: ~azure.keyvault.v7_2.models.CertificateAttributes
     :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
     :param recovery_id: The url of the recovery object, used to identify and recover the deleted
@@ -848,7 +848,7 @@ class DeletedCertificateItem(CertificateItem):
     :param id: Certificate identifier.
     :type id: str
     :param attributes: The certificate management attributes.
-    :type attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :type attributes: ~azure.keyvault.v7_2.models.CertificateAttributes
     :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
     :param x509_thumbprint: Thumbprint of the certificate.
@@ -894,7 +894,7 @@ class DeletedCertificateListResult(msrest.serialization.Model):
 
     :ivar value: A response message containing a list of deleted certificates in the vault along
      with a link to the next page of deleted certificates.
-    :vartype value: list[~azure.keyvault.v7_1.models.DeletedCertificateItem]
+    :vartype value: list[~azure.keyvault.v7_2.models.DeletedCertificateItem]
     :ivar next_link: The URL to get the next set of deleted certificates.
     :vartype next_link: str
     """
@@ -928,7 +928,7 @@ class Error(msrest.serialization.Model):
     :ivar message: The error message.
     :vartype message: str
     :ivar inner_error: The key vault server error.
-    :vartype inner_error: ~azure.keyvault.v7_1.models.Error
+    :vartype inner_error: ~azure.keyvault.v7_2.models.Error
     """
 
     _validation = {
@@ -997,11 +997,11 @@ class IssuerBundle(msrest.serialization.Model):
     :param provider: The issuer provider.
     :type provider: str
     :param credentials: The credentials to be used for the issuer.
-    :type credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
+    :type credentials: ~azure.keyvault.v7_2.models.IssuerCredentials
     :param organization_details: Details of the organization as provided to the issuer.
-    :type organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
+    :type organization_details: ~azure.keyvault.v7_2.models.OrganizationDetails
     :param attributes: Attributes of the issuer object.
-    :type attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
+    :type attributes: ~azure.keyvault.v7_2.models.IssuerAttributes
     """
 
     _validation = {
@@ -1087,15 +1087,15 @@ class KeyProperties(msrest.serialization.Model):
     :param exportable: Not supported in this version. Indicates if the private key can be exported.
     :type exportable: bool
     :param key_type: The type of key pair to be used for the certificate. Possible values include:
-     "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".
-    :type key_type: str or ~azure.keyvault.v7_1.models.JsonWebKeyType
+     "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", "oct-HSM".
+    :type key_type: str or ~azure.keyvault.v7_2.models.JsonWebKeyType
     :param key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
     :type key_size: int
     :param reuse_key: Indicates if the same key pair will be used on certificate renewal.
     :type reuse_key: bool
     :param curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible values
      include: "P-256", "P-384", "P-521", "P-256K".
-    :type curve: str or ~azure.keyvault.v7_1.models.JsonWebKeyCurveName
+    :type curve: str or ~azure.keyvault.v7_2.models.JsonWebKeyCurveName
     """
 
     _attribute_map = {
@@ -1124,7 +1124,7 @@ class KeyVaultError(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar error: The key vault server error.
-    :vartype error: ~azure.keyvault.v7_1.models.Error
+    :vartype error: ~azure.keyvault.v7_2.models.Error
     """
 
     _validation = {
@@ -1147,9 +1147,9 @@ class LifetimeAction(msrest.serialization.Model):
     """Action and its trigger that will be performed by Key Vault over the lifetime of a certificate.
 
     :param trigger: The condition that will execute the action.
-    :type trigger: ~azure.keyvault.v7_1.models.Trigger
+    :type trigger: ~azure.keyvault.v7_2.models.Trigger
     :param action: The action that will be executed.
-    :type action: ~azure.keyvault.v7_1.models.Action
+    :type action: ~azure.keyvault.v7_2.models.Action
     """
 
     _attribute_map = {
@@ -1172,7 +1172,7 @@ class OrganizationDetails(msrest.serialization.Model):
     :param id: Id of the organization.
     :type id: str
     :param admin_details: Details of the organization administrator.
-    :type admin_details: list[~azure.keyvault.v7_1.models.AdministratorDetails]
+    :type admin_details: list[~azure.keyvault.v7_2.models.AdministratorDetails]
     """
 
     _attribute_map = {
@@ -1298,9 +1298,9 @@ class X509CertificateProperties(msrest.serialization.Model):
     :param ekus: The enhanced key usage.
     :type ekus: list[str]
     :param subject_alternative_names: The subject alternative names.
-    :type subject_alternative_names: ~azure.keyvault.v7_1.models.SubjectAlternativeNames
+    :type subject_alternative_names: ~azure.keyvault.v7_2.models.SubjectAlternativeNames
     :param key_usage: List of key usages.
-    :type key_usage: list[str or ~azure.keyvault.v7_1.models.KeyUsageType]
+    :type key_usage: list[str or ~azure.keyvault.v7_2.models.KeyUsageType]
     :param validity_in_months: The duration that the certificate is valid in months.
     :type validity_in_months: int
     """
