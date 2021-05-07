@@ -6,7 +6,7 @@ Azure Purview Scanning is a fully managed cloud service whose users can scan you
 - Examine your data
 - Extract schemas from your data
 
-**Please rely heavily on the [service's documentation][scanning_product_documentation] and our [Low-Level client docs][request_builders_and_client] to use this library**
+**Please rely heavily on the [service's documentation][scanning_product_documentation] and our [client docs][request_builders_and_client] to use this library**
 
 [Source code][source_code] | [Package (PyPI)][scanning_pypi] | [API reference documentation][scanning_ref_docs]| [Product documentation][scanning_product_documentation]
 
@@ -140,7 +140,7 @@ result = client.send_request(request, logging_enable=True)
 
 ## Next steps
 
-For more generic samples, see our [low level client docs][request_builders_and_client].
+For more generic samples, see our [client docs][request_builders_and_client].
 
 ## Contributing
 
