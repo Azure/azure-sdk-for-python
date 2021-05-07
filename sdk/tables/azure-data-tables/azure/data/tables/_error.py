@@ -157,7 +157,8 @@ class TableTransactionError(HttpResponseError):
      Defaults to 0 in the case where an index was not provided, or the error applies across operations.
     :ivar ~azure.data.tables.TableErrorCode error_code: The error code.
     :ivar str message: The error message.
-    :ivar Mapping[str, Any] additional_info: Any additional data for the error.
+    :ivar additional_info: Any additional data for the error.
+    :vartype additional_info: Mapping[str, Any]
     """
 
     def __init__(self, **kwargs):

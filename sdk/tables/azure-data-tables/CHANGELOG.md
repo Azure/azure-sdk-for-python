@@ -1,6 +1,6 @@
 # Release History
 
-## 12.0.0b7 (Unreleased)
+## 12.0.0b7 (2021-05-11)
 **Breaking**
 * The `account_url` parameter in the client constructors has been renamed to `endpoint`.
 * The `TableEntity` object now acts exclusively like a dictionary, and no longer supports key access via attributes.
