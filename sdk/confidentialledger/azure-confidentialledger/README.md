@@ -225,7 +225,7 @@ assert user.role == LedgerUserRole.CONTRIBUTOR
 
 ledger_client.delete_user(user_id)
 
-# For a certificated-based user, their user ID is the fingerprint for their PEM certificate.
+# For a certificate-based user, their user ID is the fingerprint for their PEM certificate.
 user_id = "PEM certificate fingerprint"
 user = ledger_client.create_or_update_user(
     user_id, LedgerUserRole.READER
