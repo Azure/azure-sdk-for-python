@@ -72,7 +72,7 @@ class KeyVaultClientBase(object):
                 **kwargs
             )
             self._models = _KeyVaultClient.models(api_version=self.api_version)
-        except NotImplementedError:
+        except ValueError:
             raise NotImplementedError(
                 "This package doesn't support API version '{}'. ".format(self.api_version)
                 + "Supported versions: {}".format(", ".join(v.value for v in ApiVersion))
