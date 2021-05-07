@@ -7,28 +7,51 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import CloudErrorBody
     from ._models_py3 import DisableSerialConsoleResult
     from ._models_py3 import EnableSerialConsoleResult
     from ._models_py3 import GetSerialConsoleSubscriptionNotFound
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import Resource
     from ._models_py3 import SerialConsoleOperations
     from ._models_py3 import SerialConsoleOperationsValueItem
     from ._models_py3 import SerialConsoleOperationsValueItemDisplay
     from ._models_py3 import SerialConsoleStatus
+    from ._models_py3 import SerialPort
+    from ._models_py3 import SerialPortConnectResult
+    from ._models_py3 import SerialPortListResult
 except (SyntaxError, ImportError):
+    from ._models import CloudErrorBody  # type: ignore
     from ._models import DisableSerialConsoleResult  # type: ignore
     from ._models import EnableSerialConsoleResult  # type: ignore
     from ._models import GetSerialConsoleSubscriptionNotFound  # type: ignore
+    from ._models import ProxyResource  # type: ignore
+    from ._models import Resource  # type: ignore
     from ._models import SerialConsoleOperations  # type: ignore
     from ._models import SerialConsoleOperationsValueItem  # type: ignore
     from ._models import SerialConsoleOperationsValueItemDisplay  # type: ignore
     from ._models import SerialConsoleStatus  # type: ignore
+    from ._models import SerialPort  # type: ignore
+    from ._models import SerialPortConnectResult  # type: ignore
+    from ._models import SerialPortListResult  # type: ignore
+
+from ._microsoft_serial_console_client_enums import (
+    SerialPortState,
+)
 
 __all__ = [
+    'CloudErrorBody',
     'DisableSerialConsoleResult',
     'EnableSerialConsoleResult',
     'GetSerialConsoleSubscriptionNotFound',
+    'ProxyResource',
+    'Resource',
     'SerialConsoleOperations',
     'SerialConsoleOperationsValueItem',
     'SerialConsoleOperationsValueItemDisplay',
     'SerialConsoleStatus',
+    'SerialPort',
+    'SerialPortConnectResult',
+    'SerialPortListResult',
+    'SerialPortState',
 ]
