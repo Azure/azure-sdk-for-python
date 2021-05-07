@@ -23,7 +23,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
     async def set_up(self, endpoint, name):
         repo_client = self.create_container_repository(endpoint, name)
 
-        async for artifact in repo_client.list_registry_artifacts():
+        async for artifact in repo_client.list_manifests():
             return repo_client.get_artifact(artifact.digest)
 
     @acr_preparer()

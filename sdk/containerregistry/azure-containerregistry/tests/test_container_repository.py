@@ -10,7 +10,7 @@ from azure.containerregistry import (
     ContentProperties,
     DeleteRepositoryResult,
     RepositoryProperties,
-    ManifestOrderBy,
+    ManifestOrder,
     ArtifactManifestProperties,
 )
 from azure.core.exceptions import ResourceNotFoundError
@@ -29,7 +29,6 @@ class TestContainerRepository(ContainerRegistryTestClass):
         assert isinstance(properties, RepositoryProperties)
         assert isinstance(properties.writeable_properties, ContentProperties)
         assert properties.name == u"library/hello-world"
-        assert properties.registry == containerregistry_endpoint
 
     @acr_preparer()
     def test_set_properties(self, containerregistry_endpoint):
@@ -64,13 +63,14 @@ class TestContainerRepository(ContainerRegistryTestClass):
         client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
 
         count = 0
-        for artifact in client.list_registry_artifacts():
+        for artifact in client.list_manifests():
             assert artifact is not None
             assert isinstance(artifact, ArtifactManifestProperties)
             assert artifact.created_on is not None
             assert isinstance(artifact.created_on, datetime)
             assert artifact.last_updated_on is not None
             assert isinstance(artifact.last_updated_on, datetime)
+            assert artifact.repository_name == "library/busybox"
             count += 1
 
         assert count > 0
@@ -80,7 +80,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
         results_per_page = 2
 
-        pages = client.list_registry_artifacts(results_per_page=results_per_page)
+        pages = client.list_manifests(results_per_page=results_per_page)
         page_count = 0
         for page in pages.by_page():
             reg_count = 0
@@ -97,7 +97,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for artifact in client.list_registry_artifacts(order_by=ManifestOrderBy.LAST_UPDATE_TIME_DESCENDING):
+        for artifact in client.list_manifests(order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
             if prev_last_updated_on:
                 assert artifact.last_updated_on < prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -111,7 +111,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for artifact in client.list_registry_artifacts(order_by=ManifestOrderBy.LAST_UPDATE_TIME_ASCENDING):
+        for artifact in client.list_manifests(order_by=ManifestOrder.LAST_UPDATE_TIME_ASCENDING):
             if prev_last_updated_on:
                 assert artifact.last_updated_on > prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on

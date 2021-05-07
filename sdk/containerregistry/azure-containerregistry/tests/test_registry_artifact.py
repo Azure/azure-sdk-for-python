@@ -23,7 +23,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
     def set_up(self, endpoint, name):
         repo_client = self.create_container_repository(endpoint, name)
 
-        for artifact in repo_client.list_registry_artifacts():
+        for artifact in repo_client.list_manifests():
             return repo_client.get_artifact(artifact.digest)
 
     @acr_preparer()
@@ -40,6 +40,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         assert isinstance(properties.writeable_properties, ContentProperties)
         assert isinstance(properties.architecture, ArtifactArchitecture)
         assert isinstance(properties.operating_system, ArtifactOperatingSystem)
+        assert properties.repository_name == repo
 
     @acr_preparer()
     def test_get_manifest_properties_does_not_exist(self, containerregistry_endpoint):

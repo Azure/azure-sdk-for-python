@@ -40,6 +40,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         **kwargs: Dict[str, Any]
     ) -> None:
         """Create a RegistryArtifact from an endpoint, repository, a tag or digest, and a credential
+
         :param endpoint: An ACR endpoint
         :type endpoint: str
         :param repository: The name of a repository
@@ -117,6 +118,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     @distributed_trace_async
     async def get_manifest_properties(self, **kwargs: Dict[str, Any]) -> ArtifactManifestProperties:
         """Get the properties of a registry artifact
+
         :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
@@ -127,7 +129,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             from azure.identity.aio import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            async for artifact in client.list_registry_artifacts():
+            async for artifact in client.list_manifests():
                 properties = await client.get_registry_artifact_properties(artifact.digest)
         """
         if not self._digest:
@@ -167,7 +169,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             call will return values after last lexically
         :paramtype last: str
         :keyword order_by: Query parameter for ordering by time ascending or descending
-        :paramtype order_by: :class:`~azure.containerregistry.TagOrder`
+        :paramtype order_by: :class:`~azure.containerregistry.TagOrder` or str
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
         :return: ItemPaged[:class:`~azure.containerregistry.ArtifactTagProperties`]
@@ -295,6 +297,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         self, permissions: ContentProperties, **kwargs: Dict[str, Any]
     ) -> ArtifactManifestProperties:
         """Set the properties for a manifest
+
         :param permissions: The property's values to be set
         :type permissions: ContentProperties
         :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
@@ -307,7 +310,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             from azure.identity.aio import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            async for artifact in client.list_registry_artifacts():
+            async for artifact in client.list_manifests():
                 received_permissions = await client.set_manifest_properties(
                     artifact.digest,
                     ContentProperties(

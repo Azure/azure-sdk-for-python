@@ -10,10 +10,13 @@ from azure.containerregistry import (
     DeleteRepositoryResult,
     RepositoryProperties,
     ContentProperties,
-    ManifestOrderBy,
+    ManifestOrder,
     ArtifactManifestProperties,
+    TagOrder,
 )
+from azure.containerregistry.aio import ContainerRegistryClient, ContainerRepository
 from azure.core.exceptions import ResourceNotFoundError
+from azure.core.async_paging import AsyncItemPaged
 
 from asynctestcase import AsyncContainerRegistryTestClass
 from preparer import acr_preparer
@@ -53,13 +56,14 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
         client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
 
         count = 0
-        async for artifact in client.list_registry_artifacts():
+        async for artifact in client.list_manifests():
             assert artifact is not None
             assert isinstance(artifact, ArtifactManifestProperties)
             assert artifact.created_on is not None
             assert isinstance(artifact.created_on, datetime)
             assert artifact.last_updated_on is not None
             assert isinstance(artifact.last_updated_on, datetime)
+            assert artifact.repository_name == "library/busybox"
             count += 1
 
         assert count > 0
@@ -69,7 +73,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
         client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
         results_per_page = 2
 
-        pages = client.list_registry_artifacts(results_per_page=results_per_page)
+        pages = client.list_manifests(results_per_page=results_per_page)
         page_count = 0
         async for page in pages.by_page():
             reg_count = 0
@@ -86,9 +90,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        async for artifact in client.list_registry_artifacts(
-            order_by=ManifestOrderBy.LAST_UPDATE_TIME_DESCENDING
-        ):
+        async for artifact in client.list_manifests(order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
             if prev_last_updated_on:
                 assert artifact.last_updated_on < prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -102,9 +104,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        async for artifact in client.list_registry_artifacts(
-            order_by=ManifestOrderBy.LAST_UPDATE_TIME_ASCENDING
-        ):
+        async for artifact in client.list_manifests(order_by=ManifestOrder.LAST_UPDATE_TIME_ASCENDING):
             if prev_last_updated_on:
                 assert artifact.last_updated_on > prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -112,7 +112,6 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
 
         assert count > 0
 
-    # @pytest.mark.live_test_only  # This needs to be removed in the future
     @acr_preparer()
     async def test_get_properties(self, containerregistry_endpoint):
         repo_client = self.create_container_repository(containerregistry_endpoint, HELLO_WORLD)
@@ -121,9 +120,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
         assert isinstance(properties, RepositoryProperties)
         assert isinstance(properties.writeable_properties, ContentProperties)
         assert properties.name == u"library/hello-world"
-        assert properties.registry == containerregistry_endpoint
 
-    # @pytest.mark.live_test_only  # This needs to be removed in the future
     @acr_preparer()
     async def test_set_properties(self, containerregistry_endpoint):
         repository = self.get_resource_name("repo")

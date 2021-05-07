@@ -1,6 +1,8 @@
 # Release History
 
-## 11.2.0b3 (Unreleased)
+## 11.2.0b3 (2021-05-11)
+
+### New features
 
 - Added support for knowledge store    #18461
 

@@ -28,13 +28,13 @@ class CreateDeleteTable(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name,
             self.access_key,
-            self.endpoint
+            self.endpoint_suffix
         )
 
 
@@ -62,15 +62,12 @@ class CreateDeleteTable(object):
 
     def delete_table(self):
         from azure.data.tables import TableServiceClient
-        from azure.core.exceptions import ResourceNotFoundError
+        from azure.core.exceptions import HttpResponseError
 
         # [START delete_table_from_tc]
         with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
-            try:
-                table_service_client.delete_table(table_name="myTable")
-                print("Deleted table {}!".format("myTable"))
-            except ResourceNotFoundError:
-                print("Table could not be found")
+            table_service_client.delete_table(table_name="myTable")
+            print("Deleted table {}!".format("myTable"))
         # [END delete_table_from_tc]
 
     def create_from_table_client(self):
@@ -88,15 +85,12 @@ class CreateDeleteTable(object):
 
     def delete_from_table_client(self):
         from azure.data.table import TableClient
-        from azure.core.exceptions import ResourceNotFoundError
+        from azure.core.exceptions import HttpResponseError
 
         # [START delete_table_from_table_client]
         with TableClient.from_connection_string(conn_str=self.connection_string, table_name="myTable") as table_client:
-            try:
-                table_client.delete_table()
-                print("Deleted table {}!".format(table_client.table_name))
-            except ResourceNotFoundError:
-                print("Table could not be found")
+            table_client.delete_table()
+            print("Deleted table {}!".format(table_client.table_name))
         # [END delete_table_from_table_client]
 
 

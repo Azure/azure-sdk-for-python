@@ -32,7 +32,7 @@ class DeleteOperations(object):
         from azure.containerregistry import (
             ContainerRegistryClient,
             ContainerRepositoryClient,
-            TagOrderBy
+            TagOrder
         )
         from azure.identity import DefaultAzureCredential
 
@@ -47,7 +47,7 @@ class DeleteOperations(object):
 
             # [START list_tags]
             tag_count = 0
-            for tag in repository_client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING):
+            for tag in repository_client.list_tags(order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
                 tag_count += 1
                 if tag_count > 3:
                     repository_client.delete_tag(tag.name)

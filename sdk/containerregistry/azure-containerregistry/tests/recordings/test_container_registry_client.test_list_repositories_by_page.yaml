@@ -1288,7 +1288,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repos6ce51658&n=2&orderby=
   response:
     body:
-      string: '{"repositories": null}'
+      string: '{"repositories": ["repo34ab0fa1", "repo3c82158b"]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest

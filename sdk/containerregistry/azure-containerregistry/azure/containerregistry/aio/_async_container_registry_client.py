@@ -56,6 +56,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     @distributed_trace_async
     async def delete_repository(self, repository_name: str, **kwargs: Dict[str, Any]) -> DeleteRepositoryResult:
         """Delete a repository
+
         :param str repository_name: The repository to delete
         :returns: Object containing information about the deleted repository
         :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
@@ -188,6 +189,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     @distributed_trace
     def get_repository(self, repository_name: str, **kwargs: Any) -> ContainerRepository:
         """Get a repository client
+
         :param str repository_name: The repository to create a client for
         :returns: :class:`~azure.containerregistry.aio.ContainerRepository`
 
@@ -208,6 +210,28 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
         return ContainerRepository(
             self._endpoint, repository_name, credential=self._credential, pipeline=_pipeline, **kwargs
+        )
+
+    @distributed_trace
+    def get_artifact(self, repository_name: str, tag_or_digest: str, **kwargs: Dict[str, Any]) -> RegistryArtifact:
+        """Get a Registry Artifact object
+
+        :param str repository_name: Name of the repository
+        :param str tag_or_digest: The tag or digest of the artifact
+        :returns: :class:`~azure.containerregistry.RegistryArtifact`
+        :raises: None
+        """
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
+        )
+        return RegistryArtifact(
+            self._endpoint,
+            repository_name,
+            tag_or_digest,
+            self._credential,
+            pipeline=_pipeline,
+            **kwargs
         )
 
     @distributed_trace

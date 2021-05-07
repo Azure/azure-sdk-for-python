@@ -17,7 +17,7 @@ from preparer import acr_preparer
 
 class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
-    async def test_list_repositories(self, containerregistry_endpoint):
+    async def test_list_repository_names(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
 
         repositories = client.list_repository_names()
@@ -33,7 +33,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert count > 0
 
     @acr_preparer()
-    async def test_list_repositories_by_page(self, containerregistry_endpoint):
+    async def test_list_repository_names_by_page(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
         results_per_page = 2
         total_pages = 0

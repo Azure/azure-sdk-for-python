@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 15:50:08 GMT
+      - Fri, 07 May 2021 22:08:25 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 15:50:09 GMT
+      - Fri, 07 May 2021 22:08:26 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '165.766667'
+      - '166.65'
     status:
       code: 200
       message: OK
@@ -109,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 15:50:09 GMT
+      - Fri, 07 May 2021 22:08:26 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '165.75'
+      - '166.633333'
     status:
       code: 200
       message: OK
@@ -136,10 +136,12 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories": ["library/alpine", "library/busybox", "repo28471541",
-        "repo2c591564", "repo2e8319c5", "repo308e19dd", "repo34ab0fa1", "repo3db51597",
-        "repo3e8d15a3", "repo84e316ff", "repo9b321760", "repo9cb4121e", "repoaf9517b2",
-        "repob0a917be", "repob22512e7", "repoc28d1326", "repod2be1c42", "repos6ce51658"]}'
+      string: '{"repositories": ["library/alpine", "library/busybox", "repo25ce0f5d",
+        "repo27331535", "repo28471541", "repo2c591564", "repo2e8319c5", "repo308e19dd",
+        "repo34ab0fa1", "repo3c82158b", "repo3db51597", "repo3e8d15a3", "repo84e316ff",
+        "repo8b5a11da", "repo9b321760", "repo9cb4121e", "repoaf9517b2", "repob0a917be",
+        "repob22512e7", "repoc1b5131a", "repoc28d1326", "repod2be1c42", "repoeb7113db",
+        "repos6ce51658", "reposetb7cc1bf8", "reposetmani160e197b"]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -149,11 +151,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '295'
+      - '425'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 15:50:09 GMT
+      - Fri, 07 May 2021 22:08:27 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -197,7 +199,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 15:50:09 GMT
+      - Fri, 07 May 2021 22:08:27 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -238,7 +240,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 15:50:10 GMT
+      - Fri, 07 May 2021 22:08:27 GMT
       server:
       - openresty
       strict-transport-security:
@@ -246,7 +248,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '165.733333'
+      - '166.616667'
     status:
       code: 200
       message: OK
@@ -265,10 +267,12 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories": ["library/alpine", "library/busybox", "repo28471541",
-        "repo2c591564", "repo2e8319c5", "repo308e19dd", "repo34ab0fa1", "repo3db51597",
-        "repo3e8d15a3", "repo84e316ff", "repo9b321760", "repo9cb4121e", "repoaf9517b2",
-        "repob0a917be", "repob22512e7", "repoc28d1326", "repod2be1c42", "repos6ce51658"]}'
+      string: '{"repositories": ["library/alpine", "library/busybox", "repo25ce0f5d",
+        "repo27331535", "repo28471541", "repo2c591564", "repo2e8319c5", "repo308e19dd",
+        "repo34ab0fa1", "repo3c82158b", "repo3db51597", "repo3e8d15a3", "repo84e316ff",
+        "repo8b5a11da", "repo9b321760", "repo9cb4121e", "repoaf9517b2", "repob0a917be",
+        "repob22512e7", "repoc1b5131a", "repoc28d1326", "repod2be1c42", "repoeb7113db",
+        "repos6ce51658", "reposetb7cc1bf8", "reposetmani160e197b"]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -278,11 +282,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '295'
+      - '425'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 15:50:10 GMT
+      - Fri, 07 May 2021 22:08:27 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

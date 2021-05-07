@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '218'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:17 GMT
+      date: Fri, 07 May 2021 22:10:32 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -46,11 +46,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:18 GMT
+      date: Fri, 07 May 2021 22:10:33 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.633333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.616667'
     status:
       code: 200
       message: OK
@@ -74,11 +74,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:18 GMT
+      date: Fri, 07 May 2021 22:10:33 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.616667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.6'
     status:
       code: 200
       message: OK
@@ -111,7 +111,7 @@ interactions:
       connection: keep-alive
       content-length: '931'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:18 GMT
+      date: Fri, 07 May 2021 22:10:33 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/library%2Fbusybox/_manifests?last=sha256%3A1ccc0a0ca577e5fb5a0bdf2150a1a9f842f47c8865e861fa0062c5d343eb8cac&n=2&orderby=>;
         rel="next"
@@ -141,7 +141,7 @@ interactions:
       connection: keep-alive
       content-length: '218'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:18 GMT
+      date: Fri, 07 May 2021 22:10:33 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -170,11 +170,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:18 GMT
+      date: Fri, 07 May 2021 22:10:33 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.6'
+      x-ms-ratelimit-remaining-calls-per-second: '166.583333'
     status:
       code: 200
       message: OK
@@ -207,7 +207,7 @@ interactions:
       connection: keep-alive
       content-length: '940'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:19 GMT
+      date: Fri, 07 May 2021 22:10:34 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/library%2Fbusybox/_manifests?last=sha256%3A1e389843d4f03f45b1c21ba70fa10a4e182780eb42c2f6f9b868e6b1804f2d99&n=2&orderby=>;
         rel="next"
@@ -237,7 +237,7 @@ interactions:
       connection: keep-alive
       content-length: '218'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:19 GMT
+      date: Fri, 07 May 2021 22:10:34 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -266,11 +266,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:19 GMT
+      date: Fri, 07 May 2021 22:10:34 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.583333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.566667'
     status:
       code: 200
       message: OK
@@ -303,7 +303,7 @@ interactions:
       connection: keep-alive
       content-length: '931'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:19 GMT
+      date: Fri, 07 May 2021 22:10:34 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/library%2Fbusybox/_manifests?last=sha256%3A447655bf5812d64e4d2133b5bf323bee06c89ece80159e76a05c577f70f89085&n=2&orderby=>;
         rel="next"
@@ -333,7 +333,7 @@ interactions:
       connection: keep-alive
       content-length: '218'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:19 GMT
+      date: Fri, 07 May 2021 22:10:34 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -362,11 +362,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:19 GMT
+      date: Fri, 07 May 2021 22:10:34 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.566667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.55'
     status:
       code: 200
       message: OK
@@ -399,7 +399,7 @@ interactions:
       connection: keep-alive
       content-length: '927'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:19 GMT
+      date: Fri, 07 May 2021 22:10:35 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/library%2Fbusybox/_manifests?last=sha256%3A82b4c9f36a6fa022454e78ad5c72a74fd34ca4e20489b36a8a436ca3ce9c34ef&n=2&orderby=>;
         rel="next"
@@ -429,7 +429,7 @@ interactions:
       connection: keep-alive
       content-length: '218'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:20 GMT
+      date: Fri, 07 May 2021 22:10:35 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -458,11 +458,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:20 GMT
+      date: Fri, 07 May 2021 22:10:35 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.55'
+      x-ms-ratelimit-remaining-calls-per-second: '166.533333'
     status:
       code: 200
       message: OK
@@ -495,7 +495,7 @@ interactions:
       connection: keep-alive
       content-length: '931'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:20 GMT
+      date: Fri, 07 May 2021 22:10:35 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/library%2Fbusybox/_manifests?last=sha256%3A975eefa55fc130df8943cf2f72a8852ed2591db75871e0dcc427b76a0d8c26f8&n=2&orderby=>;
         rel="next"
@@ -525,7 +525,7 @@ interactions:
       connection: keep-alive
       content-length: '218'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:20 GMT
+      date: Fri, 07 May 2021 22:10:35 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -554,11 +554,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:20 GMT
+      date: Fri, 07 May 2021 22:10:36 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.533333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.516667'
     status:
       code: 200
       message: OK
@@ -590,7 +590,7 @@ interactions:
       connection: keep-alive
       content-length: '873'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:20 GMT
+      date: Fri, 07 May 2021 22:10:36 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/library%2Fbusybox/_manifests?last=sha256%3Ab5e14f3f5a2c7eb2201fd1d8470dbc7b19ae9df0b72c38ece5dd3f2233aca440&n=2&orderby=>;
         rel="next"
@@ -620,7 +620,7 @@ interactions:
       connection: keep-alive
       content-length: '218'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:21 GMT
+      date: Fri, 07 May 2021 22:10:36 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -649,11 +649,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:21 GMT
+      date: Fri, 07 May 2021 22:10:36 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.516667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.5'
     status:
       code: 200
       message: OK
@@ -685,7 +685,7 @@ interactions:
       connection: keep-alive
       content-length: '896'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:21 GMT
+      date: Fri, 07 May 2021 22:10:36 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/library%2Fbusybox/_manifests?last=sha256%3Abeded925d853f36a55cf1d0d4e92c81e945e0be5ade32df173c2827df2c9b12f&n=2&orderby=>;
         rel="next"
@@ -715,7 +715,7 @@ interactions:
       connection: keep-alive
       content-length: '218'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:21 GMT
+      date: Fri, 07 May 2021 22:10:36 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -744,11 +744,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:21 GMT
+      date: Fri, 07 May 2021 22:10:37 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.5'
+      x-ms-ratelimit-remaining-calls-per-second: '166.483333'
     status:
       code: 200
       message: OK
@@ -781,7 +781,7 @@ interactions:
       connection: keep-alive
       content-length: '931'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:21 GMT
+      date: Fri, 07 May 2021 22:10:37 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/library%2Fbusybox/_manifests?last=sha256%3Ad1eb04b3e60d4b8b90ee62f9a5a76bcc70bdeb9d43ffc4ae47c873828917f89e&n=2&orderby=>;
         rel="next"
@@ -811,7 +811,7 @@ interactions:
       connection: keep-alive
       content-length: '218'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:22 GMT
+      date: Fri, 07 May 2021 22:10:37 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -840,11 +840,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:22 GMT
+      date: Fri, 07 May 2021 22:10:37 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.483333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.466667'
     status:
       code: 200
       message: OK
@@ -877,7 +877,7 @@ interactions:
       connection: keep-alive
       content-length: '934'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:22 GMT
+      date: Fri, 07 May 2021 22:10:37 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/library%2Fbusybox/_manifests?last=sha256%3Aed9c347e6a72d81a3dec189527b720bd0da021239fe779c9549be501ad083b4e&n=2&orderby=>;
         rel="next"
@@ -907,7 +907,7 @@ interactions:
       connection: keep-alive
       content-length: '218'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:22 GMT
+      date: Fri, 07 May 2021 22:10:37 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -936,11 +936,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:22 GMT
+      date: Fri, 07 May 2021 22:10:37 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.466667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.45'
     status:
       code: 200
       message: OK
@@ -973,7 +973,7 @@ interactions:
       connection: keep-alive
       content-length: '931'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 15:52:23 GMT
+      date: Fri, 07 May 2021 22:10:38 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains

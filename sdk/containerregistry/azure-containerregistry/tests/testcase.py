@@ -8,6 +8,7 @@ from datetime import datetime
 import json
 import logging
 import os
+from azure_devtools.scenario_tests.recording_processors import SubscriptionRecordingProcessor
 import pytest
 import re
 import six
@@ -224,7 +225,7 @@ class ContainerRegistryTestClass(AzureTestCase):
                     except:
                         pass
 
-                for manifest in repo_client.list_registry_artifacts():
+                for manifest in repo_client.list_manifests():
                     try:
                         p = manifest.writeable_properties
                         p.can_delete = True
@@ -244,18 +245,10 @@ class ContainerRegistryTestClass(AzureTestCase):
         return FakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
-        c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
-        logger = logging.getLogger("azure")
-        logger.setLevel(logging.WARNING)
-        logger.propagate = True
-        return c
+        return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
 
     def create_container_repository(self, endpoint, name, **kwargs):
-        c = ContainerRepository(endpoint=endpoint, repository=name, credential=self.get_credential(), **kwargs)
-        logger = logging.getLogger("azure")
-        logger.setLevel(logging.WARNING)
-        logger.propagate = True
-        return c
+        return ContainerRepository(endpoint=endpoint, name=name, credential=self.get_credential(), **kwargs)
 
     def assert_content_permission(self, content_perm, content_perm2):
         assert isinstance(content_perm, ContentProperties)
@@ -293,10 +286,6 @@ class ContainerRegistryTestClass(AzureTestCase):
         if repository:
             assert tag.repository == repository
 
-    def assert_registry_artifact(self, tag_or_digest, expected_tag_or_digest):
-        assert isinstance(tag_or_digest, ArtifactManifestProperties)
-        assert tag_or_digest == expected_tag_or_digest
-
 
 # Moving this out of testcase so the fixture and individual tests can use it
 def import_image(repository, tags):
@@ -323,6 +312,7 @@ def import_image(repository, tags):
 
 @pytest.fixture(scope="session")
 def load_registry():
+    return
     repos = [
         "library/hello-world",
         "library/alpine",

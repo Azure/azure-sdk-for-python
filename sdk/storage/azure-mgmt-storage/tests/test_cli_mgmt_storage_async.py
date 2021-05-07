@@ -32,6 +32,7 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
 
     def setUp(self):
         super(MgmtStorageTest, self).setUp()
+        self.re_replacer.register_pattern_pair('"value":".{88}"', '"value":"FakeValue"')
         self.mgmt_client = self.create_mgmt_aio_client(
             az_storage_aio.StorageManagementClient
         )
