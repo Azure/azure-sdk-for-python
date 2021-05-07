@@ -43,7 +43,7 @@ class AttestationClient(object):
       by the attestation service.
 
     :param str base_url: base url of the service
-    :param credential: An object which can provide secrets for the attestation service
+    :param credential: Credentials for the caller used to interact with the service.
     :type credential: ~azure.core.credentials.TokenCredentials
     :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
     :keyword HttpTransport transport: If omitted, the standard pipeline is used.
@@ -113,8 +113,12 @@ class AttestationClient(object):
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
-            before applying the policy document via the set_policy API.
+            before applying the policy document via the set_policy API
+
         :return AttestationResponse[AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
+
+        .. note::
+            Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
 
         For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
@@ -153,6 +157,9 @@ class AttestationClient(object):
             before applying the policy document via the set_policy API.
         :return AttestationResponse[AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
 
+        .. note::
+            Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
+
         For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
         """
@@ -177,7 +184,7 @@ class AttestationClient(object):
 
     @distributed_trace
     def attest_tpm(self, request, **kwargs):
-        #type:(TpmAttestationRequest) -> TpmAttestationResponse
+        #type:(TpmAttestationRequest, **Any) -> TpmAttestationResponse
         """ Attest a TPM based enclave.
 
         See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.

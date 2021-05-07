@@ -33,7 +33,7 @@ class AttestationAdministrationClient(object):
     """Provides administrative APIs for managing an instance of the Attestation Service.
 
     :param str instance_url: base url of the service
-    :param credential: An object which can provide secrets for the attestation service
+    :param credential: Credentials for the caller used to interact with the service.
     :type credential: azure.core.credentials.TokenCredential
     :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
     :keyword HttpTransport transport: If omitted, the standard pipeline is used.
@@ -66,7 +66,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def get_policy(self, attestation_type, **kwargs): 
-        #type(AttestationType) -> AttestationResult[str]:
+        #type(AttestationType, **Any) -> AttestationResult[str]:
         """ Retrieves the attestation policy for a specified attestation type.
 
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
@@ -88,7 +88,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def set_policy(self, attestation_type, attestation_policy, signing_key=None, **kwargs): 
-        #type:(AttestationType, str, Optional[AttestationSigningKey], Any) -> AttestationResponse[PolicyResult]
+        #type:(AttestationType, str, Optional[AttestationSigningKey], **Any) -> AttestationResponse[PolicyResult]
         """ Sets the attestation policy for the specified attestation type.
 
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
@@ -114,7 +114,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def get_policy_management_certificates(self, **kwargs):
-        #type:(Any) -> AttestationResponse[list[list[bytes]]]
+        #type:(**Any) -> AttestationResponse[list[list[bytes]]]
         """ Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only be non-empty if the
@@ -144,7 +144,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def add_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
-        #type:(bytes, AttestationSigningKey, Any)-> AttestationResponse[PolicyCertificatesModificationResult]
+        #type:(bytes, AttestationSigningKey, **Any)-> AttestationResponse[PolicyCertificatesModificationResult]
         """ Adds a new policy management certificate to the set of policy management certificates for the instance.
 
         :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
@@ -152,7 +152,14 @@ class AttestationAdministrationClient(object):
         :param AttestationSigningKey signing_key: Signing Key representing one of 
             the *existing* attestation signing certificates.
         :return AttestationResponse[PolicyCertificatesModificationResult]: Attestation service response 
-            encapsulating a list of DER encoded X.509 certificate chains.
+            encapsulating the status of the response.
+
+        .. note::
+            The response to the :meth:`add_policy_management_certificate` and
+            :meth:`remove_policy_management_certificate` API includes the
+            `thumbprint` of the certificate added or removed. The `thumbprint`
+            for the certificate is the SHA1 hash of the DER encoding of the
+            certificate.
         """
         key=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add).decode('ascii')])
         add_body = AttestationCertificateManagementBody(policy_certificate=key)
@@ -171,7 +178,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def remove_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
-        #type:(bytes, AttestationSigningKey, Any)-> AttestationResponse[PolicyCertificatesModificationResult]
+        #type:(bytes, AttestationSigningKey, **Any)-> AttestationResponse[PolicyCertificatesModificationResult]
         """ Removes a new policy management certificate to the set of policy management certificates for the instance.
 
         :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
@@ -180,6 +187,13 @@ class AttestationAdministrationClient(object):
             the *existing* attestation signing certificates.
         :return AttestationResponse[PolicyCertificatesModificationResult]: Attestation service response 
             encapsulating a list of DER encoded X.509 certificate chains.
+
+        .. note::
+            The response to the :meth:`add_policy_management_certificate` and
+            :meth:`remove_policy_management_certificate` API includes the
+            `thumbprint` of the certificate added or removed. The `thumbprint`
+            for the certificate is the SHA1 hash of the DER encoding of the
+            certificate.
         """
         key=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add).decode('ascii')])
         add_body = AttestationCertificateManagementBody(policy_certificate=key)
@@ -197,7 +211,7 @@ class AttestationAdministrationClient(object):
         return AttestationResponse[PolicyCertificatesModificationResult](token, PolicyCertificatesModificationResult._from_generated(token.get_body()))
 
     def _get_signers(self, **kwargs):
-        #type(Any) -> List[AttestationSigner]
+        #type(**Any) -> List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
 

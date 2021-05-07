@@ -43,11 +43,20 @@ class AttestationClient(object):
         **kwargs  # type: Any
     ):
         # type: (str, Any, dict) -> None
-        self.base_url = instance_url
+        self._base_url = instance_url
         if not credential:
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(credential, instance_url, **kwargs)
         self._client = AzureAttestationRestClient(credential, instance_url, **kwargs)
+
+    @property
+    def base_url(self):
+        #type:()->str
+        """ Returns the base URL configured for this instance of the AttestationClient.
+
+        :returns str: The base URL for the client instance.
+        """
+        return self._base_url
 
     @distributed_trace_async
     async def get_openidmetadata(self):
@@ -66,10 +75,7 @@ class AttestationClient(object):
             assert key.x5_c is not None
 
             # Convert the returned certificate chain into an array of X.509 Certificates.
-            certificates = []
-            for x5c in key.x5_c:
-                der_cert = base64.b64decode(x5c)
-                certificates.append(der_cert)
+            certificates = [base64.b64decode(x5c) for x5c in key.x5_c]
             signers.append(AttestationSigner(certificates, key.kid))
         return signers
 
