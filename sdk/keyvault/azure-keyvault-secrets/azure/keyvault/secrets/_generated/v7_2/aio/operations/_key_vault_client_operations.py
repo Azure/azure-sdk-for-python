@@ -9,11 +9,11 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -24,9 +24,9 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         secret_name: str,
-        parameters: "models.SecretSetParameters",
+        parameters: "_models.SecretSetParameters",
         **kwargs
-    ) -> "models.SecretBundle":
+    ) -> "_models.SecretBundle":
         """Sets a secret in a specified key vault.
 
         The SET operation adds a secret to the Azure Key Vault. If the named secret already exists,
@@ -38,17 +38,20 @@ class KeyVaultClientOperationsMixin:
         :param secret_name: The name of the secret.
         :type secret_name: str
         :param parameters: The parameters for setting the secret.
-        :type parameters: ~azure.keyvault.v7_1.models.SecretSetParameters
+        :type parameters: ~azure.keyvault.v7_2.models.SecretSetParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_2.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.set_secret.metadata['url']  # type: ignore
@@ -65,19 +68,18 @@ class KeyVaultClientOperationsMixin:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'SecretSetParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SecretBundle', pipeline_response)
@@ -93,7 +95,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         secret_name: str,
         **kwargs
-    ) -> "models.DeletedSecretBundle":
+    ) -> "_models.DeletedSecretBundle":
         """Deletes a secret from a specified key vault.
 
         The DELETE operation applies to any secret stored in Azure Key Vault. DELETE cannot be applied
@@ -105,13 +107,16 @@ class KeyVaultClientOperationsMixin:
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedSecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v7_2.models.DeletedSecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedSecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedSecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.2"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete_secret.metadata['url']  # type: ignore
@@ -127,7 +132,7 @@ class KeyVaultClientOperationsMixin:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -135,7 +140,7 @@ class KeyVaultClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedSecretBundle', pipeline_response)
@@ -151,9 +156,9 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         secret_name: str,
         secret_version: str,
-        parameters: "models.SecretUpdateParameters",
+        parameters: "_models.SecretUpdateParameters",
         **kwargs
-    ) -> "models.SecretBundle":
+    ) -> "_models.SecretBundle":
         """Updates the attributes associated with a specified secret in a given key vault.
 
         The UPDATE operation changes specified attributes of an existing stored secret. Attributes that
@@ -167,17 +172,20 @@ class KeyVaultClientOperationsMixin:
         :param secret_version: The version of the secret.
         :type secret_version: str
         :param parameters: The parameters for update secret operation.
-        :type parameters: ~azure.keyvault.v7_1.models.SecretUpdateParameters
+        :type parameters: ~azure.keyvault.v7_2.models.SecretUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_2.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.update_secret.metadata['url']  # type: ignore
@@ -195,19 +203,18 @@ class KeyVaultClientOperationsMixin:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'SecretUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SecretBundle', pipeline_response)
@@ -224,7 +231,7 @@ class KeyVaultClientOperationsMixin:
         secret_name: str,
         secret_version: str,
         **kwargs
-    ) -> "models.SecretBundle":
+    ) -> "_models.SecretBundle":
         """Get a specified secret from a given key vault.
 
         The GET operation is applicable to any secret stored in Azure Key Vault. This operation
@@ -239,13 +246,16 @@ class KeyVaultClientOperationsMixin:
         :type secret_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_2.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.2"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_secret.metadata['url']  # type: ignore
@@ -262,7 +272,7 @@ class KeyVaultClientOperationsMixin:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -270,7 +280,7 @@ class KeyVaultClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SecretBundle', pipeline_response)
@@ -286,7 +296,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         maxresults: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.SecretListResult"]:
+    ) -> AsyncIterable["_models.SecretListResult"]:
         """List secrets in a specified key vault.
 
         The Get Secrets operation is applicable to the entire vault. However, only the base secret
@@ -300,18 +310,21 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecretListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_1.models.SecretListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.SecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.2"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -351,7 +364,7 @@ class KeyVaultClientOperationsMixin:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -368,7 +381,7 @@ class KeyVaultClientOperationsMixin:
         secret_name: str,
         maxresults: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.SecretListResult"]:
+    ) -> AsyncIterable["_models.SecretListResult"]:
         """List all versions of the specified secret.
 
         The full secret identifier and attributes are provided in the response. No values are returned
@@ -383,18 +396,21 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecretListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_1.models.SecretListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.SecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.2"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -436,7 +452,7 @@ class KeyVaultClientOperationsMixin:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -452,7 +468,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         maxresults: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.DeletedSecretListResult"]:
+    ) -> AsyncIterable["_models.DeletedSecretListResult"]:
         """Lists deleted secrets for the specified vault.
 
         The Get Deleted Secrets operation returns the secrets that have been deleted for a vault
@@ -465,18 +481,21 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedSecretListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_1.models.DeletedSecretListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.DeletedSecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedSecretListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedSecretListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.2"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -516,7 +535,7 @@ class KeyVaultClientOperationsMixin:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -532,7 +551,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         secret_name: str,
         **kwargs
-    ) -> "models.DeletedSecretBundle":
+    ) -> "_models.DeletedSecretBundle":
         """Gets the specified deleted secret.
 
         The Get Deleted Secret operation returns the specified deleted secret along with its
@@ -544,13 +563,16 @@ class KeyVaultClientOperationsMixin:
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedSecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v7_2.models.DeletedSecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedSecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedSecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.2"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_deleted_secret.metadata['url']  # type: ignore
@@ -566,7 +588,7 @@ class KeyVaultClientOperationsMixin:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -574,7 +596,7 @@ class KeyVaultClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedSecretBundle', pipeline_response)
@@ -607,9 +629,12 @@ class KeyVaultClientOperationsMixin:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.2"
+        accept = "application/json"
 
         # Construct URL
         url = self.purge_deleted_secret.metadata['url']  # type: ignore
@@ -625,6 +650,7 @@ class KeyVaultClientOperationsMixin:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -632,7 +658,7 @@ class KeyVaultClientOperationsMixin:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -645,7 +671,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         secret_name: str,
         **kwargs
-    ) -> "models.SecretBundle":
+    ) -> "_models.SecretBundle":
         """Recovers the deleted secret to the latest version.
 
         Recovers the deleted secret in the specified vault. This operation can only be performed on a
@@ -657,13 +683,16 @@ class KeyVaultClientOperationsMixin:
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_2.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.2"
+        accept = "application/json"
 
         # Construct URL
         url = self.recover_deleted_secret.metadata['url']  # type: ignore
@@ -679,7 +708,7 @@ class KeyVaultClientOperationsMixin:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -687,7 +716,7 @@ class KeyVaultClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SecretBundle', pipeline_response)
@@ -703,7 +732,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         secret_name: str,
         **kwargs
-    ) -> "models.BackupSecretResult":
+    ) -> "_models.BackupSecretResult":
         """Backs up the specified secret.
 
         Requests that a backup of the specified secret be downloaded to the client. All versions of the
@@ -715,13 +744,16 @@ class KeyVaultClientOperationsMixin:
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupSecretResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.BackupSecretResult
+        :rtype: ~azure.keyvault.v7_2.models.BackupSecretResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupSecretResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupSecretResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.2"
+        accept = "application/json"
 
         # Construct URL
         url = self.backup_secret.metadata['url']  # type: ignore
@@ -737,7 +769,7 @@ class KeyVaultClientOperationsMixin:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -745,7 +777,7 @@ class KeyVaultClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('BackupSecretResult', pipeline_response)
@@ -759,9 +791,9 @@ class KeyVaultClientOperationsMixin:
     async def restore_secret(
         self,
         vault_base_url: str,
-        parameters: "models.SecretRestoreParameters",
+        parameters: "_models.SecretRestoreParameters",
         **kwargs
-    ) -> "models.SecretBundle":
+    ) -> "_models.SecretBundle":
         """Restores a backed up secret to a vault.
 
         Restores a backed up secret, and all its versions, to a vault. This operation requires the
@@ -770,17 +802,20 @@ class KeyVaultClientOperationsMixin:
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param parameters: The parameters to restore the secret.
-        :type parameters: ~azure.keyvault.v7_1.models.SecretRestoreParameters
+        :type parameters: ~azure.keyvault.v7_2.models.SecretRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_2.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.restore_secret.metadata['url']  # type: ignore
@@ -796,19 +831,18 @@ class KeyVaultClientOperationsMixin:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'SecretRestoreParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SecretBundle', pipeline_response)
