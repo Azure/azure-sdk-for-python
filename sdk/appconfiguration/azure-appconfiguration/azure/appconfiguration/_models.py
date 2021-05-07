@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-from typing import Dict, Union, List, Any, Optional
+from typing import Dict, Optional, Any, List, Union
 from msrest.serialization import Model
 from ._generated.models import KeyValue
 
@@ -12,6 +12,7 @@ class ConfigurationSetting(Model):
     """A configuration value.
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
     :ivar value: The value of the configuration setting
     :vartype value: str
     :ivar etag: Entity tag (etag) of the object
@@ -45,6 +46,7 @@ class ConfigurationSetting(Model):
     content_type = None
 
     def __init__(self, **kwargs):
+        # type: (**Any) -> None
         super(ConfigurationSetting, self).__init__(**kwargs)
         self.key = kwargs.get("key", None)
         self.label = kwargs.get("label", None)
@@ -108,6 +110,7 @@ class FeatureFlagConfigurationSetting(
     """A feature flag configuration value.
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
     :ivar etag: Entity tag (etag) of the object
     :vartype etag: str
     :ivar key:
@@ -258,6 +261,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     """A configuration value that references a KeyVault Secret
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
     :ivar etag: Entity tag (etag) of the object
     :vartype etag: str
     :ivar key:
@@ -294,7 +298,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     kind = "SecretReference"
 
     def __init__(self, key, secret_uri, label=None, **kwargs):
-        # type: (str, str, str, **Any) -> None
+        # type: (str, str, Optional[str], **Any) -> None
         self._secret_uri = secret_uri
         super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
         self.key = key

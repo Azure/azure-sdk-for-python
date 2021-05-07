@@ -1890,7 +1890,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzccc/regenerateKey?api-version=2021-02-01
   response:
     body:
-      string: '{"keys":[{"creationTime":"2021-04-13T05:47:41.2838152Z","keyName":"key1","value":"W2vpnh31w4m1ScIVh2uXTZY76x46jq7x8V3DGkuy47xHC/cWEZPAem0k/ACAf/m1lZy0KeTvDmA/G5NsAnjGgw==","permissions":"FULL"},{"creationTime":"2021-04-13T05:48:33.0184652Z","keyName":"key2","value":"a3sDevVNf9Cc8Q2B25jMbzubFEowOGfV3XNiCG0yy+7j95V+58ZhC++IRZL3OIHaCEydnxLngWUeJSHFVY5iBg==","permissions":"FULL"}]}'
+      string: '{"keys":[{"creationTime":"2021-04-13T05:47:41.2838152Z","keyName":"key1","value":"FakeValue","permissions":"FULL"},{"creationTime":"2021-04-13T05:48:33.0184652Z","keyName":"key2","value":"FakeValue","permissions":"FULL"}]}'
     headers:
       cache-control:
       - no-cache
@@ -1937,7 +1937,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzzccc/listKeys?api-version=2021-02-01&$expand=kerb
   response:
     body:
-      string: '{"keys":[{"creationTime":"2021-04-13T05:47:41.2838152Z","keyName":"key1","value":"W2vpnh31w4m1ScIVh2uXTZY76x46jq7x8V3DGkuy47xHC/cWEZPAem0k/ACAf/m1lZy0KeTvDmA/G5NsAnjGgw==","permissions":"FULL"},{"creationTime":"2021-04-13T05:48:33.0184652Z","keyName":"key2","value":"a3sDevVNf9Cc8Q2B25jMbzubFEowOGfV3XNiCG0yy+7j95V+58ZhC++IRZL3OIHaCEydnxLngWUeJSHFVY5iBg==","permissions":"FULL"}]}'
+      string: '{"keys":[{"creationTime":"2021-04-13T05:47:41.2838152Z","keyName":"key1","value":"FakeValue","permissions":"FULL"},{"creationTime":"2021-04-13T05:48:33.0184652Z","keyName":"key2","value":"FakeValue","permissions":"FULL"}]}'
     headers:
       cache-control:
       - no-cache

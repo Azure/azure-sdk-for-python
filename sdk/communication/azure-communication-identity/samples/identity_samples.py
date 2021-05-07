@@ -14,7 +14,7 @@ DESCRIPTION:
 USAGE:
     python identity_samples.py
     Set the environment variables with your own values before running the sample:
-    2) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - the connection string in your ACS account
+    2) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS account
     3) AZURE_CLIENT_ID - the client ID of your active directory application
     4) AZURE_CLIENT_SECRET - the secret of your active directory application
     5) AZURE_TENANT_ID - the tenant ID of your active directory application
@@ -25,7 +25,7 @@ from azure.communication.identity._shared.utils import parse_connection_str
 class CommunicationIdentityClientSamples(object):
 
     def __init__(self):
-        self.connection_string = os.getenv('COMMUNICATION_CONNECTION_STRING')
+        self.connection_string = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
         self.client_id = os.getenv('AZURE_CLIENT_ID')
         self.client_secret = os.getenv('AZURE_CLIENT_SECRET')
         self.tenant_id = os.getenv('AZURE_TENANT_ID')

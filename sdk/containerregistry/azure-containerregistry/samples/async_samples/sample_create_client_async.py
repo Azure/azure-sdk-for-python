@@ -10,7 +10,7 @@
 FILE: sample_create_client_async.py
 
 DESCRIPTION:
-    These samples demonstrate creating a ContainerRegistryClient and a ContainerRepositoryClient
+    These samples demonstrate creating a ContainerRegistryClient and a ContainerRepository
 
 USAGE:
     python sample_create_client_async.py
@@ -41,10 +41,10 @@ class CreateClients(object):
     async def create_repository_client(self):
         # Instantiate the ContainerRegistryClient
         # [START create_repository_client]
-        from azure.containerregistry.aio import ContainerRepositoryClient
+        from azure.containerregistry.aio import ContainerRepository
         from azure.identity.aio import DefaultAzureCredential
 
-        client = ContainerRepositoryClient(self.account_url, "my_repository", DefaultAzureCredential())
+        client = ContainerRepository(self.account_url, "my_repository", DefaultAzureCredential())
         # [END create_repository_client]
 
     async def basic_sample(self):
@@ -56,10 +56,10 @@ class CreateClients(object):
         client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
         async with client:
             # Iterate through all the repositories
-            async for repository_name in client.list_repositories():
+            async for repository_name in client.list_repository_names():
                 if repository_name == "hello-world":
                     # Create a repository client from the registry client
-                    repository_client = client.get_repository_client(repository_name)
+                    repository_client = client.get_repository(repository_name)
 
                     async with repository_client:
                         # Show all tags

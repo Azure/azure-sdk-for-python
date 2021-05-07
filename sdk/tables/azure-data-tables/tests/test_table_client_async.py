@@ -424,13 +424,13 @@ class TestTableClientUnit(AsyncTableTestCase):
             assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_hostname == 'local-machine:11002/custom/account/path'
 
-        service = TableServiceClient(account_url=custom_account_url)
+        service = TableServiceClient(endpoint=custom_account_url)
         assert service.account_name == "custom"
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
-        service = TableClient(account_url=custom_account_url, table_name="foo")
+        service = TableClient(endpoint=custom_account_url, table_name="foo")
         assert service.account_name == "custom"
         assert service.table_name == "foo"
         assert service.credential == None
@@ -459,7 +459,7 @@ class TestTableClientUnit(AsyncTableTestCase):
     async def test_create_table_client_with_complete_url_async(self):
         # Arrange
         table_url = "https://{}.table.core.windows.net:443/foo".format(self.tables_storage_account_name)
-        service = TableClient(account_url=table_url, table_name='bar', credential=self.credential)
+        service = TableClient(endpoint=table_url, table_name='bar', credential=self.credential)
 
         # Assert
         assert service.scheme == 'https'
@@ -474,7 +474,7 @@ class TestTableClientUnit(AsyncTableTestCase):
 
         # Assert
         with pytest.raises(ValueError) as excinfo:
-            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential="self.tables_primary_storage_account_key")
+            service = TableClient(endpoint=table_url, table_name=invalid_table_name, credential="self.tables_primary_storage_account_key")
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."in str(excinfo)
 

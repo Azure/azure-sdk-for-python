@@ -46,7 +46,6 @@ from ._base_async import (
 CONTENT_CHUNK_SIZE = 10 * 1024
 _LOGGER = logging.getLogger(__name__)
 
-
 class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
 
@@ -89,7 +88,8 @@ class AioHttpTransport(AsyncHttpTransport):
             self.session = aiohttp.ClientSession(
                 loop=self._loop,
                 trust_env=self._use_env_settings,
-                cookie_jar=jar
+                cookie_jar=jar,
+                auto_decompress=False,
             )
         if self.session is not None:
             await self.session.__aenter__()
@@ -191,22 +191,24 @@ class AioHttpTransport(AsyncHttpTransport):
             raise ServiceResponseError(err, error=err) from err
         return response
 
-
 class AioHttpStreamDownloadGenerator(AsyncIterator):
     """Streams the response body data.
 
     :param pipeline: The pipeline object
     :param response: The client response object.
-    :param block_size: block size of data sent over connection.
-    :type block_size: int
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
+        on the ‘content-encoding’ header.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
+        self._decompress = kwargs.pop("decompress", True)
+        if len(kwargs) > 0:
+            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
-        self.downloaded = 0
+        self._decompressor = None
 
     def __len__(self):
         return self.content_length
@@ -216,6 +218,18 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             chunk = await self.response.internal_response.content.read(self.block_size)
             if not chunk:
                 raise _ResponseStopIteration()
+            if not self._decompress:
+                return chunk
+            enc = self.response.internal_response.headers.get('Content-Encoding')
+            if not enc:
+                return chunk
+            enc = enc.lower()
+            if enc in ("gzip", "deflate"):
+                if not self._decompressor:
+                    import zlib
+                    zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
+                    self._decompressor = zlib.decompressobj(wbits=zlib_mode)
+                chunk = self._decompressor.decompress(chunk)
             return chunk
         except _ResponseStopIteration:
             self.response.internal_response.close()
@@ -269,13 +283,15 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         """Load in memory the body, so it could be accessible from sync methods."""
         self._body = await self.internal_response.read()
 
-    def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
         :param pipeline: The pipeline object
-        :type pipeline: azure.core.pipeline
+        :type pipeline: azure.core.pipeline.Pipeline
+        :keyword bool decompress: If True which is default, will attempt to decode the body based
+            on the ‘content-encoding’ header.
         """
-        return AioHttpStreamDownloadGenerator(pipeline, self)
+        return AioHttpStreamDownloadGenerator(pipeline, self, **kwargs)
 
     def __getstate__(self):
         # Be sure body is loaded in memory, otherwise not pickable and let it throw

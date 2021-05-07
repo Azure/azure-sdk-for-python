@@ -98,8 +98,6 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        # account_url = self.account_url(tables_cosmos_account_name, "table")
-        # ts = self.create_client_from_credential(TableServiceClient, tables_primary_cosmos_account_key, account_url=account_url)
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
 
         table_name = "myasynctable"
@@ -254,10 +252,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
-
-        # Act
-        with pytest.raises(ResourceNotFoundError):
-            await ts.delete_table(table_name)
+        await ts.delete_table(table_name)
 
         if self.is_live:
             sleep(SLEEP_DELAY)

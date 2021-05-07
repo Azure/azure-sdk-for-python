@@ -310,8 +310,6 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
 
-    @pytest.mark.skip("Throws 400 on POST: (InvalidRequest) Job task parameter value bad is not supported for model-version "
-                 "parameter for job task type NamedEntityRecognition. Supported values latest,2019-10-01,2020-07-01")
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_out_of_order_ids_multiple_tasks(self, client):
@@ -323,7 +321,7 @@ class TestAnalyze(TextAnalyticsTest):
         response = client.begin_analyze_actions(
             docs,
             actions=[
-                RecognizeEntitiesAction(model_version="bad"),
+                RecognizeEntitiesAction(),
                 ExtractKeyPhrasesAction(),
                 RecognizePiiEntitiesAction(),
                 RecognizeLinkedEntitiesAction(),
@@ -333,11 +331,13 @@ class TestAnalyze(TextAnalyticsTest):
         ).result()
 
         action_results = list(response)
-        assert len(action_results) == 3
+        assert len(action_results) == 5
 
-        assert action_results[0].is_error
+        assert action_results[0].action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
         assert action_results[1].action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
         assert action_results[2].action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
+        assert action_results[3].action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+        assert action_results[4].action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
 
         action_results = [r for r in action_results if not r.is_error]
         assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
@@ -506,36 +506,23 @@ class TestAnalyze(TextAnalyticsTest):
             for doc in action_result.document_results:
                 assert doc.is_error
 
-    @pytest.mark.skip("Throws 400 on POST: (InvalidRequest) Job task parameter value bad is not supported for model-version "
-                 "parameter for job task type KeyPhraseExtraction. Supported values latest,2019-10-01,2020-07-01")
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_bad_model_version_error_multiple_tasks(self, client):  # TODO: verify behavior of service
+    def test_bad_model_version_error_multiple_tasks(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
-        response = client.begin_analyze_actions(
-            docs,
-            actions=[
-                RecognizeEntitiesAction(model_version="latest"),
-                ExtractKeyPhrasesAction(model_version="bad"),
-                RecognizePiiEntitiesAction(model_version="bad"),
-                RecognizeLinkedEntitiesAction(model_version="bad"),
-                AnalyzeSentimentAction(model_version="bad")
-            ],
-            polling_interval=self._interval(),
-        ).result()
-
-        action_results = list(response)
-        assert action_results[0].is_error == False
-        assert action_results[0].action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
-        assert action_results[1].is_error == True
-        assert action_results[1].error.code == "InvalidRequest"
-        assert action_results[2].is_error == True
-        assert action_results[2].error.code == "InvalidRequest"
-        assert action_results[3].is_error == True
-        assert action_results[3].error.code == "InvalidRequest"
-        assert action_results[4].is_error == True
-        assert action_results[4].error.code == "InvalidRequest"
+        with pytest.raises(HttpResponseError):
+            response = client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizeEntitiesAction(model_version="latest"),
+                    ExtractKeyPhrasesAction(model_version="bad"),
+                    RecognizePiiEntitiesAction(model_version="bad"),
+                    RecognizeLinkedEntitiesAction(model_version="bad"),
+                    AnalyzeSentimentAction(model_version="bad")
+                ],
+                polling_interval=self._interval(),
+            ).result()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
