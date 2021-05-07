@@ -144,6 +144,7 @@ class AioHttpTransport(AsyncHttpTransport):
         :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
         :keyword str proxy: will define the proxy to use all the time
         """
+        auto_decompress = self.session.auto_decompress
         await self.open()
 
         proxies = config.pop('proxies', None)
@@ -180,7 +181,9 @@ class AioHttpTransport(AsyncHttpTransport):
                 allow_redirects=False,
                 **config
             )
-            response = AioHttpTransportResponse(request, result, self.connection_config.data_block_size)
+            response = AioHttpTransportResponse(request, result,
+                                                self.connection_config.data_block_size,
+                                                decompress=not(auto_decompress))
             if not stream_response:
                 await response.load_body()
         except aiohttp.client_exceptions.ClientResponseError as err:
@@ -250,8 +253,12 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :type aiohttp_response: aiohttp.ClientResponse object
     :param block_size: block size of data sent over connection.
     :type block_size: int
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
+            on the ‘content-encoding’ header.
     """
-    def __init__(self, request: HttpRequest, aiohttp_response: aiohttp.ClientResponse, block_size=None) -> None:
+    def __init__(self, request: HttpRequest,
+                 aiohttp_response: aiohttp.ClientResponse,
+                 block_size=None, **kwargs) -> None:
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         self.status_code = aiohttp_response.status
@@ -259,12 +266,17 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         self.reason = aiohttp_response.reason
         self.content_type = aiohttp_response.headers.get('content-type')
         self._body = None
+        self._decompress = kwargs.pop("decompress", True)
+        if len(kwargs) > 0:
+            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
 
     def body(self) -> bytes:
         """Return the whole body as bytes in memory.
         """
         if self._body is None:
             raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
+        if not self._decompress:
+            return self._body
         enc = self.headers.get('Content-Encoding')
         if not enc:
             return self._body
