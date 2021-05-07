@@ -68,6 +68,7 @@ class AttestationClient(object):
 
     @distributed_trace
     def get_openidmetadata(self):
+        #type:()->Any
         """ Retrieves the OpenID metadata configuration document for this attestation instance.
         """
         return self._client.metadata_configuration.get()
@@ -85,8 +86,6 @@ class AttestationClient(object):
         signing_certificates = self._client.signing_certificates.get(**kwargs)
         signers = []
         for key in signing_certificates.keys:
-            assert key.x5_c is not None
-
             # Convert the returned certificate chain into an array of X.509 Certificates.
             certificates = []
             for x5c in key.x5_c:
@@ -189,15 +188,12 @@ class AttestationClient(object):
         """
 
         with self._statelock:
-            if (self._signing_certificates == None):
+            if self._signing_certificates is None:
                 signing_certificates = self._client.signing_certificates.get(**kwargs)
                 self._signing_certificates = []
                 for key in signing_certificates.keys:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
-                    certificates = []
-                    for x5c in key.x5_c:
-                        der_cert = base64.b64decode(x5c)
-                        certificates.append(der_cert)
+                    certificates = [base64.b64decode(x5c) for x5c in key.x5_c]
                     self._signing_certificates.append(AttestationSigner(certificates, key.kid))
             signers = self._signing_certificates
         return signers
