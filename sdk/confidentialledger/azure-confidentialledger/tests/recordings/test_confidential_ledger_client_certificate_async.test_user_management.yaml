@@ -1,0 +1,128 @@
+interactions:
+- request:
+    body: '{"assignedRole": "Contributor"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '31'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: PATCH
+    uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+  response:
+    body:
+      string: '{"assignedRole":"Contributor","userId":"000000000000000000000000000000000000"}'
+    headers:
+      content-length: '78'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.2781'
+    status:
+      code: 200
+      message: OK
+    url: https://sdk-test-ledger-prod.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+  response:
+    body:
+      string: '{"assignedRole":"Contributor","userId":"000000000000000000000000000000000000"}'
+    headers:
+      content-length: '78'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.2782'
+    status:
+      code: 200
+      message: OK
+    url: https://sdk-test-ledger-prod.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: DELETE
+    uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      x-ms-ccf-transaction-id: '2.2783'
+    status:
+      code: 204
+      message: No Content
+    url: https://sdk-test-ledger-prod.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+- request:
+    body: '{"assignedRole": "Reader"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '26'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: PATCH
+    uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+  response:
+    body:
+      string: '{"assignedRole":"Reader","userId":"000000000000000000000000000000000000"}'
+    headers:
+      content-length: '73'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.2785'
+    status:
+      code: 200
+      message: OK
+    url: https://sdk-test-ledger-prod.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+  response:
+    body:
+      string: '{"assignedRole":"Reader","userId":"000000000000000000000000000000000000"}'
+    headers:
+      content-length: '73'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.2786'
+    status:
+      code: 200
+      message: OK
+    url: https://sdk-test-ledger-prod.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: DELETE
+    uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      x-ms-ccf-transaction-id: '2.2787'
+    status:
+      code: 204
+      message: No Content
+    url: https://sdk-test-ledger-prod.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+version: 1
