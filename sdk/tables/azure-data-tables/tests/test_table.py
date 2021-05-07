@@ -105,8 +105,8 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         ps = ts.get_service_properties()
         ts.delete_table(table_name)
 
-    @RecordedByProxy
     @tables_decorator
+    @RecordedByProxy
     def test_create_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -121,8 +121,8 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         assert created.table_name == table_name
         ts.delete_table(table_name)
 
-    @RecordedByProxy
     @tables_decorator
+    @RecordedByProxy
     def test_create_table_fail_on_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -173,8 +173,8 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         if self.is_live:
             self.sleep(10) # wait for tables to be deleted before proceeding
 
-    @RecordedByProxy
     @tables_decorator
+    @RecordedByProxy
     def test_create_table_if_exists(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
@@ -188,8 +188,8 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         assert t0.table_name == t1.table_name
         ts.delete_table(table_name)
 
-    @RecordedByProxy
     @tables_decorator
+    @RecordedByProxy
     def test_create_table_if_exists_new_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)

@@ -4,35 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-import inspect
 import logging
+import os
 import os.path
 import sys
 import time
-import zlib
 
-try:
-    from inspect import getfullargspec as get_arg_spec
-except ImportError:
-    from inspect import getargspec as get_arg_spec
-
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib2 import quote  # type: ignore
-
-import pytest
 from dotenv import load_dotenv, find_dotenv
 
-from azure_devtools.scenario_tests import (
-    ReplayableTest,
-    AzureTestError,
-    GeneralNameReplacer,
-    RequestUrlNormalizer,
-    AuthenticationMetadataFilter,
-    OAuthRequestResponsesFilter,
-)
-from azure_devtools.scenario_tests.config import TestConfig
+from azure_devtools.scenario_tests import AzureTestError
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 from .config import TEST_SETTING_FILENAME
@@ -45,8 +25,6 @@ try:
 except SyntaxError:
     pass
 
-
-from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 print(os.environ["AZURE_RECORD_MODE"])
@@ -80,6 +58,16 @@ class AzureRecordedTestCase(object):
     @property
     def qualified_test_name(self):
         return get_qualified_method_name(self, "method_name")
+
+    @property
+    def in_recording(self):
+        return os.getenv("AZURE_RECORD_MODE") == "record"
+
+    # TODO: This needs to be removed, recording processors are handled on the proxy side, but
+    # this is needed for the preparers
+    @property
+    def recording_processors(self):
+        return []
 
     def is_playback(self):
         return not self.is_live
