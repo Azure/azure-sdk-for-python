@@ -259,7 +259,6 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         self.reason = aiohttp_response.reason
         self.content_type = aiohttp_response.headers.get('content-type')
         self._body = None
-        self._decompressor = None
 
     def body(self) -> bytes:
         """Return the whole body as bytes in memory.
