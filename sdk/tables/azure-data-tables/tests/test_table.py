@@ -6,13 +6,12 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-
-import sys
-import locale
-import os
 from datetime import datetime, timedelta
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import (
+    AzureRecordedTestCase,
+    RecordedByProxy
+)
 
 from azure.data.tables import (
     ResourceTypes,
@@ -50,7 +49,7 @@ TEST_TABLE_PREFIX = 'pytablesync'
 
 # ------------------------------------------------------------------------------
 
-class StorageTableTest(AzureTestCase, TableTestCase):
+class TestStorageTable(AzureRecordedTestCase, TableTestCase):
 
     # --Helpers-----------------------------------------------------------------
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
@@ -106,6 +105,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         ps = ts.get_service_properties()
         ts.delete_table(table_name)
 
+    @RecordedByProxy
     @tables_decorator
     def test_create_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # # Arrange
@@ -121,6 +121,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert created.table_name == table_name
         ts.delete_table(table_name)
 
+    @RecordedByProxy
     @tables_decorator
     def test_create_table_fail_on_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -172,6 +173,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             self.sleep(10) # wait for tables to be deleted before proceeding
 
+    @RecordedByProxy
     @tables_decorator
     def test_create_table_if_exists(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -186,6 +188,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert t0.table_name == t1.table_name
         ts.delete_table(table_name)
 
+    @RecordedByProxy
     @tables_decorator
     def test_create_table_if_exists_new_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
