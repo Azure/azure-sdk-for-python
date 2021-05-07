@@ -244,7 +244,7 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def delete_table(self, **kwargs) -> None:
         """Deletes the table under the current account. No error will be raised if
-            the given table name is not found.
+        the given table name is not found.
 
         :return: None
         :rtype: None
@@ -277,7 +277,7 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def delete_entity(self, *args: Union[TableEntity, str], **kwargs: Any) -> None:
         """Deletes the specified entity in a table. No error will be raised if
-            the entity or PartitionKey-RowKey pairing is not found.
+        the entity or PartitionKey-RowKey pairing is not found.
 
         :param partition_key: The partition key of the entity.
         :type partition_key: str
@@ -507,7 +507,8 @@ class TableClient(AsyncTablesBaseClient):
         :keyword int results_per_page: Number of entities returned per service request.
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
-        :keyword Dict[str, Any] parameters: Dictionary for formatting query with additional, user defined parameters
+        :keyword parameters: Dictionary for formatting query with additional, user defined parameters
+        :paramtype parameters: Dict[str, Any]
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
         :rtype: ~azure.core.async_paging.AsyncItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`

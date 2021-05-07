@@ -252,7 +252,7 @@ class TableClient(TablesBaseClient):
     ):
         # type: (...) -> None
         """Deletes the table under the current account. No error will be raised
-            if the table does not exist
+        if the table does not exist
 
         :return: None
         :rtype: None
@@ -288,7 +288,7 @@ class TableClient(TablesBaseClient):
     def delete_entity(self, *args, **kwargs):
         # type: (Union[TableEntity, str], Any) -> None
         """Deletes the specified entity in a table. No error will be raised if
-            the entity or PartitionKey-RowKey pairing is not found.
+        the entity or PartitionKey-RowKey pairing is not found.
 
         :param partition_key: The partition key of the entity.
         :type partition_key: str
@@ -365,7 +365,7 @@ class TableClient(TablesBaseClient):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: Dict[str,str] or :class:`~azure.data.tables.TableEntity`
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -523,7 +523,8 @@ class TableClient(TablesBaseClient):
         :keyword int results_per_page: Number of entities returned per service request.
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
-        :keyword Dict[str, Any] parameters: Dictionary for formatting query with additional, user defined parameters
+        :keyword parameters: Dictionary for formatting query with additional, user defined parameters
+        :paramtype parameters: Dict[str, Any]
         :return: ItemPaged[:class:`~azure.data.tables.TableEntity`]
         :rtype: ~azure.core.paging.ItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`

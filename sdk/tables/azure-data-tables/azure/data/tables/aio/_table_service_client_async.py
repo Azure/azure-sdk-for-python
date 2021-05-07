@@ -246,7 +246,7 @@ class TableServiceClient(AsyncTablesBaseClient):
     def list_tables(self, **kwargs) -> AsyncItemPaged[TableItem]:
         """Queries tables under the given account.
 
-        :keyword int results_per_page: Number of tables per page in return ItemPaged
+        :keyword int results_per_page: Number of tables per page in returned ItemPaged
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableItem`]
         :rtype: ~azure.core.async_paging.AsyncItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
