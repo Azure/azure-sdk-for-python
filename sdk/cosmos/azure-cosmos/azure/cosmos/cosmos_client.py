@@ -159,7 +159,7 @@ class CosmosClient(object):
             :name: create_client
     """
 
-    def __init__(self, url, credential, consistency_level, **kwargs):
+    def __init__(self, url, credential, consistency_level=None, **kwargs):
         # type: (str, Any, str, Any) -> None
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
@@ -180,7 +180,7 @@ class CosmosClient(object):
         return self.client_connection.pipeline_client.__exit__(*args)
 
     @classmethod
-    def from_connection_string(cls, conn_str, credential=None, consistency_level, **kwargs):
+    def from_connection_string(cls, conn_str, credential=None, consistency_level=None, **kwargs):
         # type: (str, Optional[Any], str, Any) -> CosmosClient
         """Create a CosmosClient instance from a connection string.
 
