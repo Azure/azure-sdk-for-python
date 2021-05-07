@@ -6,17 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+import datetime
+from typing import Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+from ._azure_stack_hci_client_enums import *
 
 
 class AvailableOperations(msrest.serialization.Model):
     """Available operations of the service.
 
     :param value: Collection of available operation details.
-    :type value: list[~azure.mgmt.azurestackhci.models.OperationDetail]
+    :type value: list[~azure_stack_hci_client.models.OperationDetail]
     :param next_link: URL client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
     :type next_link: str
@@ -77,7 +80,7 @@ class Resource(msrest.serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -145,10 +148,10 @@ class Cluster(TrackedResource):
     :type location: str
     :ivar provisioning_state: Provisioning state. Possible values include: "Succeeded", "Failed",
      "Canceled", "Accepted", "Provisioning".
-    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure_stack_hci_client.models.ProvisioningState
     :ivar status: Status of the cluster agent. Possible values include: "NotYetRegistered",
      "ConnectedRecently", "NotConnectedRecently", "Disconnected", "Error".
-    :vartype status: str or ~azure.mgmt.azurestackhci.models.Status
+    :vartype status: str or ~azure_stack_hci_client.models.Status
     :ivar cloud_id: Unique, immutable resource id.
     :vartype cloud_id: str
     :param aad_client_id: App id of cluster AAD identity.
@@ -156,7 +159,7 @@ class Cluster(TrackedResource):
     :param aad_tenant_id: Tenant id of cluster AAD identity.
     :type aad_tenant_id: str
     :param reported_properties: Properties reported by cluster agent.
-    :type reported_properties: ~azure.mgmt.azurestackhci.models.ClusterReportedProperties
+    :type reported_properties: ~azure_stack_hci_client.models.ClusterReportedProperties
     :ivar trial_days_remaining: Number of days remaining in the trial period.
     :vartype trial_days_remaining: float
     :ivar billing_model: Type of billing applied to the resource.
@@ -167,6 +170,20 @@ class Cluster(TrackedResource):
     :vartype last_sync_timestamp: ~datetime.datetime
     :ivar last_billing_timestamp: Most recent billing meter timestamp.
     :vartype last_billing_timestamp: ~datetime.datetime
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
     """
 
     _validation = {
@@ -201,6 +218,12 @@ class Cluster(TrackedResource):
         'registration_timestamp': {'key': 'properties.registrationTimestamp', 'type': 'iso-8601'},
         'last_sync_timestamp': {'key': 'properties.lastSyncTimestamp', 'type': 'iso-8601'},
         'last_billing_timestamp': {'key': 'properties.lastBillingTimestamp', 'type': 'iso-8601'},
+        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
+        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
     }
 
     def __init__(
@@ -211,6 +234,12 @@ class Cluster(TrackedResource):
         aad_client_id: Optional[str] = None,
         aad_tenant_id: Optional[str] = None,
         reported_properties: Optional["ClusterReportedProperties"] = None,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(Cluster, self).__init__(tags=tags, location=location, **kwargs)
@@ -225,6 +254,12 @@ class Cluster(TrackedResource):
         self.registration_timestamp = None
         self.last_sync_timestamp = None
         self.last_billing_timestamp = None
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class ClusterList(msrest.serialization.Model):
@@ -233,7 +268,7 @@ class ClusterList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: List of clusters.
-    :type value: list[~azure.mgmt.azurestackhci.models.Cluster]
+    :type value: list[~azure_stack_hci_client.models.Cluster]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -335,7 +370,7 @@ class ClusterReportedProperties(msrest.serialization.Model):
     :ivar cluster_version: Version of the cluster software.
     :vartype cluster_version: str
     :ivar nodes: List of nodes reported by the cluster.
-    :vartype nodes: list[~azure.mgmt.azurestackhci.models.ClusterNode]
+    :vartype nodes: list[~azure_stack_hci_client.models.ClusterNode]
     :ivar last_updated: Last time the cluster reported the data.
     :vartype last_updated: ~datetime.datetime
     """
@@ -397,7 +432,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: str
     """
 
     _validation = {
@@ -407,7 +442,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        'info': {'key': 'info', 'type': 'str'},
     }
 
     def __init__(
@@ -431,9 +466,9 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.azurestackhci.models.ErrorDetail]
+    :vartype details: list[~azure_stack_hci_client.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~azure.mgmt.azurestackhci.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure_stack_hci_client.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -468,7 +503,7 @@ class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :param error: The error object.
-    :type error: ~azure.mgmt.azurestackhci.models.ErrorDetail
+    :type error: ~azure_stack_hci_client.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -493,11 +528,11 @@ class OperationDetail(msrest.serialization.Model):
     :param is_data_action: Indicates whether the operation is a data action.
     :type is_data_action: bool
     :param display: Display of the operation.
-    :type display: ~azure.mgmt.azurestackhci.models.OperationDisplay
+    :type display: ~azure_stack_hci_client.models.OperationDisplay
     :param origin: Origin of the operation.
     :type origin: str
     :param properties: Properties of the operation.
-    :type properties: object
+    :type properties: str
     """
 
     _attribute_map = {
@@ -505,7 +540,7 @@ class OperationDetail(msrest.serialization.Model):
         'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        'properties': {'key': 'properties', 'type': 'str'},
     }
 
     def __init__(
@@ -515,7 +550,7 @@ class OperationDetail(msrest.serialization.Model):
         is_data_action: Optional[bool] = None,
         display: Optional["OperationDisplay"] = None,
         origin: Optional[str] = None,
-        properties: Optional[object] = None,
+        properties: Optional[str] = None,
         **kwargs
     ):
         super(OperationDetail, self).__init__(**kwargs)
