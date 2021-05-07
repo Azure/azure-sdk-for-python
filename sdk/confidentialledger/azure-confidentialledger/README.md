@@ -256,7 +256,7 @@ ledger_client = ConfidentialLedgerClient(
 ```
 
 ### Verifying service details
-One may want to validate details about the Confidential Ledger for a variety of reasons. For example, you may want to view details about how Microsoft may manage your Confidential Ledger as part of [Confidential Consortium Framework governance](https://microsoft.github.io/CCF/main/governance/index.html), or verify that your Confidential Ledger is indeed running in a Trusted Execution Environment. A number of client methods are provided for these use cases.
+One may want to validate details about the Confidential Ledger for a variety of reasons. For example, you may want to view details about how Microsoft may manage your Confidential Ledger as part of [Confidential Consortium Framework governance](https://microsoft.github.io/CCF/main/governance/index.html), or verify that your Confidential Ledger is indeed running in a secure enclave. A number of client methods are provided for these use cases.
 ```python
 consortium = ledger_client.get_consortium()
 # Consortium members can manage and alter the Confidential Ledger,
