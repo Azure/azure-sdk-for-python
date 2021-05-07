@@ -59,22 +59,12 @@ class AttestationClient(object):
         **kwargs  # type: Any
     ):
         # type: (TokenCredential, str, Any) -> None
-        self._base_url = instance_url
         if not credential:
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(credential, instance_url, **kwargs)
         self._client = AzureAttestationRestClient(credential, instance_url, **kwargs)
         self._statelock = Lock()
         self._signing_certificates = None
-
-    @property
-    def base_url(self):
-        #type:()->str
-        """ Returns the base URL configured for this instance of the AttestationClient.
-
-        :returns str: The base URL for the client instance.
-        """
-        return self._base_url
 
     @distributed_trace
     def get_openidmetadata(self):
