@@ -72,6 +72,7 @@ class AttestationAdministrationClient(object):
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to retrieve the policy.
         :return AttestationResponse[str]: Attestation service response encapsulating a string attestation policy.
+
         """
         
         policyResult = self._client.policy.get(attestation_type, **kwargs)
@@ -94,9 +95,17 @@ class AttestationAdministrationClient(object):
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to set the policy.
         :param str attestation_policy: Attestation policy to be set.
-        :param AttestationSigningKey signing_key: Optional signing key to be
+        :param Optional[AttestationSigningKey] signing_key: Optional signing key to be
             used to sign the policy before sending it to the service.
         :return AttestationResponse[PolicyResult]: Attestation service response encapsulating a :class:`PolicyResult`.
+
+        .. note::
+            If the attestation instance is in *Isolated* mode, then the 
+            `signing_key` parameter MUST be a signing key containing one of the
+            certificates returned by :meth:`get_policy_management_certificates`.
+
+            If the attestation instance is in *AAD* mode, then the `signing_key` 
+            parameter does not need to be provided.
         """
         policy_token = AttestationToken[StoredAttestationPolicy](
             body=StoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
@@ -136,11 +145,9 @@ class AttestationAdministrationClient(object):
         cert_list = token.get_body()
 
         for key in cert_list.policy_certificates.keys:
-            key_certs = list()
-            for cert in key.x5_c:
-                key_certs.append(base64.b64decode(cert))
+            key_certs = [base64.b64decode(cert) for cert in key.x5_c]
             certificates.append(key_certs)
-        return AttestationResponse[list](token, certificates)
+        return AttestationResponse(token, certificates)
 
     @distributed_trace
     def add_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
@@ -152,14 +159,21 @@ class AttestationAdministrationClient(object):
         :param AttestationSigningKey signing_key: Signing Key representing one of 
             the *existing* attestation signing certificates.
         :return AttestationResponse[PolicyCertificatesModificationResult]: Attestation service response 
-            encapsulating the status of the response.
+            encapsulating the status of the add request.
 
-        .. note::
-            The response to the :meth:`add_policy_management_certificate` and
-            :meth:`remove_policy_management_certificate` API includes the
-            `thumbprint` of the certificate added or removed. The `thumbprint`
-            for the certificate is the SHA1 hash of the DER encoding of the
-            certificate.
+        The :class:`PolicyCertificatesModificationResult` response to the 
+        :meth:`add_policy_management_certificate` API contains two attributes
+        of interest. 
+        
+        The first is `certificate_resolution`, which indicates 
+        whether the certificate in question is present in the set of policy 
+        management certificates after the operation has completed, or if it is 
+        absent.
+
+        The second is the `thumbprint` of the certificate added. The `thumbprint`
+        for the certificate is the SHA1 hash of the DER encoding of the
+        certificate.
+
         """
         key=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add).decode('ascii')])
         add_body = AttestationCertificateManagementBody(policy_certificate=key)
@@ -188,12 +202,19 @@ class AttestationAdministrationClient(object):
         :return AttestationResponse[PolicyCertificatesModificationResult]: Attestation service response 
             encapsulating a list of DER encoded X.509 certificate chains.
 
-        .. note::
-            The response to the :meth:`add_policy_management_certificate` and
-            :meth:`remove_policy_management_certificate` API includes the
-            `thumbprint` of the certificate added or removed. The `thumbprint`
-            for the certificate is the SHA1 hash of the DER encoding of the
-            certificate.
+        The :class:`PolicyCertificatesModificationResult` response to the 
+        :meth:`remove_policy_management_certificate` API contains two attributes
+        of interest. 
+        
+        The first is `certificate_resolution`, which indicates 
+        whether the certificate in question is present in the set of policy 
+        management certificates after the operation has completed, or if it is 
+        absent.
+
+        The second is the `thumbprint` of the certificate added. The `thumbprint`
+        for the certificate is the SHA1 hash of the DER encoding of the
+        certificate.
+        
         """
         key=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add).decode('ascii')])
         add_body = AttestationCertificateManagementBody(policy_certificate=key)

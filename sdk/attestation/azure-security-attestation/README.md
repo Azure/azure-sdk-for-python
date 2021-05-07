@@ -8,7 +8,7 @@ Azure Attestation enables cutting-edge security paradigms such as Azure Confiden
 
 Azure Attestation receives evidence from compute entities, turns them into a set of claims, validates them against configurable policies, and produces cryptographic proofs for claims-based applications (for example, relying parties and auditing authorities).
 
-This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
+This package has been tested with Python 2.7, 3.6 to 3.9.
 
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
@@ -25,7 +25,7 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 ### Install the package
 
-Install the Microsoft Azure Attestation client library for .NET with [NuGet][nuget]:
+Install the Microsoft Azure Attestation client library for .NET with [PyPI][Attestation_pypi]:
 
 ```Powershell
 pip install --pre azure-security-attestation
@@ -170,12 +170,9 @@ InitTime data refers to data which is used to configure the SGX enclave being at
 Creates an instance of the Attestation Client at uri `endpoint`.
 
 ```python
-    def create_client(self, base_uri):
-        #type:(str) -> AttestationClient
-            attest_client = AttestationClient(
-                credential=DefaultAzureCredential(), 
-                instance_url=base_uri)
-            return attest_client
+        attest_client = AttestationClient(
+            credential=DefaultAzureCredential(), 
+            instance_url=base_uri)
 ```
 
 ### Get attestation policy

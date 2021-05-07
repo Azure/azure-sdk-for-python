@@ -26,9 +26,11 @@ T = TypeVar('T', PolicyResult, AttestationResult, StoredAttestationPolicy)
 class AttestationSigner(object):
     """ Represents a signing certificate returned by the Attestation Service.
 
-    :param list[bytes] certificates: A list of Base64 encoded X.509 Certificates which may be used
-        to sign an :class:`AttestationToken`. 
-    :param str key_id: A string which identifies a signing key, See `RFC 7517 Section 4.5<https://tools.ietf.org/html/rfc7517#section-4.5>`:
+    :param list[bytes] certificates: A list of Base64 encoded X.509
+        Certificates representing an X.509 certificate chain. The first of these
+        certificates will be used to sign an :class:`AttestationToken`. 
+    :param str key_id: A string which identifies a signing key, See 
+        `RFC 7517 Section 4.5 <https://tools.ietf.org/html/rfc7517#section-4.5>`_
 
     """
     def __init__(self, certificates, key_id, **kwargs):
@@ -135,7 +137,6 @@ class AttestationSigningKey(object):
         self._signing_key = signing_key
         self._certificate = certificate
 
-
         # We only support ECDS and RSA keys in the MAA service.
         if (not isinstance(signing_key, RSAPrivateKey) and not isinstance(signing_key, EllipticCurvePrivateKey)):
             raise ValueError("Signing keys must be either ECDS or RSA keys.")
@@ -152,10 +153,11 @@ class AttestationSigningKey(object):
 class AttestationToken(Generic[T]):
     """ Represents a token returned from the attestation service.
 
-        :keyword Any body: The body of hte newly created token, if provided.
-        :keyword SigningKey signer: If specified, the key used to sign the token.
-        :keyword str token: If no body or signer is provided, the string representation of the token.
-        :keyword Type body_type: The underlying type of the body of the 'token' parameter, used to deserialize the underlying body when parsing the token.
+    :keyword Any body: The body of the newly created token, if provided.
+    :keyword AttestationSigningKey signer: If specified, the key used to sign the token.
+        If the `signer` property is not specified, the token created is unsecured.
+    :keyword str token: If no body or signer is provided, the string representation of the token.
+    :keyword Type body_type: The underlying type of the body of the 'token' parameter, used to deserialize the underlying body when parsing the token.
     """
 
     def __init__(self, **kwargs):
@@ -188,7 +190,7 @@ class AttestationToken(Generic[T]):
         #type:() -> Union[str, None]
         """ Json Web Token Header "alg". 
         
-        ..seealso::See `RFC 7515 Section 4.1.1<https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.1>` for details.
+        See `RFC 7515 Section 4.1.1 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.1>`_ for details.
 
         If the value of algorithm is "none" it indicates that the token is unsecured.
         """
@@ -199,7 +201,7 @@ class AttestationToken(Generic[T]):
         #type:() -> Union[str, None]
         """ Json Web Token Header "kid". 
         
-        ..seealso:: See `RFC7515 Section 4.1.4<https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.4>` for details.
+        See `RFC 7515 Section 4.1.4 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.4>`_ for details.
         """
         return self._header.get('kid')
 
@@ -238,7 +240,7 @@ class AttestationToken(Generic[T]):
         #type:() -> Union[str, None]
         """ Json Web Token Header "content type".
         
-        ..seealso:: See `RFC 7515 Section 4.1.10 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.10>` for details.
+        See `RFC 7515 Section 4.1.10 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.10>`_ for details.
         """
         return self._header.get('cty')
 
@@ -247,7 +249,7 @@ class AttestationToken(Generic[T]):
         #type() -> # type: Optional[bool]
         """ Json Web Token Header "Critical". 
         
-        See `RFC 7515 Section 4.1.11 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.11>` for details.
+        See `RFC 7515 Section 4.1.11 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.11>`_ for details.
         """
         return self._header.get('crit')
 
@@ -256,7 +258,7 @@ class AttestationToken(Generic[T]):
         #type:() -> Union[str, None]
         """ Json Web Token Header "Key URL". 
         
-        See ..seealso:`RFC 7515 Section 4.1.2 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.2>` for details.
+        See `RFC 7515 Section 4.1.2 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.2>`_ for details.
         """
         return self._header.get('jku')
 
@@ -265,7 +267,7 @@ class AttestationToken(Generic[T]):
         #type:() -> Union[str, None]
         """  Json Web Token Header "X509 URL".
 
-        See ..seealso:`RFC 7515 Section 4.1.5 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.5>` for details.
+        See `RFC 7515 Section 4.1.5 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.5>`_ for details.
         """
         return self._header.get('x5u')
 
@@ -274,7 +276,7 @@ class AttestationToken(Generic[T]):
         #type:() -> Union[str, None]
         """ Json Web Token Header "typ".
         
-        ..seealso:`RFC 7515 Section 4.1.9<https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.9>` for details.
+        `RFC 7515 Section 4.1.9 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.9>`_ for details.
         """
         return self._header.get('typ')
 
@@ -283,7 +285,7 @@ class AttestationToken(Generic[T]):
         #type:() -> Union[str, None]
         """ The "thumbprint" of the certificate used to sign the request. 
         
-        ..seealso:`RFC 7515 Section 4.1.7<https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.7>` for details.
+        `RFC 7515 Section 4.1.7 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.7>`_ for details.
         """
         return self._header.get('x5t')
 
@@ -292,7 +294,7 @@ class AttestationToken(Generic[T]):
         #type:() -> Union[str, None]
         """ The "thumbprint" of the certificate used to sign the request generated using the SHA256 algorithm. 
         
-        ..seealso:`RFC 7515 Section 4.1.8<https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.8>` for details.
+        `RFC 7515 Section 4.1.8 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.8>`_ for details.
         """
         return self._header.get('x5t#256')
 
@@ -301,16 +303,16 @@ class AttestationToken(Generic[T]):
         #type:() -> Union[str, None]
         """ Json Web Token "iss" claim.
         
-        ..seealso:`RFC 7515 Section 4.1.1<https://www.rfc-editor.org/rfc/rfc7519.html#section-4.1.1>` for details.
+        `RFC 7519 Section 4.1.1 <https://www.rfc-editor.org/rfc/rfc7519.html#section-4.1.1>`_ for details.
         """
         return self._body.get('iss')
 
     @property
     def x509_certificate_chain(self):
-        #type:() -> Union[List[str], None]
+        #type:() -> Union[list[str], None]
         """ An array of Base64 encoded X.509 certificates which represent a certificate chain used to sign the token. 
         
-        :seealso:See `RFC 7515 Section 4.1.6<https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.6>` for details.
+        See `RFC 7515 Section 4.1.6 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.6>`_ for details.
         """
         x5c = self._header.get('x5c')
         if x5c is not None:
@@ -327,7 +329,7 @@ class AttestationToken(Generic[T]):
         return self._token
 
     def validate_token(self, options=None, signers=None):
-        # type: (TokenValidationOptions, List[AttestationSigner]) -> bool
+        # type: (TokenValidationOptions, list[AttestationSigner]) -> bool
         """ Validate the attestation token based on the options specified in the
          :class:`TokenValidationOptions`.
         
@@ -340,7 +342,7 @@ class AttestationToken(Generic[T]):
         :return bool: Returns True if the token successfully validated, False 
             otherwise. 
 
-        : raises AttestationTokenValidationException:
+        :raises: AttestationTokenValidationException
         """
         if (options is None):
             options = TokenValidationOptions(
@@ -379,7 +381,7 @@ class AttestationToken(Generic[T]):
             return self._body
 
     def _get_candidate_signing_certificates(self, signing_certificates):
-        # type: (List[AttestationSigner]) -> List[AttestationSigner]
+        # type: (list[AttestationSigner]) -> list[AttestationSigner]
 
         candidates = []
         desired_key_id = self.key_id
@@ -416,15 +418,11 @@ class AttestationToken(Generic[T]):
         return candidates
 
     def _get_certificates_from_x5c(self, x5clist):
-        # type:(List[str]) -> List[Certificate]
-        certs = list()
-        for b64cert in x5clist:
-            cert = base64.b64decode(b64cert)
-            certs.append(cert)
-        return certs
+        # type:(list[str]) -> list[Certificate]
+        return [base64.b64decode(b64cert) for b64cert in x5clist]
 
     def _validate_signature(self, candidate_certificates):
-        # type:(List[AttestationSigner]) -> AttestationSigner
+        # type:(list[AttestationSigner]) -> AttestationSigner
         signed_data = Base64Url.encode(
             self.header_bytes)+'.'+Base64Url.encode(self.body_bytes)
         for signer in candidate_certificates:
