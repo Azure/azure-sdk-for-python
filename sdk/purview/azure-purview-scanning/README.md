@@ -6,7 +6,7 @@ Azure Purview Scanning is a fully managed cloud service whose users can scan you
 - Examine your data
 - Extract schemas from your data
 
-**Please rely heavily on the [service's documentation][scanning_product_documentation] and our [Low-Level client docs][low_level_client] to use this library**
+**Please rely heavily on the [service's documentation][scanning_product_documentation] and our [Low-Level client docs][request_builders_and_client] to use this library**
 
 [Source code][source_code] | [Package (PyPI)][scanning_pypi] | [API reference documentation][scanning_ref_docs]| [Product documentation][scanning_product_documentation]
 
@@ -57,9 +57,10 @@ client = AzurePurviewScanningClient(endpoint="https://<my-account-name>.scanning
 
 ## Key concepts
 
-### Low Level Client
+### Client
 
-This client is one of our Low-Level clients. We highly recommend you read how to use a Low-Level client [here][low_level_client].
+This package offers request builders so you can build http requests and send these requests to the service using the `send_request` method.
+For more information on how to use request builders and our clients, see [here][request_builders_and_client].
 
 ## Examples
 
@@ -139,7 +140,7 @@ result = client.send_request(request, logging_enable=True)
 
 ## Next steps
 
-For more generic samples, see our [low level client docs][low_level_client].
+For more generic samples, see our [low level client docs][request_builders_and_client].
 
 ## Contributing
 
@@ -162,7 +163,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
-[low_level_client]: https://aka.ms/azsdk/python/protocol/quickstart
+[request_builders_and_client]: https://aka.ms/azsdk/python/protocol/quickstart
 [enable_aad]: https://docs.microsoft.com/azure/purview/create-catalog-portal#add-a-security-principal-to-a-data-plane-role
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [cla]: https://cla.microsoft.com
