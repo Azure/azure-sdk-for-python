@@ -43,10 +43,17 @@ def test_connection_error_response():
             if self._count == 0:
                 self._count += 1
                 raise requests.exceptions.ConnectionError
+        
+        def stream(self, chunk_size, decode_content=False):
+            if self._count == 0:
+                self._count += 1
+                raise requests.exceptions.ConnectionError
+            while True:
+                yield b"test"
 
     class MockInternalResponse():
-        def iter_content(self, block_size):
-            return MockTransport()
+        def __init__(self):
+            self.raw = MockTransport()
 
         def close(self):
             pass
@@ -55,7 +62,7 @@ def test_connection_error_response():
     pipeline = Pipeline(MockTransport())
     http_response = HttpResponse(http_request, None)
     http_response.internal_response = MockInternalResponse()
-    stream = StreamDownloadGenerator(pipeline, http_response)
+    stream = StreamDownloadGenerator(pipeline, http_response, decompress=False)
     with mock.patch('time.sleep', return_value=None):
         with pytest.raises(requests.exceptions.ConnectionError):
             stream.__next__()
@@ -69,6 +76,8 @@ def test_response_streaming_error_behavior():
 
     class FakeStreamWithConnectionError:
         # fake object for urllib3.response.HTTPResponse
+        def __init__(self):
+            self.total_response_size = 500
 
         def stream(self, chunk_size, decode_content=False):
             assert chunk_size == block_size
@@ -80,9 +89,19 @@ def test_response_streaming_error_behavior():
                 left -= len(data)
                 yield data
 
+        def read(self, chunk_size, decode_content=False):
+            assert chunk_size == block_size
+            if self.total_response_size > 0:
+                if self.total_response_size <= block_size:
+                    raise requests.exceptions.ConnectionError()
+                data = b"X" * min(chunk_size, self.total_response_size)
+                self.total_response_size -= len(data)
+                return data
+
         def close(self):
             pass
 
+    s = FakeStreamWithConnectionError()
     req_response.raw = FakeStreamWithConnectionError()
 
     response = RequestsTransportResponse(
@@ -101,6 +120,6 @@ def test_response_streaming_error_behavior():
     transport = RequestsTransport()
     pipeline = Pipeline(transport)
     pipeline.run = mock_run
-    downloader = response.stream_download(pipeline)
+    downloader = response.stream_download(pipeline, decompress=False)
     with pytest.raises(requests.exceptions.ConnectionError):
         full_response = b"".join(downloader)
