@@ -2,6 +2,8 @@
 
 ## 3.1.0 (Unreleased)
 
+Note: this version will be the last to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+
+
 **Breaking Changes**
 
 - `begin_recognize_id_documents` renamed to `begin_recognize_identity_documents`
