@@ -23,11 +23,12 @@ class ApiVersion(str, Enum):
     """Key Vault API versions supported by this package"""
 
     #: this is the default version
+    V7_2 = "7.2"
     V7_1 = "7.1"
     V7_0 = "7.0"
     V2016_10_01 = "2016-10-01"
 
-DEFAULT_VERSION = ApiVersion.V7_1
+DEFAULT_VERSION = ApiVersion.V7_2
 
 
 class KeyVaultClientBase(object):
