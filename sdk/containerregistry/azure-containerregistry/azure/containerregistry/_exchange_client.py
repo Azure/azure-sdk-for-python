@@ -70,7 +70,7 @@ class ACRExchangeClient(object):
         )
 
     def get_refresh_token(self, service, **kwargs):
-        # type: (str, **Any) -> str
+        # type: (str, Dict[str, Any]) -> str
         if not self._refresh_token or time.time() - self._last_refresh_time > 300:
             self._refresh_token = self.exchange_aad_token_for_refresh_token(service, **kwargs)
             self._last_refresh_time = time.time()

@@ -6,19 +6,19 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_tags?n=2
+    method: DELETE
+    uri: https://fake_url.azurecr.io/acr/v1/repoddbe1864/_tags/does_not_exist
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "library/busybox", "Action": "metadata_read"}]}]}'
+        "repository", "Name": "repoddbe1864", "Action": "delete"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '218'
+      content-length: '208'
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 22:07:53 GMT
+      date: Mon, 03 May 2021 16:14:26 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -27,7 +27,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_tags?n=2
+    url: https://fake_url.azurecr.io/acr/v1/repoddbe1864/_tags/does_not_exist
 - request:
     body:
       access_token: REDACTED
@@ -46,11 +46,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 22:07:54 GMT
+      date: Mon, 03 May 2021 16:14:27 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.616667'
+      x-ms-ratelimit-remaining-calls-per-second: '165.9'
     status:
       code: 200
       message: OK
@@ -59,7 +59,7 @@ interactions:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
-      scope: repository:library/busybox:metadata_read
+      scope: repository:repoddbe1864:delete
       service: fake_url.azurecr.io
     headers:
       Accept:
@@ -74,11 +74,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 22:07:54 GMT
+      date: Mon, 03 May 2021 16:14:27 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.6'
+      x-ms-ratelimit-remaining-calls-per-second: '165.883333'
     status:
       code: 200
       message: OK
@@ -90,27 +90,25 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_tags?n=2
+    method: DELETE
+    uri: https://fake_url.azurecr.io/acr/v1/repoddbe1864/_tags/does_not_exist
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "library/busybox",
-        "tags": [{"name": "latest", "digest": "sha256:ae39a6f5c07297d7ab64dbd4f82c77c874cc6a94cea29fdec309d0992574b4f7",
-        "createdTime": "2021-04-13T15:11:15.3146514Z", "lastUpdateTime": "2021-04-13T15:11:15.3146514Z",
-        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
-        true, "readEnabled": true, "listEnabled": true}}]}'
+      string: '{"errors": [{"code": "TAG_UNKNOWN", "message": "the specified tag does
+        not exist"}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '387'
+      content-length: '81'
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 22:07:54 GMT
+      date: Mon, 03 May 2021 16:14:27 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
+      x-ms-ratelimit-remaining-calls-per-second: '8.000000'
     status:
-      code: 200
-      message: OK
-    url: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_tags?n=2
+      code: 404
+      message: Not Found
+    url: https://fake_url.azurecr.io/acr/v1/repoddbe1864/_tags/does_not_exist
 version: 1

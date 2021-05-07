@@ -5,7 +5,7 @@
 # ------------------------------------
 import functools
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import PowerShellPreparer
 
 acr_preparer = functools.partial(
     PowerShellPreparer,
