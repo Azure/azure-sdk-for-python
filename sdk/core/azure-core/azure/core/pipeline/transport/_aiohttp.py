@@ -70,6 +70,7 @@ class AioHttpTransport(AsyncHttpTransport):
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
+        self._non_decompress_session = session
         self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop('use_env_settings', True)
 
@@ -89,10 +90,16 @@ class AioHttpTransport(AsyncHttpTransport):
                 loop=self._loop,
                 trust_env=self._use_env_settings,
                 cookie_jar=jar,
+            )
+            self._non_decompress_session = aiohttp.ClientSession(
+                loop=self._loop,
+                trust_env=self._use_env_settings,
+                cookie_jar=jar,
                 auto_decompress=False,
             )
         if self.session is not None:
             await self.session.__aenter__()
+            await self._non_decompress_session.__aenter__()
 
     async def close(self):
         """Closes the connection.
@@ -101,6 +108,9 @@ class AioHttpTransport(AsyncHttpTransport):
             await self.session.close()
             self._session_owner = False
             self.session = None
+            await self._non_decompress_session.close()
+            self._session_owner = False
+            self._non_decompress_session = None
 
     def _build_ssl_config(self, cert, verify):  # pylint: disable=no-self-use
         ssl_ctx = None
@@ -171,17 +181,28 @@ class AioHttpTransport(AsyncHttpTransport):
             timeout = config.pop('connection_timeout', self.connection_config.timeout)
             read_timeout = config.pop('read_timeout', self.connection_config.read_timeout)
             socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
-            result = await self.session.request(
-                request.method,
-                request.url,
-                headers=request.headers,
-                data=self._get_request_data(request),
-                timeout=socket_timeout,
-                allow_redirects=False,
-                **config
-            )
-            response = AioHttpTransportResponse(request, result, self.connection_config.data_block_size)
-            if not stream_response:
+            if stream_response:
+                result = await self._non_decompress_session.request(
+                    request.method,
+                    request.url,
+                    headers=request.headers,
+                    data=self._get_request_data(request),
+                    timeout=socket_timeout,
+                    allow_redirects=False,
+                    **config
+                )
+                response = AioHttpTransportResponse(request, result, self.connection_config.data_block_size)
+            else:
+                result = await self.session.request(
+                    request.method,
+                    request.url,
+                    headers=request.headers,
+                    data=self._get_request_data(request),
+                    timeout=socket_timeout,
+                    allow_redirects=False,
+                    **config
+                )
+                response = AioHttpTransportResponse(request, result, self.connection_config.data_block_size)
                 await response.load_body()
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
