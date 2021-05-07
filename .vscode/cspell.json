@@ -8,6 +8,6 @@
   "ignorePaths": [
     ".vscode/cspell.json"
   ],
-  "words": ["azsdk", "conda"],
+  "words": ["azsdk", "conda", "tenvparallel"],
   "allowCompoundWords": false
 }
