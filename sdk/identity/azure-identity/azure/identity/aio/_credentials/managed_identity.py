@@ -6,8 +6,6 @@ import logging
 import os
 from typing import TYPE_CHECKING
 
-from azure.core.credentials import AccessToken
-
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
@@ -15,6 +13,7 @@ from ..._constants import EnvironmentVariables
 
 if TYPE_CHECKING:
     from typing import Any, Optional
+    from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)

@@ -2,6 +2,10 @@
 
 ## 3.1.0b5 (Unreleased)
 
+**Breaking Changes**
+
+- `begin_recognize_id_documents` renamed to `begin_recognize_identity_documents`
+- `begin_recognize_id_documents_from_url` renamed to `begin_recognize_identity_documents_from_url`
 
 ## 3.1.0b4 (2021-04-06)
 

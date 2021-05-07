@@ -30,7 +30,7 @@ with open("README.md", "r") as fh:
 
 
 # Fetch version
-with open("azure/iot/modelsrepository/_constants.py", "r") as fh:
+with open("azure/iot/modelsrepository/_version.py", "r") as fh:
     VERSION = re.search(r"^VERSION\s=\s*[\"']([^\"']*)", fh.read(), re.MULTILINE).group(1)
 if not VERSION:
     raise RuntimeError("Cannot find version information")

@@ -112,7 +112,41 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
-class Configuration(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class Configuration(ProxyResource):
     """Represents a Configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -205,7 +239,7 @@ class ConfigurationListResult(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class Database(Resource):
+class Database(ProxyResource):
     """Represents a Database.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -314,7 +348,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: str
     """
 
     _validation = {
@@ -324,7 +358,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        'info': {'key': 'info', 'type': 'str'},
     }
 
     def __init__(
@@ -382,7 +416,7 @@ class ErrorResponse(msrest.serialization.Model):
         self.additional_info = None
 
 
-class FirewallRule(Resource):
+class FirewallRule(ProxyResource):
     """Represents a server firewall rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -614,7 +648,7 @@ class Operation(msrest.serialization.Model):
      "user", "system".
     :vartype origin: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.OperationOrigin
     :ivar properties: Additional descriptions for the operation.
-    :vartype properties: dict[str, object]
+    :vartype properties: dict[str, str]
     """
 
     _validation = {
@@ -629,7 +663,7 @@ class Operation(msrest.serialization.Model):
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
+        'properties': {'key': 'properties', 'type': '{str}'},
     }
 
     def __init__(
@@ -711,40 +745,6 @@ class OperationListResult(msrest.serialization.Model):
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
 
 
 class TrackedResource(Resource):
@@ -863,12 +863,15 @@ class Server(TrackedResource):
     :type availability_zone: str
     :ivar standby_availability_zone: availability Zone information of the server.
     :vartype standby_availability_zone: str
-    :ivar byok_enforcement: Status showing whether the data encryption is enabled with customer-
-     managed keys.
+    :ivar byok_enforcement: Status showing whether the data encryption is enabled with
+     customer-managed keys.
     :vartype byok_enforcement: str
     :param delegated_subnet_arguments:
     :type delegated_subnet_arguments:
      ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerPropertiesDelegatedSubnetArguments
+    :param private_dns_zone_arguments:
+    :type private_dns_zone_arguments:
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerPropertiesPrivateDnsZoneArguments
     :param create_mode: The mode to create a new PostgreSQL server. Possible values include:
      "Default", "PointInTimeRestore".
     :type create_mode: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.CreateMode
@@ -916,6 +919,7 @@ class Server(TrackedResource):
         'standby_availability_zone': {'key': 'properties.standbyAvailabilityZone', 'type': 'str'},
         'byok_enforcement': {'key': 'properties.byokEnforcement', 'type': 'str'},
         'delegated_subnet_arguments': {'key': 'properties.delegatedSubnetArguments', 'type': 'ServerPropertiesDelegatedSubnetArguments'},
+        'private_dns_zone_arguments': {'key': 'properties.privateDnsZoneArguments', 'type': 'ServerPropertiesPrivateDnsZoneArguments'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'tags_properties_tags': {'key': 'properties.tags', 'type': '{str}'},
     }
@@ -940,6 +944,7 @@ class Server(TrackedResource):
         point_in_time_utc: Optional[datetime.datetime] = None,
         availability_zone: Optional[str] = None,
         delegated_subnet_arguments: Optional["ServerPropertiesDelegatedSubnetArguments"] = None,
+        private_dns_zone_arguments: Optional["ServerPropertiesPrivateDnsZoneArguments"] = None,
         create_mode: Optional[Union[str, "CreateMode"]] = None,
         tags_properties_tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -966,6 +971,7 @@ class Server(TrackedResource):
         self.standby_availability_zone = None
         self.byok_enforcement = None
         self.delegated_subnet_arguments = delegated_subnet_arguments
+        self.private_dns_zone_arguments = private_dns_zone_arguments
         self.create_mode = create_mode
         self.tags_properties_tags = tags_properties_tags
 
@@ -1104,6 +1110,27 @@ class ServerPropertiesDelegatedSubnetArguments(msrest.serialization.Model):
     ):
         super(ServerPropertiesDelegatedSubnetArguments, self).__init__(**kwargs)
         self.subnet_arm_resource_id = subnet_arm_resource_id
+
+
+class ServerPropertiesPrivateDnsZoneArguments(msrest.serialization.Model):
+    """ServerPropertiesPrivateDnsZoneArguments.
+
+    :param private_dns_zone_arm_resource_id: private dns zone arm resource id.
+    :type private_dns_zone_arm_resource_id: str
+    """
+
+    _attribute_map = {
+        'private_dns_zone_arm_resource_id': {'key': 'privateDnsZoneArmResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_dns_zone_arm_resource_id: Optional[str] = None,
+        **kwargs
+    ):
+        super(ServerPropertiesPrivateDnsZoneArguments, self).__init__(**kwargs)
+        self.private_dns_zone_arm_resource_id = private_dns_zone_arm_resource_id
 
 
 class ServerVersionCapability(msrest.serialization.Model):
