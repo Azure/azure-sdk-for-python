@@ -25,6 +25,10 @@
 # --------------------------------------------------------------------------
 from typing import Any, Optional, AsyncIterator as AsyncIteratorType
 from collections.abc import AsyncIterator
+try:
+    import cchardet as chardet
+except ImportError:  # pragma: no cover
+    import chardet  # type: ignore
 
 import logging
 import asyncio
@@ -300,10 +304,13 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
         :param str encoding: The encoding to apply.
         """
+        body = self.body()
         if not encoding:
-            encoding = self.internal_response.get_encoding()
+            encoding = chardet.detect(body)["encoding"]
+        if encoding == "utf-8" or encoding is None:
+            encoding = "utf-8-sig"
 
-        return super().text(encoding)
+        return body.decode(encoding)
 
     async def load_body(self) -> None:
         """Load in memory the body, so it could be accessible from sync methods."""
