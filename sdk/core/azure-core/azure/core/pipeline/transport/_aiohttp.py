@@ -32,6 +32,7 @@ except ImportError:  # pragma: no cover
 
 import logging
 import asyncio
+import codecs
 import aiohttp
 from multidict import CIMultiDict
 from requests.exceptions import StreamConsumedError
@@ -305,8 +306,32 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         :param str encoding: The encoding to apply.
         """
         body = self.body()
+
+        ctype = self.headers.get(aiohttp.hdrs.CONTENT_TYPE, "").lower()
+        mimetype = aiohttp.helpers.parse_mimetype(ctype)
+
+        encoding = mimetype.parameters.get("charset")
+        if encoding:
+            try:
+                codecs.lookup(encoding)
+            except LookupError:
+                encoding = None
         if not encoding:
-            encoding = chardet.detect(body)["encoding"]
+            if mimetype.type == "application" and (
+                    mimetype.subtype == "json" or mimetype.subtype == "rdap"
+            ):
+                # RFC 7159 states that the default encoding is UTF-8.
+                # RFC 7483 defines application/rdap+json
+                encoding = "utf-8"
+            elif body is None:
+                raise RuntimeError(
+                    "Cannot guess the encoding of " "a not yet read body"
+                )
+            else:
+                encoding = chardet.detect(body)["encoding"]
+        if not encoding:
+            encoding = "utf-8"
+
         if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"
 

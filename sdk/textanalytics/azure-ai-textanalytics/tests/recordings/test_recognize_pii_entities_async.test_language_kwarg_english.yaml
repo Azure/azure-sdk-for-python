@@ -10,7 +10,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/pii?model-version=latest&showStats=true&stringIndexType=UnicodeCodePoint
   response:
@@ -19,14 +19,14 @@ interactions:
         is the CEO of *********.","id":"0","statistics":{"charactersCount":35,"transactionsCount":1},"entities":[{"text":"Bill
         Gates","category":"Person","offset":0,"length":10,"confidenceScore":1.0},{"text":"Microsoft","category":"Organization","offset":25,"length":9,"confidenceScore":0.97}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
-      apim-request-id: 8646d14b-ec85-441f-b97a-844f0e425afe
+      apim-request-id: 8aaec55a-ed9a-4067-b676-c635851d007b
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
-      date: Tue, 27 Apr 2021 20:13:38 GMT
+      date: Sat, 08 May 2021 07:02:33 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '23'
+      x-envoy-upstream-service-time: '29'
     status:
       code: 200
       message: OK
