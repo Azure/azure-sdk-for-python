@@ -158,7 +158,7 @@ class TestContentFromStream(FormRecognizerTest):
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
         self.assertEqual(layout.tables[0].row_count, 3)
-        self.assertEqual(layout.tables[0].column_count, 6)
+        self.assertEqual(layout.tables[0].column_count, 5)
         self.assertEqual(layout.tables[0].page_number, 1)
     
     @FormRecognizerPreparer()
@@ -208,7 +208,7 @@ class TestContentFromStream(FormRecognizerTest):
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
         self.assertEqual(layout.tables[0].row_count, 5)
-        self.assertEqual(layout.tables[0].column_count, 5)
+        self.assertEqual(layout.tables[0].column_count, 4)
         self.assertEqual(layout.tables[1].row_count, 4)
         self.assertEqual(layout.tables[1].column_count, 2)
         self.assertEqual(layout.tables[0].page_number, 1)
