@@ -323,6 +323,23 @@ To see how to use the Document Translation client library with Azure Storage Blo
 for your containers, and download the finished translated documents, see this [sample][sample_translation_with_azure_blob].
 Note that you will need to install the [azure-storage-blob][azure_storage_blob] library to run this sample.
 
+## Advanced Topics
+
+The following section provides some insights for some advanced translation features such as glossaries and custom translation models.
+
+### Glossaries
+Glossaries are domain-specific dictionaries. For example, if you want to translate some medical-related documents, you may need support for the many words, terminology, and idioms in the medical field which you can't find in a standard translation dictionary. This is why Document Translator provides support for glossaries. Document Translator supports glossaries in the following formats:
+
+|**File Type**|**Extension**|**Description**|
+|----------------|-------------|-------------|
+|Localization Interchange File Format|.xlf. , xliff|A parallel document format, export of Translation Memory systems. The languages used are defined inside the file.|
+|Tab Separated Values/TAB|.tsv/.tab|A tab-delimited raw-data file used by spreadsheet programs.
+
+
+### Custom Translation Models
+Instead of using Document Translator's engine for translation, you can use your own machine/deep learning model.
+For more info on how to create your custom azure translation model, please follow the instructions here: [Build, deploy, and use a custom model for translation][custom_translation_article]
+
 ## Troubleshooting
 
 ### General
@@ -436,6 +453,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_translation_with_glossaries_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_glossaries_async.py
 [sample_translation_with_azure_blob]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_azure_blob.py
 [sample_translation_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_azure_blob_async.py
+
+[custom_translation_article]: https://docs.microsoft.com/en-us/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
