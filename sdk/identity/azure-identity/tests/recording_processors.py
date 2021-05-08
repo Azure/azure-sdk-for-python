@@ -6,7 +6,6 @@ import base64
 import binascii
 import hashlib
 import json
-import re
 import time
 
 from azure_devtools.scenario_tests import RecordingProcessor
@@ -26,11 +25,17 @@ SECRETS = frozenset({
 
 
 class RecordingRedactor(RecordingProcessor):
-    """Removes authentication secrets from recordings"""
+    """Removes authentication secrets from recordings.
+
+    :keyword bool record_unique_values:
+    """
+
+    def __init__(self, record_unique_values=False):
+        super(RecordingRedactor, self).__init__()
+        self._record_unique_values = record_unique_values
 
     def process_request(self, request):
-        # don't record the body because it probably contains secrets and is formed by msal anyway,
-        # i.e. it isn't this library's responsibility
+        # bodies typically contain secrets and are often formed by msal anyway, i.e. not this library's responsibility
         request.body = None
         return request
 
@@ -42,10 +47,13 @@ class RecordingRedactor(RecordingProcessor):
 
         for field in body:
             if field in SECRETS:
-                # record a hash of the secret instead of a simple replacement like "redacted"
-                # because some tests (e.g. for CAE) require unique, consistent values
-                digest = hashlib.sha256(six.ensure_binary(body[field])).digest()
-                body[field] = "redacted-" + six.ensure_str(binascii.hexlify(digest))[:6]
+                redacted_value = "redacted"
+                if self._record_unique_values:
+                    # include a hash of the secret instead of a simple replacement
+                    # because some tests (e.g. for CAE) require unique, consistent values
+                    digest = hashlib.sha256(six.ensure_binary(body[field])).digest()
+                    redacted_value += six.ensure_str(binascii.hexlify(digest))[:6]
+                body[field] = redacted_value
 
         response["body"]["string"] = json.dumps(body)
         return response
