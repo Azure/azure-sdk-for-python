@@ -126,7 +126,7 @@ jobs:
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
 
-  - ${{ if gt(length(parameters.CondaArtifacts), 0 }}:
+  - ${{ if gt(length(parameters.CondaArtifacts), 0) }}:
     - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
       parameters:
         JobTemplatePath: /eng/pipelines/templates/jobs/ci.conda.tests.yml
