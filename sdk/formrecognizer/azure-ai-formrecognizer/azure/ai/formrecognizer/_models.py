@@ -1130,9 +1130,9 @@ class CustomFormModelProperties(object):
 class TextAppearance(object):
     """An object representing the appearance of the text line.
 
-    :ivar str name: The text line style name.
+    :ivar str style_name: The text line style name.
         Possible values include: "other", "handwriting".
-    :ivar float confidence: The confidence of text line style.
+    :ivar float style_confidence: The confidence of text line style.
     """
 
     def __init__(self, **kwargs):
