@@ -252,7 +252,7 @@ class TableClient(TablesBaseClient):
     ):
         # type: (...) -> None
         """Deletes the table under the current account. No error will be raised
-            if the table does not exist
+        if the table does not exist
 
         :return: None
         :rtype: None
@@ -288,7 +288,7 @@ class TableClient(TablesBaseClient):
     def delete_entity(self, *args, **kwargs):
         # type: (Union[TableEntity, str], Any) -> None
         """Deletes the specified entity in a table. No error will be raised if
-            the entity or PartitionKey-RowKey pairing is not found.
+        the entity or PartitionKey-RowKey pairing is not found.
 
         :param partition_key: The partition key of the entity.
         :type partition_key: str
@@ -365,7 +365,7 @@ class TableClient(TablesBaseClient):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
+        :type entity: Dict[str,str] or :class:`~azure.data.tables.TableEntity`
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -405,9 +405,9 @@ class TableClient(TablesBaseClient):
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
+        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: :class:`~azure.data.tables.UpdateMode`
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
@@ -523,7 +523,8 @@ class TableClient(TablesBaseClient):
         :keyword int results_per_page: Number of entities returned per service request.
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
-        :keyword Dict[str, Any] parameters: Dictionary for formatting query with additional, user defined parameters
+        :keyword parameters: Dictionary for formatting query with additional, user defined parameters
+        :paramtype parameters: Dict[str, Any]
         :return: ItemPaged[:class:`~azure.data.tables.TableEntity`]
         :rtype: ~azure.core.paging.ItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -612,9 +613,9 @@ class TableClient(TablesBaseClient):
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
+        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: :class:`~azure.data.tables.UpdateMode`
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -679,7 +680,7 @@ class TableClient(TablesBaseClient):
         :type operations: Iterable[Tuple[str, EntityType]]
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: List[Mapping[str, Any]]
-        :raises ~azure.data.tables.TableTransactionError:
+        :raises: :class:`~azure.data.tables.TableTransactionError`
 
         .. admonition:: Example:
 

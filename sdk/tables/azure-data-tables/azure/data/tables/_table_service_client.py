@@ -289,7 +289,7 @@ class TableServiceClient(TablesBaseClient):
         # type: (Any) -> ItemPaged[TableItem]
         """Queries tables under the given account.
 
-        :keyword int results_per_page: Number of tables per page in return ItemPaged
+        :keyword int results_per_page: Number of tables per page in returned ItemPaged
         :return: ItemPaged[:class:`~azure.data.tables.TableItem`]
         :rtype: ~azure.core.paging.ItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
