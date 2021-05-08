@@ -125,6 +125,27 @@ jobs:
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
+
+  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+    parameters:
+      JobTemplatePath: /eng/pipelines/templates/jobs/ci.conda.tests.yml
+      DependsOn:
+        - 'Build'
+      MatrixConfigs:
+          - Name: Python_ci_conda_envs
+            Path: eng/pipelines/templates/stages/platform-matrix-conda-support.json
+            Selection: sparse
+            GenerateVMJobs: true
+      MatrixFilters: ${{ parameters.MatrixFilters }}
+      MatrixReplace: ${{ parameters.MatrixReplace }}
+      CloudConfig:
+        Cloud: Public
+      AdditionalParameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+        InjectedPackages: ${{ parameters.InjectedPackages }}
         CondaArtifacts: ${{ parameters.CondaArtifacts}}
 
   - job: 'RunRegression'
