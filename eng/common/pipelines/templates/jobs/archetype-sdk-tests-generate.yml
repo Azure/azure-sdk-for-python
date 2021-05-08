@@ -31,9 +31,12 @@ parameters:
 - name: OsVmImage
   type: string
   default: MMSUbuntu18.04
+- name: GeneratedJobName
+  type: string
+  default: 'generate_matrix'
 
 jobs:
-- job: generate_matrix
+- job: ${{ parameters.GeneratedJobName }}
   variables:
     displayNameFilter: $[ coalesce(variables.jobMatrixFilter, '.*') ]
   pool:
@@ -89,8 +92,8 @@ jobs:
     - template: ${{ parameters.JobTemplatePath }}
       parameters:
         UsePlatformContainer: false
-        Matrix: dependencies.generate_matrix.outputs['generate_vm_job_matrix_${{ config.Name }}.matrix']
-        DependsOn: generate_matrix
+        Matrix: dependencies.${{ parameters.GeneratedJobName }}.outputs['generate_vm_job_matrix_${{ config.Name }}.matrix']
+        DependsOn: ${{ parameters.GeneratedJobName }}
         CloudConfig: ${{ parameters.CloudConfig }}
         ${{ each param in parameters.AdditionalParameters }}:
           ${{ param.key }}: ${{ param.value }}
@@ -99,8 +102,8 @@ jobs:
     - template: ${{ parameters.JobTemplatePath }}
       parameters:
         UsePlatformContainer: true
-        Matrix: dependencies.generate_matrix.outputs['generate_container_job_matrix_${{ config.Name }}.matrix']
-        DependsOn: generate_matrix
+        Matrix: dependencies.${{ parameters.GeneratedJobName }}.outputs['generate_container_job_matrix_${{ config.Name }}.matrix']
+        DependsOn: ${{ parameters.GeneratedJobName }}
         CloudConfig: ${{ parameters.CloudConfig }}
         ${{ each param in parameters.AdditionalParameters }}:
           ${{ param.key }}: ${{ param.value }}
