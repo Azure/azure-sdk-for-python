@@ -1,6 +1,6 @@
 # Release History
 
-## 0.7.0 (Unreleased)
+## 0.7.0 (2021-05-11)
 
 ### Bug fixes
 

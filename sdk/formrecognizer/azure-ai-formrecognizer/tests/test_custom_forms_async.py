@@ -224,6 +224,11 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         self.assertIsNotNone(recognized_form[0].model_id)
         self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
+        recognized_form_dict = [v.to_dict() for v in recognized_form]
+        self.assertIsNone(recognized_form_dict[0].get("form_type_confidence"))
+        self.assertIsNotNone(recognized_form_dict[0].get("model_id"))
+        self.assertEqual(recognized_form_dict[0].get("form_type"), "form-0")
+
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_custom_forms_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url):

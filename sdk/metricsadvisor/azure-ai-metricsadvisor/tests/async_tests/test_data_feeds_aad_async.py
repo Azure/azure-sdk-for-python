@@ -11,11 +11,11 @@ from devtools_testutils import AzureTestCase
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.ai.metricsadvisor.models import (
-    SQLServerDataFeed,
-    AzureTableDataFeed,
-    AzureBlobDataFeed,
-    AzureCosmosDBDataFeed,
-    HttpRequestDataFeed,
+    SQLServerDataFeedSource,
+    AzureTableDataFeedSource,
+    AzureBlobDataFeedSource,
+    AzureCosmosDBDataFeedSource,
+    HttpRequestDataFeedSource,
     DataFeedMetric,
     DataFeedDimension,
     DataFeedSchema,
@@ -24,14 +24,14 @@ from azure.ai.metricsadvisor.models import (
     DataFeedOptions,
     DataFeedMissingDataPointFillSettings,
     DataFeedRollupSettings,
-    AzureApplicationInsightsDataFeed,
-    AzureDataExplorerDataFeed,
-    InfluxDBDataFeed,
-    AzureDataLakeStorageGen2DataFeed,
-    MongoDBDataFeed,
-    MySqlDataFeed,
-    PostgreSqlDataFeed,
-    ElasticsearchDataFeed,
+    AzureApplicationInsightsDataFeedSource,
+    AzureDataExplorerDataFeedSource,
+    InfluxDBDataFeedSource,
+    AzureDataLakeStorageGen2DataFeedSource,
+    MongoDBDataFeedSource,
+    MySqlDataFeedSource,
+    PostgreSqlDataFeedSource,
+    ElasticsearchDataFeedSource,
 )
 from base_testcase_aad_async import TestMetricsAdvisorAdministrationClientBaseAsync
 
@@ -45,7 +45,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=data_feed_name,
-                    source=SQLServerDataFeed(
+                    source=SQLServerDataFeedSource(
                         connection_string=self.sql_server_connection_string,
                         query="select * from adsample2 where Timestamp = @StartTime"
                     ),
@@ -76,7 +76,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=data_feed_name,
-                    source=SQLServerDataFeed(
+                    source=SQLServerDataFeedSource(
                         connection_string=self.sql_server_connection_string,
                         query=u"select * from adsample2 where Timestamp = @StartTime"
                     ),
@@ -167,7 +167,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=data_feed_name,
-                    source=SQLServerDataFeed(
+                    source=SQLServerDataFeedSource(
                         connection_string=self.sql_server_connection_string,
                         query=u"select * from adsample2 where Timestamp = @StartTime"
                     ),
@@ -262,7 +262,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=AzureTableDataFeed(
+                    source=AzureTableDataFeedSource(
                         connection_string=self.azure_table_connection_string,
                         query="PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'",
                         table="adsample"
@@ -303,7 +303,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=AzureBlobDataFeed(
+                    source=AzureBlobDataFeedSource(
                         connection_string=self.azure_blob_connection_string,
                         container="adsample",
                         blob_template="%Y/%m/%d/%h/JsonFormatV2.json"
@@ -344,7 +344,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=AzureCosmosDBDataFeed(
+                    source=AzureCosmosDBDataFeedSource(
                         connection_string=self.azure_cosmosdb_connection_string,
                         sql_query="'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'",
                         database="adsample",
@@ -387,7 +387,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=HttpRequestDataFeed(
+                    source=HttpRequestDataFeedSource(
                         url=self.http_request_get_url,
                         http_method="GET"
                     ),
@@ -427,7 +427,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=HttpRequestDataFeed(
+                    source=HttpRequestDataFeedSource(
                         url=self.http_request_post_url,
                         http_method="POST",
                         payload="{'startTime': '@StartTime'}"
@@ -472,7 +472,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     "duration_max_ms = max(duration) by resultCode"
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=AzureApplicationInsightsDataFeed(
+                    source=AzureApplicationInsightsDataFeedSource(
                         azure_cloud="Azure",
                         application_id="3706fe8b-98f1-47c7-bf69-b73b6e53274d",
                         api_key=self.application_insights_api_key,
@@ -517,7 +517,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         "adsample | where Timestamp >= StartDateTime and Timestamp < EndDateTime"
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=AzureDataExplorerDataFeed(
+                    source=AzureDataExplorerDataFeedSource(
                         connection_string=self.azure_data_explorer_connection_string,
                         query=query
                     ),
@@ -557,7 +557,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=InfluxDBDataFeed(
+                    source=InfluxDBDataFeedSource(
                         connection_string=self.influxdb_connection_string,
                         database="adsample",
                         user_name="adreadonly",
@@ -603,7 +603,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=AzureDataLakeStorageGen2DataFeed(
+                    source=AzureDataLakeStorageGen2DataFeedSource(
                         account_name="adsampledatalakegen2",
                         account_key=self.azure_datalake_account_key,
                         file_system_name="adsample",
@@ -649,7 +649,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=MongoDBDataFeed(
+                    source=MongoDBDataFeedSource(
                         connection_string=self.mongodb_connection_string,
                         database="adsample",
                         command='{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000,}'
@@ -691,7 +691,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=MySqlDataFeed(
+                    source=MySqlDataFeedSource(
                         connection_string=self.mysql_connection_string,
                         query="'select * from adsample2 where Timestamp = @StartTime'"
                     ),
@@ -731,7 +731,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=PostgreSqlDataFeed(
+                    source=PostgreSqlDataFeedSource(
                         connection_string=self.postgresql_connection_string,
                         query="'select * from adsample2 where Timestamp = @StartTime'"
                     ),
@@ -771,7 +771,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=ElasticsearchDataFeed(
+                    source=ElasticsearchDataFeedSource(
                         host="ad-sample-es.westus2.cloudapp.azure.com",
                         port="9200",
                         auth_header=self.elasticsearch_auth_header,
@@ -944,7 +944,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     viewer_emails=["updated"],
                     status="Paused",
                     action_link_template="updated",
-                    source=SQLServerDataFeed(
+                    source=SQLServerDataFeedSource(
                         connection_string="updated",
                         query="get data"
                     )
@@ -1019,7 +1019,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     viewer_emails=["updated"],
                     status="Paused",
                     action_link_template="updated",
-                    source=SQLServerDataFeed(
+                    source=SQLServerDataFeedSource(
                         connection_string="updated",
                         query="get data"
                     )
