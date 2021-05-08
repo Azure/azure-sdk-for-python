@@ -64,10 +64,8 @@ def get_field_value(
         }
     if value.type == "selectionMark":
         return value.value_selection_mark
-    if value.type == "gender":
-        return value.value_gender
-    if value.type == "country":
-        return value.value_country
+    if value.type == "countryRegion":
+        return value.value_country_region
     return None
 
 
@@ -75,7 +73,7 @@ class FieldValueType(str, Enum):
     """Semantic data type of the field value.
 
     .. versionadded:: v2.1
-        The *gender* and *country* values
+        The *selectionMark* and *countryRegion* values
     """
 
     STRING = "string"
@@ -87,8 +85,7 @@ class FieldValueType(str, Enum):
     LIST = "list"
     DICTIONARY = "dictionary"
     SELECTION_MARK = "selectionMark"
-    GENDER = "gender"
-    COUNTRY = "country"
+    COUNTRY_REGION = "countryRegion"
 
 
 class LengthUnit(str, Enum):
@@ -239,7 +236,7 @@ class FormField(object):
     :ivar str value_type: The type of `value` found on FormField. Described in
         :class:`~azure.ai.formrecognizer.FieldValueType`, possible types include: 'string',
         'date', 'time', 'phoneNumber', 'float', 'integer', 'dictionary', 'list', 'selectionMark',
-        'gender', or 'country'.
+        or 'countryRegion'.
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
         Contains the text, bounding box, and field elements for the field label.
         Note that this is not returned for forms analyzed by models trained with labels.
