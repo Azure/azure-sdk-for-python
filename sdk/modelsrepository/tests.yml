@@ -4,7 +4,6 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       AllocateResourceGroup: 'false'
-      BuildTargetingString: $(BuildTargetingString)
       ServiceDirectory: modelsrepository
       EnvVars:
         TEST_MODE: 'RunLiveNoRecord'

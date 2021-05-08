@@ -21,7 +21,7 @@ from azure.data.tables import (
 )
 
 from _shared.testcase import TableTestCase, SLEEP_DELAY
-from preparers import CosmosPreparer
+from preparers import cosmos_decorator
 # ------------------------------------------------------------------------------
 
 class TableServicePropertiesTest(AzureTestCase, TableTestCase):
@@ -100,7 +100,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         assert ret1.days ==  ret2.days
 
     # --Test cases for errors ---------------------------------------
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_too_many_cors_rules(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         cors = []
@@ -111,7 +111,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
             tsc.set_service_properties(None, None, None, cors)
         self.sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_retention_too_long(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=366))

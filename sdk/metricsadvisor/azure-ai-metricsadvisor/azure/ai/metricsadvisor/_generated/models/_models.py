@@ -692,6 +692,10 @@ class AnomalyResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar data_feed_id: data feed unique id
+    
+     only return for alerting anomaly result.
+    :vartype data_feed_id: str
     :ivar metric_id: metric unique id
     
      only return for alerting anomaly result.
@@ -717,6 +721,7 @@ class AnomalyResult(msrest.serialization.Model):
     """
 
     _validation = {
+        'data_feed_id': {'readonly': True},
         'metric_id': {'readonly': True},
         'anomaly_detection_configuration_id': {'readonly': True},
         'timestamp': {'required': True},
@@ -727,6 +732,7 @@ class AnomalyResult(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
         'metric_id': {'key': 'metricId', 'type': 'str'},
         'anomaly_detection_configuration_id': {'key': 'anomalyDetectionConfigurationId', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
@@ -741,6 +747,7 @@ class AnomalyResult(msrest.serialization.Model):
         **kwargs
     ):
         super(AnomalyResult, self).__init__(**kwargs)
+        self.data_feed_id = None
         self.metric_id = None
         self.anomaly_detection_configuration_id = None
         self.timestamp = kwargs['timestamp']
@@ -5064,6 +5071,10 @@ class IncidentResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar data_feed_id: data feed unique id
+    
+     only return for alerting anomaly result.
+    :vartype data_feed_id: str
     :ivar metric_id: metric unique id
     
      only return for alerting incident result.
@@ -5085,6 +5096,7 @@ class IncidentResult(msrest.serialization.Model):
     """
 
     _validation = {
+        'data_feed_id': {'readonly': True},
         'metric_id': {'readonly': True},
         'anomaly_detection_configuration_id': {'readonly': True},
         'incident_id': {'required': True},
@@ -5095,6 +5107,7 @@ class IncidentResult(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
         'metric_id': {'key': 'metricId', 'type': 'str'},
         'anomaly_detection_configuration_id': {'key': 'anomalyDetectionConfigurationId', 'type': 'str'},
         'incident_id': {'key': 'incidentId', 'type': 'str'},
@@ -5109,6 +5122,7 @@ class IncidentResult(msrest.serialization.Model):
         **kwargs
     ):
         super(IncidentResult, self).__init__(**kwargs)
+        self.data_feed_id = None
         self.metric_id = None
         self.anomaly_detection_configuration_id = None
         self.incident_id = kwargs['incident_id']

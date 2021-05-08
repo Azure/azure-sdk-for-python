@@ -86,6 +86,8 @@ jobs:
       vmImage: MMSUbuntu18.04
 
     steps:
+    - template: /eng/common/pipelines/templates/steps/check-spelling.yml
+
     - template: /eng/common/pipelines/templates/steps/verify-links.yml
       parameters:
         ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+from binascii import hexlify
 from typing import Dict
 from uuid import UUID
 from datetime import datetime
@@ -15,7 +15,7 @@ import six
 from azure.core import MatchConditions
 from azure.core.exceptions import raise_with_traceback
 
-from ._entity import EdmType, EntityProperty
+from ._entity import EdmType
 from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
 
@@ -65,12 +65,22 @@ def _parameter_filter_substitution(parameters, query_filter):
                 val = parameters[word[1:]]
                 if val in [True, False]:
                     filter_strings[index] = str(val).lower()
-                elif isinstance(val, (float, six.integer_types)):
+                elif isinstance(val, (float)):
                     filter_strings[index] = str(val)
+                elif isinstance(val, six.integer_types):
+                    if val.bit_length() <= 32:
+                        filter_strings[index] = str(val)
+                    else:
+                        filter_strings[index] = "{}L".format(str(val))
                 elif isinstance(val, datetime):
                     filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
                 elif isinstance(val, UUID):
                     filter_strings[index] = "guid'{}'".format(str(val))
+                elif isinstance(val, six.binary_type):
+                    v = str(hexlify(val))
+                    if v[0] == 'b': # Python 3 adds a 'b' and quotations, python 2.7 does neither
+                        v = v[2:-1]
+                    filter_strings[index] = "X'{}'".format(v)
                 else:
                     filter_strings[index] = "'{}'".format(val.replace("'", "''"))
         return ' '.join(filter_strings)
@@ -215,11 +225,9 @@ def _add_entity_properties(source):
             mtype, value = conv(value)
         elif isinstance(value, datetime):
             mtype, value = _to_entity_datetime(value)
-        elif isinstance(value, EntityProperty):
-            conv = _EDM_TO_ENTITY_CONVERSIONS.get(value.type)
-            if conv is None:
-                raise TypeError(_ERROR_TYPE_NOT_SUPPORTED.format(value.type))
-            mtype, value = conv(value.value)
+        elif isinstance(value, tuple):
+            conv = _EDM_TO_ENTITY_CONVERSIONS.get(value[1])
+            mtype, value = conv(value[0])
         else:
             conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
             if conv is None and value is not None:

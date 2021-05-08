@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
 from datetime import datetime
 import json
 import sys
@@ -168,3 +169,15 @@ async def test_subprocess_error_does_not_expose_token(output):
 
     assert "secret value" not in str(ex.value)
     assert "secret value" not in repr(ex.value)
+
+
+async def test_timeout():
+    """The credential should kill the subprocess after a timeout"""
+
+    proc = mock.Mock(communicate=mock.Mock(side_effect=asyncio.TimeoutError), returncode=None)
+    with mock.patch(SUBPROCESS_EXEC, mock.Mock(return_value=get_completed_future(proc))):
+        with pytest.raises(CredentialUnavailableError):
+            await AzureCliCredential().get_token("scope")
+
+    assert proc.communicate.call_count == 1
+    assert proc.kill.call_count == 1
