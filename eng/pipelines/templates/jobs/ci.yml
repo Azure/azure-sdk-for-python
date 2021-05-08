@@ -138,14 +138,11 @@ jobs:
             GenerateVMJobs: true
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
-      CloudConfig:
-        Cloud: Public
       AdditionalParameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestPipeline: ${{ parameters.TestPipeline }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-        InjectedPackages: ${{ parameters.InjectedPackages }}
         CondaArtifacts: ${{ parameters.CondaArtifacts}}
 
   - job: 'RunRegression'

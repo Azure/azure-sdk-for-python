@@ -25,6 +25,9 @@ parameters:
   - name: UsePlatformContainer
     type: boolean
     default: false
+  - name: TestTimeoutInMinutes
+    type: number
+    default: 0
 
 jobs:
   - job:
