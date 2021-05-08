@@ -521,7 +521,7 @@ class FieldValue(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. Type of field value. Possible values include: "string", "date", "time",
-     "phoneNumber", "number", "integer", "array", "object", "selectionMark", "gender", "country".
+     "phoneNumber", "number", "integer", "array", "object", "selectionMark", "countryRegion".
     :type type: str or ~azure.ai.formrecognizer.v2_1.models.FieldValueType
     :param value_string: String value.
     :type value_string: str
@@ -542,10 +542,8 @@ class FieldValue(msrest.serialization.Model):
     :param value_selection_mark: Selection mark value. Possible values include: "selected",
      "unselected".
     :type value_selection_mark: str or ~azure.ai.formrecognizer.v2_1.models.FieldValueSelectionMark
-    :param value_gender: Gender value: M, F, or X. Possible values include: "M", "F", "X".
-    :type value_gender: str or ~azure.ai.formrecognizer.v2_1.models.FieldValueGender
-    :param value_country: 3-letter country code (ISO 3166-1 alpha-3).
-    :type value_country: str
+    :param value_country_region: 3-letter country code (ISO 3166-1 alpha-3).
+    :type value_country_region: str
     :param text: Text content of the extracted field.
     :type text: str
     :param bounding_box: Bounding box of the field value, if appropriate.
@@ -577,8 +575,7 @@ class FieldValue(msrest.serialization.Model):
         'value_array': {'key': 'valueArray', 'type': '[FieldValue]'},
         'value_object': {'key': 'valueObject', 'type': '{FieldValue}'},
         'value_selection_mark': {'key': 'valueSelectionMark', 'type': 'str'},
-        'value_gender': {'key': 'valueGender', 'type': 'str'},
-        'value_country': {'key': 'valueCountry', 'type': 'str'},
+        'value_country_region': {'key': 'valueCountryRegion', 'type': 'str'},
         'text': {'key': 'text', 'type': 'str'},
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'confidence': {'key': 'confidence', 'type': 'float'},
@@ -601,8 +598,7 @@ class FieldValue(msrest.serialization.Model):
         self.value_array = kwargs.get('value_array', None)
         self.value_object = kwargs.get('value_object', None)
         self.value_selection_mark = kwargs.get('value_selection_mark', None)
-        self.value_gender = kwargs.get('value_gender', None)
-        self.value_country = kwargs.get('value_country', None)
+        self.value_country_region = kwargs.get('value_country_region', None)
         self.text = kwargs.get('text', None)
         self.bounding_box = kwargs.get('bounding_box', None)
         self.confidence = kwargs.get('confidence', None)
