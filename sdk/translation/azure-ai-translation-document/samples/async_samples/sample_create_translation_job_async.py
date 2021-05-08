@@ -40,10 +40,10 @@ async def sample_translation_async():
         TranslationTarget
     )
 
-    endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
-    key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
-    source_container_url = os.environ["AZURE_SOURCE_CONTAINER_URL"]
-    target_container_url = os.environ["AZURE_TARGET_CONTAINER_URL"]
+    endpoint = "https://krpratic.cognitiveservices.azure.com/"
+    key = "2c3b8a4e74bc4ea6a22b3483925a626f"
+    source_container_url = "https://krpraticstorageacc.blob.core.windows.net/testingtranslation?sp=rl&st=2021-05-07T16:07:07Z&se=2021-05-08T16:07:07Z&sv=2020-02-10&sr=c&sig=SphgvDXk5KAFivEKYoYq28hw0UWnnJDhYvaGNwVq538%3D"
+    target_container_url = "https://krpraticstorageacc.blob.core.windows.net/gualala?sp=wl&st=2021-05-07T16:07:22Z&se=2021-05-08T16:07:22Z&sv=2020-02-10&sr=c&sig=I8j%2B6nsQzrgsKHH0GSrzX%2FZRh5Yh%2FJyYVqBbwIbS%2FWo%3D"
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
