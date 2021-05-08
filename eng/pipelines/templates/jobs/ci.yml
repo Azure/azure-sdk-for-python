@@ -130,7 +130,7 @@ jobs:
     - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
       parameters:
         JobTemplatePath: /eng/pipelines/templates/jobs/ci.conda.tests.yml
-        GeneratedJobName: generate_conda_matrix
+        GenerateJobName: generate_conda_matrix
         DependsOn:
           - 'Build'
         MatrixConfigs:
