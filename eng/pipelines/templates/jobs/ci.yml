@@ -138,6 +138,8 @@ jobs:
             GenerateVMJobs: true
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
+      CloudConfig:
+        Cloud: Public
       AdditionalParameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestPipeline: ${{ parameters.TestPipeline }}

@@ -28,6 +28,9 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 0
+  - name: CloudConfig
+    type: object
+    default: {}
 
 jobs:
   - job:
