@@ -187,7 +187,7 @@ class AioHttpTransport(AsyncHttpTransport):
             )
             response = AioHttpTransportResponse(request, result,
                                                 self.connection_config.data_block_size,
-                                                decompress=not(auto_decompress))
+                                                decompress=not auto_decompress)
             if not stream_response:
                 await response.load_body()
         except aiohttp.client_exceptions.ClientResponseError as err:
