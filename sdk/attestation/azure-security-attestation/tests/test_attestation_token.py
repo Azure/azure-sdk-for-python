@@ -19,7 +19,11 @@ from cryptography.hazmat.primitives.asymmetric import ec, rsa
 from  cryptography.x509 import BasicConstraints, CertificateBuilder, NameOID, SubjectAlternativeName
 import base64
 import pytest
-from azure.security.attestation import AttestationToken, AttestationSigningKey, TokenValidationOptions, AttestationTokenValidationException
+from azure.security.attestation import (
+    AttestationToken,
+    AttestationSigningKey,
+    TokenValidationOptions,
+    AttestationTokenValidationException)
 
 
 class TestAzureAttestationToken(object):

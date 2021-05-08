@@ -360,7 +360,7 @@ class AttestationToken(Generic[T]):
                 signers)
             signer = self._validate_signature(candidate_certificates)
             if (signer is None):
-                raise Exception(
+                raise AttestationTokenValidationException(
                     "Could not find the certificate used to sign the token.")
         self._validate_static_properties(options)
 
