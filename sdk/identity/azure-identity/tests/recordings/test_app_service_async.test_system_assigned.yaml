@@ -10,7 +10,7 @@ interactions:
     uri: https://msi-endpoint/token?api-version=2017-09-01&resource=https://management.azure.com
   response:
     body:
-      string: '{"access_token": "redacted-89d6d4", "expires_on": "04/28/2021 22:44:48
+      string: '{"access_token": "redacted", "expires_on": "04/28/2021 22:44:48
         +00:00", "resource": "https://management.azure.com", "token_type": "Bearer",
         "client_id": "bdd6fcc1-7805-4948-82e7-ad3c7afec470"}'
     headers:
