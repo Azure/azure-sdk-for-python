@@ -72,9 +72,9 @@ class RecognizeIdDocumentsSampleAsync(object):
                 address = id_document.fields.get("Address")
                 if address:
                     print("Address: {} has confidence: {}".format(address.value, address.confidence))
-                country = id_document.fields.get("Country")
+                country = id_document.fields.get("CountryRegion")
                 if country:
-                    print("Country: {} has confidence: {}".format(country.value, country.confidence))
+                    print("Country Region: {} has confidence: {}".format(country.value, country.confidence))
                 region = id_document.fields.get("Region")
                 if region:
                     print("Region: {} has confidence: {}".format(region.value, region.confidence))

@@ -10,6 +10,7 @@ Note: this version will be the last to officially support Python 3.5, future ver
 - `begin_recognize_id_documents_from_url` renamed to `begin_recognize_identity_documents_from_url`
 - Removed field value types "gender" and "country" from the `FieldValueType` enum.
 - Added field value type "countryRegion" to the `FieldValueType` enum.
+- "Country" field name for identity documents was renamed to "CountryRegion"
 
 ## 3.1.0b4 (2021-04-06)
 
