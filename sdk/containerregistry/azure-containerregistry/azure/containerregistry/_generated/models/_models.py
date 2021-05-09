@@ -953,7 +953,7 @@ class PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedS
 
     :param grant_type: Required. Grant type is expected to be refresh_token. Possible values
      include: "refresh_token", "password".
-    :type grant_type: str or ~container_registry.models.TokenGrantType
+    :type grant_type: str or ~container_registry.models.Enum2
     :param service: Required. Indicates the name of your Azure container registry.
     :type service: str
     :param scope: Required. Which is expected to be a valid scope, and can be specified more than
