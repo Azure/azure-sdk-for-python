@@ -312,7 +312,6 @@ def import_image(repository, tags):
 
 @pytest.fixture(scope="session")
 def load_registry():
-    return
     repos = [
         "library/hello-world",
         "library/alpine",
