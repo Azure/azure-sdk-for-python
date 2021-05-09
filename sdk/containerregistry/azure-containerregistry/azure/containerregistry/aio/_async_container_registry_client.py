@@ -21,7 +21,7 @@ from ._async_base_client import ContainerRegistryBaseClient, AsyncTransportWrapp
 from ._async_container_repository_client import ContainerRepositoryClient
 from .._generated.models import AcrErrors
 from .._helpers import _parse_next_link
-from .._models import RepositoryProperties, DeletedRepositoryResult
+from .._models import RepositoryProperties, DeleteRepositoryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -37,6 +37,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
         :returns: None
         :raises: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
+                :start-after: [START create_registry_client]
+                :end-before: [END create_registry_client]
+                :language: python
+                :dedent: 8
+                :caption: Instantiate an instance of `ContainerRegistryClient`
         """
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
@@ -45,17 +54,26 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def delete_repository(self, repository: str, **kwargs: Dict[str, Any]) -> DeletedRepositoryResult:
+    async def delete_repository(self, repository: str, **kwargs: Dict[str, Any]) -> DeleteRepositoryResult:
         """Delete a repository
 
         :param repository: The repository to delete
         :type repository: str
         :returns: Object containing information about the deleted repository
-        :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
+        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
+                :start-after: [START delete_repository]
+                :end-before: [END delete_repository]
+                :language: python
+                :dedent: 8
+                :caption: Delete a repository from the `ContainerRegistryClient`
         """
         result = await self._client.container_registry.delete_repository(repository, **kwargs)
-        return DeletedRepositoryResult._from_generated(result)  # pylint: disable=protected-access
+        return DeleteRepositoryResult._from_generated(result)  # pylint: disable=protected-access
 
     @distributed_trace
     def list_repositories(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[str]:
@@ -71,6 +89,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :return: ItemPaged[str]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_delete_old_tags_async.py
+                :start-after: [START list_repositories]
+                :end-before: [END list_repositories]
+                :language: python
+                :dedent: 8
+                :caption: List repositories in a container registry account
         """
         n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
@@ -168,6 +195,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param repository: The repository to create a client for
         :type repository: str
         :returns: :class:`~azure.containerregistry.aio.ContainerRepositoryClient`
+
+        Example
+
+        .. code-block:: python
+
+            from azure.containerregistry.aio import ContainerRepositoryClient
+            from azure.identity.aio import DefaultAzureCredential
+
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRegistryClient(account_url, DefaultAzureCredential())
+            repository_client = client.get_repository_client("my_repository")
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(

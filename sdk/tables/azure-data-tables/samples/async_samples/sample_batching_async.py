@@ -10,7 +10,7 @@
 FILE: sample_batching.py
 
 DESCRIPTION:
-    These samples demonstrate how to use the batching API to perform multiple
+    These samples demonstrate how to use the batch transaction API to perform multiple
     operations within a single request
 
 USAGE:
@@ -32,17 +32,16 @@ class CreateClients(object):
 
     def __init__(self):
         load_dotenv(find_dotenv())
-        # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name,
             self.access_key,
-            self.endpoint
+            self.endpoint_suffix
         )
-        self.table_name = "sampleBatchingAsync"
+        self.table_name = "sampleTransactionAsync"
 
     async def _create_entities(self):
         from azure.core.exceptions import ResourceExistsError
@@ -84,13 +83,13 @@ class CreateClients(object):
                 print("entity already exists")
                 pass
 
-    async def sample_batching(self):
+    async def sample_transaction(self):
         # Instantiate a TableServiceClient using a connection string
 
 
         # [START batching]
         from azure.data.tables.aio import TableClient
-        from azure.data.tables import UpdateMode, BatchErrorException
+        from azure.data.tables import TableTransactionError
         from azure.core.exceptions import ResourceExistsError
         self.table_client = TableClient.from_connection_string(
             conn_str=self.connection_string, table_name=self.table_name)
@@ -103,15 +102,16 @@ class CreateClients(object):
 
         await self._create_entities()
 
-        batch = self.table_client.create_batch()
-        batch.create_entity(self.entity1)
-        batch.delete_entity(partition_key=self.entity2['PartitionKey'], row_key=self.entity2['RowKey'])
-        batch.upsert_entity(self.entity3)
-        batch.update_entity(self.entity4, mode=UpdateMode.REPLACE)
+        operations = [
+            ('create', self.entity1),
+            ('delete', self.entity2),
+            ('upsert', self.entity3),
+            ('update', self.entity4, {'mode': 'replace'})
+        ]
         try:
-            await self.table_client.send_batch(batch)
-        except BatchErrorException as e:
-            print("There was an error with the batch operation")
+            await self.table_client.submit_transaction(operations)
+        except TableTransactionError as e:
+            print("There was an error with the transaction operation")
             print("Error: {}".format(e))
         # [END batching]
 
@@ -122,7 +122,7 @@ class CreateClients(object):
 
 async def main():
     sample = CreateClients()
-    await sample.sample_batching()
+    await sample.sample_transaction()
     await sample.clean_up()
 
 if __name__ == '__main__':

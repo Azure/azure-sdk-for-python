@@ -82,6 +82,7 @@ except (SyntaxError, ImportError):
 from ._postgre_sql_management_client_enums import (
     ConfigurationDataType,
     CreateMode,
+    Enum8,
     HAEnabledEnum,
     OperationOrigin,
     ServerHAState,
@@ -129,6 +130,7 @@ __all__ = [
     'VirtualNetworkSubnetUsageResult',
     'ConfigurationDataType',
     'CreateMode',
+    'Enum8',
     'HAEnabledEnum',
     'OperationOrigin',
     'ServerHAState',

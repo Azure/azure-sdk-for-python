@@ -167,10 +167,24 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             assert rule_desc.filter.correlation_id == 'testcid'
             assert rule_desc.action.sql_expression == "SET Priority = 'low'"
 
+            mgmt_service.update_rule(
+                topic_description.name,
+                subscription_description.name,
+                rule_desc,
+                filter=CorrelationRuleFilter(correlation_id='updatedcid'),
+                action=None
+            )
+
+            rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name)
+            assert type(rule_desc.filter) == CorrelationRuleFilter
+            assert rule_desc.filter.correlation_id == 'updatedcid'
+            assert rule_desc.action == None
+
         finally:
             mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -301,10 +315,24 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             assert rule_desc.filter.correlation_id == 'testcid'
             assert rule_desc.action.sql_expression == "SET Priority = 'low'"
 
+            mgmt_service.update_rule(
+                topic_description.name,
+                subscription_description.name,
+                dict(rule_desc),
+                filter=CorrelationRuleFilter(correlation_id='updatedcid'),
+                action=None
+            )
+
+            rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name)
+            assert type(rule_desc.filter) == CorrelationRuleFilter
+            assert rule_desc.filter.correlation_id == 'updatedcid'
+            assert rule_desc.action == None
+
         finally:
             mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')

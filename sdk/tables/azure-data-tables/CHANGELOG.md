@@ -2,12 +2,23 @@
 
 ## 12.0.0b7 (Unreleased)
 **Breaking**
+* The `account_url` parameter in the client constructors has been renamed to `endpoint`.
+* The `TableEntity` object now acts exclusively like a dictionary, and no longer supports key access via attributes.
+* Metadata of an entity is now accessed via `TableEntity.metadata` attribute rather than a method.
 * Removed explicit `LinearRetry` and `ExponentialRetry` in favor of keyword parameter.
 * Renamed `filter` parameter in query APIs to `query_filter`.
 * The `location_mode` attribute on clients is now read-only. This has been added as a keyword parameter to the constructor.
 * The `TableItem.table_name` has been renamed to `TableItem.name`.
+* Removed the `TableClient.create_batch` method along with the `TableBatchOperations` object. The transactional batching is now supported via a simple Python list of tuples.
+* `TableClient.send_batch` has been renamed to `TableClient.submit_transaction`.
 * Removed `BatchTransactionResult` object in favor of returning an iterable of batched entities with returned metadata.
 * Removed Batching context-manager behavior
+* `EntityProperty` is now a NampedTuple, and can be represented by a tuple of `(entity, EdmType)`.
+* Renamed `EntityProperty.type` to `EntityProperty.edm_type`.
+* `BatchErrorException` has been renamed to `TableTransactionError`.
+* The `location_mode` is no longer a public attribute on the Clients.
+* The only supported credentials are `AzureNamedKeyCredential`, `AzureSasCredential`, or authentication by connection string
+* Removed `date` and `api_version` from the `TableItem` class.
 
 **Fixes**
 * Fixed issue with Cosmos merge operations.
@@ -15,8 +26,10 @@
 * Removed unused legacy client-side encryption attributes from client classes.
 * Fixed sharing of pipeline between service/table clients.
 * Added support for Azurite storage emulator
+* Throws a `RequestTooLargeError` on transaction requests that return a 413 error code
 * Added support for Int64 and Binary types in query filters
-* Throws a `RequestTooLargeError` on batch requests that return a 413 error code
+* Added support for `select` keyword parameter to `TableClient.get_entity()`.
+* On `update_entity` and `delete_entity` if no `etag` is supplied via kwargs, the `etag` in the entity will be used if it is in the entity.
 
 ## 12.0.0b6 (2021-04-06)
 * Updated deserialization of datetime fields in entities to support preservation of the service format with additional decimal place.
