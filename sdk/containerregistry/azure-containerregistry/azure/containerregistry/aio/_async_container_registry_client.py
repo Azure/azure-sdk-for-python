@@ -233,13 +233,3 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             pipeline=_pipeline,
             **kwargs
         )
-
-    @distributed_trace
-    def get_artifact(self, repository_name: str, tag_or_digest: str, **kwargs: Dict[str, Any]) -> RegistryArtifact:
-        """Get a Registry Artifact object
-        :param str repository_name: Name of the repository
-        :param str tag_or_digest: The tag or digest of the artifact
-        :returns: :class:`~azure.containerregistry.RegistryArtifact`
-        :raises: None
-        """
-        return RegistryArtifact(self._endpoint, repository_name, tag_or_digest, self._credential, **kwargs)

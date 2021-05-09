@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING, Dict, Any
 
 from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
 from ._generated.models import ContentProperties as GeneratedContentProperties
-from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
 
 if TYPE_CHECKING:
     from ._generated.models import ManifestAttributesBase
