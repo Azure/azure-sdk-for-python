@@ -1,0 +1,68 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 21 Apr 2021 01:04:05 GMT
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"identity": {"id": "sanitized"}}'
+    headers:
+      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      content-type: application/json; charset=utf-8
+      date: Wed, 21 Apr 2021 01:04:04 GMT
+      ms-cv: +Ld0uuJrsEy+Fmi0FwHE8A.0
+      request-context: appId=
+      strict-transport-security: max-age=2592000
+      transfer-encoding: chunked
+      x-processing-time: 12ms
+    status:
+      code: 201
+      message: Created
+    url: https://lakshmanscommunication-communication.communication.azure.com/identities?api-version=2021-03-07
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 21 Apr 2021 01:04:05 GMT
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+  response:
+    body:
+      string: '{"error": {"code": "ValidationError", "message": "Scopes: The Scopes
+        field is required.", "target": "Scopes"}}'
+    headers:
+      content-type: application/json
+      date: Wed, 21 Apr 2021 01:04:04 GMT
+      ms-cv: o4QM5R8B1EaTu9t9KLIA2g.0
+      request-context: appId=
+      strict-transport-security: max-age=2592000
+      transfer-encoding: chunked
+      x-processing-time: 19ms
+    status:
+      code: 400
+      message: Bad Request
+    url: https://lakshmanscommunication-communication.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+version: 1

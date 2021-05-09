@@ -58,7 +58,7 @@ The following section provides several code snippets covering some of the most c
 Use the `create_user` method to create a new user.
 ```python
 user = identity_client.create_user()
-print("User created with id:" + user.identifier)
+print("User created with id:" + user.properties['id'])
 ```
 
 ### Issuing or Refreshing an access token for a user
@@ -77,7 +77,7 @@ For convenience, use `create_user_and_token` to create a new user and issue a to
 
 ```python
 user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
-print("User id:" + user.identifier)
+print("User id:" + user.properties['id'])
 print("Token issued with value: " + tokenresponse.token)
 ```
 

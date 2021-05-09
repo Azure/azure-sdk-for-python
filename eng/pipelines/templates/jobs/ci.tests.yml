@@ -1,0 +1,112 @@
+parameters:
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: TestPipeline
+    type: boolean
+    default: false
+  - name: TestMarkArgument
+    type: string
+    default: ''
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+  - name: TestTimeoutInMinutes
+    type: number
+    default: 0
+  - name: ToxEnvParallel
+    type: string
+    default: '--tenvparallel'
+  - name: InjectedPackages
+    type: string
+    default: ''
+  - name: Matrix
+    type: string
+  - name: DependsOn
+    type: string
+    default: ''
+  - name: UsePlatformContainer
+    type: boolean
+    default: false
+  - name: CloudConfig
+    type: object
+    default: {}
+
+jobs:
+  - job:
+    displayName: 'Test'
+    condition: |
+      and(
+        succeededOrFailed(),
+        ne(variables['Skip.Test'], 'true'),
+        ne(${{ parameters.Matrix }}, '{}')
+      )
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+
+    dependsOn:
+       - ${{ parameters.DependsOn }}
+
+    strategy:
+      matrix: $[ ${{ parameters.Matrix }} ]
+
+    pool:
+      name: $(Pool)
+      vmImage: $(OSVmImage)
+
+    ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
+      # Add a default so the job doesn't fail when the matrix is empty
+      container: $[ variables['Container'] ]
+
+    variables:
+    - template: ../variables/globals.yml
+    - name: InjectedPackages
+      value: ${{ parameters.InjectedPackages }}
+
+    steps:
+    - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+      parameters:
+        AgentImage: $(OSVmImage)
+
+    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+      parameters:
+        PackageName: "azure-template"
+        ServiceDirectory: "template"
+        TestPipeline: ${{ parameters.TestPipeline }}
+
+    - pwsh: |
+        $toxenvvar = "whl,sdist"
+        if ('$(System.TeamProject)' -eq 'internal') {
+          $toxenvvar = "whl,sdist,depends,latestdependency,mindependency,whl_no_aio"
+        }
+
+        # ensure that the variable is unset. if it isn't, use the value discovered there
+        if ('$(Run.ToxCustomEnvs)' -ne ('$' + '(Run.ToxCustomEnvs)'))
+        {
+          $toxenvvar = '$(Run.ToxCustomEnvs)'
+        }
+
+        echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
+      displayName: "Set Tox Environment"
+
+    - template: ../steps/build-test.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        OSVmImage: $(OSVmImage)
+        CoverageArg: $(CoverageArg)
+        PythonVersion: $(PythonVersion)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ToxTestEnv: $(toxenv)
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        InjectedPackages: $(InjectedPackages)
+        BeforeTestSteps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: 'packages'
+              targetPath: $(Build.ArtifactStagingDirectory)
+
+          - template: ../steps/set-dev-build.yml
+            parameters:
+              ServiceDirectory: ${{ parameters.ServiceDirectory }}
+              BuildTargetingString: ${{ parameters.BuildTargetingString }}

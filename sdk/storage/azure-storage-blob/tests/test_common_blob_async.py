@@ -227,6 +227,25 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertTrue(prop)
         self.assertEqual(snapshot['snapshot'], prop.snapshot)
 
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_from_generator(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+        blob_name = self._get_blob_reference()
+        # Act
+        raw_data = self.get_random_bytes(3 * 1024 * 1024) + b"hello random text"
+
+        def data_generator():
+            for i in range(0, 2):
+                yield raw_data
+
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.upload_blob(data=data_generator())
+        dl_blob = await blob.download_blob()
+        data = await dl_blob.readall()
+
+        # Assert
+        self.assertEqual(data, raw_data*2)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1495,7 +1514,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
     async def test_abort_copy_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account, storage_account_key)
-        source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
+        source_blob = "https://www.gutenberg.org/files/59466/59466-0.txt"
         copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
 
         # Act

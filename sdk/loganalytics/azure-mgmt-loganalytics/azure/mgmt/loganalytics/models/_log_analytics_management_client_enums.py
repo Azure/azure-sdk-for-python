@@ -26,6 +26,15 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class BillingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Configures whether billing will be only on the cluster or each workspace will be billed by its
+    proportional use. This does not change the overall billing, only how it will be distributed.
+    Default value is 'Cluster'
+    """
+
+    CLUSTER = "Cluster"
+    WORKSPACES = "Workspaces"
+
 class ClusterEntityStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state of the cluster.
     """
@@ -48,12 +57,18 @@ class DataIngestionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of data ingestion for this workspace.
     """
 
-    RESPECT_QUOTA = "RespectQuota"  #: Ingestion enabled following daily cap quota reset, or subscription enablement.
-    FORCE_ON = "ForceOn"  #: Ingestion started following service setting change.
-    FORCE_OFF = "ForceOff"  #: Ingestion stopped following service setting change.
-    OVER_QUOTA = "OverQuota"  #: Reached daily cap quota, ingestion stopped.
-    SUBSCRIPTION_SUSPENDED = "SubscriptionSuspended"  #: Ingestion stopped following suspended subscription.
-    APPROACHING_QUOTA = "ApproachingQuota"  #: 80% of daily cap quota reached.
+    #: Ingestion enabled following daily cap quota reset, or subscription enablement.
+    RESPECT_QUOTA = "RespectQuota"
+    #: Ingestion started following service setting change.
+    FORCE_ON = "ForceOn"
+    #: Ingestion stopped following service setting change.
+    FORCE_OFF = "ForceOff"
+    #: Reached daily cap quota, ingestion stopped.
+    OVER_QUOTA = "OverQuota"
+    #: Ingestion stopped following suspended subscription.
+    SUBSCRIPTION_SUSPENDED = "SubscriptionSuspended"
+    #: 80% of daily cap quota reached.
+    APPROACHING_QUOTA = "ApproachingQuota"
 
 class DataSourceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The kind of the DataSource.
@@ -103,10 +118,11 @@ class DataSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ALERTS = "Alerts"
 
 class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The identity type.
+    """Type of managed service identity.
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
     NONE = "None"
 
 class LinkedServiceEntityStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
@@ -122,8 +138,10 @@ class PublicNetworkAccessType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     """The network access type for operating on the Log Analytics Workspace. By default it is Enabled
     """
 
-    ENABLED = "Enabled"  #: Enables connectivity to Log Analytics through public DNS.
-    DISABLED = "Disabled"  #: Disables public connectivity to Log Analytics through public DNS.
+    #: Enables connectivity to Log Analytics through public DNS.
+    ENABLED = "Enabled"
+    #: Disables public connectivity to Log Analytics through public DNS.
+    DISABLED = "Disabled"
 
 class PurgeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the operation represented by the requested Id.
@@ -188,3 +206,4 @@ class WorkspaceSkuNameEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PER_GB2018 = "PerGB2018"
     STANDALONE = "Standalone"
     CAPACITY_RESERVATION = "CapacityReservation"
+    LA_CLUSTER = "LACluster"

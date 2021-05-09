@@ -28,9 +28,9 @@ import asyncio
 
 class ChatClientSamplesAsync(object):
     from azure.communication.identity import CommunicationIdentityClient
-    connection_string = os.environ.get("AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING", None)
+    connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", None)
     if not connection_string:
-        raise ValueError("Set AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING env before run this sample.")
+        raise ValueError("Set COMMUNICATION_SAMPLES_CONNECTION_STRING env before run this sample.")
 
     identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
     user = identity_client.create_user()
@@ -64,15 +64,15 @@ class ChatClientSamplesAsync(object):
         # [START create_thread]
         from datetime import datetime
         from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
-        from azure.communication.chat import ChatThreadParticipant
+        from azure.communication.chat import ChatParticipant
 
         # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         async with chat_client:
 
             topic = "test topic"
-            participants = [ChatThreadParticipant(
-                user=self.user,
+            participants = [ChatParticipant(
+                identifier=self.user,
                 display_name='name',
                 share_history_time=datetime.utcnow()
             )]

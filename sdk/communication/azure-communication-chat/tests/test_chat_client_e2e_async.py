@@ -16,7 +16,7 @@ from azure.communication.chat.aio import (
     CommunicationTokenCredential
 )
 from azure.communication.chat import (
-    ChatThreadParticipant
+    ChatParticipant
 )
 from azure.communication.identity._shared.utils import parse_connection_str
 from azure_devtools.scenario_tests import RecordingProcessor
@@ -24,6 +24,7 @@ from helper import URIIdentityReplacer
 from chat_e2e_helper import ChatURIReplacer
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor
+from _shared.utils import get_http_logging_policy
 
 
 class ChatClientTestAsync(AsyncCommunicationTestCase):
@@ -47,7 +48,11 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
         self.token = token_response.token
 
         # create ChatClient
-        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
+        self.chat_client = ChatClient(
+            self.endpoint, 
+            CommunicationTokenCredential(self.token), 
+            http_logging_policy=get_http_logging_policy()
+        )
 
     def tearDown(self):
         super(ChatClientTestAsync, self).tearDown()
@@ -61,8 +66,8 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
         topic = "test topic"
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        participants = [ChatThreadParticipant(
-            user=self.user,
+        participants = [ChatParticipant(
+            identifier=self.user,
             display_name='name',
             share_history_time=share_history_time
         )]

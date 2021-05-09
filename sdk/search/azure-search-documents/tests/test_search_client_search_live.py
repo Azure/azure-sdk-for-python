@@ -56,7 +56,7 @@ class SearchClientTest(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
-        select = ("hotelName", "category", "description")
+        select = ["hotelName", "category", "description"]
         results = list(client.search(
             search_text="WiFi",
             filter="category eq 'Budget'",
@@ -83,7 +83,7 @@ class SearchClientTest(AzureMgmtTestCase):
             endpoint, index_name, AzureKeyCredential(api_key)
         )
 
-        select = ("hotelName", "category", "description")
+        select = ["hotelName", "category", "description"]
         results = list(client.search(
             search_text="WiFi",
             filter="category eq 'Budget'",

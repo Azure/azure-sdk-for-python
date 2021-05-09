@@ -1,8 +1,40 @@
 # Release History
 
-## 12.0.0b6 (Unreleased)
+## 12.0.0b7 (2021-05-11)
+**Breaking**
+* The `account_url` parameter in the client constructors has been renamed to `endpoint`.
+* The `TableEntity` object now acts exclusively like a dictionary, and no longer supports key access via attributes.
+* Metadata of an entity is now accessed via `TableEntity.metadata` attribute rather than a method.
+* Removed explicit `LinearRetry` and `ExponentialRetry` in favor of keyword parameter.
+* Renamed `filter` parameter in query APIs to `query_filter`.
+* The `location_mode` attribute on clients is now read-only. This has been added as a keyword parameter to the constructor.
+* The `TableItem.table_name` has been renamed to `TableItem.name`.
+* Removed the `TableClient.create_batch` method along with the `TableBatchOperations` object. The transactional batching is now supported via a simple Python list of tuples.
+* `TableClient.send_batch` has been renamed to `TableClient.submit_transaction`.
+* Removed `BatchTransactionResult` object in favor of returning an iterable of batched entities with returned metadata.
+* Removed Batching context-manager behavior
+* `EntityProperty` is now a NampedTuple, and can be represented by a tuple of `(entity, EdmType)`.
+* Renamed `EntityProperty.type` to `EntityProperty.edm_type`.
+* `BatchErrorException` has been renamed to `TableTransactionError`.
+* The `location_mode` is no longer a public attribute on the Clients.
+* The only supported credentials are `AzureNamedKeyCredential`, `AzureSasCredential`, or authentication by connection string
+* Removed `date` and `api_version` from the `TableItem` class.
 
-- Passing a string parameter into a query filter will now be escaped to protect against injection.
+**Fixes**
+* Fixed issue with Cosmos merge operations.
+* Removed legacy Storage policies from pipeline.
+* Removed unused legacy client-side encryption attributes from client classes.
+* Fixed sharing of pipeline between service/table clients.
+* Added support for Azurite storage emulator
+* Throws a `RequestTooLargeError` on transaction requests that return a 413 error code
+* Added support for Int64 and Binary types in query filters
+* Added support for `select` keyword parameter to `TableClient.get_entity()`.
+* On `update_entity` and `delete_entity` if no `etag` is supplied via kwargs, the `etag` in the entity will be used if it is in the entity.
+
+## 12.0.0b6 (2021-04-06)
+* Updated deserialization of datetime fields in entities to support preservation of the service format with additional decimal place.
+* Passing a string parameter into a query filter will now be escaped to protect against injection.
+* Fixed bug in incrementing retries in async retry policy
 
 ## 12.0.0b5 (2021-03-09)
 * This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
@@ -27,6 +59,3 @@
 
 ## 12.0.0b1 (2020-09-08)
 This is the first beta of the `azure-data-tables` client library. The Azure Tables client library can seamlessly target either Azure Table storage or Azure Cosmos DB table service endpoints with no code changes.
-
-
-

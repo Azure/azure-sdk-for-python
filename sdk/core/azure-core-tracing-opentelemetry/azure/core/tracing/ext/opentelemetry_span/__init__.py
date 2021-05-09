@@ -125,11 +125,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     def kind(self, value):
         # type: (SpanKind) -> None
         """Set the span kind of this span."""
-        warnings.warn(
-            """Kind must be set while creating the span for Opentelemetry. It might be possible
-            that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
-            Try updating the azure pacakges to the latest versions."""
-        )
         kind = (
             OpenTelemetrySpanKind.CLIENT if value == SpanKind.CLIENT else
             OpenTelemetrySpanKind.PRODUCER if value == SpanKind.PRODUCER else
@@ -141,7 +136,14 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         )
         if kind is None:
             raise ValueError("Kind {} is not supported in OpenTelemetry".format(value))
-        self._span_instance._kind = kind # pylint: disable=protected-access
+        try:
+            self._span_instance._kind = kind # pylint: disable=protected-access
+        except AttributeError:
+            warnings.warn(
+                """Kind must be set while creating the span for Opentelemetry. It might be possible
+                that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
+                Try updating the azure packages to the latest versions."""
+            )
 
     def __enter__(self):
         """Start a span."""
@@ -224,15 +226,17 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :param headers: A key value pair dictionary
         :type headers: dict
         """
-        warnings.warn(
-            """Link must be added while creating the span for Opentelemetry. It might be possible
-            that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
-            Try updating the azure pacakges to the latest versions."""
-        )
         ctx = extract(headers)
         span_ctx = get_span_from_context(ctx).get_span_context()
         current_span = cls.get_current_span()
-        current_span._links.append(OpenTelemetryLink(span_ctx, attributes)) # pylint: disable=protected-access
+        try:
+            current_span._links.append(OpenTelemetryLink(span_ctx, attributes)) # pylint: disable=protected-access
+        except AttributeError:
+            warnings.warn(
+                """Link must be added while creating the span for Opentelemetry. It might be possible
+                that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
+                Try updating the azure packages to the latest versions."""
+            )
 
     @classmethod
     def get_current_span(cls):

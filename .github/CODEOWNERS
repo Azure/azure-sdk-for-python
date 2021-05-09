@@ -26,10 +26,12 @@
 /sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @xiafu-msft @tasherif-msft @kasobol-msft
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @xiangyan99
+/sdk/appconfiguration/                                               @xiangyan99 @seankane-msft
 
 /sdk/applicationinsights/azure-applicationinsights/                  @divya-jay @geneh @alongafni
 /sdk/loganalytics/azure-loganalytics/                                @divya-jay @geneh @alongafni
+
+/sdk/attestation/azure-security-attestation                          @larryosterman @anilba06 @Azure/azure-sdk-write-attestation
 
 # PRLabel: %Batch
 /sdk/batch/                                                          @cRui861 @paterasMSFT @dpwatrous @gingi @zfengms
@@ -71,6 +73,9 @@
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
 
+# PRLabel: %Models repository
+/sdk/modelsrepository/                                               @cartertinney @digimaun
+
 # PRLabel: %Machine Learning Compute
 /sdk/machinelearningcompute/                                         @shutchings
 
@@ -108,13 +113,16 @@
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico
 
 # PRLabel: %Cognitive - Translator
-/sdk/documenttranslation/                                            @kristapratico @mohamedshabanofficial
+/sdk/translation/                                                    @kristapratico @mohamedshabanofficial
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @seankane-msft
 
 # PRLabel: %Media
 /sdk/media/                                                          @naiteeks @bennage @giakas
+
+# PRLabel: %Container Registry
+/sdk/containerregistry/                                              @seankane-msft
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
@@ -127,5 +135,5 @@
 # Eng Sys
 ###########
 /eng/           @weshaggard @scbedd @mitchdenny @danieljurek
-/**/tests.yml   @danieljurek
+/**/tests.yml   @benbp
 /**/ci.yml      @mitchdenny

@@ -28,9 +28,9 @@ import os
 
 class ChatClientSamples(object):
     from azure.communication.identity import CommunicationIdentityClient
-    connection_string = os.environ.get("AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING", None)
+    connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", None)
     if not connection_string:
-        raise ValueError("Set AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING env before run this sample.")
+        raise ValueError("Set COMMUNICATION_SAMPLES_CONNECTION_STRING env before run this sample.")
 
     identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
     user = identity_client.create_user()
@@ -60,11 +60,10 @@ class ChatClientSamples(object):
         # [START create_thread]
         from datetime import datetime
 
-        from azure.communication.identity import CommunicationUserIdentifier
-
         from azure.communication.chat import(
             ChatClient,
-            ChatThreadParticipant,
+            ChatParticipant,
+            CommunicationUserIdentifier,
             CommunicationTokenCredential
         )
 
@@ -72,8 +71,8 @@ class ChatClientSamples(object):
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
 
         topic = "test topic"
-        participants = [ChatThreadParticipant(
-            user=user,
+        participants = [ChatParticipant(
+            identifier=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]

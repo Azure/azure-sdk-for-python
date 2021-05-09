@@ -53,7 +53,7 @@ class Resource(msrest.serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -899,7 +899,7 @@ class SystemData(msrest.serialization.Model):
     :param last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
     :type last_modified_by_type: str or ~azure.mgmt.maps.models.CreatedByType
-    :param last_modified_at: The type of identity that last modified the resource.
+    :param last_modified_at: The timestamp of resource last modification (UTC).
     :type last_modified_at: ~datetime.datetime
     """
 

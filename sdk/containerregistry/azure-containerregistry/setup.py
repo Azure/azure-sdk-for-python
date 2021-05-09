@@ -30,9 +30,11 @@ with open("README.md", encoding="utf-8") as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
+    include_package_data=True,
     description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     # ensure that these are updated to reflect the package owners' information
     long_description=long_description,
+    long_description_content_type="text/markdown",
     url="https://github.com/Azure/azure-sdk-for-python",
     author="Microsoft Corporation",
     author_email="azuresdkengsysadmins@microsoft.com",

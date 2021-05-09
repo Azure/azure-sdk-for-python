@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
+from typing import Dict, Any, Optional
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.pipeline import AsyncPipeline
@@ -12,6 +13,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     AsyncBearerTokenCredentialPolicy,
+    ContentDecodePolicy,
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -31,8 +33,7 @@ from .._utils import (
     prep_if_none_match,
 )
 from .._generated.aio import AzureAppConfiguration
-from .._generated.models import ErrorException
-from .._generated.aio._configuration_async import AzureAppConfigurationConfiguration
+from .._generated.aio._configuration import AzureAppConfigurationConfiguration
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._generated.models import KeyValue
@@ -46,8 +47,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from azure.core.async_paging import AsyncItemPaged
 
 
 class AzureAppConfigurationClient:
@@ -67,7 +67,7 @@ class AzureAppConfigurationClient:
     # pylint:disable=protected-access
 
     def __init__(self, base_url, credential, **kwargs):
-        # type: (str, Any, dict) -> None
+        # type: (str, Any, **Any) -> None
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -77,8 +77,10 @@ class AzureAppConfigurationClient:
         if not credential:
             raise ValueError("Missing credential")
 
+        self._credential_scopes = base_url.strip("/") + "/.default"
+
         self._config = AzureAppConfigurationConfiguration(
-            credential, base_url, **kwargs
+            credential, base_url, credential_scopes=self._credential_scopes, **kwargs
         )
         self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
@@ -87,6 +89,7 @@ class AzureAppConfigurationClient:
         self._sync_token_policy = None
 
         pipeline = kwargs.get("pipeline")
+        self._sync_token_policy = SyncTokenPolicy()
 
         if pipeline is None:
             self._sync_token_policy = SyncTokenPolicy()
@@ -96,20 +99,20 @@ class AzureAppConfigurationClient:
             )
 
         self._impl = AzureAppConfiguration(
-            credentials=credential, endpoint=base_url, pipeline=pipeline
+            credential, base_url, credential_scopes=self._credential_scopes, pipeline=pipeline
         )
 
     @classmethod
     def from_connection_string(cls, connection_string, **kwargs):
-        # type: (str, dict) -> AzureAppConfigurationClient
+        # type: (str, **Any) -> AzureAppConfigurationClient
         """Create AzureAppConfigurationClient from a Connection String.
-
-            :param connection_string: Connection String
-                (one of the access keys of the Azure App Configuration resource)
-                used to access the Azure App Configuration.
-            :type connection_string: str
-
         This is the async version of :class:`azure.appconfiguration.AzureAppConfigurationClient`
+
+        :param str connection_string: Connection String
+            (one of the access keys of the Azure App Configuration resource)
+            used to access the Azure App Configuration.
+        :return: An AzureAppConfigurationClient authenticated with the connection string
+        :rtype: :class:`~azure.appconfiguration.AzureAppConfigurationClient`
 
         Example
 
@@ -156,6 +159,7 @@ class AzureAppConfigurationClient:
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),
                 HttpLoggingPolicy(**kwargs),
+                ContentDecodePolicy(**kwargs),
             ]
 
         if not transport:
@@ -167,9 +171,8 @@ class AzureAppConfigurationClient:
         )
 
     @distributed_trace
-    def list_configuration_settings(
-        self, key_filter=None, label_filter=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
+    def list_configuration_settings(self, key_filter=None, label_filter=None, **kwargs):
+        # type: (Optional[str], Optional[str], **Any) -> AsyncItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
@@ -184,7 +187,7 @@ class AzureAppConfigurationClient:
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
-        :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
 
         Example
@@ -216,13 +219,14 @@ class AzureAppConfigurationClient:
                 key=key_filter,
                 select=select,
                 cls=lambda objs: [
-                    ConfigurationSetting._from_key_value(x) for x in objs
+                    ConfigurationSetting._from_generated(x) for x in objs
                 ],
                 error_map=error_map,
                 **kwargs
             )
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -235,7 +239,7 @@ class AzureAppConfigurationClient:
         match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, Optional[str], Optional[str], Optional[MatchConditions], dict) -> ConfigurationSetting
+        # type: (str, Optional[str], Optional[str], Optional[MatchConditions], **Any) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
@@ -245,11 +249,12 @@ class AzureAppConfigurationClient:
         :type label: str
         :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :type etag: str or None
-        :param ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
+        :param match_condition: The match condition to use upon the etag
+        :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object
-        :rtype: :class:`ConfigurationSetting`
+        :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
         :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`ResourceExistsError`
 
@@ -281,25 +286,26 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
                 **kwargs
             )
-            return ConfigurationSetting._from_key_value(key_value)
+            return ConfigurationSetting._from_generated(key_value)
         except ResourceNotModifiedError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace_async
     async def add_configuration_setting(self, configuration_setting, **kwargs):
-        # type: (ConfigurationSetting, dict) -> ConfigurationSetting
+        # type: (ConfigurationSetting, **Any) -> ConfigurationSetting
 
-        """Add a ConfigurationSetting into the Azure App Configuration service.
+        """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
         :param configuration_setting: the ConfigurationSetting object to be added
         :type configuration_setting: :class:`ConfigurationSetting<azure.appconfiguration.ConfigurationSetting>`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting object returned from the App Configuration service
-        :rtype: :class:`ConfigurationSetting`
+        :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceExistsError`
 
         Example
@@ -316,13 +322,7 @@ class AzureAppConfigurationClient:
             )
             added_config_setting = await async_client.add_configuration_setting(config_setting)
         """
-        key_value = KeyValue(
-            key=configuration_setting.key,
-            label=configuration_setting.label,
-            content_type=configuration_setting.content_type,
-            value=configuration_setting.value,
-            tags=configuration_setting.tags,
-        )
+        key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {401: ClientAuthenticationError, 412: ResourceExistsError}
 
@@ -335,9 +335,10 @@ class AzureAppConfigurationClient:
                 headers=custom_headers,
                 error_map=error_map,
             )
-            return ConfigurationSetting._from_key_value(key_value_added)
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+            return ConfigurationSetting._from_generated(key_value_added)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -347,7 +348,7 @@ class AzureAppConfigurationClient:
         configuration_setting,
         match_condition=MatchConditions.Unconditionally,
         **kwargs
-    ):  # type: (ConfigurationSetting, Optional[MatchConditions], dict) -> ConfigurationSetting
+    ):  # type: (ConfigurationSetting, Optional[MatchConditions], **Any) -> ConfigurationSetting
 
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
@@ -356,10 +357,11 @@ class AzureAppConfigurationClient:
         :param configuration_setting: the ConfigurationSetting to be added (if not exists) \
         or updated (if exists) to the service
         :type configuration_setting: :class:`ConfigurationSetting`
-        :param ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
+        :param match_condition: The match condition to use upon the etag
+        :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
-        :rtype: :class:`ConfigurationSetting`
+        :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
         :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`, \
         :class:`ResourceNotFoundError`, :class:`ResourceExistsError`
@@ -378,13 +380,7 @@ class AzureAppConfigurationClient:
             )
             returned_config_setting = await async_client.set_configuration_setting(config_setting)
         """
-        key_value = KeyValue(
-            key=configuration_setting.key,
-            label=configuration_setting.label,
-            content_type=configuration_setting.content_type,
-            value=configuration_setting.value,
-            tags=configuration_setting.tags,
-        )
+        key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
@@ -408,16 +404,17 @@ class AzureAppConfigurationClient:
                 headers=custom_headers,
                 error_map=error_map,
             )
-            return ConfigurationSetting._from_key_value(key_value_set)
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+            return ConfigurationSetting._from_generated(key_value_set)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace_async
     async def delete_configuration_setting(
         self, key, label=None, **kwargs
-    ):  # type: (str, Optional[str], dict) -> ConfigurationSetting
+    ):  # type: (str, Optional[str], **Any) -> ConfigurationSetting
 
         """Delete a ConfigurationSetting if it exists
 
@@ -426,10 +423,11 @@ class AzureAppConfigurationClient:
         :param label: label used to identify the ConfigurationSetting
         :type label: str
         :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
-        :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: :class:`~azure.core.MatchConditions`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
-        :rtype: :class:`ConfigurationSetting`
+        :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
         :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`, \
         :class:`ResourceNotFoundError`, :class:`ResourceExistsError`
@@ -465,16 +463,17 @@ class AzureAppConfigurationClient:
                 headers=custom_headers,
                 error_map=error_map,
             )
-            return ConfigurationSetting._from_key_value(key_value_deleted)
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+            return ConfigurationSetting._from_generated(key_value_deleted)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
     def list_revisions(
         self, key_filter=None, label_filter=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], dict) -> azure.core.paging.AsyncItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[str], Optional[str], **Any) -> AsyncItemPaged[ConfigurationSetting]
 
         """
         Find the ConfigurationSetting revision history.
@@ -489,7 +488,7 @@ class AzureAppConfigurationClient:
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
-        :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
 
         Example
@@ -522,20 +521,21 @@ class AzureAppConfigurationClient:
                 key=key_filter,
                 select=select,
                 cls=lambda objs: [
-                    ConfigurationSetting._from_key_value(x) for x in objs
+                    ConfigurationSetting._from_generated(x) for x in objs
                 ],
                 error_map=error_map,
                 **kwargs
             )
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
     async def set_read_only(
         self, configuration_setting, read_only=True, **kwargs
-    ):  # type: (ConfigurationSetting, Optional[bool], dict) -> ConfigurationSetting
+    ):  # type: (ConfigurationSetting, Optional[bool], **Any) -> ConfigurationSetting
 
         """Set a configuration setting read only
 
@@ -543,10 +543,11 @@ class AzureAppConfigurationClient:
         :type configuration_setting: :class:`ConfigurationSetting`
         :param read_only: set the read only setting if true, else clear the read only setting
         :type read_only: bool
-        :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: :class:`~azure.core.MatchConditions`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
-        :rtype: :class:`ConfigurationSetting`
+        :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`
 
         Example
@@ -595,24 +596,30 @@ class AzureAppConfigurationClient:
                     error_map=error_map,
                     **kwargs
                 )
-            return ConfigurationSetting._from_key_value(key_value)
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+            return ConfigurationSetting._from_generated(key_value)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
-    def update_sync_token(self, token):
-        # type: (str) -> None
+    def update_sync_token(self, token: str) -> None:
 
         """Add a sync token to the internal list of tokens.
-        :param token: The sync token to be added to the internal list of tokens
-        :type token: str
+
+        :param str token: The sync token to be added to the internal list of tokens
         """
 
         self._sync_token_policy.add_token(token)
 
-    async def close(self):
-        # type: (...) -> None
+    async def close(self) -> None:
 
         """Close all connections made by the client"""
         await self._impl._client.close()
+
+    async def __aenter__(self):
+        await self._impl.__aenter__()
+        return self
+
+    async def __aexit__(self, *args):
+        await self._impl.__aexit__(*args)

@@ -1,5 +1,12 @@
 # Release History
 
+## 1.14.0 (2021-05-07)
+
+### New Features
+
+- Added `azure.core.credentials.AzureNamedKeyCredential` credential #17548.
+- Added `decompress` parameter for `stream_download` method. If it is set to `False`, will not do decompression upon the stream.    #17920
+
 ## 1.13.0 (2021-04-02)
 
 Azure core requires Python 2.7 or Python 3.6+ since this release.

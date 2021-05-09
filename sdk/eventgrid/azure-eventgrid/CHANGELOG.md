@@ -1,7 +1,14 @@
 # Release History
 
-## 4.1.1 (Unreleased)
+## 4.2.0 (2021-05-11)
 
+  **New Features**
+  - Added new event names to the `SystemEventNames` enum.
+
+## 4.1.1 (2021-04-07)
+
+  **Bug Fixes**
+  - Improved the `repr` on `EventGridEvent` to show more meaningful text.
 
 ## 4.1.0 (2021-03-23)
 
