@@ -85,7 +85,7 @@ from ._container_registry_enums import (
     ArtifactArchitecture,
     ArtifactOperatingSystem,
     Enum2,
-    ManifestOrder,
+    ManifestOrderBy,
     TagOrderBy,
 )
 
@@ -130,6 +130,6 @@ __all__ = [
     'ArtifactArchitecture',
     'ArtifactOperatingSystem',
     'Enum2',
-    'ManifestOrder',
+    'ManifestOrderBy',
     'TagOrderBy',
 ]

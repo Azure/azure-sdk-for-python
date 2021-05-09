@@ -64,7 +64,7 @@ class Enum2(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REFRESH_TOKEN = "refresh_token"
     PASSWORD = "password"
 
-class ManifestOrder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManifestOrderBy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Sort options for ordering manifests in a collection.
     """
 
