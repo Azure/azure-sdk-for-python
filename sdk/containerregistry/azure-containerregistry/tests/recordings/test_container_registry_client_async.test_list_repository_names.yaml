@@ -7,18 +7,18 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "library/hello-world", "Action": "metadata_read"}]}]}'
+        "registry", "Name": "catalog", "Action": "*"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '222'
+      content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 21:18:07 GMT
+      date: Wed, 28 Apr 2021 21:16:36 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -27,7 +27,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
+    url: https://fake_url.azurecr.io/acr/v1/_catalog
 - request:
     body:
       access_token: REDACTED
@@ -46,11 +46,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 21:18:08 GMT
+      date: Wed, 28 Apr 2021 21:16:37 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.433333'
+      x-ms-ratelimit-remaining-calls-per-second: '165.866667'
     status:
       code: 200
       message: OK
@@ -59,7 +59,7 @@ interactions:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
-      scope: repository:library/hello-world:metadata_read
+      scope: registry:catalog:*
       service: fake_url.azurecr.io
     headers:
       Accept:
@@ -74,11 +74,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 21:18:08 GMT
+      date: Wed, 28 Apr 2021 21:16:37 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.016667'
+      x-ms-ratelimit-remaining-calls-per-second: '165.85'
     status:
       code: 200
       message: OK
@@ -91,20 +91,20 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "library/hello-world",
-        "createdTime": "2021-04-13T15:10:43.6788287Z", "lastUpdateTime": "2021-04-20T12:50:15.1385136Z",
-        "manifestCount": 12, "tagCount": 5, "changeableAttributes": {"deleteEnabled":
-        false, "writeEnabled": false, "readEnabled": false, "listEnabled": false,
-        "teleportEnabled": false}}'
+      string: '{"repositories": ["library/alpine", "library/busybox", "repo25ce0f5d",
+        "repo27331535", "repo28471541", "repo2c591564", "repo2e8319c5", "repo308e19dd",
+        "repo34ab0fa1", "repo3c82158b", "repo3db51597", "repo3e8d15a3", "repo84e316ff",
+        "repo8b5a11da", "repo9b321760", "repo9cb4121e", "repoaf9517b2", "repob0a917be",
+        "repob22512e7", "repoc1b5131a", "repoc28d1326", "repoc7611808"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '326'
+      content-length: '354'
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 21:18:08 GMT
+      date: Wed, 28 Apr 2021 21:16:37 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -112,5 +112,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
+    url: https://fake_url.azurecr.io/acr/v1/_catalog
 version: 1
