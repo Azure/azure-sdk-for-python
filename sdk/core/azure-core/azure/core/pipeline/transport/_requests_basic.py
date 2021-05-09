@@ -28,6 +28,9 @@ import logging
 from typing import Iterator, Optional, Any, Union, TypeVar
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
+from urllib3.exceptions import (
+    DecodeError, ReadTimeoutError, ProtocolError
+)
 import requests
 
 from azure.core.configuration import ConnectionConfiguration
@@ -48,6 +51,25 @@ PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
+def _read_raw_stream(response, chunk_size=1):
+    # Special case for urllib3.
+    if hasattr(response.raw, 'stream'):
+        try:
+            for chunk in response.raw.stream(chunk_size, decode_content=False):
+                yield chunk
+        except ProtocolError as e:
+            raise requests.exceptions.ChunkedEncodingError(e)
+        except DecodeError as e:
+            raise requests.exceptions.ContentDecodingError(e)
+        except ReadTimeoutError as e:
+            raise requests.exceptions.ConnectionError(e)
+    else:
+        # Standard file-like object.
+        while True:
+            chunk = response.raw.read(chunk_size)
+            if not chunk:
+                break
+            yield chunk
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
@@ -98,13 +120,21 @@ class StreamDownloadGenerator(object):
 
     :param pipeline: The pipeline object
     :param response: The response object.
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
+        on the ‘content-encoding’ header.
     """
-    def __init__(self, pipeline, response):
+    def __init__(self, pipeline, response, **kwargs):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
+        decompress = kwargs.pop("decompress", True)
+        if len(kwargs) > 0:
+            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+        if decompress:
+            self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
+        else:
+            self.iter_content_func = _read_raw_stream(self.response.internal_response, self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
 
     def __len__(self):
@@ -134,10 +164,10 @@ class StreamDownloadGenerator(object):
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
-    def stream_download(self, pipeline):
-        # type: (PipelineType) -> Iterator[bytes]
+    def stream_download(self, pipeline, **kwargs):
+        # type: (PipelineType, **Any) -> Iterator[bytes]
         """Generator for streaming request body data."""
-        return StreamDownloadGenerator(pipeline, self)
+        return StreamDownloadGenerator(pipeline, self, **kwargs)
 
 
 class RequestsTransport(HttpTransport):

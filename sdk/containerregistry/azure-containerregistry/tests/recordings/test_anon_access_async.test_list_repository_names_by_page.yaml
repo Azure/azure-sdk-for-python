@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 19:52:00 GMT
+      date: Sun, 09 May 2021 18:56:02 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -46,7 +46,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 19:52:01 GMT
+      date: Sun, 09 May 2021 18:56:03 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -71,7 +71,7 @@ interactions:
       connection: keep-alive
       content-length: '54'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 19:52:01 GMT
+      date: Sun, 09 May 2021 18:56:03 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/_catalog?last=library%2Fbusybox&n=2&orderby=>; rel="next"
       server: openresty
@@ -100,7 +100,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 19:52:01 GMT
+      date: Sun, 09 May 2021 18:56:04 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -128,7 +128,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 19:52:01 GMT
+      date: Sun, 09 May 2021 18:56:04 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -153,7 +153,7 @@ interactions:
       connection: keep-alive
       content-length: '41'
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 19:52:01 GMT
+      date: Sun, 09 May 2021 18:56:04 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains

@@ -870,6 +870,27 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @tables_decorator
+    def test_get_entity_with_select(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                         row_key=entity['RowKey'],
+                                         select=['age', 'ratio'])
+            resp.pop('_metadata', None)
+            assert resp == {'age': 39, 'ratio': 3.1}
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                         row_key=entity['RowKey'],
+                                         select='age,ratio')
+            resp.pop('_metadata', None)
+            assert resp == {'age': 39, 'ratio': 3.1}
+
+        finally:
+            self._tear_down()
+
+    @tables_decorator
     def test_get_entity_with_hook(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)

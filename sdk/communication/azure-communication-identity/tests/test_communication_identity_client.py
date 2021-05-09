@@ -34,8 +34,8 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             URIIdentityReplacer()])
     
     @CommunicationPreparer()
-    def test_create_user_from_managed_identity(self, communication_connection_string):
-        endpoint, access_key = parse_connection_str(communication_connection_string)
+    def test_create_user_from_managed_identity(self, communication_livetest_dynamic_connection_string):
+        endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
         from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
@@ -51,17 +51,17 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.properties.get('id') is not None
 
     @CommunicationPreparer()
-    def test_create_user(self, communication_connection_string):
+    def test_create_user(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string,
+            communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
 
     @CommunicationPreparer()
-    def test_create_user_and_token(self, communication_connection_string):
+    def test_create_user_and_token(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string,
+            communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
         user, token_response = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
@@ -70,8 +70,8 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert token_response.token is not None
 
     @CommunicationPreparer()
-    def test_get_token_from_managed_identity(self, communication_connection_string):
-        endpoint, access_key = parse_connection_str(communication_connection_string)
+    def test_get_token_from_managed_identity(self, communication_livetest_dynamic_connection_string):
+        endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
         from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
@@ -90,9 +90,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert token_response.token is not None
 
     @CommunicationPreparer()
-    def test_get_token(self, communication_connection_string):
+    def test_get_token(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string,
+            communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
@@ -103,8 +103,8 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert token_response.token is not None
 
     @CommunicationPreparer()
-    def test_revoke_tokens_from_managed_identity(self, communication_connection_string):
-        endpoint, access_key = parse_connection_str(communication_connection_string)
+    def test_revoke_tokens_from_managed_identity(self, communication_livetest_dynamic_connection_string):
+        endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
         from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
@@ -124,9 +124,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert token_response.token is not None
 
     @CommunicationPreparer()
-    def test_revoke_tokens(self, communication_connection_string):
+    def test_revoke_tokens(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string,
+            communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
@@ -138,8 +138,8 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert token_response.token is not None
 
     @CommunicationPreparer()
-    def test_delete_user_from_managed_identity(self, communication_connection_string):
-        endpoint, access_key = parse_connection_str(communication_connection_string)
+    def test_delete_user_from_managed_identity(self, communication_livetest_dynamic_connection_string):
+        endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
         from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
@@ -157,9 +157,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.properties.get('id') is not None
 
     @CommunicationPreparer()
-    def test_delete_user(self, communication_connection_string):
+    def test_delete_user(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string,
+            communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
@@ -169,9 +169,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.properties.get('id') is not None
 
     @CommunicationPreparer()
-    def test_create_user_and_token_with_no_scopes(self, communication_connection_string):
+    def test_create_user_and_token_with_no_scopes(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string,
+            communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
 
@@ -179,9 +179,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             user, token_response = identity_client.create_user_and_token(scopes=None)
 
     @CommunicationPreparer()
-    def test_delete_user_with_no_user(self, communication_connection_string):
+    def test_delete_user_with_no_user(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string,
+            communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
 
@@ -189,9 +189,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             identity_client.delete_user(user=None)
 
     @CommunicationPreparer()
-    def test_revoke_tokens_with_no_user(self, communication_connection_string):
+    def test_revoke_tokens_with_no_user(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string,
+            communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
         
@@ -199,9 +199,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             identity_client.revoke_tokens(user=None)
     
     @CommunicationPreparer()
-    def test_get_token_with_no_user(self, communication_connection_string):
+    def test_get_token_with_no_user(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string,
+            communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
 
@@ -209,9 +209,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             token_response = identity_client.get_token(user=None, scopes=[CommunicationTokenScope.CHAT])
     
     @CommunicationPreparer()
-    def test_get_token_with_no_scopes(self, communication_connection_string):
+    def test_get_token_with_no_scopes(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string,
+            communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()

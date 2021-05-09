@@ -571,6 +571,27 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    async def test_get_entity_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, _ = await self._insert_random_entity()
+
+            resp = await self.table.get_entity(partition_key=entity['PartitionKey'],
+                                               row_key=entity['RowKey'],
+                                               select=['age', 'ratio'])
+            resp.pop('_metadata', None)
+            assert resp == {'age': 39, 'ratio': 3.1}
+            resp = await self.table.get_entity(partition_key=entity['PartitionKey'],
+                                               row_key=entity['RowKey'],
+                                               select='age,ratio')
+            resp.pop('_metadata', None)
+            assert resp == {'age': 39, 'ratio': 3.1}
+
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
     async def test_get_entity_with_hook(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)

@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 19:51:51 GMT
+      - Sun, 09 May 2021 18:55:47 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 19:51:52 GMT
+      - Sun, 09 May 2021 18:55:48 GMT
       server:
       - openresty
       strict-transport-security:
@@ -114,7 +114,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 19:51:52 GMT
+      - Sun, 09 May 2021 18:55:48 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

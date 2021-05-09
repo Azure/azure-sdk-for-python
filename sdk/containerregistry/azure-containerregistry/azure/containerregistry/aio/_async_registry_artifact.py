@@ -100,29 +100,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         )
 
     @distributed_trace_async
-    async def delete_registry_artifact(self, digest: str, **kwargs: Dict[str, Any]) -> None:
-        """Delete a registry artifact
-
-        :param digest: The digest of the artifact to be deleted
-        :type digest: str
-        :returns: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
-
-        Example
-
-        .. code-block:: python
-
-            from azure.containerregistry.aio import ContainerRepositoryClient
-            from azure.identity.aio import DefaultAzureCredential
-
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            async for artifact in client.list_registry_artifacts():
-                await client.delete_registry_artifact(artifact.digest)
-        """
-        await self._client.container_registry.delete_manifest(self.repository, digest, **kwargs)
-
-    @distributed_trace_async
     async def delete_tag(self, tag: str, **kwargs: Dict[str, Any]) -> None:
         """Delete a tag from a repository
 
@@ -205,7 +182,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             call will return values after last lexically
         :paramtype last: str
         :keyword order_by: Query parameter for ordering by time ascending or descending
-        :paramtype order_by: :class:`~azure.containerregistry.TagOrderBy`
+        :paramtype order_by: :class:`~azure.containerregistry.TagOrder` or str
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
         :return: ItemPaged[:class:`~azure.containerregistry.ArtifactTagProperties`]

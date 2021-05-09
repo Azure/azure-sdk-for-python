@@ -45,7 +45,7 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
     def create_container_repository(self, endpoint, name, **kwargs):
         return ContainerRepository(
             endpoint=endpoint,
-            repository=name,
+            name=name,
             credential=self.get_credential(),
             **kwargs,
         )

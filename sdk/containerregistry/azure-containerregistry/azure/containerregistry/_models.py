@@ -169,14 +169,14 @@ class RepositoryProperties(object):
         )
 
 
-class ManifestOrderBy(str, Enum):
+class ManifestOrder(str, Enum):
     """Enum for ordering registry artifacts"""
 
     LAST_UPDATE_TIME_DESCENDING = "timedesc"
     LAST_UPDATE_TIME_ASCENDING = "timeasc"
 
 
-class TagOrderBy(str, Enum):
+class TagOrder(str, Enum):
     """Enum for ordering tags"""
 
     LAST_UPDATE_TIME_DESCENDING = "timedesc"

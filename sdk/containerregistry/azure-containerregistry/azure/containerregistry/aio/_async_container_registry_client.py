@@ -189,11 +189,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_repository(self, repository: str, **kwargs: Dict[str, Any]) -> ContainerRepository:
+    def get_repository(self, repository_name: str, **kwargs: Any) -> ContainerRepository:
         """Get a repository client
 
-        :param repository: The repository to create a client for
-        :type repository: str
+        :param str repository_name: The repository to create a client for
         :returns: :class:`~azure.containerregistry.aio.ContainerRepository`
 
         Example
@@ -214,7 +213,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
         )
         return ContainerRepository(
-            self._endpoint, repository, credential=self._credential, pipeline=_pipeline, **kwargs
+            self._endpoint, repository_name, credential=self._credential, pipeline=_pipeline, **kwargs
         )
 
     @distributed_trace
@@ -226,4 +225,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: :class:`~azure.containerregistry.RegistryArtifact`
         :raises: None
         """
-        return RegistryArtifact(self._endpoint, repository_name, tag_or_digest, self._credential, **kwargs)
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
+        )
+        return RegistryArtifact(
+            self._endpoint,
+            repository_name,
+            tag_or_digest,
+            self._credential,
+            pipeline=_pipeline,
+            **kwargs
+        )

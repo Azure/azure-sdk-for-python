@@ -30,7 +30,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
+<<<<<<< HEAD
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_repository.test_list_registry_artifacts_descending.yaml
       - Wed, 28 Apr 2021 17:58:34 GMT
+=======
+      - Wed, 28 Apr 2021 21:17:24 GMT
+>>>>>>> cd4d31fedc47b6a7e8e0482f0bdc66b00348fbd0:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_repository.test_list_manifests_descending.yaml
+=======
+      - Wed, 28 Apr 2021 17:58:34 GMT
+>>>>>>> cd4d31fedc47b6a7e8e0482f0bdc66b00348fbd0
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +79,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
+<<<<<<< HEAD
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_repository.test_list_registry_artifacts_descending.yaml
       - Wed, 28 Apr 2021 17:58:35 GMT
+=======
+      - Wed, 28 Apr 2021 21:17:25 GMT
+>>>>>>> cd4d31fedc47b6a7e8e0482f0bdc66b00348fbd0:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_repository.test_list_manifests_descending.yaml
+=======
+      - Wed, 28 Apr 2021 17:58:35 GMT
+>>>>>>> cd4d31fedc47b6a7e8e0482f0bdc66b00348fbd0
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +95,15 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
+<<<<<<< HEAD
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_repository.test_list_registry_artifacts_descending.yaml
       - '165.866667'
+=======
+      - '166.616667'
+>>>>>>> cd4d31fedc47b6a7e8e0482f0bdc66b00348fbd0:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_repository.test_list_manifests_descending.yaml
+=======
+      - '165.866667'
+>>>>>>> cd4d31fedc47b6a7e8e0482f0bdc66b00348fbd0
     status:
       code: 200
       message: OK
@@ -109,7 +133,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
+<<<<<<< HEAD
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_repository.test_list_registry_artifacts_descending.yaml
       - Wed, 28 Apr 2021 17:58:35 GMT
+=======
+      - Wed, 28 Apr 2021 21:17:25 GMT
+>>>>>>> cd4d31fedc47b6a7e8e0482f0bdc66b00348fbd0:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_repository.test_list_manifests_descending.yaml
+=======
+      - Wed, 28 Apr 2021 17:58:35 GMT
+>>>>>>> cd4d31fedc47b6a7e8e0482f0bdc66b00348fbd0
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +149,15 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
+<<<<<<< HEAD
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_repository.test_list_registry_artifacts_descending.yaml
       - '165.833333'
+=======
+      - '166.466667'
+>>>>>>> cd4d31fedc47b6a7e8e0482f0bdc66b00348fbd0:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_repository.test_list_manifests_descending.yaml
+=======
+      - '165.833333'
+>>>>>>> cd4d31fedc47b6a7e8e0482f0bdc66b00348fbd0
     status:
       code: 200
       message: OK
@@ -198,7 +238,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
+<<<<<<< HEAD
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_repository.test_list_registry_artifacts_descending.yaml
       - Wed, 28 Apr 2021 17:58:36 GMT
+=======
+      - Wed, 28 Apr 2021 21:17:26 GMT
+>>>>>>> cd4d31fedc47b6a7e8e0482f0bdc66b00348fbd0:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_repository.test_list_manifests_descending.yaml
+=======
+      - Wed, 28 Apr 2021 17:58:36 GMT
+>>>>>>> cd4d31fedc47b6a7e8e0482f0bdc66b00348fbd0
       docker-distribution-api-version:
       - registry/2.0
       server:

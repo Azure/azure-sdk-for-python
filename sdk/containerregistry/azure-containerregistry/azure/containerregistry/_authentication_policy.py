@@ -25,10 +25,9 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         # type: (TokenCredential, str) -> None
         super(ContainerRegistryChallengePolicy, self).__init__()
         self._credential = credential
-        if not self._credential:
+        self._exchange_client = ACRExchangeClient(endpoint, self._credential)
+        if self._credential is None:
             self._exchange_client = AnonymousACRExchangeClient(endpoint)
-        else:
-            self._exchange_client = ACRExchangeClient(endpoint, self._credential)
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None

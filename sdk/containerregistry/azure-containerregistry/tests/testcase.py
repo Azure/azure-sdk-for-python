@@ -6,7 +6,9 @@
 import copy
 from datetime import datetime
 import json
+import logging
 import os
+from azure_devtools.scenario_tests.recording_processors import SubscriptionRecordingProcessor
 import pytest
 import re
 import six
@@ -248,7 +250,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
 
     def create_container_repository(self, endpoint, name, **kwargs):
-        return ContainerRepository(endpoint=endpoint, repository=name, credential=self.get_credential(), **kwargs)
+        return ContainerRepository(endpoint=endpoint, name=name, credential=self.get_credential(), **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
         return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)
@@ -315,6 +317,7 @@ def import_image(repository, tags):
 
 @pytest.fixture(scope="session")
 def load_registry():
+    return
     if not is_live():
         return
     repos = [

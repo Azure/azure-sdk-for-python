@@ -11,10 +11,10 @@ from ._container_repository import ContainerRepository
 from ._models import (
     DeleteRepositoryResult,
     ContentProperties,
-    ManifestOrderBy,
+    ManifestOrder,
     ArtifactManifestProperties,
     RepositoryProperties,
-    TagOrderBy,
+    TagOrder,
     ArtifactTagProperties,
 )
 from ._registry_artifact import RegistryArtifact
@@ -28,9 +28,9 @@ __all__ = [
     "ContentProperties",
     "DeleteRepositoryResult",
     "RegistryArtifact",
-    "ManifestOrderBy",
+    "ManifestOrder",
     "ArtifactManifestProperties",
     "RepositoryProperties",
-    "TagOrderBy",
+    "TagOrder",
     "ArtifactTagProperties",
 ]

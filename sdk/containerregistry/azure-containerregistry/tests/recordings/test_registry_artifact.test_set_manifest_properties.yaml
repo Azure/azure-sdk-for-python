@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 20:11:04 GMT
+      - Sun, 09 May 2021 19:01:40 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 20:11:05 GMT
+      - Sun, 09 May 2021 19:01:43 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.633333'
+      - '165.45'
     status:
       code: 200
       message: OK
@@ -109,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 20:11:05 GMT
+      - Sun, 09 May 2021 19:01:44 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.616667'
+      - '165.433333'
     status:
       code: 200
       message: OK
@@ -198,7 +198,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 20:11:06 GMT
+      - Sun, 09 May 2021 19:01:44 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -244,7 +244,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 20:11:06 GMT
+      - Sun, 09 May 2021 19:01:45 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -259,44 +259,6 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-- request:
-    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1343'
-      Content-Type:
-      - application/x-www-form-urlencoded
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
-  response:
-    body:
-      string: '{"refresh_token": "REDACTED"}'
-    headers:
-      connection:
-      - keep-alive
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 06 May 2021 20:11:07 GMT
-      server:
-      - openresty
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      x-ms-ratelimit-remaining-calls-per-second:
-      - '166.083333'
-    status:
-      code: 200
-      message: OK
 - request:
     body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Arepo28471541%3Ametadata_read&refresh_token=REDACTED
     headers:
@@ -323,7 +285,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 20:11:07 GMT
+      - Sun, 09 May 2021 19:01:45 GMT
       server:
       - openresty
       strict-transport-security:
@@ -331,7 +293,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '165.666667'
+      - '166.116667'
     status:
       code: 200
       message: OK
@@ -357,7 +319,7 @@ interactions:
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
         true, "quarantineDetails": "{\"state\":\"Scan InProgress\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
-        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"5/6/2021 8:10:55
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"5/9/2021 7:01:34
         PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
         "quarantineState": "Passed"}}}'
     headers:
@@ -373,7 +335,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 20:11:07 GMT
+      - Sun, 09 May 2021 19:01:45 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -422,7 +384,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 20:11:08 GMT
+      - Sun, 09 May 2021 19:01:45 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -463,7 +425,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 20:11:08 GMT
+      - Sun, 09 May 2021 19:01:45 GMT
       server:
       - openresty
       strict-transport-security:
@@ -471,7 +433,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '165.65'
+      - '166.1'
     status:
       code: 200
       message: OK
@@ -502,7 +464,7 @@ interactions:
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": false, "writeEnabled": false, "readEnabled": false, "listEnabled":
         false, "quarantineDetails": "{\"state\":\"Scan InProgress\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
-        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"5/6/2021 8:10:55
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"5/9/2021 7:01:34
         PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
         "quarantineState": "Passed"}}}'
     headers:
@@ -518,7 +480,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 20:11:08 GMT
+      - Sun, 09 May 2021 19:01:46 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -567,7 +529,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 20:11:08 GMT
+      - Sun, 09 May 2021 19:01:46 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -608,7 +570,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 20:11:08 GMT
+      - Sun, 09 May 2021 19:01:46 GMT
       server:
       - openresty
       strict-transport-security:
@@ -616,7 +578,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '165.633333'
+      - '166.083333'
     status:
       code: 200
       message: OK
@@ -647,7 +609,7 @@ interactions:
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
         true, "quarantineDetails": "{\"state\":\"Scan InProgress\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
-        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"5/6/2021 8:10:55
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"5/9/2021 7:01:34
         PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
         "quarantineState": "Passed"}}}'
     headers:
@@ -663,7 +625,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 20:11:09 GMT
+      - Sun, 09 May 2021 19:01:47 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
