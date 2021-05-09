@@ -325,20 +325,116 @@ Note that you will need to install the [azure-storage-blob][azure_storage_blob] 
 
 ## Advanced Topics
 
-The following section provides some insights for some advanced translation features such as glossaries and custom translation models.
+The following section provides some insights for some of the advanced translation features such as glossaries and custom translation models.
 
 ### Glossaries
-Glossaries are domain-specific dictionaries. For example, if you want to translate some medical-related documents, you may need support for the many words, terminology, and idioms in the medical field which you can't find in a standard translation dictionary. This is why Document Translator provides support for glossaries. Document Translator supports glossaries in the following formats:
+Glossaries are domain-specific dictionaries. For example, if you want to translate some medical-related documents, you may need support for the many words, terminology, and idioms in the medical field which you can't find in the standard translation dictionary or you simply need specific translation. This is why Document Translator provides support for glossaries. Document Translator supports glossaries in the following formats:
 
 |**File Type**|**Extension**|**Description**|
 |----------------|-------------|-------------|
 |Localization Interchange File Format|.xlf. , xliff|A parallel document format, export of Translation Memory systems. The languages used are defined inside the file.|
 |Tab Separated Values/TAB|.tsv/.tab|A tab-delimited raw-data file used by spreadsheet programs.
 
+You can read more about - for example - tsv files [here][tsv_files].\
+In order to use glossaries with Document Translator, you first need to upload your glossaries file to a blob container, and then provide it's SaS url to Document Translator as in the following sample:
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.translation.document import (
+    DocumentTranslationClient,
+    DocumentTranslationInput,
+    TranslationTarget,
+    TranslationGlossary
+)
+
+endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api_key>")
+
+endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api_key>")
+source_container_sas_url_en = "<sas-url-en>"
+target_container_sas_url_es = "<sas-url-es>"
+target_container_sas_url_fr = "<sas-url-fr>"
+glossary_url = "<glossary-url-sas>"
+
+client = DocumentTranslationClient(endpoint, credential)
+
+inputs = DocumentTranslationInput(
+            source_url=source_container_url,
+            targets=[
+                TranslationTarget(
+                    target_url=target_container_url,
+                    language_code="es",
+                    glossaries=[TranslationGlossary(glossary_url=glossary_url, file_format="TSV")]
+                )
+            ]
+        )
+
+job = client.create_translation_job(inputs=[inputs])  # type: JobStatusResult
+
+job_result = client.wait_until_done(job.id)  # type: JobStatusResult
+
+print("Job status: {}".format(job_result.status))
+print("Job created on: {}".format(job_result.created_on))
+print("Job last updated on: {}".format(job_result.last_updated_on))
+print("Total number of translations on documents: {}".format(job_result.documents_total_count))
+
+print("\nOf total documents...")
+print("{} failed".format(job_result.documents_failed_count))
+print("{} succeeded".format(job_result.documents_succeeded_count))
+```
+
 
 ### Custom Translation Models
-Instead of using Document Translator's engine for translation, you can use your own machine/deep learning model.
-For more info on how to create your custom azure translation model, please follow the instructions here: [Build, deploy, and use a custom model for translation][custom_translation_article]
+Instead of using Document Translator's engine for translation, you can use your own custom azure machine/deep learning model.
+For more info on how to create and provision your own custom azure translation model, please follow the instructions here: [Build, deploy, and use a custom model for translation][custom_translation_article]
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.translation.document import (
+    DocumentTranslationClient,
+    DocumentTranslationInput,
+    TranslationTarget
+)
+
+endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api_key>")
+
+endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api_key>")
+source_container_sas_url_en = "<sas-url-en>"
+target_container_sas_url_es = "<sas-url-es>"
+target_container_sas_url_fr = "<sas-url-fr>"
+category_id = "<custom_model_id>"
+
+client = DocumentTranslationClient(endpoint, credential)
+
+inputs = DocumentTranslationInput(
+            source_url=source_container_url,
+            targets=[
+                TranslationTarget(
+                    target_url=target_container_url,
+                    language_code="es",
+                    category_id=category_id
+                )
+            ]
+        )
+
+job = client.create_translation_job(inputs=[inputs])  # type: JobStatusResult
+
+job_result = client.wait_until_done(job.id)  # type: JobStatusResult
+
+print("Job status: {}".format(job_result.status))
+print("Job created on: {}".format(job_result.created_on))
+print("Job last updated on: {}".format(job_result.last_updated_on))
+print("Total number of translations on documents: {}".format(job_result.documents_total_count))
+
+print("\nOf total documents...")
+print("{} failed".format(job_result.documents_failed_count))
+print("{} succeeded".format(job_result.documents_succeeded_count))
+```
 
 ## Troubleshooting
 
@@ -455,6 +551,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_translation_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_azure_blob_async.py
 
 [custom_translation_article]: https://docs.microsoft.com/en-us/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
+[tsv_files]: https://en.wikipedia.org/wiki/Tab-separated_values
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
