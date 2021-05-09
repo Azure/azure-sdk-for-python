@@ -203,7 +203,7 @@ class ShareLeaseClient(LeaseClientBase):
             operation, a fixed-duration share lease breaks after the remaining share lease
             period elapses, and an infinite share lease breaks immediately.
 
-            .. versionadded:: 12.6.0
+            .. versionadded:: 12.5.0
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.

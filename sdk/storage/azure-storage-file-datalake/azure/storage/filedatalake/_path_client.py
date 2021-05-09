@@ -212,13 +212,12 @@ class PathClient(StorageAccountHostsMixin):
         options = {
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
-            'cls': return_response_headers,
             'timeout': kwargs.pop('timeout', None)}
         options.update(kwargs)
         return options
 
     def _delete(self, **kwargs):
-        # type: (bool, **Any) -> None
+        # type: (**Any) -> None
         """
         Marks the specified path for deletion.
 

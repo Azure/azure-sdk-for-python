@@ -852,7 +852,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of DeletedPathProperties.
         :rtype:
-            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties]
+            ~azure.core.paging.AsyncItemPaged[~azure.storage.filedatalake.DeletedPathProperties]
         """
         path_prefix = kwargs.pop('path_prefix', None)
         results_per_page = kwargs.pop('max_results', None)
