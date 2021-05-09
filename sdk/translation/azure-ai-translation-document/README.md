@@ -550,7 +550,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_translation_with_azure_blob]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_azure_blob.py
 [sample_translation_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_azure_blob_async.py
 
-[custom_translation_article]: https://docs.microsoft.com/en-us/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
+[custom_translation_article]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
 [tsv_files]: https://en.wikipedia.org/wiki/Tab-separated_values
 
 [cla]: https://cla.microsoft.com
