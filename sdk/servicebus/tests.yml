@@ -8,7 +8,6 @@ stages:
       DeployArmTemplate: true
       TestSamples: true
       BuildTargetingString: azure-servicebus*
-      TestCanary: false
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
