@@ -92,7 +92,7 @@ class TestToDict(FormRecognizerTest):
             ],
             page_number=2,
             appearance=_models.TextAppearance(
-                style=_models.TextStyle(name="other", confidence=0.90)
+                style_name="other", style_confidence=0.90
             ),
         )
 
@@ -133,7 +133,7 @@ class TestToDict(FormRecognizerTest):
             ],
             "page_number": 2,
             "kind": "line",
-            "appearance": {"style": {"name": "other", "confidence": 0.90}},
+            "appearance": {"style_name": "other", "style_confidence": 0.90},
         }
         assert d == final
 
@@ -196,18 +196,11 @@ class TestToDict(FormRecognizerTest):
 
     def test_text_appearance_to_dict(self):
         model = _models.TextAppearance(
-            style=_models.TextStyle(name="other", confidence=0.98)
+            style_name="other", style_confidence=0.98
         )
 
         d = model.to_dict()
-        final = {"style": {"name": "other", "confidence": 0.98}}
-        assert d == final
-
-    def test_text_style_to_dict(self):
-        model = _models.TextStyle(name="other", confidence=0.98)
-
-        d = model.to_dict()
-        final = {"name": "other", "confidence": 0.98}
+        final = {"style_name": "other", "style_confidence": 0.98}
         assert d == final
 
     def test_field_data_to_dict(self):
@@ -395,7 +388,7 @@ class TestToDict(FormRecognizerTest):
                         ],
                         page_number=2,
                         appearance=_models.TextAppearance(
-                            style=_models.TextStyle(name="other", confidence=0.90)
+                            style_name="other", style_confidence=0.90
                         ),
                     )],
                 )
@@ -480,7 +473,7 @@ class TestToDict(FormRecognizerTest):
                     ],
                     "page_number": 2,
                     "kind": "line",
-                    "appearance": {"style": {"name": "other", "confidence": 0.90}},
+                    "appearance": {"style_name": "other", "style_confidence": 0.90},
                 }],    
                 "selection_marks": [],
                 "tables": [],
@@ -574,7 +567,7 @@ class TestToDict(FormRecognizerTest):
                     ],
                     page_number=2,
                     appearance=_models.TextAppearance(
-                        style=_models.TextStyle(name="other", confidence=0.90)
+                        style_name="other", style_confidence=0.90
                     ),
                 ),
             ],
@@ -680,7 +673,7 @@ class TestToDict(FormRecognizerTest):
                 ],
                 "page_number": 2,
                 "kind": "line",
-                "appearance": {"style": {"name": "other", "confidence": 0.90}},
+                "appearance": {"style_name": "other", "style_confidence": 0.90},
             }],
             "selection_marks": [{
                 "text": "checkbox",
