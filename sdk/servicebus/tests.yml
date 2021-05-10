@@ -17,6 +17,7 @@ stages:
       Clouds: 'Public,Canary'
       CloudConfig:
         Public:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           MatrixFilters:
             - PythonVersion=^(?!pypy3).*
         Canary:
