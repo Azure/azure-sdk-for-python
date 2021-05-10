@@ -151,7 +151,7 @@ class AioHttpTransport(AsyncHttpTransport):
         """
         await self.open()
         try:
-            auto_decompress = self.session.auto_decompress
+            auto_decompress = self.session.auto_decompress  # type: ignore
         except AttributeError:
             auto_decompress = True
 
@@ -180,7 +180,7 @@ class AioHttpTransport(AsyncHttpTransport):
             timeout = config.pop('connection_timeout', self.connection_config.timeout)
             read_timeout = config.pop('read_timeout', self.connection_config.read_timeout)
             socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
-            result = await self.session.request(
+            result = await self.session.request(    # type: ignore
                 request.method,
                 request.url,
                 headers=request.headers,
