@@ -20,13 +20,13 @@ from azure.core.pipeline.transport import RequestsTransport, AsyncioRequestsTran
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 # defaults
-PROXY_URL = "https://localhost:5001"
+PROXY_URL = "http://localhost:5001"
 RECORDING_START_URL = "{}/record/start".format(PROXY_URL)
 RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)
 PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
 PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 
-# TODO, create a pytest scope="session" implementation that can be added to a fixture such that that can 
+# TODO, create a pytest scope="session" implementation that can be added to a fixture such that that can
 # unit tests can startup/shutdown the local test proxy
 # this should also fire the admin mapping updates, and start/end the session for commiting recording updates
 
@@ -116,8 +116,8 @@ def RecordedByProxyAsync(func):
             copied_positional_args = list(args)
             request = copied_positional_args[1]
 
-            # TODO, get the test-proxy server a real SSL certificate. The issue here is that SSL Certificates are 
-            # normally associated with a domain name. Need to talk to the //SSLAdmin folks (or someone else) and get 
+            # TODO, get the test-proxy server a real SSL certificate. The issue here is that SSL Certificates are
+            # normally associated with a domain name. Need to talk to the //SSLAdmin folks (or someone else) and get
             # a recommendation for how to get a valid SSL Cert for localhost
             kwargs["connection_verify"] = False
 
@@ -148,8 +148,8 @@ def RecordedByProxy(func):
             copied_positional_args = list(args)
             request = copied_positional_args[1]
 
-            # TODO, get the test-proxy server a real SSL certificate. The issue here is that SSL Certificates are 
-            # normally associated with a domain name. Need to talk to the //SSLAdmin folks (or someone else) and get 
+            # TODO, get the test-proxy server a real SSL certificate. The issue here is that SSL Certificates are
+            # normally associated with a domain name. Need to talk to the //SSLAdmin folks (or someone else) and get
             # a recommendation for how to get a valid SSL Cert for localhost
             kwargs["connection_verify"] = False
 
