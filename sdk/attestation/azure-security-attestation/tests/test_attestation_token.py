@@ -147,4 +147,4 @@ class TestAzureAttestationToken(object):
         builder = builder.public_key(signing_key.public_key())
         builder = builder.add_extension(SubjectAlternativeName([x509.DNSName(subject_name)]), critical=False)
         builder = builder.add_extension(BasicConstraints(ca=False, path_length=None), critical=True)
-        return builder.sign(private_key=signing_key, algorithm=hashes.SHA256()).public_bytes(serialization.Encoding.DER)
+        return builder.sign(private_key=signing_key, algorithm=hashes.SHA256(), backend=default_backend()).public_bytes(serialization.Encoding.DER)
