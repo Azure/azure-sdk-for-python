@@ -28,6 +28,7 @@ from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
 
 if TYPE_CHECKING:
     from ._generated.models import TableQueryResponse
+    from ._generated.models import TableServiceProperties as GenTableServiceProperties
 
 
 class TableServiceStats(GenTableServiceStats):
@@ -453,6 +454,7 @@ TableSasPermissions.DELETE = TableSasPermissions(**dict(delete=True))
 
 
 def service_stats_deserialize(generated):
+    # type: (GenTableServiceStats) -> Dict[str, Any]
     """Deserialize a ServiceStats objects into a dict."""
     return {
         "geo_replication": {
@@ -463,6 +465,7 @@ def service_stats_deserialize(generated):
 
 
 def service_properties_deserialize(generated):
+    # type: (GenTableServiceProperties) -> Dict[str, Any]
     """Deserialize a ServiceProperties objects into a dict."""
     return {
         "analytics_logging": TableAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access

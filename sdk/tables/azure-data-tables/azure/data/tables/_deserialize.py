@@ -211,7 +211,7 @@ def _convert_to_entity(entry_element):
 
         # Add type for String
         try:
-            if isinstance(value, unicode) and mtype is None:
+            if isinstance(value, unicode) and mtype is None:  # type: ignore
                 mtype = EdmType.STRING
         except NameError:
             if isinstance(value, str) and mtype is None:

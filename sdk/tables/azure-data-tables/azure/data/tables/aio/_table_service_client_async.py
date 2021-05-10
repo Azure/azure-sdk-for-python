@@ -114,9 +114,9 @@ class TableServiceClient(AsyncTablesBaseClient):
             stats = await self._client.service.get_statistics(  # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs
             )
-            return service_stats_deserialize(stats)
         except HttpResponseError as error:
             _process_table_error(error)
+        return service_stats_deserialize(stats)
 
     @distributed_trace_async
     async def get_service_properties(self, **kwargs) -> Dict[str, object]:
@@ -131,9 +131,9 @@ class TableServiceClient(AsyncTablesBaseClient):
         timeout = kwargs.pop("timeout", None)
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
-            return service_properties_deserialize(service_props)
         except HttpResponseError as error:
             _process_table_error(error)
+        return service_properties_deserialize(service_props)
 
     @distributed_trace_async
     async def set_service_properties(
@@ -163,7 +163,7 @@ class TableServiceClient(AsyncTablesBaseClient):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors,
+            cors=[cors],
         )
         try:
             return await self._client.service.set_properties(props, **kwargs)  # type: ignore
@@ -313,7 +313,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         :rtype: :class:`~azure.data.tables.aio.TableClient`
 
         """
-        pipeline = AsyncPipeline(
+        pipeline = AsyncPipeline(  # type: ignore
             transport=AsyncTransportWrapper(self._client._client._pipeline._transport), # pylint:disable=protected-access
             policies=self._policies,
         )
