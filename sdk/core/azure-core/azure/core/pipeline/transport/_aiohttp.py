@@ -56,7 +56,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
     Fully asynchronous implementation using the aiohttp library.
 
-    :param session: The client session.
+    :param aiohttp.ClientSession session: The client session.
     :param loop: The event loop.
     :param bool session_owner: Session owner. Defaults True.
 
@@ -71,10 +71,10 @@ class AioHttpTransport(AsyncHttpTransport):
             :dedent: 4
             :caption: Asynchronous transport with aiohttp.
     """
-    def __init__(self, *, session: aiohttp.ClientSession = None, loop=None, session_owner=True, **kwargs):
+    def __init__(self, *, session=None, loop=None, session_owner=True, **kwargs):
         self._loop = loop
         self._session_owner = session_owner
-        self.session = session
+        self.session = session  # Optional[aiohttp.ClientSession]
         self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop('use_env_settings', True)
 
