@@ -56,7 +56,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
     Fully asynchronous implementation using the aiohttp library.
 
-    :param session: The client session.
+    :param aiohttp.ClientSession session: The client session.
     :param loop: The event loop.
     :param bool session_owner: Session owner. Defaults True.
 
@@ -74,7 +74,7 @@ class AioHttpTransport(AsyncHttpTransport):
     def __init__(self, *, session=None, loop=None, session_owner=True, **kwargs):
         self._loop = loop
         self._session_owner = session_owner
-        self.session = session
+        self.session = session  # type: aiohttp.ClientSession
         self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop('use_env_settings', True)
 
@@ -150,11 +150,7 @@ class AioHttpTransport(AsyncHttpTransport):
         :keyword str proxy: will define the proxy to use all the time
         """
         await self.open()
-        try:
-            auto_decompress = self.session.auto_decompress
-        except AttributeError:
-            # if this is a custom session and there is no auto_decompress attribute, we assume no need to decompress
-            auto_decompress = True
+        auto_decompress = self.session.auto_decompress
 
         proxies = config.pop('proxies', None)
         if proxies and 'proxy' not in config:
