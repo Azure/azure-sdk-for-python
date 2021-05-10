@@ -132,7 +132,7 @@ class AttestationSigningKey(object):
     def __init__(self, signing_key_der, certificate_der):
     # type: (bytes, bytes) -> None
         signing_key = serialization.load_der_private_key(signing_key_der, password=None)
-        certificate = load_der_x509_certificate(certificate_der)
+        certificate = load_der_x509_certificate(certificate_der, backend=None)
 
         self._signing_key = signing_key
         self._certificate = certificate
