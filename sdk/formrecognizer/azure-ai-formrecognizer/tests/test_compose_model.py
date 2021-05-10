@@ -7,7 +7,7 @@
 import pytest
 import functools
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer import FormTrainingClient, _models
+from azure.ai.formrecognizer import FormTrainingClient
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
