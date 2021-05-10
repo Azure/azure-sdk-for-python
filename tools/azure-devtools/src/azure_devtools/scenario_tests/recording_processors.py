@@ -215,6 +215,8 @@ class GeneralNameReplacer(RecordingProcessor):
                 except UnicodeDecodeError:
                     body = response['body']['string']
                     response['body']['string'].decode('utf8', 'backslashreplace').replace(old, new).encode('utf8', 'backslashreplace')
+                except TypeError:
+                    pass
             self.replace_header(response, 'location', old, new)
             self.replace_header(response, 'operation-location', old, new)
             self.replace_header(response, 'azure-asyncoperation', old, new)
