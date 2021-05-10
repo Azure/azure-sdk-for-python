@@ -121,6 +121,9 @@ try:
     from ._models_py3 import MediaLiveEventTrackDiscontinuityDetectedEventData
     from ._models_py3 import MicrosoftTeamsUserIdentifierModel
     from ._models_py3 import PhoneNumberIdentifierModel
+    from ._models_py3 import PolicyInsightsPolicyStateChangedEventData
+    from ._models_py3 import PolicyInsightsPolicyStateCreatedEventData
+    from ._models_py3 import PolicyInsightsPolicyStateDeletedEventData
     from ._models_py3 import RedisExportRDBCompletedEventData
     from ._models_py3 import RedisImportRDBCompletedEventData
     from ._models_py3 import RedisPatchingCompletedEventData
@@ -282,6 +285,9 @@ except (SyntaxError, ImportError):
     from ._models import MediaLiveEventTrackDiscontinuityDetectedEventData  # type: ignore
     from ._models import MicrosoftTeamsUserIdentifierModel  # type: ignore
     from ._models import PhoneNumberIdentifierModel  # type: ignore
+    from ._models import PolicyInsightsPolicyStateChangedEventData  # type: ignore
+    from ._models import PolicyInsightsPolicyStateCreatedEventData  # type: ignore
+    from ._models import PolicyInsightsPolicyStateDeletedEventData  # type: ignore
     from ._models import RedisExportRDBCompletedEventData  # type: ignore
     from ._models import RedisImportRDBCompletedEventData  # type: ignore
     from ._models import RedisPatchingCompletedEventData  # type: ignore
@@ -456,6 +462,9 @@ __all__ = [
     'MediaLiveEventTrackDiscontinuityDetectedEventData',
     'MicrosoftTeamsUserIdentifierModel',
     'PhoneNumberIdentifierModel',
+    'PolicyInsightsPolicyStateChangedEventData',
+    'PolicyInsightsPolicyStateCreatedEventData',
+    'PolicyInsightsPolicyStateDeletedEventData',
     'RedisExportRDBCompletedEventData',
     'RedisImportRDBCompletedEventData',
     'RedisPatchingCompletedEventData',
