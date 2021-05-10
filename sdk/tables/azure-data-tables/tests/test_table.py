@@ -434,6 +434,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
 
     @pytest.mark.live_test_only
     @tables_decorator
+    @RecordedByProxy
     def test_account_sas(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -441,41 +442,46 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         account_url = self.account_url(tables_storage_account_name, "table")
         tsc = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
-        table = self._create_table(tsc)
-        try:
-            entity = {
-                'PartitionKey': u'test',
-                'RowKey': u'test1',
-                'text': u'hello',
-            }
-            table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
+        # table = self._create_table(tsc)
+        # print(table.table_name)
+        # try:
+        table = tsc.get_table_client(u"pytablesync669b08d7")
+        entity = {
+            'PartitionKey': u'test',
+            'RowKey': u'test1',
+            'text': u'hello',
+        }
+        table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
-            entity['RowKey'] = u'test2'
-            table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
+        entity['RowKey'] = u'test2'
+        table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
-            token = generate_account_sas(
-                tables_primary_storage_account_key,
-                resource_types=ResourceTypes(object=True),
-                permission=AccountSasPermissions(read=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start=datetime.utcnow() - timedelta(minutes=1),
-            )
+        token = generate_account_sas(
+            tables_primary_storage_account_key,
+            resource_types=ResourceTypes(object=True),
+            permission=AccountSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            start=datetime.utcnow() - timedelta(minutes=1),
+        )
 
-            account_url = self.account_url(tables_storage_account_name, "table")
+        account_url = self.account_url(tables_storage_account_name, "table")
 
-            service = self.create_client_from_credential(TableServiceClient, token, endpoint=account_url)
+        service = self.create_client_from_credential(TableServiceClient, token, endpoint=account_url)
 
-            # Act
+        # Act
 
-            sas_table = service.get_table_client(table.table_name)
-            entities = list(sas_table.list_entities())
+        sas_table = service.get_table_client(table.table_name)
+        entities = list(sas_table.list_entities())
 
-            # Assert
-            assert len(entities) ==  2
-            assert entities[0]['text'] == u'hello'
-            assert entities[1]['text'] == u'hello'
-        finally:
-            self._delete_table(table=table, ts=tsc)
+        # Assert
+        assert len(entities) ==  2
+        assert entities[0]['text'] == u'hello'
+        assert entities[1]['text'] == u'hello'
+        # finally:
+        #     self._delete_table(table=table, ts=tsc)
+
+        # for entity in table.list_entities():
+        #     table.delete_entity(entity["PartitionKey"], entity["RowKey"])
 
 
 class TestTablesUnitTest(TableTestCase):
