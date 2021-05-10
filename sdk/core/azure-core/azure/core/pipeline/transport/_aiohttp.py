@@ -327,14 +327,11 @@ class AioHttpTransportResponse(AsyncHttpResponse):
                 encoding = "utf-8"
             elif body is None:
                 raise RuntimeError(
-                    "Cannot guess the encoding of " "a not yet read body"
+                    "Cannot guess the encoding of a not yet read body"
                 )
             else:
                 encoding = chardet.detect(body)["encoding"]
         if not encoding:
-            encoding = "utf-8"
-
-        if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"
 
         return body.decode(encoding)
