@@ -208,9 +208,7 @@ class DirectoryTest(StorageTestCase):
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         await directory_client.create_directory(metadata=metadata)
 
-        response = await directory_client.delete_directory()
-        # Assert
-        self.assertIsNone(response)
+        await directory_client.delete_directory()
 
     @DataLakePreparer()
     async def test_delete_directory_with_if_modified_since_async(self, datalake_storage_account_name, datalake_storage_account_key):
