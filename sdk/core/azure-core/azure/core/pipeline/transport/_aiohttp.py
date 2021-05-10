@@ -204,17 +204,15 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
 
     :param pipeline: The pipeline object
     :param response: The client response object.
-    :keyword bool decompress: If True which is default, will attempt to decode the body based
+    :param bool decompress: If True which is default, will attempt to decode the body based
         on the ‘content-encoding’ header.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, decompress=True) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        self._decompress = kwargs.pop("decompress", True)
-        if len(kwargs) > 0:
-            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+        self._decompress = decompress
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
         self._decompressor = None
 
@@ -258,12 +256,12 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :type aiohttp_response: aiohttp.ClientResponse object
     :param block_size: block size of data sent over connection.
     :type block_size: int
-    :keyword bool decompress: If True which is default, will attempt to decode the body based
+    :param bool decompress: If True which is default, will attempt to decode the body based
             on the ‘content-encoding’ header.
     """
     def __init__(self, request: HttpRequest,
                  aiohttp_response: aiohttp.ClientResponse,
-                 block_size=None, **kwargs) -> None:
+                 block_size=None, *, decompress=True) -> None:
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         self.status_code = aiohttp_response.status
@@ -271,9 +269,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         self.reason = aiohttp_response.reason
         self.content_type = aiohttp_response.headers.get('content-type')
         self._body = None
-        self._decompress = kwargs.pop("decompress", True)
-        if len(kwargs) > 0:
-            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+        self._decompress = decompress
 
     def body(self) -> bytes:
         """Return the whole body as bytes in memory.
