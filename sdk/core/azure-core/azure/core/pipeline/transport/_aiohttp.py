@@ -305,6 +305,8 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
         :param str encoding: The encoding to apply.
         """
+        # super().text detects charset based on self._body() which is compressed
+        # implement the decoding explicitly here
         body = self.body()
 
         ctype = self.headers.get(aiohttp.hdrs.CONTENT_TYPE, "").lower()
