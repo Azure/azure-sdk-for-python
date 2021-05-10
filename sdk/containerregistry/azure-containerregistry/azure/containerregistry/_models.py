@@ -7,11 +7,11 @@
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Any
 from ._generated.models import ContentProperties as GeneratedContentProperties
+from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
 
 if TYPE_CHECKING:
     from ._generated.models import ManifestAttributesBase
-    from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
-    from ._generated.models import ArtifactTagProperties as GeneratedTagProperties
+    from ._generated.models import ArtifactTagProperties as GeneratedArtifactTagProperties
 
 
 class ContentProperties(object):
@@ -107,7 +107,7 @@ class ArtifactManifestProperties(object):
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
-        # type: (ManifestAttributesBase, Any) -> ArtifactManifestProperties
+        # type: (ManifestAttributesBase, Dict[str, Any]) -> ArtifactManifestProperties
         return cls(
             cpu_architecture=generated.architecture,
             created_on=generated.created_on,
@@ -132,7 +132,6 @@ class RepositoryProperties(object):
     :vartype last_updated_on: :class:`datetime.datetime`
     :ivar int manifest_count: Number of manifest in the repository
     :ivar str name: Name of the repository
-    :ivar str registry: Registry the repository belongs to
     :ivar int tag_count: Number of tags associated with the repository
     """
 
@@ -142,7 +141,6 @@ class RepositoryProperties(object):
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.manifest_count = kwargs.get("manifest_count", None)
         self.name = kwargs.get("name", None)
-        self.registry = kwargs.get("registry", None)
         self.tag_count = kwargs.get("tag_count", None)
         if self.writeable_properties:
             self.writeable_properties = ContentProperties._from_generated(self.writeable_properties)
@@ -157,18 +155,28 @@ class RepositoryProperties(object):
             manifest_count=generated.manifest_count,
             tag_count=generated.tag_count,
             content_permissions=generated.writeable_properties,
-            registry=generated.additional_properties.get("registry", None),
+        )
+
+    def _to_generated(self):
+        # type: () -> GeneratedRepositoryProperties
+        return GeneratedRepositoryProperties(
+            name=self.name,
+            created_on=self.created_on,
+            last_updated_on=self.last_updated_on,
+            manifest_count=self.manifest_count,
+            tag_count=self.tag_count,
+            writeable_properties=self.writeable_properties._to_generated(),  # pylint: disable=protected-access
         )
 
 
-class ManifestOrderBy(str, Enum):
+class ManifestOrder(str, Enum):
     """Enum for ordering registry artifacts"""
 
     LAST_UPDATE_TIME_DESCENDING = "timedesc"
     LAST_UPDATE_TIME_ASCENDING = "timeasc"
 
 
-class TagOrderBy(str, Enum):
+class TagOrder(str, Enum):
     """Enum for ordering tags"""
 
     LAST_UPDATE_TIME_DESCENDING = "timedesc"
@@ -201,7 +209,7 @@ class ArtifactTagProperties(object):
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
-        # type: (GeneratedTagProperties, Dict[str, Any]) -> ArtifactTagProperties
+        # type: (GeneratedArtifactTagProperties, Dict[str, Any]) -> ArtifactTagProperties
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,
