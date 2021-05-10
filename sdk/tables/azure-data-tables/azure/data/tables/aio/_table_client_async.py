@@ -409,7 +409,7 @@ class TableClient(AsyncTablesBaseClient):
                 :start-after: [START update_entity]
                 :end-before: [END update_entity]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Querying entities from a TableClient
         """
         match_condition = kwargs.pop("match_condition", None)
@@ -478,7 +478,7 @@ class TableClient(AsyncTablesBaseClient):
                 :start-after: [START list_entities]
                 :end-before: [END list_entities]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Querying entities from a TableClient
         """
         user_select = kwargs.pop("select", None)
@@ -566,7 +566,7 @@ class TableClient(AsyncTablesBaseClient):
                 :start-after: [START get_entity]
                 :end-before: [END get_entity]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Getting an entity from PartitionKey and RowKey
         """
         user_select = kwargs.pop("select", None)
@@ -608,7 +608,7 @@ class TableClient(AsyncTablesBaseClient):
                 :start-after: [START upsert_entity]
                 :end-before: [END upsert_entity]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Update/Merge or Insert an entity into a table
         """
 

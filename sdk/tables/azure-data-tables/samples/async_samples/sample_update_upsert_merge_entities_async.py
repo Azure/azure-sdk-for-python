@@ -93,12 +93,10 @@ class TableEntitySamples(object):
                 await table.create_entity(entity=entity1)
                 # [START list_entities]
                 # Query the entities in the table
-                entities = []
-                async for e in table.list_entities():
-                    entities.append(e)
-
-                for i, entity in enumerate(entities):
+                i = 0
+                async for entity in table.list_entities():
                     print("Entity #{}: {}".format(i, entity))
+                    i += 1
                 # [END list_entities]
 
             finally:

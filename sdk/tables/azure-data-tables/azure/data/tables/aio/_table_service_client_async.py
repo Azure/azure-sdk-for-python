@@ -257,7 +257,7 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :start-after: [START tsc_list_tables]
                 :end-before: [END tsc_list_tables]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Listing all tables in an account
         """
         top = kwargs.pop("results_per_page", None)
@@ -287,7 +287,7 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :start-after: [START tsc_query_tables]
                 :end-before: [END tsc_query_tables]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Querying tables in an account given specific parameters
         """
         parameters = kwargs.pop("parameters", None)
