@@ -576,6 +576,8 @@ class FileSystemTest(StorageTestCase):
 
     @DataLakePreparer()
     async def test_get_deleted_paths(self, datalake_storage_account_name, datalake_storage_account_key):
+        if not self.is_playback():
+            return
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = await self._create_file_system()
