@@ -4,8 +4,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from typing import Optional
 from azure.core.polling.base_polling import (
     LongRunningOperation,
+    PipelineResponseType,
     _is_empty,
     _as_json,
     BadResponse,
