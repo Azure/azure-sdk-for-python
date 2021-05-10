@@ -508,10 +508,14 @@ class KeyClient(KeyVaultClientBase):
         else:
             attributes = None
 
+        policy = kwargs.pop("release_policy", None)
+        if policy is not None:
+            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.data)
         parameters = self._models.KeyUpdateParameters(
             key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
-            tags=kwargs.pop("tags", None)
+            tags=kwargs.pop("tags", None),
+            release_policy=policy
         )
 
         bundle = self._client.update_key(
