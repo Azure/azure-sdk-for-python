@@ -24,8 +24,8 @@ import os
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
-class InsertDeleteEntity(object):
 
+class InsertDeleteEntity(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
@@ -33,19 +33,11 @@ class InsertDeleteEntity(object):
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
         self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name,
-            self.access_key,
-            self.endpoint_suffix
+            self.account_name, self.access_key, self.endpoint_suffix
         )
         self.table_name = "InsertDeleteAsync"
 
-        self.entity = {
-            'PartitionKey': 'color',
-            'RowKey': 'brand',
-            'text': 'Marker',
-            'color': 'Purple',
-            'price': '5'
-        }
+        self.entity = {"PartitionKey": "color", "RowKey": "brand", "text": "Marker", "color": "Purple", "price": "5"}
 
     async def create_entity(self):
         from azure.data.tables.aio import TableClient
@@ -67,7 +59,6 @@ class InsertDeleteEntity(object):
                 print("Entity already exists")
         # [END create_entity]
 
-
     async def delete_entity(self):
         from azure.data.tables.aio import TableClient
         from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
@@ -83,15 +74,13 @@ class InsertDeleteEntity(object):
             except ResourceExistsError:
                 print("Entity already exists!")
 
-            await table_client.delete_entity(
-                row_key=self.entity["RowKey"],
-                partition_key=self.entity["PartitionKey"]
-            )
+            await table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"])
             print("Successfully deleted!")
         # [END delete_entity]
 
     async def clean_up(self):
         from azure.data.tables.aio import TableServiceClient
+
         tsc = TableServiceClient.from_connection_string(self.connection_string)
         async with tsc:
             async for table in tsc.list_tables():
@@ -107,7 +96,6 @@ async def main():
     await ide.clean_up()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
-
