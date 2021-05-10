@@ -426,7 +426,7 @@ class AttestationToken(Generic[T]):
         signed_data = Base64Url.encode(
             self.header_bytes)+'.'+Base64Url.encode(self.body_bytes)
         for signer in candidate_certificates:
-            cert = load_der_x509_certificate(signer.certificates[0])
+            cert = load_der_x509_certificate(signer.certificates[0], backend=None)
             signer_key = cert.public_key()
             # Try to verify the signature with this candidate.
             # If it doesn't work, try the next signer.
