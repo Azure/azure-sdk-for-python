@@ -16,21 +16,20 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import MaintenanceClientConfiguration
+from ._configuration import MaintenanceManagementClientConfiguration
 from .operations import PublicMaintenanceConfigurationsOperations
 from .operations import ApplyUpdatesOperations
 from .operations import ConfigurationAssignmentsOperations
 from .operations import MaintenanceConfigurationsOperations
 from .operations import MaintenanceConfigurationsForResourceGroupOperations
 from .operations import ApplyUpdateForResourceGroupOperations
-from .operations import ConfigurationAssignmentsWithinSubscriptionOperations
 from .operations import Operations
 from .operations import UpdatesOperations
 from .. import models
 
 
-class MaintenanceClient(object):
-    """Maintenance Client.
+class MaintenanceManagementClient(object):
+    """Azure Maintenance Management Client.
 
     :ivar public_maintenance_configurations: PublicMaintenanceConfigurationsOperations operations
     :vartype public_maintenance_configurations: azure.mgmt.maintenance.aio.operations.PublicMaintenanceConfigurationsOperations
@@ -44,8 +43,6 @@ class MaintenanceClient(object):
     :vartype maintenance_configurations_for_resource_group: azure.mgmt.maintenance.aio.operations.MaintenanceConfigurationsForResourceGroupOperations
     :ivar apply_update_for_resource_group: ApplyUpdateForResourceGroupOperations operations
     :vartype apply_update_for_resource_group: azure.mgmt.maintenance.aio.operations.ApplyUpdateForResourceGroupOperations
-    :ivar configuration_assignments_within_subscription: ConfigurationAssignmentsWithinSubscriptionOperations operations
-    :vartype configuration_assignments_within_subscription: azure.mgmt.maintenance.aio.operations.ConfigurationAssignmentsWithinSubscriptionOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.maintenance.aio.operations.Operations
     :ivar updates: UpdatesOperations operations
@@ -66,7 +63,7 @@ class MaintenanceClient(object):
     ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = MaintenanceClientConfiguration(credential, subscription_id, **kwargs)
+        self._config = MaintenanceManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -85,8 +82,6 @@ class MaintenanceClient(object):
         self.maintenance_configurations_for_resource_group = MaintenanceConfigurationsForResourceGroupOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.apply_update_for_resource_group = ApplyUpdateForResourceGroupOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.configuration_assignments_within_subscription = ConfigurationAssignmentsWithinSubscriptionOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -113,7 +108,7 @@ class MaintenanceClient(object):
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "MaintenanceClient":
+    async def __aenter__(self) -> "MaintenanceManagementClient":
         await self._client.__aenter__()
         return self
 
