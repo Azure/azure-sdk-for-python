@@ -32,6 +32,7 @@ try:
     from ._models_py3 import HarvestDataListResponse
     from ._models_py3 import HarvestProductDetail
     from ._models_py3 import ImageFile
+    from ._models_py3 import ImageProcessingRasterizeJob
     from ._models_py3 import InnerError
     from ._models_py3 import Location
     from ._models_py3 import Measure
@@ -90,6 +91,7 @@ except (SyntaxError, ImportError):
     from ._models import HarvestDataListResponse  # type: ignore
     from ._models import HarvestProductDetail  # type: ignore
     from ._models import ImageFile  # type: ignore
+    from ._models import ImageProcessingRasterizeJob  # type: ignore
     from ._models import InnerError  # type: ignore
     from ._models import Location  # type: ignore
     from ._models import Measure  # type: ignore
@@ -156,6 +158,7 @@ __all__ = [
     'HarvestDataListResponse',
     'HarvestProductDetail',
     'ImageFile',
+    'ImageProcessingRasterizeJob',
     'InnerError',
     'Location',
     'Measure',

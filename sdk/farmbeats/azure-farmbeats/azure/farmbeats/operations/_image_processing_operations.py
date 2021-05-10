@@ -21,8 +21,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class FarmOperationsOperations(object):
-    """FarmOperationsOperations operations.
+class ImageProcessingOperations(object):
+    """ImageProcessingOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -43,14 +43,14 @@ class FarmOperationsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def _create_data_ingestion_job_initial(
+    def _create_rasterize_job_initial(
         self,
         job_id,  # type: str
-        job=None,  # type: Optional["_models.FarmOperationDataIngestionJob"]
+        job=None,  # type: Optional["_models.ImageProcessingRasterizeJob"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.FarmOperationDataIngestionJob"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FarmOperationDataIngestionJob"]
+        # type: (...) -> "_models.ImageProcessingRasterizeJob"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImageProcessingRasterizeJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -60,7 +60,7 @@ class FarmOperationsOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self._create_data_ingestion_job_initial.metadata['url']  # type: ignore
+        url = self._create_rasterize_job_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str'),
         }
@@ -77,7 +77,7 @@ class FarmOperationsOperations(object):
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if job is not None:
-            body_content = self._serialize.body(job, 'FarmOperationDataIngestionJob')
+            body_content = self._serialize.body(job, 'ImageProcessingRasterizeJob')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -87,49 +87,48 @@ class FarmOperationsOperations(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('FarmOperationDataIngestionJob', pipeline_response)
+        deserialized = self._deserialize('ImageProcessingRasterizeJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_data_ingestion_job_initial.metadata = {'url': '/farm-operations/ingest-data/{jobId}'}  # type: ignore
+    _create_rasterize_job_initial.metadata = {'url': '/image-processing/rasterize/{jobId}'}  # type: ignore
 
-    def begin_create_data_ingestion_job(
+    def begin_create_rasterize_job(
         self,
         job_id,  # type: str
-        job=None,  # type: Optional["_models.FarmOperationDataIngestionJob"]
+        job=None,  # type: Optional["_models.ImageProcessingRasterizeJob"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.FarmOperationDataIngestionJob"]
-        """Create a farm operation data ingestion job.
+        # type: (...) -> LROPoller["_models.ImageProcessingRasterizeJob"]
+        """Create a ImageProcessing Rasterize job.
 
-        :param job_id: Job Id supplied by user.
+        :param job_id: JobId provided by user.
         :type job_id: str
         :param job: Job parameters supplied by user.
-        :type job: ~azure.farmbeats.models.FarmOperationDataIngestionJob
+        :type job: ~azure.farmbeats.models.ImageProcessingRasterizeJob
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either FarmOperationDataIngestionJob or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.farmbeats.models.FarmOperationDataIngestionJob]
+        :return: An instance of LROPoller that returns either ImageProcessingRasterizeJob or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.farmbeats.models.ImageProcessingRasterizeJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FarmOperationDataIngestionJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImageProcessingRasterizeJob"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._create_data_ingestion_job_initial(
+            raw_result = self._create_rasterize_job_initial(
                 job_id=job_id,
                 job=job,
                 cls=lambda x,y,z: x,
@@ -140,7 +139,7 @@ class FarmOperationsOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('FarmOperationDataIngestionJob', pipeline_response)
+            deserialized = self._deserialize('ImageProcessingRasterizeJob', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -162,24 +161,24 @@ class FarmOperationsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_data_ingestion_job.metadata = {'url': '/farm-operations/ingest-data/{jobId}'}  # type: ignore
+    begin_create_rasterize_job.metadata = {'url': '/image-processing/rasterize/{jobId}'}  # type: ignore
 
-    def get_data_ingestion_job_details(
+    def get_rasterize_job(
         self,
         job_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.FarmOperationDataIngestionJob"
-        """Get a farm operation data ingestion job.
+        # type: (...) -> "_models.ImageProcessingRasterizeJob"
+        """Get ImageProcessing Rasterize job's details.
 
         :param job_id: Id of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: FarmOperationDataIngestionJob, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.FarmOperationDataIngestionJob
+        :return: ImageProcessingRasterizeJob, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.ImageProcessingRasterizeJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FarmOperationDataIngestionJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImageProcessingRasterizeJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -188,7 +187,7 @@ class FarmOperationsOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.get_data_ingestion_job_details.metadata['url']  # type: ignore
+        url = self.get_rasterize_job.metadata['url']  # type: ignore
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str'),
         }
@@ -208,13 +207,12 @@ class FarmOperationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('FarmOperationDataIngestionJob', pipeline_response)
+        deserialized = self._deserialize('ImageProcessingRasterizeJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_data_ingestion_job_details.metadata = {'url': '/farm-operations/ingest-data/{jobId}'}  # type: ignore
+    get_rasterize_job.metadata = {'url': '/image-processing/rasterize/{jobId}'}  # type: ignore

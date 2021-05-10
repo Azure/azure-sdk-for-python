@@ -459,9 +459,10 @@ class CascadeDeleteJob(msrest.serialization.Model):
     :ivar id: Unique job id.
     :vartype id: str
     :ivar status: Status of the job.
+     Possible values: 'Waiting', 'Running', 'Succeeded', 'Failed', 'Cancelled'.
     :vartype status: str
     :ivar duration_in_seconds: Duration of the job in seconds.
-    :vartype duration_in_seconds: str
+    :vartype duration_in_seconds: float
     :ivar message: Status message to capture more details of the job.
     :vartype message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -507,7 +508,7 @@ class CascadeDeleteJob(msrest.serialization.Model):
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'float'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -1019,9 +1020,10 @@ class FarmOperationDataIngestionJob(msrest.serialization.Model):
     :ivar id: Unique job id.
     :vartype id: str
     :ivar status: Status of the job.
+     Possible values: 'Waiting', 'Running', 'Succeeded', 'Failed', 'Cancelled'.
     :vartype status: str
     :ivar duration_in_seconds: Duration of the job in seconds.
-    :vartype duration_in_seconds: str
+    :vartype duration_in_seconds: float
     :ivar message: Status message to capture more details of the job.
     :vartype message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -1068,7 +1070,7 @@ class FarmOperationDataIngestionJob(msrest.serialization.Model):
         'start_year': {'key': 'startYear', 'type': 'int'},
         'id': {'key': 'id', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'float'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -1495,6 +1497,104 @@ class ImageFile(msrest.serialization.Model):
         self.name = kwargs['name']
         self.image_format = kwargs.get('image_format', None)
         self.resolution = kwargs.get('resolution', None)
+
+
+class ImageProcessingRasterizeJob(msrest.serialization.Model):
+    """ImageProcessingRasterizeJob.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param farmer_id: Required. Farmer Id.
+    :type farmer_id: str
+    :param shapefile_attachment_id: Required. Shapefile attachment Id.
+    :type shapefile_attachment_id: str
+    :param shapefile_column_names: Required. List of shapefile column names to create raster
+     attachments.
+    :type shapefile_column_names: list[str]
+    :ivar id: Unique job id.
+    :vartype id: str
+    :ivar status: Status of the job.
+     Possible values: 'Waiting', 'Running', 'Succeeded', 'Failed', 'Cancelled'.
+    :vartype status: str
+    :ivar duration_in_seconds: Duration of the job in seconds.
+    :vartype duration_in_seconds: float
+    :ivar message: Status message to capture more details of the job.
+    :vartype message: str
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype end_time: ~datetime.datetime
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of the resource.
+    :type description: str
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _validation = {
+        'farmer_id': {'required': True},
+        'shapefile_attachment_id': {'required': True},
+        'shapefile_column_names': {'required': True},
+        'id': {'readonly': True},
+        'status': {'readonly': True},
+        'duration_in_seconds': {'readonly': True},
+        'message': {'readonly': True},
+        'created_date_time': {'readonly': True},
+        'last_action_date_time': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+        'name': {'max_length': 100, 'min_length': 0},
+        'description': {'max_length': 500, 'min_length': 0},
+    }
+
+    _attribute_map = {
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'shapefile_attachment_id': {'key': 'shapefileAttachmentId', 'type': 'str'},
+        'shapefile_column_names': {'key': 'shapefileColumnNames', 'type': '[str]'},
+        'id': {'key': 'id', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'float'},
+        'message': {'key': 'message', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ImageProcessingRasterizeJob, self).__init__(**kwargs)
+        self.farmer_id = kwargs['farmer_id']
+        self.shapefile_attachment_id = kwargs['shapefile_attachment_id']
+        self.shapefile_column_names = kwargs['shapefile_column_names']
+        self.id = None
+        self.status = None
+        self.duration_in_seconds = None
+        self.message = None
+        self.created_date_time = None
+        self.last_action_date_time = None
+        self.start_time = None
+        self.end_time = None
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.properties = kwargs.get('properties', None)
 
 
 class InnerError(msrest.serialization.Model):
@@ -2176,7 +2276,7 @@ class Polygon(GeoJsonObject):
 
 
 class SatelliteData(msrest.serialization.Model):
-    """Data Model for SatelliteInjestionJobRequest.
+    """Data Model for SatelliteIngestionJobRequest.
 
     :param image_names: List of ImageNames.
     :type image_names: list[str]
@@ -2222,14 +2322,15 @@ class SatelliteDataIngestionJob(msrest.serialization.Model):
     :type provider: str or ~azure.farmbeats.models.DataProvider
     :param source: Source of satellite data. Possible values include: "Sentinel_2_L2A".
     :type source: str or ~azure.farmbeats.models.Source
-    :param data: Data Model for SatelliteInjestionJobRequest.
+    :param data: Data Model for SatelliteIngestionJobRequest.
     :type data: ~azure.farmbeats.models.SatelliteData
     :ivar id: Unique job id.
     :vartype id: str
     :ivar status: Status of the job.
+     Possible values: 'Waiting', 'Running', 'Succeeded', 'Failed', 'Cancelled'.
     :vartype status: str
     :ivar duration_in_seconds: Duration of the job in seconds.
-    :vartype duration_in_seconds: str
+    :vartype duration_in_seconds: float
     :ivar message: Status message to capture more details of the job.
     :vartype message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -2280,7 +2381,7 @@ class SatelliteDataIngestionJob(msrest.serialization.Model):
         'data': {'key': 'data', 'type': 'SatelliteData'},
         'id': {'key': 'id', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'float'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -2428,7 +2529,7 @@ class SearchBoundaryQuery(msrest.serialization.Model):
     :param names: Names of the resource.
     :type names: list[str]
     :param property_filters: Filters on key-value pairs within the Properties object.
-     eg. "{testkey} eq {testvalue}".
+     eg. "{testKey} eq {testValue}".
     :type property_filters: list[str]
     :param statuses: Statuses of the resource.
     :type statuses: list[str]
@@ -3092,9 +3193,10 @@ class WeatherDataDeleteJob(msrest.serialization.Model):
     :ivar id: Unique job id.
     :vartype id: str
     :ivar status: Status of the job.
+     Possible values: 'Waiting', 'Running', 'Succeeded', 'Failed', 'Cancelled'.
     :vartype status: str
     :ivar duration_in_seconds: Duration of the job in seconds.
-    :vartype duration_in_seconds: str
+    :vartype duration_in_seconds: float
     :ivar message: Status message to capture more details of the job.
     :vartype message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -3119,7 +3221,7 @@ class WeatherDataDeleteJob(msrest.serialization.Model):
     """
 
     _validation = {
-        'extension_id': {'required': True, 'max_length': 100, 'min_length': 2},
+        'extension_id': {'required': True, 'max_length': 100, 'min_length': 2, 'pattern': r'^[A-za-z]{3,50}[.][A-za-z]{3,100}$'},
         'farmer_id': {'required': True},
         'boundary_id': {'required': True},
         'id': {'readonly': True},
@@ -3144,7 +3246,7 @@ class WeatherDataDeleteJob(msrest.serialization.Model):
         'end_date_time': {'key': 'endDateTime', 'type': 'iso-8601'},
         'id': {'key': 'id', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'float'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -3208,9 +3310,10 @@ class WeatherDataIngestionJob(msrest.serialization.Model):
     :ivar id: Unique job id.
     :vartype id: str
     :ivar status: Status of the job.
+     Possible values: 'Waiting', 'Running', 'Succeeded', 'Failed', 'Cancelled'.
     :vartype status: str
     :ivar duration_in_seconds: Duration of the job in seconds.
-    :vartype duration_in_seconds: str
+    :vartype duration_in_seconds: float
     :ivar message: Status message to capture more details of the job.
     :vartype message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -3237,7 +3340,7 @@ class WeatherDataIngestionJob(msrest.serialization.Model):
     _validation = {
         'boundary_id': {'required': True},
         'farmer_id': {'required': True},
-        'extension_id': {'required': True, 'max_length': 100, 'min_length': 2},
+        'extension_id': {'required': True, 'max_length': 100, 'min_length': 2, 'pattern': r'^[A-za-z]{3,50}[.][A-za-z]{3,100}$'},
         'extension_api_name': {'required': True, 'max_length': 100, 'min_length': 2},
         'extension_api_input': {'required': True},
         'extension_data_provider_app_id': {'max_length': 200, 'min_length': 2},
@@ -3264,7 +3367,7 @@ class WeatherDataIngestionJob(msrest.serialization.Model):
         'extension_data_provider_api_key': {'key': 'extensionDataProviderApiKey', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'float'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},

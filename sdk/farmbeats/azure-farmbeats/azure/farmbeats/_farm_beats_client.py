@@ -27,6 +27,7 @@ from .operations import FarmOperationsOperations
 from .operations import FarmsOperations
 from .operations import FieldsOperations
 from .operations import HarvestDataOperations
+from .operations import ImageProcessingOperations
 from .operations import OAuthProvidersOperations
 from .operations import OAuthTokensOperations
 from .operations import PlantingDataOperations
@@ -61,6 +62,8 @@ class FarmBeatsClient(object):
     :vartype fields: azure.farmbeats.operations.FieldsOperations
     :ivar harvest_data: HarvestDataOperations operations
     :vartype harvest_data: azure.farmbeats.operations.HarvestDataOperations
+    :ivar image_processing: ImageProcessingOperations operations
+    :vartype image_processing: azure.farmbeats.operations.ImageProcessingOperations
     :ivar oauth_providers: OAuthProvidersOperations operations
     :vartype oauth_providers: azure.farmbeats.operations.OAuthProvidersOperations
     :ivar oauth_tokens: OAuthTokensOperations operations
@@ -85,11 +88,11 @@ class FarmBeatsClient(object):
 
     def __init__(
         self,
-        base_url,
         credential,  # type: "TokenCredential"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        base_url = 'None'
         self._config = FarmBeatsClientConfiguration(credential, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -117,6 +120,8 @@ class FarmBeatsClient(object):
         self.fields = FieldsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.harvest_data = HarvestDataOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.image_processing = ImageProcessingOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.oauth_providers = OAuthProvidersOperations(
             self._client, self._config, self._serialize, self._deserialize)

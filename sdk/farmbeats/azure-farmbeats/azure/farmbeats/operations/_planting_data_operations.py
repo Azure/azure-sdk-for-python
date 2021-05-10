@@ -125,7 +125,7 @@ class PlantingDataOperations(object):
         :param names: Names of the resource.
         :type names: list[str]
         :param property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :type property_filters: list[str]
         :param statuses: Statuses of the resource.
         :type statuses: list[str]
@@ -340,7 +340,7 @@ class PlantingDataOperations(object):
         :param names: Names of the resource.
         :type names: list[str]
         :param property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :type property_filters: list[str]
         :param statuses: Statuses of the resource.
         :type statuses: list[str]
@@ -474,7 +474,7 @@ class PlantingDataOperations(object):
         planting_data_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.PlantingData"]
+        # type: (...) -> "_models.PlantingData"
         """Get a specified planting data resource under a particular farmer.
 
         :param farmer_id: ID of the associated farmer resource.
@@ -483,10 +483,10 @@ class PlantingDataOperations(object):
         :type planting_data_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PlantingData, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.PlantingData or None
+        :rtype: ~azure.farmbeats.models.PlantingData
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PlantingData"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PlantingData"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -514,14 +514,12 @@ class PlantingDataOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PlantingData', pipeline_response)
+        deserialized = self._deserialize('PlantingData', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

@@ -14,6 +14,7 @@ from ._farm_operations_operations import FarmOperationsOperations
 from ._farms_operations import FarmsOperations
 from ._fields_operations import FieldsOperations
 from ._harvest_data_operations import HarvestDataOperations
+from ._image_processing_operations import ImageProcessingOperations
 from ._oauth_providers_operations import OAuthProvidersOperations
 from ._oauth_tokens_operations import OAuthTokensOperations
 from ._planting_data_operations import PlantingDataOperations
@@ -34,6 +35,7 @@ __all__ = [
     'FarmsOperations',
     'FieldsOperations',
     'HarvestDataOperations',
+    'ImageProcessingOperations',
     'OAuthProvidersOperations',
     'OAuthTokensOperations',
     'PlantingDataOperations',

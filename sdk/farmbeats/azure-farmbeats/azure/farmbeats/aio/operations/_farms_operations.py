@@ -65,7 +65,7 @@ class FarmsOperations:
         :param names: Names of the resource.
         :type names: list[str]
         :param property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :type property_filters: list[str]
         :param statuses: Statuses of the resource.
         :type statuses: list[str]
@@ -188,7 +188,7 @@ class FarmsOperations:
         :param names: Names of the resource.
         :type names: list[str]
         :param property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :type property_filters: list[str]
         :param statuses: Statuses of the resource.
         :type statuses: list[str]
@@ -287,7 +287,7 @@ class FarmsOperations:
         farmer_id: str,
         farm_id: str,
         **kwargs
-    ) -> Optional["_models.Farm"]:
+    ) -> "_models.Farm":
         """Gets a specified farm resource under a particular farmer.
 
         :param farmer_id: ID of the associated farmer resource.
@@ -296,10 +296,10 @@ class FarmsOperations:
         :type farm_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Farm, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.Farm or None
+        :rtype: ~azure.farmbeats.models.Farm
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Farm"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Farm"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -327,14 +327,12 @@ class FarmsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('Farm', pipeline_response)
+        deserialized = self._deserialize('Farm', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -474,17 +472,17 @@ class FarmsOperations:
         self,
         job_id: str,
         **kwargs
-    ) -> Optional["_models.CascadeDeleteJob"]:
+    ) -> "_models.CascadeDeleteJob":
         """Get a cascade delete job for specified farm.
 
         :param job_id: Id of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CascadeDeleteJob, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.CascadeDeleteJob or None
+        :rtype: ~azure.farmbeats.models.CascadeDeleteJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CascadeDeleteJob"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -511,14 +509,12 @@ class FarmsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
+        deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

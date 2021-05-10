@@ -85,7 +85,7 @@ class BoundariesOperations(object):
         :param names: Names of the resource.
         :type names: list[str]
         :param property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :type property_filters: list[str]
         :param statuses: Statuses of the resource.
         :type statuses: list[str]
@@ -326,7 +326,7 @@ class BoundariesOperations(object):
         :param names: Names of the resource.
         :type names: list[str]
         :param property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :type property_filters: list[str]
         :param statuses: Statuses of the resource.
         :type statuses: list[str]
@@ -516,17 +516,17 @@ class BoundariesOperations(object):
         job_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.CascadeDeleteJob"]
+        # type: (...) -> "_models.CascadeDeleteJob"
         """Get cascade delete job for specified boundary.
 
         :param job_id: Id of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CascadeDeleteJob, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.CascadeDeleteJob or None
+        :rtype: ~azure.farmbeats.models.CascadeDeleteJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CascadeDeleteJob"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -553,14 +553,12 @@ class BoundariesOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
+        deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -694,19 +692,19 @@ class BoundariesOperations(object):
         boundary_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.Boundary"]
+        # type: (...) -> "_models.Boundary"
         """Gets a specified boundary resource under a particular farmer.
 
-        :param farmer_id: Id of the associted farmer.
+        :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
         :param boundary_id: Id of the boundary.
         :type boundary_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Boundary, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.Boundary or None
+        :rtype: ~azure.farmbeats.models.Boundary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Boundary"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Boundary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -734,14 +732,12 @@ class BoundariesOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('Boundary', pipeline_response)
+        deserialized = self._deserialize('Boundary', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -887,7 +883,7 @@ class BoundariesOperations(object):
         other_boundary_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.BoundaryOverlapResponse"]
+        # type: (...) -> "_models.BoundaryOverlapResponse"
         """Returns overlapping acreage between two boundary Ids.
 
         :param farmer_id: Id of the farmer.
@@ -900,10 +896,10 @@ class BoundariesOperations(object):
         :type other_boundary_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BoundaryOverlapResponse, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.BoundaryOverlapResponse or None
+        :rtype: ~azure.farmbeats.models.BoundaryOverlapResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BoundaryOverlapResponse"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BoundaryOverlapResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -933,14 +929,12 @@ class BoundariesOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('BoundaryOverlapResponse', pipeline_response)
+        deserialized = self._deserialize('BoundaryOverlapResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
