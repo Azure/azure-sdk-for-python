@@ -28,7 +28,6 @@ import os
 
 
 class CreateClients(object):
-
     def __init__(self):
         load_dotenv(find_dotenv())
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
@@ -36,17 +35,17 @@ class CreateClients(object):
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
         self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name,
-            self.access_key,
-            self.endpoint_suffix
+            self.account_name, self.access_key, self.endpoint_suffix
         )
-
 
     def create_table_client(self):
         # Instantiate a TableServiceClient using a connection string
         # [START create_table_client]
         from azure.data.tables import TableClient
-        with TableClient.from_connection_string(conn_str=self.connection_string, table_name="tableName") as table_client:
+
+        with TableClient.from_connection_string(
+            conn_str=self.connection_string, table_name="tableName"
+        ) as table_client:
             print("Table name: {}".format(table_client.table_name))
         # [END create_table_client]
 
@@ -63,7 +62,7 @@ class CreateClients(object):
         # [END create_table_service_client]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = CreateClients()
     sample.create_table_client()
     sample.create_table_service_client()
