@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="azure-farmbeats",
-    version="0.1.0",
+    version="1.0.0b1",
     description="Azure Farmbeats Client Library v0",
     packages=find_packages(),
     author="Microsoft Corporation",
