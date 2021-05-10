@@ -290,10 +290,10 @@ class TableClient(TablesBaseClient):
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
+        :param str partition_key: The partition key of the entity.
+        :param str row_key: The row key of the entity.
+        :param entity: The entity to delete
+        :type entity: Union[TableEntity, Mapping[str, str]]
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchConditions

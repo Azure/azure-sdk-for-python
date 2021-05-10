@@ -119,11 +119,10 @@ class TableEntitySamples(object):
                 created = table.get_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])
 
                 # [START upsert_entity]
-                # Try Replace and then Insert on Fail
+                # Try Replace and insert on fail
                 insert_entity = table.upsert_entity(mode=UpdateMode.REPLACE, entity=entity1)
                 print("Inserted entity: {}".format(insert_entity))
 
-                # Try merge, and merge since already in table
                 created['text'] = "NewMarker"
                 merged_entity = table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
                 print("Merged entity: {}".format(merged_entity))
@@ -136,7 +135,9 @@ class TableEntitySamples(object):
 
                 # Get the replaced entity
                 replaced = table.get_entity(
-                    partition_key=created['PartitionKey'], row_key=created['RowKey'])
+                    partition_key=created['PartitionKey'],
+                    row_key=created['RowKey']
+                )
                 print("Replaced entity: {}".format(replaced))
 
                 # Merge the entity
@@ -145,7 +146,9 @@ class TableEntitySamples(object):
 
                 # Get the merged entity
                 merged = table.get_entity(
-                    partition_key=replaced['PartitionKey'], row_key=replaced['RowKey'])
+                    partition_key=replaced['PartitionKey'],
+                    row_key=replaced['RowKey']
+                )
                 print("Merged entity: {}".format(merged))
                 # [END update_entity]
 

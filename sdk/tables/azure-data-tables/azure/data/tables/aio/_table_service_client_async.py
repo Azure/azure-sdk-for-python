@@ -223,7 +223,7 @@ class TableServiceClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def delete_table(self, table_name: str, **kwargs) -> None:
         """Deletes a table under the current account. No error will be raised if
-            the table is not found.
+        the table is not found.
 
         :param str table_name: The Table name.
         :return: None
@@ -275,7 +275,8 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :param str query_filter: Specify a filter to return certain tables.
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword Dict[str, Any] parameters: Dictionary for formatting query with additional, user defined parameters
+        :keyword parameters: Dictionary for formatting query with additional, user defined parameters
+        :paramtype parameters:  Dict[str, Any]
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableItem`]
         :rtype: ~azure.core.async_paging.AsyncItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
