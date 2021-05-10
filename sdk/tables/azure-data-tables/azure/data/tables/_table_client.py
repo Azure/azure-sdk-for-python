@@ -242,9 +242,9 @@ class TableClient(TablesBaseClient):
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
                 **kwargs
             )
-            return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
+        return _trim_service_metadata(metadata)
 
     @distributed_trace
     def delete_table(
@@ -390,9 +390,9 @@ class TableClient(TablesBaseClient):
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
                 **kwargs
             )
-            return _trim_service_metadata(metadata)
         except ResourceNotFoundError as error:
             _process_table_error(error)
+        return _trim_service_metadata(metadata)
 
     @distributed_trace
     def update_entity(
@@ -469,9 +469,9 @@ class TableClient(TablesBaseClient):
                 )
             else:
                 raise ValueError("Mode type is not supported")
-            return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
+        return _trim_service_metadata(metadata)
 
     @distributed_trace
     def list_entities(
@@ -597,10 +597,9 @@ class TableClient(TablesBaseClient):
                 query_options=QueryOptions(select=user_select),
                 **kwargs
             )
-            properties = _convert_to_entity(entity)
-            return properties
         except HttpResponseError as error:
             _process_table_error(error)
+        return _convert_to_entity(entity)
 
     @distributed_trace
     def upsert_entity(
@@ -660,9 +659,9 @@ class TableClient(TablesBaseClient):
                         mode
                     )
                 )
-            return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
+        return _trim_service_metadata(metadata)
 
     def submit_transaction(
         self,

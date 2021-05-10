@@ -166,7 +166,7 @@ class TableServiceClient(AsyncTablesBaseClient):
             cors=[cors],
         )
         try:
-            return await self._client.service.set_properties(props, **kwargs)  # type: ignore
+            await self._client.service.set_properties(props, **kwargs)  # type: ignore
         except HttpResponseError as error:
             _process_table_error(error)
 

@@ -214,7 +214,7 @@ class TableClient(AsyncTablesBaseClient):
                 raise
 
     @distributed_trace_async
-    async def create_table(self, **kwargs) -> None:
+    async def create_table(self, **kwargs) -> Dict[str, str]:
         """Creates a new table under the given account.
 
         :return: Dictionary of operation metadata returned from service
@@ -237,9 +237,9 @@ class TableClient(AsyncTablesBaseClient):
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
                 **kwargs
             )
-            return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
+        return _trim_service_metadata(metadata)
 
     @distributed_trace_async
     async def delete_table(self, **kwargs) -> None:
@@ -379,9 +379,9 @@ class TableClient(AsyncTablesBaseClient):
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
                 **kwargs
             )
-            return _trim_service_metadata(metadata)
         except ResourceNotFoundError as error:
             _process_table_error(error)
+        return _trim_service_metadata(metadata)
 
     @distributed_trace_async
     async def update_entity(
@@ -457,9 +457,9 @@ class TableClient(AsyncTablesBaseClient):
                 )
             else:
                 raise ValueError("Mode type is not supported")
-            return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
+        return _trim_service_metadata(metadata)
 
     @distributed_trace
     def list_entities(self, **kwargs) -> AsyncItemPaged[TableEntity]:
@@ -581,9 +581,9 @@ class TableClient(AsyncTablesBaseClient):
                 **kwargs
             )
             properties = _convert_to_entity(entity)
-            return properties
         except HttpResponseError as error:
             _process_table_error(error)
+        return properties
 
     @distributed_trace_async
     async def upsert_entity(
@@ -643,9 +643,9 @@ class TableClient(AsyncTablesBaseClient):
                         mode
                     )
                 )
-            return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
+        return _trim_service_metadata(metadata)
 
     @distributed_trace_async
     async def submit_transaction(
