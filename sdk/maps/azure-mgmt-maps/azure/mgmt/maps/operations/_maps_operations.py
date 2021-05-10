@@ -62,7 +62,7 @@ class MapsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-01-preview"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -89,7 +89,7 @@ class MapsOperations(object):
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
