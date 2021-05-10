@@ -24,6 +24,7 @@ from devtools_testutils import AzureTestCase, PowerShellPreparer
 import functools
 import cryptography
 import cryptography.x509
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 import base64
 import pytest
@@ -83,7 +84,7 @@ class PolicyGetSetTests(AzureTestCase):
         assert policy_get_response.value == attestation_policy
 
         expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy=str(attestation_policy).encode('utf-8')))
-        hasher = hashes.Hash(hashes.SHA256())
+        hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
         hasher.update(expected_policy.serialize().encode('utf-8'))
         expected_hash = hasher.finalize()
 
@@ -106,7 +107,7 @@ class PolicyGetSetTests(AzureTestCase):
         assert policy_get_response.value == attestation_policy
 
         expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy=str(attestation_policy).encode('ascii')), signer=AttestationSigningKey(key, signing_certificate))
-        hasher = hashes.Hash(hashes.SHA256())
+        hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
         hasher.update(expected_policy.serialize().encode('utf-8'))
         expected_hash = hasher.finalize()
 
@@ -129,7 +130,7 @@ class PolicyGetSetTests(AzureTestCase):
         assert policy_get_response.value == attestation_policy
 
         expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy=str(attestation_policy).encode('ascii')), signer=AttestationSigningKey(key, decoded_cert))
-        hasher = hashes.Hash(hashes.SHA256())
+        hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
         hasher.update(expected_policy.serialize().encode('utf-8'))
         expected_hash = hasher.finalize()
 
