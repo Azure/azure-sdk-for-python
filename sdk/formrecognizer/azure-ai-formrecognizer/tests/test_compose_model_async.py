@@ -38,10 +38,6 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             self.assertEqual(composed_model_dict.get("model_name"), "my composed model")
             self.assertIsNotNone(composed_model_dict.get("model_id"))
 
-            composed_model = _models.CustomFormModel.from_dict(composed_model_dict)
-            self.assertEqual(composed_model.model_name, "my composed model")
-            self.assertComposedModelHasValues(composed_model, model_1, model_2)
-
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_compose_model_no_model_name(self, client, formrecognizer_storage_container_sas_url):
