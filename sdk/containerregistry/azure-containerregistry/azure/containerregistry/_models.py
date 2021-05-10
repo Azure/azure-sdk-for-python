@@ -82,10 +82,10 @@ class ArtifactManifestProperties(object):
     :ivar architecture: CPU Architecture of an artifact
     :vartype architecture: :class:`azure.containerregistry.ArtifactArchitecture`
     :ivar created_on: Time and date an artifact was created
-    :vartype created_on: :class:`~datetime.datetime`
+    :vartype created_on: datetime.datetime
     :ivar str digest: Digest for the artifact
     :ivar last_updated_on: Time and date an artifact was last updated
-    :vartype last_updated_on: :class:`~datetime.datetime`
+    :vartype last_updated_on: datetime.datetime
     :ivar operating_system: Operating system for the artifact
     :vartype operating_system: :class:`azure.containerregistry.ArtifactOperatingSystem`
     :ivar str repository_name: Repository name the artifact belongs to
@@ -96,17 +96,27 @@ class ArtifactManifestProperties(object):
     """
 
     def __init__(self, **kwargs):
-        self.architecture = _map_architecture(kwargs.get("cpu_architecture", None))
+        self.architecture = kwargs.get("cpu_architecture", None)
         self.created_on = kwargs.get("created_on", None)
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
-        self.operating_system = _map_operating_system(kwargs.get("operating_system", None))
+        self.operating_system = kwargs.get("operating_system", None)
         self.repository_name = kwargs.get("repository_name", None)
         self.size = kwargs.get("size", None)
         self.tags = kwargs.get("tags", None)
         self.writeable_properties = kwargs.get("content_permissions", None)
         if self.writeable_properties:
             self.writeable_properties = ContentProperties._from_generated(self.writeable_properties)
+
+        for data in ArtifactArchitecture:
+            if data.value == self.architecture:
+                self.architecture = data
+                break
+
+        for data in ArtifactOperatingSystem:
+            if data.value == self.operating_system:
+                self.operating_system = data
+                break
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
@@ -130,9 +140,9 @@ class RepositoryProperties(object):
     :ivar writeable_properties: Read/Write/List/Delete permissions for the repository
     :vartype writeable_properties: :class:`~azure.containerregistry.ContentProperties`
     :ivar created_on: Time the repository was created
-    :vartype created_on: :class:`datetime.datetime`
+    :vartype created_on: datetime.datetime
     :ivar last_updated_on: Time the repository was last updated
-    :vartype last_updated_on: :class:`datetime.datetime`
+    :vartype last_updated_on: datetime.datetime
     :ivar int manifest_count: Number of manifest in the repository
     :ivar str name: Name of the repository
     :ivar int tag_count: Number of tags associated with the repository
@@ -203,10 +213,10 @@ class ArtifactTagProperties(object):
     :ivar writeable_properties: Read/Write/List/Delete permissions for the tag
     :vartype writeable_properties: :class:`~azure.containerregistry.ContentProperties`
     :ivar created_on: Time the tag was created
-    :vartype created_on: :class:`datetime.datetime`
+    :vartype created_on: datetime.datetime
     :ivar str digest: Digest for the tag
     :ivar last_updated_on: Time the tag was last updated
-    :vartype last_updated_on: :class:`datetime.datetime`
+    :vartype last_updated_on: datetime.datetime
     :ivar str name: Name of the image the tag corresponds to
     :ivar str repository: Repository the tag belongs to
     """
@@ -233,50 +243,6 @@ class ArtifactTagProperties(object):
             repository=kwargs.get("repository", None),
         )
 
-
-def _map_architecture(arch):
-    # type: (str) -> ArtifactArchitecture
-    if arch is None:
-        return None
-    m = {
-        "amd64": ArtifactArchitecture.AMD64,
-        "arm": ArtifactArchitecture.ARM,
-        "arm64": ArtifactArchitecture.ARM64,
-        "386": ArtifactArchitecture.I386,
-        "mips": ArtifactArchitecture.MIPS,
-        "mips64": ArtifactArchitecture.MIPS64,
-        "mips64le": ArtifactArchitecture.MIPS64LE,
-        "mipsle": ArtifactArchitecture.MIPSLE,
-        "ppc64": ArtifactArchitecture.PPC64,
-        "ppc64le": ArtifactArchitecture.PPC64LE,
-        "riscv64": ArtifactArchitecture.RISCV64,
-        "s390x": ArtifactArchitecture.S390X,
-        "wasm": ArtifactArchitecture.WASM,
-    }
-    return m[arch]
-
-
-def _map_operating_system(os):
-    # type: (str) -> ArtifactOperatingSystem
-    if os is None:
-        return None
-    m = {
-        "aix": ArtifactOperatingSystem.AIX,
-        "android": ArtifactOperatingSystem.ANDROID,
-        "darwin": ArtifactOperatingSystem.DARWIN,
-        "dragonfly": ArtifactOperatingSystem.DRAGONFLY,
-        "freebsd": ArtifactOperatingSystem.FREEBSD,
-        "illumos": ArtifactOperatingSystem.ILLUMOS,
-        "ios": ArtifactOperatingSystem.IOS,
-        "js": ArtifactOperatingSystem.JS,
-        "linux": ArtifactOperatingSystem.LINUX,
-        "netbsd": ArtifactOperatingSystem.NETBSD,
-        "openbsd": ArtifactOperatingSystem.OPENBSD,
-        "plan9": ArtifactOperatingSystem.PLAN9,
-        "solaris": ArtifactOperatingSystem.SOLARIS,
-        "windows": ArtifactOperatingSystem.WINDOWS,
-    }
-    return m[os]
 
 class ArtifactArchitecture(str, Enum):
 
