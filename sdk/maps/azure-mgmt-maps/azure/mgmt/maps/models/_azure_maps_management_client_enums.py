@@ -41,3 +41,18 @@ class KeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     PRIMARY = "primary"
     SECONDARY = "secondary"
+
+class Kind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The Kind of the Maps Account.
+    """
+
+    GEN1 = "Gen1"
+    GEN2 = "Gen2"
+
+class Name(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The name of the SKU, in standard format (such as S0).
+    """
+
+    S0 = "S0"
+    S1 = "S1"
+    G2 = "G2"
