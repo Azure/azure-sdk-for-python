@@ -54,6 +54,9 @@ class BlockBlobOperations(object):
         tier=None,  # type: Optional[Union[str, "_models.AccessTierOptional"]]
         request_id_parameter=None,  # type: Optional[str]
         blob_tags_string=None,  # type: Optional[str]
+        immutability_policy_expiry=None,  # type: Optional[datetime.datetime]
+        immutability_policy_mode=None,  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
+        legal_hold=None,  # type: Optional[bool]
         blob_http_headers=None,  # type: Optional["_models.BlobHTTPHeaders"]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         cpk_info=None,  # type: Optional["_models.CpkInfo"]
@@ -94,6 +97,13 @@ class BlockBlobOperations(object):
         :type request_id_parameter: str
         :param blob_tags_string: Optional.  Used to set blob tags in various blob operations.
         :type blob_tags_string: str
+        :param immutability_policy_expiry: Specifies the date time when the blobs immutability policy
+         is set to expire.
+        :type immutability_policy_expiry: ~datetime.datetime
+        :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
+        :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
+        :param legal_hold: Specified if a legal hold should be set on the blob.
+        :type legal_hold: bool
         :param blob_http_headers: Parameter group.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Parameter group.
@@ -215,6 +225,12 @@ class BlockBlobOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         if blob_tags_string is not None:
             header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
+        if immutability_policy_expiry is not None:
+            header_parameters['x-ms-immutability-policy-until-date'] = self._serialize.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
+        if immutability_policy_mode is not None:
+            header_parameters['x-ms-immutability-policy-mode'] = self._serialize.header("immutability_policy_mode", immutability_policy_mode, 'str')
+        if legal_hold is not None:
+            header_parameters['x-ms-legal-hold'] = self._serialize.header("legal_hold", legal_hold, 'bool')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
@@ -226,7 +242,7 @@ class BlockBlobOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -465,7 +481,7 @@ class BlockBlobOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -603,7 +619,7 @@ class BlockBlobOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -762,7 +778,7 @@ class BlockBlobOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -791,6 +807,9 @@ class BlockBlobOperations(object):
         tier=None,  # type: Optional[Union[str, "_models.AccessTierOptional"]]
         request_id_parameter=None,  # type: Optional[str]
         blob_tags_string=None,  # type: Optional[str]
+        immutability_policy_expiry=None,  # type: Optional[datetime.datetime]
+        immutability_policy_mode=None,  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
+        legal_hold=None,  # type: Optional[bool]
         blob_http_headers=None,  # type: Optional["_models.BlobHTTPHeaders"]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         cpk_info=None,  # type: Optional["_models.CpkInfo"]
@@ -834,6 +853,13 @@ class BlockBlobOperations(object):
         :type request_id_parameter: str
         :param blob_tags_string: Optional.  Used to set blob tags in various blob operations.
         :type blob_tags_string: str
+        :param immutability_policy_expiry: Specifies the date time when the blobs immutability policy
+         is set to expire.
+        :type immutability_policy_expiry: ~datetime.datetime
+        :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
+        :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
+        :param legal_hold: Specified if a legal hold should be set on the blob.
+        :type legal_hold: bool
         :param blob_http_headers: Parameter group.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Parameter group.
@@ -956,6 +982,12 @@ class BlockBlobOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         if blob_tags_string is not None:
             header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
+        if immutability_policy_expiry is not None:
+            header_parameters['x-ms-immutability-policy-until-date'] = self._serialize.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
+        if immutability_policy_mode is not None:
+            header_parameters['x-ms-immutability-policy-mode'] = self._serialize.header("immutability_policy_mode", immutability_policy_mode, 'str')
+        if legal_hold is not None:
+            header_parameters['x-ms-legal-hold'] = self._serialize.header("legal_hold", legal_hold, 'bool')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
@@ -968,7 +1000,7 @@ class BlockBlobOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1077,7 +1109,7 @@ class BlockBlobOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

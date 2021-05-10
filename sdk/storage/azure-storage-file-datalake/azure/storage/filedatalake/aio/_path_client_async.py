@@ -4,7 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-from typing import Any, Dict
+from datetime import datetime
+from typing import Any, Dict, Union
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob.aio import BlobClient
@@ -133,7 +134,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             process_storage_error(error)
 
     async def _delete(self, **kwargs):
-        # type: (bool, **Any) -> None
+        # type: (**Any) -> Dict[Union[datetime, str]]
         """
         Marks the specified path for deletion.
 
