@@ -80,19 +80,19 @@ class ArtifactManifestProperties(object):
     """Represents properties of a registry artifact
 
     :ivar architecture: CPU Architecture of an artifact
-    :vartype architecture: :class:`azure.containerregistry.ArtifactArchitecture`
+    :vartype architecture: ~azure.containerregistry.ArtifactArchitecture
     :ivar created_on: Time and date an artifact was created
     :vartype created_on: datetime.datetime
     :ivar str digest: Digest for the artifact
     :ivar last_updated_on: Time and date an artifact was last updated
     :vartype last_updated_on: datetime.datetime
     :ivar operating_system: Operating system for the artifact
-    :vartype operating_system: :class:`azure.containerregistry.ArtifactOperatingSystem`
+    :vartype writeable_properties: ~azure.containerregistry.ArtifactOperatingSystem
     :ivar str repository_name: Repository name the artifact belongs to
     :ivar str size: Size of the artifact
     :ivar List[str] tags: Tags associated with a registry artifact
     :ivar writeable_properties: Permissions for an artifact
-    :vartype writeable_properties: :class:`~azure.containerregistry.ContentProperties`
+    :vartype writeable_properties: ~azure.containerregistry.ContentProperties
     """
 
     def __init__(self, **kwargs):
@@ -138,7 +138,7 @@ class RepositoryProperties(object):
     """Model for storing properties of a single repository
 
     :ivar writeable_properties: Read/Write/List/Delete permissions for the repository
-    :vartype writeable_properties: :class:`~azure.containerregistry.ContentProperties`
+    :vartype writeable_properties: ~azure.containerregistry.ContentProperties
     :ivar created_on: Time the repository was created
     :vartype created_on: datetime.datetime
     :ivar last_updated_on: Time the repository was last updated
@@ -211,7 +211,7 @@ class ArtifactTagProperties(object):
     """Model for storing properties of a single tag
 
     :ivar writeable_properties: Read/Write/List/Delete permissions for the tag
-    :vartype writeable_properties: :class:`~azure.containerregistry.ContentProperties`
+    :vartype writeable_properties: ~azure.containerregistry.ContentProperties
     :ivar created_on: Time the tag was created
     :vartype created_on: datetime.datetime
     :ivar str digest: Digest for the tag
