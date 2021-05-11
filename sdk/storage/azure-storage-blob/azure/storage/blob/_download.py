@@ -329,6 +329,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._file_size = None
         self._non_empty_ranges = None
         self._response = None
+        self._decompress = kwargs.pop("decompress", True)
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
@@ -389,6 +390,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     validate_content=self._validate_content,
                     data_stream_total=None,
                     download_stream_current=0,
+                    decompress=self._decompress,
                     **self._request_options
                 )
 
@@ -417,6 +419,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                             validate_content=self._validate_content,
                             data_stream_total=0,
                             download_stream_current=0,
+                            decompress=self._decompress,
                             **self._request_options
                         )
                     except HttpResponseError as error:

@@ -99,6 +99,7 @@ class BlobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        decompress = kwargs.pop("decompress", True)
         
         _lease_id = None
         _encryption_key = None
@@ -220,7 +221,7 @@ class BlobOperations:
             response_headers['x-ms-tag-count']=self._deserialize('long', response.headers.get('x-ms-tag-count'))
             response_headers['x-ms-blob-sealed']=self._deserialize('bool', response.headers.get('x-ms-blob-sealed'))
             response_headers['x-ms-last-access-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-last-access-time'))
-            deserialized = response.stream_download(self._client._pipeline)
+            deserialized = response.stream_download(self._client._pipeline, decompress=decompress)
 
         if response.status_code == 206:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
@@ -263,7 +264,7 @@ class BlobOperations:
             response_headers['x-ms-tag-count']=self._deserialize('long', response.headers.get('x-ms-tag-count'))
             response_headers['x-ms-blob-sealed']=self._deserialize('bool', response.headers.get('x-ms-blob-sealed'))
             response_headers['x-ms-last-access-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-last-access-time'))
-            deserialized = response.stream_download(self._client._pipeline)
+            deserialized = response.stream_download(self._client._pipeline, decompress=decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -2861,7 +2862,7 @@ class BlobOperations:
             response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
             response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
             response_headers['x-ms-blob-content-md5']=self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5'))
-            deserialized = response.stream_download(self._client._pipeline)
+            deserialized = response.stream_download(self._client._pipeline, **kwargs)
 
         if response.status_code == 206:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
@@ -2897,7 +2898,7 @@ class BlobOperations:
             response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
             response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
             response_headers['x-ms-blob-content-md5']=self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5'))
-            deserialized = response.stream_download(self._client._pipeline)
+            deserialized = response.stream_download(self._client._pipeline, **kwargs)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)

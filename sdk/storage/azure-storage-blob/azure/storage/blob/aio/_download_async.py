@@ -23,7 +23,11 @@ from .._download import process_range_and_offset, _ChunkDownloader
 async def process_content(data, start_offset, end_offset, encryption):
     if data is None:
         raise ValueError("Response cannot be None.")
-    content = data.response.body()
+    # content = data.response.body()
+    content = b""
+    async for d in data:
+        content += d
+    # content = b"".join(list(data))
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(
@@ -99,6 +103,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                         validate_content=self.validate_content,
                         data_stream_total=self.total_size,
                         download_stream_current=self.progress_total,
+                        decompress=self._decompress,
                         **self.request_options
                     )
                     retry_active = False
@@ -227,6 +232,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._file_size = None
         self._non_empty_ranges = None
         self._response = None
+        self._decompress = kwargs.pop("decompress", True)
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
@@ -296,6 +302,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     validate_content=self._validate_content,
                     data_stream_total=None,
                     download_stream_current=0,
+                    decompress=self._decompress,
                     **self._request_options)
 
                 # Check the location we read from to ensure we use the same one
