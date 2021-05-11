@@ -97,6 +97,12 @@ class BlobExpiryOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RELATIVE_TO_NOW = "RelativeToNow"
     ABSOLUTE = "Absolute"
 
+class BlobImmutabilityPolicyMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    UNLOCKED = "Unlocked"
+    LOCKED = "Locked"
+    MUTABLE = "Mutable"
+
 class BlobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     BLOCK_BLOB = "BlockBlob"
@@ -120,6 +126,11 @@ class DeleteSnapshotsOptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, En
 
     INCLUDE = "include"
     ONLY = "only"
+
+class EncryptionAlgorithmType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    NONE = "None"
+    AES256 = "AES256"
 
 class GeoReplicationStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the secondary location
@@ -156,6 +167,8 @@ class ListBlobsIncludeItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNCOMMITTEDBLOBS = "uncommittedblobs"
     VERSIONS = "versions"
     TAGS = "tags"
+    IMMUTABILITYPOLICY = "immutabilitypolicy"
+    LEGALHOLD = "legalhold"
 
 class ListContainersIncludeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -193,6 +206,7 @@ class QueryFormatType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DELIMITED = "delimited"
     JSON = "json"
     ARROW = "arrow"
+    PARQUET = "parquet"
 
 class RehydratePriority(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """If an object is in rehydrate pending state then this header is returned with priority of

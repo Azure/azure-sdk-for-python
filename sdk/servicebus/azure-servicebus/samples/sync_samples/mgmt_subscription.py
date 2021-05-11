@@ -53,8 +53,13 @@ def get_and_update_subscription(servicebus_mgmt_client):
     print("Subscription Name:", subscription_properties.name)
     print("Please refer to SubscriptionDescription for complete available settings.")
     print("")
+    # update by updating the properties in the model
     subscription_properties.max_delivery_count = 5
     servicebus_mgmt_client.update_subscription(TOPIC_NAME, subscription_properties)
+
+    # update by passing keyword arguments
+    subscription_properties = servicebus_mgmt_client.get_subscription(TOPIC_NAME, SUBSCRIPTION_NAME)
+    servicebus_mgmt_client.update_subscription(TOPIC_NAME, subscription_properties, max_delivery_count=3)
 
 
 def get_subscription_runtime_properties(servicebus_mgmt_client):

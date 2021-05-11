@@ -60,8 +60,8 @@ Lists all of your purchased phone numbers
 
 ```python
 purchased_phone_numbers = phone_numbers_client.list_purchased_phone_numbers()
-purchased_phone_number = purchased_phone_numbers.next()
-print(acquired_phone_number.phone_number)
+for acquired_phone_number in purchased_phone_numbers:
+    print(acquired_phone_number.phone_number)
 ```
 
 ### Get Purchased Phone Number
@@ -102,7 +102,7 @@ search_result = poller.result()
 
 ### Purchase Phone Numbers
 
-The result of your search can be used to purchase the specificied phone numbers. This can be done by passing the `search_id` from the search response to the purchase phone number API.
+The result of your search can be used to purchase the specified phone numbers. This can be done by passing the `search_id` from the search response to the purchase phone number API.
 
 ```python
 purchase_poller = phone_numbers_client.begin_purchase_phone_numbers(

@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import re
+import time
 from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -47,29 +48,38 @@ class ACRExchangeClient(object):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self._credential_scopes = "https://management.core.windows.net/.default"
+        self.credential_scope = "https://management.core.windows.net/.default"
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
-            credential_scopes=kwargs.pop("credential_scopes", self._credential_scopes),
+            credential_scopes=kwargs.pop("credential_scopes", self.credential_scope),
             **kwargs
         )
         self._credential = credential
+        self._refresh_token = None
+        self._last_refresh_time = 0
 
     def get_acr_access_token(self, challenge, **kwargs):
         # type: (str, Dict[str, Any]) -> str
         parsed_challenge = _parse_challenge(challenge)
-        refresh_token = self.exchange_aad_token_for_refresh_token(service=parsed_challenge["service"])
+        refresh_token = self.get_refresh_token(parsed_challenge["service"], **kwargs)
         return self.exchange_refresh_token_for_access_token(
             refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"], **kwargs
         )
 
+    def get_refresh_token(self, service, **kwargs):
+        # type: (str, Dict[str, Any]) -> str
+        if not self._refresh_token or time.time() - self._last_refresh_time > 300:
+            self._refresh_token = self.exchange_aad_token_for_refresh_token(service, **kwargs)
+            self._last_refresh_time = time.time()
+        return self._refresh_token
+
     def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):
         # type: (str, Dict[str, Any]) -> str
         refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
-            service=service, access_token=self._credential.get_token(self._credential_scopes).token, **kwargs
+            service=service, access_token=self._credential.get_token(self.credential_scope).token, **kwargs
         )
         return refresh_token.refresh_token
 

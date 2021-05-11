@@ -12,8 +12,6 @@ trigger:
     include:
     - sdk/appconfiguration/
     - sdk/core/
-    - tools/
-    - eng/
 
 pr:
   branches:
@@ -28,13 +26,12 @@ pr:
     include:
     - sdk/appconfiguration/
     - sdk/core/
-    - tools/
-    - eng/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: appconfiguration
+    VerifyAutorest: true
     Artifacts:
     - name: azure-appconfiguration
       safeName: azureappconfiguration

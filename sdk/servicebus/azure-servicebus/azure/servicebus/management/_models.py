@@ -27,8 +27,12 @@ from ._generated.models import (
     AuthorizationRule as InternalAuthorizationRule,
 )
 
-from ._model_workaround import adjust_attribute_map
+from ._model_workaround import (
+    adjust_attribute_map,
+    avoid_timedelta_overflow
+)
 from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
+from ._utils import _normalize_entity_path_to_full_path_if_needed
 
 adjust_attribute_map()
 
@@ -316,43 +320,63 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         qd._internal_qd = deepcopy(internal_qd)  # pylint:disable=protected-access
         return qd
 
-    def _to_internal_entity(self):
+    def _to_internal_entity(self, fully_qualified_namespace, kwargs=None):
+        # type: (str, Optional[Dict]) -> InternalQueueDescription
+        kwargs = kwargs or {}
+
         if not self._internal_qd:
             internal_qd = InternalQueueDescription()
             self._internal_qd = internal_qd
 
+        authorization_rules = kwargs.pop("authorization_rules", self.authorization_rules)
         self._internal_qd.authorization_rules = (
-            [r._to_internal_entity() for r in self.authorization_rules]
-            if self.authorization_rules
-            else self.authorization_rules
+            [r._to_internal_entity() for r in authorization_rules]
+            if authorization_rules
+            else authorization_rules
         )
-        self._internal_qd.auto_delete_on_idle = self.auto_delete_on_idle
+
+        self._internal_qd.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
+            kwargs.pop("auto_delete_on_idle", self.auto_delete_on_idle)
+        )
         self._internal_qd.dead_lettering_on_message_expiration = (
-            self.dead_lettering_on_message_expiration
+            kwargs.pop("dead_lettering_on_message_expiration", self.dead_lettering_on_message_expiration)
         )
-        self._internal_qd.default_message_time_to_live = (
-            self.default_message_time_to_live
+        self._internal_qd.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
+            kwargs.pop("default_message_time_to_live", self.default_message_time_to_live)
         )
         self._internal_qd.duplicate_detection_history_time_window = (
-            self.duplicate_detection_history_time_window
+            kwargs.pop("duplicate_detection_history_time_window", self.duplicate_detection_history_time_window)
         )
-        self._internal_qd.entity_availability_status = self.availability_status
-        self._internal_qd.enable_batched_operations = self.enable_batched_operations
-        self._internal_qd.enable_express = self.enable_express
-        self._internal_qd.enable_partitioning = self.enable_partitioning
-        self._internal_qd.lock_duration = self.lock_duration
-        self._internal_qd.max_delivery_count = self.max_delivery_count
-        self._internal_qd.max_size_in_megabytes = self.max_size_in_megabytes
+        self._internal_qd.entity_availability_status = kwargs.pop("availability_status", self.availability_status)
+        self._internal_qd.enable_batched_operations = (
+            kwargs.pop("enable_batched_operations", self.enable_batched_operations)
+        )
+        self._internal_qd.enable_express = kwargs.pop("enable_express", self.enable_express)
+        self._internal_qd.enable_partitioning = kwargs.pop("enable_partitioning", self.enable_partitioning)
+        self._internal_qd.lock_duration = kwargs.pop("lock_duration", self.lock_duration)
+        self._internal_qd.max_delivery_count = kwargs.pop("max_delivery_count", self.max_delivery_count)
+        self._internal_qd.max_size_in_megabytes = kwargs.pop("max_size_in_megabytes", self.max_size_in_megabytes)
         self._internal_qd.requires_duplicate_detection = (
-            self.requires_duplicate_detection
+            kwargs.pop("requires_duplicate_detection", self.requires_duplicate_detection)
         )
-        self._internal_qd.requires_session = self.requires_session
-        self._internal_qd.status = self.status
-        self._internal_qd.forward_to = self.forward_to
-        self._internal_qd.forward_dead_lettered_messages_to = (
-            self.forward_dead_lettered_messages_to
+        self._internal_qd.requires_session = kwargs.pop("requires_session", self.requires_session)
+        self._internal_qd.status = kwargs.pop("status", self.status)
+
+        forward_to = kwargs.pop("forward_to", self.forward_to)
+        self._internal_qd.forward_to = _normalize_entity_path_to_full_path_if_needed(
+            forward_to,
+            fully_qualified_namespace
         )
-        self._internal_qd.user_metadata = self.user_metadata
+
+        forward_dead_lettered_messages_to = (
+            kwargs.pop("forward_dead_lettered_messages_to", self.forward_dead_lettered_messages_to)
+        )
+        self._internal_qd.forward_dead_lettered_messages_to = _normalize_entity_path_to_full_path_if_needed(
+            forward_dead_lettered_messages_to,
+            fully_qualified_namespace
+        )
+
+        self._internal_qd.user_metadata = kwargs.pop("user_metadata", self.user_metadata)
 
         return self._internal_qd
 
@@ -577,34 +601,42 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         td._internal_td = deepcopy(internal_td)
         return td
 
-    def _to_internal_entity(self):
-        # type: () -> InternalTopicDescription
+    def _to_internal_entity(self, kwargs=None):
+        # type: (Optional[Dict]) -> InternalTopicDescription
+        kwargs = kwargs or {}
+
         if not self._internal_td:
             self._internal_td = InternalTopicDescription()
-        self._internal_td.default_message_time_to_live = (
-            self.default_message_time_to_live
+        self._internal_td.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
+            kwargs.pop("default_message_time_to_live", self.default_message_time_to_live)
         )
-        self._internal_td.max_size_in_megabytes = self.max_size_in_megabytes
+        self._internal_td.max_size_in_megabytes = kwargs.pop("max_size_in_megabytes", self.max_size_in_megabytes)
         self._internal_td.requires_duplicate_detection = (
-            self.requires_duplicate_detection
+            kwargs.pop("requires_duplicate_detection", self.requires_duplicate_detection)
         )
         self._internal_td.duplicate_detection_history_time_window = (
-            self.duplicate_detection_history_time_window
+            kwargs.pop("duplicate_detection_history_time_window", self.duplicate_detection_history_time_window)
         )
-        self._internal_td.enable_batched_operations = self.enable_batched_operations
-        self._internal_td.size_in_bytes = self.size_in_bytes
+        self._internal_td.enable_batched_operations = (
+            kwargs.pop("enable_batched_operations", self.enable_batched_operations)
+        )
+        self._internal_td.size_in_bytes = kwargs.pop("size_in_bytes", self.size_in_bytes)
+
+        authorization_rules = kwargs.pop("authorization_rules", self.authorization_rules)
         self._internal_td.authorization_rules = (
-            [r._to_internal_entity() for r in self.authorization_rules]
-            if self.authorization_rules
-            else self.authorization_rules
+            [r._to_internal_entity() for r in authorization_rules]
+            if authorization_rules
+            else authorization_rules
         )
-        self._internal_td.status = self.status
-        self._internal_td.support_ordering = self.support_ordering
-        self._internal_td.auto_delete_on_idle = self.auto_delete_on_idle
-        self._internal_td.enable_partitioning = self.enable_partitioning
-        self._internal_td.entity_availability_status = self.availability_status
-        self._internal_td.enable_express = self.enable_express
-        self._internal_td.user_metadata = self.user_metadata
+        self._internal_td.status = kwargs.pop("status", self.status)
+        self._internal_td.support_ordering = kwargs.pop("support_ordering", self.support_ordering)
+        self._internal_td.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
+            kwargs.pop("auto_delete_on_idle", self.auto_delete_on_idle)
+        )
+        self._internal_td.enable_partitioning = kwargs.pop("enable_partitioning", self.enable_partitioning)
+        self._internal_td.entity_availability_status = kwargs.pop("availability_status", self.availability_status)
+        self._internal_td.enable_express = kwargs.pop("enable_express", self.enable_express)
+        self._internal_td.user_metadata = kwargs.pop("user_metadata", self.user_metadata)
 
         return self._internal_td
 
@@ -790,31 +822,51 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         subscription._internal_sd = deepcopy(internal_subscription)
         return subscription
 
-    def _to_internal_entity(self):
-        # type: () -> InternalSubscriptionDescription
+    def _to_internal_entity(self, fully_qualified_namespace, kwargs=None):
+        # type: (str, Optional[Dict]) -> InternalSubscriptionDescription
+        kwargs = kwargs or {}
+
         if not self._internal_sd:
             self._internal_sd = InternalSubscriptionDescription()
-        self._internal_sd.lock_duration = self.lock_duration
-        self._internal_sd.requires_session = self.requires_session
-        self._internal_sd.default_message_time_to_live = (
-            self.default_message_time_to_live
+        self._internal_sd.lock_duration = kwargs.pop("lock_duration", self.lock_duration)
+        self._internal_sd.requires_session = kwargs.pop("requires_session", self.requires_session)
+        self._internal_sd.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
+            kwargs.pop("default_message_time_to_live", self.default_message_time_to_live)
         )
         self._internal_sd.dead_lettering_on_message_expiration = (
-            self.dead_lettering_on_message_expiration
+            kwargs.pop("dead_lettering_on_message_expiration", self.dead_lettering_on_message_expiration)
         )
         self._internal_sd.dead_lettering_on_filter_evaluation_exceptions = (
-            self.dead_lettering_on_filter_evaluation_exceptions
+            kwargs.pop(
+                "dead_lettering_on_filter_evaluation_exceptions",
+                self.dead_lettering_on_filter_evaluation_exceptions
+            )
         )
-        self._internal_sd.max_delivery_count = self.max_delivery_count
-        self._internal_sd.enable_batched_operations = self.enable_batched_operations
-        self._internal_sd.status = self.status
-        self._internal_sd.forward_to = self.forward_to
-        self._internal_sd.user_metadata = self.user_metadata
-        self._internal_sd.forward_dead_lettered_messages_to = (
-            self.forward_dead_lettered_messages_to
+        self._internal_sd.max_delivery_count = kwargs.pop("max_delivery_count", self.max_delivery_count)
+        self._internal_sd.enable_batched_operations = (
+            kwargs.pop("enable_batched_operations", self.enable_batched_operations)
         )
-        self._internal_sd.auto_delete_on_idle = self.auto_delete_on_idle
-        self._internal_sd.entity_availability_status = self.availability_status
+        self._internal_sd.status = kwargs.pop("status", self.status)
+
+        forward_to = kwargs.pop("forward_to", self.forward_to)
+        self._internal_sd.forward_to = _normalize_entity_path_to_full_path_if_needed(
+            forward_to,
+            fully_qualified_namespace
+        )
+
+        forward_dead_lettered_messages_to = (
+            kwargs.pop("forward_dead_lettered_messages_to", self.forward_dead_lettered_messages_to)
+        )
+        self._internal_sd.forward_dead_lettered_messages_to = _normalize_entity_path_to_full_path_if_needed(
+            forward_dead_lettered_messages_to,
+            fully_qualified_namespace
+        )
+
+        self._internal_sd.user_metadata = kwargs.pop("user_metadata", self.user_metadata)
+        self._internal_sd.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
+            kwargs.pop("auto_delete_on_idle", self.auto_delete_on_idle)
+        )
+        self._internal_sd.entity_availability_status = kwargs.pop("availability_status", self.availability_status)
 
         return self._internal_sd
 
@@ -964,16 +1016,22 @@ class RuleProperties(DictMixin):
         rule._internal_rule = deepcopy(internal_rule)
         return rule
 
-    def _to_internal_entity(self):
-        # type: () -> InternalRuleDescription
+    def _to_internal_entity(self, kwargs=None):
+        # type: (Optional[Dict]) -> InternalRuleDescription
+        kwargs = kwargs or {}
         if not self._internal_rule:
             self._internal_rule = InternalRuleDescription()
-        self._internal_rule.filter = self.filter._to_internal_entity() if self.filter else TRUE_FILTER  # type: ignore
+
+        rule_filter = kwargs.pop("filter", self.filter)
+        self._internal_rule.filter = rule_filter._to_internal_entity() if rule_filter else TRUE_FILTER  # type: ignore
+
+        action = kwargs.pop("action", self.action)
         self._internal_rule.action = (
-            self.action._to_internal_entity() if self.action else EMPTY_RULE_ACTION
+            action._to_internal_entity() if action else EMPTY_RULE_ACTION
         )
-        self._internal_rule.created_at = self.created_at_utc
-        self._internal_rule.name = self.name
+
+        self._internal_rule.created_at = kwargs.pop("created_at_utc", self.created_at_utc)
+        self._internal_rule.name = kwargs.pop("name", self.name)
 
         return self._internal_rule
 
@@ -1061,6 +1119,20 @@ class CorrelationRuleFilter(object):
 class SqlRuleFilter(object):
     """Represents a filter which is a composition of an expression and an action
     that is executed in the pub/sub pipeline.
+
+    .. admonition:: Example:
+
+        .. code-block:: python
+            :caption: Create SqlRuleFilter.
+
+            sql_filter = SqlRuleFilter("property1 = 'value'")
+            sql_filter_parametrized = SqlRuleFilter(
+                "property1 = @param1 AND property2 = @param2",
+                parameters={
+                    "@param1": "value",
+                    "@param2" : 1
+                }
+            )
 
     :param sql_expression: The SQL expression. e.g. MyProperty='ABC'
     :type sql_expression: str
