@@ -81,9 +81,9 @@ setup(
         'azure.mgmt',
     ]),
     install_requires=[
-        'msrest>=0.5.0',
-        'azure-mgmt-core>=1.2.0,<2.0.0',
+        'msrest>=0.6.21',
         'azure-common~=1.1',
+        'azure-mgmt-core>=1.2.0,<2.0.0',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-mgmt-nspkg'],

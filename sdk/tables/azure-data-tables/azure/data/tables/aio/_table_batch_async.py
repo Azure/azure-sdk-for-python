@@ -71,7 +71,7 @@ class TableBatchOperations(object):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: TableEntity or dict[str,str]
+        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :return: None
         :rtype: None
         :raises ValueError:
@@ -192,9 +192,9 @@ class TableBatchOperations(object):
         """Adds an update operation to the current batch.
 
         :param entity: The properties for the table entity.
-        :type entity: TableEntity or Dict[str,str]
+        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: :class:`~azure.data.tables.UpdateMode`
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
@@ -214,11 +214,19 @@ class TableBatchOperations(object):
         self._verify_partition_key(entity)
         temp = entity.copy()
 
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if match_condition and not etag:
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
+
         if_match, _ = _get_match_headers(
             kwargs=dict(
                 kwargs,
-                etag=kwargs.pop("etag", None),
-                match_condition=kwargs.pop("match_condition", None),
+                etag=etag,
+                match_condition=match_condition,
             ),
             etag_param="etag",
             match_param="match_condition",
@@ -484,11 +492,20 @@ class TableBatchOperations(object):
         temp = entity.copy()
         partition_key = temp["PartitionKey"]
         row_key = temp["RowKey"]
+
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if match_condition and not etag:
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
+
         if_match, _ = _get_match_headers(
             kwargs=dict(
                 kwargs,
-                etag=kwargs.pop("etag", None),
-                match_condition=kwargs.pop("match_condition", None),
+                etag=etag,
+                match_condition=match_condition,
             ),
             etag_param="etag",
             match_param="match_condition",
@@ -599,9 +616,9 @@ class TableBatchOperations(object):
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: TableEntity or dict[str,str]
+        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: :class:`~azure.data.tables.UpdateMode`
         :return: None
         :rtype: None
         :raises ValueError:

@@ -12,7 +12,7 @@ import uamqp
 from uamqp import compat
 from uamqp.message import MessageProperties
 
-from azure.core.credentials import AccessToken, AzureSasCredential
+from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
 from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync
 from .._common._configuration import Configuration
@@ -81,7 +81,25 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class ServiceBusAzureSasCredentialAsync(object):
+class ServiceBusAzureNamedKeyTokenCredentialAsync(object):
+    """The named key credential used for authentication.
+    :param credential: The AzureNamedKeyCredential that should be used.
+    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
+    """
+
+    def __init__(self, azure_named_key_credential):
+        # type: (AzureNamedKeyCredential) -> None
+        self._credential = azure_named_key_credential
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    async def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        if not scopes:
+            raise ValueError("No token scope provided.")
+        name, key = self._credential.named_key
+        return _generate_sas_token(scopes[0], name, key)
+
+
+class ServiceBusAzureSasTokenCredentialAsync(object):
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
     :param azure_sas_credential: The credential to be used for authentication.
@@ -104,7 +122,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self,
         fully_qualified_namespace: str,
         entity_name: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential],
+        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
         **kwargs: Any
     ) -> None:
         # If the user provided http:// or sb://, let's be polite and strip that.
@@ -119,7 +137,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         )
         self._mgmt_target = "{}{}".format(self._entity_path, MANAGEMENT_PATH_SUFFIX)
         if isinstance(credential, AzureSasCredential):
-            self._credential = ServiceBusAzureSasCredentialAsync(credential)
+            self._credential = ServiceBusAzureSasTokenCredentialAsync(credential)
+        elif isinstance(credential, AzureNamedKeyCredential):
+            self._credential = ServiceBusAzureNamedKeyTokenCredentialAsync(credential) # type: ignore
         else:
             self._credential = credential # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]

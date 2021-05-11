@@ -2,6 +2,12 @@
 
 ## 3.1.0b5 (Unreleased)
 
+**Breaking Changes**
+
+- `begin_recognize_id_documents` renamed to `begin_recognize_identity_documents`
+- `begin_recognize_id_documents_from_url` renamed to `begin_recognize_identity_documents_from_url`
+- The model `TextAppearance` now includes the properties `style_name` and `style_confidence` that were part of the `TextStyle` object.
+- Removed the model `TextStyle`.
 
 ## 3.1.0b4 (2021-04-06)
 

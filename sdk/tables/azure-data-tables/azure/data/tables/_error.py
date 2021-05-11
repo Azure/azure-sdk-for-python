@@ -33,10 +33,8 @@ def _to_str(value):
     return _str(value) if value is not None else None
 
 
-_ERROR_ATTRIBUTE_MISSING = "'{0}' object has no attribute '{1}'"
 _ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service: {0}."
 _ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
-_ERROR_ATTRIBUTE_MISSING = "'{0}' object has no attribute '{1}'"
 _ERROR_UNKNOWN = "Unknown error ({0})"
 _ERROR_VALUE_NONE = "{0} should not be None."
 _ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = "Unknown key wrap algorithm."
@@ -159,7 +157,8 @@ class TableTransactionError(HttpResponseError):
      Defaults to 0 in the case where an index was not provided, or the error applies across operations.
     :ivar ~azure.data.tables.TableErrorCode error_code: The error code.
     :ivar str message: The error message.
-    :ivar Mapping[str, Any] additional_info: Any additional data for the error.
+    :ivar additional_info: Any additional data for the error.
+    :vartype additional_info: Mapping[str, Any]
     """
 
     def __init__(self, **kwargs):

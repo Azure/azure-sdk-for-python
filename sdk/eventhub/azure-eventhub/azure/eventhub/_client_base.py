@@ -20,8 +20,9 @@ except ImportError:
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
 import six
+from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 from azure.core.utils import parse_connection_string as core_parse_connection_string
-from azure.core.credentials import AccessToken, AzureSasCredential
+
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
 from ._configuration import Configuration
@@ -173,6 +174,25 @@ class EventHubSharedKeyCredential(object):
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
+class EventhubAzureNamedKeyTokenCredential(object):
+    """The named key credential used for authentication.
+
+    :param credential: The AzureNamedKeyCredential that should be used.
+    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
+    """
+
+    def __init__(self, azure_named_key_credential):
+        # type: (AzureNamedKeyCredential) -> None
+        self._credential = azure_named_key_credential
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, Any) -> _AccessToken
+        if not scopes:
+            raise ValueError("No token scope provided.")
+        name, key = self._credential.named_key
+        return _generate_sas_token(scopes[0], name, key)
+
 
 class EventHubSASTokenCredential(object):
     """The shared access token credential used for authentication.
@@ -197,7 +217,7 @@ class EventHubSASTokenCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
-class AzureSasTokenCredential(object):
+class EventhubAzureSasTokenCredential(object):
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
 
@@ -226,7 +246,7 @@ class AzureSasTokenCredential(object):
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
-        # type: (str, str, Union[AzureSasCredential, TokenCredential], Any) -> None
+        # type: (str, str, Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential], Any) -> None
         self.eventhub_name = eventhub_name
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")
@@ -234,7 +254,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._address = _Address(hostname=fully_qualified_namespace, path=path)
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         if isinstance(credential, AzureSasCredential):
-            self._credential = AzureSasTokenCredential(credential)
+            self._credential = EventhubAzureSasTokenCredential(credential)
+        elif isinstance(credential, AzureNamedKeyCredential):
+            self._credential = EventhubAzureNamedKeyTokenCredential(credential) # type: ignore
         else:
             self._credential = credential #type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)

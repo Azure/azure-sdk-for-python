@@ -25,7 +25,7 @@ from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,
-    AnalyzeBatchActionsType,
+    AnalyzeActionsType,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -41,7 +41,7 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = client.begin_analyze_batch_actions("hello world", actions=[], polling_interval=self._interval())
+            response = client.begin_analyze_actions("hello world", actions=[], polling_interval=self._interval())
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -49,7 +49,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
-        response = client.begin_analyze_batch_actions(
+        response = client.begin_analyze_actions(
             docs,
             actions=[ExtractKeyPhrasesAction()],
             show_stats=True,
@@ -61,7 +61,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert len(action_results) == 1
         action_result = action_results[0]
 
-        assert action_result.action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
+        assert action_result.action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
         assert len(action_result.document_results) == len(docs)
 
         for doc in action_result.document_results:
@@ -77,7 +77,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at. It was too expensive."},
                 {"id": "3", "language": "en", "text": "The restaurant had really good food. I recommend you try it."}]
 
-        response = client.begin_analyze_batch_actions(
+        response = client.begin_analyze_actions(
             docs,
             actions=[AnalyzeSentimentAction()],
             show_stats=True,
@@ -89,7 +89,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert len(action_results) == 1
         action_result = action_results[0]
 
-        assert action_result.action_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT
+        assert action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
         assert len(action_result.document_results) == len(docs)
 
         self.assertEqual(action_result.document_results[0].sentiment, "neutral")
@@ -120,7 +120,7 @@ class TestAnalyze(TextAnalyticsTest):
             "The food and service is not good"
         ]
 
-        response = client.begin_analyze_batch_actions(
+        response = client.begin_analyze_actions(
             documents,
             actions=[AnalyzeSentimentAction(show_opinion_mining=True)],
             show_stats=True,
@@ -132,7 +132,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert len(action_results) == 1
         action_result = action_results[0]
 
-        assert action_result.action_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT
+        assert action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
         assert len(action_result.document_results) == len(documents)
 
         for idx, doc in enumerate(action_result.document_results):
@@ -198,7 +198,7 @@ class TestAnalyze(TextAnalyticsTest):
             TextDocumentInput(id="3", text="Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet.", language="de"),
         ]
 
-        response = client.begin_analyze_batch_actions(
+        response = client.begin_analyze_actions(
             docs,
             actions=[RecognizeEntitiesAction()],
             show_stats=True,
@@ -210,7 +210,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert len(action_results) == 1
         action_result = action_results[0]
 
-        assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+        assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
         assert len(action_result.document_results) == len(docs)
 
         for doc in action_result.document_results:
@@ -231,7 +231,7 @@ class TestAnalyze(TextAnalyticsTest):
                 "Is 998.214.865-68 your Brazilian CPF number?"
         ]
 
-        response = client.begin_analyze_batch_actions(
+        response = client.begin_analyze_actions(
             docs,
             actions=[RecognizePiiEntitiesAction()],
             show_stats=True,
@@ -243,7 +243,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert len(action_results) == 1
         action_result = action_results[0]
 
-        assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+        assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
         assert len(action_result.document_results) == len(docs)
 
         self.assertEqual(action_result.document_results[0].entities[0].text, "859-98-0987")
@@ -268,7 +268,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = [u""]
 
         with self.assertRaises(HttpResponseError):
-            response = client.begin_analyze_batch_actions(
+            response = client.begin_analyze_actions(
                 docs,
                 actions=[ExtractKeyPhrasesAction()],
                 polling_interval=self._interval(),
@@ -280,7 +280,7 @@ class TestAnalyze(TextAnalyticsTest):
     })
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze_batch_actions(
+            response = client.begin_analyze_actions(
                 ["This is written in English."],
                 actions=[
                     RecognizeEntitiesAction(),
@@ -298,7 +298,7 @@ class TestAnalyze(TextAnalyticsTest):
     })
     def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze_batch_actions(
+            response = client.begin_analyze_actions(
                 ["This is written in English."],
                 actions=[
                     RecognizeEntitiesAction(),
@@ -310,8 +310,6 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
 
-    @pytest.mark.skip("Throws 400 on POST: (InvalidRequest) Job task parameter value bad is not supported for model-version "
-                 "parameter for job task type NamedEntityRecognition. Supported values latest,2019-10-01,2020-07-01")
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_out_of_order_ids_multiple_tasks(self, client):
@@ -320,10 +318,10 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = client.begin_analyze_batch_actions(
+        response = client.begin_analyze_actions(
             docs,
             actions=[
-                RecognizeEntitiesAction(model_version="bad"),
+                RecognizeEntitiesAction(),
                 ExtractKeyPhrasesAction(),
                 RecognizePiiEntitiesAction(),
                 RecognizeLinkedEntitiesAction(),
@@ -333,11 +331,13 @@ class TestAnalyze(TextAnalyticsTest):
         ).result()
 
         action_results = list(response)
-        assert len(action_results) == 3
+        assert len(action_results) == 5
 
-        assert action_results[0].is_error
-        assert action_results[1].action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
-        assert action_results[2].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+        assert action_results[0].action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
+        assert action_results[1].action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
+        assert action_results[2].action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
+        assert action_results[3].action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+        assert action_results[4].action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
 
         action_results = [r for r in action_results if not r.is_error]
         assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
@@ -361,7 +361,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        poller = client.begin_analyze_batch_actions(
+        poller = client.begin_analyze_actions(
             docs,
             actions=[
                 RecognizeEntitiesAction(model_version="latest"),
@@ -379,11 +379,11 @@ class TestAnalyze(TextAnalyticsTest):
 
         action_results = list(response)
         assert len(action_results) == 5
-        assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
-        assert action_results[1].action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
-        assert action_results[2].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
-        assert action_results[3].action_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
-        assert action_results[4].action_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT
+        assert action_results[0].action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
+        assert action_results[1].action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
+        assert action_results[2].action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
+        assert action_results[3].action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+        assert action_results[4].action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
 
         assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
 
@@ -397,7 +397,7 @@ class TestAnalyze(TextAnalyticsTest):
     def test_poller_metadata(self, client):
         docs = [{"id": "56", "text": ":)"}]
 
-        poller = client.begin_analyze_batch_actions(
+        poller = client.begin_analyze_actions(
             docs,
             actions=[
                 RecognizeEntitiesAction(model_version="latest")
@@ -435,7 +435,7 @@ class TestAnalyze(TextAnalyticsTest):
     #         u"The restaurant was not as good as I hoped."
     #     ]
 
-    #     response = list(client.begin_analyze_batch_actions(
+    #     response = list(client.begin_analyze_actions(
     #         docs,
     #         actions=[
     #             RecognizeEntitiesAction(),
@@ -472,7 +472,7 @@ class TestAnalyze(TextAnalyticsTest):
     #         TextDocumentInput(id="3", text="猫は幸せ"),
     #     ]
 
-    #     response = list(client.begin_analyze_batch_actions(
+    #     response = list(client.begin_analyze_actions(
     #         docs,
     #         actions=[
     #             RecognizeEntitiesAction(),
@@ -489,7 +489,7 @@ class TestAnalyze(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_invalid_language_hint_method(self, client):
-        response = list(client.begin_analyze_batch_actions(
+        response = list(client.begin_analyze_actions(
             ["This should fail because we're passing in an invalid language hint"],
             language="notalanguage",
             actions=[
@@ -506,36 +506,23 @@ class TestAnalyze(TextAnalyticsTest):
             for doc in action_result.document_results:
                 assert doc.is_error
 
-    @pytest.mark.skip("Throws 400 on POST: (InvalidRequest) Job task parameter value bad is not supported for model-version "
-                 "parameter for job task type KeyPhraseExtraction. Supported values latest,2019-10-01,2020-07-01")
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_bad_model_version_error_multiple_tasks(self, client):  # TODO: verify behavior of service
+    def test_bad_model_version_error_multiple_tasks(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
-        response = client.begin_analyze_batch_actions(
-            docs,
-            actions=[
-                RecognizeEntitiesAction(model_version="latest"),
-                ExtractKeyPhrasesAction(model_version="bad"),
-                RecognizePiiEntitiesAction(model_version="bad"),
-                RecognizeLinkedEntitiesAction(model_version="bad"),
-                AnalyzeSentimentAction(model_version="bad")
-            ],
-            polling_interval=self._interval(),
-        ).result()
-
-        action_results = list(response)
-        assert action_results[0].is_error == False
-        assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
-        assert action_results[1].is_error == True
-        assert action_results[1].error.code == "InvalidRequest"
-        assert action_results[2].is_error == True
-        assert action_results[2].error.code == "InvalidRequest"
-        assert action_results[3].is_error == True
-        assert action_results[3].error.code == "InvalidRequest"
-        assert action_results[4].is_error == True
-        assert action_results[4].error.code == "InvalidRequest"
+        with pytest.raises(HttpResponseError):
+            response = client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizeEntitiesAction(model_version="latest"),
+                    ExtractKeyPhrasesAction(model_version="bad"),
+                    RecognizePiiEntitiesAction(model_version="bad"),
+                    RecognizeLinkedEntitiesAction(model_version="bad"),
+                    AnalyzeSentimentAction(model_version="bad")
+                ],
+                polling_interval=self._interval(),
+            ).result()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -543,7 +530,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         with self.assertRaises(HttpResponseError):
-            response = client.begin_analyze_batch_actions(
+            response = client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="bad"),
@@ -560,7 +547,7 @@ class TestAnalyze(TextAnalyticsTest):
     def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
-            client.begin_analyze_batch_actions(
+            client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(),
@@ -577,7 +564,7 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
-            client.begin_analyze_batch_actions(None, None)
+            client.begin_analyze_actions(None, None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -585,7 +572,7 @@ class TestAnalyze(TextAnalyticsTest):
     def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
             return "cls result"
-        res = client.begin_analyze_batch_actions(
+        res = client.begin_analyze_actions(
             documents=["Test passing cls to endpoint"],
             actions=[
                 RecognizeEntitiesAction(),
@@ -601,7 +588,7 @@ class TestAnalyze(TextAnalyticsTest):
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 25)))] # max number of documents is 25
 
-        result = client.begin_analyze_batch_actions(
+        result = client.begin_analyze_actions(
             docs,
             actions=[
                 RecognizeEntitiesAction(),
@@ -625,19 +612,19 @@ class TestAnalyze(TextAnalyticsTest):
         # do 2 pages of 5 task results
         for idx, action_result in enumerate(action_results):
             if idx % 5 == 0:
-                assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+                assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
                 recognize_entities_results.append(action_result)
             elif idx % 5 == 1:
-                assert action_result.action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
+                assert action_result.action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
                 extract_key_phrases_results.append(action_result)
             elif idx % 5 == 2:
-                assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+                assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
                 recognize_pii_entities_results.append(action_result)
             elif idx % 5 == 3:
-                assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
+                assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
                 recognize_linked_entities_results.append(action_result)
             else:
-                assert action_result.action_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT
+                assert action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
                 analyze_sentiment_results.append(action_result)
             if idx < 5:  # first page of task results
                 assert len(action_result.document_results) == 20
@@ -656,7 +643,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = list(itertools.repeat("input document", 26))  # Maximum number of documents per request is 25
 
         with pytest.raises(HttpResponseError) as excinfo:
-            client.begin_analyze_batch_actions(
+            client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(),

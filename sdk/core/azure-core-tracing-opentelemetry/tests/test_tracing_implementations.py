@@ -139,7 +139,7 @@ class TestOpentelemetryWrapper:
             assert parent.attributes["test"] == "test2"
 
     def test_set_http_attributes(self, tracer):
-        with tracer.start_as_current_span("Root") as parent:
+        with tracer.start_as_current_span("Root", kind=OpenTelemetrySpanKind.CLIENT) as parent:
             wrapped_class = OpenTelemetrySpan(span=parent)
             request = mock.Mock()
             setattr(request, "method", "GET")
