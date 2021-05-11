@@ -88,6 +88,7 @@ def stop_record_or_playback(test_id, recording_id):
             headers={"x-recording-file": test_id, "x-recording-id": recording_id, "x-recording-save": "true"},
             verify=False,
         )
+        print("STOPPED: ", result.status_code)
     elif os.getenv("AZURE_RECORD_MODE") == "playback":
         result = requests.post(
             PLAYBACK_STOP_URL,
@@ -163,9 +164,17 @@ def RecordedByProxy(func):
         # this ensures that within this scope, we've monkeypatched the send functionality
         with patch_requests_func(transform_args):
             # call the modified function.
-            value = func(*args, **trimmed_kwargs)
+            try:
+                value = func(*args, **trimmed_kwargs)
+                print("VALUE: {}".format(value))
+            except Exception as exc:
+                # stop_record_or_playback(test_id, recording_id)
+                # raise
+                value = None
+                print(exc)
+                pass
 
-        stop_record_or_playback(test_id, recording_id)
+            stop_record_or_playback(test_id, recording_id)
 
         return value
 

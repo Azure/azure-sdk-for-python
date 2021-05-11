@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from devtools_testutils.proxy_testcase import RecordedByProxyAsync
 import pytest
 from datetime import datetime, timedelta
 
@@ -83,6 +84,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
     # --Test cases for tables --------------------------------------------------
 
     @tables_decorator
+    @RecordedByProxy
     def test_create_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -142,6 +144,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         ts.delete_table(table_name)
 
     @tables_decorator
+    @RecordedByProxy
     def test_query_tables_per_page(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -202,6 +205,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         ts.delete_table(table_name)
 
     @tables_decorator
+    @RecordedByProxy
     def test_query_tables(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -224,6 +228,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             self.sleep(10) # wait for tables to be deleted before proceeding
 
     @tables_decorator
+    @RecordedByProxy
     def test_query_tables_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -248,6 +253,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             self.sleep(10) # wait for tables to be deleted before proceeding
 
     @tables_decorator
+    @RecordedByProxy
     def test_query_tables_with_num_results(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         prefix = 'listtable'
@@ -277,6 +283,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             self.sleep(10) # wait for tables to be deleted before proceeding
 
     @tables_decorator
+    @RecordedByProxy
     def test_query_tables_with_marker(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -307,6 +314,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             self.sleep(10) # wait for tables to be deleted before proceeding
 
     @tables_decorator
+    @RecordedByProxy
     def test_delete_table_with_existing_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -322,6 +330,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         assert len(existing) ==  0
 
     @tables_decorator
+    @RecordedByProxy
     def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -330,6 +339,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         ts.delete_table(table_name)
 
     @tables_decorator
+    @RecordedByProxy
     def test_get_table_acl(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -347,6 +357,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             ts.delete_table(table.table_name)
 
     @tables_decorator
+    @RecordedByProxy
     def test_set_table_acl_with_empty_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -366,6 +377,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             ts.delete_table(table.table_name)
 
     @tables_decorator
+    @RecordedByProxy
     def test_set_table_acl_with_empty_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -388,6 +400,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             ts.delete_table(table.table_name)
 
     @tables_decorator
+    @RecordedByProxy
     def test_set_table_acl_with_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -413,6 +426,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             ts.delete_table(table.table_name)
 
     @tables_decorator
+    @RecordedByProxy
     def test_set_table_acl_too_many_ids(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -442,46 +456,42 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         account_url = self.account_url(tables_storage_account_name, "table")
         tsc = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
-        # table = self._create_table(tsc)
-        # print(table.table_name)
-        # try:
-        table = tsc.get_table_client(u"pytablesync669b08d7")
-        entity = {
-            'PartitionKey': u'test',
-            'RowKey': u'test1',
-            'text': u'hello',
-        }
-        table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
+        table = self._create_table(tsc)
+        try:
+            table = tsc.get_table_client(u"pytablesync669b08d7")
+            entity = {
+                'PartitionKey': u'test',
+                'RowKey': u'test1',
+                'text': u'hello',
+            }
+            table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
-        entity['RowKey'] = u'test2'
-        table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
+            entity['RowKey'] = u'test2'
+            table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
-        token = generate_account_sas(
-            tables_primary_storage_account_key,
-            resource_types=ResourceTypes(object=True),
-            permission=AccountSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1),
-            start=datetime.utcnow() - timedelta(minutes=1),
-        )
+            token = generate_account_sas(
+                tables_primary_storage_account_key,
+                resource_types=ResourceTypes(object=True),
+                permission=AccountSasPermissions(read=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start=datetime.utcnow() - timedelta(minutes=1),
+            )
 
-        account_url = self.account_url(tables_storage_account_name, "table")
+            account_url = self.account_url(tables_storage_account_name, "table")
 
-        service = self.create_client_from_credential(TableServiceClient, token, endpoint=account_url)
+            service = self.create_client_from_credential(TableServiceClient, token, endpoint=account_url)
 
-        # Act
+            # Act
 
-        sas_table = service.get_table_client(table.table_name)
-        entities = list(sas_table.list_entities())
+            sas_table = service.get_table_client(table.table_name)
+            entities = list(sas_table.list_entities())
 
-        # Assert
-        assert len(entities) ==  2
-        assert entities[0]['text'] == u'hello'
-        assert entities[1]['text'] == u'hello'
-        # finally:
-        #     self._delete_table(table=table, ts=tsc)
-
-        # for entity in table.list_entities():
-        #     table.delete_entity(entity["PartitionKey"], entity["RowKey"])
+            # Assert
+            assert len(entities) ==  2
+            assert entities[0]['text'] == u'hello'
+            assert entities[1]['text'] == u'hello'
+        finally:
+            self._delete_table(table=table, ts=tsc)
 
 
 class TestTablesUnitTest(TableTestCase):
