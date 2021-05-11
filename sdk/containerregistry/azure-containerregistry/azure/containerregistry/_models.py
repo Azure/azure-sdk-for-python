@@ -64,6 +64,7 @@ class RepositoryWriteableProperties(object):
     :ivar bool can_list: Ability to list an artifact or tag
     :ivar bool can_read: Ability to read an artifact or tag
     :ivar bool can_write: Ability to write an artifact or tag
+    :ivar bool teleport_enabled: Teleport Enabled
     """
 
     def __init__(self, **kwargs):
@@ -73,11 +74,13 @@ class RepositoryWriteableProperties(object):
         :keyword bool can_list: List operation status for the object
         :keyword bool can_read: Read operation status for the object
         :keyword bool can_write: Write operation status for the object
+        :keyword bool teleport_enabled: Teleport Enabled
         """
         self.can_delete = kwargs.get("can_delete")
         self.can_list = kwargs.get("can_list")
         self.can_read = kwargs.get("can_read")
         self.can_write = kwargs.get("can_write")
+        self.teleport_enabled = kwargs.get("teleport_enabled")
 
     @classmethod
     def _from_generated(cls, generated):
@@ -87,6 +90,7 @@ class RepositoryWriteableProperties(object):
             can_list=generated.can_list,
             can_read=generated.can_read,
             can_write=generated.can_write,
+            teleport_enabled=generated.additional_properties.get("teleport_enabled")
         )
 
     def _to_generated(self):
@@ -96,6 +100,7 @@ class RepositoryWriteableProperties(object):
             can_list=self.can_list,
             can_read=self.can_read,
             can_write=self.can_write,
+            teleport_enabled=self.teleport_enabled,
         )
 
 
