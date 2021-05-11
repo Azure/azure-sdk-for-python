@@ -41,13 +41,13 @@ class MetricsClient(object):
         self._definitions_op = self._client.metric_definitions
 
     def query(self, resource_uri, metricnames, **kwargs):
-        # type: (str, str, Any) -> MetricsResponse
+        # type: (str, list, Any) -> MetricsResponse
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param metricnames: The names of the metrics (comma separated) to retrieve.
-        :type metricnames: str
+        :param metricnames: The names of the metrics to retrieve.
+        :type metricnames: list
         :keyword timespan: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'.
         :paramtype timespan: str
@@ -82,6 +82,7 @@ class MetricsClient(object):
         :rtype: ~azure.monitor.query.MetricsResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        kwargs.setdefault("metricnames", metricnames.join(","))
         return self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
 
     def list_metric_namespaces(self, resource_uri, **kwargs):

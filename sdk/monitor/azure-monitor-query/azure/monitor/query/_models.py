@@ -12,6 +12,7 @@ from ._generated.models import (
     Column,
     Response,
     QueryBody,
+    BatchResponse,
     LogQueryRequest as InternalLogQueryRequest
 )
 
@@ -161,10 +162,6 @@ class LogsQueryRequest(InternalLogQueryRequest):
     :keyword body: The Analytics query. Learn more about the `Analytics query syntax
      <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
     :paramtype body: ~monitor_query_client.models.QueryBody
-    :ivar path:  Default value: "/query".
-    :vartype path: str
-    :ivar method:  Default value: "POST".
-    :vartype method: str
     :keyword workspace: Workspace Id to be included in the query.
     :paramtype workspace: str
     """
@@ -208,3 +205,26 @@ class LogsQueryBody(QueryBody):
         self.qualified_names = kwargs.get('qualified_names', None)
         self.workspace_ids = kwargs.get('workspace_ids', None)
         self.azure_resource_ids = kwargs.get('azure_resource_ids', None)
+
+class LogsBatchResponse(BatchResponse):
+    """Response to a batch.
+
+    :keyword responses: An array of responses corresponding to each individual request in a batch.
+    :paramtype responses: list[~monitor_query_client.models.LogQueryResponse]
+    :keyword error: Error response for a batch request.
+    :paramtype error: ~monitor_query_client.models.BatchResponseError
+    """
+
+    _attribute_map = {
+        'responses': {'key': 'responses', 'type': '[LogQueryResponse]'},
+        'error': {'key': 'error', 'type': 'BatchResponseError'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        # type: (Any) -> None
+        super(LogsBatchResponse, self).__init__(**kwargs)
+        self.responses = kwargs.get('responses', None)
+        self.error = kwargs.get('error', None)

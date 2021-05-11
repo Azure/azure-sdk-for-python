@@ -13,7 +13,8 @@ from ._models import (
     LogsQueryResultColumn,
     MetricsResponse,
     LogsQueryRequest,
-    LogsQueryBody
+    LogsQueryBody,
+    LogsBatchResponse
 )
 
 from ._generated.models import MetricNamespaceCollection
@@ -22,6 +23,7 @@ from ._version import VERSION
 
 __all__ = [
     "LogsClient",
+    "LogsBatchResponse",
     "LogsQueryResults",
     "LogsQueryResultColumn",
     "LogsQueryResultTable",

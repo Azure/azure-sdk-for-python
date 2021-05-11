@@ -36,7 +36,7 @@ class LogsClient(object):
         self._query_op = self._client.query
 
     def query(self, workspace_id, query, **kwargs):
-        # type: (str, str, Any) -> LogQueryResults
+        # type: (str, str, Any) -> LogsQueryResults
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -57,7 +57,7 @@ class LogsClient(object):
          By default, the API does not return information regarding the type of visualization to show.
          If your client requires this information, specify the preference
         :return: QueryResults, or the result of cls(response)
-        :rtype: ~azure.monitor.query.LogQueryResults
+        :rtype: ~azure.monitor.query.LogsQueryResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timespan = kwargs.pop("timespan", None)
@@ -85,7 +85,7 @@ class LogsClient(object):
         return self._query_op.get(workspace_id, query, **kwargs)
 
     def batch_query(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogQueryRequest], Any) -> BatchResponse
+        # type: (Union[Sequence[Dict], Sequence[LogQueryRequest], Any) -> LogsBatchResponse
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -93,7 +93,7 @@ class LogsClient(object):
         :param queries: The list of queries that should be processed
         :type queries: list[dict] or list[~azure.monitor.query.LogQueryRequest]
         :return: BatchResponse, or the result of cls(response)
-        :rtype: ~monitor_query_client.models.BatchResponse
+        :rtype: ~azure.monitor.query.LogsBatchResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
