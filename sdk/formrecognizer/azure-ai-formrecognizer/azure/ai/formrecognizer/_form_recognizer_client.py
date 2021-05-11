@@ -87,8 +87,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
-        :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword str locale: Locale of the receipt. Supported locales include: en-US, en-AU, en-CA, en-GB,
             and en-IN.
@@ -165,8 +163,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
-        :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword str locale: Locale of the receipt. Supported locales include: en-US, en-AU, en-CA, en-GB,
             and en-IN.
@@ -245,8 +241,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
-        :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
@@ -311,8 +305,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
             `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
-        :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
@@ -361,8 +353,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
-        :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
@@ -424,8 +414,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
-        :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
@@ -480,8 +468,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
-        :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
@@ -545,8 +531,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
             `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
-        :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
@@ -609,8 +593,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
-        :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.FormPage`].
@@ -696,8 +678,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             reading orders include: basic (default), natural. Set 'basic' to sort lines left to right and top
             to bottom, although in some cases proximity is treated with higher priority. Set 'natural' to sort
             lines by using positional information to keep nearby lines together.
-        :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.FormPage`].
@@ -765,8 +745,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
             `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
-        :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
@@ -851,8 +829,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
             `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
-        :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
