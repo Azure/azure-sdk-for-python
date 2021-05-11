@@ -37,7 +37,7 @@ class FarmBeatsClientConfiguration(Configuration):
 
         self.credential = credential
         self.api_version = "2021-03-31-preview"
-        self.credential_scopes = kwargs.pop('credential_scopes', [])
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://farmbeats-dogfood.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'farmbeatsclient/{}'.format(VERSION))
         self._configure(**kwargs)
 
@@ -54,7 +54,5 @@ class FarmBeatsClientConfiguration(Configuration):
         self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
-        if not self.credential_scopes and not self.authentication_policy:
-            raise ValueError("You must provide either credential_scopes or authentication_policy as kwargs")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
