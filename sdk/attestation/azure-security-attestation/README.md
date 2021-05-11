@@ -25,7 +25,7 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 ### Install the package
 
-Install the Microsoft Azure Attestation client library for .NET with [PyPI][Attestation_pypi]:
+Install the Microsoft Azure Attestation client library for Python with [PyPI][Attestation_pypi]:
 
 ```Powershell
 pip install --pre azure-security-attestation
