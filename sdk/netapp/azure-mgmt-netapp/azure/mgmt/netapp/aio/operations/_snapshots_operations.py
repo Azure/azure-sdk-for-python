@@ -73,7 +73,7 @@ class SnapshotsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -160,7 +160,7 @@ class SnapshotsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         # Construct URL
@@ -214,7 +214,7 @@ class SnapshotsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -288,8 +288,8 @@ class SnapshotsOperations:
         :type body: ~azure.mgmt.netapp.models.Snapshot
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Snapshot or the result of cls(response)
@@ -355,7 +355,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: object,
+        body: str,
         **kwargs
     ) -> Optional["_models.Snapshot"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Snapshot"]]
@@ -363,7 +363,7 @@ class SnapshotsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -389,7 +389,7 @@ class SnapshotsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'object')
+        body_content = self._serialize.body(body, 'str')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -416,7 +416,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: object,
+        body: str,
         **kwargs
     ) -> AsyncLROPoller["_models.Snapshot"]:
         """Update a snapshot.
@@ -434,11 +434,11 @@ class SnapshotsOperations:
         :param snapshot_name: The name of the mount target.
         :type snapshot_name: str
         :param body: Snapshot object supplied in the body of the operation.
-        :type body: object
+        :type body: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Snapshot or the result of cls(response)
@@ -511,7 +511,7 @@ class SnapshotsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -570,8 +570,8 @@ class SnapshotsOperations:
         :type snapshot_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
