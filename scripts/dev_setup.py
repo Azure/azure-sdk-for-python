@@ -32,18 +32,16 @@ def pip_command(command, additional_dir=".", error_ok=False):
 
 def select_install_type(pkg, run_develop, exceptions):
     # the default for disable_develop will be false, which means `run_develop` will be true
-    argument = ""
+    argument, decision = {1: "", -1: "-e"}, 1
+    
     if run_develop:
-        argument = "-e"
+        decision = -1
 
     if pkg in exceptions:
         # opposite of whatever our decision was
-        if argument == "":
-            argument = "-e"
-        elif argument == "-e":
-            argument = ""
+        decision *= -1
 
-    return argument
+    return argument[decision]
 
 # optional argument in a situation where we want to build a variable subset of packages
 parser = argparse.ArgumentParser(
