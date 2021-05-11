@@ -31,5 +31,7 @@ extends:
   parameters:
     ServiceDirectory: confidentialledger
     Artifacts:
+    - name: azure-confidentialledger
+      safeName: azureconfidentialledger
     - name: azure-mgmt-confidentialledger
       safeName: azuremgmtconfidentialledger

@@ -5,13 +5,13 @@
 # ------------------------------------
 
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Any
 from ._generated.models import ContentProperties as GeneratedContentProperties
+from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
 
 if TYPE_CHECKING:
     from ._generated.models import ManifestAttributesBase
-    from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
-    from ._generated.models import ArtifactTagProperties as GeneratedTagProperties
+    from ._generated.models import ArtifactTagProperties as GeneratedArtifactTagProperties
 
 
 class ContentProperties(object):
@@ -56,26 +56,26 @@ class ContentProperties(object):
         )
 
 
-class DeletedRepositoryResult(object):
+class DeleteRepositoryResult(object):
     """Represents the digests and tags deleted when a repository is deleted
 
-    :ivar List[str] deleted_registry_artifact_digests: Registry artifact digests that were deleted
+    :ivar List[str] deleted_manifests: Registry artifact digests that were deleted
     :ivar List[str] deleted_tags: Tags that were deleted
     """
 
     def __init__(self, **kwargs):
-        self.deleted_registry_artifact_digests = kwargs.get("deleted_registry_artifact_digests", None)
+        self.deleted_manifests = kwargs.get("deleted_manifests", None)
         self.deleted_tags = kwargs.get("deleted_tags", None)
 
     @classmethod
     def _from_generated(cls, gen):
         return cls(
             deleted_tags=gen.deleted_tags,
-            deleted_registry_artifact_digests=gen.deleted_manifests,
+            deleted_manifests=gen.deleted_manifests,
         )
 
 
-class RegistryArtifactProperties(object):
+class ArtifactManifestProperties(object):
     """Represents properties of a registry artifact
 
     :ivar str cpu_architecture: CPU Architecture of an artifact
@@ -85,7 +85,7 @@ class RegistryArtifactProperties(object):
     :ivar last_updated_on: Time and date an artifact was last updated
     :vartype last_updated_on: :class:`~datetime.datetime`
     :ivar str operating_system: Operating system for the artifact
-    :ivar List[str] references: References for the artifact
+    :ivar str repository_name: Repository name the artifact belongs to
     :ivar str size: Size of the artifact
     :ivar List[str] tags: Tags associated with a registry artifact
     :ivar writeable_properties: Permissions for an artifact
@@ -98,7 +98,7 @@ class RegistryArtifactProperties(object):
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.operating_system = kwargs.get("operating_system", None)
-        self.references = kwargs.get("references", None)
+        self.repository_name = kwargs.get("repository_name", None)
         self.size = kwargs.get("size", None)
         self.tags = kwargs.get("tags", None)
         self.writeable_properties = kwargs.get("content_permissions", None)
@@ -106,8 +106,8 @@ class RegistryArtifactProperties(object):
             self.writeable_properties = ContentProperties._from_generated(self.writeable_properties)
 
     @classmethod
-    def _from_generated(cls, generated):
-        # type: (ManifestAttributesBase) -> RegistryArtifactProperties
+    def _from_generated(cls, generated, **kwargs):
+        # type: (ManifestAttributesBase, Dict[str, Any]) -> ArtifactManifestProperties
         return cls(
             cpu_architecture=generated.architecture,
             created_on=generated.created_on,
@@ -117,6 +117,7 @@ class RegistryArtifactProperties(object):
             size=generated.size,
             tags=generated.tags,
             content_permissions=generated.writeable_properties,
+            repository_name=kwargs.get("repository_name", None),
         )
 
 
@@ -131,7 +132,6 @@ class RepositoryProperties(object):
     :vartype last_updated_on: :class:`datetime.datetime`
     :ivar int manifest_count: Number of manifest in the repository
     :ivar str name: Name of the repository
-    :ivar str registry: Registry the repository belongs to
     :ivar int tag_count: Number of tags associated with the repository
     """
 
@@ -141,7 +141,6 @@ class RepositoryProperties(object):
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.manifest_count = kwargs.get("manifest_count", None)
         self.name = kwargs.get("name", None)
-        self.registry = kwargs.get("registry", None)
         self.tag_count = kwargs.get("tag_count", None)
         if self.writeable_properties:
             self.writeable_properties = ContentProperties._from_generated(self.writeable_properties)
@@ -156,25 +155,35 @@ class RepositoryProperties(object):
             manifest_count=generated.manifest_count,
             tag_count=generated.tag_count,
             content_permissions=generated.writeable_properties,
-            registry=generated.additional_properties.get("registry", None),
+        )
+
+    def _to_generated(self):
+        # type: () -> GeneratedRepositoryProperties
+        return GeneratedRepositoryProperties(
+            name=self.name,
+            created_on=self.created_on,
+            last_updated_on=self.last_updated_on,
+            manifest_count=self.manifest_count,
+            tag_count=self.tag_count,
+            writeable_properties=self.writeable_properties._to_generated(),  # pylint: disable=protected-access
         )
 
 
-class RegistryArtifactOrderBy(str, Enum):
+class ManifestOrder(str, Enum):
     """Enum for ordering registry artifacts"""
 
     LAST_UPDATE_TIME_DESCENDING = "timedesc"
     LAST_UPDATE_TIME_ASCENDING = "timeasc"
 
 
-class TagOrderBy(str, Enum):
+class TagOrder(str, Enum):
     """Enum for ordering tags"""
 
     LAST_UPDATE_TIME_DESCENDING = "timedesc"
     LAST_UPDATE_TIME_ASCENDING = "timeasc"
 
 
-class TagProperties(object):
+class ArtifactTagProperties(object):
     """Model for storing properties of a single tag
 
     :ivar writeable_properties: Read/Write/List/Delete permissions for the tag
@@ -185,7 +194,7 @@ class TagProperties(object):
     :ivar last_updated_on: Time the tag was last updated
     :vartype last_updated_on: :class:`datetime.datetime`
     :ivar str name: Name of the image the tag corresponds to
-    :ivar str registry: Registry the tag belongs to
+    :ivar str repository: Repository the tag belongs to
     """
 
     def __init__(self, **kwargs):
@@ -194,16 +203,18 @@ class TagProperties(object):
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.name = kwargs.get("name", None)
+        self.repository = kwargs.get("repository", None)
         if self.writeable_properties:
             self.writeable_properties = ContentProperties._from_generated(self.writeable_properties)
 
     @classmethod
-    def _from_generated(cls, generated):
-        # type: (GeneratedTagProperties) -> TagProperties
+    def _from_generated(cls, generated, **kwargs):
+        # type: (GeneratedArtifactTagProperties, Dict[str, Any]) -> ArtifactTagProperties
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
             name=generated.name,
             writeable_properties=generated.writeable_properties,
+            repository=kwargs.get("repository", None),
         )

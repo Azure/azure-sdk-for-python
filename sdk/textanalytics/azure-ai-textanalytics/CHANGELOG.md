@@ -1,6 +1,12 @@
 # Release History
 
-## 5.1.0b7 (Unreleased)
+## 5.1.0b7 (2021-05-11)
+
+**Breaking Changes**
+- Renamed `begin_analyze_batch_actions` to `begin_analyze_actions`.
+- Renamed `AnalyzeBatchActionsType` to `AnalyzeActionsType`.
+- Renamed `AnalyzeBatchActionsResult` to `AnalyzeActionsResult`.
+- Renamed `AnalyzeBatchActionsError` to `AnalyzeActionsError`.
 
 **New Features**
 - Added enums `EntityConditionality`, `EntityCertainty`, and `EntityAssociation`.
