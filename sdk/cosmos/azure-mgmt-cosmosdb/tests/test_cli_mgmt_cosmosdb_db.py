@@ -41,6 +41,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
             azure.mgmt.cosmosdb.CosmosDBManagementClient
         )
     
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_dbaccount(self, resource_group):
         RESOURCE_GROUP = resource_group.name
