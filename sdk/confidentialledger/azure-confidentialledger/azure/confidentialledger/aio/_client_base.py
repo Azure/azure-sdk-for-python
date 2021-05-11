@@ -11,6 +11,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import AioHttpTransport
 
+from .._user_agent import USER_AGENT
 from .._generated._generated_ledger.v0_1_preview.aio import (
     ConfidentialLedgerClient as _ConfidentialLedgerClient,
 )
@@ -101,6 +102,7 @@ class AsyncConfidentialLedgerClientBase(object):
                 pipeline=pipeline,
                 transport=transport,
                 http_logging_policy=http_logging_policy,
+                sdk_moniker=USER_AGENT,
                 **kwargs
             )
         except NotImplementedError:
