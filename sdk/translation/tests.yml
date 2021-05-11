@@ -3,7 +3,6 @@ trigger: none
 stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      DeployArmTemplate: true
       BuildTargetingString: azure-ai-translation-document
       ServiceDirectory: translation
       EnvVars:
@@ -13,3 +12,9 @@ stages:
         AZURE_TEST_RUN_LIVE: 'true'
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
+        # temp for live test debugging
+        TRANSLATION_DOCUMENT_NAME: $(python-translation-test-name)
+        TRANSLATION_DOCUMENT_TEST_API_KEY: $(python-translation-test-key)
+        TRANSLATION_DOCUMENT_TEST_ENDPOINT: $(python-translation-test-endpoint)
+        TRANSLATION_DOCUMENT_STORAGE_NAME: $(python-translation-test-storage-name)
+        TRANSLATION_DOCUMENT_STORAGE_KEY: $(python-translation-test-storage-key)

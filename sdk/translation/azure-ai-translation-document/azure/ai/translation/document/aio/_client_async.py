@@ -213,7 +213,7 @@ class DocumentTranslationClient(object):
         )
         try:
             result = await asyncio.wait_for(poller.result(), 45)
-        except asyncio.TimeoutError:
+        except (asyncio.TimeoutError, Exception):
             assert job_id in [""], "job ID that didn't finish is %s" % job_id
 
 
