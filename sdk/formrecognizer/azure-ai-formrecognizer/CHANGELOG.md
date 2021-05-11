@@ -9,6 +9,10 @@
 - The model `TextAppearance` now includes the properties `style_name` and `style_confidence` that were part of the `TextStyle` object.
 - Removed the model `TextStyle`.
 
+**New features**
+
+- Added `to_dict` and `from_dict` methods to all of the models
+
 ## 3.1.0b4 (2021-04-06)
 
 **New features**
