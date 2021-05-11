@@ -208,7 +208,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     :param pipeline: The pipeline object
     :param response: The client response object.
     :param bool decompress: If True which is default, will attempt to decode the body based
-        on the ‘content-encoding’ header.
+        on the *content-encoding* header.
     """
     def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, decompress=True) -> None:
         self.pipeline = pipeline
@@ -260,7 +260,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :param block_size: block size of data sent over connection.
     :type block_size: int
     :param bool decompress: If True which is default, will attempt to decode the body based
-            on the ‘content-encoding’ header.
+            on the *content-encoding* header.
     """
     def __init__(self, request: HttpRequest,
                  aiohttp_response: aiohttp.ClientResponse,
@@ -341,7 +341,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         :param pipeline: The pipeline object
         :type pipeline: azure.core.pipeline.Pipeline
         :keyword bool decompress: If True which is default, will attempt to decode the body based
-            on the ‘content-encoding’ header.
+            on the *content-encoding* header.
         """
         return AioHttpStreamDownloadGenerator(pipeline, self, **kwargs)
 
