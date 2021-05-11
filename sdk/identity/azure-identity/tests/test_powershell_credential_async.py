@@ -77,7 +77,7 @@ async def test_get_token(stderr):
     assert command.startswith("pwsh -NonInteractive -EncodedCommand ")
 
     encoded_script = command.split()[-1]
-    decoded_script = base64.urlsafe_b64decode(encoded_script).decode("utf-16-le")
+    decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
     assert "Get-AzAccessToken -ResourceUrl '{}'".format(scope) in decoded_script
 
     assert mock_exec().result().communicate.call_count == 1
@@ -94,27 +94,6 @@ async def test_ignores_extraneous_stdout_content():
 
     assert token.token == expected_access_token
     assert token.expires_on == expected_expires_on
-
-
-@pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
-async def test_legacy_powershell():
-    mock_exec = get_mock_exec(stdout="azsdk%***%42")
-    with patch(CREATE_SUBPROCESS_EXEC, mock_exec):
-        await AzurePowerShellCredential(use_legacy_powershell=True).get_token("scope")
-
-    assert mock_exec.call_count == 1
-    args, kwargs = mock_exec.call_args
-    command = args[-1]
-    assert command.startswith("powershell")
-
-
-@pytest.mark.parametrize("platform", ("darwin", "linux"))
-async def test_legacy_powershell_non_windows(platform):
-    """The credential should raise ValueError when configured to use legacy PowerShell on non-Windows platforms"""
-
-    with patch(AzurePowerShellCredential.__module__ + ".sys.platform", platform):
-        with pytest.raises(ValueError, match=".*Windows.*"):
-            AzurePowerShellCredential(use_legacy_powershell=True)
 
 
 async def test_az_powershell_not_installed():
@@ -221,17 +200,48 @@ async def test_unexpected_error():
 
 
 @pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
-async def test_windows_fallback():
+async def test_windows_event_loop():
     """The credential should fall back to the sync implementation when not using ProactorEventLoop on Windows"""
 
     sync_get_token = Mock()
     credential = AzurePowerShellCredential()
 
-    with patch(AzurePowerShellCredential.__module__ + ".sys.platform", "win32"):
-        with patch(AzurePowerShellCredential.__module__ + "._SyncCredential") as fallback:
-            fallback.return_value = Mock(get_token=sync_get_token)
-            with patch(AzurePowerShellCredential.__module__ + ".asyncio.get_event_loop"):
-                # asyncio.get_event_loop now returns Mock, i.e. never ProactorEventLoop
-                await credential.get_token("scope")
+    with patch(AzurePowerShellCredential.__module__ + "._SyncCredential") as fallback:
+        fallback.return_value = Mock(get_token=sync_get_token)
+        with patch(AzurePowerShellCredential.__module__ + ".asyncio.get_event_loop"):
+            # asyncio.get_event_loop now returns Mock, i.e. never ProactorEventLoop
+            await credential.get_token("scope")
 
     assert sync_get_token.call_count == 1
+
+
+@pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
+async def test_windows_powershell_fallback():
+    """On Windows, the credential should fall back to powershell.exe when pwsh.exe isn't on the path"""
+
+    calls = 0
+
+    async def subprocess_exec(*args, **kwargs):
+        assert args[:2] == ["cmd", "/c"]
+        nonlocal calls
+        calls += 1
+        if args[-1].startswith("pwsh"):
+            assert calls == 1, 'credential should invoke "pwsh" only once'
+            stdout = ""
+            stderr = "'pwsh' is not recognized as an internal or external command,\r\noperable program or batch file."
+            return_code = 1
+        else:
+            assert args[-1].startswith("powershell"), 'credential should fall back to "powershell"'
+            stdout = NO_AZ_ACCOUNT_MODULE
+            stderr = ""
+            return_code = 0
+
+        communicate = Mock(return_value=get_completed_future((stdout.encode(), stderr.encode())))
+        return Mock(communicate=communicate, returncode=return_code)
+
+    credential = AzurePowerShellCredential()
+    with pytest.raises(CredentialUnavailableError, match=AZ_ACCOUNT_NOT_INSTALLED):
+        with patch(CREATE_SUBPROCESS_EXEC, subprocess_exec):
+            await credential.get_token("scope")
+
+    assert calls == 2

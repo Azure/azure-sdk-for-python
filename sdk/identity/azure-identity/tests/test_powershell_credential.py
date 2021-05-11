@@ -8,6 +8,11 @@ from platform import python_version
 import subprocess
 import sys
 
+try:
+    from unittest.mock import Mock, patch
+except ImportError:  # python < 3.3
+    from mock import Mock, patch  # type: ignore
+
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import AzurePowerShellCredential, CredentialUnavailableError
 from azure.identity._credentials.azure_powershell import (
@@ -19,8 +24,6 @@ from azure.identity._credentials.azure_powershell import (
 )
 import pytest
 
-from helpers import mock
-
 
 POPEN = AzurePowerShellCredential.__module__ + ".subprocess.Popen"
 
@@ -31,12 +34,12 @@ PREPARING_MODULES = """#< CLIXML
 
 def raise_called_process_error(return_code, stdout, stderr="", cmd="..."):
     error = subprocess.CalledProcessError(return_code, cmd=cmd, output=stdout, stderr=stderr)
-    return mock.Mock(side_effect=error)
+    return Mock(side_effect=error)
 
 
 def get_mock_Popen(return_code=0, stdout="", stderr=""):
-    communicate = mock.Mock(return_value=(stdout, stderr))
-    return mock.Mock(return_value=mock.Mock(communicate=communicate, returncode=return_code))
+    communicate = Mock(return_value=(stdout, stderr))
+    return Mock(return_value=Mock(communicate=communicate, returncode=return_code))
 
 
 def test_no_scopes():
@@ -56,7 +59,7 @@ def test_multiple_scopes():
 def test_cannot_execute_shell():
     """The credential should raise CredentialUnavailableError when the subprocess doesn't start"""
 
-    with mock.patch(POPEN, mock.Mock(side_effect=OSError)):
+    with patch(POPEN, Mock(side_effect=OSError)):
         with pytest.raises(CredentialUnavailableError):
             AzurePowerShellCredential().get_token("scope")
 
@@ -71,7 +74,7 @@ def test_get_token(stderr):
     stdout = "azsdk%{}%{}".format(expected_access_token, expected_expires_on)
 
     Popen = get_mock_Popen(stdout=stdout, stderr=stderr)
-    with mock.patch(POPEN, Popen):
+    with patch(POPEN, Popen):
         token = AzurePowerShellCredential().get_token(scope)
 
     assert token.token == expected_access_token
@@ -83,7 +86,7 @@ def test_get_token(stderr):
     assert command.startswith("pwsh -NonInteractive -EncodedCommand ")
 
     encoded_script = command.split()[-1]
-    decoded_script = base64.urlsafe_b64decode(encoded_script).decode("utf-16-le")
+    decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
     assert "Get-AzAccessToken -ResourceUrl '{}'".format(scope) in decoded_script
 
     assert Popen().communicate.call_count == 1
@@ -98,38 +101,17 @@ def test_ignores_extraneous_stdout_content():
     motd = "MOTD: Customize your experience: save your profile to $HOME/.config/PowerShell\n"
     Popen = get_mock_Popen(stdout=motd + "azsdk%{}%{}".format(expected_access_token, expected_expires_on))
 
-    with mock.patch(POPEN, Popen):
+    with patch(POPEN, Popen):
         token = AzurePowerShellCredential().get_token("scope")
 
     assert token.token == expected_access_token
     assert token.expires_on == expected_expires_on
 
 
-@pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
-def test_legacy_powershell():
-    Popen = get_mock_Popen(stdout="azsdk%***%42")
-    with mock.patch(POPEN, Popen):
-        AzurePowerShellCredential(use_legacy_powershell=True).get_token("scope")
-
-    assert Popen.call_count == 1
-    args, kwargs = Popen.call_args
-    command = args[0][-1]
-    assert command.startswith("powershell")
-
-
-@pytest.mark.parametrize("platform", ("darwin", "linux"))
-def test_legacy_powershell_non_windows(platform):
-    """The credential should raise ValueError when configured to use legacy PowerShell on non-Windows platforms"""
-
-    with mock.patch(AzurePowerShellCredential.__module__ + ".sys.platform", platform):
-        with pytest.raises(ValueError, match=".*Windows.*"):
-            AzurePowerShellCredential(use_legacy_powershell=True)
-
-
 def test_az_powershell_not_installed():
     """The credential should raise CredentialUnavailableError when Azure PowerShell isn't installed"""
 
-    with mock.patch(POPEN, get_mock_Popen(stdout=NO_AZ_ACCOUNT_MODULE)):
+    with patch(POPEN, get_mock_Popen(stdout=NO_AZ_ACCOUNT_MODULE)):
         with pytest.raises(CredentialUnavailableError, match=AZ_ACCOUNT_NOT_INSTALLED):
             AzurePowerShellCredential().get_token("scope")
 
@@ -145,7 +127,7 @@ def test_powershell_not_installed_cmd(stderr):
     """The credential should raise CredentialUnavailableError when PowerShell isn't installed"""
 
     Popen = get_mock_Popen(return_code=1, stderr=stderr)
-    with mock.patch(POPEN, Popen):
+    with patch(POPEN, Popen):
         with pytest.raises(CredentialUnavailableError, match=POWERSHELL_NOT_INSTALLED):
             AzurePowerShellCredential().get_token("scope")
 
@@ -154,7 +136,7 @@ def test_powershell_not_installed_sh():
     """The credential should raise CredentialUnavailableError when PowerShell isn't installed"""
 
     Popen = get_mock_Popen(return_code=127, stderr="/bin/sh: 0: Can't open pwsh")
-    with mock.patch(POPEN, Popen):
+    with patch(POPEN, Popen):
         with pytest.raises(CredentialUnavailableError, match=POWERSHELL_NOT_INSTALLED):
             AzurePowerShellCredential().get_token("scope")
 
@@ -172,7 +154,7 @@ def test_not_logged_in(stderr):
     """The credential should raise CredentialUnavailableError when a user isn't logged in to Azure PowerShell"""
 
     Popen = get_mock_Popen(return_code=1, stderr=stderr)
-    with mock.patch(POPEN, Popen):
+    with patch(POPEN, Popen):
         with pytest.raises(CredentialUnavailableError, match=RUN_CONNECT_AZ_ACCOUNT):
             AzurePowerShellCredential().get_token("scope")
 
@@ -183,7 +165,7 @@ def test_blocked_by_execution_policy():
     stderr = r"""#< CLIXML
 <Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04"><S S="Error">Import-Module : Errors occurred while loading the format data file: _x000D__x000A_</S><S S="Error">C:\Users\foo\Documents\WindowsPowerShell\Modules\Az.Accounts\2.2.7\Accounts.format.ps1xml, , C:\Users\foo\Documents\WindowsPowerShell\Modules\Az.Accounts\2.2.7\Accounts.format.ps1xml: The file was skipped because of the _x000D__x000A_</S><S S="Error">following validation exception: AuthorizationManager check failed.._x000D__x000A_</S><S S="Error">C:\Users\foo\Documents\WindowsPowerShell\Modules\Az.Accounts\2.2.7\Accounts.generated.format.ps1xml, , C:\Users\foo\Documents\WindowsPowerShell\Modules\Az.Accounts\2.2.7\Accounts.generated.format.ps1xml: The file was skipped _x000D__x000A_</S><S S="Error">because of the following validation exception: AuthorizationManager check failed.._x000D__x000A_</S><S S="Error">At line:4 char:6_x000D__x000A_</S><S S="Error">+ $m = Import-Module Az.Accounts -MinimumVersion $minimumVersion -PassT ..._x000D__x000A_</S><S S="Error">+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~_x000D__x000A_</S><S S="Error">    + CategoryInfo          : InvalidOperation: (:) [Import-Module], RuntimeException_x000D__x000A_</S><S S="Error">    + FullyQualifiedErrorId : FormatXmlUpdateException,Microsoft.PowerShell.Commands.ImportModuleCommand_x000D__x000A_</S><S S="Error"> _x000D__x000A_</S></Objs>"""
     Popen = get_mock_Popen(return_code=1, stderr=stderr)
-    with mock.patch(POPEN, Popen):
+    with patch(POPEN, Popen):
         with pytest.raises(CredentialUnavailableError, match=BLOCKED_BY_EXECUTION_POLICY):
             AzurePowerShellCredential().get_token("scope")
 
@@ -194,8 +176,8 @@ def test_timeout():
 
     from subprocess import TimeoutExpired
 
-    proc = mock.Mock(communicate=mock.Mock(side_effect=TimeoutExpired), returncode=None)
-    with mock.patch(POPEN, mock.Mock(return_value=proc)):
+    proc = Mock(communicate=Mock(side_effect=TimeoutExpired("", 42)), returncode=None)
+    with patch(POPEN, Mock(return_value=proc)):
         with pytest.raises(CredentialUnavailableError):
             AzurePowerShellCredential().get_token("scope")
 
@@ -221,7 +203,7 @@ def test_unexpected_error():
 
     expected_output = "something went wrong"
     Popen = get_mock_Popen(return_code=42, stderr=expected_output)
-    with mock.patch(POPEN, Popen):
+    with patch(POPEN, Popen):
         with pytest.raises(ClientAuthenticationError):
             AzurePowerShellCredential().get_token("scope")
 
@@ -230,3 +212,34 @@ def test_unexpected_error():
             return
 
     assert False, "Credential should have included stderr in a DEBUG level message"
+
+
+def test_windows_powershell_fallback():
+    """On Windows, the credential should fall back to powershell.exe when pwsh.exe isn't on the path"""
+
+    class Fake:
+        calls = 0
+
+    def Popen(args, **kwargs):
+        assert args[:2] == ["cmd", "/c"]
+        Fake.calls += 1
+        if args[-1].startswith("pwsh"):
+            assert Fake.calls == 1, 'credential should invoke "pwsh" only once'
+            stdout = ""
+            stderr = "'pwsh' is not recognized as an internal or external command,\r\noperable program or batch file."
+            return_code = 1
+        else:
+            assert args[-1].startswith("powershell"), 'credential should fall back to "powershell"'
+            stdout = NO_AZ_ACCOUNT_MODULE
+            stderr = ""
+            return_code = 0
+
+        return Mock(communicate=Mock(return_value=(stdout, stderr)), returncode=return_code)
+
+    with patch(AzurePowerShellCredential.__module__ + ".sys.platform", "win32"):
+        with patch.dict("os.environ", {"SYSTEMROOT": "foo"}):
+            with patch(POPEN, Popen):
+                with pytest.raises(CredentialUnavailableError, match=AZ_ACCOUNT_NOT_INSTALLED):
+                    AzurePowerShellCredential().get_token("scope")
+
+    assert Fake.calls == 2
