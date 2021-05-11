@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2post1 (2021-05-11)
+## 1.0.0b3 (Unreleased)
 
 Updated README.md
 
