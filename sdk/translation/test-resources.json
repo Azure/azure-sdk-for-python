@@ -135,26 +135,6 @@
         "AZURE_CLIENT_SECRET": {
             "type": "string",
             "value": "[parameters('testApplicationSecret')]"
-        },
-        "TRANSLATION_DOCUMENT_NAME": {
-            "type": "string",
-            "value": "[variables('docTranslationBaseName')]"
-        },
-        "TRANSLATION_DOCUMENT_TEST_API_KEY": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('docTranslationBaseName')), variables('docTranslationApiVersion')).key1]"
-        },
-        "TRANSLATION_DOCUMENT_TEST_ENDPOINT": {
-            "type": "string",
-            "value": "[variables('azureDocTranslationUrl')]"
-        },
-        "TRANSLATION_DOCUMENT_STORAGE_NAME": {
-            "type": "string",
-            "value": "[parameters('blobStorageAccount')]"
-        },
-        "TRANSLATION_DOCUMENT_STORAGE_KEY": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageMgmtApiVersion')).keys[0].value]"
         }
     }
 }
