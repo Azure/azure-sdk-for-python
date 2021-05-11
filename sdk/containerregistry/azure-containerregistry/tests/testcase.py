@@ -320,6 +320,27 @@ def import_image(repository, tags):
     while not result.done():
         pass
 
+    # Do the same for anonymous
+    mgmt_client = ContainerRegistryManagementClient(
+        DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
+    )
+    registry_uri = "registry.hub.docker.com"
+    rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
+    registry_name = os.environ["CONTAINERREGISTRY_ANONREGISTRY_NAME"]
+
+    import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
+
+    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
+
+    result = mgmt_client.registries.begin_import_image(
+        rg_name,
+        registry_name,
+        parameters=import_params,
+    )
+
+    while not result.done():
+        pass
+
 
 @pytest.fixture(scope="session")
 def load_registry():

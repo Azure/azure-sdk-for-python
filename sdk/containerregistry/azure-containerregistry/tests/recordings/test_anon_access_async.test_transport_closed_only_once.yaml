@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Sun, 09 May 2021 18:56:07 GMT
+      date: Tue, 11 May 2021 21:18:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -30,7 +30,8 @@ interactions:
     url: https://fake_url.azurecr.io/acr/v1/_catalog
 - request:
     body:
-      grant_type: password
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
+      - password
       scope: registry:catalog:*
       service: fake_url.azurecr.io
     headers:
@@ -46,7 +47,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Sun, 09 May 2021 18:56:08 GMT
+      date: Tue, 11 May 2021 21:18:58 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -71,7 +72,7 @@ interactions:
       connection: keep-alive
       content-length: '76'
       content-type: application/json; charset=utf-8
-      date: Sun, 09 May 2021 18:56:08 GMT
+      date: Tue, 11 May 2021 21:18:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -99,7 +100,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Sun, 09 May 2021 18:56:08 GMT
+      date: Tue, 11 May 2021 21:18:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -111,7 +112,8 @@ interactions:
     url: https://fake_url.azurecr.io/acr/v1/_catalog
 - request:
     body:
-      grant_type: password
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
+      - password
       scope: registry:catalog:*
       service: fake_url.azurecr.io
     headers:
@@ -127,7 +129,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Sun, 09 May 2021 18:56:08 GMT
+      date: Tue, 11 May 2021 21:18:58 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -152,7 +154,7 @@ interactions:
       connection: keep-alive
       content-length: '76'
       content-type: application/json; charset=utf-8
-      date: Sun, 09 May 2021 18:56:08 GMT
+      date: Tue, 11 May 2021 21:18:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains

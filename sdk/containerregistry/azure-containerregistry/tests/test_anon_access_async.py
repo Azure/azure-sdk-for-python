@@ -125,7 +125,8 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         container_repository = client.get_repository(HELLO_WORLD)
         assert container_repository._credential is None
 
-        registry_artifact = container_repository.get_artifact("latest")
+        async for manifest in container_repository.list_manifests():
+            registry_artifact = container_repository.get_artifact(manifest.digest)
         assert registry_artifact._credential is None
 
         count = 0
