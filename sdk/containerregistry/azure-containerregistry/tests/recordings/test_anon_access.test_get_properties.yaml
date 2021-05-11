@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 09 May 2021 18:55:47 GMT
+      - Tue, 11 May 2021 21:18:42 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 09 May 2021 18:55:48 GMT
+      - Tue, 11 May 2021 21:18:42 GMT
       server:
       - openresty
       strict-transport-security:
@@ -97,7 +97,7 @@ interactions:
   response:
     body:
       string: '{"registry": "fake_url.azurecr.io", "imageName": "library/hello-world",
-        "createdTime": "2021-05-05T18:00:19.7101132Z", "lastUpdateTime": "2021-05-05T18:00:17.5345755Z",
+        "createdTime": "2021-05-11T21:17:45.937904Z", "lastUpdateTime": "2021-05-11T21:17:46.3234919Z",
         "manifestCount": 10, "tagCount": 5, "changeableAttributes": {"deleteEnabled":
         true, "writeEnabled": true, "readEnabled": true, "listEnabled": true, "teleportEnabled":
         false}}'
@@ -110,11 +110,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '326'
+      - '325'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 09 May 2021 18:55:48 GMT
+      - Tue, 11 May 2021 21:18:43 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
