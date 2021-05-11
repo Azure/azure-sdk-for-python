@@ -100,7 +100,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *locale* and *pages* keyword arguments and support for image/bmp content
 
         .. admonition:: Example:
@@ -127,20 +127,20 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if locale:
-            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"locale": locale})
             else:
                 raise ValueError(
-                    "'locale' is only available for API version V2_1_PREVIEW and up"
+                    "'locale' is only available for API version V2_1 and up"
                 )
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
-            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError(
-                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                    "'pages' is only available for API version V2_1 and up"
                 )
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream=receipt,
@@ -178,7 +178,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *locale* and *pages* keyword arguments and support for image/bmp content
 
         .. admonition:: Example:
@@ -198,20 +198,20 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if locale:
-            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"locale": locale})
             else:
                 raise ValueError(
-                    "'locale' is only available for API version V2_1_PREVIEW and up"
+                    "'locale' is only available for API version V2_1 and up"
                 )
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
-            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError(
-                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                    "'pages' is only available for API version V2_1 and up"
                 )
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
@@ -253,7 +253,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *begin_recognize_business_cards* client method
 
         .. admonition:: Example:
@@ -288,7 +288,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         except ValueError as e:
             if "begin_analyze_business_card_async" in str(e):
                 raise ValueError(
-                    "Method 'begin_recognize_business_cards' is only available for API version V2_1_PREVIEW and up"
+                    "Method 'begin_recognize_business_cards' is only available for API version V2_1 and up"
                 )
             raise e
 
@@ -319,7 +319,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *begin_recognize_business_cards_from_url* client method
 
         """
@@ -338,7 +338,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             if "begin_analyze_business_card_async" in str(e):
                 raise ValueError(
                     "Method 'begin_recognize_business_cards_from_url' is "
-                    "only available for API version V2_1_PREVIEW and up"
+                    "only available for API version V2_1 and up"
                 )
             raise e
 
@@ -372,7 +372,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *begin_recognize_identity_documents* client method
 
         .. admonition:: Example:
@@ -406,7 +406,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         except ValueError as e:
             if "begin_analyze_id_document_async" in str(e):
                 raise ValueError(
-                    "Method 'begin_recognize_identity_documents' is only available for API version V2_1_PREVIEW and up"
+                    "Method 'begin_recognize_identity_documents' is only available for API version V2_1 and up"
                 )
             raise e
 
@@ -435,7 +435,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *begin_recognize_identity_documents_from_url* client method
         """
 
@@ -453,7 +453,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             if "begin_analyze_id_document_async" in str(e):
                 raise ValueError(
                     "Method 'begin_recognize_identity_documents_from_url' is "
-                    "only available for API version V2_1_PREVIEW and up"
+                    "only available for API version V2_1 and up"
                 )
             raise e
 
@@ -488,7 +488,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *begin_recognize_invoices* client method
 
         .. admonition:: Example:
@@ -523,7 +523,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         except ValueError as e:
             if "begin_analyze_invoice_async" in str(e):
                 raise ValueError(
-                    "Method 'begin_recognize_invoices' is only available for API version V2_1_PREVIEW and up"
+                    "Method 'begin_recognize_invoices' is only available for API version V2_1 and up"
                 )
             raise e
 
@@ -553,7 +553,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *begin_recognize_invoices_from_url* client method
         """
 
@@ -571,7 +571,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             if "begin_analyze_invoice_async" in str(e):
                 raise ValueError(
                     "Method 'begin_recognize_invoices_from_url' is "
-                    "only available for API version V2_1_PREVIEW and up"
+                    "only available for API version V2_1 and up"
                 )
             raise e
 
@@ -617,7 +617,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *pages*, *language* and *reading_order* keyword arguments and support for image/bmp content
 
         .. admonition:: Example:
@@ -644,27 +644,27 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
-            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError(
-                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                    "'pages' is only available for API version V2_1 and up"
                 )
 
         if reading_order:
-            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"reading_order": reading_order})
             else:
                 raise ValueError(
-                    "'reading_order' is only available for API version V2_1_PREVIEW and up"
+                    "'reading_order' is only available for API version V2_1 and up"
                 )
 
         if language:
-            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"language": language})
             else:
                 raise ValueError(
-                    "'language' is only available for API version V2_1_PREVIEW and up"
+                    "'language' is only available for API version V2_1 and up"
                 )
 
         return self._client.begin_analyze_layout_async(  # type: ignore
@@ -704,7 +704,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *pages*, *language* and *reading_order* keyword arguments and support for image/bmp content
         """
         pages = kwargs.pop("pages", None)
@@ -714,27 +714,27 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
-            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError(
-                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                    "'pages' is only available for API version V2_1 and up"
                 )
 
         if reading_order:
-            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"reading_order": reading_order})
             else:
                 raise ValueError(
-                    "'reading_order' is only available for API version V2_1_PREVIEW and up"
+                    "'reading_order' is only available for API version V2_1 and up"
                 )
 
         if language:
-            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"language": language})
             else:
                 raise ValueError(
-                    "'language' is only available for API version V2_1_PREVIEW and up"
+                    "'language' is only available for API version V2_1 and up"
                 )
 
         return self._client.begin_analyze_layout_async(  # type: ignore
@@ -817,11 +817,11 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
-            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError(
-                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                    "'pages' is only available for API version V2_1 and up"
                 )
 
         return self._client.begin_analyze_with_custom_model(  # type: ignore
@@ -886,11 +886,11 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
-            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError(
-                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                    "'pages' is only available for API version V2_1 and up"
                 )
 
         return self._client.begin_analyze_with_custom_model(  # type: ignore

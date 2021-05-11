@@ -1,13 +1,18 @@
 # Release History
 
-## 3.1.0b5 (Unreleased)
+## 3.1.0 (Unreleased)
+
+Note: this version will be the last to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+
 
 **Breaking Changes**
 
-- `begin_recognize_id_documents` renamed to `begin_recognize_identity_documents`
-- `begin_recognize_id_documents_from_url` renamed to `begin_recognize_identity_documents_from_url`
+- `begin_recognize_id_documents` renamed to `begin_recognize_identity_documents`.
+- `begin_recognize_id_documents_from_url` renamed to `begin_recognize_identity_documents_from_url`.
 - The model `TextAppearance` now includes the properties `style_name` and `style_confidence` that were part of the `TextStyle` object.
 - Removed the model `TextStyle`.
+- Removed field value types "gender" and "country" from the `FieldValueType` enum.
+- Added field value type "countryRegion" to the `FieldValueType` enum.
+- Renamed field name for identity documents from "Country" to "CountryRegion".
 
 **New features**
 
