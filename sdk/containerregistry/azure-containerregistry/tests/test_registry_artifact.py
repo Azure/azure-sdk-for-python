@@ -9,7 +9,7 @@ from azure.containerregistry import (
     ArtifactArchitecture,
     ArtifactManifestProperties,
     ArtifactOperatingSystem,
-    ContentProperties,
+    ManifestWriteableProperties,
     ArtifactTagProperties,
 )
 from azure.core.exceptions import ResourceNotFoundError
@@ -37,7 +37,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         properties = reg_artifact.get_manifest_properties()
 
         assert isinstance(properties, ArtifactManifestProperties)
-        assert isinstance(properties.writeable_properties, ContentProperties)
+        assert isinstance(properties.writeable_properties, ManifestWriteableProperties)
         assert isinstance(properties.architecture, ArtifactArchitecture)
         assert isinstance(properties.operating_system, ArtifactOperatingSystem)
         assert properties.repository_name == repo
@@ -60,7 +60,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         reg_artifact = self.set_up(containerregistry_endpoint, name=repo)
 
         properties = reg_artifact.get_manifest_properties()
-        c = ContentProperties(can_delete=False, can_read=False, can_write=False, can_list=False)
+        c = ManifestWriteableProperties(can_delete=False, can_read=False, can_write=False, can_list=False)
 
         received = reg_artifact.set_manifest_properties(c)
 
@@ -69,7 +69,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         assert received.writeable_properties.can_write == c.can_write
         assert received.writeable_properties.can_list == c.can_list
 
-        c = ContentProperties(can_delete=True, can_read=True, can_write=True, can_list=True)
+        c = ManifestWriteableProperties(can_delete=True, can_read=True, can_write=True, can_list=True)
         received = reg_artifact.set_manifest_properties(c)
 
         assert received.writeable_properties.can_delete == c.can_delete
@@ -108,7 +108,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         reg_artifact = self.set_up(containerregistry_endpoint, name=repo)
 
         properties = reg_artifact.get_tag_properties(tag)
-        c = ContentProperties(can_delete=False, can_read=False, can_write=False, can_list=False)
+        c = ManifestWriteableProperties(can_delete=False, can_read=False, can_write=False, can_list=False)
 
         received = reg_artifact.set_tag_properties(tag, c)
 
@@ -117,7 +117,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         assert received.writeable_properties.can_write == c.can_write
         assert received.writeable_properties.can_list == c.can_list
 
-        c = ContentProperties(can_delete=True, can_read=True, can_write=True, can_list=True)
+        c = ManifestWriteableProperties(can_delete=True, can_read=True, can_write=True, can_list=True)
         received = reg_artifact.set_tag_properties(tag, c)
 
         assert received.writeable_properties.can_delete == c.can_delete

@@ -29,7 +29,6 @@ from ._registry_artifact import RegistryArtifact
 if TYPE_CHECKING:
     from typing import Any, Dict
     from azure.core.credentials import TokenCredential
-    from ._models import ContentProperties
 
 
 class ContainerRepository(ContainerRegistryBaseClient):

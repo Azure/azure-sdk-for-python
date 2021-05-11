@@ -7,7 +7,7 @@ from datetime import datetime
 import pytest
 
 from azure.containerregistry import (
-    ContentProperties,
+    RepositoryWriteableProperties,
     DeleteRepositoryResult,
     RepositoryProperties,
     ManifestOrder,
@@ -27,7 +27,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
 
         properties = repo_client.get_properties()
         assert isinstance(properties, RepositoryProperties)
-        assert isinstance(properties.writeable_properties, ContentProperties)
+        assert isinstance(properties.writeable_properties, RepositoryWriteableProperties)
         assert properties.name == u"library/hello-world"
 
     @acr_preparer()
@@ -38,9 +38,9 @@ class TestContainerRepository(ContainerRegistryTestClass):
         repo_client = self.create_container_repository(containerregistry_endpoint, repository)
 
         properties = repo_client.get_properties()
-        assert isinstance(properties.writeable_properties, ContentProperties)
+        assert isinstance(properties.writeable_properties, RepositoryWriteableProperties)
 
-        c = ContentProperties(can_delete=False, can_read=False, can_list=False, can_write=False)
+        c = RepositoryWriteableProperties(can_delete=False, can_read=False, can_list=False, can_write=False)
         properties.writeable_properties = c
         new_properties = repo_client.set_properties(c)
 
@@ -49,7 +49,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         assert c.can_list == new_properties.writeable_properties.can_list
         assert c.can_write == new_properties.writeable_properties.can_write
 
-        c = ContentProperties(can_delete=True, can_read=True, can_list=True, can_write=True)
+        c = RepositoryWriteableProperties(can_delete=True, can_read=True, can_list=True, can_write=True)
         properties.writeable_properties = c
         new_properties = repo_client.set_properties(c)
 

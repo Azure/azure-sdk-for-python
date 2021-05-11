@@ -15,8 +15,8 @@ if TYPE_CHECKING:
     from ._generated.models import ArtifactTagProperties as GeneratedArtifactTagProperties
 
 
-class ContentProperties(object):
-    """Permissions of an artifact or tag
+class ManifestWriteableProperties(object):
+    """Permissions of a manifest
 
     :ivar bool can_delete: Ability to delete an artifact or tag
     :ivar bool can_list: Ability to list an artifact or tag
@@ -25,7 +25,7 @@ class ContentProperties(object):
     """
 
     def __init__(self, **kwargs):
-        """Create ContentProperties for an artifact, tag, or manifest
+        """Create ManifestWriteableProperties for a manifest
 
         :keyword bool can_delete: Delete operation status for the object
         :keyword bool can_list: List operation status for the object
@@ -39,7 +39,91 @@ class ContentProperties(object):
 
     @classmethod
     def _from_generated(cls, generated):
-        # type: (GeneratedContentProperties) -> ContentProperties
+        # type: (GeneratedContentProperties) -> ManifestWriteableProperties
+        return cls(
+            can_delete=generated.can_delete,
+            can_list=generated.can_list,
+            can_read=generated.can_read,
+            can_write=generated.can_write,
+        )
+
+    def _to_generated(self):
+        # type: () -> GeneratedContentProperties
+        return GeneratedContentProperties(
+            can_delete=self.can_delete,
+            can_list=self.can_list,
+            can_read=self.can_read,
+            can_write=self.can_write,
+        )
+
+
+class RepositoryWriteableProperties(object):
+    """Permissions of a repository
+
+    :ivar bool can_delete: Ability to delete an artifact or tag
+    :ivar bool can_list: Ability to list an artifact or tag
+    :ivar bool can_read: Ability to read an artifact or tag
+    :ivar bool can_write: Ability to write an artifact or tag
+    """
+
+    def __init__(self, **kwargs):
+        """Create ManifestWriteableProperties for a repository
+
+        :keyword bool can_delete: Delete operation status for the object
+        :keyword bool can_list: List operation status for the object
+        :keyword bool can_read: Read operation status for the object
+        :keyword bool can_write: Write operation status for the object
+        """
+        self.can_delete = kwargs.get("can_delete")
+        self.can_list = kwargs.get("can_list")
+        self.can_read = kwargs.get("can_read")
+        self.can_write = kwargs.get("can_write")
+
+    @classmethod
+    def _from_generated(cls, generated):
+        # type: (GeneratedContentProperties) -> RepositoryWriteableProperties
+        return cls(
+            can_delete=generated.can_delete,
+            can_list=generated.can_list,
+            can_read=generated.can_read,
+            can_write=generated.can_write,
+        )
+
+    def _to_generated(self):
+        # type: () -> GeneratedContentProperties
+        return GeneratedContentProperties(
+            can_delete=self.can_delete,
+            can_list=self.can_list,
+            can_read=self.can_read,
+            can_write=self.can_write,
+        )
+
+
+class TagWriteableProperties(object):
+    """Permissions of a tag
+
+    :ivar bool can_delete: Ability to delete an artifact or tag
+    :ivar bool can_list: Ability to list an artifact or tag
+    :ivar bool can_read: Ability to read an artifact or tag
+    :ivar bool can_write: Ability to write an artifact or tag
+    """
+
+    def __init__(self, **kwargs):
+        """Create ManifestWriteableProperties for a tag
+
+        :keyword bool can_delete: Delete operation status for the object
+        :keyword bool can_list: List operation status for the object
+        :keyword bool can_read: Read operation status for the object
+        :keyword bool can_write: Write operation status for the object
+        """
+        self.can_delete = kwargs.get("can_delete")
+        self.can_list = kwargs.get("can_list")
+        self.can_read = kwargs.get("can_read")
+        self.can_write = kwargs.get("can_write")
+
+    @classmethod
+    def _from_generated(cls, generated):
+        # type: (GeneratedContentProperties) -> TagWriteableProperties
         return cls(
             can_delete=generated.can_delete,
             can_list=generated.can_list,
@@ -92,7 +176,7 @@ class ArtifactManifestProperties(object):
     :ivar str size: Size of the artifact
     :ivar List[str] tags: Tags associated with a registry artifact
     :ivar writeable_properties: Permissions for an artifact
-    :vartype writeable_properties: ~azure.containerregistry.ContentProperties
+    :vartype writeable_properties: ~azure.containerregistry.ManifestWriteableProperties
     """
 
     def __init__(self, **kwargs):
@@ -110,7 +194,9 @@ class ArtifactManifestProperties(object):
         self.tags = kwargs.get("tags", None)
         self.writeable_properties = kwargs.get("content_permissions", None)
         if self.writeable_properties:
-            self.writeable_properties = ContentProperties._from_generated(self.writeable_properties)
+            self.writeable_properties = ManifestWriteableProperties._from_generated(
+                self.writeable_properties
+            )
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
@@ -132,7 +218,7 @@ class RepositoryProperties(object):
     """Model for storing properties of a single repository
 
     :ivar writeable_properties: Read/Write/List/Delete permissions for the repository
-    :vartype writeable_properties: ~azure.containerregistry.ContentProperties
+    :vartype writeable_properties: ~azure.containerregistry.RepositoryWriteableProperties
     :ivar created_on: Time the repository was created
     :vartype created_on: datetime.datetime
     :ivar last_updated_on: Time the repository was last updated
@@ -150,7 +236,9 @@ class RepositoryProperties(object):
         self.name = kwargs.get("name", None)
         self.tag_count = kwargs.get("tag_count", None)
         if self.writeable_properties:
-            self.writeable_properties = ContentProperties._from_generated(self.writeable_properties)
+            self.writeable_properties = RepositoryWriteableProperties._from_generated(
+                self.writeable_properties
+            )
 
     @classmethod
     def _from_generated(cls, generated):
@@ -205,7 +293,7 @@ class ArtifactTagProperties(object):
     """Model for storing properties of a single tag
 
     :ivar writeable_properties: Read/Write/List/Delete permissions for the tag
-    :vartype writeable_properties: ~azure.containerregistry.ContentProperties
+    :vartype writeable_properties: ~azure.containerregistry.TagWriteableProperties
     :ivar created_on: Time the tag was created
     :vartype created_on: datetime.datetime
     :ivar str digest: Digest for the tag
@@ -223,7 +311,9 @@ class ArtifactTagProperties(object):
         self.name = kwargs.get("name", None)
         self.repository = kwargs.get("repository", None)
         if self.writeable_properties:
-            self.writeable_properties = ContentProperties._from_generated(self.writeable_properties)
+            self.writeable_properties = TagWriteableProperties._from_generated(
+                self.writeable_properties
+            )
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):

@@ -21,7 +21,7 @@ from ._async_base_client import ContainerRegistryBaseClient, AsyncTransportWrapp
 from .._generated.models import AcrErrors
 from .._helpers import _parse_next_link
 from .._models import (
-    ContentProperties,
+    RepositoryWriteableProperties,
     DeleteRepositoryResult,
     ArtifactManifestProperties,
     RepositoryProperties,
@@ -196,7 +196,11 @@ class ContainerRepository(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def set_properties(self, properties: ContentProperties, **kwargs: Dict[str, Any]) -> RepositoryProperties:
+    async def set_properties(
+        self,
+        properties: RepositoryWriteableProperties,
+        **kwargs: Dict[str, Any]
+    ) -> RepositoryProperties:
         """Set the properties of a repository
 
         :returns: :class:`~azure.containerregistry.RepositoryProperties`

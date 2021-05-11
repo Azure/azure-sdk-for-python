@@ -21,7 +21,7 @@ from .._generated.models import AcrErrors
 from .._helpers import _is_tag, _parse_next_link
 from .._models import (
     DeleteRepositoryResult,
-    ContentProperties,
+    ManifestWriteableProperties,
     ArtifactManifestProperties,
     ArtifactTagProperties,
 )
@@ -295,12 +295,12 @@ class RegistryArtifact(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def set_manifest_properties(
-        self, permissions: ContentProperties, **kwargs: Dict[str, Any]
+        self, permissions: ManifestWriteableProperties, **kwargs: Dict[str, Any]
     ) -> ArtifactManifestProperties:
         """Set the properties for a manifest
 
         :param permissions: The property's values to be set
-        :type permissions: ContentProperties
+        :type permissions: ManifestWriteableProperties
         :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
@@ -314,7 +314,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             async for artifact in client.list_manifests():
                 received_permissions = await client.set_manifest_properties(
                     artifact.digest,
-                    ContentProperties(
+                    ManifestWriteableProperties(
                         can_delete=False,
                         can_list=False,
                         can_read=False,
@@ -337,13 +337,13 @@ class RegistryArtifact(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def set_tag_properties(
-        self, tag: str, permissions: ContentProperties, **kwargs: Dict[str, Any]
+        self, tag: str, permissions: ManifestWriteableProperties, **kwargs: Dict[str, Any]
     ) -> ArtifactTagProperties:
         """Set the properties for a tag
         :param tag: Tag to set properties for
         :type tag: str
         :param permissions: The property's values to be set
-        :type permissions: ContentProperties
+        :type permissions: ManifestWriteableProperties
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
@@ -357,7 +357,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             tag_identifier = "latest"
             received = await client.set_tag_properties(
                 tag_identifier,
-                ContentProperties(
+                ManifestWriteableProperties(
                     can_delete=False,
                     can_list=False,
                     can_read=False,

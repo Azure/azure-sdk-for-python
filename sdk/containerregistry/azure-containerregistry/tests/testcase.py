@@ -4,11 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import copy
-from datetime import datetime
 import json
-import logging
 import os
-from azure_devtools.scenario_tests.recording_processors import SubscriptionRecordingProcessor
 import pytest
 import re
 import six
@@ -17,9 +14,6 @@ import time
 from azure.containerregistry import (
     ContainerRepository,
     ContainerRegistryClient,
-    ArtifactTagProperties,
-    ContentProperties,
-    ArtifactManifestProperties,
 )
 
 from azure.core.credentials import AccessToken
@@ -213,39 +207,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         # tags is a List of repository/tag combos in the format <repository>:<tag>
         if not self.is_live:
             return
-
         import_image(repository, tags)
-
-    def _clean_up(self, endpoint):
-        if not self.is_live:
-            return
-
-        reg_client = self.create_registry_client(endpoint)
-        for repo in reg_client.list_repository_names():
-            if repo.startswith("repo"):
-                repo_client = self.create_container_repository(endpoint, repo)
-                for tag in repo_client.list_tags():
-
-                    try:
-                        p = tag.writeable_properties
-                        p.can_delete = True
-                        repo_client.set_tag_properties(tag.digest, p)
-                    except:
-                        pass
-
-                for manifest in repo_client.list_manifests():
-                    try:
-                        p = manifest.writeable_properties
-                        p.can_delete = True
-                        repo_client.set_manifest_properties(tag.digest, p)
-                    except:
-                        pass
-
-        for repo in reg_client.list_repository_names():
-            try:
-                reg_client.delete_repository(repo)
-            except:
-                pass
 
     def get_credential(self):
         if self.is_live:
@@ -260,42 +222,6 @@ class ContainerRegistryTestClass(AzureTestCase):
 
     def create_anon_client(self, endpoint, **kwargs):
         return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)
-
-    def assert_content_permission(self, content_perm, content_perm2):
-        assert isinstance(content_perm, ContentProperties)
-        assert isinstance(content_perm2, ContentProperties)
-        assert content_perm.can_delete == content_perm2.can_delete
-        assert content_perm.can_list == content_perm2.can_list
-        assert content_perm.can_read == content_perm2.can_read
-        assert content_perm.can_write == content_perm2.can_write
-
-    def assert_tag(
-        self,
-        tag,
-        created_on=None,
-        digest=None,
-        last_updated_on=None,
-        content_permission=None,
-        name=None,
-        registry=None,
-        repository=None,
-    ):
-        assert isinstance(tag, ArtifactTagProperties)
-        assert isinstance(tag.writeable_permissions, ContentProperties)
-        assert isinstance(tag.created_on, datetime)
-        assert isinstance(tag.last_updated_on, datetime)
-        if content_permission:
-            self.assert_content_permission(tag.content_permission, content_permission)
-        if created_on:
-            assert tag.created_on == created_on
-        if last_updated_on:
-            assert tag.last_updated_on == last_updated_on
-        if name:
-            assert tag.name == name
-        if registry:
-            assert tag.registry == registry
-        if repository:
-            assert tag.repository == repository
 
 
 # Moving this out of testcase so the fixture and individual tests can use it
