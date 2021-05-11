@@ -87,7 +87,7 @@ class ArtifactManifestProperties(object):
     :ivar last_updated_on: Time and date an artifact was last updated
     :vartype last_updated_on: datetime.datetime
     :ivar operating_system: Operating system for the artifact
-    :vartype writeable_properties: ~azure.containerregistry.ArtifactOperatingSystem
+    :vartype operating_system: ~azure.containerregistry.ArtifactOperatingSystem
     :ivar str repository_name: Repository name the artifact belongs to
     :ivar str size: Size of the artifact
     :ivar List[str] tags: Tags associated with a registry artifact
