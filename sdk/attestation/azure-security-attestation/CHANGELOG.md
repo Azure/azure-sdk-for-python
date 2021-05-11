@@ -2,8 +2,6 @@
 
 ## 1.0.0b3 (Unreleased)
 
-Updated README.md
-
 ## 1.0.0b2 (2021-05-11)
 
 ### Features Added
