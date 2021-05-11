@@ -82,7 +82,7 @@ class ArtifactManifestProperties(object):
     :ivar architecture: CPU Architecture of an artifact
     :vartype architecture: ~azure.containerregistry.ArtifactArchitecture
     :ivar created_on: Time and date an artifact was created
-    :vartype created_on: datetime.datetime
+    :vartype created_on: ~datetime.datetime
     :ivar str digest: Digest for the artifact
     :ivar last_updated_on: Time and date an artifact was last updated
     :vartype last_updated_on: datetime.datetime
