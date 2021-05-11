@@ -3,8 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import re
-from typing import TYPE_CHECKING, Dict, Any, Optional
+from typing import TYPE_CHECKING, Dict, Any
 
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
@@ -25,7 +24,7 @@ class AnonymousACRExchangeClient(object):
     :type credential: :class:`~azure.core.credentials.TokenCredential`
     """
 
-    def __init__(self, endpoint, **kwargs):
+    def __init__(self, endpoint, **kwargs):  # pylint: disable=missing-client-constructor-parameter-credential
         # type: (str, Dict[str, Any]) -> None
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint

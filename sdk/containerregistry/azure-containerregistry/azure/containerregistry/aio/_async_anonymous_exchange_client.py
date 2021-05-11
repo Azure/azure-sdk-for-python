@@ -3,7 +3,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import re
 from typing import TYPE_CHECKING, Dict, List, Any
 
 from ._async_exchange_client import ExchangeClientAuthenticationPolicy
@@ -23,7 +22,7 @@ class AnonymousACRExchangeClient(object):
     :type endpoint: str
     """
 
-    def __init__(self, endpoint: str, **kwargs: Dict[str, Any]) -> None:
+    def __init__(self, endpoint: str, **kwargs: Dict[str, Any]) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
