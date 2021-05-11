@@ -40,9 +40,6 @@ class ACRExchangeClient(object):
     :type credential: :class:`~azure.core.credentials.TokenCredential`
     """
 
-    BEARER = "Bearer"
-    AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
-
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):

@@ -22,9 +22,10 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
     def __init__(self, credential: "AsyncTokenCredential", endpoint: str) -> None:
         super().__init__()
         self._credential = credential
-        self._exchange_client = ACRExchangeClient(endpoint, self._credential)
         if self._credential is None:
             self._exchange_client = AnonymousACRExchangeClient(endpoint)
+        else:
+            self._exchange_client = ACRExchangeClient(endpoint, self._credential)
 
     async def on_request(self, request):
         # type: (PipelineRequest) -> None

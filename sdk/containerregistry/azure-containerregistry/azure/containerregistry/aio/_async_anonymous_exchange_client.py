@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Dict, List, Any
 
 from ._async_exchange_client import ExchangeClientAuthenticationPolicy
 from .._generated.aio import ContainerRegistry
+from .._generated.models._container_registry_enums import TokenGrantType
 from .._helpers import _parse_challenge
 from .._user_agent import USER_AGENT
 
@@ -15,45 +16,35 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-PASSWORD = u"password"
-
-
-
 class AnonymousACRExchangeClient(object):
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
-    :param credential: Credential which provides tokens to authenticate requests
-    :type credential: :class:`azure.core.credentials.TokenCredential`
     """
 
-    BEARER = "Bearer"
-    AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
-
-    def __init__(self, endpoint: str, credential: "AsyncTokencredential" = None, **kwargs: Dict[str, Any]) -> None:
+    def __init__(self, endpoint: str, **kwargs: Dict[str, Any]) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential_scope = "https://management.core.windows.net/.default"
         self._client = ContainerRegistry(
-            credential=credential,
+            credential=None,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
             credential_scopes=kwargs.pop("credential_scopes", self._credential_scope),
             **kwargs
         )
-        self._credential = credential
 
     async def get_acr_access_token(self, challenge: str, **kwargs: Dict[str, Any]) -> str:
         parsed_challenge = _parse_challenge(challenge)
-        parsed_challenge["grant_type"] = PASSWORD
+        parsed_challenge["grant_type"] = TokenGrantType.PASSWORD
         return await self.exchange_refresh_token_for_access_token(
             None,
             service=parsed_challenge["service"],
             scope=parsed_challenge["scope"],
-            grant_type=PASSWORD,
+            grant_type=TokenGrantType.PASSWORD,
             **kwargs
         )
 
@@ -62,7 +53,7 @@ class AnonymousACRExchangeClient(object):
         refresh_token: str = None,
         service: str = None,
         scope: str = None,
-        grant_type: str = PASSWORD,
+        grant_type: str = TokenGrantType.PASSWORD,
         **kwargs: Any
     ) -> str:
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(

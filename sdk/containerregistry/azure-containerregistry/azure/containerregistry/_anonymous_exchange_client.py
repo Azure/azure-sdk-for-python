@@ -4,18 +4,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import re
-from typing import TYPE_CHECKING, Dict, Any
+from typing import TYPE_CHECKING, Dict, Any, Optional
 
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
+from ._generated.models._container_registry_enums import TokenGrantType
 from ._helpers import _parse_challenge
 from ._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-
-
-PASSWORD = u"password"
 
 
 class AnonymousACRExchangeClient(object):
@@ -27,39 +25,35 @@ class AnonymousACRExchangeClient(object):
     :type credential: :class:`~azure.core.credentials.TokenCredential`
     """
 
-    BEARER = "Bearer"
-    AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
-
-    def __init__(self, endpoint, credential=None, **kwargs):
-        # type: (str, TokenCredential, Dict[str, Any]) -> None
+    def __init__(self, endpoint, **kwargs):
+        # type: (str, Dict[str, Any]) -> None
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self.credential_scope = "https://management.core.windows.net/.default"
         self._client = ContainerRegistry(
-            credential=credential,
+            credential=None,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
             credential_scopes=kwargs.pop("credential_scopes", self.credential_scope),
             **kwargs
         )
-        self._credential = credential
 
     def get_acr_access_token(self, challenge, **kwargs):
         # type: (str, Dict[str, Any]) -> str
         parsed_challenge = _parse_challenge(challenge)
-        parsed_challenge["grant_type"] = PASSWORD
+        parsed_challenge["grant_type"] = TokenGrantType.PASSWORD
         return self.exchange_refresh_token_for_access_token(
             None,
             service=parsed_challenge["service"],
             scope=parsed_challenge["scope"],
-            grant_type=PASSWORD,
+            grant_type=TokenGrantType.PASSWORD,
             **kwargs
         )
 
     def exchange_refresh_token_for_access_token(
-        self, refresh_token=None, service=None, scope=None, grant_type=PASSWORD, **kwargs
+        self, refresh_token=None, service=None, scope=None, grant_type=TokenGrantType.PASSWORD, **kwargs
     ):
         # type: (str, str, str, str, Dict[str, Any]) -> str
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
