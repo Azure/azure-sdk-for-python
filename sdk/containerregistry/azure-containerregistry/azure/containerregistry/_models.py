@@ -97,26 +97,20 @@ class ArtifactManifestProperties(object):
 
     def __init__(self, **kwargs):
         self.architecture = kwargs.get("cpu_architecture", None)
+        if self.architecture is not None:
+            self.architecture = ArtifactArchitecture(self.architecture)
         self.created_on = kwargs.get("created_on", None)
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.operating_system = kwargs.get("operating_system", None)
+        if self.operating_system is not None:
+            self.operating_system = ArtifactOperatingSystem(self.operating_system)
         self.repository_name = kwargs.get("repository_name", None)
         self.size = kwargs.get("size", None)
         self.tags = kwargs.get("tags", None)
         self.writeable_properties = kwargs.get("content_permissions", None)
         if self.writeable_properties:
             self.writeable_properties = ContentProperties._from_generated(self.writeable_properties)
-
-        for data in ArtifactArchitecture:
-            if data.value == self.architecture:
-                self.architecture = data
-                break
-
-        for data in ArtifactOperatingSystem:
-            if data.value == self.operating_system:
-                self.operating_system = data
-                break
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
