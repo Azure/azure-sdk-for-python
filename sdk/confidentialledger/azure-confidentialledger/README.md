@@ -35,7 +35,7 @@ export AZURE_TENANT_ID="tenant id"
 ```
 Then, `DefaultAzureCredential` will be able to authenticate the `ConfidentialLedgerClient`.
 
-Constructing the client also requires your Confidential Ledger's URL and id, which you can get from the Azure CLI or the Azure Portal. When you have retrieved those values, please replace instances of `"my-ledger-id"` and `"https://my-ledger-url.confidential-ledger.azure.com"` in the examples below
+Constructing the client also requires your Confidential Ledger's URL and id, which you can get from the Azure CLI or the Azure Portal. When you have retrieved those values, please replace instances of `"my-ledger-id"` and `"https://my-ledger-url.confidential-ledger.azure.com"` in the examples below. You may also need to replace `"https://identity.accledger.azure.com"` with the hostname from the `identityServiceUri` in the ARM description of your ledger.
 
 Because Confidential Ledgers use self-signed certificates securely generated and stored in an enclave, the signing certificate for each Confidential Ledger must first be retrieved from the Confidential Ledger Identity Service.
 
