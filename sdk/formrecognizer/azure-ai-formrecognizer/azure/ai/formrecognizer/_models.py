@@ -288,7 +288,7 @@ class RecognizedForm(object):
     @classmethod
     def from_dict(cls, d):
         return cls(
-            fields={k: FormField.from_dict(v) for k, v in d.get("fields").items()},
+            fields={k: FormField.from_dict(v) for k, v in d.get("fields").items()} if d.get("fields") else {},
             form_type=d.get("form_type", None),
             pages=[FormPage.from_dict(v) for v in d.get("pages")]
             if len(d.get("pages", [])) > 0
@@ -1238,7 +1238,7 @@ class CustomFormSubmodel(object):
         return cls(
             model_id=d.get("model_id", None),
             accuracy=d.get("accuracy", None),
-            fields={k: CustomFormModelField.from_dict(v) for k, v in d.get("fields").items()},
+            fields={k: CustomFormModelField.from_dict(v) for k, v in d.get("fields").items()} if d.get("fields") else {},
             form_type=d.get("form_type", None),
         )
 
