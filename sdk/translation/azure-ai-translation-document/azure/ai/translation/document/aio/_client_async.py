@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import asyncio
 from typing import Any, List
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -210,7 +211,11 @@ class DocumentTranslationClient(object):
                 **kwargs
             ),
         )
-        return await poller.result()
+        try:
+            result = await asyncio.wait_for(poller.result(), 45)
+        except asyncio.TimeoutError:
+            assert job_id in [""], "job ID that didn't finish is %s" % job_id
+
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):

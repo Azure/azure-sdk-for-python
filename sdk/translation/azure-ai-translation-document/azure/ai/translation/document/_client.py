@@ -210,7 +210,10 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
                 **kwargs
             ),
         )
-        return poller.result()
+        result = poller.result(timeout=45)
+        if result.status != "Succeeded":
+            assert result.id in [""], "job ID that didn't finish is %s" % result.id
+        return result
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):
