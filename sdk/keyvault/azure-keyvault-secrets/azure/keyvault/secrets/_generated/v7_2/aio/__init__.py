@@ -6,8 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._key_vault_client_operations_async import KeyVaultClientOperationsMixin
-
-__all__ = [
-    'KeyVaultClientOperationsMixin',
-]
+from ._key_vault_client import KeyVaultClient
+__all__ = ['KeyVaultClient']
