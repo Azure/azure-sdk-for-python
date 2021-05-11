@@ -46,7 +46,7 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2020-03-01'
+    DEFAULT_API_VERSION = '2021-03-31'
     _PROFILE_TAG = "azure.mgmt.iothub.IotHubClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -83,6 +83,8 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
            * 2019-07-01-preview: :mod:`v2019_07_01_preview.models<azure.mgmt.iothub.v2019_07_01_preview.models>`
            * 2019-11-04: :mod:`v2019_11_04.models<azure.mgmt.iothub.v2019_11_04.models>`
            * 2020-03-01: :mod:`v2020_03_01.models<azure.mgmt.iothub.v2020_03_01.models>`
+           * 2021-03-03-preview: :mod:`v2021_03_03_preview.models<azure.mgmt.iothub.v2021_03_03_preview.models>`
+           * 2021-03-31: :mod:`v2021_03_31.models<azure.mgmt.iothub.v2021_03_31.models>`
         """
         if api_version == '2016-02-03':
             from .v2016_02_03 import models
@@ -117,6 +119,12 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2020-03-01':
             from .v2020_03_01 import models
             return models
+        elif api_version == '2021-03-03-preview':
+            from .v2021_03_03_preview import models
+            return models
+        elif api_version == '2021-03-31':
+            from .v2021_03_31 import models
+            return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
     @property
@@ -132,6 +140,8 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
            * 2019-07-01-preview: :class:`CertificatesOperations<azure.mgmt.iothub.v2019_07_01_preview.operations.CertificatesOperations>`
            * 2019-11-04: :class:`CertificatesOperations<azure.mgmt.iothub.v2019_11_04.operations.CertificatesOperations>`
            * 2020-03-01: :class:`CertificatesOperations<azure.mgmt.iothub.v2020_03_01.operations.CertificatesOperations>`
+           * 2021-03-03-preview: :class:`CertificatesOperations<azure.mgmt.iothub.v2021_03_03_preview.operations.CertificatesOperations>`
+           * 2021-03-31: :class:`CertificatesOperations<azure.mgmt.iothub.v2021_03_31.operations.CertificatesOperations>`
         """
         api_version = self._get_api_version('certificates')
         if api_version == '2017-07-01':
@@ -152,6 +162,10 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
             from .v2019_11_04.operations import CertificatesOperations as OperationClass
         elif api_version == '2020-03-01':
             from .v2020_03_01.operations import CertificatesOperations as OperationClass
+        elif api_version == '2021-03-03-preview':
+            from .v2021_03_03_preview.operations import CertificatesOperations as OperationClass
+        elif api_version == '2021-03-31':
+            from .v2021_03_31.operations import CertificatesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -165,6 +179,8 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
            * 2019-07-01-preview: :class:`IotHubOperations<azure.mgmt.iothub.v2019_07_01_preview.operations.IotHubOperations>`
            * 2019-11-04: :class:`IotHubOperations<azure.mgmt.iothub.v2019_11_04.operations.IotHubOperations>`
            * 2020-03-01: :class:`IotHubOperations<azure.mgmt.iothub.v2020_03_01.operations.IotHubOperations>`
+           * 2021-03-03-preview: :class:`IotHubOperations<azure.mgmt.iothub.v2021_03_03_preview.operations.IotHubOperations>`
+           * 2021-03-31: :class:`IotHubOperations<azure.mgmt.iothub.v2021_03_31.operations.IotHubOperations>`
         """
         api_version = self._get_api_version('iot_hub')
         if api_version == '2019-03-22':
@@ -177,6 +193,10 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
             from .v2019_11_04.operations import IotHubOperations as OperationClass
         elif api_version == '2020-03-01':
             from .v2020_03_01.operations import IotHubOperations as OperationClass
+        elif api_version == '2021-03-03-preview':
+            from .v2021_03_03_preview.operations import IotHubOperations as OperationClass
+        elif api_version == '2021-03-31':
+            from .v2021_03_31.operations import IotHubOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -196,6 +216,8 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
            * 2019-07-01-preview: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2019_07_01_preview.operations.IotHubResourceOperations>`
            * 2019-11-04: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2019_11_04.operations.IotHubResourceOperations>`
            * 2020-03-01: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2020_03_01.operations.IotHubResourceOperations>`
+           * 2021-03-03-preview: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2021_03_03_preview.operations.IotHubResourceOperations>`
+           * 2021-03-31: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2021_03_31.operations.IotHubResourceOperations>`
         """
         api_version = self._get_api_version('iot_hub_resource')
         if api_version == '2016-02-03':
@@ -220,6 +242,10 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
             from .v2019_11_04.operations import IotHubResourceOperations as OperationClass
         elif api_version == '2020-03-01':
             from .v2020_03_01.operations import IotHubResourceOperations as OperationClass
+        elif api_version == '2021-03-03-preview':
+            from .v2021_03_03_preview.operations import IotHubResourceOperations as OperationClass
+        elif api_version == '2021-03-31':
+            from .v2021_03_31.operations import IotHubResourceOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -237,6 +263,8 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
            * 2019-07-01-preview: :class:`Operations<azure.mgmt.iothub.v2019_07_01_preview.operations.Operations>`
            * 2019-11-04: :class:`Operations<azure.mgmt.iothub.v2019_11_04.operations.Operations>`
            * 2020-03-01: :class:`Operations<azure.mgmt.iothub.v2020_03_01.operations.Operations>`
+           * 2021-03-03-preview: :class:`Operations<azure.mgmt.iothub.v2021_03_03_preview.operations.Operations>`
+           * 2021-03-31: :class:`Operations<azure.mgmt.iothub.v2021_03_31.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2017-07-01':
@@ -257,6 +285,10 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
             from .v2019_11_04.operations import Operations as OperationClass
         elif api_version == '2020-03-01':
             from .v2020_03_01.operations import Operations as OperationClass
+        elif api_version == '2021-03-03-preview':
+            from .v2021_03_03_preview.operations import Operations as OperationClass
+        elif api_version == '2021-03-31':
+            from .v2021_03_31.operations import Operations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -266,10 +298,16 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2020-03-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2020_03_01.operations.PrivateEndpointConnectionsOperations>`
+           * 2021-03-03-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2021_03_03_preview.operations.PrivateEndpointConnectionsOperations>`
+           * 2021-03-31: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2021_03_31.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2020-03-01':
             from .v2020_03_01.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2021-03-03-preview':
+            from .v2021_03_03_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2021-03-31':
+            from .v2021_03_31.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -279,10 +317,16 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2020-03-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2020_03_01.operations.PrivateLinkResourcesOperations>`
+           * 2021-03-03-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2021_03_03_preview.operations.PrivateLinkResourcesOperations>`
+           * 2021-03-31: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2021_03_31.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2020-03-01':
             from .v2020_03_01.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2021-03-03-preview':
+            from .v2021_03_03_preview.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2021-03-31':
+            from .v2021_03_31.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -298,6 +342,8 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
            * 2019-07-01-preview: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2019_07_01_preview.operations.ResourceProviderCommonOperations>`
            * 2019-11-04: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2019_11_04.operations.ResourceProviderCommonOperations>`
            * 2020-03-01: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2020_03_01.operations.ResourceProviderCommonOperations>`
+           * 2021-03-03-preview: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2021_03_03_preview.operations.ResourceProviderCommonOperations>`
+           * 2021-03-31: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2021_03_31.operations.ResourceProviderCommonOperations>`
         """
         api_version = self._get_api_version('resource_provider_common')
         if api_version == '2018-04-01':
@@ -314,6 +360,10 @@ class IotHubClient(MultiApiClientMixin, SDKClient):
             from .v2019_11_04.operations import ResourceProviderCommonOperations as OperationClass
         elif api_version == '2020-03-01':
             from .v2020_03_01.operations import ResourceProviderCommonOperations as OperationClass
+        elif api_version == '2021-03-03-preview':
+            from .v2021_03_03_preview.operations import ResourceProviderCommonOperations as OperationClass
+        elif api_version == '2021-03-31':
+            from .v2021_03_31.operations import ResourceProviderCommonOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

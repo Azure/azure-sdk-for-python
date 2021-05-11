@@ -27,7 +27,7 @@ class IotHubResourceOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2019-11-04".
+    :ivar api_version: The version of the API. Constant value: "2021-03-31".
     """
 
     models = models
@@ -37,7 +37,7 @@ class IotHubResourceOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-11-04"
+        self.api_version = "2021-03-31"
 
         self.config = config
 
@@ -850,7 +850,7 @@ class IotHubResourceOperations(object):
     get_event_hub_consumer_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}'}
 
     def create_event_hub_consumer_group(
-            self, resource_group_name, resource_name, event_hub_endpoint_name, name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, event_hub_endpoint_name, name, properties, custom_headers=None, raw=False, **operation_config):
         """Add a consumer group to an Event Hub-compatible endpoint in an IoT hub.
 
         Add a consumer group to an Event Hub-compatible endpoint in an IoT hub.
@@ -865,6 +865,8 @@ class IotHubResourceOperations(object):
         :type event_hub_endpoint_name: str
         :param name: The name of the consumer group to add.
         :type name: str
+        :param properties:
+        :type properties: ~azure.mgmt.iothub.models.EventHubConsumerGroupName
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -876,6 +878,8 @@ class IotHubResourceOperations(object):
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
+        consumer_group_body = models.EventHubConsumerGroupBodyDescription(properties=properties)
+
         # Construct URL
         url = self.create_event_hub_consumer_group.metadata['url']
         path_format_arguments = {
@@ -894,6 +898,7 @@ class IotHubResourceOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -901,8 +906,11 @@ class IotHubResourceOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(consumer_group_body, 'EventHubConsumerGroupBodyDescription')
+
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -1624,7 +1632,7 @@ class IotHubResourceOperations(object):
     get_keys_for_key_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/IotHubKeys/{keyName}/listkeys'}
 
     def export_devices(
-            self, resource_group_name, resource_name, export_blob_container_uri, exclude_keys, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, export_devices_parameters, custom_headers=None, raw=False, **operation_config):
         """Exports all the device identities in the IoT hub identity registry to
         an Azure Storage blob container. For more information, see:
         https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
@@ -1638,11 +1646,10 @@ class IotHubResourceOperations(object):
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub.
         :type resource_name: str
-        :param export_blob_container_uri: The export blob container URI.
-        :type export_blob_container_uri: str
-        :param exclude_keys: The value indicating whether keys should be
-         excluded during export.
-        :type exclude_keys: bool
+        :param export_devices_parameters: The parameters that specify the
+         export devices operation.
+        :type export_devices_parameters:
+         ~azure.mgmt.iothub.models.ExportDevicesRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1654,8 +1661,6 @@ class IotHubResourceOperations(object):
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
-        export_devices_parameters = models.ExportDevicesRequest(export_blob_container_uri=export_blob_container_uri, exclude_keys=exclude_keys)
-
         # Construct URL
         url = self.export_devices.metadata['url']
         path_format_arguments = {
@@ -1702,7 +1707,7 @@ class IotHubResourceOperations(object):
     export_devices.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/exportDevices'}
 
     def import_devices(
-            self, resource_group_name, resource_name, input_blob_container_uri, output_blob_container_uri, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, import_devices_parameters, custom_headers=None, raw=False, **operation_config):
         """Import, update, or delete device identities in the IoT hub identity
         registry from a blob. For more information, see:
         https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
@@ -1716,10 +1721,10 @@ class IotHubResourceOperations(object):
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub.
         :type resource_name: str
-        :param input_blob_container_uri: The input blob container URI.
-        :type input_blob_container_uri: str
-        :param output_blob_container_uri: The output blob container URI.
-        :type output_blob_container_uri: str
+        :param import_devices_parameters: The parameters that specify the
+         import devices operation.
+        :type import_devices_parameters:
+         ~azure.mgmt.iothub.models.ImportDevicesRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1731,8 +1736,6 @@ class IotHubResourceOperations(object):
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
-        import_devices_parameters = models.ImportDevicesRequest(input_blob_container_uri=input_blob_container_uri, output_blob_container_uri=output_blob_container_uri)
-
         # Construct URL
         url = self.import_devices.metadata['url']
         path_format_arguments = {

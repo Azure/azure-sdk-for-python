@@ -13,6 +13,75 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class ArmIdentity(Model):
+    """ArmIdentity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: Principal Id
+    :vartype principal_id: str
+    :ivar tenant_id: Tenant Id
+    :vartype tenant_id: str
+    :param type: The type of identity used for the resource. The type
+     'SystemAssigned,UserAssigned' includes both an implicitly created identity
+     and a set of user assigned identities. The type 'None' will remove any
+     identities from the service. Possible values include: 'SystemAssigned',
+     'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
+    :type type: str or ~azure.mgmt.iothub.models.ResourceIdentityType
+    :param user_assigned_identities:
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.iothub.models.ArmUserIdentity]
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'ResourceIdentityType'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{ArmUserIdentity}'},
+    }
+
+    def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
+        super(ArmIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
+
+
+class ArmUserIdentity(Model):
+    """ArmUserIdentity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id:
+    :vartype principal_id: str
+    :ivar client_id:
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ArmUserIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
 class CertificateBodyDescription(Model):
     """The JSON-serialized X509 Certificate.
 
@@ -25,9 +94,9 @@ class CertificateBodyDescription(Model):
         'certificate': {'key': 'certificate', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, certificate: str=None, **kwargs) -> None:
         super(CertificateBodyDescription, self).__init__(**kwargs)
-        self.certificate = kwargs.get('certificate', None)
+        self.certificate = certificate
 
 
 class CertificateDescription(Model):
@@ -63,9 +132,9 @@ class CertificateDescription(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(CertificateDescription, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = properties
         self.id = None
         self.name = None
         self.etag = None
@@ -83,9 +152,9 @@ class CertificateListDescription(Model):
         'value': {'key': 'value', 'type': '[CertificateDescription]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value=None, **kwargs) -> None:
         super(CertificateListDescription, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = value
 
 
 class CertificateProperties(Model):
@@ -129,7 +198,7 @@ class CertificateProperties(Model):
         'certificate': {'key': 'certificate', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, certificate: str=None, **kwargs) -> None:
         super(CertificateProperties, self).__init__(**kwargs)
         self.subject = None
         self.expiry = None
@@ -137,7 +206,7 @@ class CertificateProperties(Model):
         self.is_verified = None
         self.created = None
         self.updated = None
-        self.certificate = kwargs.get('certificate', None)
+        self.certificate = certificate
 
 
 class CertificatePropertiesWithNonce(Model):
@@ -188,7 +257,7 @@ class CertificatePropertiesWithNonce(Model):
         'certificate': {'key': 'certificate', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(CertificatePropertiesWithNonce, self).__init__(**kwargs)
         self.subject = None
         self.expiry = None
@@ -212,9 +281,9 @@ class CertificateVerificationDescription(Model):
         'certificate': {'key': 'certificate', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, certificate: str=None, **kwargs) -> None:
         super(CertificateVerificationDescription, self).__init__(**kwargs)
-        self.certificate = kwargs.get('certificate', None)
+        self.certificate = certificate
 
 
 class CertificateWithNonceDescription(Model):
@@ -250,9 +319,9 @@ class CertificateWithNonceDescription(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(CertificateWithNonceDescription, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = properties
         self.id = None
         self.name = None
         self.etag = None
@@ -292,11 +361,32 @@ class CloudToDeviceProperties(Model):
         'feedback': {'key': 'feedback', 'type': 'FeedbackProperties'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, max_delivery_count: int=None, default_ttl_as_iso8601=None, feedback=None, **kwargs) -> None:
         super(CloudToDeviceProperties, self).__init__(**kwargs)
-        self.max_delivery_count = kwargs.get('max_delivery_count', None)
-        self.default_ttl_as_iso8601 = kwargs.get('default_ttl_as_iso8601', None)
-        self.feedback = kwargs.get('feedback', None)
+        self.max_delivery_count = max_delivery_count
+        self.default_ttl_as_iso8601 = default_ttl_as_iso8601
+        self.feedback = feedback
+
+
+class EncryptionPropertiesDescription(Model):
+    """The encryption properties for the IoT hub.
+
+    :param key_source: The source of the key.
+    :type key_source: str
+    :param key_vault_properties: The properties of the KeyVault key.
+    :type key_vault_properties:
+     list[~azure.mgmt.iothub.models.KeyVaultKeyProperties]
+    """
+
+    _attribute_map = {
+        'key_source': {'key': 'keySource', 'type': 'str'},
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': '[KeyVaultKeyProperties]'},
+    }
+
+    def __init__(self, *, key_source: str=None, key_vault_properties=None, **kwargs) -> None:
+        super(EncryptionPropertiesDescription, self).__init__(**kwargs)
+        self.key_source = key_source
+        self.key_vault_properties = key_vault_properties
 
 
 class EndpointHealthData(Model):
@@ -315,19 +405,39 @@ class EndpointHealthData(Model):
      to identify errors and monitor issues with endpoints. The 'unknown' status
      shows that the IoT Hub has not established a connection with the endpoint.
      No messages have been delivered to or rejected from this endpoint.
-     Possible values include: 'unknown', 'healthy', 'unhealthy', 'dead'
+     Possible values include: 'unknown', 'healthy', 'degraded', 'unhealthy',
+     'dead'
     :type health_status: str or ~azure.mgmt.iothub.models.EndpointHealthStatus
+    :param last_known_error: Last error obtained when a message failed to be
+     delivered to iot hub
+    :type last_known_error: str
+    :param last_known_error_time: Time at which the last known error occurred
+    :type last_known_error_time: datetime
+    :param last_successful_send_attempt_time: Last time iot hub successfully
+     sent a message to the endpoint
+    :type last_successful_send_attempt_time: datetime
+    :param last_send_attempt_time: Last time iot hub tried to send a message
+     to the endpoint
+    :type last_send_attempt_time: datetime
     """
 
     _attribute_map = {
         'endpoint_id': {'key': 'endpointId', 'type': 'str'},
         'health_status': {'key': 'healthStatus', 'type': 'str'},
+        'last_known_error': {'key': 'lastKnownError', 'type': 'str'},
+        'last_known_error_time': {'key': 'lastKnownErrorTime', 'type': 'rfc-1123'},
+        'last_successful_send_attempt_time': {'key': 'lastSuccessfulSendAttemptTime', 'type': 'rfc-1123'},
+        'last_send_attempt_time': {'key': 'lastSendAttemptTime', 'type': 'rfc-1123'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, endpoint_id: str=None, health_status=None, last_known_error: str=None, last_known_error_time=None, last_successful_send_attempt_time=None, last_send_attempt_time=None, **kwargs) -> None:
         super(EndpointHealthData, self).__init__(**kwargs)
-        self.endpoint_id = kwargs.get('endpoint_id', None)
-        self.health_status = kwargs.get('health_status', None)
+        self.endpoint_id = endpoint_id
+        self.health_status = health_status
+        self.last_known_error = last_known_error
+        self.last_known_error_time = last_known_error_time
+        self.last_successful_send_attempt_time = last_successful_send_attempt_time
+        self.last_send_attempt_time = last_send_attempt_time
 
 
 class EnrichmentProperties(Model):
@@ -357,11 +467,11 @@ class EnrichmentProperties(Model):
         'endpoint_names': {'key': 'endpointNames', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, key: str, value: str, endpoint_names, **kwargs) -> None:
         super(EnrichmentProperties, self).__init__(**kwargs)
-        self.key = kwargs.get('key', None)
-        self.value = kwargs.get('value', None)
-        self.endpoint_names = kwargs.get('endpoint_names', None)
+        self.key = key
+        self.value = value
+        self.endpoint_names = endpoint_names
 
 
 class ErrorDetails(Model):
@@ -394,7 +504,7 @@ class ErrorDetails(Model):
         'details': {'key': 'details', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ErrorDetails, self).__init__(**kwargs)
         self.code = None
         self.http_status_code = None
@@ -412,6 +522,22 @@ class ErrorDetailsException(HttpOperationError):
     def __init__(self, deserialize, response, *args):
 
         super(ErrorDetailsException, self).__init__(deserialize, response, 'ErrorDetails', *args)
+
+
+class EventHubConsumerGroupBodyDescription(Model):
+    """The EventHub consumer group.
+
+    :param properties:
+    :type properties: ~azure.mgmt.iothub.models.EventHubConsumerGroupName
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'EventHubConsumerGroupName'},
+    }
+
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(EventHubConsumerGroupBodyDescription, self).__init__(**kwargs)
+        self.properties = properties
 
 
 class EventHubConsumerGroupInfo(Model):
@@ -447,13 +573,29 @@ class EventHubConsumerGroupInfo(Model):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(EventHubConsumerGroupInfo, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = properties
         self.id = None
         self.name = None
         self.type = None
         self.etag = None
+
+
+class EventHubConsumerGroupName(Model):
+    """The EventHub consumer group name.
+
+    :param name: EventHub consumer group name
+    :type name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, **kwargs) -> None:
+        super(EventHubConsumerGroupName, self).__init__(**kwargs)
+        self.name = name
 
 
 class EventHubProperties(Model):
@@ -494,10 +636,10 @@ class EventHubProperties(Model):
         'endpoint': {'key': 'endpoint', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, retention_time_in_days: int=None, partition_count: int=None, **kwargs) -> None:
         super(EventHubProperties, self).__init__(**kwargs)
-        self.retention_time_in_days = kwargs.get('retention_time_in_days', None)
-        self.partition_count = kwargs.get('partition_count', None)
+        self.retention_time_in_days = retention_time_in_days
+        self.partition_count = partition_count
         self.partition_ids = None
         self.path = None
         self.endpoint = None
@@ -523,6 +665,9 @@ class ExportDevicesRequest(Model):
      'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of storage endpoint for
+     export devices.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
     """
 
     _validation = {
@@ -535,14 +680,16 @@ class ExportDevicesRequest(Model):
         'exclude_keys': {'key': 'excludeKeys', 'type': 'bool'},
         'export_blob_name': {'key': 'exportBlobName', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, export_blob_container_uri: str, exclude_keys: bool, export_blob_name: str=None, authentication_type=None, identity=None, **kwargs) -> None:
         super(ExportDevicesRequest, self).__init__(**kwargs)
-        self.export_blob_container_uri = kwargs.get('export_blob_container_uri', None)
-        self.exclude_keys = kwargs.get('exclude_keys', None)
-        self.export_blob_name = kwargs.get('export_blob_name', None)
-        self.authentication_type = kwargs.get('authentication_type', None)
+        self.export_blob_container_uri = export_blob_container_uri
+        self.exclude_keys = exclude_keys
+        self.export_blob_name = export_blob_name
+        self.authentication_type = authentication_type
+        self.identity = identity
 
 
 class FailoverInput(Model):
@@ -562,9 +709,9 @@ class FailoverInput(Model):
         'failover_region': {'key': 'failoverRegion', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, failover_region: str, **kwargs) -> None:
         super(FailoverInput, self).__init__(**kwargs)
-        self.failover_region = kwargs.get('failover_region', None)
+        self.failover_region = failover_region
 
 
 class FallbackRouteProperties(Model):
@@ -613,12 +760,12 @@ class FallbackRouteProperties(Model):
 
     source = "DeviceMessages"
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, endpoint_names, is_enabled: bool, name: str=None, condition: str=None, **kwargs) -> None:
         super(FallbackRouteProperties, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.condition = kwargs.get('condition', None)
-        self.endpoint_names = kwargs.get('endpoint_names', None)
-        self.is_enabled = kwargs.get('is_enabled', None)
+        self.name = name
+        self.condition = condition
+        self.endpoint_names = endpoint_names
+        self.is_enabled = is_enabled
 
 
 class FeedbackProperties(Model):
@@ -648,11 +795,11 @@ class FeedbackProperties(Model):
         'max_delivery_count': {'key': 'maxDeliveryCount', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, lock_duration_as_iso8601=None, ttl_as_iso8601=None, max_delivery_count: int=None, **kwargs) -> None:
         super(FeedbackProperties, self).__init__(**kwargs)
-        self.lock_duration_as_iso8601 = kwargs.get('lock_duration_as_iso8601', None)
-        self.ttl_as_iso8601 = kwargs.get('ttl_as_iso8601', None)
-        self.max_delivery_count = kwargs.get('max_delivery_count', None)
+        self.lock_duration_as_iso8601 = lock_duration_as_iso8601
+        self.ttl_as_iso8601 = ttl_as_iso8601
+        self.max_delivery_count = max_delivery_count
 
 
 class GroupIdInformation(Model):
@@ -675,7 +822,7 @@ class GroupIdInformation(Model):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
+        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
         'type': {'readonly': True},
         'properties': {'required': True},
     }
@@ -687,12 +834,12 @@ class GroupIdInformation(Model):
         'properties': {'key': 'properties', 'type': 'GroupIdInformationProperties'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, properties, **kwargs) -> None:
         super(GroupIdInformation, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = properties
 
 
 class GroupIdInformationProperties(Model):
@@ -712,11 +859,11 @@ class GroupIdInformationProperties(Model):
         'required_zone_names': {'key': 'requiredZoneNames', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, group_id: str=None, required_members=None, required_zone_names=None, **kwargs) -> None:
         super(GroupIdInformationProperties, self).__init__(**kwargs)
-        self.group_id = kwargs.get('group_id', None)
-        self.required_members = kwargs.get('required_members', None)
-        self.required_zone_names = kwargs.get('required_zone_names', None)
+        self.group_id = group_id
+        self.required_members = required_members
+        self.required_zone_names = required_zone_names
 
 
 class ImportDevicesRequest(Model):
@@ -740,6 +887,9 @@ class ImportDevicesRequest(Model):
      'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of storage endpoint for
+     import devices.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
     """
 
     _validation = {
@@ -753,15 +903,17 @@ class ImportDevicesRequest(Model):
         'input_blob_name': {'key': 'inputBlobName', 'type': 'str'},
         'output_blob_name': {'key': 'outputBlobName', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, input_blob_container_uri: str, output_blob_container_uri: str, input_blob_name: str=None, output_blob_name: str=None, authentication_type=None, identity=None, **kwargs) -> None:
         super(ImportDevicesRequest, self).__init__(**kwargs)
-        self.input_blob_container_uri = kwargs.get('input_blob_container_uri', None)
-        self.output_blob_container_uri = kwargs.get('output_blob_container_uri', None)
-        self.input_blob_name = kwargs.get('input_blob_name', None)
-        self.output_blob_name = kwargs.get('output_blob_name', None)
-        self.authentication_type = kwargs.get('authentication_type', None)
+        self.input_blob_container_uri = input_blob_container_uri
+        self.output_blob_container_uri = output_blob_container_uri
+        self.input_blob_name = input_blob_name
+        self.output_blob_name = output_blob_name
+        self.authentication_type = authentication_type
+        self.identity = identity
 
 
 class IotHubCapacity(Model):
@@ -795,7 +947,7 @@ class IotHubCapacity(Model):
         'scale_type': {'key': 'scaleType', 'type': 'IotHubScaleType'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(IotHubCapacity, self).__init__(**kwargs)
         self.minimum = None
         self.maximum = None
@@ -838,13 +990,13 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+        self.location = location
+        self.tags = tags
 
 
 class IotHubDescription(Resource):
@@ -873,6 +1025,8 @@ class IotHubDescription(Resource):
     :type properties: ~azure.mgmt.iothub.models.IotHubProperties
     :param sku: Required. IotHub SKU info
     :type sku: ~azure.mgmt.iothub.models.IotHubSkuInfo
+    :param identity: The managed identities for the IotHub.
+    :type identity: ~azure.mgmt.iothub.models.ArmIdentity
     """
 
     _validation = {
@@ -892,13 +1046,15 @@ class IotHubDescription(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'IotHubProperties'},
         'sku': {'key': 'sku', 'type': 'IotHubSkuInfo'},
+        'identity': {'key': 'identity', 'type': 'ArmIdentity'},
     }
 
-    def __init__(self, **kwargs):
-        super(IotHubDescription, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.properties = kwargs.get('properties', None)
-        self.sku = kwargs.get('sku', None)
+    def __init__(self, *, location: str, sku, tags=None, etag: str=None, properties=None, identity=None, **kwargs) -> None:
+        super(IotHubDescription, self).__init__(location=location, tags=tags, **kwargs)
+        self.etag = etag
+        self.properties = properties
+        self.sku = sku
+        self.identity = identity
 
 
 class IotHubLocationDescription(Model):
@@ -920,10 +1076,10 @@ class IotHubLocationDescription(Model):
         'role': {'key': 'role', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, location: str=None, role=None, **kwargs) -> None:
         super(IotHubLocationDescription, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.role = kwargs.get('role', None)
+        self.location = location
+        self.role = role
 
 
 class IotHubNameAvailabilityInfo(Model):
@@ -954,11 +1110,11 @@ class IotHubNameAvailabilityInfo(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, message: str=None, **kwargs) -> None:
         super(IotHubNameAvailabilityInfo, self).__init__(**kwargs)
         self.name_available = None
         self.reason = None
-        self.message = kwargs.get('message', None)
+        self.message = message
 
 
 class IotHubProperties(Model):
@@ -977,6 +1133,9 @@ class IotHubProperties(Model):
      ~azure.mgmt.iothub.models.PublicNetworkAccess
     :param ip_filter_rules: The IP filter rules.
     :type ip_filter_rules: list[~azure.mgmt.iothub.models.IpFilterRule]
+    :param network_rule_sets:
+    :type network_rule_sets:
+     ~azure.mgmt.iothub.models.NetworkRuleSetProperties
     :param min_tls_version: Specifies the minimum TLS version to support for
      this hub. Can be set to "1.2" to have clients that use a TLS version below
      1.2 to be rejected.
@@ -1018,9 +1177,15 @@ class IotHubProperties(Model):
     :type cloud_to_device: ~azure.mgmt.iothub.models.CloudToDeviceProperties
     :param comments: IoT hub comments.
     :type comments: str
+    :param device_streams: The device streams properties of iothub.
+    :type device_streams:
+     ~azure.mgmt.iothub.models.IotHubPropertiesDeviceStreams
     :param features: The capabilities and features enabled for the IoT hub.
      Possible values include: 'None', 'DeviceManagement'
     :type features: str or ~azure.mgmt.iothub.models.Capabilities
+    :param encryption: The encryption properties for the IoT hub.
+    :type encryption:
+     ~azure.mgmt.iothub.models.EncryptionPropertiesDescription
     :ivar locations: Primary and secondary location for iot hub
     :vartype locations:
      list[~azure.mgmt.iothub.models.IotHubLocationDescription]
@@ -1037,6 +1202,7 @@ class IotHubProperties(Model):
         'authorization_policies': {'key': 'authorizationPolicies', 'type': '[SharedAccessSignatureAuthorizationRule]'},
         'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
         'ip_filter_rules': {'key': 'ipFilterRules', 'type': '[IpFilterRule]'},
+        'network_rule_sets': {'key': 'networkRuleSets', 'type': 'NetworkRuleSetProperties'},
         'min_tls_version': {'key': 'minTlsVersion', 'type': 'str'},
         'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
@@ -1049,29 +1215,50 @@ class IotHubProperties(Model):
         'enable_file_upload_notifications': {'key': 'enableFileUploadNotifications', 'type': 'bool'},
         'cloud_to_device': {'key': 'cloudToDevice', 'type': 'CloudToDeviceProperties'},
         'comments': {'key': 'comments', 'type': 'str'},
+        'device_streams': {'key': 'deviceStreams', 'type': 'IotHubPropertiesDeviceStreams'},
         'features': {'key': 'features', 'type': 'str'},
+        'encryption': {'key': 'encryption', 'type': 'EncryptionPropertiesDescription'},
         'locations': {'key': 'locations', 'type': '[IotHubLocationDescription]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, authorization_policies=None, public_network_access=None, ip_filter_rules=None, network_rule_sets=None, min_tls_version: str=None, private_endpoint_connections=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications: bool=None, cloud_to_device=None, comments: str=None, device_streams=None, features=None, encryption=None, **kwargs) -> None:
         super(IotHubProperties, self).__init__(**kwargs)
-        self.authorization_policies = kwargs.get('authorization_policies', None)
-        self.public_network_access = kwargs.get('public_network_access', None)
-        self.ip_filter_rules = kwargs.get('ip_filter_rules', None)
-        self.min_tls_version = kwargs.get('min_tls_version', None)
-        self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
+        self.authorization_policies = authorization_policies
+        self.public_network_access = public_network_access
+        self.ip_filter_rules = ip_filter_rules
+        self.network_rule_sets = network_rule_sets
+        self.min_tls_version = min_tls_version
+        self.private_endpoint_connections = private_endpoint_connections
         self.provisioning_state = None
         self.state = None
         self.host_name = None
-        self.event_hub_endpoints = kwargs.get('event_hub_endpoints', None)
-        self.routing = kwargs.get('routing', None)
-        self.storage_endpoints = kwargs.get('storage_endpoints', None)
-        self.messaging_endpoints = kwargs.get('messaging_endpoints', None)
-        self.enable_file_upload_notifications = kwargs.get('enable_file_upload_notifications', None)
-        self.cloud_to_device = kwargs.get('cloud_to_device', None)
-        self.comments = kwargs.get('comments', None)
-        self.features = kwargs.get('features', None)
+        self.event_hub_endpoints = event_hub_endpoints
+        self.routing = routing
+        self.storage_endpoints = storage_endpoints
+        self.messaging_endpoints = messaging_endpoints
+        self.enable_file_upload_notifications = enable_file_upload_notifications
+        self.cloud_to_device = cloud_to_device
+        self.comments = comments
+        self.device_streams = device_streams
+        self.features = features
+        self.encryption = encryption
         self.locations = None
+
+
+class IotHubPropertiesDeviceStreams(Model):
+    """The device streams properties of iothub.
+
+    :param streaming_endpoints: List of Device Streams Endpoints.
+    :type streaming_endpoints: list[str]
+    """
+
+    _attribute_map = {
+        'streaming_endpoints': {'key': 'streamingEndpoints', 'type': '[str]'},
+    }
+
+    def __init__(self, *, streaming_endpoints=None, **kwargs) -> None:
+        super(IotHubPropertiesDeviceStreams, self).__init__(**kwargs)
+        self.streaming_endpoints = streaming_endpoints
 
 
 class IotHubQuotaMetricInfo(Model):
@@ -1100,7 +1287,7 @@ class IotHubQuotaMetricInfo(Model):
         'max_value': {'key': 'maxValue', 'type': 'long'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(IotHubQuotaMetricInfo, self).__init__(**kwargs)
         self.name = None
         self.current_value = None
@@ -1135,11 +1322,11 @@ class IotHubSkuDescription(Model):
         'capacity': {'key': 'capacity', 'type': 'IotHubCapacity'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, sku, capacity, **kwargs) -> None:
         super(IotHubSkuDescription, self).__init__(**kwargs)
         self.resource_type = None
-        self.sku = kwargs.get('sku', None)
-        self.capacity = kwargs.get('capacity', None)
+        self.sku = sku
+        self.capacity = capacity
 
 
 class IotHubSkuInfo(Model):
@@ -1172,11 +1359,11 @@ class IotHubSkuInfo(Model):
         'capacity': {'key': 'capacity', 'type': 'long'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name, capacity: int=None, **kwargs) -> None:
         super(IotHubSkuInfo, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name
         self.tier = None
-        self.capacity = kwargs.get('capacity', None)
+        self.capacity = capacity
 
 
 class IpFilterRule(Model):
@@ -1206,11 +1393,11 @@ class IpFilterRule(Model):
         'ip_mask': {'key': 'ipMask', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, filter_name: str, action, ip_mask: str, **kwargs) -> None:
         super(IpFilterRule, self).__init__(**kwargs)
-        self.filter_name = kwargs.get('filter_name', None)
-        self.action = kwargs.get('action', None)
-        self.ip_mask = kwargs.get('ip_mask', None)
+        self.filter_name = filter_name
+        self.action = action
+        self.ip_mask = ip_mask
 
 
 class JobResponse(Model):
@@ -1264,7 +1451,7 @@ class JobResponse(Model):
         'parent_job_id': {'key': 'parentJobId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(JobResponse, self).__init__(**kwargs)
         self.job_id = None
         self.start_time_utc = None
@@ -1274,6 +1461,42 @@ class JobResponse(Model):
         self.failure_reason = None
         self.status_message = None
         self.parent_job_id = None
+
+
+class KeyVaultKeyProperties(Model):
+    """The properties of the KeyVault key.
+
+    :param key_identifier: The identifier of the key.
+    :type key_identifier: str
+    :param identity: Managed identity properties of KeyVault Key.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
+    """
+
+    _attribute_map = {
+        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
+    }
+
+    def __init__(self, *, key_identifier: str=None, identity=None, **kwargs) -> None:
+        super(KeyVaultKeyProperties, self).__init__(**kwargs)
+        self.key_identifier = key_identifier
+        self.identity = identity
+
+
+class ManagedIdentity(Model):
+    """The properties of the Managed identity.
+
+    :param user_assigned_identity: The user assigned identity.
+    :type user_assigned_identity: str
+    """
+
+    _attribute_map = {
+        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+    }
+
+    def __init__(self, *, user_assigned_identity: str=None, **kwargs) -> None:
+        super(ManagedIdentity, self).__init__(**kwargs)
+        self.user_assigned_identity = user_assigned_identity
 
 
 class MatchedRoute(Model):
@@ -1287,9 +1510,9 @@ class MatchedRoute(Model):
         'properties': {'key': 'properties', 'type': 'RouteProperties'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(MatchedRoute, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = properties
 
 
 class MessagingEndpointProperties(Model):
@@ -1318,11 +1541,11 @@ class MessagingEndpointProperties(Model):
         'max_delivery_count': {'key': 'maxDeliveryCount', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, lock_duration_as_iso8601=None, ttl_as_iso8601=None, max_delivery_count: int=None, **kwargs) -> None:
         super(MessagingEndpointProperties, self).__init__(**kwargs)
-        self.lock_duration_as_iso8601 = kwargs.get('lock_duration_as_iso8601', None)
-        self.ttl_as_iso8601 = kwargs.get('ttl_as_iso8601', None)
-        self.max_delivery_count = kwargs.get('max_delivery_count', None)
+        self.lock_duration_as_iso8601 = lock_duration_as_iso8601
+        self.ttl_as_iso8601 = ttl_as_iso8601
+        self.max_delivery_count = max_delivery_count
 
 
 class Name(Model):
@@ -1339,10 +1562,76 @@ class Name(Model):
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value: str=None, localized_value: str=None, **kwargs) -> None:
         super(Name, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.localized_value = kwargs.get('localized_value', None)
+        self.value = value
+        self.localized_value = localized_value
+
+
+class NetworkRuleSetIpRule(Model):
+    """IP Rule to be applied as part of Network Rule Set.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param filter_name: Required. Name of the IP filter rule.
+    :type filter_name: str
+    :param action: IP Filter Action. Possible values include: 'Allow'. Default
+     value: "Allow" .
+    :type action: str or ~azure.mgmt.iothub.models.NetworkRuleIPAction
+    :param ip_mask: Required. A string that contains the IP address range in
+     CIDR notation for the rule.
+    :type ip_mask: str
+    """
+
+    _validation = {
+        'filter_name': {'required': True},
+        'ip_mask': {'required': True},
+    }
+
+    _attribute_map = {
+        'filter_name': {'key': 'filterName', 'type': 'str'},
+        'action': {'key': 'action', 'type': 'str'},
+        'ip_mask': {'key': 'ipMask', 'type': 'str'},
+    }
+
+    def __init__(self, *, filter_name: str, ip_mask: str, action="Allow", **kwargs) -> None:
+        super(NetworkRuleSetIpRule, self).__init__(**kwargs)
+        self.filter_name = filter_name
+        self.action = action
+        self.ip_mask = ip_mask
+
+
+class NetworkRuleSetProperties(Model):
+    """Network Rule Set Properties of IotHub.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param default_action: Default Action for Network Rule Set. Possible
+     values include: 'Deny', 'Allow'. Default value: "Deny" .
+    :type default_action: str or ~azure.mgmt.iothub.models.DefaultAction
+    :param apply_to_built_in_event_hub_endpoint: Required. If True, then
+     Network Rule Set is also applied to BuiltIn EventHub EndPoint of IotHub
+    :type apply_to_built_in_event_hub_endpoint: bool
+    :param ip_rules: Required. List of IP Rules
+    :type ip_rules: list[~azure.mgmt.iothub.models.NetworkRuleSetIpRule]
+    """
+
+    _validation = {
+        'apply_to_built_in_event_hub_endpoint': {'required': True},
+        'ip_rules': {'required': True},
+    }
+
+    _attribute_map = {
+        'default_action': {'key': 'defaultAction', 'type': 'str'},
+        'apply_to_built_in_event_hub_endpoint': {'key': 'applyToBuiltInEventHubEndpoint', 'type': 'bool'},
+        'ip_rules': {'key': 'ipRules', 'type': '[NetworkRuleSetIpRule]'},
+    }
+
+    def __init__(self, *, apply_to_built_in_event_hub_endpoint: bool, ip_rules, default_action="Deny", **kwargs) -> None:
+        super(NetworkRuleSetProperties, self).__init__(**kwargs)
+        self.default_action = default_action
+        self.apply_to_built_in_event_hub_endpoint = apply_to_built_in_event_hub_endpoint
+        self.ip_rules = ip_rules
 
 
 class Operation(Model):
@@ -1367,10 +1656,10 @@ class Operation(Model):
         'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, display=None, **kwargs) -> None:
         super(Operation, self).__init__(**kwargs)
         self.name = None
-        self.display = kwargs.get('display', None)
+        self.display = display
 
 
 class OperationDisplay(Model):
@@ -1403,7 +1692,7 @@ class OperationDisplay(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -1428,9 +1717,9 @@ class OperationInputs(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, **kwargs) -> None:
         super(OperationInputs, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name
 
 
 class PrivateEndpoint(Model):
@@ -1451,7 +1740,7 @@ class PrivateEndpoint(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(PrivateEndpoint, self).__init__(**kwargs)
         self.id = None
 
@@ -1477,7 +1766,7 @@ class PrivateEndpointConnection(Model):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
+        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
         'type': {'readonly': True},
         'properties': {'required': True},
     }
@@ -1489,12 +1778,12 @@ class PrivateEndpointConnection(Model):
         'properties': {'key': 'properties', 'type': 'PrivateEndpointConnectionProperties'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, properties, **kwargs) -> None:
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = properties
 
 
 class PrivateEndpointConnectionProperties(Model):
@@ -1518,10 +1807,10 @@ class PrivateEndpointConnectionProperties(Model):
         'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, private_link_service_connection_state, private_endpoint=None, **kwargs) -> None:
         super(PrivateEndpointConnectionProperties, self).__init__(**kwargs)
-        self.private_endpoint = kwargs.get('private_endpoint', None)
-        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
 
 
 class PrivateLinkResources(Model):
@@ -1535,9 +1824,9 @@ class PrivateLinkResources(Model):
         'value': {'key': 'value', 'type': '[GroupIdInformation]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value=None, **kwargs) -> None:
         super(PrivateLinkResources, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = value
 
 
 class PrivateLinkServiceConnectionState(Model):
@@ -1568,11 +1857,11 @@ class PrivateLinkServiceConnectionState(Model):
         'actions_required': {'key': 'actionsRequired', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, status, description: str, actions_required: str=None, **kwargs) -> None:
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.description = kwargs.get('description', None)
-        self.actions_required = kwargs.get('actions_required', None)
+        self.status = status
+        self.description = description
+        self.actions_required = actions_required
 
 
 class RegistryStatistics(Model):
@@ -1604,7 +1893,7 @@ class RegistryStatistics(Model):
         'disabled_device_count': {'key': 'disabledDeviceCount', 'type': 'long'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(RegistryStatistics, self).__init__(**kwargs)
         self.total_device_count = None
         self.enabled_device_count = None
@@ -1629,11 +1918,11 @@ class RouteCompilationError(Model):
         'location': {'key': 'location', 'type': 'RouteErrorRange'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, message: str=None, severity=None, location=None, **kwargs) -> None:
         super(RouteCompilationError, self).__init__(**kwargs)
-        self.message = kwargs.get('message', None)
-        self.severity = kwargs.get('severity', None)
-        self.location = kwargs.get('location', None)
+        self.message = message
+        self.severity = severity
+        self.location = location
 
 
 class RouteErrorPosition(Model):
@@ -1650,10 +1939,10 @@ class RouteErrorPosition(Model):
         'column': {'key': 'column', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, line: int=None, column: int=None, **kwargs) -> None:
         super(RouteErrorPosition, self).__init__(**kwargs)
-        self.line = kwargs.get('line', None)
-        self.column = kwargs.get('column', None)
+        self.line = line
+        self.column = column
 
 
 class RouteErrorRange(Model):
@@ -1670,10 +1959,10 @@ class RouteErrorRange(Model):
         'end': {'key': 'end', 'type': 'RouteErrorPosition'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, start=None, end=None, **kwargs) -> None:
         super(RouteErrorRange, self).__init__(**kwargs)
-        self.start = kwargs.get('start', None)
-        self.end = kwargs.get('end', None)
+        self.start = start
+        self.end = end
 
 
 class RouteProperties(Model):
@@ -1689,7 +1978,8 @@ class RouteProperties(Model):
     :param source: Required. The source that the routing rule is to be applied
      to, such as DeviceMessages. Possible values include: 'Invalid',
      'DeviceMessages', 'TwinChangeEvents', 'DeviceLifecycleEvents',
-     'DeviceJobLifecycleEvents'
+     'DeviceJobLifecycleEvents', 'DigitalTwinChangeEvents',
+     'DeviceConnectionStateEvents'
     :type source: str or ~azure.mgmt.iothub.models.RoutingSource
     :param condition: The condition that is evaluated to apply the routing
      rule. If no condition is provided, it evaluates to true by default. For
@@ -1719,13 +2009,13 @@ class RouteProperties(Model):
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, source, endpoint_names, is_enabled: bool, condition: str=None, **kwargs) -> None:
         super(RouteProperties, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.source = kwargs.get('source', None)
-        self.condition = kwargs.get('condition', None)
-        self.endpoint_names = kwargs.get('endpoint_names', None)
-        self.is_enabled = kwargs.get('is_enabled', None)
+        self.name = name
+        self.source = source
+        self.condition = condition
+        self.endpoint_names = endpoint_names
+        self.is_enabled = is_enabled
 
 
 class RoutingEndpoints(Model):
@@ -1760,12 +2050,12 @@ class RoutingEndpoints(Model):
         'storage_containers': {'key': 'storageContainers', 'type': '[RoutingStorageContainerProperties]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, service_bus_queues=None, service_bus_topics=None, event_hubs=None, storage_containers=None, **kwargs) -> None:
         super(RoutingEndpoints, self).__init__(**kwargs)
-        self.service_bus_queues = kwargs.get('service_bus_queues', None)
-        self.service_bus_topics = kwargs.get('service_bus_topics', None)
-        self.event_hubs = kwargs.get('event_hubs', None)
-        self.storage_containers = kwargs.get('storage_containers', None)
+        self.service_bus_queues = service_bus_queues
+        self.service_bus_topics = service_bus_topics
+        self.event_hubs = event_hubs
+        self.storage_containers = storage_containers
 
 
 class RoutingEventHubProperties(Model):
@@ -1786,6 +2076,9 @@ class RoutingEventHubProperties(Model):
      hub endpoint. Possible values include: 'keyBased', 'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of routing event hub
+     endpoint.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
     :param name: Required. The name that identifies this endpoint. The name
      can only include alphanumeric characters, periods, underscores, hyphens
      and has a maximum length of 64 characters. The following names are
@@ -1810,21 +2103,23 @@ class RoutingEventHubProperties(Model):
         'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
         'entity_path': {'key': 'entityPath', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
         'name': {'key': 'name', 'type': 'str'},
         'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
         'resource_group': {'key': 'resourceGroup', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, id: str=None, connection_string: str=None, endpoint_uri: str=None, entity_path: str=None, authentication_type=None, identity=None, subscription_id: str=None, resource_group: str=None, **kwargs) -> None:
         super(RoutingEventHubProperties, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.endpoint_uri = kwargs.get('endpoint_uri', None)
-        self.entity_path = kwargs.get('entity_path', None)
-        self.authentication_type = kwargs.get('authentication_type', None)
-        self.name = kwargs.get('name', None)
-        self.subscription_id = kwargs.get('subscription_id', None)
-        self.resource_group = kwargs.get('resource_group', None)
+        self.id = id
+        self.connection_string = connection_string
+        self.endpoint_uri = endpoint_uri
+        self.entity_path = entity_path
+        self.authentication_type = authentication_type
+        self.identity = identity
+        self.name = name
+        self.subscription_id = subscription_id
+        self.resource_group = resource_group
 
 
 class RoutingMessage(Model):
@@ -1844,11 +2139,11 @@ class RoutingMessage(Model):
         'system_properties': {'key': 'systemProperties', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, body: str=None, app_properties=None, system_properties=None, **kwargs) -> None:
         super(RoutingMessage, self).__init__(**kwargs)
-        self.body = kwargs.get('body', None)
-        self.app_properties = kwargs.get('app_properties', None)
-        self.system_properties = kwargs.get('system_properties', None)
+        self.body = body
+        self.app_properties = app_properties
+        self.system_properties = system_properties
 
 
 class RoutingProperties(Model):
@@ -1881,12 +2176,12 @@ class RoutingProperties(Model):
         'enrichments': {'key': 'enrichments', 'type': '[EnrichmentProperties]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, endpoints=None, routes=None, fallback_route=None, enrichments=None, **kwargs) -> None:
         super(RoutingProperties, self).__init__(**kwargs)
-        self.endpoints = kwargs.get('endpoints', None)
-        self.routes = kwargs.get('routes', None)
-        self.fallback_route = kwargs.get('fallback_route', None)
-        self.enrichments = kwargs.get('enrichments', None)
+        self.endpoints = endpoints
+        self.routes = routes
+        self.fallback_route = fallback_route
+        self.enrichments = enrichments
 
 
 class RoutingServiceBusQueueEndpointProperties(Model):
@@ -1909,6 +2204,9 @@ class RoutingServiceBusQueueEndpointProperties(Model):
      'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of routing service bus queue
+     endpoint.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
     :param name: Required. The name that identifies this endpoint. The name
      can only include alphanumeric characters, periods, underscores, hyphens
      and has a maximum length of 64 characters. The following names are
@@ -1934,21 +2232,23 @@ class RoutingServiceBusQueueEndpointProperties(Model):
         'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
         'entity_path': {'key': 'entityPath', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
         'name': {'key': 'name', 'type': 'str'},
         'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
         'resource_group': {'key': 'resourceGroup', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, id: str=None, connection_string: str=None, endpoint_uri: str=None, entity_path: str=None, authentication_type=None, identity=None, subscription_id: str=None, resource_group: str=None, **kwargs) -> None:
         super(RoutingServiceBusQueueEndpointProperties, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.endpoint_uri = kwargs.get('endpoint_uri', None)
-        self.entity_path = kwargs.get('entity_path', None)
-        self.authentication_type = kwargs.get('authentication_type', None)
-        self.name = kwargs.get('name', None)
-        self.subscription_id = kwargs.get('subscription_id', None)
-        self.resource_group = kwargs.get('resource_group', None)
+        self.id = id
+        self.connection_string = connection_string
+        self.endpoint_uri = endpoint_uri
+        self.entity_path = entity_path
+        self.authentication_type = authentication_type
+        self.identity = identity
+        self.name = name
+        self.subscription_id = subscription_id
+        self.resource_group = resource_group
 
 
 class RoutingServiceBusTopicEndpointProperties(Model):
@@ -1971,6 +2271,9 @@ class RoutingServiceBusTopicEndpointProperties(Model):
      'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of routing service bus topic
+     endpoint.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
     :param name: Required. The name that identifies this endpoint. The name
      can only include alphanumeric characters, periods, underscores, hyphens
      and has a maximum length of 64 characters. The following names are
@@ -1996,21 +2299,23 @@ class RoutingServiceBusTopicEndpointProperties(Model):
         'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
         'entity_path': {'key': 'entityPath', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
         'name': {'key': 'name', 'type': 'str'},
         'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
         'resource_group': {'key': 'resourceGroup', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, id: str=None, connection_string: str=None, endpoint_uri: str=None, entity_path: str=None, authentication_type=None, identity=None, subscription_id: str=None, resource_group: str=None, **kwargs) -> None:
         super(RoutingServiceBusTopicEndpointProperties, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.endpoint_uri = kwargs.get('endpoint_uri', None)
-        self.entity_path = kwargs.get('entity_path', None)
-        self.authentication_type = kwargs.get('authentication_type', None)
-        self.name = kwargs.get('name', None)
-        self.subscription_id = kwargs.get('subscription_id', None)
-        self.resource_group = kwargs.get('resource_group', None)
+        self.id = id
+        self.connection_string = connection_string
+        self.endpoint_uri = endpoint_uri
+        self.entity_path = entity_path
+        self.authentication_type = authentication_type
+        self.identity = identity
+        self.name = name
+        self.subscription_id = subscription_id
+        self.resource_group = resource_group
 
 
 class RoutingStorageContainerProperties(Model):
@@ -2029,6 +2334,8 @@ class RoutingStorageContainerProperties(Model):
      storage endpoint. Possible values include: 'keyBased', 'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of routing storage endpoint.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
     :param name: Required. The name that identifies this endpoint. The name
      can only include alphanumeric characters, periods, underscores, hyphens
      and has a maximum length of 64 characters. The following names are
@@ -2074,6 +2381,7 @@ class RoutingStorageContainerProperties(Model):
         'connection_string': {'key': 'connectionString', 'type': 'str'},
         'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
         'name': {'key': 'name', 'type': 'str'},
         'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
         'resource_group': {'key': 'resourceGroup', 'type': 'str'},
@@ -2084,20 +2392,21 @@ class RoutingStorageContainerProperties(Model):
         'encoding': {'key': 'encoding', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, container_name: str, id: str=None, connection_string: str=None, endpoint_uri: str=None, authentication_type=None, identity=None, subscription_id: str=None, resource_group: str=None, file_name_format: str=None, batch_frequency_in_seconds: int=None, max_chunk_size_in_bytes: int=None, encoding=None, **kwargs) -> None:
         super(RoutingStorageContainerProperties, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.endpoint_uri = kwargs.get('endpoint_uri', None)
-        self.authentication_type = kwargs.get('authentication_type', None)
-        self.name = kwargs.get('name', None)
-        self.subscription_id = kwargs.get('subscription_id', None)
-        self.resource_group = kwargs.get('resource_group', None)
-        self.container_name = kwargs.get('container_name', None)
-        self.file_name_format = kwargs.get('file_name_format', None)
-        self.batch_frequency_in_seconds = kwargs.get('batch_frequency_in_seconds', None)
-        self.max_chunk_size_in_bytes = kwargs.get('max_chunk_size_in_bytes', None)
-        self.encoding = kwargs.get('encoding', None)
+        self.id = id
+        self.connection_string = connection_string
+        self.endpoint_uri = endpoint_uri
+        self.authentication_type = authentication_type
+        self.identity = identity
+        self.name = name
+        self.subscription_id = subscription_id
+        self.resource_group = resource_group
+        self.container_name = container_name
+        self.file_name_format = file_name_format
+        self.batch_frequency_in_seconds = batch_frequency_in_seconds
+        self.max_chunk_size_in_bytes = max_chunk_size_in_bytes
+        self.encoding = encoding
 
 
 class RoutingTwin(Model):
@@ -2114,10 +2423,10 @@ class RoutingTwin(Model):
         'properties': {'key': 'properties', 'type': 'RoutingTwinProperties'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tags=None, properties=None, **kwargs) -> None:
         super(RoutingTwin, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.properties = kwargs.get('properties', None)
+        self.tags = tags
+        self.properties = properties
 
 
 class RoutingTwinProperties(Model):
@@ -2134,10 +2443,10 @@ class RoutingTwinProperties(Model):
         'reported': {'key': 'reported', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, desired=None, reported=None, **kwargs) -> None:
         super(RoutingTwinProperties, self).__init__(**kwargs)
-        self.desired = kwargs.get('desired', None)
-        self.reported = kwargs.get('reported', None)
+        self.desired = desired
+        self.reported = reported
 
 
 class SharedAccessSignatureAuthorizationRule(Model):
@@ -2176,12 +2485,12 @@ class SharedAccessSignatureAuthorizationRule(Model):
         'rights': {'key': 'rights', 'type': 'AccessRights'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, key_name: str, rights, primary_key: str=None, secondary_key: str=None, **kwargs) -> None:
         super(SharedAccessSignatureAuthorizationRule, self).__init__(**kwargs)
-        self.key_name = kwargs.get('key_name', None)
-        self.primary_key = kwargs.get('primary_key', None)
-        self.secondary_key = kwargs.get('secondary_key', None)
-        self.rights = kwargs.get('rights', None)
+        self.key_name = key_name
+        self.primary_key = primary_key
+        self.secondary_key = secondary_key
+        self.rights = rights
 
 
 class StorageEndpointProperties(Model):
@@ -2205,6 +2514,9 @@ class StorageEndpointProperties(Model):
      'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of storage endpoint for file
+     upload.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
     """
 
     _validation = {
@@ -2217,14 +2529,16 @@ class StorageEndpointProperties(Model):
         'connection_string': {'key': 'connectionString', 'type': 'str'},
         'container_name': {'key': 'containerName', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, connection_string: str, container_name: str, sas_ttl_as_iso8601=None, authentication_type=None, identity=None, **kwargs) -> None:
         super(StorageEndpointProperties, self).__init__(**kwargs)
-        self.sas_ttl_as_iso8601 = kwargs.get('sas_ttl_as_iso8601', None)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.container_name = kwargs.get('container_name', None)
-        self.authentication_type = kwargs.get('authentication_type', None)
+        self.sas_ttl_as_iso8601 = sas_ttl_as_iso8601
+        self.connection_string = connection_string
+        self.container_name = container_name
+        self.authentication_type = authentication_type
+        self.identity = identity
 
 
 class TagsResource(Model):
@@ -2239,9 +2553,9 @@ class TagsResource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(TagsResource, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
+        self.tags = tags
 
 
 class TestAllRoutesInput(Model):
@@ -2249,7 +2563,8 @@ class TestAllRoutesInput(Model):
 
     :param routing_source: Routing source. Possible values include: 'Invalid',
      'DeviceMessages', 'TwinChangeEvents', 'DeviceLifecycleEvents',
-     'DeviceJobLifecycleEvents'
+     'DeviceJobLifecycleEvents', 'DigitalTwinChangeEvents',
+     'DeviceConnectionStateEvents'
     :type routing_source: str or ~azure.mgmt.iothub.models.RoutingSource
     :param message: Routing message
     :type message: ~azure.mgmt.iothub.models.RoutingMessage
@@ -2263,11 +2578,11 @@ class TestAllRoutesInput(Model):
         'twin': {'key': 'twin', 'type': 'RoutingTwin'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, routing_source=None, message=None, twin=None, **kwargs) -> None:
         super(TestAllRoutesInput, self).__init__(**kwargs)
-        self.routing_source = kwargs.get('routing_source', None)
-        self.message = kwargs.get('message', None)
-        self.twin = kwargs.get('twin', None)
+        self.routing_source = routing_source
+        self.message = message
+        self.twin = twin
 
 
 class TestAllRoutesResult(Model):
@@ -2281,9 +2596,9 @@ class TestAllRoutesResult(Model):
         'routes': {'key': 'routes', 'type': '[MatchedRoute]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, routes=None, **kwargs) -> None:
         super(TestAllRoutesResult, self).__init__(**kwargs)
-        self.routes = kwargs.get('routes', None)
+        self.routes = routes
 
 
 class TestRouteInput(Model):
@@ -2309,11 +2624,11 @@ class TestRouteInput(Model):
         'twin': {'key': 'twin', 'type': 'RoutingTwin'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, route, message=None, twin=None, **kwargs) -> None:
         super(TestRouteInput, self).__init__(**kwargs)
-        self.message = kwargs.get('message', None)
-        self.route = kwargs.get('route', None)
-        self.twin = kwargs.get('twin', None)
+        self.message = message
+        self.route = route
+        self.twin = twin
 
 
 class TestRouteResult(Model):
@@ -2331,10 +2646,10 @@ class TestRouteResult(Model):
         'details': {'key': 'details', 'type': 'TestRouteResultDetails'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, result=None, details=None, **kwargs) -> None:
         super(TestRouteResult, self).__init__(**kwargs)
-        self.result = kwargs.get('result', None)
-        self.details = kwargs.get('details', None)
+        self.result = result
+        self.details = details
 
 
 class TestRouteResultDetails(Model):
@@ -2350,9 +2665,9 @@ class TestRouteResultDetails(Model):
         'compilation_errors': {'key': 'compilationErrors', 'type': '[RouteCompilationError]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, compilation_errors=None, **kwargs) -> None:
         super(TestRouteResultDetails, self).__init__(**kwargs)
-        self.compilation_errors = kwargs.get('compilation_errors', None)
+        self.compilation_errors = compilation_errors
 
 
 class UserSubscriptionQuota(Model):
@@ -2381,14 +2696,14 @@ class UserSubscriptionQuota(Model):
         'name': {'key': 'name', 'type': 'Name'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, type: str=None, unit: str=None, current_value: int=None, limit: int=None, name=None, **kwargs) -> None:
         super(UserSubscriptionQuota, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.type = kwargs.get('type', None)
-        self.unit = kwargs.get('unit', None)
-        self.current_value = kwargs.get('current_value', None)
-        self.limit = kwargs.get('limit', None)
-        self.name = kwargs.get('name', None)
+        self.id = id
+        self.type = type
+        self.unit = unit
+        self.current_value = current_value
+        self.limit = limit
+        self.name = name
 
 
 class UserSubscriptionQuotaListResult(Model):
@@ -2412,7 +2727,7 @@ class UserSubscriptionQuotaListResult(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value=None, **kwargs) -> None:
         super(UserSubscriptionQuotaListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = value
         self.next_link = None

@@ -13,6 +13,75 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class ArmIdentity(Model):
+    """ArmIdentity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: Principal Id
+    :vartype principal_id: str
+    :ivar tenant_id: Tenant Id
+    :vartype tenant_id: str
+    :param type: The type of identity used for the resource. The type
+     'SystemAssigned, UserAssigned' includes both an implicitly created
+     identity and a set of user assigned identities. The type 'None' will
+     remove any identities from the service. Possible values include:
+     'SystemAssigned', 'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
+    :type type: str or ~azure.mgmt.iothub.models.ResourceIdentityType
+    :param user_assigned_identities:
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.iothub.models.ArmUserIdentity]
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'ResourceIdentityType'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{ArmUserIdentity}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ArmIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = kwargs.get('type', None)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+
+
+class ArmUserIdentity(Model):
+    """ArmUserIdentity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id:
+    :vartype principal_id: str
+    :ivar client_id:
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ArmUserIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
 class CertificateBodyDescription(Model):
     """The JSON-serialized X509 Certificate.
 
@@ -315,19 +384,39 @@ class EndpointHealthData(Model):
      to identify errors and monitor issues with endpoints. The 'unknown' status
      shows that the IoT Hub has not established a connection with the endpoint.
      No messages have been delivered to or rejected from this endpoint.
-     Possible values include: 'unknown', 'healthy', 'unhealthy', 'dead'
+     Possible values include: 'unknown', 'healthy', 'degraded', 'unhealthy',
+     'dead'
     :type health_status: str or ~azure.mgmt.iothub.models.EndpointHealthStatus
+    :param last_known_error: Last error obtained when a message failed to be
+     delivered to iot hub
+    :type last_known_error: str
+    :param last_known_error_time: Time at which the last known error occurred
+    :type last_known_error_time: datetime
+    :param last_successful_send_attempt_time: Last time iot hub successfully
+     sent a message to the endpoint
+    :type last_successful_send_attempt_time: datetime
+    :param last_send_attempt_time: Last time iot hub tried to send a message
+     to the endpoint
+    :type last_send_attempt_time: datetime
     """
 
     _attribute_map = {
         'endpoint_id': {'key': 'endpointId', 'type': 'str'},
         'health_status': {'key': 'healthStatus', 'type': 'str'},
+        'last_known_error': {'key': 'lastKnownError', 'type': 'str'},
+        'last_known_error_time': {'key': 'lastKnownErrorTime', 'type': 'rfc-1123'},
+        'last_successful_send_attempt_time': {'key': 'lastSuccessfulSendAttemptTime', 'type': 'rfc-1123'},
+        'last_send_attempt_time': {'key': 'lastSendAttemptTime', 'type': 'rfc-1123'},
     }
 
     def __init__(self, **kwargs):
         super(EndpointHealthData, self).__init__(**kwargs)
         self.endpoint_id = kwargs.get('endpoint_id', None)
         self.health_status = kwargs.get('health_status', None)
+        self.last_known_error = kwargs.get('last_known_error', None)
+        self.last_known_error_time = kwargs.get('last_known_error_time', None)
+        self.last_successful_send_attempt_time = kwargs.get('last_successful_send_attempt_time', None)
+        self.last_send_attempt_time = kwargs.get('last_send_attempt_time', None)
 
 
 class EnrichmentProperties(Model):
@@ -414,6 +503,28 @@ class ErrorDetailsException(HttpOperationError):
         super(ErrorDetailsException, self).__init__(deserialize, response, 'ErrorDetails', *args)
 
 
+class EventHubConsumerGroupBodyDescription(Model):
+    """The EventHub consumer group.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param properties: Required.
+    :type properties: ~azure.mgmt.iothub.models.EventHubConsumerGroupName
+    """
+
+    _validation = {
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'EventHubConsumerGroupName'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EventHubConsumerGroupBodyDescription, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
 class EventHubConsumerGroupInfo(Model):
     """The properties of the EventHubConsumerGroupInfo object.
 
@@ -421,7 +532,7 @@ class EventHubConsumerGroupInfo(Model):
     sending a request.
 
     :param properties: The tags.
-    :type properties: dict[str, str]
+    :type properties: dict[str, object]
     :ivar id: The Event Hub-compatible consumer group identifier.
     :vartype id: str
     :ivar name: The Event Hub-compatible consumer group name.
@@ -440,7 +551,7 @@ class EventHubConsumerGroupInfo(Model):
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': '{object}'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -454,6 +565,28 @@ class EventHubConsumerGroupInfo(Model):
         self.name = None
         self.type = None
         self.etag = None
+
+
+class EventHubConsumerGroupName(Model):
+    """The EventHub consumer group name.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. EventHub consumer group name
+    :type name: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EventHubConsumerGroupName, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
 
 
 class EventHubProperties(Model):
@@ -523,6 +656,16 @@ class ExportDevicesRequest(Model):
      'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of storage endpoint for
+     export devices.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
+    :param include_configurations: The value indicating whether configurations
+     should be exported.
+    :type include_configurations: bool
+    :param configurations_blob_name: The name of the blob that will be created
+     in the provided output blob container. This blob will contain the exported
+     configurations for the Iot Hub.
+    :type configurations_blob_name: str
     """
 
     _validation = {
@@ -535,6 +678,9 @@ class ExportDevicesRequest(Model):
         'exclude_keys': {'key': 'excludeKeys', 'type': 'bool'},
         'export_blob_name': {'key': 'exportBlobName', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
+        'include_configurations': {'key': 'includeConfigurations', 'type': 'bool'},
+        'configurations_blob_name': {'key': 'configurationsBlobName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -543,6 +689,9 @@ class ExportDevicesRequest(Model):
         self.exclude_keys = kwargs.get('exclude_keys', None)
         self.export_blob_name = kwargs.get('export_blob_name', None)
         self.authentication_type = kwargs.get('authentication_type', None)
+        self.identity = kwargs.get('identity', None)
+        self.include_configurations = kwargs.get('include_configurations', None)
+        self.configurations_blob_name = kwargs.get('configurations_blob_name', None)
 
 
 class FailoverInput(Model):
@@ -740,6 +889,15 @@ class ImportDevicesRequest(Model):
      'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of storage endpoint for
+     import devices.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
+    :param include_configurations: The value indicating whether configurations
+     should be imported.
+    :type include_configurations: bool
+    :param configurations_blob_name: The blob name to be used when importing
+     configurations from the provided input blob container.
+    :type configurations_blob_name: str
     """
 
     _validation = {
@@ -753,6 +911,9 @@ class ImportDevicesRequest(Model):
         'input_blob_name': {'key': 'inputBlobName', 'type': 'str'},
         'output_blob_name': {'key': 'outputBlobName', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
+        'include_configurations': {'key': 'includeConfigurations', 'type': 'bool'},
+        'configurations_blob_name': {'key': 'configurationsBlobName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -762,6 +923,9 @@ class ImportDevicesRequest(Model):
         self.input_blob_name = kwargs.get('input_blob_name', None)
         self.output_blob_name = kwargs.get('output_blob_name', None)
         self.authentication_type = kwargs.get('authentication_type', None)
+        self.identity = kwargs.get('identity', None)
+        self.include_configurations = kwargs.get('include_configurations', None)
+        self.configurations_blob_name = kwargs.get('configurations_blob_name', None)
 
 
 class IotHubCapacity(Model):
@@ -873,6 +1037,8 @@ class IotHubDescription(Resource):
     :type properties: ~azure.mgmt.iothub.models.IotHubProperties
     :param sku: Required. IotHub SKU info
     :type sku: ~azure.mgmt.iothub.models.IotHubSkuInfo
+    :param identity: The managed identities for the IotHub.
+    :type identity: ~azure.mgmt.iothub.models.ArmIdentity
     """
 
     _validation = {
@@ -892,6 +1058,7 @@ class IotHubDescription(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'IotHubProperties'},
         'sku': {'key': 'sku', 'type': 'IotHubSkuInfo'},
+        'identity': {'key': 'identity', 'type': 'ArmIdentity'},
     }
 
     def __init__(self, **kwargs):
@@ -899,6 +1066,7 @@ class IotHubDescription(Resource):
         self.etag = kwargs.get('etag', None)
         self.properties = kwargs.get('properties', None)
         self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
 
 
 class IotHubLocationDescription(Model):
@@ -977,6 +1145,9 @@ class IotHubProperties(Model):
      ~azure.mgmt.iothub.models.PublicNetworkAccess
     :param ip_filter_rules: The IP filter rules.
     :type ip_filter_rules: list[~azure.mgmt.iothub.models.IpFilterRule]
+    :param network_rule_sets:
+    :type network_rule_sets:
+     ~azure.mgmt.iothub.models.NetworkRuleSetProperties
     :param min_tls_version: Specifies the minimum TLS version to support for
      this hub. Can be set to "1.2" to have clients that use a TLS version below
      1.2 to be rejected.
@@ -1037,6 +1208,7 @@ class IotHubProperties(Model):
         'authorization_policies': {'key': 'authorizationPolicies', 'type': '[SharedAccessSignatureAuthorizationRule]'},
         'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
         'ip_filter_rules': {'key': 'ipFilterRules', 'type': '[IpFilterRule]'},
+        'network_rule_sets': {'key': 'networkRuleSets', 'type': 'NetworkRuleSetProperties'},
         'min_tls_version': {'key': 'minTlsVersion', 'type': 'str'},
         'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
@@ -1058,6 +1230,7 @@ class IotHubProperties(Model):
         self.authorization_policies = kwargs.get('authorization_policies', None)
         self.public_network_access = kwargs.get('public_network_access', None)
         self.ip_filter_rules = kwargs.get('ip_filter_rules', None)
+        self.network_rule_sets = kwargs.get('network_rule_sets', None)
         self.min_tls_version = kwargs.get('min_tls_version', None)
         self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
         self.provisioning_state = None
@@ -1276,6 +1449,22 @@ class JobResponse(Model):
         self.parent_job_id = None
 
 
+class ManagedIdentity(Model):
+    """The properties of the Managed identity.
+
+    :param user_assigned_identity: The user assigned identity.
+    :type user_assigned_identity: str
+    """
+
+    _attribute_map = {
+        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedIdentity, self).__init__(**kwargs)
+        self.user_assigned_identity = kwargs.get('user_assigned_identity', None)
+
+
 class MatchedRoute(Model):
     """Routes that matched.
 
@@ -1343,6 +1532,72 @@ class Name(Model):
         super(Name, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.localized_value = kwargs.get('localized_value', None)
+
+
+class NetworkRuleSetIpRule(Model):
+    """IP Rule to be applied as part of Network Rule Set.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param filter_name: Required. Name of the IP filter rule.
+    :type filter_name: str
+    :param action: IP Filter Action. Possible values include: 'Allow'. Default
+     value: "Allow" .
+    :type action: str or ~azure.mgmt.iothub.models.NetworkRuleIPAction
+    :param ip_mask: Required. A string that contains the IP address range in
+     CIDR notation for the rule.
+    :type ip_mask: str
+    """
+
+    _validation = {
+        'filter_name': {'required': True},
+        'ip_mask': {'required': True},
+    }
+
+    _attribute_map = {
+        'filter_name': {'key': 'filterName', 'type': 'str'},
+        'action': {'key': 'action', 'type': 'str'},
+        'ip_mask': {'key': 'ipMask', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NetworkRuleSetIpRule, self).__init__(**kwargs)
+        self.filter_name = kwargs.get('filter_name', None)
+        self.action = kwargs.get('action', "Allow")
+        self.ip_mask = kwargs.get('ip_mask', None)
+
+
+class NetworkRuleSetProperties(Model):
+    """Network Rule Set Properties of IotHub.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param default_action: Default Action for Network Rule Set. Possible
+     values include: 'Deny', 'Allow'. Default value: "Deny" .
+    :type default_action: str or ~azure.mgmt.iothub.models.DefaultAction
+    :param apply_to_built_in_event_hub_endpoint: Required. If True, then
+     Network Rule Set is also applied to BuiltIn EventHub EndPoint of IotHub
+    :type apply_to_built_in_event_hub_endpoint: bool
+    :param ip_rules: Required. List of IP Rules
+    :type ip_rules: list[~azure.mgmt.iothub.models.NetworkRuleSetIpRule]
+    """
+
+    _validation = {
+        'apply_to_built_in_event_hub_endpoint': {'required': True},
+        'ip_rules': {'required': True},
+    }
+
+    _attribute_map = {
+        'default_action': {'key': 'defaultAction', 'type': 'str'},
+        'apply_to_built_in_event_hub_endpoint': {'key': 'applyToBuiltInEventHubEndpoint', 'type': 'bool'},
+        'ip_rules': {'key': 'ipRules', 'type': '[NetworkRuleSetIpRule]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NetworkRuleSetProperties, self).__init__(**kwargs)
+        self.default_action = kwargs.get('default_action', "Deny")
+        self.apply_to_built_in_event_hub_endpoint = kwargs.get('apply_to_built_in_event_hub_endpoint', None)
+        self.ip_rules = kwargs.get('ip_rules', None)
 
 
 class Operation(Model):
@@ -1689,7 +1944,7 @@ class RouteProperties(Model):
     :param source: Required. The source that the routing rule is to be applied
      to, such as DeviceMessages. Possible values include: 'Invalid',
      'DeviceMessages', 'TwinChangeEvents', 'DeviceLifecycleEvents',
-     'DeviceJobLifecycleEvents'
+     'DeviceJobLifecycleEvents', 'DeviceConnectionStateEvents'
     :type source: str or ~azure.mgmt.iothub.models.RoutingSource
     :param condition: The condition that is evaluated to apply the routing
      rule. If no condition is provided, it evaluates to true by default. For
@@ -1786,6 +2041,9 @@ class RoutingEventHubProperties(Model):
      hub endpoint. Possible values include: 'keyBased', 'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of routing event hub
+     endpoint.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
     :param name: Required. The name that identifies this endpoint. The name
      can only include alphanumeric characters, periods, underscores, hyphens
      and has a maximum length of 64 characters. The following names are
@@ -1810,6 +2068,7 @@ class RoutingEventHubProperties(Model):
         'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
         'entity_path': {'key': 'entityPath', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
         'name': {'key': 'name', 'type': 'str'},
         'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
         'resource_group': {'key': 'resourceGroup', 'type': 'str'},
@@ -1822,6 +2081,7 @@ class RoutingEventHubProperties(Model):
         self.endpoint_uri = kwargs.get('endpoint_uri', None)
         self.entity_path = kwargs.get('entity_path', None)
         self.authentication_type = kwargs.get('authentication_type', None)
+        self.identity = kwargs.get('identity', None)
         self.name = kwargs.get('name', None)
         self.subscription_id = kwargs.get('subscription_id', None)
         self.resource_group = kwargs.get('resource_group', None)
@@ -1909,6 +2169,9 @@ class RoutingServiceBusQueueEndpointProperties(Model):
      'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of routing service bus queue
+     endpoint.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
     :param name: Required. The name that identifies this endpoint. The name
      can only include alphanumeric characters, periods, underscores, hyphens
      and has a maximum length of 64 characters. The following names are
@@ -1934,6 +2197,7 @@ class RoutingServiceBusQueueEndpointProperties(Model):
         'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
         'entity_path': {'key': 'entityPath', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
         'name': {'key': 'name', 'type': 'str'},
         'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
         'resource_group': {'key': 'resourceGroup', 'type': 'str'},
@@ -1946,6 +2210,7 @@ class RoutingServiceBusQueueEndpointProperties(Model):
         self.endpoint_uri = kwargs.get('endpoint_uri', None)
         self.entity_path = kwargs.get('entity_path', None)
         self.authentication_type = kwargs.get('authentication_type', None)
+        self.identity = kwargs.get('identity', None)
         self.name = kwargs.get('name', None)
         self.subscription_id = kwargs.get('subscription_id', None)
         self.resource_group = kwargs.get('resource_group', None)
@@ -1971,6 +2236,9 @@ class RoutingServiceBusTopicEndpointProperties(Model):
      'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of routing service bus topic
+     endpoint.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
     :param name: Required. The name that identifies this endpoint. The name
      can only include alphanumeric characters, periods, underscores, hyphens
      and has a maximum length of 64 characters. The following names are
@@ -1996,6 +2264,7 @@ class RoutingServiceBusTopicEndpointProperties(Model):
         'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
         'entity_path': {'key': 'entityPath', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
         'name': {'key': 'name', 'type': 'str'},
         'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
         'resource_group': {'key': 'resourceGroup', 'type': 'str'},
@@ -2008,6 +2277,7 @@ class RoutingServiceBusTopicEndpointProperties(Model):
         self.endpoint_uri = kwargs.get('endpoint_uri', None)
         self.entity_path = kwargs.get('entity_path', None)
         self.authentication_type = kwargs.get('authentication_type', None)
+        self.identity = kwargs.get('identity', None)
         self.name = kwargs.get('name', None)
         self.subscription_id = kwargs.get('subscription_id', None)
         self.resource_group = kwargs.get('resource_group', None)
@@ -2029,6 +2299,8 @@ class RoutingStorageContainerProperties(Model):
      storage endpoint. Possible values include: 'keyBased', 'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of routing storage endpoint.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
     :param name: Required. The name that identifies this endpoint. The name
      can only include alphanumeric characters, periods, underscores, hyphens
      and has a maximum length of 64 characters. The following names are
@@ -2074,6 +2346,7 @@ class RoutingStorageContainerProperties(Model):
         'connection_string': {'key': 'connectionString', 'type': 'str'},
         'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
         'name': {'key': 'name', 'type': 'str'},
         'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
         'resource_group': {'key': 'resourceGroup', 'type': 'str'},
@@ -2090,6 +2363,7 @@ class RoutingStorageContainerProperties(Model):
         self.connection_string = kwargs.get('connection_string', None)
         self.endpoint_uri = kwargs.get('endpoint_uri', None)
         self.authentication_type = kwargs.get('authentication_type', None)
+        self.identity = kwargs.get('identity', None)
         self.name = kwargs.get('name', None)
         self.subscription_id = kwargs.get('subscription_id', None)
         self.resource_group = kwargs.get('resource_group', None)
@@ -2205,6 +2479,9 @@ class StorageEndpointProperties(Model):
      'identityBased'
     :type authentication_type: str or
      ~azure.mgmt.iothub.models.AuthenticationType
+    :param identity: Managed identity properties of storage endpoint for file
+     upload.
+    :type identity: ~azure.mgmt.iothub.models.ManagedIdentity
     """
 
     _validation = {
@@ -2217,6 +2494,7 @@ class StorageEndpointProperties(Model):
         'connection_string': {'key': 'connectionString', 'type': 'str'},
         'container_name': {'key': 'containerName', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
     }
 
     def __init__(self, **kwargs):
@@ -2225,6 +2503,7 @@ class StorageEndpointProperties(Model):
         self.connection_string = kwargs.get('connection_string', None)
         self.container_name = kwargs.get('container_name', None)
         self.authentication_type = kwargs.get('authentication_type', None)
+        self.identity = kwargs.get('identity', None)
 
 
 class TagsResource(Model):
@@ -2249,7 +2528,7 @@ class TestAllRoutesInput(Model):
 
     :param routing_source: Routing source. Possible values include: 'Invalid',
      'DeviceMessages', 'TwinChangeEvents', 'DeviceLifecycleEvents',
-     'DeviceJobLifecycleEvents'
+     'DeviceJobLifecycleEvents', 'DeviceConnectionStateEvents'
     :type routing_source: str or ~azure.mgmt.iothub.models.RoutingSource
     :param message: Routing message
     :type message: ~azure.mgmt.iothub.models.RoutingMessage
