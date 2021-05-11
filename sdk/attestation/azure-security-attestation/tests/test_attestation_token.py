@@ -11,6 +11,7 @@ from logging import critical
 from typing import Dict
 import unittest
 from cryptography import x509
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric.dsa import DSAPublicKey
 from devtools_testutils import AzureTestCase, ResourceGroupPreparer, PowerShellPreparer
@@ -19,7 +20,11 @@ from cryptography.hazmat.primitives.asymmetric import ec, rsa
 from  cryptography.x509 import BasicConstraints, CertificateBuilder, NameOID, SubjectAlternativeName
 import base64
 import pytest
-from azure.security.attestation import AttestationToken, AttestationSigningKey, TokenValidationOptions, AttestationTokenValidationException
+from azure.security.attestation import (
+    AttestationToken,
+    AttestationSigningKey,
+    TokenValidationOptions,
+    AttestationTokenValidationException)
 
 
 class TestAzureAttestationToken(object):
@@ -112,21 +117,21 @@ class TestAzureAttestationToken(object):
     # Helper functions to create keys and certificates wrapping those keys.
     @staticmethod
     def _create_ecds_key(): #type() -> EllipticCurvePrivateKey
-        return ec.generate_private_key(ec.SECP256R1()).private_bytes(
+        return ec.generate_private_key(ec.SECP256R1(), backend=default_backend()).private_bytes(
             serialization.Encoding.DER,
             serialization.PrivateFormat.PKCS8,
             serialization.NoEncryption())
 
     @staticmethod
     def _create_rsa_key(): #type() -> EllipticCurvePrivateKey
-        return rsa.generate_private_key(65537, 2048).private_bytes(
+        return rsa.generate_private_key(65537, 2048, backend=default_backend()).private_bytes(
             serialization.Encoding.DER,
             serialization.PrivateFormat.PKCS8,
             serialization.NoEncryption())
 
     @staticmethod
     def _create_x509_certificate(key_der, subject_name): #type(Union[EllipticCurvePrivateKey,RSAPrivateKey], str) -> Certificate
-        signing_key = serialization.load_der_private_key(key_der, password=None)
+        signing_key = serialization.load_der_private_key(key_der, password=None, backend=default_backend())
         builder = CertificateBuilder()
         builder = builder.subject_name(x509.Name([
             x509.NameAttribute(NameOID.COMMON_NAME, subject_name),
@@ -142,4 +147,4 @@ class TestAzureAttestationToken(object):
         builder = builder.public_key(signing_key.public_key())
         builder = builder.add_extension(SubjectAlternativeName([x509.DNSName(subject_name)]), critical=False)
         builder = builder.add_extension(BasicConstraints(ca=False, path_length=None), critical=True)
-        return builder.sign(private_key=signing_key, algorithm=hashes.SHA256()).public_bytes(serialization.Encoding.DER)
+        return builder.sign(private_key=signing_key, algorithm=hashes.SHA256(), backend=default_backend()).public_bytes(serialization.Encoding.DER)

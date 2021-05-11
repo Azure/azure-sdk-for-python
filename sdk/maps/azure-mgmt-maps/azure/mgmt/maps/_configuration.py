@@ -21,8 +21,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureMapsResourceProviderConfiguration(Configuration):
-    """Configuration for AzureMapsResourceProvider.
+class AzureMapsManagementClientConfiguration(Configuration):
+    """Configuration for AzureMapsManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -44,11 +44,11 @@ class AzureMapsResourceProviderConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(AzureMapsResourceProviderConfiguration, self).__init__(**kwargs)
+        super(AzureMapsManagementClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2020-02-01-preview"
+        self.api_version = "2021-02-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-maps/{}'.format(VERSION))
         self._configure(**kwargs)

@@ -297,7 +297,7 @@ Use `GetSigningCertificatesAsync` to retrieve the certificates which can be used
 ```python
     signers = attest_client.get_signing_certificates()
     for signer in signers:
-        cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0])
+        cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
         print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 ```
 

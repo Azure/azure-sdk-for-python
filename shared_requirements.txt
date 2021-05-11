@@ -271,4 +271,5 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-elastic msrest>=0.6.21
 #override azure-mgmt-confidentialledger msrest>=0.6.21
 #override azure-mgmt-mixedreality msrest>=0.6.21
+#override azure-mgmt-videoanalyzer msrest>=0.6.21
 #override azure-mgmt-extendedlocation msrest>=0.6.21

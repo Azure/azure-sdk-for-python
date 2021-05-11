@@ -13,6 +13,7 @@ from cryptography.hazmat.primitives.hashes import SHA256
 from ._common import Base64Url
 from ._generated.models import PolicyResult, AttestationResult, StoredAttestationPolicy, JSONWebKey, CertificateModification, AttestationType
 from typing import Any, Callable, List, Type, TypeVar, Generic, Union
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from cryptography.x509 import Certificate, load_der_x509_certificate
@@ -131,8 +132,8 @@ class AttestationSigningKey(object):
 
     def __init__(self, signing_key_der, certificate_der):
     # type: (bytes, bytes) -> None
-        signing_key = serialization.load_der_private_key(signing_key_der, password=None)
-        certificate = load_der_x509_certificate(certificate_der)
+        signing_key = serialization.load_der_private_key(signing_key_der, password=None, backend=default_backend())
+        certificate = load_der_x509_certificate(certificate_der, backend=default_backend())
 
         self._signing_key = signing_key
         self._certificate = certificate
@@ -360,7 +361,7 @@ class AttestationToken(Generic[T]):
                 signers)
             signer = self._validate_signature(candidate_certificates)
             if (signer is None):
-                raise Exception(
+                raise AttestationTokenValidationException(
                     "Could not find the certificate used to sign the token.")
         self._validate_static_properties(options)
 
@@ -426,7 +427,7 @@ class AttestationToken(Generic[T]):
         signed_data = Base64Url.encode(
             self.header_bytes)+'.'+Base64Url.encode(self.body_bytes)
         for signer in candidate_certificates:
-            cert = load_der_x509_certificate(signer.certificates[0])
+            cert = load_der_x509_certificate(signer.certificates[0], backend=default_backend())
             signer_key = cert.public_key()
             # Try to verify the signature with this candidate.
             # If it doesn't work, try the next signer.
