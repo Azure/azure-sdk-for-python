@@ -22,15 +22,15 @@ if TYPE_CHECKING:
     from ._models import MetricsResponse
     from ._generated.models import MetricNamespaceCollection
 
-class MetricsQueryClient(object):
-    """MetricsQueryClient
+class MetricsClient(object):
+    """MetricsClient
 
     :param credential: The credential to authenticate the client
     :type credential: ~azure.core.credentials.TokenCredential or ~azure.identity.DefaultAzureCredential
     """
 
     def __init__(self, credential, **kwargs):
-        # type: (Union[DefaultAzureCredential, TokenCredential], Any) -> None
+        # type: (TokenCredential, Any) -> None
         self._client = MonitorQueryClient(
             credential=credential,
             authentication_policy=get_authentication_policy(credential),
@@ -39,19 +39,19 @@ class MetricsQueryClient(object):
         self._metrics_op = self._client.metrics
         self._namespace_op = self._client.metric_namespaces
 
-    def query(self, resource_uri, **kwargs):
-        # type: (str, Any) -> MetricsResponse
+    def query(self, resource_uri, metricnames, **kwargs):
+        # type: (str, str, Any) -> MetricsResponse
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
+        :param metricnames: The names of the metrics (comma separated) to retrieve.
+        :type metricnames: str
         :keyword timespan: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'.
         :paramtype timespan: str
         :keyword interval: The interval (i.e. timegrain) of the query.
         :paramtype interval: ~datetime.timedelta
-        :keyword metricnames: The names of the metrics (comma separated) to retrieve.
-        :paramtype metricnames: str
         :keyword aggregation: The list of aggregation types (comma separated) to retrieve.
         :paramtype aggregation: str
         :keyword top: The maximum number of records to retrieve.
@@ -100,11 +100,11 @@ class MetricsQueryClient(object):
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.monitor.query.MetricsQueryClient` session."""
+        """Close the :class:`~azure.monitor.query.MetricsClient` session."""
         return self._client.close()
 
     def __enter__(self):
-        # type: () -> MetricsQueryClient
+        # type: () -> MetricsClient
         self._client.__enter__()  # pylint:disable=no-member
         return self
 

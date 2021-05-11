@@ -11,6 +11,7 @@ from ._generated.models import (
     Table,
     Column,
     Response,
+    QueryBody,
     LogQueryRequest as InternalLogQueryRequest
 )
 
@@ -43,6 +44,7 @@ class LogQueryResultTable(Table):
         self,
         **kwargs
     ):
+        # type: (Any) -> None
         super(LogQueryResultTable, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.columns = kwargs['columns']
@@ -67,6 +69,7 @@ class LogQueryResultColumn(Column):
         self,
         **kwargs
     ):
+        # type: (Any) -> None
         super(LogQueryResultColumn, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.type = kwargs.get('type', None)
@@ -90,6 +93,7 @@ class LogQueryResults(QueryResults):
         self,
         **kwargs
     ):
+        # type: (Any) -> None
         super(LogQueryResults, self).__init__(**kwargs)
         self.tables = kwargs.get('tables', None)
         self.errors = kwargs.get('errors', None)
@@ -136,6 +140,7 @@ class MetricsResponse(Response):
         self,
         **kwargs
     ):
+        # type: (Any) -> None
         super(MetricsResponse, self).__init__(**kwargs)
         self.cost = kwargs.get('cost', None)
         self.timespan = kwargs['timespan']
@@ -163,28 +168,8 @@ class LogQueryRequest(InternalLogQueryRequest):
     :param workspace: Workspace Id to be included in the query.
     :type workspace: str
     """
-
-    _validation = {
-        'path': {'constant': True},
-        'method': {'constant': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'headers': {'key': 'headers', 'type': '{str}'},
-        'body': {'key': 'body', 'type': 'QueryBody'},
-        'path': {'key': 'path', 'type': 'str'},
-        'method': {'key': 'method', 'type': 'str'},
-        'workspace': {'key': 'workspace', 'type': 'str'},
-    }
-
-    path = "/query"
-    method = "POST"
-
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
         super(LogQueryRequest, self).__init__(**kwargs)
         self.id = kwargs.get('id', uuid.uuid4())
         self.headers = kwargs.get('headers', {
@@ -192,3 +177,34 @@ class LogQueryRequest(InternalLogQueryRequest):
         })
         self.body = kwargs.get('body', None)
         self.workspace = kwargs.get('workspace', None)
+
+
+class LogsQueryBody(QueryBody):
+    """The Analytics query. Learn more about the `Analytics query syntax <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param query: Required. The query to execute.
+    :type query: str
+    :keyword timespan: Optional. The timespan over which to query data. This is an ISO8601 time
+     period value.  This timespan is applied in addition to any that are specified in the query
+     expression.
+    :paramtype timespan: str
+    :keyword workspaces: A list of workspaces that are included in the query.
+    :paramtype workspaces: list[str]
+    :keyword qualified_names: A list of qualified workspace names that are included in the query.
+    :paramtype qualified_names: list[str]
+    :keyword workspace_ids: A list of workspace IDs that are included in the query.
+    :paramtype workspace_ids: list[str]
+    :keyword azure_resource_ids: A list of Azure resource IDs that are included in the query.
+    :paramtype azure_resource_ids: list[str]
+    """
+    def __init__(self, query, **kwargs):
+        # type: (str, Any) -> None
+        super(QueryBody, self).__init__(**kwargs)
+        kwargs.setdefault("query", query)
+        self.timespan = kwargs.get('timespan', None)
+        self.workspaces = kwargs.get('workspaces', None)
+        self.qualified_names = kwargs.get('qualified_names', None)
+        self.workspace_ids = kwargs.get('workspace_ids', None)
+        self.azure_resource_ids = kwargs.get('azure_resource_ids', None)

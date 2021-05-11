@@ -13,22 +13,22 @@ from ._generated._monitor_query_client import (
 
 from ._generated.models import BatchRequest, QueryBody
 from ._helpers import get_authentication_policy
-from ._models import LogQueryResults, LogQueryRequest
+from ._models import LogQueryResults, LogQueryRequest, LogsQueryBody
 
 if TYPE_CHECKING:
     from azure.identity import DefaultAzureCredential
     from azure.core.credentials import TokenCredential
     from ._generated.models import BatchResponse
 
-class LogQueryClient(object):
-    """LogQueryClient
+class LogsClient(object):
+    """LogsClient
 
     :param credential: The credential to authenticate the client
     :type credential: ~azure.core.credentials.TokenCredential or ~azure.identity.DefaultAzureCredential
     """
 
     def __init__(self, credential, **kwargs):
-        # type: (Union[DefaultAzureCredential, TokenCredential], Any) -> None
+        # type: (TokenCredential, Any) -> None
         self._client = MonitorQueryClient(
             credential=credential,
             authentication_policy=get_authentication_policy(credential),
@@ -37,7 +37,7 @@ class LogQueryClient(object):
         self._query_op = self._client.query
 
     def query(self, workspace_id, query, **kwargs):
-        # type: (str, str, Any) -> LogQueryResults
+        # type: (str, Union[str, LogsQueryBody], Any) -> LogQueryResults
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -47,7 +47,7 @@ class LogQueryClient(object):
         :type workspace_id: str
         :param query: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
-        :type query: str
+        :type query: str or ~azure.monitor.query.LogsQueryBody
         :keyword ~datetime.timedelta timespan: Optional. The timespan over which to query data. This is an ISO8601 time
          period value.  This timespan is applied in addition to any that are specified in the query
          expression.
@@ -59,9 +59,10 @@ class LogQueryClient(object):
         :rtype: ~azure.monitor.query.LogQueryResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        timeout = kwargs.pop("timeout", None)
+        timespan = kwargs.pop("timespan", None)
         include_statistics = kwargs.pop("include_statistics", False)
         include_render = kwargs.pop("include_render", False)
+        timeout = kwargs.pop("timeout", None)
         
         prefer = ""
         if timeout:
@@ -70,7 +71,12 @@ class LogQueryClient(object):
             prefer += " include-statistics=true"
         if include_render:
             prefer += " include-render=true"
+        
+        if prefer:
+            kwargs.setdefault("prefer", prefer)
+            return self._query_op.execute(workspace_id, LogsQueryBody(query), **kwargs)
 
+        kwargs.setdefault("timespan", timespan)
         return self._query_op.get(workspace_id, query, **kwargs)
 
     def batch_query(self, queries, **kwargs):
@@ -94,11 +100,11 @@ class LogQueryClient(object):
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.monitor.query.LogQueryClient` session."""
+        """Close the :class:`~azure.monitor.query.LogsClient` session."""
         return self._client.close()
 
     def __enter__(self):
-        # type: () -> LogQueryClient
+        # type: () -> LogsClient
         self._client.__enter__()  # pylint:disable=no-member
         return self
 

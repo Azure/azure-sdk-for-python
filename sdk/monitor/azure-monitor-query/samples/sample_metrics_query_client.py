@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import os
-from azure.monitor.query import MetricsQueryClient
+from azure.monitor.query import MetricsClient
 from azure.identity import ClientSecretCredential
 
 
@@ -12,6 +12,6 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = MetricsQueryClient(credential)
+client = MetricsClient(credential)
 names = [os.environ['STORAGE_METRIC_NAME']]
 response = client.query(os.environ['APPINSIGHTS_STORAGE_RESOURCE_URI'], metricnames=names)

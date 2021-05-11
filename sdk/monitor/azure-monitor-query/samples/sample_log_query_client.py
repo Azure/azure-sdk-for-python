@@ -2,7 +2,8 @@
 # Licensed under the MIT License.
 
 import os
-from azure.monitor.query import LogQueryClient
+from datetime import timedelta
+from azure.monitor.query import LogsClient
 from azure.identity import ClientSecretCredential
 
 
@@ -12,7 +13,7 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = LogQueryClient(credential)
+client = LogsClient(credential)
 
 # Response time trend 
 # request duration over the last 12 hours. 
@@ -23,5 +24,4 @@ summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _Resour
 response = client.query(os.environ['LOG_WORKSPACE_ID'], query)
 
 for item in response.tables:
-    print(item.rows,len(item.rows))
-    print("\n\n\n\n\n\n")
+    print(item.columns,len(item.columns))

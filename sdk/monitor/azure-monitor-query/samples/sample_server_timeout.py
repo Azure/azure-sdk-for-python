@@ -3,7 +3,7 @@
 
 import os
 from datetime import timedelta
-from azure.monitor.query import LogQueryClient
+from azure.monitor.query import LogsClient
 from azure.identity import ClientSecretCredential
 
 
@@ -13,15 +13,12 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = LogQueryClient(credential)
+client = LogsClient(credential)
 
 response = client.query(
     os.environ['LOG_WORKSPACE_ID'],
     "AppRequests | take 1",
-    timeout=timedelta(seconds=30) ,
-    include_statistics=True,
-    include_render=True
+    timeout=100,
     )
 
-for item in response.tables:
-    print(item)
+print(response)

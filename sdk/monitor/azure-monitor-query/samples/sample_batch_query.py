@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import os
-from azure.monitor.query import LogQueryClient, LogQueryRequest
+from azure.monitor.query import LogsClient, LogQueryRequest
 from azure.identity import ClientSecretCredential
 
 
@@ -12,7 +12,7 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = LogQueryClient(credential)
+client = LogsClient(credential)
 
 requests = [
     {
