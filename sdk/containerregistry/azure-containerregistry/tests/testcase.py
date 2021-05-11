@@ -24,9 +24,19 @@ from azure.containerregistry import (
 
 from azure.core.credentials import AccessToken
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
-from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
+from azure.mgmt.containerregistry.models import (
+    ImportImageParameters,
+    ImportSource,
+    ImportMode
+)
 from azure.identity import DefaultAzureCredential
 
+from azure_devtools.scenario_tests import (
+    GeneralNameReplacer,
+    RequestUrlNormalizer,
+    AuthenticationMetadataFilter,
+    RecordingProcessor,
+)
 from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import (
     GeneralNameReplacer,
