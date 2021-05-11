@@ -10,51 +10,89 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .error_details_item_py3 import ErrorDetailsItem
-    from .error_py3 import Error, ErrorException
-    from .resource_py3 import Resource
-    from .sku_py3 import Sku
-    from .maps_account_py3 import MapsAccount
-    from .maps_account_create_parameters_py3 import MapsAccountCreateParameters
-    from .maps_account_update_parameters_py3 import MapsAccountUpdateParameters
-    from .maps_accounts_move_request_py3 import MapsAccountsMoveRequest
-    from .maps_key_specification_py3 import MapsKeySpecification
-    from .maps_account_keys_py3 import MapsAccountKeys
-    from .maps_operations_value_item_display_py3 import MapsOperationsValueItemDisplay
-    from .maps_operations_value_item_py3 import MapsOperationsValueItem
+    from ._models_py3 import AzureEntityResource
+    from ._models_py3 import Creator
+    from ._models_py3 import CreatorProperties
+    from ._models_py3 import CreatorUpdateParameters
+    from ._models_py3 import Dimension
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import MapsAccount
+    from ._models_py3 import MapsAccountKeys
+    from ._models_py3 import MapsAccountProperties
+    from ._models_py3 import MapsAccountUpdateParameters
+    from ._models_py3 import MapsKeySpecification
+    from ._models_py3 import MetricSpecification
+    from ._models_py3 import OperationDetail
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import Resource
+    from ._models_py3 import ServiceSpecification
+    from ._models_py3 import Sku
+    from ._models_py3 import SystemData
+    from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
-    from .error_details_item import ErrorDetailsItem
-    from .error import Error, ErrorException
-    from .resource import Resource
-    from .sku import Sku
-    from .maps_account import MapsAccount
-    from .maps_account_create_parameters import MapsAccountCreateParameters
-    from .maps_account_update_parameters import MapsAccountUpdateParameters
-    from .maps_accounts_move_request import MapsAccountsMoveRequest
-    from .maps_key_specification import MapsKeySpecification
-    from .maps_account_keys import MapsAccountKeys
-    from .maps_operations_value_item_display import MapsOperationsValueItemDisplay
-    from .maps_operations_value_item import MapsOperationsValueItem
-from .maps_account_paged import MapsAccountPaged
-from .maps_operations_value_item_paged import MapsOperationsValueItemPaged
-from .maps_management_client_enums import (
+    from ._models import AzureEntityResource
+    from ._models import Creator
+    from ._models import CreatorProperties
+    from ._models import CreatorUpdateParameters
+    from ._models import Dimension
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorDetail
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import MapsAccount
+    from ._models import MapsAccountKeys
+    from ._models import MapsAccountProperties
+    from ._models import MapsAccountUpdateParameters
+    from ._models import MapsKeySpecification
+    from ._models import MetricSpecification
+    from ._models import OperationDetail
+    from ._models import OperationDisplay
+    from ._models import ProxyResource
+    from ._models import Resource
+    from ._models import ServiceSpecification
+    from ._models import Sku
+    from ._models import SystemData
+    from ._models import TrackedResource
+from ._paged_models import CreatorPaged
+from ._paged_models import MapsAccountPaged
+from ._paged_models import OperationDetailPaged
+from ._azure_maps_management_client_enums import (
+    Name,
+    Kind,
+    CreatedByType,
     KeyType,
 )
 
 __all__ = [
-    'ErrorDetailsItem',
-    'Error', 'ErrorException',
-    'Resource',
-    'Sku',
+    'AzureEntityResource',
+    'Creator',
+    'CreatorProperties',
+    'CreatorUpdateParameters',
+    'Dimension',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse', 'ErrorResponseException',
     'MapsAccount',
-    'MapsAccountCreateParameters',
-    'MapsAccountUpdateParameters',
-    'MapsAccountsMoveRequest',
-    'MapsKeySpecification',
     'MapsAccountKeys',
-    'MapsOperationsValueItemDisplay',
-    'MapsOperationsValueItem',
+    'MapsAccountProperties',
+    'MapsAccountUpdateParameters',
+    'MapsKeySpecification',
+    'MetricSpecification',
+    'OperationDetail',
+    'OperationDisplay',
+    'ProxyResource',
+    'Resource',
+    'ServiceSpecification',
+    'Sku',
+    'SystemData',
+    'TrackedResource',
     'MapsAccountPaged',
-    'MapsOperationsValueItemPaged',
+    'OperationDetailPaged',
+    'CreatorPaged',
+    'Name',
+    'Kind',
+    'CreatedByType',
     'KeyType',
 ]

@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .maps_management_client import MapsManagementClient
-from .version import VERSION
+from ._configuration import AzureMapsManagementClientConfiguration
+from ._azure_maps_management_client import AzureMapsManagementClient
+__all__ = ['AzureMapsManagementClient', 'AzureMapsManagementClientConfiguration']
 
-__all__ = ['MapsManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

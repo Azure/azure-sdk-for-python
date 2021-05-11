@@ -9,8 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .accounts_operations import AccountsOperations
+from ._accounts_operations import AccountsOperations
+from ._maps_operations_operations import MapsOperationsOperations
+from ._creators_operations import CreatorsOperations
 
 __all__ = [
     'AccountsOperations',
+    'MapsOperationsOperations',
+    'CreatorsOperations',
 ]
