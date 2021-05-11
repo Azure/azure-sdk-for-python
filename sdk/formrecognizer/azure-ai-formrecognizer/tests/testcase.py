@@ -335,6 +335,10 @@ class FormRecognizerTest(AzureTestCase):
             self.assertEqual(form_field.value, expected.value_phone_number)
         if field_type == "time":
             self.assertEqual(form_field.value, expected.value_time)
+        if field_type == "selectionMark":
+            self.assertEqual(form_field.value, expected.value_selection_mark)
+        if field_type == "countryRegion":
+            self.assertEqual(form_field.value, expected.value_country_region)
         if field_type == "array":
             for i in range(len(expected.value_array)):
                 self.assertFormFieldValueTransformCorrect(form_field.value[i], expected.value_array[i], read_results)
