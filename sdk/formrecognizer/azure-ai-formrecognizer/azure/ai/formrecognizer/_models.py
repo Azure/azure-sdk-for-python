@@ -63,21 +63,17 @@ def get_field_value(
             for key, value in value.value_object.items()
         }
     if value.type == "selectionMark":
-        return (
-            value.text
-        )  # FIXME https://github.com/Azure/azure-sdk-for-python/issues/15276
-    if value.type == "gender":
-        return value.value_gender
-    if value.type == "country":
-        return value.value_country
+        return value.value_selection_mark
+    if value.type == "countryRegion":
+        return value.value_country_region
     return None
 
 
 class FieldValueType(str, Enum):
     """Semantic data type of the field value.
 
-    .. versionadded:: v2.1-preview
-        The *gender* and *country* values
+    .. versionadded:: v2.1
+        The *selectionMark* and *countryRegion* values
     """
 
     STRING = "string"
@@ -89,8 +85,7 @@ class FieldValueType(str, Enum):
     LIST = "list"
     DICTIONARY = "dictionary"
     SELECTION_MARK = "selectionMark"
-    GENDER = "gender"
-    COUNTRY = "country"
+    COUNTRY_REGION = "countryRegion"
 
 
 class LengthUnit(str, Enum):
@@ -121,7 +116,7 @@ class CustomFormModelStatus(str, Enum):
 class FormContentType(str, Enum):
     """Content type for upload.
 
-    .. versionadded:: v2.1-preview
+    .. versionadded:: v2.1
         Support for image/bmp
     """
 
@@ -248,7 +243,7 @@ class RecognizedForm(object):
         A list of pages recognized from the input document. Contains lines,
         words, selection marks, tables and page metadata.
 
-    .. versionadded:: v2.1-preview
+    .. versionadded:: v2.1
         The *form_type_confidence* and *model_id* properties
     """
 
@@ -307,7 +302,7 @@ class FormField(object):
     :ivar str value_type: The type of `value` found on FormField. Described in
         :class:`~azure.ai.formrecognizer.FieldValueType`, possible types include: 'string',
         'date', 'time', 'phoneNumber', 'float', 'integer', 'dictionary', 'list', 'selectionMark',
-        'gender', or 'country'.
+        or 'countryRegion'.
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
         Contains the text, bounding box, and field elements for the field label.
         Note that this is not returned for forms analyzed by models trained with labels.
@@ -428,7 +423,7 @@ class FieldData(object):
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine,  ~azure.ai.formrecognizer.FormSelectionMark]]
 
-    .. versionadded:: v2.1-preview
+    .. versionadded:: v2.1
         *FormSelectionMark* is added to the types returned in the list of field_elements
     """
 
@@ -536,7 +531,7 @@ class FormPage(object):
     :ivar selection_marks: List of selection marks extracted from the page.
     :vartype selection_marks: list[~azure.ai.formrecognizer.FormSelectionMark]
 
-    .. versionadded:: v2.1-preview
+    .. versionadded:: v2.1
         *selection_marks* property
     """
 
@@ -616,7 +611,7 @@ class FormLine(FormElement):
     :ivar appearance: An object representing the appearance of the line.
     :vartype appearance: ~azure.ai.formrecognizer.Appearance
 
-    .. versionadded:: v2.1-preview
+    .. versionadded:: v2.1
         *appearance* property
     """
 
@@ -817,7 +812,7 @@ class FormTable(object):
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
 
-    .. versionadded:: v2.1-preview
+    .. versionadded:: v2.1
         The *bounding_box* property.
     """
 
@@ -890,7 +885,7 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.FormSelectionMark]]
 
-    .. versionadded:: v2.1-preview
+    .. versionadded:: v2.1
         *FormSelectionMark* is added to the types returned in the list of field_elements
     """
 
@@ -1016,7 +1011,7 @@ class CustomFormModel(object):
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
 
-    .. versionadded:: v2.1-preview
+    .. versionadded:: v2.1
         The *model_name* and *properties* properties.
     """
 
@@ -1145,7 +1140,7 @@ class CustomFormSubmodel(object):
     :vartype fields: dict[str, ~azure.ai.formrecognizer.CustomFormModelField]
     :ivar str form_type: Type of form this submodel recognizes.
 
-    .. versionadded:: v2.1-preview
+    .. versionadded:: v2.1
         The *model_id* property
     """
 
@@ -1309,7 +1304,7 @@ class TrainingDocumentInfo(object):
     :ivar str model_id:
         The model ID that used the document to train.
 
-    .. versionadded:: v2.1-preview
+    .. versionadded:: v2.1
         The *model_id* property
     """
 
@@ -1438,7 +1433,7 @@ class CustomFormModelInfo(object):
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
 
-    .. versionadded:: v2.1-preview
+    .. versionadded:: v2.1
         The *model_name* and *properties* properties
     """
 

@@ -35,7 +35,7 @@ export AZURE_TENANT_ID="tenant id"
 ```
 Then, `DefaultAzureCredential` will be able to authenticate the `ConfidentialLedgerClient`.
 
-Constructing the client also requires your Confidential Ledger's URL and id, which you can get from the Azure CLI or the Azure Portal. When you have retrieved those values, please replace instances of `"my-ledger-id"` and `"https://my-ledger-url.confidential-ledger.azure.com"` in the examples below
+Constructing the client also requires your Confidential Ledger's URL and id, which you can get from the Azure CLI or the Azure Portal. When you have retrieved those values, please replace instances of `"my-ledger-id"` and `"https://my-ledger-url.confidential-ledger.azure.com"` in the examples below. You may also need to replace `"https://identity.accledger.azure.com"` with the hostname from the `identityServiceUri` in the ARM description of your ledger.
 
 Because Confidential Ledgers use self-signed certificates securely generated and stored in an enclave, the signing certificate for each Confidential Ledger must first be retrieved from the Confidential Ledger Identity Service.
 
@@ -100,17 +100,17 @@ This section contains code snippets covering common tasks:
 Data that needs to be stored immutably in a tamper-proof manner can be saved to Azure Confidential Ledger by appending an entry to the ledger.
 
 ```python
-append_result = ledger_client.append_to_ledger(entry_contents="Hello world!")
-print(append_result.transaction_id)
+first_append_result = ledger_client.append_to_ledger(entry_contents="Hello world!")
+print(first_append_result.transaction_id)
 ```
 
 Since Confidential Ledger is a distributed system, rare transient failures may cause writes to be lost. For entries that must be preserved, it is advisable to verify that the write became durable. Waits are blocking calls.
 ```python
 from azure.confidentialledger import TransactionState
-ledger_client.wait_until_durable(transaction_id=append_result.transaction_id)
+ledger_client.wait_until_durable(transaction_id=first_append_result.transaction_id)
 assert ledger_client.get_transaction_status(
-    transaction_id=append_result.transaction_id
-) is TransactionState.COMMITTED
+    transaction_id=first_append_result.transaction_id
+).state is TransactionState.COMMITTED
 
 # Alternatively, a client may wait when appending.
 append_result = ledger_client.append_to_ledger(
@@ -118,7 +118,7 @@ append_result = ledger_client.append_to_ledger(
 )
 assert ledger_client.get_transaction_status(
     transaction_id=append_result.transaction_id
-) is TransactionState.COMMITTED
+).state is TransactionState.COMMITTED
 ```
 
 ### Get receipt
@@ -134,16 +134,16 @@ print(receipt.contents)
 Clients can write to different sub-ledgers to separate logically-distinct data.
 ```python
 ledger_client.append_to_ledger(
-    entry_contents="Hello from Alice", sub_ledger_id="Alice's messages"
+    entry_contents="Hello from Alice", sub_ledger_id="Alice"
 )
 ledger_client.append_to_ledger(
-    entry_contents="Hello from Bob", sub_ledger_id="Bob's messages"
+    entry_contents="Hello from Bob", sub_ledger_id="Bob"
 )
 ```
 
 When no sub-ledger id is specified on method calls, the Confidential Ledger service will assume a constant, service-determined sub-ledger id.
 ```python
-append_result = ledger_client.append_to_ledger(entry_contents="Hello world?")
+append_result = ledger_client.append_to_ledger(entry_contents="Hello world?", wait_for_commit=True)
 
 # The append result contains the sub-ledger id assigned.
 entry_by_subledger = ledger_client.get_ledger_entry(
@@ -171,7 +171,8 @@ subledger_append_result = ledger_client.append_to_ledger(
 )
 ledger_client.append_to_ledger(
     entry_contents="Hello world sub-ledger 1",
-    sub_ledger_id="sub-ledger"
+    sub_ledger_id="sub-ledger",
+    wait_for_commit=True
 )
 
 # The ledger entry written at 'append_result.transaction_id'
@@ -202,7 +203,7 @@ assert subledger_latest_entry.contents == "Hello world sub-ledger 1"
 Ledger entries in a sub-ledger may be retrieved over a range of transaction ids.
 ```python
 ranged_result = ledger_client.get_ledger_entries(
-    from_transaction_id="12.3"
+    from_transaction_id=first_append_result.transaction_id
 )
 for entry in ranged_result:
     print(f"Transaction id {entry.transaction_id} contents: {entry.contents}")
@@ -357,6 +358,7 @@ async for entry in query_result:
 Confidential Ledger clients raise exceptions defined in [azure-core][azure_core_exceptions]. For example, if you try to get a transaction that doesn't exist, `ConfidentialLedgerClient` raises [ResourceNotFoundError](https://aka.ms/azsdk-python-core-exceptions-resource-not-found-error):
 
 ```python
+from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.confidentialledger import ConfidentialLedgerClient
 from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient

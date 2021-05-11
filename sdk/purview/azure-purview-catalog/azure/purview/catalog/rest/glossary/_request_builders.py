@@ -3110,7 +3110,6 @@ def build_assign_term_to_entities_request(
                     "relationshipType": "str (optional)"
                 }
             ]
-
     """
     content_type = kwargs.pop("content_type", None)
 
@@ -3174,7 +3173,6 @@ def build_remove_term_assignment_from_entities_request(
                     "relationshipType": "str (optional)"
                 }
             ]
-
     """
     content_type = kwargs.pop("content_type", None)
 
@@ -3238,7 +3236,6 @@ def build_delete_term_assignment_from_entities_request(
                     "relationshipType": "str (optional)"
                 }
             ]
-
     """
     content_type = kwargs.pop("content_type", None)
 
@@ -4505,7 +4502,8 @@ def build_import_glossary_terms_via_csv_request(
     Example:
         .. code-block:: python
 
-    # multipart input template you can fill out and use as your `files` input.
+
+            # multipart input template you can fill out and use as your `files` input.
             files = {
                 "file": "IO. The csv file to import glossary terms from."
             }
@@ -4583,7 +4581,8 @@ def build_import_glossary_terms_via_csv_by_glossary_name_request(
     Example:
         .. code-block:: python
 
-    # multipart input template you can fill out and use as your `files` input.
+
+            # multipart input template you can fill out and use as your `files` input.
             files = {
                 "file": "IO. The csv file to import glossary terms from."
             }
@@ -4723,7 +4722,6 @@ def build_export_glossary_terms_as_csv_request(
             json = [
                 "str (optional)"
             ]
-
     """
     include_term_hierarchy = kwargs.pop('include_term_hierarchy', False)  # type: Optional[bool]
     content_type = kwargs.pop("content_type", None)
