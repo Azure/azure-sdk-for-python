@@ -74,7 +74,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     def delete(self, **kwargs):
         # type: (Dict[str, Any]) -> None
         """Delete a repository
-
         :returns: Object containing information about the deleted repository
         :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
@@ -82,10 +81,8 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             client.delete()
@@ -98,7 +95,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     def delete_tag(self, tag, **kwargs):
         # type: (str, Dict[str, Any]) -> None
         """Delete a tag from a repository
-
         :param str tag: The tag to be deleted
         :returns: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
@@ -106,10 +102,8 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for artifact in client.list_tags():
@@ -128,13 +122,11 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            for artifact in client.list_registry_artifacts():
+            for artifact in client.list_manifests():
                 properties = client.get_registry_artifact_properties(artifact.digest)
         """
         if not self._digest:
@@ -149,7 +141,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     def get_tag_properties(self, tag, **kwargs):
         # type: (str, Dict[str, Any]) -> ArtifactTagProperties
         """Get the properties for a tag
-
         :param tag: The tag to get properties for
         :type tag: str
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
@@ -158,10 +149,8 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for tag in client.list_tags():
@@ -176,7 +165,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     def list_tags(self, **kwargs):
         # type: (Dict[str, Any]) -> ItemPaged[ArtifactTagProperties]
         """List the tags for a repository
-
         :keyword last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexically
         :paramtype last: str
@@ -191,10 +179,8 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for tag in client.list_tags():
@@ -319,16 +305,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            for artifact in client.list_registry_artifacts():
+            for artifact in client.list_manifests():
                 received_permissions = client.set_manifest_properties(
                     artifact.digest,
-                    ContentPermissions(
+                    ContentProperties(
                         can_delete=False,
                         can_list=False,
                         can_read=False,
@@ -353,7 +337,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     def set_tag_properties(self, tag, permissions, **kwargs):
         # type: (str, ContentProperties, Dict[str, Any]) -> ArtifactTagProperties
         """Set the properties for a tag
-
         :param tag: Tag to set properties for
         :type tag: str
         :param permissions: The property's values to be set
@@ -364,16 +347,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             tag_identifier = "latest"
             received = client.set_tag_properties(
                 tag_identifier,
-                ContentPermissions(
+                ContentProperties(
                     can_delete=False,
                     can_list=False,
                     can_read=False,

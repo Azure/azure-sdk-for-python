@@ -142,6 +142,10 @@ class Point(namedtuple("Point", "x y")):
     def to_dict(self):
         return {"x": self.x, "y": self.y}
 
+    @classmethod
+    def from_dict(cls, d):
+        return cls(x=d.get("x", None), y=d.get("y", None))
+
 
 class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_number")):
     """The 1-based page range of the form.
@@ -162,6 +166,13 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
             "first_page_number": self.first_page_number,
             "last_page_number": self.last_page_number,
         }
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            first_page_number=d.get("first_page_number", None),
+            last_page_number=d.get("last_page_number", None),
+        )
 
 
 class FormElement(object):
@@ -194,6 +205,17 @@ class FormElement(object):
             "page_number": self.page_number,
             "kind": self.kind,
         }
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            text=d.get("text", None),
+            page_number=d.get("page_number", None),
+            kind=d.get("kind", None),
+            bounding_box=[Point.from_dict(f) for f in d.get("bounding_box")]
+            if len(d.get("bounding_box", [])) > 0
+            else [],
+        )
 
 
 class RecognizedForm(object):
@@ -248,13 +270,30 @@ class RecognizedForm(object):
 
     def to_dict(self):
         return {
-            "fields": {k: v.to_dict() for k, v in self.fields.items()} if self.fields else {},
+            "fields": {k: v.to_dict() for k, v in self.fields.items()}
+            if self.fields
+            else {},
             "form_type": self.form_type,
             "pages": [v.to_dict() for v in self.pages] if self.pages else [],
             "model_id": self.model_id,
             "form_type_confidence": self.form_type_confidence,
-            "page_range": self.page_range.to_dict() if self.page_range else None
+            "page_range": self.page_range.to_dict() if self.page_range else None,
         }
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            fields={k: FormField.from_dict(v) for k, v in d.get("fields").items()} if d.get("fields") else {},
+            form_type=d.get("form_type", None),
+            pages=[FormPage.from_dict(v) for v in d.get("pages")]
+            if len(d.get("pages", [])) > 0
+            else [],
+            model_id=d.get("model_id", None),
+            form_type_confidence=d.get("form_type_confidence", None),
+            page_range=FormPageRange.from_dict(d.get("page_range"))
+            if d.get("page_range")
+            else None,
+        )
 
 
 class FormField(object):
@@ -342,6 +381,28 @@ class FormField(object):
             "value_data": self.value_data.to_dict() if self.value_data else None,
         }
 
+    @classmethod
+    def from_dict(cls, d):
+        value = d.get("value", None)
+        if isinstance(d.get("value"), dict):
+            value = {k: FormField.from_dict(v) for k, v in d.get("value").items()}
+        elif isinstance(d.get("value"), list):
+            value = [FormField.from_dict(v) for v in d.get("value")]
+
+        return cls(
+            value_type=d.get("value_type", None),
+            name=d.get("name", None),
+            value=value,
+            confidence=d.get("confidence", None),
+            label_data=FieldData.from_dict(d.get("label_data"))
+            if d.get("label_data")
+            else None,
+            value_data=FieldData.from_dict(d.get("value_data"))
+            if d.get("value_data")
+            else None,
+        )
+
+
 class FieldData(object):
     """Contains the data for the form field. This includes the text,
     location of the text on the form, and a collection of the
@@ -418,6 +479,28 @@ class FieldData(object):
             "field_elements": [f.to_dict() for f in self.field_elements] if self.field_elements else []
         }
 
+    @classmethod
+    def from_dict(cls, d):
+        field_elements = []
+        for v in d.get("field_elements"):
+            if v.get("kind") == "word":
+                field_elements.append(FormWord.from_dict(v))
+            elif v.get("kind") == "line":
+                field_elements.append(FormLine.from_dict(v))
+            elif v.get("kind") == "selectionMark":
+                field_elements.append(FormSelectionMark.from_dict(v))
+            else:
+                field_elements.append(FormElement.from_dict(v))
+
+        return cls(
+            text=d.get("text", None),
+            page_number=d.get("page_number", None),
+            bounding_box=[Point.from_dict(f) for f in d.get("bounding_box")]
+            if len(d.get("bounding_box", [])) > 0
+            else [],
+            field_elements=field_elements,
+        )
+
 
 class FormPage(object):
     """Represents a page recognized from the input document. Contains lines,
@@ -489,6 +572,28 @@ class FormPage(object):
             "selection_marks": [mark.to_dict() for mark in self.selection_marks] if self.selection_marks else []
         }
 
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            text_angle=d.get("text_angle", None),
+            width=d.get("width", None),
+            height=d.get("height", None),
+            unit=d.get("unit", None),
+            page_number=d.get("page_number", None),
+            tables=[FormTable.from_dict(v) for v in d.get("tables")]
+            if len(d.get("tables", [])) > 0
+            else [],
+            lines=[FormLine.from_dict(v) for v in d.get("lines")]
+            if len(d.get("lines", [])) > 0
+            else [],
+            selection_marks=[
+                FormSelectionMark.from_dict(v) for v in d.get("selection_marks")
+            ]
+            if len(d.get("selection_marks", [])) > 0
+            else [],
+        )
+
+
 class FormLine(FormElement):
     """An object representing an extracted line of text.
 
@@ -554,6 +659,22 @@ class FormLine(FormElement):
             "appearance": self.appearance.to_dict() if self.appearance else None
         }
 
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            text=d.get("text", None),
+            page_number=d.get("page_number", None),
+            bounding_box=[Point.from_dict(v) for v in d.get("bounding_box")]
+            if len(d.get("bounding_box", [])) > 0
+            else [],
+            words=[FormWord.from_dict(v) for v in d.get("words")]
+            if len(d.get("words", [])) > 0
+            else [],
+            appearance=TextAppearance.from_dict(d.get("appearance"))
+            if d.get("appearance")
+            else None,
+        )
+
 
 class FormWord(FormElement):
     """Represents a word recognized from the input document.
@@ -599,6 +720,17 @@ class FormWord(FormElement):
             "page_number": self.page_number,
             "kind": self.kind,
         }
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            text=d.get("text", None),
+            page_number=d.get("page_number", None),
+            bounding_box=[Point.from_dict(v) for v in d.get("bounding_box")]
+            if len(d.get("bounding_box", [])) > 0
+            else [],
+            confidence=d.get("confidence", None),
+        )
 
 
 class FormSelectionMark(FormElement):
@@ -650,6 +782,18 @@ class FormSelectionMark(FormElement):
             "kind": self.kind,
         }
 
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            text=d.get("text", None),
+            page_number=d.get("page_number", None),
+            bounding_box=[Point.from_dict(v) for v in d.get("bounding_box")]
+            if len(d.get("bounding_box", [])) > 0
+            else [],
+            confidence=d.get("confidence", None),
+            state=d.get("state", None),
+        )
+
 
 class FormTable(object):
     """Information about the extracted table contained on a page.
@@ -698,6 +842,20 @@ class FormTable(object):
             "cells": [cell.to_dict() for cell in self.cells],
             "bounding_box": [box.to_dict() for box in self.bounding_box] if self.bounding_box else []
         }
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            row_count=d.get("row_count", None),
+            page_number=d.get("page_number", None),
+            column_count=d.get("column_count", None),
+            bounding_box=[Point.from_dict(v) for v in d.get("bounding_box")]
+            if len(d.get("bounding_box", [])) > 0
+            else [],
+            cells=[FormTableCell.from_dict(v) for v in d.get("cells")]
+            if len(d.get("cells", [])) > 0
+            else [],
+        )
 
 
 class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
@@ -797,8 +955,37 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
             "page_number": self.page_number,
             "bounding_box": [box.to_dict() for box in self.bounding_box] if self.bounding_box else [],
             "field_elements": [element.to_dict() for element in self.field_elements]
-            if self.field_elements else None
+            if self.field_elements else []
         }
+
+    @classmethod
+    def from_dict(cls, d):
+        field_elements = []
+        for v in d.get("field_elements"):
+            if v.get("kind") == "word":
+                field_elements.append(FormWord.from_dict(v))
+            elif v.get("kind") == "line":
+                field_elements.append(FormLine.from_dict(v))
+            elif v.get("kind") == "selectionMark":
+                field_elements.append(FormSelectionMark.from_dict(v))
+            else:
+                field_elements.append(FormElement.from_dict(v))
+
+        return cls(
+            text=d.get("text", None),
+            row_index=d.get("row_index", None),
+            column_index=d.get("column_index", None),
+            row_span=d.get("row_span", None),
+            column_span=d.get("column_span", None),
+            confidence=d.get("confidence", None),
+            is_header=d.get("is_header", None),
+            is_footer=d.get("is_footer", None),
+            page_number=d.get("page_number", None),
+            bounding_box=[Point.from_dict(v) for v in d.get("bounding_box")]
+            if len(d.get("bounding_box", [])) > 0
+            else [],
+            field_elements=field_elements,
+        )
 
 
 class CustomFormModel(object):
@@ -915,6 +1102,31 @@ class CustomFormModel(object):
             "properties": self.properties.to_dict() if self.properties else None
         }
 
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            model_id=d.get("model_id", None),
+            status=d.get("status", None),
+            training_started_on=d.get("training_started_on", None),
+            training_completed_on=d.get("training_completed_on", None),
+            submodels=[CustomFormSubmodel.from_dict(v) for v in d.get("submodels")]
+            if len(d.get("submodels", [])) > 0
+            else [],
+            errors=[FormRecognizerError.from_dict(v) for v in d.get("errors")]
+            if len(d.get("errors", [])) > 0
+            else [],
+            training_documents=[
+                TrainingDocumentInfo.from_dict(v) for v in d.get("training_documents")
+            ]
+            if len(d.get("training_documents", [])) > 0
+            else [],
+            model_name=d.get("model_name", None),
+            properties=CustomFormModelProperties.from_dict(d.get("properties"))
+            if d.get("properties")
+            else None,
+        )
+
+
 class CustomFormSubmodel(object):
     """Represents a submodel that extracts fields from a specific type of form.
 
@@ -1016,6 +1228,16 @@ class CustomFormSubmodel(object):
             "form_type": self.form_type
         }
 
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            model_id=d.get("model_id", None),
+            accuracy=d.get("accuracy", None),
+            fields={k: CustomFormModelField.from_dict(v) for k, v in d.get("fields").items()}
+            if d.get("fields") else {},
+            form_type=d.get("form_type", None),
+        )
+
 
 class CustomFormModelField(object):
     """A field that the model will extract from forms it analyzes.
@@ -1055,6 +1277,14 @@ class CustomFormModelField(object):
             "accuracy": self.accuracy,
             "name": self.name
         }
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            label=d.get("label", None),
+            accuracy=d.get("accuracy", None),
+            name=d.get("name", None),
+        )
 
 
 class TrainingDocumentInfo(object):
@@ -1132,9 +1362,21 @@ class TrainingDocumentInfo(object):
             "name": self.name,
             "status": self.status,
             "page_count": self.page_count,
-            "errors": [err.to_dict() for err in self.errors],
+            "errors": [err.to_dict() for err in self.errors] if self.errors else [],
             "model_id": self.model_id
         }
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            name=d.get("name", None),
+            status=d.get("status", None),
+            page_count=d.get("page_count", None),
+            errors=[
+                FormRecognizerError.from_dict(v) for v in d.get("errors")
+            ],
+            model_id=d.get("model_id", None),
+        )
 
 
 class FormRecognizerError(object):
@@ -1166,6 +1408,13 @@ class FormRecognizerError(object):
             "code": self.code,
             "message": self.message
         }
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            code=d.get("code", None),
+            message=d.get("message", None),
+        )
 
 
 class CustomFormModelInfo(object):
@@ -1242,6 +1491,19 @@ class CustomFormModelInfo(object):
             "properties": self.properties.to_dict() if self.properties else None
         }
 
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            model_id=d.get("model_id", None),
+            status=d.get("status", None),
+            training_started_on=d.get("training_started_on", None),
+            training_completed_on=d.get("training_completed_on", None),
+            model_name=d.get("model_name", None),
+            properties=CustomFormModelProperties.from_dict(d.get("properties"))
+            if d.get("properties")
+            else None,
+        )
+
 
 class AccountProperties(object):
     """Summary of all the custom models on the account.
@@ -1272,6 +1534,13 @@ class AccountProperties(object):
             "custom_model_limit": self.custom_model_limit
         }
 
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            custom_model_count=d.get("custom_model_count", None),
+            custom_model_limit=d.get("custom_model_limit", None),
+        )
+
 
 class CustomFormModelProperties(object):
     """Optional model properties.
@@ -1297,6 +1566,12 @@ class CustomFormModelProperties(object):
         return {
             "is_composed_model": self.is_composed_model
         }
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            is_composed_model=d.get("is_composed_model", None),
+        )
 
 
 class TextAppearance(object):
@@ -1328,3 +1603,10 @@ class TextAppearance(object):
             "style_name": self.style_name,
             "style_confidence": self.style_confidence
         }
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            style_name=d.get("style_name", None),
+            style_confidence=d.get("style_confidence", None),
+        )

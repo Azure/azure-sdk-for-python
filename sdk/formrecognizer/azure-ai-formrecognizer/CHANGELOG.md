@@ -14,6 +14,10 @@ Note: this version will be the last to officially support Python 3.5, future ver
 - Added field value type "countryRegion" to the `FieldValueType` enum.
 - Renamed field name for identity documents from "Country" to "CountryRegion".
 
+**New features**
+
+- Added `to_dict` and `from_dict` methods to all of the models
+
 ## 3.1.0b4 (2021-04-06)
 
 **New features**
