@@ -13,5 +13,4 @@ credential  = ClientSecretCredential(
     )
 
 client = MetricsClient(credential)
-names = [os.environ['STORAGE_METRIC_NAME']]
-response = client.query(os.environ['APPINSIGHTS_STORAGE_RESOURCE_URI'], metricnames=names)
+response = client.query(os.environ['METRICS_RESOURCE_URI'], metricnames=["Microsoft.CognitiveServices/accounts"])

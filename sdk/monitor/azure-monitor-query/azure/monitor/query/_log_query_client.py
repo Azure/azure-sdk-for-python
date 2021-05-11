@@ -85,19 +85,19 @@ class LogsClient(object):
         return self._query_op.get(workspace_id, query, **kwargs)
 
     def batch_query(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogQueryRequest], Any) -> LogsBatchResponse
+        # type: (Union[Sequence[Dict], Sequence[LogsQueryRequest], Any) -> LogsBatchResponse
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
 
         :param queries: The list of queries that should be processed
-        :type queries: list[dict] or list[~azure.monitor.query.LogQueryRequest]
+        :type queries: list[dict] or list[~azure.monitor.query.LogsQueryRequest]
         :return: BatchResponse, or the result of cls(response)
         :rtype: ~azure.monitor.query.LogsBatchResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
-            queries = [LogQueryRequest(**q) for q in queries]
+            queries = [LogsQueryRequest(**q) for q in queries]
         except (KeyError, TypeError):
             pass
         batch = BatchRequest(requests=queries)

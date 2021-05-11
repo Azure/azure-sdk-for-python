@@ -82,7 +82,7 @@ class MetricsClient(object):
         :rtype: ~azure.monitor.query.MetricsResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        kwargs.setdefault("metricnames", metricnames.join(","))
+        kwargs.setdefault("metricnames", ",".join(metricnames))
         return self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
 
     def list_metric_namespaces(self, resource_uri, **kwargs):
