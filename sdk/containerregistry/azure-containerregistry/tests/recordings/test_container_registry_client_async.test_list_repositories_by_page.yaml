@@ -1018,7 +1018,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoc7611808&n=2&orderby=
   response:
     body:
-      string: '{"repositories": ["repod2be1c42", "repoeb7113db"]}'
+      string: '{"repositories": ["repo3db51597", "repo3e8d15a3"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
