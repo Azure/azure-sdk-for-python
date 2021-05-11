@@ -13,7 +13,7 @@ from ._generated._monitor_query_client import (
 
 from ._generated.models import BatchRequest, QueryBody
 from ._helpers import get_authentication_policy
-from ._models import LogQueryResults, LogQueryRequest, LogsQueryBody
+from ._models import LogsQueryResults, LogsQueryRequest, LogsQueryBody
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -36,7 +36,7 @@ class LogsClient(object):
         self._query_op = self._client.query
 
     def query(self, workspace_id, query, **kwargs):
-        # type: (str, Union[str, LogsQueryBody], Any) -> LogQueryResults
+        # type: (str, str, Any) -> LogQueryResults
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -46,10 +46,12 @@ class LogsClient(object):
         :type workspace_id: str
         :param query: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
-        :type query: str or ~azure.monitor.query.LogsQueryBody
+        :type query: str
         :keyword ~datetime.timedelta timespan: Optional. The timespan over which to query data. This is an ISO8601 time
          period value.  This timespan is applied in addition to any that are specified in the query
          expression.
+        :keyword int timeout: the server timeout. The default timeout is 3 minutes,
+         and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
         :keyword bool include_render: In the query language, it is possible to specify different render options.
          By default, the API does not return information regarding the type of visualization to show.
@@ -73,7 +75,11 @@ class LogsClient(object):
         
         if prefer:
             kwargs.setdefault("prefer", prefer)
-            return self._query_op.execute(workspace_id, LogsQueryBody(query), **kwargs)
+            return self._query_op.execute(
+                workspace_id,
+                LogsQueryBody(query, workspace_ids=[workspace_id]),
+                **kwargs
+                )
 
         kwargs.setdefault("timespan", timespan)
         return self._query_op.get(workspace_id, query, **kwargs)
