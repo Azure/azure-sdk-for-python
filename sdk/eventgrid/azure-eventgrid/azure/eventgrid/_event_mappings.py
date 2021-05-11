@@ -162,6 +162,12 @@ class SystemEventNames(str, Enum):
 
     MediaLiveEventTrackDiscontinuityDetectedEventName = 'Microsoft.Media.LiveEventTrackDiscontinuityDetected'
 
+    PolicyInsightsPolicyStateChangedEventName = 'Microsoft.PolicyInsights.PolicyStateChanged'
+
+    PolicyInsightsPolicyStateCreatedEventName = 'Microsoft.PolicyInsights.PolicyStateCreated'
+
+    PolicyInsightsPolicyStateDeletedEventName = 'Microsoft.PolicyInsights.PolicyStateDeleted'
+
     RedisExportRDBCompletedEventName = 'Microsoft.Cache.ExportRDBCompleted'
 
     RedisImportRDBCompletedEventName = 'Microsoft.Cache.ImportRDBCompleted'

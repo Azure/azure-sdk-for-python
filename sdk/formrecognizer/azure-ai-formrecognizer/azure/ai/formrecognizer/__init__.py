@@ -34,7 +34,6 @@ from ._models import (
     CustomFormModelProperties,
     FormSelectionMark,
     TextAppearance,
-    TextStyle,
 )
 from ._api_versions import FormRecognizerApiVersion
 
@@ -69,7 +68,6 @@ __all__ = [
     "CustomFormModelProperties",
     "FormSelectionMark",
     "TextAppearance",
-    "TextStyle",
 ]
 
 __VERSION__ = VERSION

@@ -9,31 +9,31 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '223'
+      - '211'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?readingOrder=natural
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyze?readingOrder=natural
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - a882d9df-2b9b-4f48-95a1-e29b1939096d
+      - 5b6c006b-b5ee-41af-ad00-5eb5567177b8
       content-length:
       - '0'
       date:
-      - Tue, 30 Mar 2021 23:02:30 GMT
+      - Tue, 11 May 2021 00:34:35 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/a882d9df-2b9b-4f48-95a1-e29b1939096d
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyzeResults/5b6c006b-b5ee-41af-ad00-5eb5567177b8
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '617'
+      - '322'
     status:
       code: 202
       message: Accepted
@@ -47,13 +47,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/a882d9df-2b9b-4f48-95a1-e29b1939096d
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyzeResults/5b6c006b-b5ee-41af-ad00-5eb5567177b8
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-30T23:02:30Z",
-        "lastUpdatedDateTime": "2021-03-30T23:02:34Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T00:34:35Z",
+        "lastUpdatedDateTime": "2021-05-11T00:34:38Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 1700, "height":
         2200, "unit": "pixel", "lines": [{"boundingBox": [136, 139, 351, 138, 351,
         166, 136, 166], "text": "Purchase Order", "appearance": {"style": {"name":
@@ -71,26 +71,26 @@ interactions:
         "confidence": 0.996}, {"boundingBox": [277, 351, 360, 351, 361, 378, 278,
         379], "text": "Phone:", "confidence": 0.992}, {"boundingBox": [365, 351, 525,
         351, 525, 374, 366, 378], "text": "555-348-6512", "confidence": 0.994}]},
-        {"boundingBox": [1112, 321, 1554, 321, 1554, 369, 1112, 369], "text": "Purchase
-        Order", "appearance": {"style": {"name": "other", "confidence": 0.878}}, "words":
-        [{"boundingBox": [1113, 322, 1367, 321, 1367, 370, 1113, 368], "text": "Purchase",
-        "confidence": 0.995}, {"boundingBox": [1386, 321, 1550, 321, 1549, 370, 1386,
-        370], "text": "Order", "confidence": 0.996}]}, {"boundingBox": [166, 393,
-        533, 393, 533, 418, 166, 418], "text": "Website: www.herolimited.com", "appearance":
-        {"style": {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox":
-        [167, 394, 268, 393, 268, 418, 167, 417], "text": "Website:", "confidence":
-        0.995}, {"boundingBox": [273, 393, 524, 393, 524, 418, 273, 418], "text":
-        "www.herolimited.com", "confidence": 0.982}]}, {"boundingBox": [1024, 419,
-        1317, 420, 1317, 448, 1024, 448], "text": "Dated As: 12/20/2020", "appearance":
-        {"style": {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox":
-        [1025, 421, 1104, 420, 1104, 448, 1025, 448], "text": "Dated", "confidence":
-        0.994}, {"boundingBox": [1112, 420, 1158, 420, 1158, 448, 1112, 448], "text":
-        "As:", "confidence": 0.998}, {"boundingBox": [1163, 420, 1310, 421, 1310,
-        449, 1163, 448], "text": "12/20/2020", "confidence": 0.986}]}, {"boundingBox":
-        [165, 435, 237, 435, 237, 460, 165, 460], "text": "Email:", "appearance":
-        {"style": {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox":
-        [165, 435, 237, 435, 237, 460, 165, 460], "text": "Email:", "confidence":
-        0.994}]}, {"boundingBox": [1023, 461, 1376, 461, 1376, 489, 1023, 488], "text":
+        {"boundingBox": [166, 393, 533, 393, 533, 418, 166, 418], "text": "Website:
+        www.herolimited.com", "appearance": {"style": {"name": "other", "confidence":
+        0.878}}, "words": [{"boundingBox": [167, 394, 268, 393, 268, 418, 167, 417],
+        "text": "Website:", "confidence": 0.995}, {"boundingBox": [273, 393, 524,
+        393, 524, 418, 273, 418], "text": "www.herolimited.com", "confidence": 0.982}]},
+        {"boundingBox": [165, 435, 237, 435, 237, 460, 165, 460], "text": "Email:",
+        "appearance": {"style": {"name": "other", "confidence": 0.878}}, "words":
+        [{"boundingBox": [165, 435, 237, 435, 237, 460, 165, 460], "text": "Email:",
+        "confidence": 0.994}]}, {"boundingBox": [1112, 321, 1554, 321, 1554, 369,
+        1112, 369], "text": "Purchase Order", "appearance": {"style": {"name": "other",
+        "confidence": 0.878}}, "words": [{"boundingBox": [1113, 322, 1367, 321, 1367,
+        370, 1113, 368], "text": "Purchase", "confidence": 0.995}, {"boundingBox":
+        [1386, 321, 1550, 321, 1549, 370, 1386, 370], "text": "Order", "confidence":
+        0.996}]}, {"boundingBox": [1024, 419, 1317, 420, 1317, 448, 1024, 448], "text":
+        "Dated As: 12/20/2020", "appearance": {"style": {"name": "other", "confidence":
+        0.878}}, "words": [{"boundingBox": [1025, 421, 1104, 420, 1104, 448, 1025,
+        448], "text": "Dated", "confidence": 0.994}, {"boundingBox": [1112, 420, 1158,
+        420, 1158, 448, 1112, 448], "text": "As:", "confidence": 0.998}, {"boundingBox":
+        [1163, 420, 1310, 421, 1310, 449, 1163, 448], "text": "12/20/2020", "confidence":
+        0.986}]}, {"boundingBox": [1023, 461, 1376, 461, 1376, 489, 1023, 488], "text":
         "Purchase Order #: 948284", "appearance": {"style": {"name": "other", "confidence":
         0.878}}, "words": [{"boundingBox": [1023, 461, 1149, 461, 1150, 489, 1023,
         488], "text": "Purchase", "confidence": 0.995}, {"boundingBox": [1155, 461,
@@ -187,37 +187,37 @@ interactions:
         [885, 1047, 1034, 1047, 1034, 1083, 886, 1083], "text": "Quantity", "appearance":
         {"style": {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox":
         [886, 1048, 1030, 1047, 1030, 1084, 886, 1084], "text": "Quantity", "confidence":
-        0.994}]}, {"boundingBox": [172, 1093, 279, 1095, 279, 1123, 172, 1121], "text":
-        "Bindings", "appearance": {"style": {"name": "other", "confidence": 0.878}},
-        "words": [{"boundingBox": [172, 1094, 278, 1097, 278, 1123, 173, 1122], "text":
-        "Bindings", "confidence": 0.995}]}, {"boundingBox": [859, 1094, 893, 1094,
-        893, 1119, 859, 1119], "text": "20", "appearance": {"style": {"name": "other",
-        "confidence": 0.878}}, "words": [{"boundingBox": [860, 1094, 888, 1094, 888,
-        1119, 860, 1119], "text": "20", "confidence": 0.999}]}, {"boundingBox": [1111,
-        1047, 1270, 1047, 1269, 1078, 1111, 1077], "text": "Unit Price", "appearance":
+        0.994}]}, {"boundingBox": [1111, 1047, 1270, 1047, 1269, 1078, 1111, 1077],
+        "text": "Unit Price", "appearance": {"style": {"name": "other", "confidence":
+        0.878}}, "words": [{"boundingBox": [1112, 1047, 1179, 1047, 1178, 1078, 1111,
+        1078], "text": "Unit", "confidence": 0.994}, {"boundingBox": [1185, 1047,
+        1267, 1048, 1266, 1078, 1184, 1078], "text": "Price", "confidence": 0.996}]},
+        {"boundingBox": [1382, 1047, 1468, 1047, 1467, 1077, 1382, 1077], "text":
+        "Total", "appearance": {"style": {"name": "other", "confidence": 0.878}},
+        "words": [{"boundingBox": [1384, 1047, 1468, 1047, 1468, 1077, 1384, 1077],
+        "text": "Total", "confidence": 0.996}]}, {"boundingBox": [172, 1093, 279,
+        1095, 279, 1123, 172, 1121], "text": "Bindings", "appearance": {"style": {"name":
+        "other", "confidence": 0.878}}, "words": [{"boundingBox": [172, 1094, 278,
+        1097, 278, 1123, 173, 1122], "text": "Bindings", "confidence": 0.995}]}, {"boundingBox":
+        [859, 1094, 893, 1094, 893, 1119, 859, 1119], "text": "20", "appearance":
         {"style": {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox":
-        [1112, 1047, 1179, 1047, 1178, 1078, 1111, 1078], "text": "Unit", "confidence":
-        0.994}, {"boundingBox": [1185, 1047, 1267, 1048, 1266, 1078, 1184, 1078],
-        "text": "Price", "confidence": 0.996}]}, {"boundingBox": [1382, 1047, 1468,
-        1047, 1467, 1077, 1382, 1077], "text": "Total", "appearance": {"style": {"name":
-        "other", "confidence": 0.878}}, "words": [{"boundingBox": [1384, 1047, 1468,
-        1047, 1468, 1077, 1384, 1077], "text": "Total", "confidence": 0.996}]}, {"boundingBox":
-        [1240, 1096, 1295, 1094, 1294, 1118, 1241, 1118], "text": "1.00", "appearance":
+        [860, 1094, 888, 1094, 888, 1119, 860, 1119], "text": "20", "confidence":
+        0.999}]}, {"boundingBox": [1240, 1096, 1295, 1094, 1294, 1118, 1241, 1118],
+        "text": "1.00", "appearance": {"style": {"name": "other", "confidence": 0.878}},
+        "words": [{"boundingBox": [1240, 1095, 1291, 1094, 1291, 1117, 1240, 1118],
+        "text": "1.00", "confidence": 0.994}]}, {"boundingBox": [1458, 1095, 1530,
+        1095, 1530, 1119, 1458, 1119], "text": "20.00", "appearance": {"style": {"name":
+        "other", "confidence": 0.878}}, "words": [{"boundingBox": [1459, 1096, 1527,
+        1095, 1526, 1120, 1460, 1119], "text": "20.00", "confidence": 0.996}]}, {"boundingBox":
+        [169, 1135, 332, 1134, 333, 1160, 169, 1161], "text": "Covers Small", "appearance":
         {"style": {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox":
-        [1240, 1095, 1291, 1094, 1291, 1117, 1240, 1118], "text": "1.00", "confidence":
-        0.994}]}, {"boundingBox": [1458, 1095, 1530, 1095, 1530, 1119, 1458, 1119],
-        "text": "20.00", "appearance": {"style": {"name": "other", "confidence": 0.878}},
-        "words": [{"boundingBox": [1459, 1096, 1527, 1095, 1526, 1120, 1460, 1119],
-        "text": "20.00", "confidence": 0.996}]}, {"boundingBox": [169, 1135, 332,
-        1134, 333, 1160, 169, 1161], "text": "Covers Small", "appearance": {"style":
-        {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox": [170, 1136,
-        255, 1136, 254, 1161, 170, 1161], "text": "Covers", "confidence": 0.994},
-        {"boundingBox": [260, 1136, 333, 1135, 332, 1161, 259, 1161], "text": "Small",
-        "confidence": 0.996}]}, {"boundingBox": [859, 1135, 894, 1135, 891, 1160,
-        860, 1160], "text": "20", "appearance": {"style": {"name": "other", "confidence":
-        0.878}}, "words": [{"boundingBox": [860, 1135, 888, 1135, 888, 1160, 860,
-        1160], "text": "20", "confidence": 0.999}]}, {"boundingBox": [1239, 1135,
-        1295, 1135, 1294, 1159, 1239, 1160], "text": "1.00", "appearance": {"style":
+        [170, 1136, 255, 1136, 254, 1161, 170, 1161], "text": "Covers", "confidence":
+        0.994}, {"boundingBox": [260, 1136, 333, 1135, 332, 1161, 259, 1161], "text":
+        "Small", "confidence": 0.996}]}, {"boundingBox": [859, 1135, 894, 1135, 891,
+        1160, 860, 1160], "text": "20", "appearance": {"style": {"name": "other",
+        "confidence": 0.878}}, "words": [{"boundingBox": [860, 1135, 888, 1135, 888,
+        1160, 860, 1160], "text": "20", "confidence": 0.999}]}, {"boundingBox": [1239,
+        1135, 1295, 1135, 1294, 1159, 1239, 1160], "text": "1.00", "appearance": {"style":
         {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox": [1240,
         1135, 1291, 1135, 1291, 1160, 1240, 1160], "text": "1.00", "confidence": 0.993}]},
         {"boundingBox": [1458, 1135, 1530, 1135, 1530, 1159, 1459, 1160], "text":
@@ -235,20 +235,27 @@ interactions:
         1295, 1178, 1295, 1203, 1239, 1204], "text": "5.00", "appearance": {"style":
         {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox": [1240,
         1179, 1291, 1178, 1291, 1203, 1240, 1204], "text": "5.00", "confidence": 0.993}]},
-        {"boundingBox": [169, 1223, 429, 1222, 430, 1249, 169, 1253], "text": "Copper
-        Swirl Marker", "appearance": {"style": {"name": "other", "confidence": 0.878}},
-        "words": [{"boundingBox": [170, 1223, 259, 1222, 258, 1253, 170, 1253], "text":
-        "Copper", "confidence": 0.996}, {"boundingBox": [265, 1222, 328, 1222, 327,
-        1251, 264, 1252], "text": "Swirl", "confidence": 0.996}, {"boundingBox": [334,
-        1222, 429, 1223, 428, 1248, 333, 1251], "text": "Marker", "confidence": 0.996}]},
-        {"boundingBox": [860, 1223, 893, 1223, 893, 1247, 860, 1247], "text": "20",
-        "appearance": {"style": {"name": "other", "confidence": 0.878}}, "words":
-        [{"boundingBox": [861, 1223, 888, 1223, 888, 1247, 861, 1247], "text": "20",
-        "confidence": 0.999}]}, {"boundingBox": [1239, 1221, 1294, 1222, 1294, 1246,
-        1239, 1247], "text": "5.00", "appearance": {"style": {"name": "other", "confidence":
-        0.878}}, "words": [{"boundingBox": [1240, 1221, 1292, 1221, 1292, 1247, 1240,
-        1247], "text": "5.00", "confidence": 0.986}]}, {"boundingBox": [484, 1670,
-        764, 1670, 764, 1707, 484, 1706], "text": "Bernie Sanders", "appearance":
+        {"boundingBox": [1442, 1180, 1530, 1180, 1530, 1203, 1443, 1204], "text":
+        "100.00", "appearance": {"style": {"name": "other", "confidence": 0.878}},
+        "words": [{"boundingBox": [1443, 1181, 1525, 1180, 1525, 1204, 1443, 1205],
+        "text": "100.00", "confidence": 0.994}]}, {"boundingBox": [169, 1223, 429,
+        1222, 430, 1249, 169, 1253], "text": "Copper Swirl Marker", "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox":
+        [170, 1223, 259, 1222, 258, 1253, 170, 1253], "text": "Copper", "confidence":
+        0.996}, {"boundingBox": [265, 1222, 328, 1222, 327, 1251, 264, 1252], "text":
+        "Swirl", "confidence": 0.996}, {"boundingBox": [334, 1222, 429, 1223, 428,
+        1248, 333, 1251], "text": "Marker", "confidence": 0.996}]}, {"boundingBox":
+        [860, 1223, 893, 1223, 893, 1247, 860, 1247], "text": "20", "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox":
+        [861, 1223, 888, 1223, 888, 1247, 861, 1247], "text": "20", "confidence":
+        0.999}]}, {"boundingBox": [1239, 1221, 1294, 1222, 1294, 1246, 1239, 1247],
+        "text": "5.00", "appearance": {"style": {"name": "other", "confidence": 0.878}},
+        "words": [{"boundingBox": [1240, 1221, 1292, 1221, 1292, 1247, 1240, 1247],
+        "text": "5.00", "confidence": 0.986}]}, {"boundingBox": [1443, 1223, 1530,
+        1222, 1530, 1246, 1444, 1247], "text": "100.00", "appearance": {"style": {"name":
+        "other", "confidence": 0.878}}, "words": [{"boundingBox": [1444, 1224, 1526,
+        1223, 1525, 1247, 1444, 1248], "text": "100.00", "confidence": 0.062}]}, {"boundingBox":
+        [484, 1670, 764, 1670, 764, 1707, 484, 1706], "text": "Bernie Sanders", "appearance":
         {"style": {"name": "handwriting", "confidence": 0.785}}, "words": [{"boundingBox":
         [484, 1671, 595, 1671, 595, 1706, 484, 1706], "text": "Bernie", "confidence":
         0.993}, {"boundingBox": [602, 1671, 761, 1670, 762, 1708, 602, 1706], "text":
@@ -280,28 +287,21 @@ interactions:
         {"boundingBox": [1146, 1573, 1296, 1573, 1296, 1600, 1146, 1600], "text":
         "SUBTOTAL", "appearance": {"style": {"name": "other", "confidence": 0.878}},
         "words": [{"boundingBox": [1148, 1575, 1294, 1575, 1293, 1600, 1148, 1600],
-        "text": "SUBTOTAL", "confidence": 0.995}]}, {"boundingBox": [1236, 1618, 1296,
-        1618, 1295, 1643, 1236, 1643], "text": "TAX", "appearance": {"style": {"name":
-        "other", "confidence": 0.878}}, "words": [{"boundingBox": [1237, 1618, 1290,
-        1618, 1290, 1643, 1237, 1643], "text": "TAX", "confidence": 0.997}]}, {"boundingBox":
+        "text": "SUBTOTAL", "confidence": 0.995}]}, {"boundingBox": [1426, 1571, 1530,
+        1571, 1530, 1597, 1426, 1598], "text": "$140.00", "appearance": {"style":
+        {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox": [1428,
+        1572, 1528, 1572, 1528, 1597, 1428, 1599], "text": "$140.00", "confidence":
+        0.995}]}, {"boundingBox": [1236, 1618, 1296, 1618, 1295, 1643, 1236, 1643],
+        "text": "TAX", "appearance": {"style": {"name": "other", "confidence": 0.878}},
+        "words": [{"boundingBox": [1237, 1618, 1290, 1618, 1290, 1643, 1237, 1643],
+        "text": "TAX", "confidence": 0.997}]}, {"boundingBox": [1458, 1615, 1529,
+        1615, 1528, 1641, 1458, 1643], "text": "$4.00", "appearance": {"style": {"name":
+        "other", "confidence": 0.878}}, "words": [{"boundingBox": [1458, 1615, 1529,
+        1615, 1529, 1642, 1458, 1643], "text": "$4.00", "confidence": 0.992}]}, {"boundingBox":
         [1203, 1673, 1297, 1673, 1297, 1698, 1204, 1699], "text": "TOTAL", "appearance":
         {"style": {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox":
         [1204, 1674, 1295, 1673, 1295, 1699, 1205, 1699], "text": "TOTAL", "confidence":
-        0.994}]}, {"boundingBox": [1442, 1180, 1530, 1180, 1530, 1203, 1443, 1204],
-        "text": "100.00", "appearance": {"style": {"name": "other", "confidence":
-        0.878}}, "words": [{"boundingBox": [1443, 1181, 1525, 1180, 1525, 1204, 1443,
-        1205], "text": "100.00", "confidence": 0.994}]}, {"boundingBox": [1443, 1223,
-        1530, 1222, 1530, 1246, 1444, 1247], "text": "100.00", "appearance": {"style":
-        {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox": [1444,
-        1224, 1526, 1223, 1525, 1247, 1444, 1248], "text": "100.00", "confidence":
-        0.062}]}, {"boundingBox": [1426, 1571, 1530, 1571, 1530, 1597, 1426, 1598],
-        "text": "$140.00", "appearance": {"style": {"name": "other", "confidence":
-        0.878}}, "words": [{"boundingBox": [1428, 1572, 1528, 1572, 1528, 1597, 1428,
-        1599], "text": "$140.00", "confidence": 0.995}]}, {"boundingBox": [1458, 1615,
-        1529, 1615, 1528, 1641, 1458, 1643], "text": "$4.00", "appearance": {"style":
-        {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox": [1458,
-        1615, 1529, 1615, 1529, 1642, 1458, 1643], "text": "$4.00", "confidence":
-        0.992}]}, {"boundingBox": [1427, 1670, 1529, 1669, 1530, 1696, 1427, 1697],
+        0.994}]}, {"boundingBox": [1427, 1670, 1529, 1669, 1530, 1696, 1427, 1697],
         "text": "$144.00", "appearance": {"style": {"name": "other", "confidence":
         0.878}}, "words": [{"boundingBox": [1427, 1671, 1526, 1669, 1527, 1697, 1429,
         1698], "text": "$144.00", "confidence": 0.983}]}, {"boundingBox": [168, 1923,
@@ -343,84 +343,86 @@ interactions:
         0.994}, {"boundingBox": [563, 1959, 630, 1959, 630, 1991, 564, 1992], "text":
         "total", "confidence": 0.996}, {"boundingBox": [636, 1959, 786, 1961, 786,
         1990, 636, 1991], "text": "purchase.", "confidence": 0.994}]}]}], "pageResults":
-        [{"page": 1, "tables": [{"rows": 5, "columns": 5, "cells": [{"rowIndex": 0,
-        "columnIndex": 0, "columnSpan": 2, "text": "Details", "boundingBox": [157,
-        1038, 847, 1037, 847, 1086, 157, 1086], "elements": ["#/readResults/0/lines/21/words/0"]},
-        {"rowIndex": 0, "columnIndex": 2, "text": "Quantity", "boundingBox": [847,
-        1037, 1071, 1037, 1071, 1086, 847, 1086], "elements": ["#/readResults/0/lines/22/words/0"]},
-        {"rowIndex": 0, "columnIndex": 3, "text": "Unit Price", "boundingBox": [1071,
-        1037, 1310, 1038, 1310, 1086, 1071, 1086], "elements": ["#/readResults/0/lines/25/words/0",
-        "#/readResults/0/lines/25/words/1"]}, {"rowIndex": 0, "columnIndex": 4, "text":
-        "Total", "boundingBox": [1310, 1038, 1543, 1038, 1543, 1086, 1310, 1086],
-        "elements": ["#/readResults/0/lines/26/words/0"]}, {"rowIndex": 1, "columnIndex":
-        0, "columnSpan": 2, "text": "Bindings", "boundingBox": [157, 1086, 847, 1086,
-        847, 1127, 157, 1128], "elements": ["#/readResults/0/lines/23/words/0"]},
-        {"rowIndex": 1, "columnIndex": 2, "text": "20", "boundingBox": [847, 1086,
-        1071, 1086, 1071, 1127, 847, 1127], "elements": ["#/readResults/0/lines/24/words/0"]},
-        {"rowIndex": 1, "columnIndex": 3, "text": "1.00", "boundingBox": [1071, 1086,
-        1310, 1086, 1310, 1127, 1071, 1127], "elements": ["#/readResults/0/lines/27/words/0"]},
-        {"rowIndex": 1, "columnIndex": 4, "text": "20.00", "boundingBox": [1310, 1086,
-        1543, 1086, 1543, 1127, 1310, 1127], "elements": ["#/readResults/0/lines/28/words/0"]},
-        {"rowIndex": 2, "columnIndex": 0, "columnSpan": 2, "text": "Covers Small",
-        "boundingBox": [157, 1128, 847, 1127, 847, 1171, 157, 1171], "elements": ["#/readResults/0/lines/29/words/0",
-        "#/readResults/0/lines/29/words/1"]}, {"rowIndex": 2, "columnIndex": 2, "text":
-        "20", "boundingBox": [847, 1127, 1071, 1127, 1071, 1171, 847, 1171], "elements":
-        ["#/readResults/0/lines/30/words/0"]}, {"rowIndex": 2, "columnIndex": 3, "text":
-        "1.00", "boundingBox": [1071, 1127, 1310, 1127, 1310, 1171, 1071, 1171], "elements":
-        ["#/readResults/0/lines/31/words/0"]}, {"rowIndex": 2, "columnIndex": 4, "text":
-        "20.00", "boundingBox": [1310, 1127, 1543, 1127, 1543, 1171, 1310, 1171],
-        "elements": ["#/readResults/0/lines/32/words/0"]}, {"rowIndex": 3, "columnIndex":
-        0, "columnSpan": 2, "text": "Feather Bookmark", "boundingBox": [157, 1171,
-        847, 1171, 847, 1214, 157, 1214], "elements": ["#/readResults/0/lines/33/words/0",
-        "#/readResults/0/lines/33/words/1"]}, {"rowIndex": 3, "columnIndex": 2, "text":
-        "20", "boundingBox": [847, 1171, 1071, 1171, 1071, 1214, 847, 1214], "elements":
-        ["#/readResults/0/lines/34/words/0"]}, {"rowIndex": 3, "columnIndex": 3, "text":
-        "5.00", "boundingBox": [1071, 1171, 1310, 1171, 1310, 1214, 1071, 1214], "elements":
-        ["#/readResults/0/lines/35/words/0"]}, {"rowIndex": 3, "columnIndex": 4, "text":
-        "100.00", "boundingBox": [1310, 1171, 1543, 1171, 1543, 1215, 1310, 1214],
-        "elements": ["#/readResults/0/lines/47/words/0"]}, {"rowIndex": 4, "columnIndex":
-        0, "columnSpan": 2, "text": "Copper Swirl Marker", "boundingBox": [157, 1214,
-        847, 1214, 847, 1258, 157, 1258], "elements": ["#/readResults/0/lines/36/words/0",
-        "#/readResults/0/lines/36/words/1", "#/readResults/0/lines/36/words/2"]},
-        {"rowIndex": 4, "columnIndex": 2, "text": "20", "boundingBox": [847, 1214,
-        1071, 1214, 1071, 1258, 847, 1258], "elements": ["#/readResults/0/lines/37/words/0"]},
-        {"rowIndex": 4, "columnIndex": 3, "text": "5.00", "boundingBox": [1071, 1214,
-        1310, 1214, 1310, 1258, 1071, 1258], "elements": ["#/readResults/0/lines/38/words/0"]},
-        {"rowIndex": 4, "columnIndex": 4, "text": "100.00", "boundingBox": [1310,
-        1214, 1543, 1215, 1543, 1260, 1310, 1258], "elements": ["#/readResults/0/lines/48/words/0"]}],
-        "boundingBox": [153, 1036, 1547, 1037, 1547, 1265, 153, 1265]}, {"rows": 4,
-        "columns": 2, "cells": [{"rowIndex": 0, "columnIndex": 0, "text": "SUBTOTAL",
-        "boundingBox": [1072, 1564, 1307, 1565, 1308, 1609, 1071, 1608], "elements":
-        ["#/readResults/0/lines/44/words/0"]}, {"rowIndex": 0, "columnIndex": 1, "text":
-        "$140.00", "boundingBox": [1307, 1565, 1542, 1564, 1543, 1609, 1308, 1609],
-        "elements": ["#/readResults/0/lines/49/words/0"]}, {"rowIndex": 1, "columnIndex":
-        0, "text": "TAX", "boundingBox": [1071, 1608, 1308, 1609, 1308, 1652, 1071,
-        1651], "elements": ["#/readResults/0/lines/45/words/0"]}, {"rowIndex": 1,
-        "columnIndex": 1, "text": "$4.00", "boundingBox": [1308, 1609, 1543, 1609,
-        1543, 1652, 1308, 1652], "elements": ["#/readResults/0/lines/50/words/0"]},
-        {"rowIndex": 2, "columnIndex": 0, "text": "", "boundingBox": [1071, 1651,
-        1308, 1652, 1308, 1663, 1071, 1663], "elements": []}, {"rowIndex": 2, "columnIndex":
-        1, "text": "", "boundingBox": [1308, 1652, 1543, 1652, 1543, 1663, 1308, 1663],
-        "elements": []}, {"rowIndex": 3, "columnIndex": 0, "text": "TOTAL", "boundingBox":
-        [1071, 1663, 1308, 1663, 1308, 1707, 1071, 1707], "elements": ["#/readResults/0/lines/46/words/0"]},
-        {"rowIndex": 3, "columnIndex": 1, "text": "$144.00", "boundingBox": [1308,
-        1663, 1543, 1663, 1543, 1708, 1308, 1707], "elements": ["#/readResults/0/lines/51/words/0"]}],
-        "boundingBox": [1058, 1563, 1555, 1563, 1555, 1707, 1058, 1707]}]}]}}'
+        [{"page": 1, "tables": [{"rows": 5, "columns": 4, "cells": [{"rowIndex": 0,
+        "columnIndex": 0, "text": "Details", "boundingBox": [156, 1037, 847, 1037,
+        847, 1086, 156, 1086], "elements": ["#/readResults/0/lines/21/words/0"], "isHeader":
+        true}, {"rowIndex": 0, "columnIndex": 1, "text": "Quantity", "boundingBox":
+        [847, 1037, 1071, 1038, 1071, 1086, 847, 1086], "elements": ["#/readResults/0/lines/22/words/0"],
+        "isHeader": true}, {"rowIndex": 0, "columnIndex": 2, "text": "Unit Price",
+        "boundingBox": [1071, 1038, 1309, 1038, 1309, 1086, 1071, 1086], "elements":
+        ["#/readResults/0/lines/23/words/0", "#/readResults/0/lines/23/words/1"],
+        "isHeader": true}, {"rowIndex": 0, "columnIndex": 3, "text": "Total", "boundingBox":
+        [1309, 1038, 1543, 1038, 1543, 1086, 1309, 1086], "elements": ["#/readResults/0/lines/24/words/0"],
+        "isHeader": true}, {"rowIndex": 1, "columnIndex": 0, "text": "Bindings", "boundingBox":
+        [156, 1086, 847, 1086, 847, 1127, 156, 1127], "elements": ["#/readResults/0/lines/25/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 1, "text": "20", "boundingBox":
+        [847, 1086, 1071, 1086, 1071, 1127, 847, 1127], "elements": ["#/readResults/0/lines/26/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 2, "text": "1.00", "boundingBox":
+        [1071, 1086, 1309, 1086, 1309, 1127, 1071, 1127], "elements": ["#/readResults/0/lines/27/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 3, "text": "20.00", "boundingBox":
+        [1309, 1086, 1543, 1086, 1543, 1127, 1309, 1127], "elements": ["#/readResults/0/lines/28/words/0"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 0, "text": "Covers Small",
+        "boundingBox": [156, 1127, 847, 1127, 847, 1171, 156, 1171], "elements": ["#/readResults/0/lines/29/words/0",
+        "#/readResults/0/lines/29/words/1"], "isHeader": false}, {"rowIndex": 2, "columnIndex":
+        1, "text": "20", "boundingBox": [847, 1127, 1071, 1127, 1071, 1171, 847, 1171],
+        "elements": ["#/readResults/0/lines/30/words/0"], "isHeader": false}, {"rowIndex":
+        2, "columnIndex": 2, "text": "1.00", "boundingBox": [1071, 1127, 1309, 1127,
+        1309, 1171, 1071, 1171], "elements": ["#/readResults/0/lines/31/words/0"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 3, "text": "20.00", "boundingBox":
+        [1309, 1127, 1543, 1127, 1543, 1171, 1309, 1171], "elements": ["#/readResults/0/lines/32/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 0, "text": "Feather Bookmark",
+        "boundingBox": [156, 1171, 847, 1171, 847, 1214, 156, 1214], "elements": ["#/readResults/0/lines/33/words/0",
+        "#/readResults/0/lines/33/words/1"], "isHeader": false}, {"rowIndex": 3, "columnIndex":
+        1, "text": "20", "boundingBox": [847, 1171, 1071, 1171, 1071, 1214, 847, 1214],
+        "elements": ["#/readResults/0/lines/34/words/0"], "isHeader": false}, {"rowIndex":
+        3, "columnIndex": 2, "text": "5.00", "boundingBox": [1071, 1171, 1309, 1171,
+        1309, 1214, 1071, 1214], "elements": ["#/readResults/0/lines/35/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 3, "text": "100.00", "boundingBox":
+        [1309, 1171, 1543, 1171, 1543, 1215, 1309, 1214], "elements": ["#/readResults/0/lines/36/words/0"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 0, "text": "Copper Swirl
+        Marker", "boundingBox": [156, 1214, 847, 1214, 847, 1258, 156, 1258], "elements":
+        ["#/readResults/0/lines/37/words/0", "#/readResults/0/lines/37/words/1", "#/readResults/0/lines/37/words/2"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 1, "text": "20", "boundingBox":
+        [847, 1214, 1071, 1214, 1071, 1258, 847, 1258], "elements": ["#/readResults/0/lines/38/words/0"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 2, "text": "5.00", "boundingBox":
+        [1071, 1214, 1309, 1214, 1309, 1258, 1071, 1258], "elements": ["#/readResults/0/lines/39/words/0"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 3, "text": "100.00", "boundingBox":
+        [1309, 1214, 1543, 1215, 1543, 1260, 1309, 1258], "elements": ["#/readResults/0/lines/40/words/0"],
+        "isHeader": false}], "boundingBox": [153, 1036, 1547, 1037, 1547, 1265, 153,
+        1265]}, {"rows": 4, "columns": 2, "cells": [{"rowIndex": 0, "columnIndex":
+        0, "text": "SUBTOTAL", "boundingBox": [1070, 1564, 1307, 1564, 1308, 1609,
+        1071, 1608], "elements": ["#/readResults/0/lines/46/words/0"], "isHeader":
+        true}, {"rowIndex": 0, "columnIndex": 1, "text": "$140.00", "boundingBox":
+        [1307, 1564, 1544, 1564, 1544, 1609, 1308, 1609], "elements": ["#/readResults/0/lines/47/words/0"],
+        "isHeader": true}, {"rowIndex": 1, "columnIndex": 0, "text": "TAX", "boundingBox":
+        [1071, 1608, 1308, 1609, 1308, 1652, 1071, 1653], "elements": ["#/readResults/0/lines/48/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 1, "text": "$4.00", "boundingBox":
+        [1308, 1609, 1544, 1609, 1544, 1652, 1308, 1652], "elements": ["#/readResults/0/lines/49/words/0"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 0, "text": "", "boundingBox":
+        [1071, 1653, 1308, 1652, 1308, 1664, 1071, 1664], "elements": [], "isHeader":
+        false}, {"rowIndex": 2, "columnIndex": 1, "text": "", "boundingBox": [1308,
+        1652, 1544, 1652, 1544, 1665, 1308, 1664], "elements": [], "isHeader": false},
+        {"rowIndex": 3, "columnIndex": 0, "text": "TOTAL", "boundingBox": [1071, 1664,
+        1308, 1664, 1308, 1707, 1071, 1707], "elements": ["#/readResults/0/lines/50/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 1, "text": "$144.00", "boundingBox":
+        [1308, 1664, 1544, 1665, 1544, 1707, 1308, 1707], "elements": ["#/readResults/0/lines/51/words/0"],
+        "isHeader": false}], "boundingBox": [1058, 1563, 1555, 1563, 1555, 1707, 1058,
+        1707]}]}]}}'
     headers:
       apim-request-id:
-      - 61ec7c75-6705-4937-89f3-59010cd0be68
+      - 97a1d50d-9a47-4d82-afa1-46b36f37542f
       content-length:
-      - '24433'
+      - '24828'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 30 Mar 2021 23:02:35 GMT
+      - Tue, 11 May 2021 00:34:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '56'
+      - '33'
     status:
       code: 200
       message: OK

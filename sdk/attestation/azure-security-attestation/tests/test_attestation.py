@@ -19,6 +19,7 @@
 from logging import fatal
 from typing import Any, ByteString
 import unittest
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 import functools
@@ -182,7 +183,7 @@ class AttestationTest(AzureTestCase):
         attest_client = self.shared_client(attestation_location_short_name)
         signers = attest_client.get_signing_certificates()
         for signer in signers:
-            x5c = cryptography.x509.load_der_x509_certificate(signer.certificates[0])
+            x5c = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
 
     @AttestationPreparer()
     def test_aad_getsigningcertificates(self, attestation_aad_url):
@@ -190,7 +191,7 @@ class AttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_aad_url)
         signers = attest_client.get_signing_certificates()
         for signer in signers:
-            cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0])
+            cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
 
     @AttestationPreparer()
     def test_isolated_getsigningcertificates(self, attestation_isolated_url):
@@ -198,7 +199,7 @@ class AttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_isolated_url)
         signers = attest_client.get_signing_certificates()
         for signer in signers:
-            cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0])
+            cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
 
     def _test_attest_open_enclave(self, client_uri):
         #type: (str) -> None

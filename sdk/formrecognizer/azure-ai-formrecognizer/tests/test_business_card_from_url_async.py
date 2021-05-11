@@ -356,7 +356,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
-        assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+        assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1 and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

@@ -14,6 +14,7 @@ from ..._generated._generated_identity.v0_1_preview.aio import (
     ConfidentialLedgerIdentityServiceClient as _ConfidentialLedgerIdentityServiceClient,
 )
 from ..._shared import DEFAULT_VERSION
+from ..._user_agent import USER_AGENT
 
 try:
     from typing import TYPE_CHECKING
@@ -75,6 +76,7 @@ class ConfidentialLedgerIdentityServiceClient(object):
             transport=transport,
             authentication_policy=authentication_policy,
             http_logging_policy=http_logging_policy,
+            sdk_moniker=USER_AGENT,
             **kwargs
         )
 
