@@ -1,5 +1,7 @@
 # Release History
 
+## 12.4.0b1 (unreleased)
+
 ## 12.3.1 (2021-04-20)
 **Fixes**
 - Fixed `recursive=True` on file deletion
@@ -10,7 +12,6 @@
 
 **New Features**
 - Added `get_account_information()` API
-
 
 ## 12.3.0 (2021-03-01)
 **Stable release of preview features**

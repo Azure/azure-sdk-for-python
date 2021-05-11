@@ -79,7 +79,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     @distributed_trace_async
     async def delete(self, **kwargs: Dict[str, Any]) -> DeleteRepositoryResult:
         """Delete a repository
-
         :returns: Object containing information about the deleted repository
         :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
@@ -87,10 +86,8 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             await client.delete()
@@ -102,7 +99,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     @distributed_trace_async
     async def delete_tag(self, tag: str, **kwargs: Dict[str, Any]) -> None:
         """Delete a tag from a repository
-
         :param str tag: The tag to be deleted
         :returns: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
@@ -110,10 +106,8 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             async for artifact in client.list_tags():
@@ -131,14 +125,12 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            async for artifact in client.list_registry_artifacts():
-                properties = await client.get_manifest_properties(artifact.digest)
+            async for artifact in client.list_manifests():
+                properties = await client.get_registry_artifact_properties(artifact.digest)
         """
         if not self._digest:
             self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else await self._get_digest_from_tag()
@@ -151,7 +143,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     @distributed_trace_async
     async def get_tag_properties(self, tag: str, **kwargs: Dict[str, Any]) -> ArtifactTagProperties:
         """Get the properties for a tag
-
         :param tag: The tag to get properties for
         :type tag: str
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
@@ -160,10 +151,8 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             async for tag in client.list_tags():
@@ -177,7 +166,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     @distributed_trace
     def list_tags(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[ArtifactTagProperties]:
         """List the tags for a repository
-
         :keyword last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexically
         :paramtype last: str
@@ -192,10 +180,8 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             async for tag in client.list_tags():
@@ -321,16 +307,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            async for artifact in client.list_registry_artifacts():
+            async for artifact in client.list_manifests():
                 received_permissions = await client.set_manifest_properties(
                     artifact.digest,
-                    ContentPermissions(
+                    ContentProperties(
                         can_delete=False,
                         can_list=False,
                         can_read=False,
@@ -356,7 +340,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         self, tag: str, permissions: ContentProperties, **kwargs: Dict[str, Any]
     ) -> ArtifactTagProperties:
         """Set the properties for a tag
-
         :param tag: Tag to set properties for
         :type tag: str
         :param permissions: The property's values to be set
@@ -367,16 +350,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             tag_identifier = "latest"
             received = await client.set_tag_properties(
                 tag_identifier,
-                ContentPermissions(
+                ContentProperties(
                     can_delete=False,
                     can_list=False,
                     can_read=False,

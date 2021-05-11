@@ -7,6 +7,11 @@ from azure.containerregistry.aio import (
     ContainerRepository,
     ContainerRegistryClient,
 )
+from azure.containerregistry import (
+    ArtifactTagProperties,
+    ContentProperties,
+    ArtifactManifestProperties,
+)
 
 from azure.core.credentials import AccessToken
 from azure.identity.aio import DefaultAzureCredential

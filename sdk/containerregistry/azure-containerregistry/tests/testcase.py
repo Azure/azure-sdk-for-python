@@ -38,6 +38,12 @@ from azure_devtools.scenario_tests import (
     AuthenticationMetadataFilter,
     RecordingProcessor,
 )
+from azure_devtools.scenario_tests import (
+    GeneralNameReplacer,
+    RequestUrlNormalizer,
+    AuthenticationMetadataFilter,
+    RecordingProcessor,
+)
 
 
 REDACTED = "REDACTED"
