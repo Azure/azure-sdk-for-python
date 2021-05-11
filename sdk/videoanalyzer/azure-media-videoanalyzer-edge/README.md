@@ -16,7 +16,7 @@ Use the client library for Video Analyzer on IoT Edge to:
 Install the Video Analyzer client library for Python with pip:
 
 ```bash
-pip install azure-media-analytics-edge
+pip install azure-media-videoanalyzer-edge
 ```
 
 ### Prerequisites

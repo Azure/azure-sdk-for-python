@@ -1,24 +1,24 @@
 import pytest
 from azure.media.videoanalyzer.edge import *
 
-class TestGraphBuildSerialize():
-    def test_build_graph_serialize(self):
-        # graph_topology_name = "graphTopology1"
-        # graph_properties = MediaGraphTopologyProperties()
-        # graph_properties.description = "Continuous video recording to an Azure Media Services Asset"
-        # user_name_param = MediaGraphParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
-        # password_param = MediaGraphParameterDeclaration(name="rtspPassword",type="String",default="dummypassword")
-        # url_param = MediaGraphParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
+class TestPipelineBuildSerialize():
+    def test_build_pipeline_serialize(self):
+        pipeline_topology_properties = PipelineTopologyProperties()
+        pipeline_topology_name = 'pipelineTopologyTest'
+        pipeline_topology_properties.description = "Continuous video recording to an Azure Media Services Asset"
+        user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
+        password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="dummypassword")
+        url_param = ParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
+        hub_param = ParameterDeclaration(name="hubSinkOutputName",type="String")
 
-        # source = MediaGraphRtspSource(name="rtspSource", endpoint=MediaGraphUnsecuredEndpoint(url="${rtspUrl}",credentials=MediaGraphUsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
-        # node = MediaGraphNodeInput(node_name="rtspSource")
-        # sink = MediaGraphAssetSink(name="assetsink", inputs=[node],asset_name_pattern='sampleAsset-${System.GraphTopologyName}-${System.GraphInstanceName}', segment_length="PT0H0M30S",local_media_cache_maximum_size_mi_b=2048,local_media_cache_path="/var/lib/azuremediaservices/tmp/")
-        # graph_properties.parameters = [user_name_param, password_param, url_param]
-        # graph_properties.sources = [source]
-        # graph_properties.sinks = [sink]
-        # graph = MediaGraphTopology(name=graph_topology_name,properties=graph_properties)
+        source = RtspSource(name="rtspSource", endpoint=UnsecuredEndpoint(url="${rtspUrl}",credentials=UsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
+        node = NodeInput(node_name="rtspSource")
+        pipeline_topology_properties.parameters = [user_name_param, password_param, url_param, hub_param]
+        pipeline_topology_properties.sources = [source]
+        pipeline_topology = PipelineTopology(name=pipeline_topology_name,properties=pipeline_topology_properties)
 
-        # set_graph_method = MediaGraphTopologySetRequest(graph=graph)
-        # set_graph_method_serialize = set_graph_method.serialize()
-        # assert set_graph_method_serialize['name'] == graph_topology_name
-        assert True
+
+
+        set_top_method = PipelineTopologySetRequest(pipeline_topology=pipeline_topology)
+        set_top_method_serialize = set_top_method.serialize()
+        assert set_top_method_serialize['name'] == pipeline_topology_name

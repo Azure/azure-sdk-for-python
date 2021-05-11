@@ -9,9 +9,9 @@ from datetime import time
 device_id = "lva-sample-device"
 module_d = "mediaEdge"
 connection_string = "connectionString"
-live_pipeline_name = "graphInstance1"
-pipeline_topology_name = "graphTopology1"
-graph_url = "rtsp://sample-url-from-camera"
+live_pipeline_name = "pipelineInstance1"
+pipeline_topology_name = "pipelineTopology1"
+url = "rtsp://sample-url-from-camera"
 
 def build_pipeline_topology():
     pipeline_topology_properties = PipelineTopologyProperties()
@@ -23,7 +23,7 @@ def build_pipeline_topology():
 
     source = RtspSource(name="rtspSource", endpoint=UnsecuredEndpoint(url="${rtspUrl}",credentials=UsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
     node = NodeInput(node_name="rtspSource")
-    sink = IotHubMessageSink("msgSink", nodeInput, "${hubSinkOutputName}")
+    sink = IotHubMessageSink("msgSink", node, "${hubSinkOutputName}")
     pipeline_topology_properties.parameters = [user_name_param, password_param, url_param, hub_param]
     pipeline_topology_properties.sources = [source]
     pipeline_topology_properties.sinks = [sink]
@@ -32,9 +32,9 @@ def build_pipeline_topology():
     return pipeline_topology
 
 def build_live_pipeline():
-    url_param = ParameterDefinition(name="rtspUrl", value=graph_url)
+    url_param = ParameterDefinition(name="rtspUrl", value=url)
     pass_param = ParameterDefinition(name="rtspPassword", value='testpass')
-    live_pipeline_properties = LivePipelineProperties(description="Sample graph description", topology_name=pipeline_topology_name, parameters=[url_param])
+    live_pipeline_properties = LivePipelineProperties(description="Sample description", topology_name=pipeline_topology_name, parameters=[url_param])
 
     live_pipeline = LivePipeline(name=live_pipeline_name, properties=live_pipeline_properties)
 
