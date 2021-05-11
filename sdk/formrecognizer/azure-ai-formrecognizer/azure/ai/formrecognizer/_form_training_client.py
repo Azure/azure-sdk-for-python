@@ -100,8 +100,6 @@ class FormTrainingClient(FormRecognizerClientBase):
             will also need to be included when searching for content to be preprocessed. Not supported if
             training with labels.
         :keyword str model_name: An optional, user-defined name to associate with your model.
-        :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.CustomFormModel`.
@@ -367,8 +365,6 @@ class FormTrainingClient(FormRecognizerClientBase):
         :param dict target:
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if
-            no Retry-After header is present.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.CustomFormModelInfo`.
@@ -446,8 +442,6 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         :param list[str] model_ids: List of model IDs to use in the composed model.
         :keyword str model_name: An optional, user-defined name to associate with your model.
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if
-            no Retry-After header is present.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.CustomFormModel`.
