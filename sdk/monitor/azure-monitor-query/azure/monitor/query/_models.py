@@ -15,17 +15,17 @@ from ._generated.models import (
     LogQueryRequest as InternalLogQueryRequest
 )
 
-class LogQueryResultTable(Table):
+class LogsQueryResultTable(Table):
     """Contains the columns and rows for one table in a query response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the table.
-    :type name: str
-    :param columns: Required. The list of columns in this table.
-    :type columns: list[~monitor_query_client.models.Column]
-    :param rows: Required. The resulting rows from this query.
-    :type rows: list[list[str]]
+    :keyword name: Required. The name of the table.
+    :paramtype name: str
+    :keyword columns: Required. The list of columns in this table.
+    :paramtype columns: list[~monitor_query_client.models.Column]
+    :keyword rows: Required. The resulting rows from this query.
+    :paramtype rows: list[list[str]]
     """
 
     _validation = {
@@ -45,19 +45,19 @@ class LogQueryResultTable(Table):
         **kwargs
     ):
         # type: (Any) -> None
-        super(LogQueryResultTable, self).__init__(**kwargs)
+        super(LogsQueryResultTable, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.columns = kwargs['columns']
         self.rows = kwargs['rows']
 
 
-class LogQueryResultColumn(Column):
+class LogsQueryResultColumn(Column):
     """A column in a table.
 
-    :param name: The name of this column.
-    :type name: str
-    :param type: The data type of this column.
-    :type type: str
+    :keyword name: The name of this column.
+    :paramtype name: str
+    :keyword type: The data type of this column.
+    :paramtype type: str
     """
 
     _attribute_map = {
@@ -70,18 +70,18 @@ class LogQueryResultColumn(Column):
         **kwargs
     ):
         # type: (Any) -> None
-        super(LogQueryResultColumn, self).__init__(**kwargs)
+        super(LogsQueryResultColumn, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.type = kwargs.get('type', None)
 
 
-class LogQueryResults(QueryResults):
+class LogsQueryResults(QueryResults):
     """Contains the tables, columns & rows resulting from a query.
 
-    :param tables: The list of tables, columns and rows.
-    :type tables: list[~monitor_query_client.models.Table]
-    :param errors:
-    :type errors: ~monitor_query_client.models.ErrorDetails
+    :keyword tables: The list of tables, columns and rows.
+    :paramtype tables: list[~monitor_query_client.models.Table]
+    :keyword errors:
+    :paramtype errors: ~monitor_query_client.models.ErrorDetails
     """
 
     _attribute_map = {
@@ -94,7 +94,7 @@ class LogQueryResults(QueryResults):
         **kwargs
     ):
         # type: (Any) -> None
-        super(LogQueryResults, self).__init__(**kwargs)
+        super(LogsQueryResults, self).__init__(**kwargs)
         self.tables = kwargs.get('tables', None)
         self.errors = kwargs.get('errors', None)
 
@@ -103,22 +103,22 @@ class MetricsResponse(Response):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param cost: The integer value representing the cost of the query, for data case.
-    :type cost: int
-    :param timespan: Required. The timespan for which the data was retrieved. Its value consists of
+    :keyword cost: The integer value representing the cost of the query, for data case.
+    :paramtype cost: int
+    :keyword timespan: Required. The timespan for which the data was retrieved. Its value consists of
      two datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned
      back from what was originally requested.
-    :type timespan: str
-    :param interval: The interval (window size) for which the metric data was returned in.  This
+    :paramtype timespan: str
+    :keyword interval: The interval (window size) for which the metric data was returned in.  This
      may be adjusted in the future and returned back from what was originally requested.  This is
      not present if a metadata request was made.
-    :type interval: ~datetime.timedelta
-    :param namespace: The namespace of the metrics been queried.
-    :type namespace: str
-    :param resourceregion: The region of the resource been queried for metrics.
-    :type resourceregion: str
-    :param value: Required. the value of the collection.
-    :type value: list[~monitor_query_client.models.Metric]
+    :paramtype interval: ~datetime.timedelta
+    :keyword namespace: The namespace of the metrics been queried.
+    :paramtype namespace: str
+    :keyword resourceregion: The region of the resource been queried for metrics.
+    :paramtype resourceregion: str
+    :keyword value: Required. the value of the collection.
+    :paramtype value: list[~monitor_query_client.models.Metric]
     """
 
     _validation = {
@@ -149,28 +149,28 @@ class MetricsResponse(Response):
         self.resourceregion = kwargs.get('resourceregion', None)
         self.value = kwargs['value']
 
-class LogQueryRequest(InternalLogQueryRequest):
+class LogsQueryRequest(InternalLogQueryRequest):
     """An single request in a batch.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: The error details.
-    :type id: str
-    :param headers: Dictionary of :code:`<string>`.
-    :type headers: dict[str, str]
-    :param body: The Analytics query. Learn more about the `Analytics query syntax
+    :keyword id: The error details.
+    :paramtype id: str
+    :keyword headers: Dictionary of :code:`<string>`.
+    :paramtype headers: dict[str, str]
+    :keyword body: The Analytics query. Learn more about the `Analytics query syntax
      <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
-    :type body: ~monitor_query_client.models.QueryBody
+    :paramtype body: ~monitor_query_client.models.QueryBody
     :ivar path:  Default value: "/query".
     :vartype path: str
     :ivar method:  Default value: "POST".
     :vartype method: str
-    :param workspace: Workspace Id to be included in the query.
-    :type workspace: str
+    :keyword workspace: Workspace Id to be included in the query.
+    :paramtype workspace: str
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        super(LogQueryRequest, self).__init__(**kwargs)
+        super(LogsQueryRequest, self).__init__(**kwargs)
         self.id = kwargs.get('id', uuid.uuid4())
         self.headers = kwargs.get('headers', {
             "Content-Type": "application/json"

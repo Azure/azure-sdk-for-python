@@ -16,7 +16,6 @@ from ._helpers import get_authentication_policy
 from ._models import LogQueryResults, LogQueryRequest, LogsQueryBody
 
 if TYPE_CHECKING:
-    from azure.identity import DefaultAzureCredential
     from azure.core.credentials import TokenCredential
     from ._generated.models import BatchResponse
 
@@ -24,7 +23,7 @@ class LogsClient(object):
     """LogsClient
 
     :param credential: The credential to authenticate the client
-    :type credential: ~azure.core.credentials.TokenCredential or ~azure.identity.DefaultAzureCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(self, credential, **kwargs):

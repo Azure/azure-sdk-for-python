@@ -8,11 +8,12 @@ from ._log_query_client import LogsClient
 from ._metrics_query_client import MetricsClient
 
 from ._models import (
-    LogQueryResults,
-    LogQueryResultTable,
-    LogQueryResultColumn,
+    LogsQueryResults,
+    LogsQueryResultTable,
+    LogsQueryResultColumn,
     MetricsResponse,
-    LogQueryRequest
+    LogsQueryRequest,
+    LogsQueryBody
 )
 
 from ._generated.models import MetricNamespaceCollection
@@ -21,10 +22,11 @@ from ._version import VERSION
 
 __all__ = [
     "LogsClient",
-    "LogQueryResults",
-    "LogQueryResultColumn",
-    "LogQueryResultTable",
-    "LogQueryRequest",
+    "LogsQueryResults",
+    "LogsQueryResultColumn",
+    "LogsQueryResultTable",
+    "LogsQueryRequest",
+    "LogsQueryBody",
     "MetricsClient",
     "MetricsResponse",
     "MetricNamespaceCollection"
