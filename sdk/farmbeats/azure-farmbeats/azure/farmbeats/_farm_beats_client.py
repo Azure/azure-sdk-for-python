@@ -88,11 +88,11 @@ class FarmBeatsClient(object):
 
     def __init__(
         self,
+        base_url,
         credential,  # type: "TokenCredential"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = 'None'
         self._config = FarmBeatsClientConfiguration(credential, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 

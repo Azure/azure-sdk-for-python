@@ -86,10 +86,10 @@ class FarmBeatsClient(object):
 
     def __init__(
         self,
+        base_url,
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        base_url = 'None'
         self._config = FarmBeatsClientConfiguration(credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
