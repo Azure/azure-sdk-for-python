@@ -19,7 +19,7 @@ from ..._credentials.azure_powershell import (
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Any, Tuple
+    from typing import Any, List
     from azure.core.credentials import AccessToken
 
 
@@ -27,18 +27,12 @@ class AzurePowerShellCredential(AsyncContextManager):
     """Authenticates by requesting a token from Azure PowerShell.
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
-
-    :keyword bool use_legacy_powershell: Can only be set on Windows. Defaults to False. If True, the credential will
-        use PowerShell version 5 or lower, i.e. not PowerShell Core (version 6+).
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
-        self._use_legacy_powershell = kwargs.get("use_legacy_powershell", False)
-        if self._use_legacy_powershell and not sys.platform.startswith("win"):
-            raise ValueError('"use_legacy_powershell" is supported only on Windows')
-
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
+    async def get_token(
+        self, *scopes: str, **kwargs: "Any"
+    ) -> "AccessToken":  # pylint:disable=no-self-use,unused-argument
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -54,31 +48,30 @@ class AzurePowerShellCredential(AsyncContextManager):
         """
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
-            return _SyncCredential(use_legacy_powershell=self._use_legacy_powershell).get_token(*scopes, **kwargs)
+            return _SyncCredential().get_token(*scopes, **kwargs)
 
-        command_line = get_command_line(scopes, self._use_legacy_powershell)
-        output = await run_command(command_line)
+        command_line = get_command_line(scopes)
+        output = await run_command_line(command_line)
         token = parse_token(output)
         return token
 
-    async def close(self):
+    async def close(self) -> None:
         """Calling this method is unnecessary"""
 
 
-async def run_command(args: "Tuple") -> str:
-    working_directory = get_safe_working_dir()
-
+async def run_command_line(command_line: "List[str]") -> str:
     try:
-        proc = await asyncio.create_subprocess_exec(
-            *args,
-            cwd=working_directory,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
+        proc = await start_process(command_line)
         stdout, stderr = await asyncio.wait_for(proc.communicate(), 10)
+        if sys.platform.startswith("win") and b"' is not recognized" in stderr:
+            # pwsh.exe isn't on the path; try powershell.exe
+            command_line[-1] = command_line[-1].replace("pwsh", "powershell", 1)
+            proc = await start_process(command_line)
+            stdout, stderr = await asyncio.wait_for(proc.communicate(), 10)
+
     except OSError as ex:
-        # failed to execute 'cmd' or '/bin/sh'; Azure PowerShell may or may not be installed
-        error = CredentialUnavailableError(message='Failed to execute "{}"'.format(args[0]))
+        # failed to execute "cmd" or "/bin/sh"; Azure PowerShell may or may not be installed
+        error = CredentialUnavailableError(message='Failed to execute "{}"'.format(command_line[0]))
         raise error from ex
     except asyncio.TimeoutError as ex:
         proc.kill()
@@ -90,3 +83,14 @@ async def run_command(args: "Tuple") -> str:
     # we handled TimeoutError above and therefore don't execute this line
     raise_for_error(cast(int, proc.returncode), decoded_stdout, stderr.decode())
     return decoded_stdout
+
+
+async def start_process(command_line):
+    working_directory = get_safe_working_dir()
+    proc = await asyncio.create_subprocess_exec(
+        *command_line,
+        cwd=working_directory,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    return proc

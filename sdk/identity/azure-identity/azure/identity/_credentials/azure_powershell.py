@@ -21,7 +21,7 @@ from .._internal.decorators import log_get_token
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Any, Tuple
+    from typing import Any, List, Tuple
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -51,19 +51,10 @@ class AzurePowerShellCredential(object):
     """Authenticates by requesting a token from Azure PowerShell.
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
-
-    :keyword bool use_legacy_powershell: Can only be set on Windows. Defaults to False. If True, the credential will
-        use PowerShell version 5 or lower, i.e. not PowerShell Core (version 6+).
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
-        self._use_legacy_powershell = kwargs.get("use_legacy_powershell", False)
-        if self._use_legacy_powershell and not sys.platform.startswith("win"):
-            raise ValueError('"use_legacy_powershell" is supported only on Windows')
-
     @log_get_token("AzurePowerShellCredential")
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=no-self-use,unused-argument
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
@@ -79,31 +70,30 @@ class AzurePowerShellCredential(object):
           receive an access token
         """
 
-        command_line = get_command_line(scopes, self._use_legacy_powershell)
-        output = run_command(command_line)
+        command_line = get_command_line(scopes)
+        output = run_command_line(command_line)
         token = parse_token(output)
         return token
 
 
-def run_command(args):
-    # type: (Tuple) -> str
-    working_directory = get_safe_working_dir()
+def run_command_line(command_line):
     stdout = stderr = ""
     proc = None
+    kwargs = {}
+    if platform.python_version() >= "3.3":
+        kwargs["timeout"] = 10
+
     try:
-        proc = subprocess.Popen(
-            args,
-            cwd=working_directory,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-        )
-        if platform.python_version() < "3.3":
-            stdout, stderr = proc.communicate()
-        else:
-            stdout, stderr = proc.communicate(timeout=10)
+        proc = start_process(command_line)
+        stdout, stderr = proc.communicate(**kwargs)
+        if sys.platform.startswith("win") and "' is not recognized" in stderr:
+            # pwsh.exe isn't on the path; try powershell.exe
+            command_line[-1] = command_line[-1].replace("pwsh", "powershell", 1)
+            proc = start_process(command_line)
+            stdout, stderr = proc.communicate(**kwargs)
+
     except Exception as ex:  # pylint:disable=broad-except
-        # failed to execute 'cmd' or '/bin/sh', or timed out; PowerShell and Az.Account may or may not be installed
+        # failed to execute "cmd" or "/bin/sh", or timed out; PowerShell and Az.Account may or may not be installed
         # (handling Exception here because subprocess.SubprocessError and .TimeoutExpired were added in 3.3)
         if proc and not proc.returncode:
             proc.kill()
@@ -112,6 +102,18 @@ def run_command(args):
 
     raise_for_error(proc.returncode, stdout, stderr)
     return stdout
+
+
+def start_process(args):
+    working_directory = get_safe_working_dir()
+    proc = subprocess.Popen(
+        args,
+        cwd=working_directory,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
+    )
+    return proc
 
 
 def parse_token(output):
@@ -124,21 +126,16 @@ def parse_token(output):
     raise ClientAuthenticationError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
 
 
-def get_command_line(scopes, use_legacy):
-    # type: (Tuple, bool) -> Tuple[str, str, str]
+def get_command_line(scopes):
+    # type: (Tuple) -> List[str]
     resource = _scopes_to_resource(*scopes)
     script = SCRIPT.format(NO_AZ_ACCOUNT_MODULE, resource)
     encoded_script = base64.b64encode(script.encode("utf-16-le")).decode()
 
-    if use_legacy:
-        powershell = "powershell"
-    else:
-        powershell = "pwsh"
-
-    command = "{} -NonInteractive -EncodedCommand {}".format(powershell, encoded_script)
+    command = "pwsh -NonInteractive -EncodedCommand " + encoded_script
     if sys.platform.startswith("win"):
-        return "cmd", "/c", command
-    return "/bin/sh", "-c", command
+        return ["cmd", "/c", command]
+    return ["/bin/sh", "-c", command]
 
 
 def raise_for_error(return_code, stdout, stderr):
