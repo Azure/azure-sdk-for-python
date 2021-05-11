@@ -54,3 +54,6 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
             credential=self.get_credential(),
             **kwargs,
         )
+
+    def create_anon_client(self, endpoint, **kwargs):
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)

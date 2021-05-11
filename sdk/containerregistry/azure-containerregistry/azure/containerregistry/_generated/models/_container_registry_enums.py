@@ -57,13 +57,6 @@ class ArtifactOperatingSystem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     SOLARIS = "solaris"
     WINDOWS = "windows"
 
-class Enum2(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Grant type is expected to be refresh_token
-    """
-
-    REFRESH_TOKEN = "refresh_token"
-    PASSWORD = "password"
-
 class ManifestOrderBy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Sort options for ordering manifests in a collection.
     """
@@ -83,3 +76,10 @@ class TagOrderBy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LAST_UPDATED_ON_DESCENDING = "timedesc"
     #: Order tags by LastUpdatedOn field, from least recently updated to most recently updated.
     LAST_UPDATED_ON_ASCENDING = "timeasc"
+
+class TokenGrantType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Grant type is expected to be refresh_token
+    """
+
+    REFRESH_TOKEN = "refresh_token"
+    PASSWORD = "password"

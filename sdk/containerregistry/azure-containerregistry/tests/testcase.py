@@ -31,13 +31,13 @@ from azure.mgmt.containerregistry.models import (
 )
 from azure.identity import DefaultAzureCredential
 
+from devtools_testutils import AzureTestCase, is_live
 from azure_devtools.scenario_tests import (
     GeneralNameReplacer,
     RequestUrlNormalizer,
     AuthenticationMetadataFilter,
     RecordingProcessor,
 )
-from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import (
     GeneralNameReplacer,
     RequestUrlNormalizer,
@@ -122,6 +122,11 @@ class AcrBodyReplacer(RecordingProcessor):
         if "seankane.azurecr.io" in request.url:
             request.url = request.url.replace("seankane.azurecr.io", "fake_url.azurecr.io")
 
+        if "seankaneanon.azurecr.io" in request.uri:
+            request.uri = request.uri.replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
+        if "seankaneanon.azurecr.io" in request.url:
+            request.url = request.url.replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
+
         return request
 
     def process_response(self, response):
@@ -141,6 +146,9 @@ class AcrBodyReplacer(RecordingProcessor):
 
                 if "seankane.azurecr.io" in body["string"]:
                     body["string"] = body["string"].replace("seankane.azurecr.io", "fake_url.azurecr.io")
+
+                if "seankaneanon.azurecr.io" in body["string"]:
+                    body["string"] = body["string"].replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
 
                 refresh = json.loads(body["string"])
                 if "refresh_token" in refresh.keys():
@@ -250,6 +258,9 @@ class ContainerRegistryTestClass(AzureTestCase):
     def create_container_repository(self, endpoint, name, **kwargs):
         return ContainerRepository(endpoint=endpoint, name=name, credential=self.get_credential(), **kwargs)
 
+    def create_anon_client(self, endpoint, **kwargs):
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)
+
     def assert_content_permission(self, content_perm, content_perm2):
         assert isinstance(content_perm, ContentProperties)
         assert isinstance(content_perm2, ContentProperties)
@@ -312,6 +323,8 @@ def import_image(repository, tags):
 
 @pytest.fixture(scope="session")
 def load_registry():
+    if not is_live():
+        return
     repos = [
         "library/hello-world",
         "library/alpine",
