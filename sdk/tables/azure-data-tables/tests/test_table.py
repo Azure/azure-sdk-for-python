@@ -100,8 +100,13 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         # have to wait for return to service
         p = ts.get_service_properties()
         # have to wait for return to service
-        ts.set_service_properties(minute_metrics= Metrics(enabled=True, include_apis=True,
-                                 retention_policy=RetentionPolicy(enabled=True, days=5)))
+        ts.set_service_properties(
+            minute_metrics=Metrics(
+                enabled=True,
+                include_apis=True,
+                retention_policy=RetentionPolicy(enabled=True, days=5)
+            )
+        )
 
         ps = ts.get_service_properties()
         ts.delete_table(table_name)

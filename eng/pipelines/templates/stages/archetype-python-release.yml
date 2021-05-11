@@ -179,13 +179,11 @@ stages:
                           ReleaseSha: $(Build.SourceVersion)
                           RepoId: Azure/azure-sdk-for-python
                           WorkingDirectory: $(System.DefaultWorkingDirectory)
-                          TargetDocRepo: 'MicrosoftDocs/azure-docs-sdk-python'
                           TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
                           TargetDocRepoName: ${{parameters.TargetDocRepoName}}
                           PRBranchName: onboarding-${{artifact.name}}-$(Build.BuildId)
                           ArtifactName: ${{artifact.name}}
                           Language: 'python'
-                          ServiceDirectory: ${{ parameters.ServiceDirectory }}
                           DocRepoDestinationPath: 'docs-ref-services/'
                           GHReviewersVariable: 'OwningGHUser'
                           CIConfigs: $(CIConfigs)
