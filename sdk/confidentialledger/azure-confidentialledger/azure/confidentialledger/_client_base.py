@@ -4,7 +4,6 @@
 # ------------------------------------
 
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, HttpLoggingPolicy
-from azure.core.pipeline.transport import RequestsTransport
 
 from ._generated._generated_ledger.v0_1_preview import (
     ConfidentialLedgerClient as _ConfidentialLedgerClient,
@@ -57,16 +56,13 @@ class ConfidentialLedgerClientBase(object):
 
         self.api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
-        pipeline = kwargs.pop("pipeline", None)
-        transport = kwargs.pop("transport", None)
-        if transport is None:
+        if not kwargs.get("transport", None):
             # Customize the transport layer to use client certificate authentication and validate
             # a self-signed TLS certificate.
             if isinstance(credential, ConfidentialLedgerCertificateCredential):
                 kwargs["connection_cert"] = credential.certificate_path
 
             kwargs["connection_verify"] = ledger_certificate_path
-            transport = RequestsTransport(**kwargs)
 
         http_logging_policy = HttpLoggingPolicy(**kwargs)
         http_logging_policy.allowed_header_names.update(
@@ -91,8 +87,6 @@ class ConfidentialLedgerClientBase(object):
             self._client = _ConfidentialLedgerClient(
                 self._endpoint,
                 api_version=self.api_version,
-                pipeline=pipeline,
-                transport=transport,
                 http_logging_policy=http_logging_policy,
                 sdk_moniker=USER_AGENT,
                 **kwargs
