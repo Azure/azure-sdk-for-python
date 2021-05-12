@@ -79,6 +79,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
         result = self.network_client.private_endpoints.begin_create_or_update(resource_group_name=group_name, private_endpoint_name=private_endpoint_name, parameters=BODY)
         result = result.result()
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_endpoint(self, resource_group):
 
