@@ -27,7 +27,7 @@ class VirtualClustersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2015-05-01-preview".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-11-01-preview".
     """
 
     models = models
@@ -37,9 +37,75 @@ class VirtualClustersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-05-01-preview"
+        self.api_version = "2020-11-01-preview"
 
         self.config = config
+
+    def update_dns_servers(
+            self, resource_group_name, virtual_cluster_name, custom_headers=None, raw=False, **operation_config):
+        """Synchronizes the DNS server settings used by the managed instances
+        inside the given virtual cluster.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param virtual_cluster_name: The name of the virtual cluster.
+        :type virtual_cluster_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: UpdateManagedInstanceDnsServersOperation or ClientRawResponse
+         if raw=true
+        :rtype:
+         ~azure.mgmt.sql.models.UpdateManagedInstanceDnsServersOperation or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.update_dns_servers.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualClusterName': self._serialize.url("virtual_cluster_name", virtual_cluster_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('UpdateManagedInstanceDnsServersOperation', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update_dns_servers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/virtualClusters/{virtualClusterName}/updateManagedInstanceDnsServers'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -324,9 +390,7 @@ class VirtualClustersOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, virtual_cluster_name, family=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.VirtualClusterUpdate(family=family, tags=tags)
-
+            self, resource_group_name, virtual_cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -375,7 +439,7 @@ class VirtualClustersOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, virtual_cluster_name, family=None, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, virtual_cluster_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates a virtual cluster.
 
         :param resource_group_name: The name of the resource group that
@@ -384,11 +448,8 @@ class VirtualClustersOperations(object):
         :type resource_group_name: str
         :param virtual_cluster_name: The name of the virtual cluster.
         :type virtual_cluster_name: str
-        :param family: If the service has different generations of hardware,
-         for the same SKU, then that can be captured here.
-        :type family: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param parameters: The requested virtual cluster resource state.
+        :type parameters: ~azure.mgmt.sql.models.VirtualClusterUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -405,8 +466,7 @@ class VirtualClustersOperations(object):
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
             virtual_cluster_name=virtual_cluster_name,
-            family=family,
-            tags=tags,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

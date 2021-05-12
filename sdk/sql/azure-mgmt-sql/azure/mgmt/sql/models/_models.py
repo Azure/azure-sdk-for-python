@@ -12,6 +12,160 @@
 from msrest.serialization import Model
 
 
+class Resource(Model):
+    """ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class ProxyResource(Resource):
+    """ARM proxy resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class Advisor(ProxyResource):
+    """Database, Server or Elastic Pool Advisor.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar kind: Resource kind.
+    :vartype kind: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar advisor_status: Gets the status of availability of this advisor to
+     customers. Possible values are 'GA', 'PublicPreview',
+     'LimitedPublicPreview' and 'PrivatePreview'. Possible values include:
+     'GA', 'PublicPreview', 'LimitedPublicPreview', 'PrivatePreview'
+    :vartype advisor_status: str or ~azure.mgmt.sql.models.AdvisorStatus
+    :param auto_execute_status: Required. Gets the auto-execute status
+     (whether to let the system execute the recommendations) of this advisor.
+     Possible values are 'Enabled' and 'Disabled'. Possible values include:
+     'Enabled', 'Disabled', 'Default'
+    :type auto_execute_status: str or ~azure.mgmt.sql.models.AutoExecuteStatus
+    :ivar auto_execute_status_inherited_from: Gets the resource from which
+     current value of auto-execute status is inherited. Auto-execute status can
+     be set on (and inherited from) different levels in the resource hierarchy.
+     Possible values are 'Subscription', 'Server', 'ElasticPool', 'Database'
+     and 'Default' (when status is not explicitly set on any level). Possible
+     values include: 'Default', 'Subscription', 'Server', 'ElasticPool',
+     'Database'
+    :vartype auto_execute_status_inherited_from: str or
+     ~azure.mgmt.sql.models.AutoExecuteStatusInheritedFrom
+    :ivar recommendations_status: Gets that status of recommendations for this
+     advisor and reason for not having any recommendations. Possible values
+     include, but are not limited to, 'Ok' (Recommendations
+     available),LowActivity (not enough workload to analyze), 'DbSeemsTuned'
+     (Database is doing well), etc.
+    :vartype recommendations_status: str
+    :ivar last_checked: Gets the time when the current resource was analyzed
+     for recommendations by this advisor.
+    :vartype last_checked: datetime
+    :ivar recommended_actions: Gets the recommended actions for this advisor.
+    :vartype recommended_actions:
+     list[~azure.mgmt.sql.models.RecommendedAction]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'readonly': True},
+        'location': {'readonly': True},
+        'advisor_status': {'readonly': True},
+        'auto_execute_status': {'required': True},
+        'auto_execute_status_inherited_from': {'readonly': True},
+        'recommendations_status': {'readonly': True},
+        'last_checked': {'readonly': True},
+        'recommended_actions': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'advisor_status': {'key': 'properties.advisorStatus', 'type': 'AdvisorStatus'},
+        'auto_execute_status': {'key': 'properties.autoExecuteStatus', 'type': 'AutoExecuteStatus'},
+        'auto_execute_status_inherited_from': {'key': 'properties.autoExecuteStatusInheritedFrom', 'type': 'AutoExecuteStatusInheritedFrom'},
+        'recommendations_status': {'key': 'properties.recommendationsStatus', 'type': 'str'},
+        'last_checked': {'key': 'properties.lastChecked', 'type': 'iso-8601'},
+        'recommended_actions': {'key': 'properties.recommendedActions', 'type': '[RecommendedAction]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Advisor, self).__init__(**kwargs)
+        self.kind = None
+        self.location = None
+        self.advisor_status = None
+        self.auto_execute_status = kwargs.get('auto_execute_status', None)
+        self.auto_execute_status_inherited_from = None
+        self.recommendations_status = None
+        self.last_checked = None
+        self.recommended_actions = None
+
+
 class AutomaticTuningOptions(Model):
     """Automatic tuning properties for individual advisors.
 
@@ -152,119 +306,6 @@ class AutoPauseDelayTimeRange(Model):
         self.do_not_pause_value = None
 
 
-class Resource(Model):
-    """ARM resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
-class ProxyResource(Resource):
-    """ARM proxy resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
-class BackupLongTermRetentionPolicy(ProxyResource):
-    """A long term retention policy.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param weekly_retention: The weekly retention policy for an LTR backup in
-     an ISO 8601 format.
-    :type weekly_retention: str
-    :param monthly_retention: The monthly retention policy for an LTR backup
-     in an ISO 8601 format.
-    :type monthly_retention: str
-    :param yearly_retention: The yearly retention policy for an LTR backup in
-     an ISO 8601 format.
-    :type yearly_retention: str
-    :param week_of_year: The week of year to take the yearly backup in an ISO
-     8601 format.
-    :type week_of_year: int
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'weekly_retention': {'key': 'properties.weeklyRetention', 'type': 'str'},
-        'monthly_retention': {'key': 'properties.monthlyRetention', 'type': 'str'},
-        'yearly_retention': {'key': 'properties.yearlyRetention', 'type': 'str'},
-        'week_of_year': {'key': 'properties.weekOfYear', 'type': 'int'},
-    }
-
-    def __init__(self, **kwargs):
-        super(BackupLongTermRetentionPolicy, self).__init__(**kwargs)
-        self.weekly_retention = kwargs.get('weekly_retention', None)
-        self.monthly_retention = kwargs.get('monthly_retention', None)
-        self.yearly_retention = kwargs.get('yearly_retention', None)
-        self.week_of_year = kwargs.get('week_of_year', None)
-
-
 class BackupShortTermRetentionPolicy(ProxyResource):
     """A short term retention policy.
 
@@ -401,6 +442,50 @@ class CompleteDatabaseRestoreDefinition(Model):
     def __init__(self, **kwargs):
         super(CompleteDatabaseRestoreDefinition, self).__init__(**kwargs)
         self.last_backup_name = kwargs.get('last_backup_name', None)
+
+
+class CopyLongTermRetentionBackupParameters(Model):
+    """Contains the information necessary to perform long term retention backup
+    copy operation.
+
+    :param target_subscription_id: The subscription that owns the target
+     server
+    :type target_subscription_id: str
+    :param target_resource_group: The resource group that owns the target
+     server
+    :type target_resource_group: str
+    :param target_server_resource_id: The resource Id of the target server
+     that owns the database
+    :type target_server_resource_id: str
+    :param target_server_fully_qualified_domain_name: The fully qualified
+     domain name of the target server
+    :type target_server_fully_qualified_domain_name: str
+    :param target_database_name: The name of the database owns the copied
+     backup.
+    :type target_database_name: str
+    :param target_backup_storage_redundancy: The storage redundancy type of
+     the copied backup. Possible values include: 'Geo', 'Local', 'Zone'
+    :type target_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.TargetBackupStorageRedundancy
+    """
+
+    _attribute_map = {
+        'target_subscription_id': {'key': 'properties.targetSubscriptionId', 'type': 'str'},
+        'target_resource_group': {'key': 'properties.targetResourceGroup', 'type': 'str'},
+        'target_server_resource_id': {'key': 'properties.targetServerResourceId', 'type': 'str'},
+        'target_server_fully_qualified_domain_name': {'key': 'properties.targetServerFullyQualifiedDomainName', 'type': 'str'},
+        'target_database_name': {'key': 'properties.targetDatabaseName', 'type': 'str'},
+        'target_backup_storage_redundancy': {'key': 'properties.targetBackupStorageRedundancy', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CopyLongTermRetentionBackupParameters, self).__init__(**kwargs)
+        self.target_subscription_id = kwargs.get('target_subscription_id', None)
+        self.target_resource_group = kwargs.get('target_resource_group', None)
+        self.target_server_resource_id = kwargs.get('target_server_resource_id', None)
+        self.target_server_fully_qualified_domain_name = kwargs.get('target_server_fully_qualified_domain_name', None)
+        self.target_database_name = kwargs.get('target_database_name', None)
+        self.target_backup_storage_redundancy = kwargs.get('target_backup_storage_redundancy', None)
 
 
 class CreateDatabaseRestorePointDefinition(Model):
@@ -624,10 +709,16 @@ class Database(TrackedResource):
     :param auto_pause_delay: Time in minutes after which database is
      automatically paused. A value of -1 means that automatic pause is disabled
     :type auto_pause_delay: int
-    :param storage_account_type: The storage account type used to store
-     backups for this database. Possible values include: 'GRS', 'LRS', 'ZRS'
-    :type storage_account_type: str or
-     ~azure.mgmt.sql.models.StorageAccountType
+    :ivar current_backup_storage_redundancy: The storage account type used to
+     store backups for this database. Possible values include: 'Geo', 'Local',
+     'Zone'
+    :vartype current_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.CurrentBackupStorageRedundancy
+    :param requested_backup_storage_redundancy: The storage account type to be
+     used to store backups for this database. Possible values include: 'Geo',
+     'Local', 'Zone'
+    :type requested_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.RequestedBackupStorageRedundancy
     :param min_capacity: Minimal capacity that database will always have
      allocated, if not paused
     :type min_capacity: float
@@ -641,6 +732,13 @@ class Database(TrackedResource):
      to the database. This configuration defines the period when the
      maintenance updates will occur.
     :type maintenance_configuration_id: str
+    :param is_ledger_on: Whether or not this database is a ledger database,
+     which means all tables in the database are ledger tables. Note: the value
+     of this property cannot be changed after the database has been created.
+    :type is_ledger_on: bool
+    :ivar is_infra_encryption_enabled: Infra encryption is enabled for this
+     database.
+    :vartype is_infra_encryption_enabled: bool
     """
 
     _validation = {
@@ -660,8 +758,10 @@ class Database(TrackedResource):
         'max_log_size_bytes': {'readonly': True},
         'earliest_restore_date': {'readonly': True},
         'current_sku': {'readonly': True},
+        'current_backup_storage_redundancy': {'readonly': True},
         'paused_date': {'readonly': True},
         'resumed_date': {'readonly': True},
+        'is_infra_encryption_enabled': {'readonly': True},
     }
 
     _attribute_map = {
@@ -702,11 +802,14 @@ class Database(TrackedResource):
         'secondary_type': {'key': 'properties.secondaryType', 'type': 'str'},
         'current_sku': {'key': 'properties.currentSku', 'type': 'Sku'},
         'auto_pause_delay': {'key': 'properties.autoPauseDelay', 'type': 'int'},
-        'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
+        'current_backup_storage_redundancy': {'key': 'properties.currentBackupStorageRedundancy', 'type': 'str'},
+        'requested_backup_storage_redundancy': {'key': 'properties.requestedBackupStorageRedundancy', 'type': 'str'},
         'min_capacity': {'key': 'properties.minCapacity', 'type': 'float'},
         'paused_date': {'key': 'properties.pausedDate', 'type': 'iso-8601'},
         'resumed_date': {'key': 'properties.resumedDate', 'type': 'iso-8601'},
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
+        'is_ledger_on': {'key': 'properties.isLedgerOn', 'type': 'bool'},
+        'is_infra_encryption_enabled': {'key': 'properties.isInfraEncryptionEnabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -743,11 +846,14 @@ class Database(TrackedResource):
         self.secondary_type = kwargs.get('secondary_type', None)
         self.current_sku = None
         self.auto_pause_delay = kwargs.get('auto_pause_delay', None)
-        self.storage_account_type = kwargs.get('storage_account_type', None)
+        self.current_backup_storage_redundancy = None
+        self.requested_backup_storage_redundancy = kwargs.get('requested_backup_storage_redundancy', None)
         self.min_capacity = kwargs.get('min_capacity', None)
         self.paused_date = None
         self.resumed_date = None
         self.maintenance_configuration_id = kwargs.get('maintenance_configuration_id', None)
+        self.is_ledger_on = kwargs.get('is_ledger_on', None)
+        self.is_infra_encryption_enabled = None
 
 
 class DatabaseAutomaticTuning(ProxyResource):
@@ -811,27 +917,6 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     :vartype type: str
     :ivar kind: Resource kind.
     :vartype kind: str
-    :param state: Required. Specifies the state of the policy. If state is
-     Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required.
-     Possible values include: 'Enabled', 'Disabled'
-    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
-     https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint or isAzureMonitorTargetEnabled is required.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account.
-     If state is Enabled and storageEndpoint is specified, not specifying the
-     storageAccountAccessKey will use SQL server system-assigned managed
-     identity to access the storage.
-     Prerequisites for using managed identity authentication:
-     1. Assign SQL Server a system-assigned managed identity in Azure Active
-     Directory (AAD).
-     2. Grant SQL Server identity access to the storage account by adding
-     'Storage Blob Data Contributor' RBAC role to the server identity.
-     For more information, see [Auditing to storage using Managed Identity
-     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
-    :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
     :type retention_days: int
@@ -896,16 +981,13 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      For more information, see [Database-Level Audit
      Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
     :type audit_actions_and_groups: list[str]
-    :param storage_account_subscription_id: Specifies the blob storage
-     subscription Id.
-    :type storage_account_subscription_id: str
     :param is_storage_secondary_key_in_use: Specifies whether
      storageAccountAccessKey value is the storage's secondary key.
     :type is_storage_secondary_key_in_use: bool
     :param is_azure_monitor_target_enabled: Specifies whether audit events are
      sent to Azure Monitor.
-     In order to send the events to Azure Monitor, specify 'state' as 'Enabled'
-     and 'isAzureMonitorTargetEnabled' as true.
+     In order to send the events to Azure Monitor, specify 'State' as 'Enabled'
+     and 'IsAzureMonitorTargetEnabled' as true.
      When using REST API to configure auditing, Diagnostic Settings with
      'SQLSecurityAuditEvents' diagnostic logs category on the database should
      be also created.
@@ -924,6 +1006,30 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      The default minimum value is 1000 (1 second). The maximum is
      2,147,483,647.
     :type queue_delay_ms: int
+    :param state: Required. Specifies the state of the audit. If state is
+     Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required.
+     Possible values include: 'Enabled', 'Disabled'
+    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+     https://MyAccount.blob.core.windows.net). If state is Enabled,
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
+    :type storage_endpoint: str
+    :param storage_account_access_key: Specifies the identifier key of the
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
+    :type storage_account_access_key: str
+    :param storage_account_subscription_id: Specifies the blob storage
+     subscription Id.
+    :type storage_account_subscription_id: str
     """
 
     _validation = {
@@ -939,29 +1045,138 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'BlobAuditingPolicyState'},
-        'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
-        'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
         'audit_actions_and_groups': {'key': 'properties.auditActionsAndGroups', 'type': '[str]'},
-        'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
         'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
+        'state': {'key': 'properties.state', 'type': 'BlobAuditingPolicyState'},
+        'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
+        'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
+        'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(DatabaseBlobAuditingPolicy, self).__init__(**kwargs)
         self.kind = None
-        self.state = kwargs.get('state', None)
-        self.storage_endpoint = kwargs.get('storage_endpoint', None)
-        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
         self.retention_days = kwargs.get('retention_days', None)
         self.audit_actions_and_groups = kwargs.get('audit_actions_and_groups', None)
-        self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
         self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
         self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
         self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
+        self.state = kwargs.get('state', None)
+        self.storage_endpoint = kwargs.get('storage_endpoint', None)
+        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
+        self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
+
+
+class DatabaseColumn(ProxyResource):
+    """A database column resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param column_type: The column data type. Possible values include:
+     'image', 'text', 'uniqueidentifier', 'date', 'time', 'datetime2',
+     'datetimeoffset', 'tinyint', 'smallint', 'int', 'smalldatetime', 'real',
+     'money', 'datetime', 'float', 'sql_variant', 'ntext', 'bit', 'decimal',
+     'numeric', 'smallmoney', 'bigint', 'hierarchyid', 'geometry', 'geography',
+     'varbinary', 'varchar', 'binary', 'char', 'timestamp', 'nvarchar',
+     'nchar', 'xml', 'sysname'
+    :type column_type: str or ~azure.mgmt.sql.models.ColumnDataType
+    :param temporal_type: The table temporal type. Possible values include:
+     'NonTemporalTable', 'HistoryTable', 'SystemVersionedTemporalTable'
+    :type temporal_type: str or ~azure.mgmt.sql.models.TableTemporalType
+    :param memory_optimized: Whether or not the column belongs to a memory
+     optimized table.
+    :type memory_optimized: bool
+    :param is_computed: Whether or not the column is computed.
+    :type is_computed: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'column_type': {'key': 'properties.columnType', 'type': 'str'},
+        'temporal_type': {'key': 'properties.temporalType', 'type': 'str'},
+        'memory_optimized': {'key': 'properties.memoryOptimized', 'type': 'bool'},
+        'is_computed': {'key': 'properties.isComputed', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DatabaseColumn, self).__init__(**kwargs)
+        self.column_type = kwargs.get('column_type', None)
+        self.temporal_type = kwargs.get('temporal_type', None)
+        self.memory_optimized = kwargs.get('memory_optimized', None)
+        self.is_computed = kwargs.get('is_computed', None)
+
+
+class DatabaseExtensions(ProxyResource):
+    """An export managed database operation result resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar operation_mode: Required. Operation Mode. Default value:
+     "PolybaseImport" .
+    :vartype operation_mode: str
+    :param storage_key_type: Required. Storage key type. Possible values
+     include: 'SharedAccessKey', 'StorageAccessKey'
+    :type storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
+    :param storage_key: Required. Storage key.
+    :type storage_key: str
+    :param storage_uri: Required. Storage Uri.
+    :type storage_uri: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'operation_mode': {'required': True, 'constant': True},
+        'storage_key_type': {'required': True},
+        'storage_key': {'required': True},
+        'storage_uri': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'operation_mode': {'key': 'properties.operationMode', 'type': 'str'},
+        'storage_key_type': {'key': 'properties.storageKeyType', 'type': 'str'},
+        'storage_key': {'key': 'properties.storageKey', 'type': 'str'},
+        'storage_uri': {'key': 'properties.storageUri', 'type': 'str'},
+    }
+
+    operation_mode = "PolybaseImport"
+
+    def __init__(self, **kwargs):
+        super(DatabaseExtensions, self).__init__(**kwargs)
+        self.storage_key_type = kwargs.get('storage_key_type', None)
+        self.storage_key = kwargs.get('storage_key', None)
+        self.storage_uri = kwargs.get('storage_uri', None)
 
 
 class DatabaseOperation(ProxyResource):
@@ -1067,8 +1282,38 @@ class DatabaseOperation(ProxyResource):
         self.is_cancellable = None
 
 
+class DatabaseSchema(ProxyResource):
+    """A database schema resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DatabaseSchema, self).__init__(**kwargs)
+
+
 class DatabaseSecurityAlertPolicy(ProxyResource):
-    """Contains information about a database Threat Detection policy.
+    """A database security alert policy.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -1081,72 +1326,63 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: The geo-location where the resource lives
-    :type location: str
-    :ivar kind: Resource kind.
-    :vartype kind: str
-    :param state: Required. Specifies the state of the policy. If state is
-     Enabled, storageEndpoint and storageAccountAccessKey are required.
-     Possible values include: 'New', 'Enabled', 'Disabled'
-    :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
-    :param disabled_alerts: Specifies the semicolon-separated list of alerts
-     that are disabled, or empty string to disable no alerts. Possible values:
-     Sql_Injection; Sql_Injection_Vulnerability; Access_Anomaly;
-     Data_Exfiltration; Unsafe_Action.
-    :type disabled_alerts: str
-    :param email_addresses: Specifies the semicolon-separated list of e-mail
-     addresses to which the alert is sent.
-    :type email_addresses: str
+    :ivar system_data: SystemData of SecurityAlertPolicyResource.
+    :vartype system_data: ~azure.mgmt.sql.models.SystemData
+    :param state: Required. Specifies the state of the policy, whether it is
+     enabled or disabled or a policy has not been applied yet on the specific
+     database. Possible values include: 'Enabled', 'Disabled'
+    :type state: str or ~azure.mgmt.sql.models.SecurityAlertsPolicyState
+    :param disabled_alerts: Specifies an array of alerts that are disabled.
+     Allowed values are: Sql_Injection, Sql_Injection_Vulnerability,
+     Access_Anomaly, Data_Exfiltration, Unsafe_Action, Brute_Force
+    :type disabled_alerts: list[str]
+    :param email_addresses: Specifies an array of e-mail addresses to which
+     the alert is sent.
+    :type email_addresses: list[str]
     :param email_account_admins: Specifies that the alert is sent to the
-     account administrators. Possible values include: 'Enabled', 'Disabled'
-    :type email_account_admins: str or
-     ~azure.mgmt.sql.models.SecurityAlertPolicyEmailAccountAdmins
+     account administrators.
+    :type email_account_admins: bool
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). This blob storage will hold all
-     Threat Detection audit logs. If state is Enabled, storageEndpoint is
-     required.
+     Threat Detection audit logs.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     Threat Detection audit storage account. If state is Enabled,
-     storageAccountAccessKey is required.
+     Threat Detection audit storage account.
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the Threat
      Detection audit logs.
     :type retention_days: int
-    :param use_server_default: Specifies whether to use the default server
-     policy. Possible values include: 'Enabled', 'Disabled'
-    :type use_server_default: str or
-     ~azure.mgmt.sql.models.SecurityAlertPolicyUseServerDefault
+    :ivar creation_time: Specifies the UTC creation time of the policy.
+    :vartype creation_time: datetime
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'readonly': True},
+        'system_data': {'readonly': True},
         'state': {'required': True},
+        'creation_time': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'SecurityAlertPolicyState'},
-        'disabled_alerts': {'key': 'properties.disabledAlerts', 'type': 'str'},
-        'email_addresses': {'key': 'properties.emailAddresses', 'type': 'str'},
-        'email_account_admins': {'key': 'properties.emailAccountAdmins', 'type': 'SecurityAlertPolicyEmailAccountAdmins'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'state': {'key': 'properties.state', 'type': 'SecurityAlertsPolicyState'},
+        'disabled_alerts': {'key': 'properties.disabledAlerts', 'type': '[str]'},
+        'email_addresses': {'key': 'properties.emailAddresses', 'type': '[str]'},
+        'email_account_admins': {'key': 'properties.emailAccountAdmins', 'type': 'bool'},
         'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
         'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
-        'use_server_default': {'key': 'properties.useServerDefault', 'type': 'SecurityAlertPolicyUseServerDefault'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
         super(DatabaseSecurityAlertPolicy, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.kind = None
+        self.system_data = None
         self.state = kwargs.get('state', None)
         self.disabled_alerts = kwargs.get('disabled_alerts', None)
         self.email_addresses = kwargs.get('email_addresses', None)
@@ -1154,7 +1390,46 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
         self.storage_endpoint = kwargs.get('storage_endpoint', None)
         self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
         self.retention_days = kwargs.get('retention_days', None)
-        self.use_server_default = kwargs.get('use_server_default', None)
+        self.creation_time = None
+
+
+class DatabaseTable(ProxyResource):
+    """A database table resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param temporal_type: The table temporal type. Possible values include:
+     'NonTemporalTable', 'HistoryTable', 'SystemVersionedTemporalTable'
+    :type temporal_type: str or ~azure.mgmt.sql.models.TableTemporalType
+    :param memory_optimized: Whether or not the table is memory optimized.
+    :type memory_optimized: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'temporal_type': {'key': 'properties.temporalType', 'type': 'str'},
+        'memory_optimized': {'key': 'properties.memoryOptimized', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DatabaseTable, self).__init__(**kwargs)
+        self.temporal_type = kwargs.get('temporal_type', None)
+        self.memory_optimized = kwargs.get('memory_optimized', None)
 
 
 class DatabaseUpdate(Model):
@@ -1287,10 +1562,16 @@ class DatabaseUpdate(Model):
     :param auto_pause_delay: Time in minutes after which database is
      automatically paused. A value of -1 means that automatic pause is disabled
     :type auto_pause_delay: int
-    :param storage_account_type: The storage account type used to store
-     backups for this database. Possible values include: 'GRS', 'LRS', 'ZRS'
-    :type storage_account_type: str or
-     ~azure.mgmt.sql.models.StorageAccountType
+    :ivar current_backup_storage_redundancy: The storage account type used to
+     store backups for this database. Possible values include: 'Geo', 'Local',
+     'Zone'
+    :vartype current_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.CurrentBackupStorageRedundancy
+    :param requested_backup_storage_redundancy: The storage account type to be
+     used to store backups for this database. Possible values include: 'Geo',
+     'Local', 'Zone'
+    :type requested_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.RequestedBackupStorageRedundancy
     :param min_capacity: Minimal capacity that database will always have
      allocated, if not paused
     :type min_capacity: float
@@ -1304,6 +1585,13 @@ class DatabaseUpdate(Model):
      to the database. This configuration defines the period when the
      maintenance updates will occur.
     :type maintenance_configuration_id: str
+    :param is_ledger_on: Whether or not this database is a ledger database,
+     which means all tables in the database are ledger tables. Note: the value
+     of this property cannot be changed after the database has been created.
+    :type is_ledger_on: bool
+    :ivar is_infra_encryption_enabled: Infra encryption is enabled for this
+     database.
+    :vartype is_infra_encryption_enabled: bool
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -1319,8 +1607,10 @@ class DatabaseUpdate(Model):
         'max_log_size_bytes': {'readonly': True},
         'earliest_restore_date': {'readonly': True},
         'current_sku': {'readonly': True},
+        'current_backup_storage_redundancy': {'readonly': True},
         'paused_date': {'readonly': True},
         'resumed_date': {'readonly': True},
+        'is_infra_encryption_enabled': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1354,11 +1644,14 @@ class DatabaseUpdate(Model):
         'secondary_type': {'key': 'properties.secondaryType', 'type': 'str'},
         'current_sku': {'key': 'properties.currentSku', 'type': 'Sku'},
         'auto_pause_delay': {'key': 'properties.autoPauseDelay', 'type': 'int'},
-        'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
+        'current_backup_storage_redundancy': {'key': 'properties.currentBackupStorageRedundancy', 'type': 'str'},
+        'requested_backup_storage_redundancy': {'key': 'properties.requestedBackupStorageRedundancy', 'type': 'str'},
         'min_capacity': {'key': 'properties.minCapacity', 'type': 'float'},
         'paused_date': {'key': 'properties.pausedDate', 'type': 'iso-8601'},
         'resumed_date': {'key': 'properties.resumedDate', 'type': 'iso-8601'},
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
+        'is_ledger_on': {'key': 'properties.isLedgerOn', 'type': 'bool'},
+        'is_infra_encryption_enabled': {'key': 'properties.isInfraEncryptionEnabled', 'type': 'bool'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -1394,66 +1687,65 @@ class DatabaseUpdate(Model):
         self.secondary_type = kwargs.get('secondary_type', None)
         self.current_sku = None
         self.auto_pause_delay = kwargs.get('auto_pause_delay', None)
-        self.storage_account_type = kwargs.get('storage_account_type', None)
+        self.current_backup_storage_redundancy = None
+        self.requested_backup_storage_redundancy = kwargs.get('requested_backup_storage_redundancy', None)
         self.min_capacity = kwargs.get('min_capacity', None)
         self.paused_date = None
         self.resumed_date = None
         self.maintenance_configuration_id = kwargs.get('maintenance_configuration_id', None)
+        self.is_ledger_on = kwargs.get('is_ledger_on', None)
+        self.is_infra_encryption_enabled = None
         self.tags = kwargs.get('tags', None)
 
 
-class DatabaseUsage(Model):
-    """The database usages.
+class DatabaseUsage(ProxyResource):
+    """Usage metric of a database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: The name of the usage metric.
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar resource_name: The name of the resource.
-    :vartype resource_name: str
-    :ivar display_name: The usage metric display name.
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar display_name: User-readable name of the metric.
     :vartype display_name: str
-    :ivar current_value: The current value of the usage metric.
+    :ivar current_value: Current value of the metric.
     :vartype current_value: float
-    :ivar limit: The current limit of the usage metric.
+    :ivar limit: Boundary value of the metric.
     :vartype limit: float
-    :ivar unit: The units of the usage metric.
+    :ivar unit: Unit of the metric.
     :vartype unit: str
-    :ivar next_reset_time: The next reset time for the usage metric (ISO8601
-     format).
-    :vartype next_reset_time: datetime
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
-        'resource_name': {'readonly': True},
+        'type': {'readonly': True},
         'display_name': {'readonly': True},
         'current_value': {'readonly': True},
         'limit': {'readonly': True},
         'unit': {'readonly': True},
-        'next_reset_time': {'readonly': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'resource_name': {'key': 'resourceName', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'float'},
-        'limit': {'key': 'limit', 'type': 'float'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'next_reset_time': {'key': 'nextResetTime', 'type': 'iso-8601'},
+        'type': {'key': 'type', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'current_value': {'key': 'properties.currentValue', 'type': 'float'},
+        'limit': {'key': 'properties.limit', 'type': 'float'},
+        'unit': {'key': 'properties.unit', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(DatabaseUsage, self).__init__(**kwargs)
-        self.name = None
-        self.resource_name = None
         self.display_name = None
         self.current_value = None
         self.limit = None
         self.unit = None
-        self.next_reset_time = None
 
 
 class DatabaseVulnerabilityAssessment(ProxyResource):
@@ -1473,9 +1765,9 @@ class DatabaseVulnerabilityAssessment(ProxyResource):
      is required if server level vulnerability assessment policy doesn't set
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has read and write access to the blob container specified in
-     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
-     specified, StorageContainerSasKey is required.
+     has write access to the blob container specified in 'storageContainerPath'
+     parameter. If 'storageAccountAccessKey' isn't specified,
+     StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -1791,6 +2083,92 @@ class DataMaskingRule(ProxyResource):
         self.replacement_string = kwargs.get('replacement_string', None)
         self.location = None
         self.kind = None
+
+
+class DataWarehouseUserActivities(ProxyResource):
+    """User activities of a data warehouse.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar active_queries_count: Count of running and suspended queries.
+    :vartype active_queries_count: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'active_queries_count': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'active_queries_count': {'key': 'properties.activeQueriesCount', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataWarehouseUserActivities, self).__init__(**kwargs)
+        self.active_queries_count = None
+
+
+class DeletedServer(ProxyResource):
+    """A deleted server.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar version: The version of the deleted server.
+    :vartype version: str
+    :ivar deletion_time: The deletion time of the deleted server.
+    :vartype deletion_time: datetime
+    :ivar original_id: The original ID of the server before deletion.
+    :vartype original_id: str
+    :ivar fully_qualified_domain_name: The fully qualified domain name of the
+     server.
+    :vartype fully_qualified_domain_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'version': {'readonly': True},
+        'deletion_time': {'readonly': True},
+        'original_id': {'readonly': True},
+        'fully_qualified_domain_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'deletion_time': {'key': 'properties.deletionTime', 'type': 'iso-8601'},
+        'original_id': {'key': 'properties.originalId', 'type': 'str'},
+        'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DeletedServer, self).__init__(**kwargs)
+        self.version = None
+        self.deletion_time = None
+        self.original_id = None
+        self.fully_qualified_domain_name = None
 
 
 class EditionCapability(Model):
@@ -2620,6 +2998,9 @@ class EncryptionProtector(ProxyResource):
     :vartype uri: str
     :ivar thumbprint: Thumbprint of the server key.
     :vartype thumbprint: str
+    :param auto_rotation_enabled: Key auto rotation opt-in flag. Either true
+     or false.
+    :type auto_rotation_enabled: bool
     """
 
     _validation = {
@@ -2645,6 +3026,7 @@ class EncryptionProtector(ProxyResource):
         'server_key_type': {'key': 'properties.serverKeyType', 'type': 'str'},
         'uri': {'key': 'properties.uri', 'type': 'str'},
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
+        'auto_rotation_enabled': {'key': 'properties.autoRotationEnabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -2656,6 +3038,7 @@ class EncryptionProtector(ProxyResource):
         self.server_key_type = kwargs.get('server_key_type', None)
         self.uri = None
         self.thumbprint = None
+        self.auto_rotation_enabled = kwargs.get('auto_rotation_enabled', None)
 
 
 class ExportDatabaseDefinition(Model):
@@ -2728,27 +3111,6 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
     :param predicate_expression: Specifies condition of where clause when
      creating an audit.
     :type predicate_expression: str
-    :param state: Required. Specifies the state of the policy. If state is
-     Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required.
-     Possible values include: 'Enabled', 'Disabled'
-    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
-     https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint or isAzureMonitorTargetEnabled is required.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account.
-     If state is Enabled and storageEndpoint is specified, not specifying the
-     storageAccountAccessKey will use SQL server system-assigned managed
-     identity to access the storage.
-     Prerequisites for using managed identity authentication:
-     1. Assign SQL Server a system-assigned managed identity in Azure Active
-     Directory (AAD).
-     2. Grant SQL Server identity access to the storage account by adding
-     'Storage Blob Data Contributor' RBAC role to the server identity.
-     For more information, see [Auditing to storage using Managed Identity
-     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
-    :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
     :type retention_days: int
@@ -2813,16 +3175,13 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      For more information, see [Database-Level Audit
      Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
     :type audit_actions_and_groups: list[str]
-    :param storage_account_subscription_id: Specifies the blob storage
-     subscription Id.
-    :type storage_account_subscription_id: str
     :param is_storage_secondary_key_in_use: Specifies whether
      storageAccountAccessKey value is the storage's secondary key.
     :type is_storage_secondary_key_in_use: bool
     :param is_azure_monitor_target_enabled: Specifies whether audit events are
      sent to Azure Monitor.
-     In order to send the events to Azure Monitor, specify 'state' as 'Enabled'
-     and 'isAzureMonitorTargetEnabled' as true.
+     In order to send the events to Azure Monitor, specify 'State' as 'Enabled'
+     and 'IsAzureMonitorTargetEnabled' as true.
      When using REST API to configure auditing, Diagnostic Settings with
      'SQLSecurityAuditEvents' diagnostic logs category on the database should
      be also created.
@@ -2841,6 +3200,30 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      The default minimum value is 1000 (1 second). The maximum is
      2,147,483,647.
     :type queue_delay_ms: int
+    :param state: Required. Specifies the state of the audit. If state is
+     Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required.
+     Possible values include: 'Enabled', 'Disabled'
+    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+     https://MyAccount.blob.core.windows.net). If state is Enabled,
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
+    :type storage_endpoint: str
+    :param storage_account_access_key: Specifies the identifier key of the
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
+    :type storage_account_access_key: str
+    :param storage_account_subscription_id: Specifies the blob storage
+     subscription Id.
+    :type storage_account_subscription_id: str
     """
 
     _validation = {
@@ -2855,29 +3238,29 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'predicate_expression': {'key': 'properties.predicateExpression', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'BlobAuditingPolicyState'},
-        'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
-        'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
         'audit_actions_and_groups': {'key': 'properties.auditActionsAndGroups', 'type': '[str]'},
-        'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
         'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
+        'state': {'key': 'properties.state', 'type': 'BlobAuditingPolicyState'},
+        'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
+        'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
+        'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ExtendedDatabaseBlobAuditingPolicy, self).__init__(**kwargs)
         self.predicate_expression = kwargs.get('predicate_expression', None)
-        self.state = kwargs.get('state', None)
-        self.storage_endpoint = kwargs.get('storage_endpoint', None)
-        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
         self.retention_days = kwargs.get('retention_days', None)
         self.audit_actions_and_groups = kwargs.get('audit_actions_and_groups', None)
-        self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
         self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
         self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
         self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
+        self.state = kwargs.get('state', None)
+        self.storage_endpoint = kwargs.get('storage_endpoint', None)
+        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
+        self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
 
 
 class ExtendedServerBlobAuditingPolicy(ProxyResource):
@@ -2894,30 +3277,25 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :param is_devops_audit_enabled: Specifies the state of devops audit. If
+     state is Enabled, devops logs will be sent to Azure Monitor.
+     In order to send the events to Azure Monitor, specify 'State' as
+     'Enabled', 'IsAzureMonitorTargetEnabled' as true and
+     'IsDevopsAuditEnabled' as true
+     When using REST API to configure auditing, Diagnostic Settings with
+     'DevOpsOperationsAudit' diagnostic logs category on the master database
+     should also be created.
+     Diagnostic Settings URI format:
+     PUT
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+     For more information, see [Diagnostic Settings REST
+     API](https://go.microsoft.com/fwlink/?linkid=2033207)
+     or [Diagnostic Settings
+     PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
+    :type is_devops_audit_enabled: bool
     :param predicate_expression: Specifies condition of where clause when
      creating an audit.
     :type predicate_expression: str
-    :param state: Required. Specifies the state of the policy. If state is
-     Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required.
-     Possible values include: 'Enabled', 'Disabled'
-    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
-     https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint or isAzureMonitorTargetEnabled is required.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account.
-     If state is Enabled and storageEndpoint is specified, not specifying the
-     storageAccountAccessKey will use SQL server system-assigned managed
-     identity to access the storage.
-     Prerequisites for using managed identity authentication:
-     1. Assign SQL Server a system-assigned managed identity in Azure Active
-     Directory (AAD).
-     2. Grant SQL Server identity access to the storage account by adding
-     'Storage Blob Data Contributor' RBAC role to the server identity.
-     For more information, see [Auditing to storage using Managed Identity
-     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
-    :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
     :type retention_days: int
@@ -2982,16 +3360,13 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      For more information, see [Database-Level Audit
      Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
     :type audit_actions_and_groups: list[str]
-    :param storage_account_subscription_id: Specifies the blob storage
-     subscription Id.
-    :type storage_account_subscription_id: str
     :param is_storage_secondary_key_in_use: Specifies whether
      storageAccountAccessKey value is the storage's secondary key.
     :type is_storage_secondary_key_in_use: bool
     :param is_azure_monitor_target_enabled: Specifies whether audit events are
      sent to Azure Monitor.
-     In order to send the events to Azure Monitor, specify 'state' as 'Enabled'
-     and 'isAzureMonitorTargetEnabled' as true.
+     In order to send the events to Azure Monitor, specify 'State' as 'Enabled'
+     and 'IsAzureMonitorTargetEnabled' as true.
      When using REST API to configure auditing, Diagnostic Settings with
      'SQLSecurityAuditEvents' diagnostic logs category on the database should
      be also created.
@@ -3010,6 +3385,30 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      The default minimum value is 1000 (1 second). The maximum is
      2,147,483,647.
     :type queue_delay_ms: int
+    :param state: Required. Specifies the state of the audit. If state is
+     Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required.
+     Possible values include: 'Enabled', 'Disabled'
+    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+     https://MyAccount.blob.core.windows.net). If state is Enabled,
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
+    :type storage_endpoint: str
+    :param storage_account_access_key: Specifies the identifier key of the
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
+    :type storage_account_access_key: str
+    :param storage_account_subscription_id: Specifies the blob storage
+     subscription Id.
+    :type storage_account_subscription_id: str
     """
 
     _validation = {
@@ -3023,30 +3422,32 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'is_devops_audit_enabled': {'key': 'properties.isDevopsAuditEnabled', 'type': 'bool'},
         'predicate_expression': {'key': 'properties.predicateExpression', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'BlobAuditingPolicyState'},
-        'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
-        'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
         'audit_actions_and_groups': {'key': 'properties.auditActionsAndGroups', 'type': '[str]'},
-        'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
         'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
+        'state': {'key': 'properties.state', 'type': 'BlobAuditingPolicyState'},
+        'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
+        'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
+        'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ExtendedServerBlobAuditingPolicy, self).__init__(**kwargs)
+        self.is_devops_audit_enabled = kwargs.get('is_devops_audit_enabled', None)
         self.predicate_expression = kwargs.get('predicate_expression', None)
-        self.state = kwargs.get('state', None)
-        self.storage_endpoint = kwargs.get('storage_endpoint', None)
-        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
         self.retention_days = kwargs.get('retention_days', None)
         self.audit_actions_and_groups = kwargs.get('audit_actions_and_groups', None)
-        self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
         self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
         self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
         self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
+        self.state = kwargs.get('state', None)
+        self.storage_endpoint = kwargs.get('storage_endpoint', None)
+        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
+        self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
 
 
 class FailoverGroup(ProxyResource):
@@ -3208,60 +3609,121 @@ class FailoverGroupUpdate(Model):
         self.tags = kwargs.get('tags', None)
 
 
-class FirewallRule(ProxyResource):
-    """Represents a server firewall rule.
+class ResourceWithWritableName(Model):
+    """ARM resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
+    :param name: Resource name.
+    :type name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar kind: Kind of server that contains this firewall rule.
-    :vartype kind: str
-    :ivar location: Location of the server that contains this firewall rule.
-    :vartype location: str
-    :param start_ip_address: Required. The start IP address of the firewall
-     rule. Must be IPv4 format. Use value '0.0.0.0' to represent all
-     Azure-internal IP addresses.
-    :type start_ip_address: str
-    :param end_ip_address: Required. The end IP address of the firewall rule.
-     Must be IPv4 format. Must be greater than or equal to startIpAddress. Use
-     value '0.0.0.0' to represent all Azure-internal IP addresses.
-    :type end_ip_address: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'readonly': True},
-        'location': {'readonly': True},
-        'start_ip_address': {'required': True},
-        'end_ip_address': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceWithWritableName, self).__init__(**kwargs)
+        self.id = None
+        self.name = kwargs.get('name', None)
+        self.type = None
+
+
+class ProxyResourceWithWritableName(ResourceWithWritableName):
+    """ARM proxy resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :param name: Resource name.
+    :type name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProxyResourceWithWritableName, self).__init__(**kwargs)
+
+
+class FirewallRule(ProxyResourceWithWritableName):
+    """A server firewall rule.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :param name: Resource name.
+    :type name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param start_ip_address: The start IP address of the firewall rule. Must
+     be IPv4 format. Use value '0.0.0.0' for all Azure-internal IP addresses.
+    :type start_ip_address: str
+    :param end_ip_address: The end IP address of the firewall rule. Must be
+     IPv4 format. Must be greater than or equal to startIpAddress. Use value
+     '0.0.0.0' for all Azure-internal IP addresses.
+    :type end_ip_address: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
         'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(FirewallRule, self).__init__(**kwargs)
-        self.kind = None
-        self.location = None
         self.start_ip_address = kwargs.get('start_ip_address', None)
         self.end_ip_address = kwargs.get('end_ip_address', None)
+
+
+class FirewallRuleList(Model):
+    """A list of server firewall rules.
+
+    :param values:
+    :type values: list[~azure.mgmt.sql.models.FirewallRule]
+    """
+
+    _attribute_map = {
+        'values': {'key': 'values', 'type': '[FirewallRule]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FirewallRuleList, self).__init__(**kwargs)
+        self.values = kwargs.get('values', None)
 
 
 class GeoBackupPolicy(ProxyResource):
@@ -3370,6 +3832,71 @@ class ImportExistingDatabaseDefinition(Model):
         self.administrator_login_password = kwargs.get('administrator_login_password', None)
         self.authentication_type = kwargs.get('authentication_type', None)
         self.network_isolation = kwargs.get('network_isolation', None)
+
+
+class ImportExportExtensionsOperationResult(ProxyResource):
+    """An Extension operation result resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar request_id: Request Id.
+    :vartype request_id: str
+    :ivar request_type: Request type.
+    :vartype request_type: str
+    :ivar last_modified_time: Last modified time.
+    :vartype last_modified_time: str
+    :ivar server_name: Server name.
+    :vartype server_name: str
+    :ivar database_name: Database name.
+    :vartype database_name: str
+    :ivar status: Operation status.
+    :vartype status: str
+    :ivar error_message: Error message.
+    :vartype error_message: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'request_id': {'readonly': True},
+        'request_type': {'readonly': True},
+        'last_modified_time': {'readonly': True},
+        'server_name': {'readonly': True},
+        'database_name': {'readonly': True},
+        'status': {'readonly': True},
+        'error_message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'request_id': {'key': 'properties.requestId', 'type': 'str'},
+        'request_type': {'key': 'properties.requestType', 'type': 'str'},
+        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'str'},
+        'server_name': {'key': 'properties.serverName', 'type': 'str'},
+        'database_name': {'key': 'properties.databaseName', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ImportExportExtensionsOperationResult, self).__init__(**kwargs)
+        self.request_id = None
+        self.request_type = None
+        self.last_modified_time = None
+        self.server_name = None
+        self.database_name = None
+        self.status = None
+        self.error_message = None
 
 
 class ImportExportOperationResult(ProxyResource):
@@ -4148,10 +4675,10 @@ class JobSchedule(Model):
     """Scheduling properties of a job.
 
     :param start_time: Schedule start time. Default value:
-     "0001-01-01T00:00:00Z" .
+     "0001-01-01T00:00:00+00:00" .
     :type start_time: datetime
-    :param end_time: Schedule end time. Default value: "9999-12-31T11:59:59Z"
-     .
+    :param end_time: Schedule end time. Default value:
+     "9999-12-31T11:59:59+00:00" .
     :type end_time: datetime
     :param type: Schedule interval type. Possible values include: 'Once',
      'Recurring'. Default value: "Once" .
@@ -4159,7 +4686,7 @@ class JobSchedule(Model):
     :param enabled: Whether or not the schedule is enabled.
     :type enabled: bool
     :param interval: Value of the schedule's recurring interval, if the
-     schedule type is recurring. ISO8601 duration format.
+     ScheduleType is recurring. ISO8601 duration format.
     :type interval: str
     """
 
@@ -4173,8 +4700,8 @@ class JobSchedule(Model):
 
     def __init__(self, **kwargs):
         super(JobSchedule, self).__init__(**kwargs)
-        self.start_time = kwargs.get('start_time', "0001-01-01T00:00:00Z")
-        self.end_time = kwargs.get('end_time', "9999-12-31T11:59:59Z")
+        self.start_time = kwargs.get('start_time', "0001-01-01T00:00:00+00:00")
+        self.end_time = kwargs.get('end_time', "9999-12-31T11:59:59+00:00")
         self.type = kwargs.get('type', "Once")
         self.enabled = kwargs.get('enabled', None)
         self.interval = kwargs.get('interval', None)
@@ -4488,6 +5015,48 @@ class JobVersion(ProxyResource):
         super(JobVersion, self).__init__(**kwargs)
 
 
+class LedgerDigestUploads(ProxyResource):
+    """Azure SQL Database ledger digest upload settings.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param digest_storage_endpoint: The digest storage endpoint, which must be
+     either an Azure blob storage endpoint or an URI for Azure Confidential
+     Ledger.
+    :type digest_storage_endpoint: str
+    :ivar state: Specifies the state of ledger digest upload. Possible values
+     include: 'Enabled', 'Disabled'
+    :vartype state: str or ~azure.mgmt.sql.models.LedgerDigestUploadsState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'digest_storage_endpoint': {'key': 'properties.digestStorageEndpoint', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'LedgerDigestUploadsState'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LedgerDigestUploads, self).__init__(**kwargs)
+        self.digest_storage_endpoint = kwargs.get('digest_storage_endpoint', None)
+        self.state = None
+
+
 class LicenseTypeCapability(Model):
     """The license type capability.
 
@@ -4621,6 +5190,14 @@ class LongTermRetentionBackup(ProxyResource):
     :ivar backup_expiration_time: The time the long term retention backup will
      expire.
     :vartype backup_expiration_time: datetime
+    :ivar backup_storage_redundancy: The storage redundancy type of the
+     backup. Possible values include: 'Geo', 'Local', 'Zone'
+    :vartype backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :param requested_backup_storage_redundancy: The storage redundancy type of
+     the backup. Possible values include: 'Geo', 'Local', 'Zone'
+    :type requested_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
     """
 
     _validation = {
@@ -4633,6 +5210,7 @@ class LongTermRetentionBackup(ProxyResource):
         'database_deletion_time': {'readonly': True},
         'backup_time': {'readonly': True},
         'backup_expiration_time': {'readonly': True},
+        'backup_storage_redundancy': {'readonly': True},
     }
 
     _attribute_map = {
@@ -4645,6 +5223,8 @@ class LongTermRetentionBackup(ProxyResource):
         'database_deletion_time': {'key': 'properties.databaseDeletionTime', 'type': 'iso-8601'},
         'backup_time': {'key': 'properties.backupTime', 'type': 'iso-8601'},
         'backup_expiration_time': {'key': 'properties.backupExpirationTime', 'type': 'iso-8601'},
+        'backup_storage_redundancy': {'key': 'properties.backupStorageRedundancy', 'type': 'str'},
+        'requested_backup_storage_redundancy': {'key': 'properties.requestedBackupStorageRedundancy', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -4655,6 +5235,125 @@ class LongTermRetentionBackup(ProxyResource):
         self.database_deletion_time = None
         self.backup_time = None
         self.backup_expiration_time = None
+        self.backup_storage_redundancy = None
+        self.requested_backup_storage_redundancy = kwargs.get('requested_backup_storage_redundancy', None)
+
+
+class LongTermRetentionBackupOperationResult(ProxyResource):
+    """A LongTermRetentionBackup operation result resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar request_id: Request Id.
+    :vartype request_id: str
+    :ivar operation_type: Operation type.
+    :vartype operation_type: str
+    :ivar from_backup_resource_id: Source backup resource id
+    :vartype from_backup_resource_id: str
+    :ivar to_backup_resource_id: Target backup resource id
+    :vartype to_backup_resource_id: str
+    :ivar target_backup_storage_redundancy: The storage redundancy type of the
+     copied backup. Possible values include: 'Geo', 'Local', 'Zone'
+    :vartype target_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :ivar status: Operation status
+    :vartype status: str
+    :ivar message: Progress message
+    :vartype message: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'request_id': {'readonly': True},
+        'operation_type': {'readonly': True},
+        'from_backup_resource_id': {'readonly': True},
+        'to_backup_resource_id': {'readonly': True},
+        'target_backup_storage_redundancy': {'readonly': True},
+        'status': {'readonly': True},
+        'message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'request_id': {'key': 'properties.requestId', 'type': 'str'},
+        'operation_type': {'key': 'properties.operationType', 'type': 'str'},
+        'from_backup_resource_id': {'key': 'properties.fromBackupResourceId', 'type': 'str'},
+        'to_backup_resource_id': {'key': 'properties.toBackupResourceId', 'type': 'str'},
+        'target_backup_storage_redundancy': {'key': 'properties.targetBackupStorageRedundancy', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'message': {'key': 'properties.message', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LongTermRetentionBackupOperationResult, self).__init__(**kwargs)
+        self.request_id = None
+        self.operation_type = None
+        self.from_backup_resource_id = None
+        self.to_backup_resource_id = None
+        self.target_backup_storage_redundancy = None
+        self.status = None
+        self.message = None
+
+
+class LongTermRetentionPolicy(ProxyResource):
+    """A long term retention policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param weekly_retention: The weekly retention policy for an LTR backup in
+     an ISO 8601 format.
+    :type weekly_retention: str
+    :param monthly_retention: The monthly retention policy for an LTR backup
+     in an ISO 8601 format.
+    :type monthly_retention: str
+    :param yearly_retention: The yearly retention policy for an LTR backup in
+     an ISO 8601 format.
+    :type yearly_retention: str
+    :param week_of_year: The week of year to take the yearly backup in an ISO
+     8601 format.
+    :type week_of_year: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'weekly_retention': {'key': 'properties.weeklyRetention', 'type': 'str'},
+        'monthly_retention': {'key': 'properties.monthlyRetention', 'type': 'str'},
+        'yearly_retention': {'key': 'properties.yearlyRetention', 'type': 'str'},
+        'week_of_year': {'key': 'properties.weekOfYear', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LongTermRetentionPolicy, self).__init__(**kwargs)
+        self.weekly_retention = kwargs.get('weekly_retention', None)
+        self.monthly_retention = kwargs.get('monthly_retention', None)
+        self.yearly_retention = kwargs.get('yearly_retention', None)
+        self.week_of_year = kwargs.get('week_of_year', None)
 
 
 class MaintenanceConfigurationCapability(Model):
@@ -4694,6 +5393,131 @@ class MaintenanceConfigurationCapability(Model):
         self.zone_redundant = None
         self.status = None
         self.reason = kwargs.get('reason', None)
+
+
+class MaintenanceWindowOptions(ProxyResource):
+    """Maintenance window options.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param is_enabled: Whether maintenance windows are enabled for the
+     database.
+    :type is_enabled: bool
+    :param maintenance_window_cycles: Available maintenance cycles e.g.
+     {Saturday, 0, 48*60}, {Wednesday, 0, 24*60}.
+    :type maintenance_window_cycles:
+     list[~azure.mgmt.sql.models.MaintenanceWindowTimeRange]
+    :param min_duration_in_minutes: Minimum duration of maintenance window.
+    :type min_duration_in_minutes: int
+    :param default_duration_in_minutes: Default duration for maintenance
+     window.
+    :type default_duration_in_minutes: int
+    :param min_cycles: Minimum number of maintenance windows cycles to be set
+     on the database.
+    :type min_cycles: int
+    :param time_granularity_in_minutes: Time granularity in minutes for
+     maintenance windows.
+    :type time_granularity_in_minutes: int
+    :param allow_multiple_maintenance_windows_per_cycle: Whether we allow
+     multiple maintenance windows per cycle.
+    :type allow_multiple_maintenance_windows_per_cycle: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
+        'maintenance_window_cycles': {'key': 'properties.maintenanceWindowCycles', 'type': '[MaintenanceWindowTimeRange]'},
+        'min_duration_in_minutes': {'key': 'properties.minDurationInMinutes', 'type': 'int'},
+        'default_duration_in_minutes': {'key': 'properties.defaultDurationInMinutes', 'type': 'int'},
+        'min_cycles': {'key': 'properties.minCycles', 'type': 'int'},
+        'time_granularity_in_minutes': {'key': 'properties.timeGranularityInMinutes', 'type': 'int'},
+        'allow_multiple_maintenance_windows_per_cycle': {'key': 'properties.allowMultipleMaintenanceWindowsPerCycle', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MaintenanceWindowOptions, self).__init__(**kwargs)
+        self.is_enabled = kwargs.get('is_enabled', None)
+        self.maintenance_window_cycles = kwargs.get('maintenance_window_cycles', None)
+        self.min_duration_in_minutes = kwargs.get('min_duration_in_minutes', None)
+        self.default_duration_in_minutes = kwargs.get('default_duration_in_minutes', None)
+        self.min_cycles = kwargs.get('min_cycles', None)
+        self.time_granularity_in_minutes = kwargs.get('time_granularity_in_minutes', None)
+        self.allow_multiple_maintenance_windows_per_cycle = kwargs.get('allow_multiple_maintenance_windows_per_cycle', None)
+
+
+class MaintenanceWindows(ProxyResource):
+    """Maintenance windows.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param time_ranges:
+    :type time_ranges: list[~azure.mgmt.sql.models.MaintenanceWindowTimeRange]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'time_ranges': {'key': 'properties.timeRanges', 'type': '[MaintenanceWindowTimeRange]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MaintenanceWindows, self).__init__(**kwargs)
+        self.time_ranges = kwargs.get('time_ranges', None)
+
+
+class MaintenanceWindowTimeRange(Model):
+    """Maintenance window time range.
+
+    :param day_of_week: Day of maintenance window. Possible values include:
+     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
+     'Saturday'
+    :type day_of_week: str or ~azure.mgmt.sql.models.DayOfWeek
+    :param start_time: Start time minutes offset from 12am.
+    :type start_time: str
+    :param duration: Duration of maintenance window in minutes.
+    :type duration: str
+    """
+
+    _attribute_map = {
+        'day_of_week': {'key': 'dayOfWeek', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'duration': {'key': 'duration', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MaintenanceWindowTimeRange, self).__init__(**kwargs)
+        self.day_of_week = kwargs.get('day_of_week', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.duration = kwargs.get('duration', None)
 
 
 class ManagedBackupShortTermRetentionPolicy(ProxyResource):
@@ -4972,7 +5796,7 @@ class ManagedDatabaseSecurityAlertPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
     :param disabled_alerts: Specifies an array of alerts that are disabled.
      Allowed values are: Sql_Injection, Sql_Injection_Vulnerability,
-     Access_Anomaly, Data_Exfiltration, Unsafe_Action
+     Access_Anomaly, Data_Exfiltration, Unsafe_Action, Brute_Force
     :type disabled_alerts: list[str]
     :param email_addresses: Specifies an array of e-mail addresses to which
      the alert is sent.
@@ -5172,7 +5996,8 @@ class ManagedInstance(TrackedResource):
     :type tags: dict[str, str]
     :param identity: The Azure Active Directory identity of the managed
      instance.
-    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
+    :type identity:
+     ~azure.mgmt.sql.models.ResourceIdentityWithUserAssignedIdentities
     :param sku: Managed instance SKU. Allowed values for sku.name: GP_Gen4,
      GP_Gen5, BC_Gen4, BC_Gen5
     :type sku: ~azure.mgmt.sql.models.Sku
@@ -5267,6 +6092,15 @@ class ManagedInstance(TrackedResource):
      ~azure.mgmt.sql.models.StorageAccountType
     :param zone_redundant: Whether or not the multi-az is enabled.
     :type zone_redundant: bool
+    :param primary_user_assigned_identity_id: The resource id of a user
+     assigned identity to be used by default.
+    :type primary_user_assigned_identity_id: str
+    :param key_id: A CMK URI of the key to use for encryption.
+    :type key_id: str
+    :param administrators: The Azure Active Directory administrator of the
+     server.
+    :type administrators:
+     ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
     """
 
     _validation = {
@@ -5287,7 +6121,7 @@ class ManagedInstance(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentityWithUserAssignedIdentities'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
@@ -5313,6 +6147,9 @@ class ManagedInstance(TrackedResource):
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
         'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
+        'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
+        'key_id': {'key': 'properties.keyId', 'type': 'str'},
+        'administrators': {'key': 'properties.administrators', 'type': 'ManagedInstanceExternalAdministrator'},
     }
 
     def __init__(self, **kwargs):
@@ -5343,6 +6180,9 @@ class ManagedInstance(TrackedResource):
         self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
         self.storage_account_type = kwargs.get('storage_account_type', None)
         self.zone_redundant = kwargs.get('zone_redundant', None)
+        self.primary_user_assigned_identity_id = kwargs.get('primary_user_assigned_identity_id', None)
+        self.key_id = kwargs.get('key_id', None)
+        self.administrators = kwargs.get('administrators', None)
 
 
 class ManagedInstanceAdministrator(ProxyResource):
@@ -5516,6 +6356,9 @@ class ManagedInstanceEncryptionProtector(ProxyResource):
     :vartype uri: str
     :ivar thumbprint: Thumbprint of the server key.
     :vartype thumbprint: str
+    :param auto_rotation_enabled: Key auto rotation opt-in flag. Either true
+     or false.
+    :type auto_rotation_enabled: bool
     """
 
     _validation = {
@@ -5537,6 +6380,7 @@ class ManagedInstanceEncryptionProtector(ProxyResource):
         'server_key_type': {'key': 'properties.serverKeyType', 'type': 'str'},
         'uri': {'key': 'properties.uri', 'type': 'str'},
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
+        'auto_rotation_enabled': {'key': 'properties.autoRotationEnabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -5546,6 +6390,46 @@ class ManagedInstanceEncryptionProtector(ProxyResource):
         self.server_key_type = kwargs.get('server_key_type', None)
         self.uri = None
         self.thumbprint = None
+        self.auto_rotation_enabled = kwargs.get('auto_rotation_enabled', None)
+
+
+class ManagedInstanceExternalAdministrator(Model):
+    """Properties of a active directory administrator.
+
+    :param administrator_type: Type of the sever administrator. Possible
+     values include: 'ActiveDirectory'
+    :type administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
+    :param principal_type: Principal Type of the sever administrator. Possible
+     values include: 'User', 'Group', 'Application'
+    :type principal_type: str or ~azure.mgmt.sql.models.PrincipalType
+    :param login: Login name of the server administrator.
+    :type login: str
+    :param sid: SID (object ID) of the server administrator.
+    :type sid: str
+    :param tenant_id: Tenant ID of the administrator.
+    :type tenant_id: str
+    :param azure_ad_only_authentication: Azure Active Directory only
+     Authentication enabled.
+    :type azure_ad_only_authentication: bool
+    """
+
+    _attribute_map = {
+        'administrator_type': {'key': 'administratorType', 'type': 'str'},
+        'principal_type': {'key': 'principalType', 'type': 'str'},
+        'login': {'key': 'login', 'type': 'str'},
+        'sid': {'key': 'sid', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'azure_ad_only_authentication': {'key': 'azureADOnlyAuthentication', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedInstanceExternalAdministrator, self).__init__(**kwargs)
+        self.administrator_type = kwargs.get('administrator_type', None)
+        self.principal_type = kwargs.get('principal_type', None)
+        self.login = kwargs.get('login', None)
+        self.sid = kwargs.get('sid', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.azure_ad_only_authentication = kwargs.get('azure_ad_only_authentication', None)
 
 
 class ManagedInstanceFamilyCapability(Model):
@@ -5626,6 +6510,9 @@ class ManagedInstanceKey(ProxyResource):
     :vartype thumbprint: str
     :ivar creation_date: The key creation date.
     :vartype creation_date: datetime
+    :ivar auto_rotation_enabled: Key auto rotation opt-in flag. Either true or
+     false.
+    :vartype auto_rotation_enabled: bool
     """
 
     _validation = {
@@ -5636,6 +6523,7 @@ class ManagedInstanceKey(ProxyResource):
         'server_key_type': {'required': True},
         'thumbprint': {'readonly': True},
         'creation_date': {'readonly': True},
+        'auto_rotation_enabled': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5647,6 +6535,7 @@ class ManagedInstanceKey(ProxyResource):
         'uri': {'key': 'properties.uri', 'type': 'str'},
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'auto_rotation_enabled': {'key': 'properties.autoRotationEnabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -5656,6 +6545,7 @@ class ManagedInstanceKey(ProxyResource):
         self.uri = kwargs.get('uri', None)
         self.thumbprint = None
         self.creation_date = None
+        self.auto_rotation_enabled = None
 
 
 class ManagedInstanceLongTermRetentionBackup(ProxyResource):
@@ -5684,6 +6574,10 @@ class ManagedInstanceLongTermRetentionBackup(ProxyResource):
     :ivar backup_expiration_time: The time the long term retention backup will
      expire.
     :vartype backup_expiration_time: datetime
+    :ivar backup_storage_redundancy: The storage redundancy type of the
+     backup. Possible values include: 'Geo', 'Local', 'Zone'
+    :vartype backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
     """
 
     _validation = {
@@ -5696,6 +6590,7 @@ class ManagedInstanceLongTermRetentionBackup(ProxyResource):
         'database_deletion_time': {'readonly': True},
         'backup_time': {'readonly': True},
         'backup_expiration_time': {'readonly': True},
+        'backup_storage_redundancy': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5708,6 +6603,7 @@ class ManagedInstanceLongTermRetentionBackup(ProxyResource):
         'database_deletion_time': {'key': 'properties.databaseDeletionTime', 'type': 'iso-8601'},
         'backup_time': {'key': 'properties.backupTime', 'type': 'iso-8601'},
         'backup_expiration_time': {'key': 'properties.backupExpirationTime', 'type': 'iso-8601'},
+        'backup_storage_redundancy': {'key': 'properties.backupStorageRedundancy', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -5718,6 +6614,7 @@ class ManagedInstanceLongTermRetentionBackup(ProxyResource):
         self.database_deletion_time = None
         self.backup_time = None
         self.backup_expiration_time = None
+        self.backup_storage_redundancy = None
 
 
 class ManagedInstanceLongTermRetentionPolicy(ProxyResource):
@@ -6028,6 +6925,52 @@ class ManagedInstancePecProperty(Model):
         self.properties = None
 
 
+class ManagedInstancePrivateEndpointConnection(ProxyResource):
+    """A private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param private_endpoint: Private endpoint which the connection belongs to.
+    :type private_endpoint:
+     ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointProperty
+    :param private_link_service_connection_state: Connection State of the
+     Private Endpoint Connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.sql.models.ManagedInstancePrivateLinkServiceConnectionStateProperty
+    :ivar provisioning_state: State of the Private Endpoint Connection.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'ManagedInstancePrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'ManagedInstancePrivateLinkServiceConnectionStateProperty'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedInstancePrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = None
+
+
 class ManagedInstancePrivateEndpointConnectionProperties(Model):
     """Properties of a private endpoint connection.
 
@@ -6078,6 +7021,70 @@ class ManagedInstancePrivateEndpointProperty(Model):
         self.id = kwargs.get('id', None)
 
 
+class ManagedInstancePrivateLink(ProxyResource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar properties: The private link resource group id.
+    :vartype properties:
+     ~azure.mgmt.sql.models.ManagedInstancePrivateLinkProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ManagedInstancePrivateLinkProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedInstancePrivateLink, self).__init__(**kwargs)
+        self.properties = None
+
+
+class ManagedInstancePrivateLinkProperties(Model):
+    """Properties of a private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    """
+
+    _validation = {
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'group_id': {'key': 'groupId', 'type': 'str'},
+        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedInstancePrivateLinkProperties, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+
+
 class ManagedInstancePrivateLinkServiceConnectionStateProperty(Model):
     """ManagedInstancePrivateLinkServiceConnectionStateProperty.
 
@@ -6114,6 +7121,40 @@ class ManagedInstancePrivateLinkServiceConnectionStateProperty(Model):
         self.actions_required = None
 
 
+class ManagedInstanceQuery(ProxyResource):
+    """Database query.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param query_text: Query text.
+    :type query_text: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'query_text': {'key': 'properties.queryText', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedInstanceQuery, self).__init__(**kwargs)
+        self.query_text = kwargs.get('query_text', None)
+
+
 class ManagedInstanceUpdate(Model):
     """An update request for an Azure SQL Database managed instance.
 
@@ -6123,7 +7164,8 @@ class ManagedInstanceUpdate(Model):
     :param sku: Managed instance sku
     :type sku: ~azure.mgmt.sql.models.Sku
     :param identity: Managed instance identity
-    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
+    :type identity:
+     ~azure.mgmt.sql.models.ResourceIdentityWithUserAssignedIdentities
     :ivar provisioning_state: Possible values include: 'Creating', 'Deleting',
      'Updating', 'Unknown', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or ~azure.mgmt.sql.models.enum
@@ -6215,6 +7257,15 @@ class ManagedInstanceUpdate(Model):
      ~azure.mgmt.sql.models.StorageAccountType
     :param zone_redundant: Whether or not the multi-az is enabled.
     :type zone_redundant: bool
+    :param primary_user_assigned_identity_id: The resource id of a user
+     assigned identity to be used by default.
+    :type primary_user_assigned_identity_id: str
+    :param key_id: A CMK URI of the key to use for encryption.
+    :type key_id: str
+    :param administrators: The Azure Active Directory administrator of the
+     server.
+    :type administrators:
+     ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -6229,7 +7280,7 @@ class ManagedInstanceUpdate(Model):
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentityWithUserAssignedIdentities'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
@@ -6254,6 +7305,9 @@ class ManagedInstanceUpdate(Model):
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
         'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
+        'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
+        'key_id': {'key': 'properties.keyId', 'type': 'str'},
+        'administrators': {'key': 'properties.administrators', 'type': 'ManagedInstanceExternalAdministrator'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -6285,6 +7339,9 @@ class ManagedInstanceUpdate(Model):
         self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
         self.storage_account_type = kwargs.get('storage_account_type', None)
         self.zone_redundant = kwargs.get('zone_redundant', None)
+        self.primary_user_assigned_identity_id = kwargs.get('primary_user_assigned_identity_id', None)
+        self.key_id = kwargs.get('key_id', None)
+        self.administrators = kwargs.get('administrators', None)
         self.tags = kwargs.get('tags', None)
 
 
@@ -6421,14 +7478,16 @@ class ManagedInstanceVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has read and write access to the blob container specified in
-     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
-     specified, StorageContainerSasKey is required.
+     has write access to the blob container specified in 'storageContainerPath'
+     parameter. If 'storageAccountAccessKey' isn't specified,
+     StorageContainerSasKey is required. Applies only if the storage account is
+     not behind a Vnet or a firewall
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
      'StorageContainerSasKey' isn't specified, storageAccountAccessKey is
-     required.
+     required. Applies only if the storage account is not behind a Vnet or a
+     firewall
     :type storage_account_access_key: str
     :param recurring_scans: The recurring scans settings
     :type recurring_scans:
@@ -6474,13 +7533,15 @@ class ManagedServerSecurityAlertPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: SystemData of SecurityAlertPolicyResource.
+    :vartype system_data: ~azure.mgmt.sql.models.SystemData
     :param state: Required. Specifies the state of the policy, whether it is
      enabled or disabled or a policy has not been applied yet on the specific
-     database. Possible values include: 'New', 'Enabled', 'Disabled'
-    :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
+     database. Possible values include: 'Enabled', 'Disabled'
+    :type state: str or ~azure.mgmt.sql.models.SecurityAlertsPolicyState
     :param disabled_alerts: Specifies an array of alerts that are disabled.
      Allowed values are: Sql_Injection, Sql_Injection_Vulnerability,
-     Access_Anomaly, Data_Exfiltration, Unsafe_Action
+     Access_Anomaly, Data_Exfiltration, Unsafe_Action, Brute_Force
     :type disabled_alerts: list[str]
     :param email_addresses: Specifies an array of e-mail addresses to which
      the alert is sent.
@@ -6506,6 +7567,7 @@ class ManagedServerSecurityAlertPolicy(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'state': {'required': True},
         'creation_time': {'readonly': True},
     }
@@ -6514,7 +7576,8 @@ class ManagedServerSecurityAlertPolicy(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'SecurityAlertPolicyState'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'state': {'key': 'properties.state', 'type': 'SecurityAlertsPolicyState'},
         'disabled_alerts': {'key': 'properties.disabledAlerts', 'type': '[str]'},
         'email_addresses': {'key': 'properties.emailAddresses', 'type': '[str]'},
         'email_account_admins': {'key': 'properties.emailAccountAdmins', 'type': 'bool'},
@@ -6526,6 +7589,7 @@ class ManagedServerSecurityAlertPolicy(ProxyResource):
 
     def __init__(self, **kwargs):
         super(ManagedServerSecurityAlertPolicy, self).__init__(**kwargs)
+        self.system_data = None
         self.state = kwargs.get('state', None)
         self.disabled_alerts = kwargs.get('disabled_alerts', None)
         self.email_addresses = kwargs.get('email_addresses', None)
@@ -6534,6 +7598,44 @@ class ManagedServerSecurityAlertPolicy(ProxyResource):
         self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
         self.retention_days = kwargs.get('retention_days', None)
         self.creation_time = None
+
+
+class ManagedTransparentDataEncryption(ProxyResource):
+    """A managed database transparent data encryption state.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param state: Required. Specifies the state of the transparent data
+     encryption. Possible values include: 'Enabled', 'Disabled'
+    :type state: str or ~azure.mgmt.sql.models.TransparentDataEncryptionState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'state': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'TransparentDataEncryptionState'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedTransparentDataEncryption, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
 
 
 class MaxSizeCapability(Model):
@@ -7015,6 +8117,86 @@ class OperationImpact(Model):
         self.change_value_relative = None
 
 
+class OperationsHealth(ProxyResource):
+    """Operations health status in a location.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar operations_health_name: Operation name for the service
+    :vartype operations_health_name: str
+    :ivar health: Operation health status of the service.
+    :vartype health: str
+    :ivar description: Health status description.
+    :vartype description: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'operations_health_name': {'readonly': True},
+        'health': {'readonly': True},
+        'description': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'operations_health_name': {'key': 'properties.name', 'type': 'str'},
+        'health': {'key': 'properties.health', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OperationsHealth, self).__init__(**kwargs)
+        self.operations_health_name = None
+        self.health = None
+        self.description = None
+
+
+class OutboundFirewallRule(ProxyResource):
+    """An Azure SQL DB Server Outbound Firewall Rule.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar provisioning_state: The state of the outbound rule.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OutboundFirewallRule, self).__init__(**kwargs)
+        self.provisioning_state = None
+
+
 class PartnerInfo(Model):
     """Partner server information for the failover group.
 
@@ -7290,22 +8472,27 @@ class PrivateLinkResourceProperties(Model):
     :vartype group_id: str
     :ivar required_members: The private link resource required member names.
     :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource required zone names.
+    :vartype required_zone_names: list[str]
     """
 
     _validation = {
         'group_id': {'readonly': True},
         'required_members': {'readonly': True},
+        'required_zone_names': {'readonly': True},
     }
 
     _attribute_map = {
         'group_id': {'key': 'groupId', 'type': 'str'},
         'required_members': {'key': 'requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'requiredZoneNames', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
         super(PrivateLinkResourceProperties, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
+        self.required_zone_names = None
 
 
 class PrivateLinkServiceConnectionStateProperty(Model):
@@ -7456,6 +8643,61 @@ class QueryMetricProperties(Model):
         self.stdev = None
 
 
+class QueryStatistics(ProxyResource):
+    """QueryStatistics.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar database_name: Database name of the database in which this query was
+     executed.
+    :vartype database_name: str
+    :ivar query_id: Unique query id (unique within one database).
+    :vartype query_id: str
+    :ivar start_time: The start time for the metric (ISO-8601 format).
+    :vartype start_time: str
+    :ivar end_time: The end time for the metric (ISO-8601 format).
+    :vartype end_time: str
+    :param intervals: List of intervals with appropriate metric data
+    :type intervals: list[~azure.mgmt.sql.models.QueryMetricInterval]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'database_name': {'readonly': True},
+        'query_id': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'database_name': {'key': 'properties.databaseName', 'type': 'str'},
+        'query_id': {'key': 'properties.queryId', 'type': 'str'},
+        'start_time': {'key': 'properties.startTime', 'type': 'str'},
+        'end_time': {'key': 'properties.endTime', 'type': 'str'},
+        'intervals': {'key': 'properties.intervals', 'type': '[QueryMetricInterval]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QueryStatistics, self).__init__(**kwargs)
+        self.database_name = None
+        self.query_id = None
+        self.start_time = None
+        self.end_time = None
+        self.intervals = kwargs.get('intervals', None)
+
+
 class QueryStatisticsProperties(Model):
     """Properties of a query execution statistics.
 
@@ -7532,11 +8774,13 @@ class ReadScaleCapability(Model):
         self.reason = kwargs.get('reason', None)
 
 
-class RecommendedElasticPool(ProxyResource):
-    """Represents a recommended elastic pool.
+class RecommendedAction(ProxyResource):
+    """Database, Server or Elastic Pool Recommended Action.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -7544,206 +8788,470 @@ class RecommendedElasticPool(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar database_edition: The edition of the recommended elastic pool. The
-     ElasticPoolEdition enumeration contains all the valid editions. Possible
-     values include: 'Basic', 'Standard', 'Premium', 'GeneralPurpose',
-     'BusinessCritical'
-    :vartype database_edition: str or
-     ~azure.mgmt.sql.models.ElasticPoolEdition
-    :param dtu: The DTU for the recommended elastic pool.
-    :type dtu: float
-    :param database_dtu_min: The minimum DTU for the database.
-    :type database_dtu_min: float
-    :param database_dtu_max: The maximum DTU for the database.
-    :type database_dtu_max: float
-    :param storage_mb: Gets storage size in megabytes.
-    :type storage_mb: float
-    :ivar observation_period_start: The observation period start (ISO8601
-     format).
-    :vartype observation_period_start: datetime
-    :ivar observation_period_end: The observation period start (ISO8601
-     format).
-    :vartype observation_period_end: datetime
-    :ivar max_observed_dtu: Gets maximum observed DTU.
-    :vartype max_observed_dtu: float
-    :ivar max_observed_storage_mb: Gets maximum observed storage in megabytes.
-    :vartype max_observed_storage_mb: float
-    :ivar databases: The list of databases in this pool. Expanded property
-    :vartype databases: list[~azure.mgmt.sql.models.TrackedResource]
-    :ivar metrics: The list of databases housed in the server. Expanded
-     property
-    :vartype metrics:
-     list[~azure.mgmt.sql.models.RecommendedElasticPoolMetric]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'database_edition': {'readonly': True},
-        'observation_period_start': {'readonly': True},
-        'observation_period_end': {'readonly': True},
-        'max_observed_dtu': {'readonly': True},
-        'max_observed_storage_mb': {'readonly': True},
-        'databases': {'readonly': True},
-        'metrics': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'database_edition': {'key': 'properties.databaseEdition', 'type': 'str'},
-        'dtu': {'key': 'properties.dtu', 'type': 'float'},
-        'database_dtu_min': {'key': 'properties.databaseDtuMin', 'type': 'float'},
-        'database_dtu_max': {'key': 'properties.databaseDtuMax', 'type': 'float'},
-        'storage_mb': {'key': 'properties.storageMB', 'type': 'float'},
-        'observation_period_start': {'key': 'properties.observationPeriodStart', 'type': 'iso-8601'},
-        'observation_period_end': {'key': 'properties.observationPeriodEnd', 'type': 'iso-8601'},
-        'max_observed_dtu': {'key': 'properties.maxObservedDtu', 'type': 'float'},
-        'max_observed_storage_mb': {'key': 'properties.maxObservedStorageMB', 'type': 'float'},
-        'databases': {'key': 'properties.databases', 'type': '[TrackedResource]'},
-        'metrics': {'key': 'properties.metrics', 'type': '[RecommendedElasticPoolMetric]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(RecommendedElasticPool, self).__init__(**kwargs)
-        self.database_edition = None
-        self.dtu = kwargs.get('dtu', None)
-        self.database_dtu_min = kwargs.get('database_dtu_min', None)
-        self.database_dtu_max = kwargs.get('database_dtu_max', None)
-        self.storage_mb = kwargs.get('storage_mb', None)
-        self.observation_period_start = None
-        self.observation_period_end = None
-        self.max_observed_dtu = None
-        self.max_observed_storage_mb = None
-        self.databases = None
-        self.metrics = None
-
-
-class RecommendedElasticPoolMetric(Model):
-    """Represents recommended elastic pool metric.
-
-    :param date_time_property: The time of metric (ISO8601 format).
-    :type date_time_property: datetime
-    :param dtu: Gets or sets the DTUs (Database Transaction Units). See
-     https://azure.microsoft.com/documentation/articles/sql-database-what-is-a-dtu/
-    :type dtu: float
-    :param size_gb: Gets or sets size in gigabytes.
-    :type size_gb: float
-    """
-
-    _attribute_map = {
-        'date_time_property': {'key': 'dateTime', 'type': 'iso-8601'},
-        'dtu': {'key': 'dtu', 'type': 'float'},
-        'size_gb': {'key': 'sizeGB', 'type': 'float'},
-    }
-
-    def __init__(self, **kwargs):
-        super(RecommendedElasticPoolMetric, self).__init__(**kwargs)
-        self.date_time_property = kwargs.get('date_time_property', None)
-        self.dtu = kwargs.get('dtu', None)
-        self.size_gb = kwargs.get('size_gb', None)
-
-
-class RecommendedIndex(ProxyResource):
-    """Represents a database recommended index.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar action: The proposed index action. You can create a missing index,
-     drop an unused index, or rebuild an existing index to improve its
-     performance. Possible values include: 'Create', 'Drop', 'Rebuild'
-    :vartype action: str or ~azure.mgmt.sql.models.RecommendedIndexAction
-    :ivar state: The current recommendation state. Possible values include:
-     'Active', 'Pending', 'Executing', 'Verifying', 'Pending Revert',
-     'Reverting', 'Reverted', 'Ignored', 'Expired', 'Blocked', 'Success'
-    :vartype state: str or ~azure.mgmt.sql.models.RecommendedIndexState
-    :ivar created: The UTC datetime showing when this resource was created
-     (ISO8601 format).
-    :vartype created: datetime
-    :ivar last_modified: The UTC datetime of when was this resource last
-     changed (ISO8601 format).
-    :vartype last_modified: datetime
-    :ivar index_type: The type of index (CLUSTERED, NONCLUSTERED, COLUMNSTORE,
-     CLUSTERED COLUMNSTORE). Possible values include: 'CLUSTERED',
-     'NONCLUSTERED', 'COLUMNSTORE', 'CLUSTERED COLUMNSTORE'
-    :vartype index_type: str or ~azure.mgmt.sql.models.RecommendedIndexType
-    :ivar schema: The schema where table to build index over resides
-    :vartype schema: str
-    :ivar table: The table on which to build index.
-    :vartype table: str
-    :ivar columns: Columns over which to build index
-    :vartype columns: list[str]
-    :ivar included_columns: The list of column names to be included in the
-     index
-    :vartype included_columns: list[str]
-    :ivar index_script: The full build index script
-    :vartype index_script: str
-    :ivar estimated_impact: The estimated impact of doing recommended index
+    :ivar kind: Resource kind.
+    :vartype kind: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar recommendation_reason: Gets the reason for recommending this action.
+     e.g., DuplicateIndex
+    :vartype recommendation_reason: str
+    :ivar valid_since: Gets the time since when this recommended action is
+     valid.
+    :vartype valid_since: datetime
+    :ivar last_refresh: Gets time when this recommended action was last
+     refreshed.
+    :vartype last_refresh: datetime
+    :param state: Required. Gets the info of the current state the recommended
+     action is in.
+    :type state: ~azure.mgmt.sql.models.RecommendedActionStateInfo
+    :ivar is_executable_action: Gets if this recommended action is actionable
+     by user
+    :vartype is_executable_action: bool
+    :ivar is_revertable_action: Gets if changes applied by this recommended
+     action can be reverted by user
+    :vartype is_revertable_action: bool
+    :ivar is_archived_action: Gets if this recommended action was suggested
+     some time ago but user chose to ignore this and system added a new
+     recommended action again.
+    :vartype is_archived_action: bool
+    :ivar execute_action_start_time: Gets the time when system started
+     applying this recommended action on the user resource. e.g., index
+     creation start time
+    :vartype execute_action_start_time: datetime
+    :ivar execute_action_duration: Gets the time taken for applying this
+     recommended action on user resource. e.g., time taken for index creation
+    :vartype execute_action_duration: str
+    :ivar revert_action_start_time: Gets the time when system started
+     reverting changes of this recommended action on user resource. e.g., time
+     when index drop is executed.
+    :vartype revert_action_start_time: datetime
+    :ivar revert_action_duration: Gets the time taken for reverting changes of
+     this recommended action on user resource. e.g., time taken for dropping
+     the created index.
+    :vartype revert_action_duration: str
+    :ivar execute_action_initiated_by: Gets if approval for applying this
+     recommended action was given by user/system. Possible values include:
+     'User', 'System'
+    :vartype execute_action_initiated_by: str or
+     ~azure.mgmt.sql.models.RecommendedActionInitiatedBy
+    :ivar execute_action_initiated_time: Gets the time when this recommended
+     action was approved for execution.
+    :vartype execute_action_initiated_time: datetime
+    :ivar revert_action_initiated_by: Gets if approval for reverting this
+     recommended action was given by user/system. Possible values include:
+     'User', 'System'
+    :vartype revert_action_initiated_by: str or
+     ~azure.mgmt.sql.models.RecommendedActionInitiatedBy
+    :ivar revert_action_initiated_time: Gets the time when this recommended
+     action was approved for revert.
+    :vartype revert_action_initiated_time: datetime
+    :ivar score: Gets the impact of this recommended action. Possible values
+     are 1 - Low impact, 2 - Medium Impact and 3 - High Impact
+    :vartype score: int
+    :ivar implementation_details: Gets the implementation details of this
+     recommended action for user to apply it manually.
+    :vartype implementation_details:
+     ~azure.mgmt.sql.models.RecommendedActionImplementationInfo
+    :ivar error_details: Gets the error details if and why this recommended
+     action is put to error state.
+    :vartype error_details: ~azure.mgmt.sql.models.RecommendedActionErrorInfo
+    :ivar estimated_impact: Gets the estimated impact info for this
+     recommended action e.g., Estimated CPU gain, Estimated Disk Space change
+    :vartype estimated_impact:
+     list[~azure.mgmt.sql.models.RecommendedActionImpactRecord]
+    :ivar observed_impact: Gets the observed/actual impact info for this
+     recommended action e.g., Actual CPU gain, Actual Disk Space change
+    :vartype observed_impact:
+     list[~azure.mgmt.sql.models.RecommendedActionImpactRecord]
+    :ivar time_series: Gets the time series info of metrics for this
+     recommended action e.g., CPU consumption time series
+    :vartype time_series:
+     list[~azure.mgmt.sql.models.RecommendedActionMetricInfo]
+    :ivar linked_objects: Gets the linked objects, if any.
+    :vartype linked_objects: list[str]
+    :ivar details: Gets additional details specific to this recommended
      action.
-    :vartype estimated_impact: list[~azure.mgmt.sql.models.OperationImpact]
-    :ivar reported_impact: The values reported after index action is complete.
-    :vartype reported_impact: list[~azure.mgmt.sql.models.OperationImpact]
+    :vartype details: dict[str, object]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'action': {'readonly': True},
-        'state': {'readonly': True},
-        'created': {'readonly': True},
-        'last_modified': {'readonly': True},
-        'index_type': {'readonly': True},
-        'schema': {'readonly': True},
-        'table': {'readonly': True},
-        'columns': {'readonly': True},
-        'included_columns': {'readonly': True},
-        'index_script': {'readonly': True},
+        'kind': {'readonly': True},
+        'location': {'readonly': True},
+        'recommendation_reason': {'readonly': True},
+        'valid_since': {'readonly': True},
+        'last_refresh': {'readonly': True},
+        'state': {'required': True},
+        'is_executable_action': {'readonly': True},
+        'is_revertable_action': {'readonly': True},
+        'is_archived_action': {'readonly': True},
+        'execute_action_start_time': {'readonly': True},
+        'execute_action_duration': {'readonly': True},
+        'revert_action_start_time': {'readonly': True},
+        'revert_action_duration': {'readonly': True},
+        'execute_action_initiated_by': {'readonly': True},
+        'execute_action_initiated_time': {'readonly': True},
+        'revert_action_initiated_by': {'readonly': True},
+        'revert_action_initiated_time': {'readonly': True},
+        'score': {'readonly': True},
+        'implementation_details': {'readonly': True},
+        'error_details': {'readonly': True},
         'estimated_impact': {'readonly': True},
-        'reported_impact': {'readonly': True},
+        'observed_impact': {'readonly': True},
+        'time_series': {'readonly': True},
+        'linked_objects': {'readonly': True},
+        'details': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'action': {'key': 'properties.action', 'type': 'RecommendedIndexAction'},
-        'state': {'key': 'properties.state', 'type': 'RecommendedIndexState'},
-        'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
-        'index_type': {'key': 'properties.indexType', 'type': 'RecommendedIndexType'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'recommendation_reason': {'key': 'properties.recommendationReason', 'type': 'str'},
+        'valid_since': {'key': 'properties.validSince', 'type': 'iso-8601'},
+        'last_refresh': {'key': 'properties.lastRefresh', 'type': 'iso-8601'},
+        'state': {'key': 'properties.state', 'type': 'RecommendedActionStateInfo'},
+        'is_executable_action': {'key': 'properties.isExecutableAction', 'type': 'bool'},
+        'is_revertable_action': {'key': 'properties.isRevertableAction', 'type': 'bool'},
+        'is_archived_action': {'key': 'properties.isArchivedAction', 'type': 'bool'},
+        'execute_action_start_time': {'key': 'properties.executeActionStartTime', 'type': 'iso-8601'},
+        'execute_action_duration': {'key': 'properties.executeActionDuration', 'type': 'str'},
+        'revert_action_start_time': {'key': 'properties.revertActionStartTime', 'type': 'iso-8601'},
+        'revert_action_duration': {'key': 'properties.revertActionDuration', 'type': 'str'},
+        'execute_action_initiated_by': {'key': 'properties.executeActionInitiatedBy', 'type': 'RecommendedActionInitiatedBy'},
+        'execute_action_initiated_time': {'key': 'properties.executeActionInitiatedTime', 'type': 'iso-8601'},
+        'revert_action_initiated_by': {'key': 'properties.revertActionInitiatedBy', 'type': 'RecommendedActionInitiatedBy'},
+        'revert_action_initiated_time': {'key': 'properties.revertActionInitiatedTime', 'type': 'iso-8601'},
+        'score': {'key': 'properties.score', 'type': 'int'},
+        'implementation_details': {'key': 'properties.implementationDetails', 'type': 'RecommendedActionImplementationInfo'},
+        'error_details': {'key': 'properties.errorDetails', 'type': 'RecommendedActionErrorInfo'},
+        'estimated_impact': {'key': 'properties.estimatedImpact', 'type': '[RecommendedActionImpactRecord]'},
+        'observed_impact': {'key': 'properties.observedImpact', 'type': '[RecommendedActionImpactRecord]'},
+        'time_series': {'key': 'properties.timeSeries', 'type': '[RecommendedActionMetricInfo]'},
+        'linked_objects': {'key': 'properties.linkedObjects', 'type': '[str]'},
+        'details': {'key': 'properties.details', 'type': '{object}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RecommendedAction, self).__init__(**kwargs)
+        self.kind = None
+        self.location = None
+        self.recommendation_reason = None
+        self.valid_since = None
+        self.last_refresh = None
+        self.state = kwargs.get('state', None)
+        self.is_executable_action = None
+        self.is_revertable_action = None
+        self.is_archived_action = None
+        self.execute_action_start_time = None
+        self.execute_action_duration = None
+        self.revert_action_start_time = None
+        self.revert_action_duration = None
+        self.execute_action_initiated_by = None
+        self.execute_action_initiated_time = None
+        self.revert_action_initiated_by = None
+        self.revert_action_initiated_time = None
+        self.score = None
+        self.implementation_details = None
+        self.error_details = None
+        self.estimated_impact = None
+        self.observed_impact = None
+        self.time_series = None
+        self.linked_objects = None
+        self.details = None
+
+
+class RecommendedActionErrorInfo(Model):
+    """Contains error information for an Azure SQL Database, Server or Elastic
+    Pool Recommended Action.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error_code: Gets the reason why the recommended action was put to
+     error state. e.g., DatabaseHasQdsOff, IndexAlreadyExists
+    :vartype error_code: str
+    :ivar is_retryable: Gets whether the error could be ignored and
+     recommended action could be retried. Possible values are: Yes/No. Possible
+     values include: 'Yes', 'No'
+    :vartype is_retryable: str or ~azure.mgmt.sql.models.IsRetryable
+    """
+
+    _validation = {
+        'error_code': {'readonly': True},
+        'is_retryable': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'error_code': {'key': 'errorCode', 'type': 'str'},
+        'is_retryable': {'key': 'isRetryable', 'type': 'IsRetryable'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RecommendedActionErrorInfo, self).__init__(**kwargs)
+        self.error_code = None
+        self.is_retryable = None
+
+
+class RecommendedActionImpactRecord(Model):
+    """Contains information of estimated or observed impact on various metrics for
+    an Azure SQL Database, Server or Elastic Pool Recommended Action.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar dimension_name: Gets the name of the impact dimension. e.g.,
+     CPUChange, DiskSpaceChange, NumberOfQueriesAffected.
+    :vartype dimension_name: str
+    :ivar unit: Gets the name of the impact dimension. e.g., CPUChange,
+     DiskSpaceChange, NumberOfQueriesAffected.
+    :vartype unit: str
+    :ivar absolute_value: Gets the absolute value of this dimension if
+     applicable. e.g., Number of Queries affected
+    :vartype absolute_value: float
+    :ivar change_value_absolute: Gets the absolute change in the value of this
+     dimension. e.g., Absolute Disk space change in Megabytes
+    :vartype change_value_absolute: float
+    :ivar change_value_relative: Gets the relative change in the value of this
+     dimension. e.g., Relative Disk space change in Percentage
+    :vartype change_value_relative: float
+    """
+
+    _validation = {
+        'dimension_name': {'readonly': True},
+        'unit': {'readonly': True},
+        'absolute_value': {'readonly': True},
+        'change_value_absolute': {'readonly': True},
+        'change_value_relative': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'dimension_name': {'key': 'dimensionName', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'absolute_value': {'key': 'absoluteValue', 'type': 'float'},
+        'change_value_absolute': {'key': 'changeValueAbsolute', 'type': 'float'},
+        'change_value_relative': {'key': 'changeValueRelative', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RecommendedActionImpactRecord, self).__init__(**kwargs)
+        self.dimension_name = None
+        self.unit = None
+        self.absolute_value = None
+        self.change_value_absolute = None
+        self.change_value_relative = None
+
+
+class RecommendedActionImplementationInfo(Model):
+    """Contains information for manual implementation for an Azure SQL Database,
+    Server or Elastic Pool Recommended Action.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar method: Gets the method in which this recommended action can be
+     manually implemented. e.g., TSql, AzurePowerShell. Possible values
+     include: 'TSql', 'AzurePowerShell'
+    :vartype method: str or ~azure.mgmt.sql.models.ImplementationMethod
+    :ivar script: Gets the manual implementation script. e.g., T-SQL script
+     that could be executed on the database.
+    :vartype script: str
+    """
+
+    _validation = {
+        'method': {'readonly': True},
+        'script': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'method': {'key': 'method', 'type': 'ImplementationMethod'},
+        'script': {'key': 'script', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RecommendedActionImplementationInfo, self).__init__(**kwargs)
+        self.method = None
+        self.script = None
+
+
+class RecommendedActionMetricInfo(Model):
+    """Contains time series of various impacted metrics for an Azure SQL Database,
+    Server or Elastic Pool Recommended Action.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar metric_name: Gets the name of the metric. e.g., CPU, Number of
+     Queries.
+    :vartype metric_name: str
+    :ivar unit: Gets the unit in which metric is measured. e.g., DTU,
+     Frequency
+    :vartype unit: str
+    :ivar time_grain: Gets the duration of time interval for the value given
+     by this MetricInfo. e.g., PT1H (1 hour)
+    :vartype time_grain: str
+    :ivar start_time: Gets the start time of time interval given by this
+     MetricInfo.
+    :vartype start_time: datetime
+    :ivar value: Gets the value of the metric in the time interval given by
+     this MetricInfo.
+    :vartype value: float
+    """
+
+    _validation = {
+        'metric_name': {'readonly': True},
+        'unit': {'readonly': True},
+        'time_grain': {'readonly': True},
+        'start_time': {'readonly': True},
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'metric_name': {'key': 'metricName', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'time_grain': {'key': 'timeGrain', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'value': {'key': 'value', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RecommendedActionMetricInfo, self).__init__(**kwargs)
+        self.metric_name = None
+        self.unit = None
+        self.time_grain = None
+        self.start_time = None
+        self.value = None
+
+
+class RecommendedActionStateInfo(Model):
+    """Contains information of current state for an Azure SQL Database, Server or
+    Elastic Pool Recommended Action.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param current_value: Required. Current state the recommended action is
+     in. Some commonly used states are: Active      -> recommended action is
+     active and no action has been taken yet. Pending     -> recommended action
+     is approved for and is awaiting execution. Executing   -> recommended
+     action is being applied on the user database. Verifying   -> recommended
+     action was applied and is being verified of its usefulness by the system.
+     Success     -> recommended action was applied and improvement found during
+     verification. Pending Revert  -> verification found little or no
+     improvement so recommended action is queued for revert or user has
+     manually reverted. Reverting   -> changes made while applying recommended
+     action are being reverted on the user database. Reverted    ->
+     successfully reverted the changes made by recommended action on user
+     database. Ignored     -> user explicitly ignored/discarded the recommended
+     action. Possible values include: 'Active', 'Pending', 'Executing',
+     'Verifying', 'PendingRevert', 'RevertCancelled', 'Reverting', 'Reverted',
+     'Ignored', 'Expired', 'Monitoring', 'Resolved', 'Success', 'Error'
+    :type current_value: str or
+     ~azure.mgmt.sql.models.RecommendedActionCurrentState
+    :ivar action_initiated_by: Gets who initiated the execution of this
+     recommended action. Possible Value are: User    -> When user explicity
+     notified system to apply the recommended action. System  -> When
+     auto-execute status of this advisor was set to 'Enabled', in which case
+     the system applied it. Possible values include: 'User', 'System'
+    :vartype action_initiated_by: str or
+     ~azure.mgmt.sql.models.RecommendedActionInitiatedBy
+    :ivar last_modified: Gets the time when the state was last modified
+    :vartype last_modified: datetime
+    """
+
+    _validation = {
+        'current_value': {'required': True},
+        'action_initiated_by': {'readonly': True},
+        'last_modified': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'current_value': {'key': 'currentValue', 'type': 'str'},
+        'action_initiated_by': {'key': 'actionInitiatedBy', 'type': 'RecommendedActionInitiatedBy'},
+        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RecommendedActionStateInfo, self).__init__(**kwargs)
+        self.current_value = kwargs.get('current_value', None)
+        self.action_initiated_by = None
+        self.last_modified = None
+
+
+class RecommendedSensitivityLabelUpdate(ProxyResource):
+    """A recommended sensitivity label update operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param op: Required. Possible values include: 'enable', 'disable'
+    :type op: str or
+     ~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdateKind
+    :param schema: Required. Schema name of the column to update.
+    :type schema: str
+    :param table: Required. Table name of the column to update.
+    :type table: str
+    :param column: Required. Column name to update.
+    :type column: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'op': {'required': True},
+        'schema': {'required': True},
+        'table': {'required': True},
+        'column': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'op': {'key': 'properties.op', 'type': 'RecommendedSensitivityLabelUpdateKind'},
         'schema': {'key': 'properties.schema', 'type': 'str'},
         'table': {'key': 'properties.table', 'type': 'str'},
-        'columns': {'key': 'properties.columns', 'type': '[str]'},
-        'included_columns': {'key': 'properties.includedColumns', 'type': '[str]'},
-        'index_script': {'key': 'properties.indexScript', 'type': 'str'},
-        'estimated_impact': {'key': 'properties.estimatedImpact', 'type': '[OperationImpact]'},
-        'reported_impact': {'key': 'properties.reportedImpact', 'type': '[OperationImpact]'},
+        'column': {'key': 'properties.column', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(RecommendedIndex, self).__init__(**kwargs)
-        self.action = None
-        self.state = None
-        self.created = None
-        self.last_modified = None
-        self.index_type = None
-        self.schema = None
-        self.table = None
-        self.columns = None
-        self.included_columns = None
-        self.index_script = None
-        self.estimated_impact = None
-        self.reported_impact = None
+        super(RecommendedSensitivityLabelUpdate, self).__init__(**kwargs)
+        self.op = kwargs.get('op', None)
+        self.schema = kwargs.get('schema', None)
+        self.table = kwargs.get('table', None)
+        self.column = kwargs.get('column', None)
+
+
+class RecommendedSensitivityLabelUpdateList(Model):
+    """A list of recommended sensitivity label update operations.
+
+    :param operations:
+    :type operations:
+     list[~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdate]
+    """
+
+    _attribute_map = {
+        'operations': {'key': 'operations', 'type': '[RecommendedSensitivityLabelUpdate]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RecommendedSensitivityLabelUpdateList, self).__init__(**kwargs)
+        self.operations = kwargs.get('operations', None)
 
 
 class RecoverableDatabase(ProxyResource):
@@ -7834,7 +9342,7 @@ class RecoverableManagedDatabase(ProxyResource):
 
 
 class ReplicationLink(ProxyResource):
-    """Represents a database replication link.
+    """A replication link.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -7845,92 +9353,91 @@ class ReplicationLink(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Location of the server that contains this firewall rule.
-    :vartype location: str
-    :ivar is_termination_allowed: Legacy value indicating whether termination
-     is allowed.  Currently always returns true.
-    :vartype is_termination_allowed: bool
-    :ivar replication_mode: Replication mode of this replication link.
-    :vartype replication_mode: str
-    :ivar partner_server: The name of the server hosting the partner database.
+    :ivar partner_server: Resource partner server.
     :vartype partner_server: str
-    :ivar partner_database: The name of the partner database.
+    :ivar partner_database: Resource partner database.
     :vartype partner_database: str
-    :ivar partner_location: The Azure Region of the partner database.
+    :ivar partner_location: Resource partner location.
     :vartype partner_location: str
-    :ivar role: The role of the database in the replication link. Possible
-     values include: 'Primary', 'Secondary', 'NonReadableSecondary', 'Source',
-     'Copy'
-    :vartype role: str or ~azure.mgmt.sql.models.ReplicationRole
-    :ivar partner_role: The role of the partner database in the replication
-     link. Possible values include: 'Primary', 'Secondary',
-     'NonReadableSecondary', 'Source', 'Copy'
-    :vartype partner_role: str or ~azure.mgmt.sql.models.ReplicationRole
-    :ivar start_time: The start time for the replication link.
+    :ivar role: Local replication role.
+    :vartype role: str
+    :ivar partner_role: Partner replication role.
+    :vartype partner_role: str
+    :ivar replication_mode: Replication mode.
+    :vartype replication_mode: str
+    :ivar start_time: Time at which the link was created.
     :vartype start_time: datetime
-    :ivar percent_complete: The percentage of seeding complete for the
-     replication link.
+    :ivar percent_complete: Seeding completion percentage for the link.
     :vartype percent_complete: int
-    :ivar replication_state: The replication state for the replication link.
-     Possible values include: 'PENDING', 'SEEDING', 'CATCH_UP', 'SUSPENDED'
-    :vartype replication_state: str or ~azure.mgmt.sql.models.ReplicationState
+    :ivar replication_state: Replication state (PENDING, SEEDING, CATCHUP,
+     SUSPENDED).
+    :vartype replication_state: str
+    :ivar is_termination_allowed: Whether the user is currently allowed to
+     terminate the link.
+    :vartype is_termination_allowed: bool
+    :ivar link_type: Link type (GEO, NAMED).
+    :vartype link_type: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
-        'is_termination_allowed': {'readonly': True},
-        'replication_mode': {'readonly': True},
         'partner_server': {'readonly': True},
         'partner_database': {'readonly': True},
         'partner_location': {'readonly': True},
         'role': {'readonly': True},
         'partner_role': {'readonly': True},
+        'replication_mode': {'readonly': True},
         'start_time': {'readonly': True},
         'percent_complete': {'readonly': True},
         'replication_state': {'readonly': True},
+        'is_termination_allowed': {'readonly': True},
+        'link_type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'is_termination_allowed': {'key': 'properties.isTerminationAllowed', 'type': 'bool'},
-        'replication_mode': {'key': 'properties.replicationMode', 'type': 'str'},
         'partner_server': {'key': 'properties.partnerServer', 'type': 'str'},
         'partner_database': {'key': 'properties.partnerDatabase', 'type': 'str'},
         'partner_location': {'key': 'properties.partnerLocation', 'type': 'str'},
-        'role': {'key': 'properties.role', 'type': 'ReplicationRole'},
-        'partner_role': {'key': 'properties.partnerRole', 'type': 'ReplicationRole'},
+        'role': {'key': 'properties.role', 'type': 'str'},
+        'partner_role': {'key': 'properties.partnerRole', 'type': 'str'},
+        'replication_mode': {'key': 'properties.replicationMode', 'type': 'str'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'percent_complete': {'key': 'properties.percentComplete', 'type': 'int'},
         'replication_state': {'key': 'properties.replicationState', 'type': 'str'},
+        'is_termination_allowed': {'key': 'properties.isTerminationAllowed', 'type': 'bool'},
+        'link_type': {'key': 'properties.linkType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ReplicationLink, self).__init__(**kwargs)
-        self.location = None
-        self.is_termination_allowed = None
-        self.replication_mode = None
         self.partner_server = None
         self.partner_database = None
         self.partner_location = None
         self.role = None
         self.partner_role = None
+        self.replication_mode = None
         self.start_time = None
         self.percent_complete = None
         self.replication_state = None
+        self.is_termination_allowed = None
+        self.link_type = None
 
 
-class ResourceIdentity(Model):
+class ResourceIdentityWithUserAssignedIdentities(Model):
     """Azure Active Directory identity configuration for a resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param user_assigned_identities: The resource ids of the user assigned
+     identities to use
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.sql.models.UserIdentity]
     :ivar principal_id: The Azure Active Directory principal id.
     :vartype principal_id: str
     :param type: The identity type. Set this to 'SystemAssigned' in order to
@@ -7948,13 +9455,15 @@ class ResourceIdentity(Model):
     }
 
     _attribute_map = {
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentity}'},
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ResourceIdentity, self).__init__(**kwargs)
+        super(ResourceIdentityWithUserAssignedIdentities, self).__init__(**kwargs)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
         self.principal_id = None
         self.type = kwargs.get('type', None)
         self.tenant_id = None
@@ -7983,7 +9492,7 @@ class ResourceMoveDefinition(Model):
 
 
 class RestorableDroppedDatabase(ProxyResource):
-    """A restorable dropped database.
+    """A restorable dropped database resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -7994,69 +9503,73 @@ class RestorableDroppedDatabase(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: The geo-location where the resource lives
-    :vartype location: str
-    :ivar database_name: The name of the database
+    :param sku: The name and tier of the SKU.
+    :type sku: ~azure.mgmt.sql.models.Sku
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :ivar database_name: The name of the database.
     :vartype database_name: str
-    :ivar edition: The edition of the database
-    :vartype edition: str
-    :ivar max_size_bytes: The max size in bytes of the database
-    :vartype max_size_bytes: str
-    :ivar service_level_objective: The service level objective name of the
-     database
-    :vartype service_level_objective: str
-    :ivar elastic_pool_name: The elastic pool name of the database
-    :vartype elastic_pool_name: str
-    :ivar creation_date: The creation date of the database (ISO8601 format)
+    :ivar max_size_bytes: The max size of the database expressed in bytes.
+    :vartype max_size_bytes: long
+    :ivar elastic_pool_id: DEPRECATED: The resource name of the elastic pool
+     containing this database. This property is deprecated and the value will
+     always be null.
+    :vartype elastic_pool_id: str
+    :ivar creation_date: The creation date of the database (ISO8601 format).
     :vartype creation_date: datetime
-    :ivar deletion_date: The deletion date of the database (ISO8601 format)
+    :ivar deletion_date: The deletion date of the database (ISO8601 format).
     :vartype deletion_date: datetime
     :ivar earliest_restore_date: The earliest restore date of the database
-     (ISO8601 format)
+     (ISO8601 format).
     :vartype earliest_restore_date: datetime
+    :ivar backup_storage_redundancy: The storage account type used to store
+     backups for this database. Possible values include: 'Geo', 'Local', 'Zone'
+    :vartype backup_storage_redundancy: str or ~azure.mgmt.sql.models.enum
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
         'database_name': {'readonly': True},
-        'edition': {'readonly': True},
         'max_size_bytes': {'readonly': True},
-        'service_level_objective': {'readonly': True},
-        'elastic_pool_name': {'readonly': True},
+        'elastic_pool_id': {'readonly': True},
         'creation_date': {'readonly': True},
         'deletion_date': {'readonly': True},
         'earliest_restore_date': {'readonly': True},
+        'backup_storage_redundancy': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'database_name': {'key': 'properties.databaseName', 'type': 'str'},
-        'edition': {'key': 'properties.edition', 'type': 'str'},
-        'max_size_bytes': {'key': 'properties.maxSizeBytes', 'type': 'str'},
-        'service_level_objective': {'key': 'properties.serviceLevelObjective', 'type': 'str'},
-        'elastic_pool_name': {'key': 'properties.elasticPoolName', 'type': 'str'},
+        'max_size_bytes': {'key': 'properties.maxSizeBytes', 'type': 'long'},
+        'elastic_pool_id': {'key': 'properties.elasticPoolId', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'deletion_date': {'key': 'properties.deletionDate', 'type': 'iso-8601'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
+        'backup_storage_redundancy': {'key': 'properties.backupStorageRedundancy', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(RestorableDroppedDatabase, self).__init__(**kwargs)
-        self.location = None
+        self.sku = kwargs.get('sku', None)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
         self.database_name = None
-        self.edition = None
         self.max_size_bytes = None
-        self.service_level_objective = None
-        self.elastic_pool_name = None
+        self.elastic_pool_id = None
         self.creation_date = None
         self.deletion_date = None
         self.earliest_restore_date = None
+        self.backup_storage_redundancy = None
 
 
 class RestorableDroppedManagedDatabase(TrackedResource):
@@ -8178,6 +9691,159 @@ class RestorePoint(ProxyResource):
         self.restore_point_label = None
 
 
+class SecurityEvent(ProxyResource):
+    """A security event.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar event_time: The time when the security event occurred.
+    :vartype event_time: datetime
+    :ivar security_event_type: The type of the security event. Possible values
+     include: 'Undefined', 'SqlInjectionVulnerability', 'SqlInjectionExploit'
+    :vartype security_event_type: str or
+     ~azure.mgmt.sql.models.SecurityEventType
+    :ivar subscription: The subscription name
+    :vartype subscription: str
+    :ivar server: The server name
+    :vartype server: str
+    :ivar database: The database name
+    :vartype database: str
+    :ivar client_ip: The IP address of the client who executed the statement.
+    :vartype client_ip: str
+    :ivar application_name: The application used to execute the statement.
+    :vartype application_name: str
+    :ivar principal_name: The principal user who executed the statement
+    :vartype principal_name: str
+    :ivar security_event_sql_injection_additional_properties: The sql
+     injection additional properties, populated only if the type of the
+     security event is sql injection.
+    :vartype security_event_sql_injection_additional_properties:
+     ~azure.mgmt.sql.models.SecurityEventSqlInjectionAdditionalProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'event_time': {'readonly': True},
+        'security_event_type': {'readonly': True},
+        'subscription': {'readonly': True},
+        'server': {'readonly': True},
+        'database': {'readonly': True},
+        'client_ip': {'readonly': True},
+        'application_name': {'readonly': True},
+        'principal_name': {'readonly': True},
+        'security_event_sql_injection_additional_properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'event_time': {'key': 'properties.eventTime', 'type': 'iso-8601'},
+        'security_event_type': {'key': 'properties.securityEventType', 'type': 'SecurityEventType'},
+        'subscription': {'key': 'properties.subscription', 'type': 'str'},
+        'server': {'key': 'properties.server', 'type': 'str'},
+        'database': {'key': 'properties.database', 'type': 'str'},
+        'client_ip': {'key': 'properties.clientIp', 'type': 'str'},
+        'application_name': {'key': 'properties.applicationName', 'type': 'str'},
+        'principal_name': {'key': 'properties.principalName', 'type': 'str'},
+        'security_event_sql_injection_additional_properties': {'key': 'properties.securityEventSqlInjectionAdditionalProperties', 'type': 'SecurityEventSqlInjectionAdditionalProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SecurityEvent, self).__init__(**kwargs)
+        self.event_time = None
+        self.security_event_type = None
+        self.subscription = None
+        self.server = None
+        self.database = None
+        self.client_ip = None
+        self.application_name = None
+        self.principal_name = None
+        self.security_event_sql_injection_additional_properties = None
+
+
+class SecurityEventsFilterParameters(Model):
+    """The properties that are supported in the $filter operation.
+
+    :param event_time: Filter on the event time.
+    :type event_time: datetime
+    :param show_server_records: Whether to show server records or not.
+    :type show_server_records: bool
+    """
+
+    _attribute_map = {
+        'event_time': {'key': 'eventTime', 'type': 'iso-8601'},
+        'show_server_records': {'key': 'showServerRecords', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SecurityEventsFilterParameters, self).__init__(**kwargs)
+        self.event_time = kwargs.get('event_time', None)
+        self.show_server_records = kwargs.get('show_server_records', None)
+
+
+class SecurityEventSqlInjectionAdditionalProperties(Model):
+    """The properties of a security event sql injection additional properties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar threat_id: The threat ID.
+    :vartype threat_id: str
+    :ivar statement: The statement
+    :vartype statement: str
+    :ivar statement_highlight_offset: The statement highlight offset
+    :vartype statement_highlight_offset: int
+    :ivar statement_highlight_length: The statement highlight length
+    :vartype statement_highlight_length: int
+    :ivar error_code: The sql error code
+    :vartype error_code: int
+    :ivar error_severity: The sql error severity
+    :vartype error_severity: int
+    :ivar error_message: The sql error message
+    :vartype error_message: str
+    """
+
+    _validation = {
+        'threat_id': {'readonly': True},
+        'statement': {'readonly': True},
+        'statement_highlight_offset': {'readonly': True},
+        'statement_highlight_length': {'readonly': True},
+        'error_code': {'readonly': True},
+        'error_severity': {'readonly': True},
+        'error_message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'threat_id': {'key': 'threatId', 'type': 'str'},
+        'statement': {'key': 'statement', 'type': 'str'},
+        'statement_highlight_offset': {'key': 'statementHighlightOffset', 'type': 'int'},
+        'statement_highlight_length': {'key': 'statementHighlightLength', 'type': 'int'},
+        'error_code': {'key': 'errorCode', 'type': 'int'},
+        'error_severity': {'key': 'errorSeverity', 'type': 'int'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SecurityEventSqlInjectionAdditionalProperties, self).__init__(**kwargs)
+        self.threat_id = None
+        self.statement = None
+        self.statement_highlight_offset = None
+        self.statement_highlight_length = None
+        self.error_code = None
+        self.error_severity = None
+        self.error_message = None
+
+
 class SensitivityLabel(ProxyResource):
     """A sensitivity label.
 
@@ -8190,6 +9856,14 @@ class SensitivityLabel(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar managed_by: Resource that manages the sensitivity label.
+    :vartype managed_by: str
+    :ivar schema_name: The schema name.
+    :vartype schema_name: str
+    :ivar table_name: The table name.
+    :vartype table_name: str
+    :ivar column_name: The column name.
+    :vartype column_name: str
     :param label_name: The label name.
     :type label_name: str
     :param label_id: The label ID.
@@ -8211,6 +9885,10 @@ class SensitivityLabel(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'managed_by': {'readonly': True},
+        'schema_name': {'readonly': True},
+        'table_name': {'readonly': True},
+        'column_name': {'readonly': True},
         'is_disabled': {'readonly': True},
     }
 
@@ -8218,6 +9896,10 @@ class SensitivityLabel(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'managed_by': {'key': 'managedBy', 'type': 'str'},
+        'schema_name': {'key': 'properties.schemaName', 'type': 'str'},
+        'table_name': {'key': 'properties.tableName', 'type': 'str'},
+        'column_name': {'key': 'properties.columnName', 'type': 'str'},
         'label_name': {'key': 'properties.labelName', 'type': 'str'},
         'label_id': {'key': 'properties.labelId', 'type': 'str'},
         'information_type': {'key': 'properties.informationType', 'type': 'str'},
@@ -8228,12 +9910,89 @@ class SensitivityLabel(ProxyResource):
 
     def __init__(self, **kwargs):
         super(SensitivityLabel, self).__init__(**kwargs)
+        self.managed_by = None
+        self.schema_name = None
+        self.table_name = None
+        self.column_name = None
         self.label_name = kwargs.get('label_name', None)
         self.label_id = kwargs.get('label_id', None)
         self.information_type = kwargs.get('information_type', None)
         self.information_type_id = kwargs.get('information_type_id', None)
         self.is_disabled = None
         self.rank = kwargs.get('rank', None)
+
+
+class SensitivityLabelUpdate(ProxyResource):
+    """A sensitivity label update operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param op: Required. Possible values include: 'set', 'remove'
+    :type op: str or ~azure.mgmt.sql.models.SensitivityLabelUpdateKind
+    :param schema: Required. Schema name of the column to update.
+    :type schema: str
+    :param table: Required. Table name of the column to update.
+    :type table: str
+    :param column: Required. Column name to update.
+    :type column: str
+    :param sensitivity_label: The sensitivity label information to apply on a
+     column.
+    :type sensitivity_label: ~azure.mgmt.sql.models.SensitivityLabel
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'op': {'required': True},
+        'schema': {'required': True},
+        'table': {'required': True},
+        'column': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'op': {'key': 'properties.op', 'type': 'SensitivityLabelUpdateKind'},
+        'schema': {'key': 'properties.schema', 'type': 'str'},
+        'table': {'key': 'properties.table', 'type': 'str'},
+        'column': {'key': 'properties.column', 'type': 'str'},
+        'sensitivity_label': {'key': 'properties.sensitivityLabel', 'type': 'SensitivityLabel'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SensitivityLabelUpdate, self).__init__(**kwargs)
+        self.op = kwargs.get('op', None)
+        self.schema = kwargs.get('schema', None)
+        self.table = kwargs.get('table', None)
+        self.column = kwargs.get('column', None)
+        self.sensitivity_label = kwargs.get('sensitivity_label', None)
+
+
+class SensitivityLabelUpdateList(Model):
+    """A list of sensitivity label update operations.
+
+    :param operations:
+    :type operations: list[~azure.mgmt.sql.models.SensitivityLabelUpdate]
+    """
+
+    _attribute_map = {
+        'operations': {'key': 'operations', 'type': '[SensitivityLabelUpdate]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SensitivityLabelUpdateList, self).__init__(**kwargs)
+        self.operations = kwargs.get('operations', None)
 
 
 class Server(TrackedResource):
@@ -8255,7 +10014,8 @@ class Server(TrackedResource):
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param identity: The Azure Active Directory identity of the server.
-    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
+    :type identity:
+     ~azure.mgmt.sql.models.ResourceIdentityWithUserAssignedIdentities
     :ivar kind: Kind of sql server. This is metadata used for the Azure portal
      experience.
     :vartype kind: str
@@ -8284,6 +10044,18 @@ class Server(TrackedResource):
      'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
     :type public_network_access: str or
      ~azure.mgmt.sql.models.ServerPublicNetworkAccess
+    :ivar workspace_feature: Whether or not existing server has a workspace
+     created and if it allows connection from workspace. Possible values
+     include: 'Connected', 'Disconnected'
+    :vartype workspace_feature: str or
+     ~azure.mgmt.sql.models.ServerWorkspaceFeature
+    :param primary_user_assigned_identity_id: The resource id of a user
+     assigned identity to be used by default.
+    :type primary_user_assigned_identity_id: str
+    :param key_id: A CMK URI of the key to use for encryption.
+    :type key_id: str
+    :param administrators: The Azure Active Directory identity of the server.
+    :type administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
     """
 
     _validation = {
@@ -8295,6 +10067,7 @@ class Server(TrackedResource):
         'state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
+        'workspace_feature': {'readonly': True},
     }
 
     _attribute_map = {
@@ -8303,7 +10076,7 @@ class Server(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentityWithUserAssignedIdentities'},
         'kind': {'key': 'kind', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
@@ -8313,6 +10086,10 @@ class Server(TrackedResource):
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'workspace_feature': {'key': 'properties.workspaceFeature', 'type': 'str'},
+        'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
+        'key_id': {'key': 'properties.keyId', 'type': 'str'},
+        'administrators': {'key': 'properties.administrators', 'type': 'ServerExternalAdministrator'},
     }
 
     def __init__(self, **kwargs):
@@ -8327,6 +10104,10 @@ class Server(TrackedResource):
         self.private_endpoint_connections = None
         self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
         self.public_network_access = kwargs.get('public_network_access', None)
+        self.workspace_feature = None
+        self.primary_user_assigned_identity_id = kwargs.get('primary_user_assigned_identity_id', None)
+        self.key_id = kwargs.get('key_id', None)
+        self.administrators = kwargs.get('administrators', None)
 
 
 class ServerAutomaticTuning(ProxyResource):
@@ -8488,27 +10269,22 @@ class ServerBlobAuditingPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param state: Required. Specifies the state of the policy. If state is
-     Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required.
-     Possible values include: 'Enabled', 'Disabled'
-    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
-     https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint or isAzureMonitorTargetEnabled is required.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account.
-     If state is Enabled and storageEndpoint is specified, not specifying the
-     storageAccountAccessKey will use SQL server system-assigned managed
-     identity to access the storage.
-     Prerequisites for using managed identity authentication:
-     1. Assign SQL Server a system-assigned managed identity in Azure Active
-     Directory (AAD).
-     2. Grant SQL Server identity access to the storage account by adding
-     'Storage Blob Data Contributor' RBAC role to the server identity.
-     For more information, see [Auditing to storage using Managed Identity
-     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
-    :type storage_account_access_key: str
+    :param is_devops_audit_enabled: Specifies the state of devops audit. If
+     state is Enabled, devops logs will be sent to Azure Monitor.
+     In order to send the events to Azure Monitor, specify 'State' as
+     'Enabled', 'IsAzureMonitorTargetEnabled' as true and
+     'IsDevopsAuditEnabled' as true
+     When using REST API to configure auditing, Diagnostic Settings with
+     'DevOpsOperationsAudit' diagnostic logs category on the master database
+     should also be created.
+     Diagnostic Settings URI format:
+     PUT
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+     For more information, see [Diagnostic Settings REST
+     API](https://go.microsoft.com/fwlink/?linkid=2033207)
+     or [Diagnostic Settings
+     PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
+    :type is_devops_audit_enabled: bool
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
     :type retention_days: int
@@ -8573,16 +10349,13 @@ class ServerBlobAuditingPolicy(ProxyResource):
      For more information, see [Database-Level Audit
      Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
     :type audit_actions_and_groups: list[str]
-    :param storage_account_subscription_id: Specifies the blob storage
-     subscription Id.
-    :type storage_account_subscription_id: str
     :param is_storage_secondary_key_in_use: Specifies whether
      storageAccountAccessKey value is the storage's secondary key.
     :type is_storage_secondary_key_in_use: bool
     :param is_azure_monitor_target_enabled: Specifies whether audit events are
      sent to Azure Monitor.
-     In order to send the events to Azure Monitor, specify 'state' as 'Enabled'
-     and 'isAzureMonitorTargetEnabled' as true.
+     In order to send the events to Azure Monitor, specify 'State' as 'Enabled'
+     and 'IsAzureMonitorTargetEnabled' as true.
      When using REST API to configure auditing, Diagnostic Settings with
      'SQLSecurityAuditEvents' diagnostic logs category on the database should
      be also created.
@@ -8601,6 +10374,30 @@ class ServerBlobAuditingPolicy(ProxyResource):
      The default minimum value is 1000 (1 second). The maximum is
      2,147,483,647.
     :type queue_delay_ms: int
+    :param state: Required. Specifies the state of the audit. If state is
+     Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required.
+     Possible values include: 'Enabled', 'Disabled'
+    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+     https://MyAccount.blob.core.windows.net). If state is Enabled,
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
+    :type storage_endpoint: str
+    :param storage_account_access_key: Specifies the identifier key of the
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
+    :type storage_account_access_key: str
+    :param storage_account_subscription_id: Specifies the blob storage
+     subscription Id.
+    :type storage_account_subscription_id: str
     """
 
     _validation = {
@@ -8614,28 +10411,30 @@ class ServerBlobAuditingPolicy(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'BlobAuditingPolicyState'},
-        'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
-        'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
+        'is_devops_audit_enabled': {'key': 'properties.isDevopsAuditEnabled', 'type': 'bool'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
         'audit_actions_and_groups': {'key': 'properties.auditActionsAndGroups', 'type': '[str]'},
-        'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
         'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
+        'state': {'key': 'properties.state', 'type': 'BlobAuditingPolicyState'},
+        'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
+        'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
+        'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ServerBlobAuditingPolicy, self).__init__(**kwargs)
-        self.state = kwargs.get('state', None)
-        self.storage_endpoint = kwargs.get('storage_endpoint', None)
-        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
+        self.is_devops_audit_enabled = kwargs.get('is_devops_audit_enabled', None)
         self.retention_days = kwargs.get('retention_days', None)
         self.audit_actions_and_groups = kwargs.get('audit_actions_and_groups', None)
-        self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
         self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
         self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
         self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
+        self.state = kwargs.get('state', None)
+        self.storage_endpoint = kwargs.get('storage_endpoint', None)
+        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
+        self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
 
 
 class ServerCommunicationLink(ProxyResource):
@@ -8862,12 +10661,18 @@ class ServerDnsAlias(ProxyResource):
 
 
 class ServerDnsAliasAcquisition(Model):
-    """A server DNS alias acquisition request.
+    """A server dns alias acquisition request.
 
-    :param old_server_dns_alias_id: The id of the server alias that will be
-     acquired to point to this server instead.
+    All required parameters must be populated in order to send to Azure.
+
+    :param old_server_dns_alias_id: Required. The id of the server alias that
+     will be acquired to point to this server instead.
     :type old_server_dns_alias_id: str
     """
+
+    _validation = {
+        'old_server_dns_alias_id': {'required': True},
+    }
 
     _attribute_map = {
         'old_server_dns_alias_id': {'key': 'oldServerDnsAliasId', 'type': 'str'},
@@ -8876,6 +10681,45 @@ class ServerDnsAliasAcquisition(Model):
     def __init__(self, **kwargs):
         super(ServerDnsAliasAcquisition, self).__init__(**kwargs)
         self.old_server_dns_alias_id = kwargs.get('old_server_dns_alias_id', None)
+
+
+class ServerExternalAdministrator(Model):
+    """Properties of a active directory administrator.
+
+    :param administrator_type: Type of the sever administrator. Possible
+     values include: 'ActiveDirectory'
+    :type administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
+    :param principal_type: Principal Type of the sever administrator. Possible
+     values include: 'User', 'Group', 'Application'
+    :type principal_type: str or ~azure.mgmt.sql.models.PrincipalType
+    :param login: Login name of the server administrator.
+    :type login: str
+    :param sid: SID (object ID) of the server administrator.
+    :type sid: str
+    :param tenant_id: Tenant ID of the administrator.
+    :type tenant_id: str
+    :param azure_ad_only_authentication: Azure Active Directory only
+     Authentication enabled.
+    :type azure_ad_only_authentication: bool
+    """
+
+    _attribute_map = {
+        'administrator_type': {'key': 'administratorType', 'type': 'str'},
+        'principal_type': {'key': 'principalType', 'type': 'str'},
+        'login': {'key': 'login', 'type': 'str'},
+        'sid': {'key': 'sid', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'azure_ad_only_authentication': {'key': 'azureADOnlyAuthentication', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServerExternalAdministrator, self).__init__(**kwargs)
+        self.administrator_type = kwargs.get('administrator_type', None)
+        self.principal_type = kwargs.get('principal_type', None)
+        self.login = kwargs.get('login', None)
+        self.sid = kwargs.get('sid', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.azure_ad_only_authentication = kwargs.get('azure_ad_only_authentication', None)
 
 
 class ServerInfo(Model):
@@ -8914,9 +10758,9 @@ class ServerKey(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param kind: Kind of encryption protector. This is metadata used for the
+    :ivar kind: Kind of encryption protector. This is metadata used for the
      Azure portal experience.
-    :type kind: str
+    :vartype kind: str
     :ivar location: Resource location.
     :vartype location: str
     :ivar subregion: Subregion of the server key.
@@ -8925,21 +10769,29 @@ class ServerKey(ProxyResource):
      'ServiceManaged', 'AzureKeyVault'. Possible values include:
      'ServiceManaged', 'AzureKeyVault'
     :type server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
-    :param uri: The URI of the server key.
+    :param uri: The URI of the server key. If the ServerKeyType is
+     AzureKeyVault, then the URI is required.
     :type uri: str
-    :param thumbprint: Thumbprint of the server key.
-    :type thumbprint: str
-    :param creation_date: The server key creation date.
-    :type creation_date: datetime
+    :ivar thumbprint: Thumbprint of the server key.
+    :vartype thumbprint: str
+    :ivar creation_date: The server key creation date.
+    :vartype creation_date: datetime
+    :ivar auto_rotation_enabled: Key auto rotation opt-in flag. Either true or
+     false.
+    :vartype auto_rotation_enabled: bool
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'kind': {'readonly': True},
         'location': {'readonly': True},
         'subregion': {'readonly': True},
         'server_key_type': {'required': True},
+        'thumbprint': {'readonly': True},
+        'creation_date': {'readonly': True},
+        'auto_rotation_enabled': {'readonly': True},
     }
 
     _attribute_map = {
@@ -8953,17 +10805,116 @@ class ServerKey(ProxyResource):
         'uri': {'key': 'properties.uri', 'type': 'str'},
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'auto_rotation_enabled': {'key': 'properties.autoRotationEnabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(ServerKey, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
+        self.kind = None
         self.location = None
         self.subregion = None
         self.server_key_type = kwargs.get('server_key_type', None)
         self.uri = kwargs.get('uri', None)
-        self.thumbprint = kwargs.get('thumbprint', None)
-        self.creation_date = kwargs.get('creation_date', None)
+        self.thumbprint = None
+        self.creation_date = None
+        self.auto_rotation_enabled = None
+
+
+class ServerOperation(ProxyResource):
+    """A server operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar operation: The name of operation.
+    :vartype operation: str
+    :ivar operation_friendly_name: The friendly name of operation.
+    :vartype operation_friendly_name: str
+    :ivar percent_complete: The percentage of the operation completed.
+    :vartype percent_complete: int
+    :ivar server_name: The name of the server.
+    :vartype server_name: str
+    :ivar start_time: The operation start time.
+    :vartype start_time: datetime
+    :ivar state: The operation state. Possible values include: 'Pending',
+     'InProgress', 'Succeeded', 'Failed', 'CancelInProgress', 'Cancelled'
+    :vartype state: str or ~azure.mgmt.sql.models.ManagementOperationState
+    :ivar error_code: The operation error code.
+    :vartype error_code: int
+    :ivar error_description: The operation error description.
+    :vartype error_description: str
+    :ivar error_severity: The operation error severity.
+    :vartype error_severity: int
+    :ivar is_user_error: Whether or not the error is a user error.
+    :vartype is_user_error: bool
+    :ivar estimated_completion_time: The estimated completion time of the
+     operation.
+    :vartype estimated_completion_time: datetime
+    :ivar description: The operation description.
+    :vartype description: str
+    :ivar is_cancellable: Whether the operation can be cancelled.
+    :vartype is_cancellable: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'operation': {'readonly': True},
+        'operation_friendly_name': {'readonly': True},
+        'percent_complete': {'readonly': True},
+        'server_name': {'readonly': True},
+        'start_time': {'readonly': True},
+        'state': {'readonly': True},
+        'error_code': {'readonly': True},
+        'error_description': {'readonly': True},
+        'error_severity': {'readonly': True},
+        'is_user_error': {'readonly': True},
+        'estimated_completion_time': {'readonly': True},
+        'description': {'readonly': True},
+        'is_cancellable': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'operation': {'key': 'properties.operation', 'type': 'str'},
+        'operation_friendly_name': {'key': 'properties.operationFriendlyName', 'type': 'str'},
+        'percent_complete': {'key': 'properties.percentComplete', 'type': 'int'},
+        'server_name': {'key': 'properties.serverName', 'type': 'str'},
+        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+        'error_code': {'key': 'properties.errorCode', 'type': 'int'},
+        'error_description': {'key': 'properties.errorDescription', 'type': 'str'},
+        'error_severity': {'key': 'properties.errorSeverity', 'type': 'int'},
+        'is_user_error': {'key': 'properties.isUserError', 'type': 'bool'},
+        'estimated_completion_time': {'key': 'properties.estimatedCompletionTime', 'type': 'iso-8601'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'is_cancellable': {'key': 'properties.isCancellable', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServerOperation, self).__init__(**kwargs)
+        self.operation = None
+        self.operation_friendly_name = None
+        self.percent_complete = None
+        self.server_name = None
+        self.start_time = None
+        self.state = None
+        self.error_code = None
+        self.error_description = None
+        self.error_severity = None
+        self.is_user_error = None
+        self.estimated_completion_time = None
+        self.description = None
+        self.is_cancellable = None
 
 
 class ServerPrivateEndpointConnection(Model):
@@ -9009,13 +10960,15 @@ class ServerSecurityAlertPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: SystemData of SecurityAlertPolicyResource.
+    :vartype system_data: ~azure.mgmt.sql.models.SystemData
     :param state: Required. Specifies the state of the policy, whether it is
      enabled or disabled or a policy has not been applied yet on the specific
-     database. Possible values include: 'New', 'Enabled', 'Disabled'
-    :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
+     database. Possible values include: 'Enabled', 'Disabled'
+    :type state: str or ~azure.mgmt.sql.models.SecurityAlertsPolicyState
     :param disabled_alerts: Specifies an array of alerts that are disabled.
      Allowed values are: Sql_Injection, Sql_Injection_Vulnerability,
-     Access_Anomaly, Data_Exfiltration, Unsafe_Action
+     Access_Anomaly, Data_Exfiltration, Unsafe_Action, Brute_Force
     :type disabled_alerts: list[str]
     :param email_addresses: Specifies an array of e-mail addresses to which
      the alert is sent.
@@ -9041,6 +10994,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'state': {'required': True},
         'creation_time': {'readonly': True},
     }
@@ -9049,7 +11003,8 @@ class ServerSecurityAlertPolicy(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'SecurityAlertPolicyState'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'state': {'key': 'properties.state', 'type': 'SecurityAlertsPolicyState'},
         'disabled_alerts': {'key': 'properties.disabledAlerts', 'type': '[str]'},
         'email_addresses': {'key': 'properties.emailAddresses', 'type': '[str]'},
         'email_account_admins': {'key': 'properties.emailAccountAdmins', 'type': 'bool'},
@@ -9061,6 +11016,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
 
     def __init__(self, **kwargs):
         super(ServerSecurityAlertPolicy, self).__init__(**kwargs)
+        self.system_data = None
         self.state = kwargs.get('state', None)
         self.disabled_alerts = kwargs.get('disabled_alerts', None)
         self.email_addresses = kwargs.get('email_addresses', None)
@@ -9120,6 +11076,9 @@ class ServerUpdate(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param identity: Server identity
+    :type identity:
+     ~azure.mgmt.sql.models.ResourceIdentityWithUserAssignedIdentities
     :param administrator_login: Administrator username for the server. Once
      created it cannot be changed.
     :type administrator_login: str
@@ -9145,6 +11104,18 @@ class ServerUpdate(Model):
      'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
     :type public_network_access: str or
      ~azure.mgmt.sql.models.ServerPublicNetworkAccess
+    :ivar workspace_feature: Whether or not existing server has a workspace
+     created and if it allows connection from workspace. Possible values
+     include: 'Connected', 'Disconnected'
+    :vartype workspace_feature: str or
+     ~azure.mgmt.sql.models.ServerWorkspaceFeature
+    :param primary_user_assigned_identity_id: The resource id of a user
+     assigned identity to be used by default.
+    :type primary_user_assigned_identity_id: str
+    :param key_id: A CMK URI of the key to use for encryption.
+    :type key_id: str
+    :param administrators: The Azure Active Directory identity of the server.
+    :type administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -9153,9 +11124,11 @@ class ServerUpdate(Model):
         'state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
+        'workspace_feature': {'readonly': True},
     }
 
     _attribute_map = {
+        'identity': {'key': 'identity', 'type': 'ResourceIdentityWithUserAssignedIdentities'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
@@ -9164,11 +11137,16 @@ class ServerUpdate(Model):
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'workspace_feature': {'key': 'properties.workspaceFeature', 'type': 'str'},
+        'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
+        'key_id': {'key': 'properties.keyId', 'type': 'str'},
+        'administrators': {'key': 'properties.administrators', 'type': 'ServerExternalAdministrator'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
         super(ServerUpdate, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
         self.administrator_login = kwargs.get('administrator_login', None)
         self.administrator_login_password = kwargs.get('administrator_login_password', None)
         self.version = kwargs.get('version', None)
@@ -9177,6 +11155,10 @@ class ServerUpdate(Model):
         self.private_endpoint_connections = None
         self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
         self.public_network_access = kwargs.get('public_network_access', None)
+        self.workspace_feature = None
+        self.primary_user_assigned_identity_id = kwargs.get('primary_user_assigned_identity_id', None)
+        self.key_id = kwargs.get('key_id', None)
+        self.administrators = kwargs.get('administrators', None)
         self.tags = kwargs.get('tags', None)
 
 
@@ -9299,14 +11281,16 @@ class ServerVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has read and write access to the blob container specified in
-     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
-     specified, StorageContainerSasKey is required.
+     has write access to the blob container specified in 'storageContainerPath'
+     parameter. If 'storageAccountAccessKey' isn't specified,
+     StorageContainerSasKey is required. Applies only if the storage account is
+     not behind a Vnet or a firewall
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
      'StorageContainerSasKey' isn't specified, storageAccountAccessKey is
-     required.
+     required. Applies only if the storage account is not behind a Vnet or a
+     firewall
     :type storage_account_access_key: str
     :param recurring_scans: The recurring scans settings
     :type recurring_scans:
@@ -9492,151 +11476,6 @@ class ServiceObjectiveCapability(Model):
         self.reason = kwargs.get('reason', None)
 
 
-class ServiceTierAdvisor(ProxyResource):
-    """Represents a Service Tier Advisor.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar observation_period_start: The observation period start (ISO8601
-     format).
-    :vartype observation_period_start: datetime
-    :ivar observation_period_end: The observation period start (ISO8601
-     format).
-    :vartype observation_period_end: datetime
-    :ivar active_time_ratio: The activeTimeRatio for service tier advisor.
-    :vartype active_time_ratio: float
-    :ivar min_dtu: Gets or sets minDtu for service tier advisor.
-    :vartype min_dtu: float
-    :ivar avg_dtu: Gets or sets avgDtu for service tier advisor.
-    :vartype avg_dtu: float
-    :ivar max_dtu: Gets or sets maxDtu for service tier advisor.
-    :vartype max_dtu: float
-    :ivar max_size_in_gb: Gets or sets maxSizeInGB for service tier advisor.
-    :vartype max_size_in_gb: float
-    :ivar service_level_objective_usage_metrics: Gets or sets
-     serviceLevelObjectiveUsageMetrics for the service tier advisor.
-    :vartype service_level_objective_usage_metrics:
-     list[~azure.mgmt.sql.models.SloUsageMetric]
-    :ivar current_service_level_objective: Gets or sets
-     currentServiceLevelObjective for service tier advisor.
-    :vartype current_service_level_objective: str
-    :ivar current_service_level_objective_id: Gets or sets
-     currentServiceLevelObjectiveId for service tier advisor.
-    :vartype current_service_level_objective_id: str
-    :ivar usage_based_recommendation_service_level_objective: Gets or sets
-     usageBasedRecommendationServiceLevelObjective for service tier advisor.
-    :vartype usage_based_recommendation_service_level_objective: str
-    :ivar usage_based_recommendation_service_level_objective_id: Gets or sets
-     usageBasedRecommendationServiceLevelObjectiveId for service tier advisor.
-    :vartype usage_based_recommendation_service_level_objective_id: str
-    :ivar database_size_based_recommendation_service_level_objective: Gets or
-     sets databaseSizeBasedRecommendationServiceLevelObjective for service tier
-     advisor.
-    :vartype database_size_based_recommendation_service_level_objective: str
-    :ivar database_size_based_recommendation_service_level_objective_id: Gets
-     or sets databaseSizeBasedRecommendationServiceLevelObjectiveId for service
-     tier advisor.
-    :vartype database_size_based_recommendation_service_level_objective_id:
-     str
-    :ivar disaster_plan_based_recommendation_service_level_objective: Gets or
-     sets disasterPlanBasedRecommendationServiceLevelObjective for service tier
-     advisor.
-    :vartype disaster_plan_based_recommendation_service_level_objective: str
-    :ivar disaster_plan_based_recommendation_service_level_objective_id: Gets
-     or sets disasterPlanBasedRecommendationServiceLevelObjectiveId for service
-     tier advisor.
-    :vartype disaster_plan_based_recommendation_service_level_objective_id:
-     str
-    :ivar overall_recommendation_service_level_objective: Gets or sets
-     overallRecommendationServiceLevelObjective for service tier advisor.
-    :vartype overall_recommendation_service_level_objective: str
-    :ivar overall_recommendation_service_level_objective_id: Gets or sets
-     overallRecommendationServiceLevelObjectiveId for service tier advisor.
-    :vartype overall_recommendation_service_level_objective_id: str
-    :ivar confidence: Gets or sets confidence for service tier advisor.
-    :vartype confidence: float
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'observation_period_start': {'readonly': True},
-        'observation_period_end': {'readonly': True},
-        'active_time_ratio': {'readonly': True},
-        'min_dtu': {'readonly': True},
-        'avg_dtu': {'readonly': True},
-        'max_dtu': {'readonly': True},
-        'max_size_in_gb': {'readonly': True},
-        'service_level_objective_usage_metrics': {'readonly': True},
-        'current_service_level_objective': {'readonly': True},
-        'current_service_level_objective_id': {'readonly': True},
-        'usage_based_recommendation_service_level_objective': {'readonly': True},
-        'usage_based_recommendation_service_level_objective_id': {'readonly': True},
-        'database_size_based_recommendation_service_level_objective': {'readonly': True},
-        'database_size_based_recommendation_service_level_objective_id': {'readonly': True},
-        'disaster_plan_based_recommendation_service_level_objective': {'readonly': True},
-        'disaster_plan_based_recommendation_service_level_objective_id': {'readonly': True},
-        'overall_recommendation_service_level_objective': {'readonly': True},
-        'overall_recommendation_service_level_objective_id': {'readonly': True},
-        'confidence': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'observation_period_start': {'key': 'properties.observationPeriodStart', 'type': 'iso-8601'},
-        'observation_period_end': {'key': 'properties.observationPeriodEnd', 'type': 'iso-8601'},
-        'active_time_ratio': {'key': 'properties.activeTimeRatio', 'type': 'float'},
-        'min_dtu': {'key': 'properties.minDtu', 'type': 'float'},
-        'avg_dtu': {'key': 'properties.avgDtu', 'type': 'float'},
-        'max_dtu': {'key': 'properties.maxDtu', 'type': 'float'},
-        'max_size_in_gb': {'key': 'properties.maxSizeInGB', 'type': 'float'},
-        'service_level_objective_usage_metrics': {'key': 'properties.serviceLevelObjectiveUsageMetrics', 'type': '[SloUsageMetric]'},
-        'current_service_level_objective': {'key': 'properties.currentServiceLevelObjective', 'type': 'str'},
-        'current_service_level_objective_id': {'key': 'properties.currentServiceLevelObjectiveId', 'type': 'str'},
-        'usage_based_recommendation_service_level_objective': {'key': 'properties.usageBasedRecommendationServiceLevelObjective', 'type': 'str'},
-        'usage_based_recommendation_service_level_objective_id': {'key': 'properties.usageBasedRecommendationServiceLevelObjectiveId', 'type': 'str'},
-        'database_size_based_recommendation_service_level_objective': {'key': 'properties.databaseSizeBasedRecommendationServiceLevelObjective', 'type': 'str'},
-        'database_size_based_recommendation_service_level_objective_id': {'key': 'properties.databaseSizeBasedRecommendationServiceLevelObjectiveId', 'type': 'str'},
-        'disaster_plan_based_recommendation_service_level_objective': {'key': 'properties.disasterPlanBasedRecommendationServiceLevelObjective', 'type': 'str'},
-        'disaster_plan_based_recommendation_service_level_objective_id': {'key': 'properties.disasterPlanBasedRecommendationServiceLevelObjectiveId', 'type': 'str'},
-        'overall_recommendation_service_level_objective': {'key': 'properties.overallRecommendationServiceLevelObjective', 'type': 'str'},
-        'overall_recommendation_service_level_objective_id': {'key': 'properties.overallRecommendationServiceLevelObjectiveId', 'type': 'str'},
-        'confidence': {'key': 'properties.confidence', 'type': 'float'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ServiceTierAdvisor, self).__init__(**kwargs)
-        self.observation_period_start = None
-        self.observation_period_end = None
-        self.active_time_ratio = None
-        self.min_dtu = None
-        self.avg_dtu = None
-        self.max_dtu = None
-        self.max_size_in_gb = None
-        self.service_level_objective_usage_metrics = None
-        self.current_service_level_objective = None
-        self.current_service_level_objective_id = None
-        self.usage_based_recommendation_service_level_objective = None
-        self.usage_based_recommendation_service_level_objective_id = None
-        self.database_size_based_recommendation_service_level_objective = None
-        self.database_size_based_recommendation_service_level_objective_id = None
-        self.disaster_plan_based_recommendation_service_level_objective = None
-        self.disaster_plan_based_recommendation_service_level_objective_id = None
-        self.overall_recommendation_service_level_objective = None
-        self.overall_recommendation_service_level_objective_id = None
-        self.confidence = None
-
-
 class Sku(Model):
     """An ARM Resource SKU.
 
@@ -9721,6 +11560,41 @@ class SloUsageMetric(Model):
         self.service_level_objective = None
         self.service_level_objective_id = None
         self.in_range_time_ratio = None
+
+
+class SqlAgentConfiguration(ProxyResource):
+    """A recoverable managed database resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param state: The state of Sql Agent. Possible values include: 'Enabled',
+     'Disabled'
+    :type state: str or ~azure.mgmt.sql.models.enum
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SqlAgentConfiguration, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
 
 
 class StorageCapability(Model):
@@ -10116,6 +11990,8 @@ class SyncGroup(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :param sku: The name and capacity of the SKU.
+    :type sku: ~azure.mgmt.sql.models.Sku
     :param interval: Sync interval of the sync group.
     :type interval: int
     :ivar last_sync_time: Last sync time of the sync group.
@@ -10138,6 +12014,11 @@ class SyncGroup(ProxyResource):
     :vartype sync_state: str or ~azure.mgmt.sql.models.SyncGroupState
     :param schema: Sync schema of the sync group.
     :type schema: ~azure.mgmt.sql.models.SyncGroupSchema
+    :param enable_conflict_logging: If conflict logging is enabled.
+    :type enable_conflict_logging: bool
+    :param conflict_logging_retention_in_days: Conflict logging retention
+     period.
+    :type conflict_logging_retention_in_days: int
     :param use_private_link_connection: If use private link connection is
      enabled.
     :type use_private_link_connection: bool
@@ -10159,6 +12040,7 @@ class SyncGroup(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'interval': {'key': 'properties.interval', 'type': 'int'},
         'last_sync_time': {'key': 'properties.lastSyncTime', 'type': 'iso-8601'},
         'conflict_resolution_policy': {'key': 'properties.conflictResolutionPolicy', 'type': 'str'},
@@ -10167,12 +12049,15 @@ class SyncGroup(ProxyResource):
         'hub_database_password': {'key': 'properties.hubDatabasePassword', 'type': 'str'},
         'sync_state': {'key': 'properties.syncState', 'type': 'str'},
         'schema': {'key': 'properties.schema', 'type': 'SyncGroupSchema'},
+        'enable_conflict_logging': {'key': 'properties.enableConflictLogging', 'type': 'bool'},
+        'conflict_logging_retention_in_days': {'key': 'properties.conflictLoggingRetentionInDays', 'type': 'int'},
         'use_private_link_connection': {'key': 'properties.usePrivateLinkConnection', 'type': 'bool'},
         'private_endpoint_name': {'key': 'properties.privateEndpointName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(SyncGroup, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
         self.interval = kwargs.get('interval', None)
         self.last_sync_time = None
         self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
@@ -10181,6 +12066,8 @@ class SyncGroup(ProxyResource):
         self.hub_database_password = kwargs.get('hub_database_password', None)
         self.sync_state = None
         self.schema = kwargs.get('schema', None)
+        self.enable_conflict_logging = kwargs.get('enable_conflict_logging', None)
+        self.conflict_logging_retention_in_days = kwargs.get('conflict_logging_retention_in_days', None)
         self.use_private_link_connection = kwargs.get('use_private_link_connection', None)
         self.private_endpoint_name = None
 
@@ -10395,38 +12282,22 @@ class SyncMember(ProxyResource):
 class SystemData(Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar created_by: A string identifier for the identity that created the
-     resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource:
-     <User|Application|ManagedIdentity|Key>. Possible values include: 'User',
-     'Application', 'ManagedIdentity', 'Key'
-    :vartype created_by_type: str or ~azure.mgmt.sql.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: datetime
-    :ivar last_modified_by: A string identifier for the identity that last
-     modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the
-     resource: <User|Application|ManagedIdentity|Key>. Possible values include:
-     'User', 'Application', 'ManagedIdentity', 'Key'
-    :vartype last_modified_by_type: str or
-     ~azure.mgmt.sql.models.CreatedByType
-    :ivar last_modified_at: The timestamp of last modification (UTC).
-    :vartype last_modified_at: datetime
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or ~azure.mgmt.sql.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or ~azure.mgmt.sql.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC)
+    :type last_modified_at: datetime
     """
-
-    _validation = {
-        'created_by': {'readonly': True},
-        'created_by_type': {'readonly': True},
-        'created_at': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'last_modified_by_type': {'readonly': True},
-        'last_modified_at': {'readonly': True},
-    }
 
     _attribute_map = {
         'created_by': {'key': 'createdBy', 'type': 'str'},
@@ -10439,12 +12310,12 @@ class SystemData(Model):
 
     def __init__(self, **kwargs):
         super(SystemData, self).__init__(**kwargs)
-        self.created_by = None
-        self.created_by_type = None
-        self.created_at = None
-        self.last_modified_by = None
-        self.last_modified_by_type = None
-        self.last_modified_at = None
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
 
 
 class TdeCertificate(ProxyResource):
@@ -10487,6 +12358,46 @@ class TdeCertificate(ProxyResource):
         super(TdeCertificate, self).__init__(**kwargs)
         self.private_blob = kwargs.get('private_blob', None)
         self.cert_password = kwargs.get('cert_password', None)
+
+
+class TimeZone(ProxyResource):
+    """Time Zone.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar time_zone_id: The time zone id
+    :vartype time_zone_id: str
+    :ivar display_name: The time zone display name
+    :vartype display_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'time_zone_id': {'readonly': True},
+        'display_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'time_zone_id': {'key': 'properties.timeZoneId', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TimeZone, self).__init__(**kwargs)
+        self.time_zone_id = None
+        self.display_name = None
 
 
 class TopQueries(Model):
@@ -10650,6 +12561,61 @@ class UnlinkParameters(Model):
         self.forced_termination = kwargs.get('forced_termination', None)
 
 
+class UpdateLongTermRetentionBackupParameters(Model):
+    """Contains the information necessary to perform long term retention backup
+    update operation.
+
+    :param requested_backup_storage_redundancy: The storage redundancy type of
+     the copied backup. Possible values include: 'Geo', 'Local', 'Zone'
+    :type requested_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.RequestedBackupStorageRedundancy
+    """
+
+    _attribute_map = {
+        'requested_backup_storage_redundancy': {'key': 'properties.requestedBackupStorageRedundancy', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UpdateLongTermRetentionBackupParameters, self).__init__(**kwargs)
+        self.requested_backup_storage_redundancy = kwargs.get('requested_backup_storage_redundancy', None)
+
+
+class UpdateManagedInstanceDnsServersOperation(ProxyResource):
+    """A recoverable managed database resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar status: The status of the DNS refresh operation. Possible values
+     include: 'Succeeded', 'Failed'
+    :vartype status: str or ~azure.mgmt.sql.models.enum
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UpdateManagedInstanceDnsServersOperation, self).__init__(**kwargs)
+        self.status = None
+
+
 class UpsertManagedServerOperationParameters(Model):
     """UpsertManagedServerOperationParameters.
 
@@ -10756,6 +12722,34 @@ class Usage(Model):
         self.requested_limit = None
 
 
+class UserIdentity(Model):
+    """Azure Active Directory identity configuration for a resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: The Azure Active Directory principal id.
+    :vartype principal_id: str
+    :ivar client_id: The Azure Active Directory client id.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UserIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
 class VirtualCluster(TrackedResource):
     """An Azure SQL virtual cluster.
 
@@ -10781,6 +12775,9 @@ class VirtualCluster(TrackedResource):
     :type family: str
     :ivar child_resources: List of resources in this virtual cluster.
     :vartype child_resources: list[str]
+    :param maintenance_configuration_id: Specifies maintenance configuration
+     id to apply to this virtual cluster.
+    :type maintenance_configuration_id: str
     """
 
     _validation = {
@@ -10801,6 +12798,7 @@ class VirtualCluster(TrackedResource):
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
         'family': {'key': 'properties.family', 'type': 'str'},
         'child_resources': {'key': 'properties.childResources', 'type': '[str]'},
+        'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -10808,6 +12806,7 @@ class VirtualCluster(TrackedResource):
         self.subnet_id = None
         self.family = kwargs.get('family', None)
         self.child_resources = None
+        self.maintenance_configuration_id = kwargs.get('maintenance_configuration_id', None)
 
 
 class VirtualClusterUpdate(Model):
@@ -10823,6 +12822,9 @@ class VirtualClusterUpdate(Model):
     :type family: str
     :ivar child_resources: List of resources in this virtual cluster.
     :vartype child_resources: list[str]
+    :param maintenance_configuration_id: Specifies maintenance configuration
+     id to apply to this virtual cluster.
+    :type maintenance_configuration_id: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -10836,6 +12838,7 @@ class VirtualClusterUpdate(Model):
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
         'family': {'key': 'properties.family', 'type': 'str'},
         'child_resources': {'key': 'properties.childResources', 'type': '[str]'},
+        'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -10844,6 +12847,7 @@ class VirtualClusterUpdate(Model):
         self.subnet_id = None
         self.family = kwargs.get('family', None)
         self.child_resources = None
+        self.maintenance_configuration_id = kwargs.get('maintenance_configuration_id', None)
         self.tags = kwargs.get('tags', None)
 
 
@@ -10868,7 +12872,7 @@ class VirtualNetworkRule(ProxyResource):
      the virtual network has vnet service endpoint enabled.
     :type ignore_missing_vnet_service_endpoint: bool
     :ivar state: Virtual Network Rule State. Possible values include:
-     'Initializing', 'InProgress', 'Ready', 'Deleting', 'Unknown'
+     'Initializing', 'InProgress', 'Ready', 'Failed', 'Deleting', 'Unknown'
     :vartype state: str or ~azure.mgmt.sql.models.VirtualNetworkRuleState
     """
 

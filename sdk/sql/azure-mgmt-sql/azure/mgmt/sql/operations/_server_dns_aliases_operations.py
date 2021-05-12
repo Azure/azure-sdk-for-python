@@ -27,7 +27,7 @@ class ServerDnsAliasesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2017-03-01-preview".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-11-01-preview".
     """
 
     models = models
@@ -37,7 +37,7 @@ class ServerDnsAliasesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-03-01-preview"
+        self.api_version = "2020-11-01-preview"
 
         self.config = config
 
@@ -52,7 +52,7 @@ class ServerDnsAliasesOperations(object):
         :param server_name: The name of the server that the alias is pointing
          to.
         :type server_name: str
-        :param dns_alias_name: The name of the server DNS alias.
+        :param dns_alias_name: The name of the server dns alias.
         :type dns_alias_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -159,7 +159,7 @@ class ServerDnsAliasesOperations(object):
 
     def create_or_update(
             self, resource_group_name, server_name, dns_alias_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates a server dns alias.
+        """Creates a server DNS alias.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -168,7 +168,7 @@ class ServerDnsAliasesOperations(object):
         :param server_name: The name of the server that the alias is pointing
          to.
         :type server_name: str
-        :param dns_alias_name: The name of the server DNS alias.
+        :param dns_alias_name: The name of the server dns alias.
         :type dns_alias_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -260,7 +260,7 @@ class ServerDnsAliasesOperations(object):
         :param server_name: The name of the server that the alias is pointing
          to.
         :type server_name: str
-        :param dns_alias_name: The name of the server DNS alias.
+        :param dns_alias_name: The name of the server dns alias.
         :type dns_alias_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -373,7 +373,7 @@ class ServerDnsAliasesOperations(object):
 
 
     def _acquire_initial(
-            self, resource_group_name, server_name, dns_alias_name, old_server_dns_alias_id=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, dns_alias_name, old_server_dns_alias_id, custom_headers=None, raw=False, **operation_config):
         parameters = models.ServerDnsAliasAcquisition(old_server_dns_alias_id=old_server_dns_alias_id)
 
         # Construct URL
@@ -392,6 +392,7 @@ class ServerDnsAliasesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -412,12 +413,19 @@ class ServerDnsAliasesOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ServerDnsAlias', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
+        return deserialized
+
     def acquire(
-            self, resource_group_name, server_name, dns_alias_name, old_server_dns_alias_id=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, server_name, dns_alias_name, old_server_dns_alias_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Acquires server DNS alias from another server.
 
         :param resource_group_name: The name of the resource group that
@@ -437,10 +445,12 @@ class ServerDnsAliasesOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns None or
-         ClientRawResponse<None> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :return: An instance of LROPoller that returns ServerDnsAlias or
+         ClientRawResponse<ServerDnsAlias> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ServerDnsAlias]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.ServerDnsAlias]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._acquire_initial(
@@ -454,9 +464,13 @@ class ServerDnsAliasesOperations(object):
         )
 
         def get_long_running_output(response):
+            deserialized = self._deserialize('ServerDnsAlias', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
+
+            return deserialized
 
         lro_delay = operation_config.get(
             'long_running_operation_timeout',
