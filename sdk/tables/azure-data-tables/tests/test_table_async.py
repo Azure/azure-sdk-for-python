@@ -34,7 +34,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
-        table_name = self._get_table_reference()
+        table_name = self.get_table_reference()
 
         # Act
         created = await ts.create_table(table_name=table_name)
@@ -48,7 +48,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
-        table_name = self._get_table_reference()
+        table_name = self.get_table_reference()
 
         # Act
         created = await ts.create_table(table_name=table_name)
@@ -215,7 +215,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
-        table_name = self._get_table_reference()
+        table_name = self.get_table_reference()
         await ts.delete_table(table_name)
 
         # Assert
@@ -273,7 +273,6 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             assert acl['empty'].expiry is None
             assert acl['empty'].start is None
         finally:
-            # self._delete_table(table)
             await ts.delete_table(table.table_name)
 
     @tables_decorator_async
@@ -362,7 +361,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             assert entities[0]['text'] == u'hello'
             assert entities[1]['text'] == u'hello'
         finally:
-            await self._delete_table(table=table, ts=tsc)
+            await tsc.delete_table(table.table_name)
 
 
 class TestTablesUnitTest(AsyncTableTestCase):
