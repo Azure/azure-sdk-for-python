@@ -18,9 +18,25 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._generated import AzureAttestationRestClient
-from ._generated.models import AttestationType, PolicyResult, PolicyCertificatesResult, JSONWebKey, AttestationCertificateManagementBody, PolicyCertificatesModificationResult as GeneratedPolicyCertificatesModificationResult
+from ._generated.models import (
+    AttestationType, 
+    PolicyResult as GeneratedPolicyResult, 
+    PolicyCertificatesResult, 
+    JSONWebKey, 
+    AttestationCertificateManagementBody, 
+    StoredAttestationPolicy as GeneratedStoredAttestationPolicy,
+    PolicyCertificatesModificationResult as GeneratedPolicyCertificatesModificationResult
+)
 from ._configuration import AttestationClientConfiguration
-from ._models import AttestationSigner, AttestationToken, AttestationResponse, StoredAttestationPolicy, AttestationSigningKey, PolicyCertificatesModificationResult
+from ._models import (
+    AttestationSigner, 
+    AttestationToken, 
+    AttestationResponse, 
+    AttestationSigningKey, 
+    PolicyCertificatesModificationResult,
+    PolicyResult,
+    AttestationTokenValidationException
+)
 from ._common import Base64Url
 import cryptography
 import cryptography.x509
@@ -63,17 +79,20 @@ class AttestationAdministrationClient(object):
             which to retrieve the policy.
         :return AttestationResponse[str]: Attestation service response encapsulating a string attestation policy.
 
+        :raises AttestationTokenValidationException: Raised when an attestation token is invalid.
+
         """
         
         policyResult = self._client.policy.get(attestation_type, **kwargs)
-        token = AttestationToken[PolicyResult](token=policyResult.token, body_type=PolicyResult)
+        token = AttestationToken[GeneratedPolicyResult](token=policyResult.token, body_type=GeneratedPolicyResult)
         token_body = token.get_body()
-        stored_policy = AttestationToken[StoredAttestationPolicy](token=token_body.policy, body_type=StoredAttestationPolicy)
+        stored_policy = AttestationToken[GeneratedStoredAttestationPolicy](token=token_body.policy, body_type=GeneratedStoredAttestationPolicy)
 
         actual_policy = stored_policy.get_body().attestation_policy #type: bytes
 
         if self._config.token_validation_options.validate_token:
-            token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
+            if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
+                raise AttestationTokenValidationException("Token Validation of get_policy API failed.")
 
         return AttestationResponse[str](token, actual_policy.decode('utf-8'))
 
@@ -88,6 +107,42 @@ class AttestationAdministrationClient(object):
         :param Optional[AttestationSigningKey] signing_key: Optional signing key to be
             used to sign the policy before sending it to the service.
         :return AttestationResponse[PolicyResult]: Attestation service response encapsulating a :class:`PolicyResult`.
+        :raises AttestationTokenValidationException: Raised when an attestation token is invalid.
+
+        .. note::
+            If the attestation instance is in *Isolated* mode, then the 
+            `signing_key` parameter MUST be a signing key containing one of the
+            certificates returned by :meth:`get_policy_management_certificates`.
+
+            If the attestation instance is in *AAD* mode, then the `signing_key` 
+            parameter does not need to be provided.
+
+        """
+        policy_token = AttestationToken[GeneratedStoredAttestationPolicy](
+            body=GeneratedStoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
+            signer=signing_key,
+            body_type=GeneratedStoredAttestationPolicy)
+        policyResult = self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.serialize(), **kwargs)
+        token = AttestationToken[GeneratedPolicyResult](token=policyResult.token,
+            body_type=GeneratedPolicyResult)
+        if self._config.token_validation_options.validate_token:
+            if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
+                raise AttestationTokenValidationException("Token Validation of set_policy API failed.")
+
+        return AttestationResponse[PolicyResult](token, PolicyResult._from_generated(token.get_body()))
+
+    @distributed_trace
+    def reset_policy(self, attestation_type, signing_key=None, **kwargs): 
+        #type:(AttestationType, Optional[AttestationSigningKey], **Any) -> AttestationResponse[PolicyResult]
+        """ Resets the attestation policy for the specified attestation type to the default value.
+
+        :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
+            which to set the policy.
+        :param str attestation_policy: Attestation policy to be reset.
+        :param Optional[AttestationSigningKey] signing_key: Optional signing key to be
+            used to sign the policy before sending it to the service.
+        :return AttestationResponse[PolicyResult]: Attestation service response encapsulating a :class:`PolicyResult`.
+        :raises AttestationTokenValidationException: Raised when an attestation token is invalid.
 
         .. note::
             If the attestation instance is in *Isolated* mode, then the 
@@ -97,19 +152,18 @@ class AttestationAdministrationClient(object):
             If the attestation instance is in *AAD* mode, then the `signing_key` 
             parameter does not need to be provided.
         """
-        policy_token = AttestationToken[StoredAttestationPolicy](
-            body=StoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
-            signer=signing_key,
-            body_type=StoredAttestationPolicy)
-        policyResult = self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.serialize(), **kwargs)
-        token = AttestationToken[PolicyResult](token=policyResult.token,
-            body_type=PolicyResult)
+        policy_token = AttestationToken(
+            body=None,
+            signer=signing_key)
+        policyResult = self._client.policy.reset(attestation_type=attestation_type, policy_jws=policy_token.serialize(), **kwargs)
+        token = AttestationToken[GeneratedPolicyResult](token=policyResult.token,
+            body_type=GeneratedPolicyResult)
         if self._config.token_validation_options.validate_token:
             if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
-                raise Exception("Token Validation of PolicySet API failed.")
+                raise AttestationTokenValidationException("Token Validation of reset_policy API failed.")
 
+        return AttestationResponse[PolicyResult](token, PolicyResult._from_generated(token.get_body()))
 
-        return AttestationResponse[PolicyResult](token, token.get_body())
 
     @distributed_trace
     def get_policy_management_certificates(self, **kwargs):

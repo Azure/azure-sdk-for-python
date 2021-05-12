@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 from ._generated import AzureAttestationRestClient
 from ._generated.models import (
-    AttestationResult,
+    AttestationResult as GeneratedAttestationResult,
     RuntimeData,
     InitTimeData,
     DataType,
@@ -29,6 +29,7 @@ from ._models import (
     AttestationSigner,
     AttestationToken,
     AttestationResponse,
+    AttestationResult,
     AttestationData,
     TpmAttestationRequest,
     TpmAttestationResponse)
@@ -127,10 +128,10 @@ class AttestationClient(object):
             runtime_data = runtime,
             draft_policy_for_attestation=draft_policy)
         result = self._client.attestation.attest_sgx_enclave(request, **kwargs)
-        token = AttestationToken[AttestationResult](token=result.token,
-            body_type=AttestationResult)
+        token = AttestationToken[GeneratedAttestationResult](token=result.token,
+            body_type=GeneratedAttestationResult)
         token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
-        return AttestationResponse[AttestationResult](token, token.get_body())
+        return AttestationResponse[AttestationResult](token, AttestationResult._from_generated(token.get_body()))
 
     @distributed_trace
     def attest_open_enclave(self, report, inittime_data=None, runtime_data=None, draft_policy=None, **kwargs):
@@ -167,10 +168,10 @@ class AttestationClient(object):
             runtime_data = runtime,
             draft_policy_for_attestation = draft_policy)
         result = self._client.attestation.attest_open_enclave(request, **kwargs)
-        token = AttestationToken[AttestationResult](token=result.token,
-            body_type=AttestationResult)
+        token = AttestationToken[GeneratedAttestationResult](token=result.token,
+            body_type=GeneratedAttestationResult)
         token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
-        return AttestationResponse[AttestationResult](token, token.get_body())
+        return AttestationResponse[AttestationResult](token, AttestationResult._from_generated(token.get_body()))
 
     @distributed_trace
     def attest_tpm(self, request, **kwargs):

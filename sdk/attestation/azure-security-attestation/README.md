@@ -25,7 +25,7 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 ### Install the package
 
-Install the Microsoft Azure Attestation client library for .NET with [PyPI][Attestation_pypi]:
+Install the Microsoft Azure Attestation client library for Python with [PyPI][Attestation_pypi]:
 
 ```Powershell
 pip install --pre azure-security-attestation
@@ -227,9 +227,8 @@ To verify the hash, clients can generate an attestation token and verify the has
     # verify that the hash of the policy document returned from the Attestation 
     # Service matches the hash of an attestation token created locally.
     expected_policy = AttestationToken(
-        body=StoredAttestationPolicy(
-            attestation_policy=str(attestation_policy).encode('ascii')),
-            signer=AttestationSigningKey(key, signing_certificate))
+        body=StoredAttestationPolicy(attestation_policy),
+        signer=AttestationSigningKey(key, signing_certificate))
     hasher = hashes.Hash(hashes.SHA256())
     hasher.update(expected_policy.serialize().encode('utf-8'))
     expected_hash = hasher.finalize()

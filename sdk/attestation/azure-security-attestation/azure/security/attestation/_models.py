@@ -11,8 +11,16 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.hashes import SHA256
 from ._common import Base64Url
-from ._generated.models import PolicyResult, AttestationResult, StoredAttestationPolicy, JSONWebKey, CertificateModification, AttestationType
-from typing import Any, Callable, List, Type, TypeVar, Generic, Union
+from ._generated.models import (
+    PolicyResult as GeneratedPolicyResult, 
+    AttestationResult as GeneratedAttestationResult,
+    StoredAttestationPolicy as GeneratedStoredAttestationPolicy,
+    JSONWebKey,
+    CertificateModification,
+    AttestationType,
+    PolicyModification
+)
+from typing import Any, Callable, Dict, List, Type, TypeVar, Generic, Union
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
@@ -21,7 +29,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, RSAPubl
 from json import JSONDecoder, JSONEncoder
 from datetime import datetime
 
-T = TypeVar('T', PolicyResult, AttestationResult, StoredAttestationPolicy)
+T = TypeVar('T')
 
 
 class AttestationSigner(object):
@@ -38,6 +46,13 @@ class AttestationSigner(object):
         # type: (list[bytes], str, Any) -> None
         self.certificates = certificates
         self.key_id = key_id
+
+    @classmethod
+    def _from_generated(cls, generated):
+        #type:(JSONWebKey)->AttestationSigner
+        if not generated:
+            return cls
+        return cls(generated.x5_c, generated.kid)
 
 class PolicyCertificatesModificationResult(object):
     """The result of a policy certificate modification.
@@ -61,6 +76,389 @@ class PolicyCertificatesModificationResult(object):
         if not generated:
             return cls
         return cls(generated.certificate_thumbprint, generated.certificate_resolution)
+
+class PolicyResult(object):
+    """ PolicyResult represents the result of a :meth:`AttestationAdministrationClient.set_policy` 
+    or :meth:`AttestationAdministrationClient.reset_policy`  API call.
+
+    :param PolicyModification policy_resolution: The result of the policy set or
+        reset call.
+    :param AttestationSigner policy_signer: If the call to `set_policy` or `reset_policy`
+        had a :class:`AttestationSigningKey` parameter, this will be the certificate
+        which was specified in this parameter.
+    :param str policy_token_hash: The hash of the complete JSON Web Signature
+        presented to the `set_policy` or `reset_policy` API.
+
+    The PolicyResult class is returned as the body of an attestation token from
+    the attestation service. It can be used to ensure that the attestation service
+    received the policy object sent from the client without alteration.
+    """
+    def __init__(self, policy_modification, policy_signer, policy_token_hash):
+        #type:(PolicyModification, JSONWebKey, str) -> None
+        self.policy_resolution = policy_modification
+        self.policy_signer = AttestationSigner._from_generated(policy_signer)
+        self.policy_token_hash = policy_token_hash
+
+    @classmethod
+    def _from_generated(cls, generated):
+        #type:(GeneratedPolicyResult)->PolicyResult
+        if not generated:
+            return cls
+        return cls(generated.policy_resolution, generated.policy_signer, generated.policy_token_hash)
+
+class AttestationResult(object):
+    def __init__(self, generated):
+        #type:(GeneratedAttestationResult) -> None
+        self._issuer = generated.iss
+        self._confirmation = generated.cnf
+        self._unique_identifier = generated.jti
+        self._nonce = generated.nonce
+        self._version = generated.version
+        self._runtime_claims = generated.runtime_claims
+        self._inittime_claims = generated.inittime_claims
+        self._policy_claims = generated.policy_claims
+        self._verifier_type = generated.verifier_type
+        self._policy_signer = generated.policy_signer
+        self._policy_hash = generated.policy_hash
+        self._is_debuggable = generated.is_debuggable
+        self._product_id = generated.product_id
+        self._mr_enclave = generated.mr_enclave
+        self._mr_signer = generated.mr_signer
+        self._svn = generated.svn
+        self._enclave_held_data = generated.enclave_held_data
+        self._sgx_collateral = generated.sgx_collateral
+
+        # Deprecated fields.
+        self._deprecated_version = generated.deprecated_version
+        self._deprecated_is_debuggable = generated.deprecated_is_debuggable
+        self._deprecated_sgx_collateral = generated.deprecated_sgx_collateral
+        self._deprecated_enclave_held_data = generated.deprecated_enclave_held_data
+        self._deprecated_enclave_held_data2 = generated.deprecated_enclave_held_data2
+        self._deprecated_product_id = generated.deprecated_product_id
+        self._deprecated_mr_enclave = generated.deprecated_mr_enclave
+        self._deprecated_mr_signer = generated.deprecated_mr_signer
+        self._deprecated_svn = generated.deprecated_svn
+        self._deprecated_tee = generated.deprecated_tee
+        self._deprecated_policy_signer = generated.deprecated_policy_signer
+        self._deprecated_policy_hash = generated.deprecated_policy_hash
+        self._deprecated_rp_data = generated.deprecated_rp_data
+
+
+    @classmethod
+    def _from_generated(cls, generated):
+        #type:(GeneratedAttestationResult) -> AttestationResult
+        return AttestationResult(generated)
+
+    @property
+    def issuer(self):
+        #type:() -> Union[str, None]
+        """ Returns the issuer of the attestation token.
+
+        The issuer for the token MUST be the same as the `instance_uri` associated
+        with the :class:`AttestationClient` object. If it is not, then the token 
+        should be rejected.
+        
+        See `RFC 7519 Section 4.1.1 <https://www.rfc-editor.org/rfc/rfc7519.html#section-4.1.1>`_ for details.
+        """
+        return self._issuer
+
+    @property
+    def confirmation(self):
+        #type:() -> Union[str, None]
+        """ Returns the confirmation claim for the attestation token.
+
+        If present, the confirmation property can be used to identify a proof of
+        possession of a key.
+        
+        See `RFC 7800 Section 3.1 <https://www.rfc-editor.org/rfc/rfc7800.html#section-3.1>`_ for details.
+        """
+        return self._confirmation
+
+    @property
+    def unique_id(self):
+        #type:() -> Union[str, None]
+        """ Returns a unique ID claim for the attestation token.
+
+        If present, the unique_id property can be used to distinguish between
+        different attestation tokens.
+        
+        See `RFC 7519 Section 4.1.7 <https://rfc-editor.org/rfc/rfc7519.html#section-4.1.7>`_ for details.
+        """
+        return self._confirmation
+
+    @property
+    def nonce(self):
+        #type:() -> Union[str, None]
+        """ Returns the value of the "nonce" input to the attestation request.
+
+        """
+        return self._nonce
+
+    @property
+    def version(self):
+        #type:() -> Union[str, None]
+        """ Returns the version of the information returned in the token.
+
+        """
+        return self._version
+
+    @property
+    def runtime_claims(self):
+        #type:() -> Dict[str, Any]
+        """ Returns the runtime claims in the token.
+
+        This value will match the input `runtime_data` property to the 
+        :meth:`AttestationClient::attest_sgx` or
+        :meth:`AttestationClient::attest_open_enclave` API.
+
+        .. note:: The `runtime_claims` property will only be populated if the
+            `runtime_data` parameter to the `Attest` API is marked as being JSON.
+
+        """
+        return self._runtime_claims
+
+    @property
+    def inittime_claims(self):
+        #type:() -> Dict[str, Any]
+        """ Returns the inittime claims in the token.
+
+        This value will match the input `inittime_data` property to the 
+        :meth:`AttestationClient::attest_sgx` or
+        :meth:`AttestationClient::attest_open_enclave` API.
+
+        .. note:: The `inittime_claims` property will only be populated if the
+            `inittime_data` parameter to the `Attest` API is marked as being JSON.
+
+        """
+        return self._inittime_claims
+
+    @property
+    def policy_claims(self):
+        #type:() -> Dict[str, Any]
+        """ Returns the claims for the token generated by attestation policy.
+
+        """
+        return self._policy_claims
+
+    @property
+    def verifier_type(self):
+        #type:() -> Union[str, None]
+        """ Returns the verifier which generated this attestation token.
+
+        """
+        return self._verifier_type
+
+    @property
+    def policy_signer(self):
+        #type:() -> Union[AttestationSigner, None]
+        """ Returns the signing certificate which was used to sign the policy
+        which was applied when the token was generated.
+
+        """
+        if self._policy_signer:
+            return AttestationSigner._from_generated(self._policy_signer)
+        return None
+
+    @property
+    def policy_hash(self):
+        #type:() -> Union[str, None]
+        """ Returns the base64url encoded SHA256 hash of the Base64Url encoded
+        attestation policy which was applied when generating this token.
+
+        """
+        return self._policy_hash
+
+    @property
+    def is_debuggable(self):
+        #type:() -> Union[bool, None]
+        """ Returns "True" if the source evidence being attested indicates
+        that the TEE has debugging enabled.
+        """
+        return self._is_debuggable
+
+    @property
+    def product_id(self):
+        #type:() -> Union[float, None]
+        """ Returns the product id associated with the SGX enclave being attested.
+        """
+        return self._product_id
+
+    @property
+    def mr_enclave(self):
+        #type:() -> Union[str, None]
+        """ Returns HEX encoded `mr-enclave` value of the SGX enclave being attested.
+        """
+        return self._mr_enclave
+
+    @property
+    def mr_signer(self):
+        #type:() -> Union[str, None]
+        """ Returns HEX encoded `mr-signer` value of the SGX enclave being attested.
+        """
+        return self._mr_signer
+
+    @property
+    def svn(self):
+        #type:() -> Union[int, None]
+        """ Returns the `svn` value of the SGX enclave being attested.
+        """
+        return self._svn
+
+    @property
+    def enclave_held_data(self):
+        #type:() -> Union[bytes, None]
+        """ Returns the value of the runtime_data field specified as an input
+        to the :meth:`AttestationClient::attest_sgx` or
+        :meth:`AttestationClient::attest_open_enclave` API.
+
+        .. note:: The enclave_held_data prperty will only be populated if the 
+            `runtime_data` parameter to the `Attest` API is marked as not being 
+            JSON.
+
+        """
+        return self._enclave_held_data
+
+    @property
+    def sgx_collateral(self):
+        #type:() -> Union[Dict[str, Any], None]
+        """ Returns a set of information describing the complete set of inputs
+        to the `oe_verify_evidence`
+
+        """
+        return self._sgx_collateral
+
+        # Deprecated fields.
+
+    @property
+    def deprecated_version(self):
+        #type:() -> Union[str, None]
+        """ Deprecated version of the :meth:`AttestationResult::version` property
+
+        """
+        return self._deprecated_version
+
+    @property
+    def deprecated_is_debuggable(self):
+        #type:() -> Union[str, None]
+        """ Deprecated version of the :meth:`AttestationResult::is_debuggable` property
+
+        """
+        return self._deprecated_is_debuggable
+
+    @property
+    def deprecated_sgx_collateral(self):
+        #type:() -> Union[Dict[str, Any], None]
+        """ Deprecated version of the :meth:`AttestationResult::sgx_collateral` property
+
+        """
+        return self._deprecated_sgx_collateral
+
+    @property
+    def deprecated_enclave_held_data(self):
+        #type:() -> Union[Dict[str, Any], None]
+        """ Deprecated version of the :meth:`AttestationResult::enclave_held_data` property
+
+        """
+        return self._deprecated_enclave_held_data
+
+    @property
+    def deprecated_enclave_held_data2(self):
+        #type:() -> Union[Dict[str, Any], None]
+        """ Deprecated version of the :meth:`AttestationResult::enclave_held_data` property
+
+        """
+        return self._deprecated_enclave_held_data2
+
+    @property
+    def deprecated_mr_enclave(self):
+        #type:() -> Union[str, None]
+        """ Deprecated version of the :meth:`AttestationResult::mr_enclave` property
+
+        """
+        return self._deprecated_mr_enclave
+
+    @property
+    def deprecated_mr_signer(self):
+        #type:() -> Union[str, None]
+        """ Deprecated version of the :meth:`AttestationResult::mr_signer` property
+
+        """
+        return self._deprecated_mr_signer
+
+    @property
+    def deprecated_svn(self):
+        #type:() -> Union[int, None]
+        """ Deprecated version of the :meth:`AttestationResult::svn` property
+
+        """
+        return self._deprecated_svn
+
+    @property
+    def deprecated_product_id(self):
+        #type:() -> Union[float, None]
+        """ Deprecated version of the :meth:`AttestationResult::product_id` property
+
+        """
+        return self._deprecated_product_id
+
+
+    @property
+    def deprecated_tee(self):
+        #type:() -> Union[str, None]
+        """ Deprecated version of the :meth:`AttestationResult::verifier_type` property
+
+        """
+        return self._deprecated_tee
+
+    @property
+    def deprecated_policy_signer(self):
+        #type:() -> Union[AttestationSigner, None]
+        """ Deprecated version of the :meth:`AttestationResult::policy_signer` property
+
+        """
+        if self._deprecated_policy_signer:
+            return AttestationSigner._from_generated(self._deprecated_policy_signer)
+        return None
+
+    @property
+    def deprecated_policy_hash(self):
+        #type:() -> Union[bytes, None]
+        """ Deprecated version of the :meth:`AttestationResult::policy_hash` property
+
+        """
+        return self._deprecated_policy_hash
+
+    @property
+    def deprecated_rp_data(self):
+        #type:() -> Union[bytes, None]
+        """ Deprecated version of the :meth:`AttestationResult::nonce` property
+
+        """
+        return self._deprecated_rp_data
+
+class StoredAttestationPolicy(object):
+    """ Represents an attesttion policy in storage.
+
+    :param str policy: Policy to be saved.
+
+    When serialized, the `StoredAttestationPolicy` object will Base64Url encode the
+    UTF-8 representation of the `policy` value.
+
+    """
+    def __init__(self, policy):
+        #type:(str)->None
+        self._policy = policy.encode("ascii")
+
+    def serialize(self):
+        #type:()->str
+        return GeneratedStoredAttestationPolicy(attestation_policy=self._policy).serialize()
+
+    @classmethod
+    def _from_generated(cls, generated):
+        #type:(GeneratedStoredAttestationPolicy) -> StoredAttestationPolicy
+        if generated is None:
+            return StoredAttestationPolicy("")
+        return StoredAttestationPolicy(generated.attestation_policy)
 
 
 class AttestationData(object):
@@ -97,7 +495,8 @@ class TokenValidationOptions(object):
     """ Validation options for an Attestation Token object.
 
     :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
-    :keyword Callable[['AttestationToken', 'AttestationSigner'], bool] validation_callback: Callback to allow clients to perform custom validation of the token.
+    :keyword validation_callback: Callback to allow clients to perform custom validation of the token.
+    :kwtype validation_callback: Callable[[AttestationToken, AttestationSigner], bool]
     :keyword bool validate_signature: if True, validate the signature of the token being validated.
     :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
     :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -109,13 +508,15 @@ class TokenValidationOptions(object):
         #type: (**Any) -> None
 
         self.validate_token = kwargs.get('validate_token', True)  # type: bool
-        self.validation_callback = kwargs.get('validation_callback') # type:Callable[['AttestationToken', AttestationSigner], bool]
+        self.validation_callback = kwargs.get('validation_callback') # type:Callable[[AttestationToken, AttestationSigner], bool]
         self.validate_signature = kwargs.get('validate_signature', True)  # type:bool
         self.validate_expiration = kwargs.get('validate_expiration', True)  # type:bool
         self.validate_not_before = kwargs.get('validate_not_before', True)  # type:bool
         self.validate_issuer = kwargs.get('validate_issuer', False)  # type:bool
         self.issuer = kwargs.get('issuer')  # type:str
-        self.validation_slack = kwargs.get('validation_slack')  # type:int
+        # We assume a default validation slack of a half second to allow for a small
+        # amount of timer drift.
+        self.validation_slack = kwargs.get('validation_slack', 0.5)  # type:float
 
 
 class AttestationSigningKey(object):
@@ -170,7 +571,12 @@ class AttestationToken(Generic[T]):
             else:
                 token = self._create_unsecured_jwt(body)
         else:
-            token = kwargs.pop('token')
+            if signer:
+                token = self._create_secured_jwt(None, signer)
+            token = kwargs.get('token')
+            if token is None:
+                token = self._create_unsecured_jwt(None)
+
 
         self._token = token
         self._body_type = kwargs.get('body_type') #type: Type
@@ -180,7 +586,10 @@ class AttestationToken(Generic[T]):
         self.header_bytes = Base64Url.decode(token_parts[0])
         self.body_bytes = Base64Url.decode(token_parts[1])
         self.signature_bytes = Base64Url.decode(token_parts[2])
-        self._body = JSONDecoder().decode(self.body_bytes.decode('ascii'))
+        if len(self.body_bytes) != 0:
+            self._body = JSONDecoder().decode(self.body_bytes.decode('ascii'))
+        else:
+            self._body = None
         self._header = JSONDecoder().decode(self.header_bytes.decode('ascii'))
 
     def __str__(self):
@@ -452,19 +861,21 @@ class AttestationToken(Generic[T]):
         # type:(TokenValidationOptions) -> bool
         """ Validate the static properties in the attestation token.
         """
-        if options.validate_expiration and self.expiration_time is not None:
-            if (datetime.now() > self.expiration_time):
-                delta = datetime.now() - self.expiration_time
-                if delta.total_seconds > options.validation_slack:
-                    raise AttestationTokenValidationException(u'Token is expired.')
-        if options.validate_not_before and hasattr(self, 'not_before_time') and self.not_before_time is not None:
-            if (datetime.now() < self.not_before_time):
-                delta = self.expiration_time - datetime.now()
-                if delta.total_seconds > options.validation_slack:
-                    raise AttestationTokenValidationException(u'Token is not yet valid.')
-        if options.validate_issuer and hasattr(self, 'issuer') and self.issuer is not None:
-            if (options.issuer != self.issuer):
-                raise AttestationTokenValidationException(u'Issuer in token: {} is not the expected issuer: {}.'.format(self.issuer, options.issuer))
+        if self._body:
+            time_now = datetime.now()
+            if options.validate_expiration and self.expiration_time is not None:
+                if (time_now > self.expiration_time):
+                    delta = time_now - self.expiration_time
+                    if delta.total_seconds() > options.validation_slack:
+                        raise AttestationTokenValidationException(u'Token is expired. Now: {}, Not Before: {}'.format(time_now.isoformat(), self.not_before_time.isoformat()))
+            if options.validate_not_before and hasattr(self, 'not_before_time') and self.not_before_time is not None:
+                if (time_now < self.not_before_time):
+                    delta = self.not_before_time - time_now
+                    if delta.total_seconds() > options.validation_slack:
+                        raise AttestationTokenValidationException(u'Token is not yet valid. Now: {}, Not Before: {}'.format(time_now.isoformat(), self.not_before_time.isoformat()))
+            if options.validate_issuer and hasattr(self, 'issuer') and self.issuer is not None:
+                if (options.issuer != self.issuer):
+                    raise AttestationTokenValidationException(u'Issuer in token: {} is not the expected issuer: {}.'.format(self.issuer, options.issuer))
         return True
 
     @staticmethod
@@ -482,7 +893,9 @@ class AttestationToken(Generic[T]):
             body = body.serialize()
         except AttributeError:
             pass
-        json_body = JSONEncoder().encode(body)
+        json_body = ''
+        if body is not None:
+            json_body = JSONEncoder().encode(body)
 
         return_value += Base64Url.encode(json_body.encode('utf-8'))
         return_value += '.'
