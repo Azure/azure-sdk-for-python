@@ -85,9 +85,12 @@ the following mechanisms in this order, stopping when one succeeds:
   Managed Identity enabled, `DefaultAzureCredential` will authenticate with it.
 - Visual Studio Code - if a user has signed in to the Visual Studio Code Azure
   Account extension, `DefaultAzureCredential` will authenticate as that user.
-- Azure CLI - If a user has signed in via the Azure CLI `az login` command,
+- Azure CLI - if a user has signed in via the Azure CLI `az login` command,
   `DefaultAzureCredential` will authenticate as that user.
-- Interactive - If enabled, `DefaultAzureCredential` will interactively
+- Azure PowerShell - if a user has signed in via Azure PowerShell's
+  `Connect-AzAccount` command, `DefaultAzureCredential` will authenticate
+  as that user.
+- Interactive - if enabled, `DefaultAzureCredential` will interactively
   authenticate a user via the default browser.
 
 >DefaultAzureCredential is intended to simplify getting started with the SDK by handling common
