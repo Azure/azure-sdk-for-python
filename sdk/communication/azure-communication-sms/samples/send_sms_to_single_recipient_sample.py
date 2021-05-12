@@ -14,8 +14,8 @@ DESCRIPTION:
 USAGE:
     python send_sms_to_single_recipient_sample.py
     Set the environment variable with your own value before running the sample:
-    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS account
-    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER - a phone number with SMS capabilities in your ACS account
+    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS resource
+    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER - a phone number with SMS capabilities in your ACS resource
 """
 
 import os
