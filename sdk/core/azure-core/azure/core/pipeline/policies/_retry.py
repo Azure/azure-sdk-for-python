@@ -454,11 +454,8 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
                 # the authentication policy failed such that the client's request can't
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise
-            except (ServiceRequestTimeoutError, ServiceResponseTimeoutError):
-                # absolute_timeout <= 0, i.e. the operation has timed out; the policy should not retry
-                raise
             except AzureError as err:
-                if self._is_method_retryable(retry_settings, request.http_request):
+                if absolute_timeout > 0 and self._is_method_retryable(retry_settings, request.http_request):
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
