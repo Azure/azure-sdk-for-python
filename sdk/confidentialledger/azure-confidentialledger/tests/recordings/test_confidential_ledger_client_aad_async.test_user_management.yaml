@@ -18,7 +18,7 @@ interactions:
     headers:
       content-length: '80'
       content-type: application/json
-      x-ms-ccf-transaction-id: '7.6773'
+      x-ms-ccf-transaction-id: '2.783'
     status:
       code: 200
       message: OK
@@ -42,7 +42,7 @@ interactions:
     headers:
       content-length: '78'
       content-type: application/json
-      x-ms-ccf-transaction-id: '7.6774'
+      x-ms-ccf-transaction-id: '2.784'
     status:
       code: 200
       message: OK
@@ -62,7 +62,7 @@ interactions:
     headers:
       content-length: '78'
       content-type: application/json
-      x-ms-ccf-transaction-id: '7.6774'
+      x-ms-ccf-transaction-id: '2.784'
     status:
       code: 200
       message: OK
@@ -81,7 +81,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      x-ms-ccf-transaction-id: '7.6775'
+      x-ms-ccf-transaction-id: '2.785'
     status:
       code: 204
       message: No Content
@@ -105,7 +105,7 @@ interactions:
     headers:
       content-length: '73'
       content-type: application/json
-      x-ms-ccf-transaction-id: '7.6777'
+      x-ms-ccf-transaction-id: '2.787'
     status:
       code: 200
       message: OK
@@ -125,7 +125,7 @@ interactions:
     headers:
       content-length: '73'
       content-type: application/json
-      x-ms-ccf-transaction-id: '7.6777'
+      x-ms-ccf-transaction-id: '2.787'
     status:
       code: 200
       message: OK
@@ -144,7 +144,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      x-ms-ccf-transaction-id: '7.6778'
+      x-ms-ccf-transaction-id: '2.788'
     status:
       code: 204
       message: No Content
