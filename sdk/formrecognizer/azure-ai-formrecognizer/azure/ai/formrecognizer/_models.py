@@ -140,11 +140,24 @@ class Point(namedtuple("Point", "x y")):
         return super(Point, cls).__new__(cls, x, y)
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of Point.
+
+        :return: dict
+        :rtype: dict
+        """
         return {"x": self.x, "y": self.y}
 
     @classmethod
-    def from_dict(cls, d):
-        return cls(x=d.get("x", None), y=d.get("y", None))
+    def from_dict(cls, data):
+        # type: (dict) -> Point
+        """Converts a dict in the shape of a Point to the model itself.
+
+        :param dict data: A dictionary in the shape of Point.
+        :return: Point
+        :rtype: Point
+        """
+        return cls(x=data.get("x", None), y=data.get("y", None))
 
 
 class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_number")):
@@ -162,16 +175,29 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
         )
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormPageRange.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "first_page_number": self.first_page_number,
             "last_page_number": self.last_page_number,
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> FormPageRange
+        """Converts a dict in the shape of a FormPageRange to the model itself.
+
+        :param dict data: A dictionary in the shape of FormPageRange.
+        :return: FormPageRange
+        :rtype: FormPageRange
+        """
         return cls(
-            first_page_number=d.get("first_page_number", None),
-            last_page_number=d.get("last_page_number", None),
+            first_page_number=data.get("first_page_number", None),
+            last_page_number=data.get("last_page_number", None),
         )
 
 
@@ -199,6 +225,12 @@ class FormElement(object):
         self.kind = kwargs.get("kind", None)
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormElement.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "text": self.text,
             "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
@@ -207,13 +239,20 @@ class FormElement(object):
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> FormElement
+        """Converts a dict in the shape of a FormElement to the model itself.
+
+        :param dict data: A dictionary in the shape of FormElement.
+        :return: FormElement
+        :rtype: FormElement
+        """
         return cls(
-            text=d.get("text", None),
-            page_number=d.get("page_number", None),
-            kind=d.get("kind", None),
-            bounding_box=[Point.from_dict(f) for f in d.get("bounding_box")]
-            if len(d.get("bounding_box", [])) > 0
+            text=data.get("text", None),
+            page_number=data.get("page_number", None),
+            kind=data.get("kind", None),
+            bounding_box=[Point.from_dict(f) for f in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
             else [],
         )
 
@@ -269,6 +308,12 @@ class RecognizedForm(object):
         )
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of RecognizedForm.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "fields": {k: v.to_dict() for k, v in self.fields.items()}
             if self.fields
@@ -281,17 +326,25 @@ class RecognizedForm(object):
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> RecognizedForm
+        """Converts a dict in the shape of a RecognizedForm to the model itself.
+
+        :param dict data: A dictionary in the shape of RecognizedForm.
+        :return: RecognizedForm
+        :rtype: RecognizedForm
+        """
         return cls(
-            fields={k: FormField.from_dict(v) for k, v in d.get("fields").items()} if d.get("fields") else {},
-            form_type=d.get("form_type", None),
-            pages=[FormPage.from_dict(v) for v in d.get("pages")]
-            if len(d.get("pages", [])) > 0
+            fields={k: FormField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
+            if data.get("fields") else {},
+            form_type=data.get("form_type", None),
+            pages=[FormPage.from_dict(v) for v in data.get("pages")]  # type: ignore
+            if len(data.get("pages", [])) > 0
             else [],
-            model_id=d.get("model_id", None),
-            form_type_confidence=d.get("form_type_confidence", None),
-            page_range=FormPageRange.from_dict(d.get("page_range"))
-            if d.get("page_range")
+            model_id=data.get("model_id", None),
+            form_type_confidence=data.get("form_type_confidence", None),
+            page_range=FormPageRange.from_dict(data.get("page_range"))  # type: ignore
+            if data.get("page_range")
             else None,
         )
 
@@ -367,6 +420,12 @@ class FormField(object):
         ]
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormField.
+
+        :return: dict
+        :rtype: dict
+        """
         value = self.value
         if isinstance(self.value, dict):
             value = {k: v.to_dict() for k, v in self.value.items()}
@@ -382,23 +441,30 @@ class FormField(object):
         }
 
     @classmethod
-    def from_dict(cls, d):
-        value = d.get("value", None)
-        if isinstance(d.get("value"), dict):
-            value = {k: FormField.from_dict(v) for k, v in d.get("value").items()}
-        elif isinstance(d.get("value"), list):
-            value = [FormField.from_dict(v) for v in d.get("value")]
+    def from_dict(cls, data):
+        # type: (dict) -> FormField
+        """Converts a dict in the shape of a FormField to the model itself.
+
+        :param dict data: A dictionary in the shape of FormField.
+        :return: FormField
+        :rtype: FormField
+        """
+        value = data.get("value", None)
+        if isinstance(data.get("value"), dict):
+            value = {k: FormField.from_dict(v) for k, v in data.get("value").items()}  # type: ignore
+        elif isinstance(data.get("value"), list):
+            value = [FormField.from_dict(v) for v in data.get("value")]  # type: ignore
 
         return cls(
-            value_type=d.get("value_type", None),
-            name=d.get("name", None),
+            value_type=data.get("value_type", None),
+            name=data.get("name", None),
             value=value,
-            confidence=d.get("confidence", None),
-            label_data=FieldData.from_dict(d.get("label_data"))
-            if d.get("label_data")
+            confidence=data.get("confidence", None),
+            label_data=FieldData.from_dict(data.get("label_data"))  # type: ignore
+            if data.get("label_data")
             else None,
-            value_data=FieldData.from_dict(d.get("value_data"))
-            if d.get("value_data")
+            value_data=FieldData.from_dict(data.get("value_data"))  # type: ignore
+            if data.get("value_data")
             else None,
         )
 
@@ -472,6 +538,12 @@ class FieldData(object):
         ]
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FieldData.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "text": self.text,
             "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
@@ -480,23 +552,30 @@ class FieldData(object):
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> FieldData
+        """Converts a dict in the shape of a FieldData to the model itself.
+
+        :param dict data: A dictionary in the shape of FieldData.
+        :return: FieldData
+        :rtype: FieldData
+        """
         field_elements = []
-        for v in d.get("field_elements"):
+        for v in data.get("field_elements"):  # type: ignore
             if v.get("kind") == "word":
                 field_elements.append(FormWord.from_dict(v))
             elif v.get("kind") == "line":
-                field_elements.append(FormLine.from_dict(v))
+                field_elements.append(FormLine.from_dict(v))  # type: ignore
             elif v.get("kind") == "selectionMark":
-                field_elements.append(FormSelectionMark.from_dict(v))
+                field_elements.append(FormSelectionMark.from_dict(v))  # type: ignore
             else:
-                field_elements.append(FormElement.from_dict(v))
+                field_elements.append(FormElement.from_dict(v))  # type: ignore
 
         return cls(
-            text=d.get("text", None),
-            page_number=d.get("page_number", None),
-            bounding_box=[Point.from_dict(f) for f in d.get("bounding_box")]
-            if len(d.get("bounding_box", [])) > 0
+            text=data.get("text", None),
+            page_number=data.get("page_number", None),
+            bounding_box=[Point.from_dict(f) for f in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
             else [],
             field_elements=field_elements,
         )
@@ -561,6 +640,12 @@ class FormPage(object):
         )
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormPage.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "page_number": self.page_number,
             "text_angle": self.text_angle,
@@ -573,23 +658,30 @@ class FormPage(object):
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> FormPage
+        """Converts a dict in the shape of a FormPage to the model itself.
+
+        :param dict data: A dictionary in the shape of FormPage.
+        :return: FormPage
+        :rtype: FormPage
+        """
         return cls(
-            text_angle=d.get("text_angle", None),
-            width=d.get("width", None),
-            height=d.get("height", None),
-            unit=d.get("unit", None),
-            page_number=d.get("page_number", None),
-            tables=[FormTable.from_dict(v) for v in d.get("tables")]
-            if len(d.get("tables", [])) > 0
+            text_angle=data.get("text_angle", None),
+            width=data.get("width", None),
+            height=data.get("height", None),
+            unit=data.get("unit", None),
+            page_number=data.get("page_number", None),
+            tables=[FormTable.from_dict(v) for v in data.get("tables")]  # type: ignore
+            if len(data.get("tables", [])) > 0
             else [],
-            lines=[FormLine.from_dict(v) for v in d.get("lines")]
-            if len(d.get("lines", [])) > 0
+            lines=[FormLine.from_dict(v) for v in data.get("lines")]  # type: ignore
+            if len(data.get("lines", [])) > 0
             else [],
             selection_marks=[
-                FormSelectionMark.from_dict(v) for v in d.get("selection_marks")
+                FormSelectionMark.from_dict(v) for v in data.get("selection_marks")  # type: ignore
             ]
-            if len(d.get("selection_marks", [])) > 0
+            if len(data.get("selection_marks", [])) > 0
             else [],
         )
 
@@ -650,6 +742,12 @@ class FormLine(FormElement):
         ]
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormLine.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "text": self.text,
             "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
@@ -660,18 +758,25 @@ class FormLine(FormElement):
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> FormLine
+        """Converts a dict in the shape of a FormLine to the model itself.
+
+        :param dict data: A dictionary in the shape of FormLine.
+        :return: FormLine
+        :rtype: FormLine
+        """
         return cls(
-            text=d.get("text", None),
-            page_number=d.get("page_number", None),
-            bounding_box=[Point.from_dict(v) for v in d.get("bounding_box")]
-            if len(d.get("bounding_box", [])) > 0
+            text=data.get("text", None),
+            page_number=data.get("page_number", None),
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
             else [],
-            words=[FormWord.from_dict(v) for v in d.get("words")]
-            if len(d.get("words", [])) > 0
+            words=[FormWord.from_dict(v) for v in data.get("words")]  # type: ignore
+            if len(data.get("words", [])) > 0
             else [],
-            appearance=TextAppearance.from_dict(d.get("appearance"))
-            if d.get("appearance")
+            appearance=TextAppearance.from_dict(data.get("appearance"))  # type: ignore
+            if data.get("appearance")
             else None,
         )
 
@@ -713,6 +818,12 @@ class FormWord(FormElement):
         ]
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormWord.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "text": self.text,
             "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
@@ -722,14 +833,21 @@ class FormWord(FormElement):
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> FormWord
+        """Converts a dict in the shape of a FormWord to the model itself.
+
+        :param dict data: A dictionary in the shape of FormWord.
+        :return: FormWord
+        :rtype: FormWord
+        """
         return cls(
-            text=d.get("text", None),
-            page_number=d.get("page_number", None),
-            bounding_box=[Point.from_dict(v) for v in d.get("bounding_box")]
-            if len(d.get("bounding_box", [])) > 0
+            text=data.get("text", None),
+            page_number=data.get("page_number", None),
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
             else [],
-            confidence=d.get("confidence", None),
+            confidence=data.get("confidence", None),
         )
 
 
@@ -773,6 +891,12 @@ class FormSelectionMark(FormElement):
         ]
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormSelectionMark.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "text": self.text,
             "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
@@ -783,15 +907,22 @@ class FormSelectionMark(FormElement):
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> FormSelectionMark
+        """Converts a dict in the shape of a FormSelectionMark to the model itself.
+
+        :param dict data: A dictionary in the shape of FormSelectionMark.
+        :return: FormSelectionMark
+        :rtype: FormSelectionMark
+        """
         return cls(
-            text=d.get("text", None),
-            page_number=d.get("page_number", None),
-            bounding_box=[Point.from_dict(v) for v in d.get("bounding_box")]
-            if len(d.get("bounding_box", [])) > 0
+            text=data.get("text", None),
+            page_number=data.get("page_number", None),
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
             else [],
-            confidence=d.get("confidence", None),
-            state=d.get("state", None),
+            confidence=data.get("confidence", None),
+            state=data.get("state", None),
         )
 
 
@@ -835,6 +966,12 @@ class FormTable(object):
         ]
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormTable.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "page_number": self.page_number,
             "row_count": self.row_count,
@@ -844,16 +981,23 @@ class FormTable(object):
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> FormTable
+        """Converts a dict in the shape of a FormTable to the model itself.
+
+        :param dict data: A dictionary in the shape of FormTable.
+        :return: FormTable
+        :rtype: FormTable
+        """
         return cls(
-            row_count=d.get("row_count", None),
-            page_number=d.get("page_number", None),
-            column_count=d.get("column_count", None),
-            bounding_box=[Point.from_dict(v) for v in d.get("bounding_box")]
-            if len(d.get("bounding_box", [])) > 0
+            row_count=data.get("row_count", None),
+            page_number=data.get("page_number", None),
+            column_count=data.get("column_count", None),
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
             else [],
-            cells=[FormTableCell.from_dict(v) for v in d.get("cells")]
-            if len(d.get("cells", [])) > 0
+            cells=[FormTableCell.from_dict(v) for v in data.get("cells")]  # type: ignore
+            if len(data.get("cells", [])) > 0
             else [],
         )
 
@@ -943,6 +1087,12 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
         )
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormTableCell.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "text": self.text,
             "row_index": self.row_index,
@@ -959,30 +1109,37 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> FormTableCell
+        """Converts a dict in the shape of a FormTableCell to the model itself.
+
+        :param dict data: A dictionary in the shape of FormTableCell.
+        :return: FormTableCell
+        :rtype: FormTableCell
+        """
         field_elements = []
-        for v in d.get("field_elements"):
+        for v in data.get("field_elements"):  # type: ignore
             if v.get("kind") == "word":
-                field_elements.append(FormWord.from_dict(v))
+                field_elements.append(FormWord.from_dict(v))  # type: ignore
             elif v.get("kind") == "line":
-                field_elements.append(FormLine.from_dict(v))
+                field_elements.append(FormLine.from_dict(v))  # type: ignore
             elif v.get("kind") == "selectionMark":
-                field_elements.append(FormSelectionMark.from_dict(v))
+                field_elements.append(FormSelectionMark.from_dict(v))  # type: ignore
             else:
-                field_elements.append(FormElement.from_dict(v))
+                field_elements.append(FormElement.from_dict(v))  # type: ignore
 
         return cls(
-            text=d.get("text", None),
-            row_index=d.get("row_index", None),
-            column_index=d.get("column_index", None),
-            row_span=d.get("row_span", None),
-            column_span=d.get("column_span", None),
-            confidence=d.get("confidence", None),
-            is_header=d.get("is_header", None),
-            is_footer=d.get("is_footer", None),
-            page_number=d.get("page_number", None),
-            bounding_box=[Point.from_dict(v) for v in d.get("bounding_box")]
-            if len(d.get("bounding_box", [])) > 0
+            text=data.get("text", None),
+            row_index=data.get("row_index", None),
+            column_index=data.get("column_index", None),
+            row_span=data.get("row_span", None),
+            column_span=data.get("column_span", None),
+            confidence=data.get("confidence", None),
+            is_header=data.get("is_header", None),
+            is_footer=data.get("is_footer", None),
+            page_number=data.get("page_number", None),
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
             else [],
             field_elements=field_elements,
         )
@@ -1090,6 +1247,12 @@ class CustomFormModel(object):
         )
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of CustomFormModel.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "model_id": self.model_id,
             "status": self.status,
@@ -1103,26 +1266,33 @@ class CustomFormModel(object):
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> CustomFormModel
+        """Converts a dict in the shape of a CustomFormModel to the model itself.
+
+        :param dict data: A dictionary in the shape of CustomFormModel.
+        :return: CustomFormModel
+        :rtype: CustomFormModel
+        """
         return cls(
-            model_id=d.get("model_id", None),
-            status=d.get("status", None),
-            training_started_on=d.get("training_started_on", None),
-            training_completed_on=d.get("training_completed_on", None),
-            submodels=[CustomFormSubmodel.from_dict(v) for v in d.get("submodels")]
-            if len(d.get("submodels", [])) > 0
+            model_id=data.get("model_id", None),
+            status=data.get("status", None),
+            training_started_on=data.get("training_started_on", None),
+            training_completed_on=data.get("training_completed_on", None),
+            submodels=[CustomFormSubmodel.from_dict(v) for v in data.get("submodels")]  # type: ignore
+            if len(data.get("submodels", [])) > 0
             else [],
-            errors=[FormRecognizerError.from_dict(v) for v in d.get("errors")]
-            if len(d.get("errors", [])) > 0
+            errors=[FormRecognizerError.from_dict(v) for v in data.get("errors")]  # type: ignore
+            if len(data.get("errors", [])) > 0
             else [],
             training_documents=[
-                TrainingDocumentInfo.from_dict(v) for v in d.get("training_documents")
+                TrainingDocumentInfo.from_dict(v) for v in data.get("training_documents")  # type: ignore
             ]
-            if len(d.get("training_documents", [])) > 0
+            if len(data.get("training_documents", [])) > 0
             else [],
-            model_name=d.get("model_name", None),
-            properties=CustomFormModelProperties.from_dict(d.get("properties"))
-            if d.get("properties")
+            model_name=data.get("model_name", None),
+            properties=CustomFormModelProperties.from_dict(data.get("properties"))  # type: ignore
+            if data.get("properties")
             else None,
         )
 
@@ -1221,6 +1391,12 @@ class CustomFormSubmodel(object):
         ]
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of CustomFormSubmodel.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "model_id": self.model_id,
             "accuracy": self.accuracy,
@@ -1229,13 +1405,20 @@ class CustomFormSubmodel(object):
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> CustomFormSubmodel
+        """Converts a dict in the shape of a CustomFormSubmodel to the model itself.
+
+        :param dict data: A dictionary in the shape of CustomFormSubmodel.
+        :return: CustomFormSubmodel
+        :rtype: CustomFormSubmodel
+        """
         return cls(
-            model_id=d.get("model_id", None),
-            accuracy=d.get("accuracy", None),
-            fields={k: CustomFormModelField.from_dict(v) for k, v in d.get("fields").items()}
-            if d.get("fields") else {},
-            form_type=d.get("form_type", None),
+            model_id=data.get("model_id", None),
+            accuracy=data.get("accuracy", None),
+            fields={k: CustomFormModelField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
+            if data.get("fields") else {},
+            form_type=data.get("form_type", None),
         )
 
 
@@ -1272,6 +1455,12 @@ class CustomFormModelField(object):
         )[:1024]
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of CustomFormModelField.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "label": self.label,
             "accuracy": self.accuracy,
@@ -1279,11 +1468,18 @@ class CustomFormModelField(object):
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> CustomFormModelField
+        """Converts a dict in the shape of a CustomFormModelField to the model itself.
+
+        :param dict data: A dictionary in the shape of CustomFormModelField.
+        :return: CustomFormModelField
+        :rtype: CustomFormModelField
+        """
         return cls(
-            label=d.get("label", None),
-            accuracy=d.get("accuracy", None),
-            name=d.get("name", None),
+            label=data.get("label", None),
+            accuracy=data.get("accuracy", None),
+            name=data.get("name", None),
         )
 
 
@@ -1358,6 +1554,12 @@ class TrainingDocumentInfo(object):
         ]
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of TrainingDocumentInfo.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "name": self.name,
             "status": self.status,
@@ -1367,15 +1569,22 @@ class TrainingDocumentInfo(object):
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> TrainingDocumentInfo
+        """Converts a dict in the shape of a TrainingDocumentInfo to the model itself.
+
+        :param dict data: A dictionary in the shape of TrainingDocumentInfo.
+        :return: TrainingDocumentInfo
+        :rtype: TrainingDocumentInfo
+        """
         return cls(
-            name=d.get("name", None),
-            status=d.get("status", None),
-            page_count=d.get("page_count", None),
+            name=data.get("name", None),
+            status=data.get("status", None),
+            page_count=data.get("page_count", None),
             errors=[
-                FormRecognizerError.from_dict(v) for v in d.get("errors")
+                FormRecognizerError.from_dict(v) for v in data.get("errors")  # type: ignore
             ],
-            model_id=d.get("model_id", None),
+            model_id=data.get("model_id", None),
         )
 
 
@@ -1404,16 +1613,29 @@ class FormRecognizerError(object):
         )[:1024]
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormRecognizerError.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "code": self.code,
             "message": self.message
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> FormRecognizerError
+        """Converts a dict in the shape of a FormRecognizerError to the model itself.
+
+        :param dict data: A dictionary in the shape of FormRecognizerError.
+        :return: FormRecognizerError
+        :rtype: FormRecognizerError
+        """
         return cls(
-            code=d.get("code", None),
-            message=d.get("message", None),
+            code=data.get("code", None),
+            message=data.get("message", None),
         )
 
 
@@ -1482,6 +1704,12 @@ class CustomFormModelInfo(object):
         )
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of CustomFormModelInfo.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "model_id": self.model_id,
             "status": self.status,
@@ -1492,15 +1720,22 @@ class CustomFormModelInfo(object):
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> CustomFormModelInfo
+        """Converts a dict in the shape of a CustomFormModelInfo to the model itself.
+
+        :param dict data: A dictionary in the shape of CustomFormModelInfo.
+        :return: CustomFormModelInfo
+        :rtype: CustomFormModelInfo
+        """
         return cls(
-            model_id=d.get("model_id", None),
-            status=d.get("status", None),
-            training_started_on=d.get("training_started_on", None),
-            training_completed_on=d.get("training_completed_on", None),
-            model_name=d.get("model_name", None),
-            properties=CustomFormModelProperties.from_dict(d.get("properties"))
-            if d.get("properties")
+            model_id=data.get("model_id", None),
+            status=data.get("status", None),
+            training_started_on=data.get("training_started_on", None),
+            training_completed_on=data.get("training_completed_on", None),
+            model_name=data.get("model_name", None),
+            properties=CustomFormModelProperties.from_dict(data.get("properties"))  # type: ignore
+            if data.get("properties")
             else None,
         )
 
@@ -1529,16 +1764,29 @@ class AccountProperties(object):
         )[:1024]
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of AccountProperties.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "custom_model_count": self.custom_model_count,
             "custom_model_limit": self.custom_model_limit
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> AccountProperties
+        """Converts a dict in the shape of a AccountProperties to the model itself.
+
+        :param dict data: A dictionary in the shape of AccountProperties.
+        :return: AccountProperties
+        :rtype: AccountProperties
+        """
         return cls(
-            custom_model_count=d.get("custom_model_count", None),
-            custom_model_limit=d.get("custom_model_limit", None),
+            custom_model_count=data.get("custom_model_count", None),
+            custom_model_limit=data.get("custom_model_limit", None),
         )
 
 
@@ -1563,14 +1811,27 @@ class CustomFormModelProperties(object):
         )
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of CustomFormModelProperties.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "is_composed_model": self.is_composed_model
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> CustomFormModelProperties
+        """Converts a dict in the shape of a CustomFormModelProperties to the model itself.
+
+        :param dict data: A dictionary in the shape of CustomFormModelProperties.
+        :return: CustomFormModelProperties
+        :rtype: CustomFormModelProperties
+        """
         return cls(
-            is_composed_model=d.get("is_composed_model", None),
+            is_composed_model=data.get("is_composed_model", None),
         )
 
 
@@ -1599,14 +1860,27 @@ class TextAppearance(object):
         return "TextAppearance(style_name={}, style_confidence={})".format(self.style_name, self.style_confidence)
 
     def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of TextAppearance.
+
+        :return: dict
+        :rtype: dict
+        """
         return {
             "style_name": self.style_name,
             "style_confidence": self.style_confidence
         }
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, data):
+        # type: (dict) -> TextAppearance
+        """Converts a dict in the shape of a TextAppearance to the model itself.
+
+        :param dict data: A dictionary in the shape of TextAppearance.
+        :return: TextAppearance
+        :rtype: TextAppearance
+        """
         return cls(
-            style_name=d.get("style_name", None),
-            style_confidence=d.get("style_confidence", None),
+            style_name=data.get("style_name", None),
+            style_confidence=data.get("style_confidence", None),
         )
