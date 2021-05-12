@@ -14,7 +14,7 @@ DESCRIPTION:
 USAGE:
     python sms_token_credential_auth_sample.py
     Set the environment variable with your own value before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - the connection string in your ACS account
+    1) COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING - the connection string in your ACS account
 """
 
 import os
