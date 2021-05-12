@@ -29,10 +29,10 @@ class ManifestWriteableProperties(object):
     def __init__(self, **kwargs):
         """Create ManifestWriteableProperties for a manifest
 
-        :keyword bool can_delete: Delete operation status for the object
-        :keyword bool can_list: List operation status for the object
-        :keyword bool can_read: Read operation status for the object
-        :keyword bool can_write: Write operation status for the object
+        :keyword bool can_delete: Delete operation status for the manifest
+        :keyword bool can_list: List operation status for the manifest
+        :keyword bool can_read: Read operation status for the manifest
+        :keyword bool can_write: Write operation status for the manifest
         """
         self.can_delete = kwargs.get("can_delete")
         self.can_list = kwargs.get("can_list")
@@ -62,21 +62,21 @@ class ManifestWriteableProperties(object):
 class RepositoryWriteableProperties(object):
     """Permissions of a repository
 
-    :ivar bool can_delete: Ability to delete an artifact or tag
-    :ivar bool can_list: Ability to list an artifact or tag
-    :ivar bool can_read: Ability to read an artifact or tag
-    :ivar bool can_write: Ability to write an artifact or tag
-    :ivar bool teleport_enabled: Teleport Enabled
+    :ivar bool can_delete: Ability to delete a repository
+    :ivar bool can_list: Ability to list a repository
+    :ivar bool can_read: Ability to read a repository
+    :ivar bool can_write: Ability to write a repository
+    :ivar bool teleport_enabled: Teleport enabled for the repository
     """
 
     def __init__(self, **kwargs):
         """Create ManifestWriteableProperties for a repository
 
-        :keyword bool can_delete: Delete operation status for the object
-        :keyword bool can_list: List operation status for the object
-        :keyword bool can_read: Read operation status for the object
-        :keyword bool can_write: Write operation status for the object
-        :keyword bool teleport_enabled: Teleport Enabled
+        :keyword bool can_delete: Delete operation status for the repository
+        :keyword bool can_list: List operation status for the repository
+        :keyword bool can_read: Read operation status for the repository
+        :keyword bool can_write: Write operation status for the repository
+        :keyword bool teleport_enabled: Teleport enabled for the repository
         """
         self.can_delete = kwargs.get("can_delete")
         self.can_list = kwargs.get("can_list")
@@ -109,19 +109,19 @@ class RepositoryWriteableProperties(object):
 class TagWriteableProperties(object):
     """Permissions of a tag
 
-    :ivar bool can_delete: Ability to delete an artifact or tag
-    :ivar bool can_list: Ability to list an artifact or tag
-    :ivar bool can_read: Ability to read an artifact or tag
-    :ivar bool can_write: Ability to write an artifact or tag
+    :ivar bool can_delete: Ability to delete a tag
+    :ivar bool can_list: Ability to list a tag
+    :ivar bool can_read: Ability to read a tag
+    :ivar bool can_write: Ability to write a tag
     """
 
     def __init__(self, **kwargs):
-        """Create ManifestWriteableProperties for a tag
+        """Create TagWriteableProperties for a tag
 
-        :keyword bool can_delete: Delete operation status for the object
-        :keyword bool can_list: List operation status for the object
-        :keyword bool can_read: Read operation status for the object
-        :keyword bool can_write: Write operation status for the object
+        :keyword bool can_delete: Delete operation status for the tag
+        :keyword bool can_list: List operation status for the tag
+        :keyword bool can_read: Read operation status for the tag
+        :keyword bool can_write: Write operation status for the tag
         """
         self.can_delete = kwargs.get("can_delete")
         self.can_list = kwargs.get("can_list")
