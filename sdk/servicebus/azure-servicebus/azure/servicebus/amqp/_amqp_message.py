@@ -113,20 +113,23 @@ class AMQPAnnotatedMessage(object):
             # internal usage only for service bus received message
             return
 
-        self._data_body = kwargs.pop("data_body", None)
-        self._sequence_body = kwargs.pop("sequence_body", None)
-        self._value_body = kwargs.pop("value_body", None)
-
-        validation = [
-            body
-            for body in (self._value_body, self._data_body, self._sequence_body)
-            if body is not None
-        ]
-        if len(validation) != 1:
+        input_count_validation = len([key for key in ("data_body", "sequence_body", "value_body") if key in kwargs])
+        if input_count_validation != 1:
             raise ValueError(
                 "There should be one and only one of either data_body, sequence_body "
                 "or value_body being set as the body of the AMQPAnnotatedMessage."
             )
+
+        body, body_type = None, None
+        if "data_body" in kwargs:
+            body = kwargs.get("data_body")
+            body_type = uamqp.MessageBodyType.Data
+        elif "sequence_body" in kwargs:
+            body = kwargs.get("sequence_body")
+            body_type = uamqp.MessageBodyType.Sequence
+        elif "value_body" in kwargs:
+            body = kwargs.get("value_body")
+            body_type = uamqp.MessageBodyType.Value
 
         header = kwargs.get("header")
         footer = kwargs.get("footer")
@@ -134,17 +137,6 @@ class AMQPAnnotatedMessage(object):
         application_properties = kwargs.get("application_properties")
         annotations = kwargs.get("annotations")
         delivery_annotations = kwargs.get("delivery_annotations")
-
-        body_type = (
-            uamqp.MessageBodyType.Data
-            if self._data_body
-            else (
-                uamqp.MessageBodyType.Sequence
-                if self._sequence_body
-                else uamqp.MessageBodyType.Value
-            )
-        )
-        body = self._data_body or self._sequence_body or self._value_body
 
         message_header = None
         message_properties = None
@@ -202,22 +194,23 @@ class AMQPAnnotatedMessage(object):
 
         :rtype: Optional[~azure.servicebus.amqp.AMQPMessageProperties]
         """
-        return AMQPMessageProperties()
-        # return uamqp.message.MessageProperties(
-        #     message_id=self._message.properties.message_id,
-        #     user_id=self._message.properties.user_id,
-        #     to=self._message.properties.to,
-        #     subject=self._message.properties.subject,
-        #     reply_to=self._message.properties.reply_to,
-        #     correlation_id=self._message.properties.correlation_id,
-        #     content_type=self._message.properties.content_type,
-        #     content_encoding=self._message.properties.content_encoding,
-        #     absolute_expiry_time=self._message.properties.absolute_expiry_time,
-        #     creation_time=self._message.properties.creation_time,
-        #     group_id=self._message.properties.group_id,
-        #     group_sequence=self._message.properties.group_sequence,
-        #     reply_to_group_id=self._message.properties.reply_to_group_id,
-        # )
+        if self._message.properties:
+            return AMQPMessageProperties(
+                message_id=self._message.properties.message_id,
+                user_id=self._message.properties.user_id,
+                to=self._message.properties.to,
+                subject=self._message.properties.subject,
+                reply_to=self._message.properties.reply_to,
+                correlation_id=self._message.properties.correlation_id,
+                content_type=self._message.properties.content_type,
+                content_encoding=self._message.properties.content_encoding,
+                absolute_expiry_time=self._message.properties.absolute_expiry_time,
+                creation_time=self._message.properties.creation_time,
+                group_id=self._message.properties.group_id,
+                group_sequence=self._message.properties.group_sequence,
+                reply_to_group_id=self._message.properties.reply_to_group_id,
+            )
+        return None
 
     # NOTE: These are disabled pending arch. design and cross-sdk consensus on
     # how we will expose sendability of amqp focused messages. To undo, uncomment and remove deepcopies/workarounds.
@@ -232,7 +225,7 @@ class AMQPAnnotatedMessage(object):
         """
         Service specific application properties.
 
-        :rtype: dict
+        :rtype: Optional[dict]
         """
         return copy.deepcopy(self._message.application_properties)
 
@@ -246,7 +239,7 @@ class AMQPAnnotatedMessage(object):
         """
         Service specific message annotations.
 
-        :rtype: dict
+        :rtype: Optional[dict]
         """
         return copy.deepcopy(self._message.annotations)
 
@@ -277,8 +270,15 @@ class AMQPAnnotatedMessage(object):
 
         :rtype: Optional[~azure.servicebus.amqp.AMQPMessageHeader]
         """
-        return AMQPMessageHeader()
-        # return uamqp.message.MessageHeader(header=self._message.header)
+        if self._message.header:
+            return AMQPMessageHeader(
+                delivery_count=self._message.header.delivery_count,
+                time_to_live=self._message.header.time_to_live,
+                first_acquirer=self._message.header.first_acquirer,
+                durable=self._message.header.durable,
+                priority=self._message.header.priority
+            )
+        return None
 
     # @header.setter
     # def header(self, value):
@@ -290,7 +290,7 @@ class AMQPAnnotatedMessage(object):
         """
         The message footer.
 
-        :rtype: dict
+        :rtype: Optional[dict]
         """
         return copy.deepcopy(self._message.footer)
 
