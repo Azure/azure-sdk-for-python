@@ -70,7 +70,7 @@ class SystemEventNames(str, Enum):
 
     AcsChatParticipantAddedToThreadWithUserEventName = 'Microsoft.Communication.ChatParticipantAddedToThreadWithUser'
 
-    AcsChatParticipantRemovedFromThreadEventName = 'Microsoft.Communication.ChatThreadParticipantRemoved'      
+    AcsChatParticipantRemovedFromThreadEventName = 'Microsoft.Communication.ChatThreadParticipantRemoved'
 
     AcsChatParticipantRemovedFromThreadWithUserEventName = 'Microsoft.Communication.ChatParticipantRemovedFromThreadWithUser'
 
@@ -140,11 +140,11 @@ class SystemEventNames(str, Enum):
 
     KeyVaultSecretNewVersionCreatedEventName = 'Microsoft.KeyVault.SecretNewVersionCreated'
 
-    MachineLearningServicesNamesetDriftDetectedEventName = 'Microsoft.MachineLearningServices.DatasetDriftDetected'
+    MachineLearningServicesDatasetDriftDetectedEventName = 'Microsoft.MachineLearningServices.DatasetDriftDetected'
 
     MachineLearningServicesModelDeployedEventName = 'Microsoft.MachineLearningServices.ModelDeployed'
 
-    MachineLearningServicesModelRegisteredEventName = 'Microsoft.MachineLearningServices.ModelRegistered'      
+    MachineLearningServicesModelRegisteredEventName = 'Microsoft.MachineLearningServices.ModelRegistered'
 
     MachineLearningServicesRunCompletedEventName = 'Microsoft.MachineLearningServices.RunCompleted'
 
@@ -192,7 +192,7 @@ class SystemEventNames(str, Enum):
 
     MediaLiveEventEncoderDisconnectedEventName = 'Microsoft.Media.LiveEventEncoderDisconnected'
 
-    MediaLiveEventIncomingNameChunkDroppedEventName = 'Microsoft.Media.LiveEventIncomingDataChunkDropped'      
+    MediaLiveEventIncomingDataChunkDroppedEventName = 'Microsoft.Media.LiveEventIncomingDataChunkDropped'
 
     MediaLiveEventIncomingStreamReceivedEventName = 'Microsoft.Media.LiveEventIncomingStreamReceived'
 
@@ -244,7 +244,7 @@ class SystemEventNames(str, Enum):
 
     ServiceBusDeadletterMessagesAvailableWithNoListenersEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListenersEvent'
 
-    SignalRServiceClientConnectionConnectedEventName = 'Microsoft.SignalRService.ClientConnectionConnected'    
+    SignalRServiceClientConnectionConnectedEventName = 'Microsoft.SignalRService.ClientConnectionConnected'
 
     SignalRServiceClientConnectionDisconnectedEventName = 'Microsoft.SignalRService.ClientConnectionDisconnected'
 
