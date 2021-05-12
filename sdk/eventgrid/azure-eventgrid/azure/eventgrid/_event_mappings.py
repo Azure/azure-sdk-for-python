@@ -196,13 +196,13 @@ class SystemEventNames(str, Enum):
 
     MediaLiveEventIncomingStreamReceivedEventName = 'Microsoft.Media.LiveEventIncomingStreamReceived'
 
-    MediaLiveEventIncomingStreamsOutOfSyncEventName = 'Microsoft.Media.LiveEventIncomingStreamsOutOfSync'      
+    MediaLiveEventIncomingStreamsOutOfSyncEventName = 'Microsoft.Media.LiveEventIncomingStreamsOutOfSync' 
 
     MediaLiveEventIncomingVideoStreamsOutOfSyncEventName = 'Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync'
 
     MediaLiveEventIngestHeartbeatEventName = 'Microsoft.Media.LiveEventIngestHeartbeat'
 
-    MediaLiveEventTrackDiscontinuityDetectedEventName = 'Microsoft.Media.LiveEventTrackDiscontinuityDetected'  
+    MediaLiveEventTrackDiscontinuityDetectedEventName = 'Microsoft.Media.LiveEventTrackDiscontinuityDetected'
 
     PolicyInsightsPolicyStateChangedEventName = 'Microsoft.PolicyInsights.PolicyStateChanged'
 
