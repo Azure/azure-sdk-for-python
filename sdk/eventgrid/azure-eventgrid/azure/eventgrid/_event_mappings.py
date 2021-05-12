@@ -196,7 +196,7 @@ class SystemEventNames(str, Enum):
 
     MediaLiveEventIncomingStreamReceivedEventName = 'Microsoft.Media.LiveEventIncomingStreamReceived'
 
-    MediaLiveEventIncomingStreamsOutOfSyncEventName = 'Microsoft.Media.LiveEventIncomingStreamsOutOfSync' 
+    MediaLiveEventIncomingStreamsOutOfSyncEventName = 'Microsoft.Media.LiveEventIncomingStreamsOutOfSync'
 
     MediaLiveEventIncomingVideoStreamsOutOfSyncEventName = 'Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync'
 
