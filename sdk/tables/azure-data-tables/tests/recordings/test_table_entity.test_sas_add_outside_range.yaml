@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 12 May 2021 16:55:58 GMT
+      - Wed, 03 Mar 2021 16:03:43 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 12 May 2021 16:55:58 GMT
+      - Wed, 03 Mar 2021 16:03:43 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 12 May 2021 16:55:58 GMT
+      - Wed, 03 Mar 2021 16:03:43 GMT
       location:
       - https://fake_table_account.table.core.windows.net/Tables('uttable973c1208')
       server:
@@ -70,11 +70,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 12 May 2021 16:55:58 GMT
+      - Wed, 03 Mar 2021 16:03:43 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 12 May 2021 16:55:58 GMT
+      - Wed, 03 Mar 2021 16:03:43 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -82,14 +82,14 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"AuthorizationFailure","message":{"lang":"en-US","value":"This
-        request is not authorized to perform this operation.\nRequestId:d82349e3-c002-002c-1d4f-47368b000000\nTime:2021-05-12T16:55:59.0003768Z"}}}'
+        request is not authorized to perform this operation.\nRequestId:6b447c8f-9002-001e-7346-1036fc000000\nTime:2021-03-03T16:03:44.2038030Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 12 May 2021 16:55:58 GMT
+      - Wed, 03 Mar 2021 16:03:43 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -105,48 +105,6 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json;odata=minimalmetadata
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      DataServiceVersion:
-      - '3.0'
-      Date:
-      - Wed, 12 May 2021 16:55:59 GMT
-      User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Wed, 12 May 2021 16:55:59 GMT
-      x-ms-version:
-      - '2019-02-02'
-    method: GET
-    uri: https://fake_table_account.table.core.windows.net/Tables
-  response:
-    body:
-      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"uttable973c1208"}]}'
-    headers:
-      cache-control:
-      - no-cache
-      content-type:
-      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date:
-      - Wed, 12 May 2021 16:55:58 GMT
-      server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
       - application/json
       Accept-Encoding:
       - gzip, deflate
@@ -155,11 +113,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 12 May 2021 16:55:59 GMT
+      - Wed, 03 Mar 2021 16:03:44 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 12 May 2021 16:55:59 GMT
+      - Wed, 03 Mar 2021 16:03:44 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -173,7 +131,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 12 May 2021 16:55:59 GMT
+      - Wed, 03 Mar 2021 16:03:44 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
