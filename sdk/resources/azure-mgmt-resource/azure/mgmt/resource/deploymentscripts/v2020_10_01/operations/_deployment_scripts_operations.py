@@ -47,7 +47,7 @@ class DeploymentScriptsOperations(object):
         url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'scriptName': self._serialize.url("script_name", script_name, 'str', max_length=90, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -174,7 +174,7 @@ class DeploymentScriptsOperations(object):
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'scriptName': self._serialize.url("script_name", script_name, 'str', max_length=90, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -243,7 +243,7 @@ class DeploymentScriptsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'scriptName': self._serialize.url("script_name", script_name, 'str', max_length=90, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -304,7 +304,7 @@ class DeploymentScriptsOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'scriptName': self._serialize.url("script_name", script_name, 'str', max_length=90, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -424,7 +424,7 @@ class DeploymentScriptsOperations(object):
         url = self.get_logs.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'scriptName': self._serialize.url("script_name", script_name, 'str', max_length=90, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -491,7 +491,7 @@ class DeploymentScriptsOperations(object):
         url = self.get_logs_default.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'scriptName': self._serialize.url("script_name", script_name, 'str', max_length=90, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -554,7 +554,7 @@ class DeploymentScriptsOperations(object):
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 

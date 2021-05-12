@@ -53,6 +53,7 @@ try:
     from ._models_py3 import TargetResource
     from ._models_py3 import TemplateHashResult
     from ._models_py3 import TemplateLink
+    from ._models_py3 import ZoneMapping
 except (SyntaxError, ImportError):
     from ._models import AliasPathType
     from ._models import AliasType
@@ -97,6 +98,7 @@ except (SyntaxError, ImportError):
     from ._models import TargetResource
     from ._models import TemplateHashResult
     from ._models import TemplateLink
+    from ._models import ZoneMapping
 from ._paged_models import DeploymentExtendedPaged
 from ._paged_models import DeploymentOperationPaged
 from ._paged_models import GenericResourceExpandedPaged
@@ -152,6 +154,7 @@ __all__ = [
     'TargetResource',
     'TemplateHashResult',
     'TemplateLink',
+    'ZoneMapping',
     'DeploymentExtendedPaged',
     'ProviderPaged',
     'GenericResourceExpandedPaged',

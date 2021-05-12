@@ -48,7 +48,7 @@ class DeploymentsOperations(object):
         url = self.delete_at_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -151,7 +151,7 @@ class DeploymentsOperations(object):
         url = self.check_existence_at_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -191,7 +191,7 @@ class DeploymentsOperations(object):
         url = self.create_or_update_at_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -312,7 +312,7 @@ class DeploymentsOperations(object):
         url = self.get_at_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -377,7 +377,7 @@ class DeploymentsOperations(object):
         url = self.cancel_at_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -415,7 +415,7 @@ class DeploymentsOperations(object):
         url = self.validate_at_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -535,7 +535,7 @@ class DeploymentsOperations(object):
         url = self.export_template_at_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -657,7 +657,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.delete_at_tenant_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -754,7 +754,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.check_existence_at_tenant_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -793,7 +793,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.create_or_update_at_tenant_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -908,7 +908,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.get_at_tenant_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -970,7 +970,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.cancel_at_tenant_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1007,7 +1007,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.validate_at_tenant_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1109,7 +1109,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.what_if_at_tenant_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1234,7 +1234,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.export_template_at_tenant_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1351,7 +1351,7 @@ class DeploymentsOperations(object):
         url = self.delete_at_management_group_scope.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1454,7 +1454,7 @@ class DeploymentsOperations(object):
         url = self.check_existence_at_management_group_scope.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1494,7 +1494,7 @@ class DeploymentsOperations(object):
         url = self.create_or_update_at_management_group_scope.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1615,7 +1615,7 @@ class DeploymentsOperations(object):
         url = self.get_at_management_group_scope.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1680,7 +1680,7 @@ class DeploymentsOperations(object):
         url = self.cancel_at_management_group_scope.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1718,7 +1718,7 @@ class DeploymentsOperations(object):
         url = self.validate_at_management_group_scope.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1824,7 +1824,7 @@ class DeploymentsOperations(object):
         url = self.what_if_at_management_group_scope.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1955,7 +1955,7 @@ class DeploymentsOperations(object):
         url = self.export_template_at_management_group_scope.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2077,7 +2077,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.delete_at_subscription_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2175,7 +2175,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.check_existence_at_subscription_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2215,7 +2215,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.create_or_update_at_subscription_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2331,7 +2331,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.get_at_subscription_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2394,7 +2394,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.cancel_at_subscription_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2432,7 +2432,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.validate_at_subscription_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2535,7 +2535,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.what_if_at_subscription_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2661,7 +2661,7 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.export_template_at_subscription_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2782,8 +2782,8 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2889,8 +2889,8 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.check_existence.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2930,8 +2930,8 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3055,8 +3055,8 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3122,8 +3122,8 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.cancel.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3161,8 +3161,8 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.validate.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3269,8 +3269,8 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.what_if.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3403,8 +3403,8 @@ class DeploymentsOperations(object):
         # Construct URL
         url = self.export_template.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3471,7 +3471,7 @@ class DeploymentsOperations(object):
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
