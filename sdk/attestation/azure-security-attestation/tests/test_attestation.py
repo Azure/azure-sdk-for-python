@@ -211,7 +211,6 @@ class AttestationTest(AzureTestCase):
                 runtime_data=AttestationData(runtime_data, is_json=False))
         assert response.value.enclave_held_data == runtime_data
         assert response.value.sgx_collateral is not None
-        assert response.value.issuer == client_uri
 
         #Now do the validation again, this time specifying runtime data as JSON.
         response = attest_client.attest_open_enclave(oe_report, runtime_data=AttestationData(runtime_data, is_json=True))

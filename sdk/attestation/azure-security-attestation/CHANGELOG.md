@@ -1,7 +1,6 @@
 # Release History
 
 ## 1.0.0b3 (2021-05-12)
-First bug fix release for Python SDK
 
 ### Features Added
 
@@ -12,16 +11,33 @@ First bug fix release for Python SDK
 ### Breaking Changes
 
 - Creating the `StoredAttestationPolicy` model type means that the `attestation_policy`
-    kwargs parameter for the constructor is no longer needed.
+    kwargs parameter for the constructor has been replaced with a positional `policy` parameter. As a result of this change, this code:
+
+```python
+StoredAttestationPolicy(attestation_policy=str(attestation_policy).encode('utf-8')))
+```
+
+changes to:
+
+```python
+StoredAttestationPolicy(attestation_policy)
+```
+
 - Several parameters for the `AttestationResult` type have been renamed, and
     several parameters which were shared with `AttestationToken` have been
     removed. In general, the naming changes removed some protocol specific
-    elements and replaced them with friendlier names. For instance the `iss`
-    attribute was renamed `issuer`.
+    elements and replaced them with friendlier names.
+
+    Full set of changes:
+  - `iss` renamed to `issuer`
+  - `cnf` renamed to `confirmation`
+  - `jti` renamed to `unique_identifier`
+  - `iat` removed
+  - `exp` removed
+  - `nbf` removed
+
 
 ## 1.0.0b2 (2021-05-11)
-
-Preliminary release for Python SDK
 
 ### Features Added
 

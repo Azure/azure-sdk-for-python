@@ -152,7 +152,7 @@ class TestAzureAttestationToken(object):
             assert expired_token.validate_token() is False
 
         early_token=AttestationToken(body={
-            "exp": time()+30, # Expired 30 seconds ago
+            "exp": time()+30, # Expires in 30 seconds
             "iat": time(),
             "nbf": time()+5 # Not valid for 5 seconds.
         })

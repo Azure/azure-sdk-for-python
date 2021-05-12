@@ -103,7 +103,7 @@ class PolicyResult(object):
     def _from_generated(cls, generated):
         #type:(GeneratedPolicyResult)->PolicyResult
         if not generated:
-            return cls
+            return cls(None, None, None)
         return cls(generated.policy_resolution, generated.policy_signer, generated.policy_token_hash)
 
 class AttestationResult(object):
@@ -112,47 +112,110 @@ class AttestationResult(object):
     :meth:`AttestationClient.attest_sgx`, :meth:`AttestationClient.attest_open_enclave`.
 
     """
-    def __init__(self, generated):
-        #type:(GeneratedAttestationResult) -> None
-        self._issuer = generated.iss
-        self._confirmation = generated.cnf
-        self._unique_identifier = generated.jti
-        self._nonce = generated.nonce
-        self._version = generated.version
-        self._runtime_claims = generated.runtime_claims
-        self._inittime_claims = generated.inittime_claims
-        self._policy_claims = generated.policy_claims
-        self._verifier_type = generated.verifier_type
-        self._policy_signer = generated.policy_signer
-        self._policy_hash = generated.policy_hash
-        self._is_debuggable = generated.is_debuggable
-        self._product_id = generated.product_id
-        self._mr_enclave = generated.mr_enclave
-        self._mr_signer = generated.mr_signer
-        self._svn = generated.svn
-        self._enclave_held_data = generated.enclave_held_data
-        self._sgx_collateral = generated.sgx_collateral
+    def __init__(self, 
+        issuer=None, #type:str
+        confirmation=None, #type:str
+        unique_identifier=None, #type:str
+        nonce=None, #type:str
+        version=None, #type:str
+        runtime_claims=None, #type:dict
+        inittime_claims=None, #type:dict
+        policy_claims=None, #type:dict
+        verifier_type=None, #type:str
+        policy_signer=None, #type:AttestationSigner
+        policy_hash=None, #type:str
+        is_debuggable=None, #type:bool
+        product_id=None, #type:int
+        mr_enclave=None, #type:str
+        mr_signer=None, #type:str
+        svn=None, #type:int
+        enclave_held_data=None, #type:bytes
+        sgx_collateral=None, #type:dict
+        deprecated_version = None, #typestr
+        deprecated_is_debuggable = None, #type:bool
+        deprecated_sgx_collateral = None, #type:dict
+        deprecated_enclave_held_data = None, #type:bytes
+        deprecated_enclave_held_data2 = None, #type:bytes
+        deprecated_product_id = None, #type:int
+        deprecated_mr_enclave = None, #type:str
+        deprecated_mr_signer = None, #type:str
+        deprecated_svn = None, #type:int
+        deprecated_tee = None, #type:str
+        deprecated_policy_signer = None, #type:AttestationSigner
+        deprecated_policy_hash = None, #type:str
+        deprecated_rp_data = None #type:str
+        ): #type:(...)->None
+        self._issuer = issuer
+        self._confirmation = confirmation
+        self._unique_identifier = unique_identifier
+        self._nonce = nonce
+        self._version = version
+        self._runtime_claims = runtime_claims
+        self._inittime_claims = inittime_claims
+        self._policy_claims = policy_claims
+        self._verifier_type = verifier_type
+        self._policy_signer = policy_signer
+        self._policy_hash = policy_hash
+        self._is_debuggable = is_debuggable
+        self._product_id = product_id
+        self._mr_enclave = mr_enclave
+        self._mr_signer = mr_signer
+        self._svn = svn
+        self._enclave_held_data = enclave_held_data
+        self._sgx_collateral = sgx_collateral
 
         # Deprecated fields.
-        self._deprecated_version = generated.deprecated_version
-        self._deprecated_is_debuggable = generated.deprecated_is_debuggable
-        self._deprecated_sgx_collateral = generated.deprecated_sgx_collateral
-        self._deprecated_enclave_held_data = generated.deprecated_enclave_held_data
-        self._deprecated_enclave_held_data2 = generated.deprecated_enclave_held_data2
-        self._deprecated_product_id = generated.deprecated_product_id
-        self._deprecated_mr_enclave = generated.deprecated_mr_enclave
-        self._deprecated_mr_signer = generated.deprecated_mr_signer
-        self._deprecated_svn = generated.deprecated_svn
-        self._deprecated_tee = generated.deprecated_tee
-        self._deprecated_policy_signer = generated.deprecated_policy_signer
-        self._deprecated_policy_hash = generated.deprecated_policy_hash
-        self._deprecated_rp_data = generated.deprecated_rp_data
+        self._deprecated_version = deprecated_version
+        self._deprecated_is_debuggable = deprecated_is_debuggable
+        self._deprecated_sgx_collateral = deprecated_sgx_collateral
+        self._deprecated_enclave_held_data = deprecated_enclave_held_data
+        self._deprecated_enclave_held_data2 = deprecated_enclave_held_data2
+        self._deprecated_product_id = deprecated_product_id
+        self._deprecated_mr_enclave = deprecated_mr_enclave
+        self._deprecated_mr_signer = deprecated_mr_signer
+        self._deprecated_svn = deprecated_svn
+        self._deprecated_tee = deprecated_tee
+        self._deprecated_policy_signer = deprecated_policy_signer
+        self._deprecated_policy_hash = deprecated_policy_hash
+        self._deprecated_rp_data = deprecated_rp_data
 
 
     @classmethod
     def _from_generated(cls, generated):
         #type:(GeneratedAttestationResult) -> AttestationResult
-        return AttestationResult(generated)
+        return AttestationResult(
+            issuer=generated.iss,
+            confirmation=generated.cnf,
+            unique_identifier=generated.jti,
+            nonce=generated.nonce,
+            version=generated.version,
+            runtime_claims=generated.runtime_claims,
+            inittime_claims=generated.inittime_claims,
+            policy_claims=generated.policy_claims,
+            verifier_type=generated.verifier_type,
+            policy_signer=AttestationSigner._from_generated(generated.policy_signer) if generated.policy_signer else None,
+            policy_hash=generated.policy_hash,
+            is_debuggable=generated.is_debuggable,
+            product_id=generated.product_id,
+            mr_enclave=generated.mr_enclave,
+            mr_signer=generated.mr_signer,
+            svn=generated.svn,
+            enclave_held_data=generated.enclave_held_data,
+            sgx_collateral=generated.sgx_collateral,
+            deprecated_version=generated.deprecated_version,
+            deprecated_is_debuggable=generated.deprecated_is_debuggable,
+            deprecated_sgx_collateral=generated.deprecated_sgx_collateral,
+            deprecated_enclave_held_data=generated.deprecated_enclave_held_data,
+            deprecated_enclave_held_data2=generated.deprecated_enclave_held_data2,
+            deprecated_product_id=generated.deprecated_product_id,
+            deprecated_mr_enclave=generated.deprecated_mr_enclave,
+            deprecated_mr_signer=generated.deprecated_mr_signer,
+            deprecated_svn=generated.deprecated_svn,
+            deprecated_tee=generated.deprecated_tee,
+            deprecated_policy_signer=AttestationSigner._from_generated(generated.deprecated_policy_signer) if generated.deprecated_policy_signer else None,
+            deprecated_policy_hash=generated.policy_hash,
+            deprecated_rp_data=generated.deprecated_rp_data
+            )
 
     @property
     def issuer(self):
