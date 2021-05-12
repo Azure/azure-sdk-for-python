@@ -12,6 +12,48 @@ class SystemEventNames(str, Enum):
     Azure Event Grid. To check the list of recognizable system topics,
     visit https://docs.microsoft.com/azure/event-grid/system-topics.
     """
+    # these names below are for backward compat only - refrain from using them.
+    AcsChatMemberAddedToThreadWithUserEventName = 'Microsoft.Communication.ChatMemberAddedToThreadWithUser'
+
+    ResourceWriteFailureEventName = 'Microsoft.Resources.ResourceWriteFailure'
+
+    IoTHubDeviceDeletedEventName = 'Microsoft.Devices.DeviceDeleted'
+
+    IoTHubDeviceDisconnectedEventName = 'Microsoft.Devices.DeviceDisconnected'
+
+    ResourceDeleteFailureEventName = 'Microsoft.Resources.ResourceDeleteFailure'
+
+    ResourceDeleteCancelEventName = 'Microsoft.Resources.ResourceDeleteCancel'
+
+    AcsChatThreadParticipantAddedEventName = 'Microsoft.Communication.ChatThreadParticipantAdded'
+
+    ResourceDeleteSuccessEventName = 'Microsoft.Resources.ResourceDeleteSuccess'
+
+    EventGridSubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
+
+    ResourceWriteSuccessEventName = 'Microsoft.Resources.ResourceWriteSuccess'
+
+    ResourceActionSuccessEventName = 'Microsoft.Resources.ResourceActionSuccess'
+
+    ResourceWriteCancelEventName = 'Microsoft.Resources.ResourceWriteCancel'
+
+    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener'
+
+    ResourceActionFailureEventName = 'Microsoft.Resources.ResourceActionFailure'
+
+    AcsChatMemberRemovedFromThreadWithUserEventName = 'Microsoft.Communication.ChatMemberRemovedFromThreadWithUser'
+
+    IoTHubDeviceConnectedEventName = 'Microsoft.Devices.DeviceConnected'
+
+    EventGridSubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
+
+    AcsChatThreadParticipantRemovedEventName = 'Microsoft.Communication.ChatThreadParticipantRemoved'
+
+    ResourceActionCancelEventName = 'Microsoft.Resources.ResourceActionCancel'
+
+    IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
+
+    # backward compat names end here.
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
     AcsChatMessageDeletedInThreadEventName = 'Microsoft.Communication.ChatMessageDeletedInThread'
@@ -28,7 +70,7 @@ class SystemEventNames(str, Enum):
 
     AcsChatParticipantAddedToThreadWithUserEventName = 'Microsoft.Communication.ChatParticipantAddedToThreadWithUser'
 
-    AcsChatParticipantRemovedFromThreadEventName = 'Microsoft.Communication.ChatThreadParticipantRemoved'
+    AcsChatParticipantRemovedFromThreadEventName = 'Microsoft.Communication.ChatThreadParticipantRemoved'      
 
     AcsChatParticipantRemovedFromThreadWithUserEventName = 'Microsoft.Communication.ChatParticipantRemovedFromThreadWithUser'
 
@@ -102,7 +144,7 @@ class SystemEventNames(str, Enum):
 
     MachineLearningServicesModelDeployedEventName = 'Microsoft.MachineLearningServices.ModelDeployed'
 
-    MachineLearningServicesModelRegisteredEventName = 'Microsoft.MachineLearningServices.ModelRegistered'
+    MachineLearningServicesModelRegisteredEventName = 'Microsoft.MachineLearningServices.ModelRegistered'      
 
     MachineLearningServicesRunCompletedEventName = 'Microsoft.MachineLearningServices.RunCompleted'
 
@@ -150,17 +192,17 @@ class SystemEventNames(str, Enum):
 
     MediaLiveEventEncoderDisconnectedEventName = 'Microsoft.Media.LiveEventEncoderDisconnected'
 
-    MediaLiveEventIncomingNameChunkDroppedEventName = 'Microsoft.Media.LiveEventIncomingDataChunkDropped'
+    MediaLiveEventIncomingNameChunkDroppedEventName = 'Microsoft.Media.LiveEventIncomingDataChunkDropped'      
 
     MediaLiveEventIncomingStreamReceivedEventName = 'Microsoft.Media.LiveEventIncomingStreamReceived'
 
-    MediaLiveEventIncomingStreamsOutOfSyncEventName = 'Microsoft.Media.LiveEventIncomingStreamsOutOfSync'
+    MediaLiveEventIncomingStreamsOutOfSyncEventName = 'Microsoft.Media.LiveEventIncomingStreamsOutOfSync'      
 
     MediaLiveEventIncomingVideoStreamsOutOfSyncEventName = 'Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync'
 
     MediaLiveEventIngestHeartbeatEventName = 'Microsoft.Media.LiveEventIngestHeartbeat'
 
-    MediaLiveEventTrackDiscontinuityDetectedEventName = 'Microsoft.Media.LiveEventTrackDiscontinuityDetected'
+    MediaLiveEventTrackDiscontinuityDetectedEventName = 'Microsoft.Media.LiveEventTrackDiscontinuityDetected'  
 
     PolicyInsightsPolicyStateChangedEventName = 'Microsoft.PolicyInsights.PolicyStateChanged'
 
@@ -202,7 +244,7 @@ class SystemEventNames(str, Enum):
 
     ServiceBusDeadletterMessagesAvailableWithNoListenersEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListenersEvent'
 
-    SignalRServiceClientConnectionConnectedEventName = 'Microsoft.SignalRService.ClientConnectionConnected'
+    SignalRServiceClientConnectionConnectedEventName = 'Microsoft.SignalRService.ClientConnectionConnected'    
 
     SignalRServiceClientConnectionDisconnectedEventName = 'Microsoft.SignalRService.ClientConnectionDisconnected'
 
@@ -253,44 +295,3 @@ class SystemEventNames(str, Enum):
     WebSlotSwapWithPreviewCancelledEventName = 'Microsoft.Web.SlotSwapWithPreviewCancelled'
 
     WebSlotSwapWithPreviewStartedEventName = 'Microsoft.Web.SlotSwapWithPreviewStarted'
-
-    # these names below are for backward compat only - refrain from using them.
-    AcsChatMemberAddedToThreadWithUserEventName = 'Microsoft.Communication.ChatMemberAddedToThreadWithUser'
-
-    ResourceWriteFailureEventName = 'Microsoft.Resources.ResourceWriteFailure'
-
-    IoTHubDeviceDeletedEventName = 'Microsoft.Devices.DeviceDeleted'
-
-    IoTHubDeviceDisconnectedEventName = 'Microsoft.Devices.DeviceDisconnected'
-
-    ResourceDeleteFailureEventName = 'Microsoft.Resources.ResourceDeleteFailure'
-
-    ResourceDeleteCancelEventName = 'Microsoft.Resources.ResourceDeleteCancel'
-
-    AcsChatThreadParticipantAddedEventName = 'Microsoft.Communication.ChatThreadParticipantAdded'
-
-    ResourceDeleteSuccessEventName = 'Microsoft.Resources.ResourceDeleteSuccess'
-
-    EventGridSubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
-
-    ResourceWriteSuccessEventName = 'Microsoft.Resources.ResourceWriteSuccess'
-
-    ResourceActionSuccessEventName = 'Microsoft.Resources.ResourceActionSuccess'
-
-    ResourceWriteCancelEventName = 'Microsoft.Resources.ResourceWriteCancel'
-
-    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener'
-
-    ResourceActionFailureEventName = 'Microsoft.Resources.ResourceActionFailure'
-
-    AcsChatMemberRemovedFromThreadWithUserEventName = 'Microsoft.Communication.ChatMemberRemovedFromThreadWithUser'
-
-    IoTHubDeviceConnectedEventName = 'Microsoft.Devices.DeviceConnected'
-
-    EventGridSubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
-
-    AcsChatThreadParticipantRemovedEventName = 'Microsoft.Communication.ChatThreadParticipantRemoved'
-
-    ResourceActionCancelEventName = 'Microsoft.Resources.ResourceActionCancel'
-
-    IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
