@@ -4,10 +4,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import List, Any, Optional, TYPE_CHECKING
+from typing import Dict, List, Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -34,7 +33,6 @@ from ._models import (
     TpmAttestationRequest,
     TpmAttestationResponse)
 import base64
-import cryptography.x509
 from azure.core.tracing.decorator import distributed_trace
 from threading import Lock
 
@@ -94,13 +92,13 @@ class AttestationClient(object):
 
     @distributed_trace
     def attest_sgx_enclave(self, quote, inittime_data=None, runtime_data=None, draft_policy=None, **kwargs):
-        # type:(bytes, Optional[AttestationData], Optional[AttestationData], Optional[str], Any) -> AttestationResponse[AttestationResult]
+        # type:(bytes, Optional[AttestationData], Optional[AttestationData], Optional[str], Dict[str, Any]) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
         :param Optional[AttestationData] inittime_data: Data presented at the time that the SGX enclave was initialized.
         :param Optional[AttestationData] runtime_data: Data presented at the time that the SGX quote was created.
-        :param Optional[str] draft_policy: "draft", or "experimental" policy to be used with
+        :param Optional[str] draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
@@ -135,13 +133,13 @@ class AttestationClient(object):
 
     @distributed_trace
     def attest_open_enclave(self, report, inittime_data=None, runtime_data=None, draft_policy=None, **kwargs):
-        # type:(bytes, Optional[AttestationData], Optional[AttestationData], Optional[str], Any) -> AttestationResponse[AttestationResult]
+        # type:(bytes, Optional[AttestationData], Optional[AttestationData], Optional[str], Dict[str, Any]) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
         :param Optional[AttestationData] inittime_data: Data presented at the time that the SGX enclave was initialized.
         :param Optional[AttestationData] runtime_data: Data presented at the time that the SGX quote was created.
-        :param Optional[str] draft_policy: "draft", or "experimental" policy to be used with
+        :param Optional[str] draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data

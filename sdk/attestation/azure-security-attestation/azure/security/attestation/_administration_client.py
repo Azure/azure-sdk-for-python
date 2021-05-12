@@ -7,7 +7,6 @@
 from typing import List, Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
 from six import python_2_unicode_compatible
 
 if TYPE_CHECKING:
@@ -37,9 +36,6 @@ from ._models import (
     PolicyResult,
     AttestationTokenValidationException
 )
-from ._common import Base64Url
-import cryptography
-import cryptography.x509
 import base64
 from azure.core.tracing.decorator import distributed_trace
 from threading import Lock, Thread

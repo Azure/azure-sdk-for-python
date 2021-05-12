@@ -273,8 +273,8 @@ class AttestationResult(object):
         """ Returns the runtime claims in the token.
 
         This value will match the input `runtime_data` property to the 
-        :meth:`AttestationClient::attest_sgx` or
-        :meth:`AttestationClient::attest_open_enclave` API.
+        :meth:`AttestationClient.attest_sgx` or
+        :meth:`AttestationClient.attest_open_enclave` API.
 
         :rtype: dict[str, Any] or None
 
@@ -290,8 +290,8 @@ class AttestationResult(object):
         """ Returns the inittime claims in the token.
 
         This value will match the input `inittime_data` property to the 
-        :meth:`AttestationClient::attest_sgx` or
-        :meth:`AttestationClient::attest_open_enclave` API.
+        :meth:`AttestationClient.attest_sgx` or
+        :meth:`AttestationClient.attest_open_enclave` API.
 
         :rtype: dict[str, Any] or None
 
@@ -393,8 +393,8 @@ class AttestationResult(object):
     def enclave_held_data(self):
         #type:() -> Union[bytes, None]
         """ Returns the value of the runtime_data field specified as an input
-        to the :meth:`AttestationClient::attest_sgx` or
-        :meth:`AttestationClient::attest_open_enclave` API.
+        to the :meth:`AttestationClient.attest_sgx` or
+        :meth:`AttestationClient.attest_open_enclave` API.
 
         .. note:: The enclave_held_data prperty will only be populated if the 
             `runtime_data` parameter to the `Attest` API is marked as not being 
@@ -948,7 +948,8 @@ class AttestationResponse(Generic[T]):
 class TpmAttestationRequest(object):
     """ Represents a request for TPM attestation.
 
-    :param bytes data: The data to transmit to the Attestation Service for TPM attestation.
+    :param bytes data: The data sent to the Attestation Service in
+        the parameter to :meth:`AttestationClient.attest_tpm`.
     """
     def __init__(self, data):
         #type (bytes) -> None
@@ -957,7 +958,8 @@ class TpmAttestationRequest(object):
 class TpmAttestationResponse(object):
     """ Represents a request for TPM attestation.
 
-    :param bytes data: The data to transmit to the Attestation Service for TPM attestation.
+    :param bytes data: The data received from the Attestation Service in
+        response to a call to :meth:`AttestationClient.attest_tpm`.
     """
     def __init__(self, data):
         #type (bytes) -> None
