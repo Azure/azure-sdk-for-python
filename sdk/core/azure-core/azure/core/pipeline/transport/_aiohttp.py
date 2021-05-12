@@ -273,6 +273,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         self.reason = aiohttp_response.reason
         self.content_type = aiohttp_response.headers.get('content-type')
         self._body = None
+        self._decompressed_body = None
         self._decompress = decompress
 
     def body(self) -> bytes:
@@ -287,11 +288,13 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             return self._body
         enc = enc.lower()
         if enc in ("gzip", "deflate"):
+            if self._decompressed_body:
+                return self._decompressed_body
             import zlib
             zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
             decompressor = zlib.decompressobj(wbits=zlib_mode)
-            body = decompressor.decompress(self._body)
-            return body
+            self._decompressed_body = decompressor.decompress(self._body)
+            return self._decompressed_body
         return self._body
 
     def text(self, encoding: Optional[str] = None) -> str:
