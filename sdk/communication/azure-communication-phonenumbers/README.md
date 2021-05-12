@@ -23,7 +23,7 @@ import os
 from azure.communication.phonenumbers import PhoneNumbersClient
 from azure.identity import DefaultAzureCredential
 
-endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+endpoint = os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
 
 # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have your
 # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
@@ -38,7 +38,7 @@ Connection string authentication is also available for Phone Numbers Client.
 import os
 from azure.communication.phonenumbers import PhoneNumbersClient
 
-connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+connection_str = os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 ```
 

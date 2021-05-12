@@ -27,7 +27,7 @@ sys.path.append("..")
 
 class SmsTokenCredentialAuthSample(object):
 
-    connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+    connection_str = os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
     phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
     
     def sms_token_credential_auth(self):
