@@ -8,7 +8,9 @@ from enum import Enum
 from typing import TYPE_CHECKING, Dict, Any
 
 from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
-from ._generated.models import ContentProperties as GeneratedContentProperties
+from ._generated.models import RepositoryWriteableProperties as GenRepositoryWriteableProperties
+from ._generated.models import TagWriteableProperties as GenTagWriteableProperties
+from ._generated.models import ManifestWriteableProperties as GenManifestWriteableProperties
 
 if TYPE_CHECKING:
     from ._generated.models import ManifestAttributesBase
@@ -18,10 +20,10 @@ if TYPE_CHECKING:
 class ManifestWriteableProperties(object):
     """Permissions of a manifest
 
-    :ivar bool can_delete: Ability to delete an artifact or tag
-    :ivar bool can_list: Ability to list an artifact or tag
-    :ivar bool can_read: Ability to read an artifact or tag
-    :ivar bool can_write: Ability to write an artifact or tag
+    :ivar bool can_delete: Ability to delete a manifest
+    :ivar bool can_list: Ability to list a manifest
+    :ivar bool can_read: Ability to read a manifest
+    :ivar bool can_write: Ability to write a manifest
     """
 
     def __init__(self, **kwargs):
@@ -39,21 +41,21 @@ class ManifestWriteableProperties(object):
 
     @classmethod
     def _from_generated(cls, generated):
-        # type: (GeneratedContentProperties) -> ManifestWriteableProperties
+        # type: (GenManifestWriteableProperties) -> ManifestWriteableProperties
         return cls(
-            can_delete=generated.can_delete,
-            can_list=generated.can_list,
-            can_read=generated.can_read,
-            can_write=generated.can_write,
+            can_delete=generated.delete_enabled,
+            can_list=generated.list_enabled,
+            can_read=generated.read_enabled,
+            can_write=generated.write_enabled,
         )
 
     def _to_generated(self):
-        # type: () -> GeneratedContentProperties
-        return GeneratedContentProperties(
-            can_delete=self.can_delete,
-            can_list=self.can_list,
-            can_read=self.can_read,
-            can_write=self.can_write,
+        # type: () -> GenManifestWriteableProperties
+        return GenManifestWriteableProperties(
+            delete_enabled=self.can_delete,
+            list_enabled=self.can_list,
+            read_enabled=self.can_read,
+            write_enabled=self.can_write,
         )
 
 
@@ -84,22 +86,22 @@ class RepositoryWriteableProperties(object):
 
     @classmethod
     def _from_generated(cls, generated):
-        # type: (GeneratedContentProperties) -> RepositoryWriteableProperties
+        # type: (GenRepositoryWriteableProperties) -> RepositoryWriteableProperties
         return cls(
-            can_delete=generated.can_delete,
-            can_list=generated.can_list,
-            can_read=generated.can_read,
-            can_write=generated.can_write,
-            teleport_enabled=generated.additional_properties.get("teleport_enabled")
+            can_delete=generated.delete_enabled,
+            can_list=generated.list_enabled,
+            can_read=generated.read_enabled,
+            can_write=generated.write_enabled,
+            teleport_enabled=generated.teleport_enabled
         )
 
     def _to_generated(self):
-        # type: () -> GeneratedContentProperties
-        return GeneratedContentProperties(
-            can_delete=self.can_delete,
-            can_list=self.can_list,
-            can_read=self.can_read,
-            can_write=self.can_write,
+        # type: () -> GenRepositoryWriteableProperties
+        return GenRepositoryWriteableProperties(
+            delete_enabled=self.can_delete,
+            list_enabled=self.can_list,
+            read_enabled=self.can_read,
+            write_enabled=self.can_write,
             teleport_enabled=self.teleport_enabled,
         )
 
@@ -128,7 +130,7 @@ class TagWriteableProperties(object):
 
     @classmethod
     def _from_generated(cls, generated):
-        # type: (GeneratedContentProperties) -> TagWriteableProperties
+        # type: (GenTagWriteableProperties) -> TagWriteableProperties
         return cls(
             can_delete=generated.can_delete,
             can_list=generated.can_list,
@@ -137,8 +139,8 @@ class TagWriteableProperties(object):
         )
 
     def _to_generated(self):
-        # type: () -> GeneratedContentProperties
-        return GeneratedContentProperties(
+        # type: () -> GenTagWriteableProperties
+        return GenTagWriteableProperties(
             can_delete=self.can_delete,
             can_list=self.can_list,
             can_read=self.can_read,
