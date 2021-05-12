@@ -111,6 +111,47 @@ class AttestationResult(object):
     service as a result of a call to
     :meth:`AttestationClient.attest_sgx`, or :meth:`AttestationClient.attest_open_enclave`.
 
+    :keyword issuer: Entity which issued the attestation token.
+    :kwtype issuer: str
+    :keyword confirmation: Confirmation claim for the token.
+    :kwtype confirmation: dict
+    :keyword unique_identifier: Unique identifier for the token.
+    :kwtype unique_identifier: str
+    :keyword nonce: Returns the input `nonce` attribute passed to the `attest` API.
+    :kwtype nonce: str
+    :keyword version: Version of the token. Must be "1.0"
+    :kwtype version: str
+    :keyword runtime_claims: Runtime claims passed in from the caller of the attest API.
+    :kwtype runtime_claims: dict
+    :keyword inittime_claims: Inittime claims passed in from the caller of the attest API.
+    :kwtype inittime_claims: dict
+    :keyword enclave_held_data: Runtime data passed in from the caller of the attest API.
+    :kwtype enclave_held_data: bytes
+    :keyword policy_claims: Attestation claims issued by policies.
+    :kwtype policy_claims: dict
+    :keyword verifier_type: Verifier which generated this token.
+    :kwtype verifier_type: str
+    :keyword policy_signer: If the policy which processed the request is signed, 
+        this will be the certificate which signed the policy.
+    :kwtype policy_signer: AttestationSigner
+    :keyword policy_hash: The hash of the policy which processed the attestation 
+        evidence.
+    :kwtype policy_hash: str
+    :keyword is_debuggable: True if the SGX enclave being attested is debuggable.
+    :kwtype is_debuggable: bool
+    :keyword product_id: Product ID for the SGX enclave being attested.
+    :kwtype product_id: int
+    :keyword mr_enclave: MRENCLAVE value for the SGX enclave being attested.
+    :kwtype mr_enclave: str
+    :keyword mr_signer: MRSIGNER value for the SGX enclave being attested.
+    :kwtype mr_signer: str
+    :keyword svn: Security version number for the SGX enclave being attested.
+    :kwtype svn: int
+    :keyword sgx_collateral: Collateral which identifies the collateral used to 
+        create the token.
+    :kwtype sgx_collateral: dict
+    
+
     """
     def __init__2(self, **kwargs):
         self._issuer = kwargs.get("issuer", None) #type:str
@@ -120,24 +161,24 @@ class AttestationResult(object):
 
     def __init__(self, **kwargs):
         #type:(Dict[str,Any])->None
-        self._issuer = kwargs.get("issuer", None) #type:str
-        self._confirmation = kwargs.get("confirmation", None) #type:dict
-        self._unique_identifier = kwargs.get("unique_identifier", None) #type:str
-        self._nonce = kwargs.get("nonce", None) #type:str
-        self._version = kwargs.get("version", None) #type:str
-        self._runtime_claims = kwargs.get("runtime_claims", None) #type:dict
-        self._inittime_claims = kwargs.get("inittime_claims", None) #type:dict
-        self._policy_claims = kwargs.get("policy_claims", None) #type:dict
-        self._verifier_type = kwargs.get("verifier_type", None) #type:str
-        self._policy_signer = kwargs.get("policy_signer", None) #type:AttestationSigner
-        self._policy_hash = kwargs.get("policy_hash", None) #type:str
-        self._is_debuggable = kwargs.get("is_debuggable", None) #type:bool
-        self._product_id = kwargs.get("product_id", None) #type:int
-        self._mr_enclave = kwargs.get("mr_enclave", None) #type:str
-        self._mr_signer = kwargs.get("mr_signer", None) #type:str
-        self._svn = kwargs.get("svn", None) #type:int
-        self._enclave_held_data = kwargs.get("enclave_held_data", None) #type:bytes
-        self._sgx_collateral = kwargs.get("sgx_collateral", None) #type:dict
+        self._issuer = kwargs.get("issuer", None) #type:Union[str|None]
+        self._confirmation = kwargs.get("confirmation", None) #type:Union[dict|None]
+        self._unique_identifier = kwargs.get("unique_identifier", None) #type:Union[str|None]
+        self._nonce = kwargs.get("nonce", None) #type:Union[str|None]
+        self._version = kwargs.get("version", None) #type:Union[str|None]
+        self._runtime_claims = kwargs.get("runtime_claims", None) #type:Union[dict|None]
+        self._inittime_claims = kwargs.get("inittime_claims", None) #type:Union[dict|None]
+        self._policy_claims = kwargs.get("policy_claims", None) #type:Union[dict|None]
+        self._verifier_type = kwargs.get("verifier_type", None) #type:Union[str|None]
+        self._policy_signer = kwargs.get("policy_signer", None) #type:Union[AttestationSigner|None]
+        self._policy_hash = kwargs.get("policy_hash", None) #type:Union[str|None]
+        self._is_debuggable = kwargs.get("is_debuggable", None) #type:Union[bool|None]
+        self._product_id = kwargs.get("product_id", None) #type:Union[int|None]
+        self._mr_enclave = kwargs.get("mr_enclave", None) #type:Union[str|None]
+        self._mr_signer = kwargs.get("mr_signer", None) #type:Union[str|None]
+        self._svn = kwargs.get("svn", None) #type:Union[int|None]
+        self._enclave_held_data = kwargs.get("enclave_held_data", None) #type:Union[bytes|None]
+        self._sgx_collateral = kwargs.get("sgx_collateral", None) #type:Union[dict|None]
 
     @classmethod
     def _from_generated(cls, generated):
@@ -172,6 +213,9 @@ class AttestationResult(object):
         should be rejected.
         
         See `RFC 7519 Section 4.1.1 <https://www.rfc-editor.org/rfc/rfc7519.html#section-4.1.1>`_ for details.
+
+        :rtype: str or None
+
         """
         return self._issuer
 
@@ -184,6 +228,9 @@ class AttestationResult(object):
         possession of a key.
         
         See `RFC 7800 Section 3.1 <https://www.rfc-editor.org/rfc/rfc7800.html#section-3.1>`_ for details.
+
+        :rtype: str or None
+
         """
         return self._confirmation
 
@@ -196,6 +243,9 @@ class AttestationResult(object):
         different attestation tokens.
         
         See `RFC 7519 Section 4.1.7 <https://rfc-editor.org/rfc/rfc7519.html#section-4.1.7>`_ for details.
+
+        :rtype: str or None
+
         """
         return self._confirmation
 
@@ -204,6 +254,7 @@ class AttestationResult(object):
         #type:() -> Union[str, None]
         """ Returns the value of the "nonce" input to the attestation request.
 
+        :rtype: str or None
         """
         return self._nonce
 
@@ -212,6 +263,7 @@ class AttestationResult(object):
         #type:() -> Union[str, None]
         """ Returns the version of the information returned in the token.
 
+        :rtype: str or None
         """
         return self._version
 
@@ -223,6 +275,8 @@ class AttestationResult(object):
         This value will match the input `runtime_data` property to the 
         :meth:`AttestationClient::attest_sgx` or
         :meth:`AttestationClient::attest_open_enclave` API.
+
+        :rtype: dict[str, Any] or None
 
         .. note:: The `runtime_claims` property will only be populated if the
             `runtime_data` parameter to the `Attest` API is marked as being JSON.
@@ -239,6 +293,8 @@ class AttestationResult(object):
         :meth:`AttestationClient::attest_sgx` or
         :meth:`AttestationClient::attest_open_enclave` API.
 
+        :rtype: dict[str, Any] or None
+
         .. note:: The `inittime_claims` property will only be populated if the
             `inittime_data` parameter to the `Attest` API is marked as being JSON.
 
@@ -250,6 +306,8 @@ class AttestationResult(object):
         #type:() -> Dict[str, Any]
         """ Returns the claims for the token generated by attestation policy.
 
+        :rtype: dict[str, Any] or None
+
         """
         return self._policy_claims
 
@@ -258,6 +316,7 @@ class AttestationResult(object):
         #type:() -> Union[str, None]
         """ Returns the verifier which generated this attestation token.
 
+        :rtype: str or None
         """
         return self._verifier_type
 
@@ -267,6 +326,7 @@ class AttestationResult(object):
         """ Returns the signing certificate which was used to sign the policy
         which was applied when the token was generated.
 
+        :rtype: AttestationSigner or None
         """
         if self._policy_signer:
             return AttestationSigner._from_generated(self._policy_signer)
@@ -278,6 +338,7 @@ class AttestationResult(object):
         """ Returns the base64url encoded SHA256 hash of the Base64Url encoded
         attestation policy which was applied when generating this token.
 
+        :rtype: str or None
         """
         return self._policy_hash
 
@@ -286,6 +347,8 @@ class AttestationResult(object):
         #type:() -> Union[bool, None]
         """ Returns "True" if the source evidence being attested indicates
         that the TEE has debugging enabled.
+
+        :rtype: bool or None
         """
         return self._is_debuggable
 
@@ -293,6 +356,9 @@ class AttestationResult(object):
     def product_id(self):
         #type:() -> Union[float, None]
         """ Returns the product id associated with the SGX enclave being attested.
+
+        :rtype: float or None
+
         """
         return self._product_id
 
@@ -300,6 +366,8 @@ class AttestationResult(object):
     def mr_enclave(self):
         #type:() -> Union[str, None]
         """ Returns HEX encoded `mr-enclave` value of the SGX enclave being attested.
+
+        :rtype: str or None
         """
         return self._mr_enclave
 
@@ -307,6 +375,8 @@ class AttestationResult(object):
     def mr_signer(self):
         #type:() -> Union[str, None]
         """ Returns HEX encoded `mr-signer` value of the SGX enclave being attested.
+
+        :rtype: str or None
         """
         return self._mr_signer
 
@@ -314,6 +384,8 @@ class AttestationResult(object):
     def svn(self):
         #type:() -> Union[int, None]
         """ Returns the `svn` value of the SGX enclave being attested.
+
+        :rtype: int or None
         """
         return self._svn
 
@@ -328,6 +400,7 @@ class AttestationResult(object):
             `runtime_data` parameter to the `Attest` API is marked as not being 
             JSON.
 
+        :rtype: bytes or None
         """
         return self._enclave_held_data
 
@@ -337,13 +410,15 @@ class AttestationResult(object):
         """ Returns a set of information describing the complete set of inputs
         to the `oe_verify_evidence`
 
+        :rtype: dict[str, Any] or None
+
         """
         return self._sgx_collateral
 
         # Deprecated fields.
 
 class StoredAttestationPolicy(object):
-    """ Represents an attesttion policy in storage.
+    """ Represents an attestation policy in storage.
 
     :param str policy: Policy to be saved.
 
