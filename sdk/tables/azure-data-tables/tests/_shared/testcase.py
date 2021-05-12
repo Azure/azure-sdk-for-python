@@ -402,7 +402,7 @@ class TableTestCase(object):
         metadata = self.table.create_entity(entity)
         return entity, metadata["etag"]
 
-    def set_up_entity_test(self, account_name, account_key, url="table"):
+    def _set_up(self, account_name, account_key, url="table"):
         self.table_name = self.get_resource_name("uttable")
         self.ts = TableServiceClient(
             self.account_url(account_name, url), credential=account_key, table_name=self.table_name

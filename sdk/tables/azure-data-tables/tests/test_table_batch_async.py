@@ -41,7 +41,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_single_insert(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -71,7 +71,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_single_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -106,7 +106,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -140,7 +140,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -178,7 +178,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_update_if_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
             resp = await self.table.create_entity(entity=entity)
@@ -205,7 +205,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_update_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
             resp = await self.table.create_entity(entity)
@@ -231,7 +231,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_insert_replace(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -260,7 +260,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_insert_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -289,7 +289,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -321,7 +321,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_inserts(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -358,7 +358,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_all_operations_together(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -430,7 +430,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_same_row_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
             await self.table.create_entity(entity)
@@ -455,7 +455,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_different_partition_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
             await self.table.create_entity(entity)
@@ -480,7 +480,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_too_many_ops(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
             await self.table.create_entity(entity)
@@ -502,7 +502,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_new_non_existent_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
 
@@ -538,7 +538,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_new_delete_nonexistent_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
 
@@ -553,7 +553,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_sas_auth(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
 
             token = generate_table_sas(
@@ -602,7 +602,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_batch_request_too_large(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
 
             batch = []
@@ -626,7 +626,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_delete_batch_with_bad_kwarg(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_storage_account_name, tables_primary_storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
             await self.table.create_entity(entity)

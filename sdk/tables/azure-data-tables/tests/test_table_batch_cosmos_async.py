@@ -43,7 +43,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_batch_single_insert(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             entity = TableEntity()
@@ -74,7 +74,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_batch_single_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             entity = TableEntity()
@@ -109,7 +109,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_batch_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             entity = TableEntity()
@@ -143,7 +143,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_batch_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             entity = TableEntity()
@@ -181,7 +181,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_batch_update_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
             resp = await self.table.create_entity(entity=entity)
@@ -208,7 +208,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_batch_update_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
             resp = await self.table.create_entity(entity)
@@ -235,7 +235,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_batch_insert_replace(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             entity = TableEntity()
@@ -264,7 +264,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_batch_insert_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             entity = TableEntity()
@@ -293,7 +293,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_batch_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             entity = TableEntity()
@@ -324,7 +324,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_batch_inserts(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             entity = TableEntity()
@@ -361,7 +361,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_batch_all_operations_together(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             entity = TableEntity()
@@ -433,7 +433,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_batch_different_partition_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
             await self.table.create_entity(entity)
@@ -458,7 +458,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_new_non_existent_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
 
@@ -496,7 +496,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_new_delete_nonexistent_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
 
@@ -511,7 +511,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_batch_request_too_large(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
 
             batch = []
@@ -535,7 +535,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_delete_batch_with_bad_kwarg(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
             await self.table.create_entity(entity)

@@ -118,7 +118,7 @@ class AsyncTableTestCase(TableTestCase):
         metadata = await self.table.create_entity(entity=entity)
         return entity, metadata["etag"]
 
-    async def set_up_entity_test(self, account_name, account_key, url="table"):
+    async def _set_up(self, account_name, account_key, url="table"):
         account_url = self.account_url(account_name, url)
         self.ts = TableServiceClient(account_url, account_key)
         self.table_name = self.get_resource_name("uttable")
