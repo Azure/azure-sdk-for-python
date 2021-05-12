@@ -5,22 +5,17 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import division
-from contextlib import contextmanager
-import os
 from datetime import datetime, timedelta
-import string
-import logging
 
-import pytest
-
-from devtools_testutils import AzureTestCase
 from azure.core.credentials import AccessToken, AzureNamedKeyCredential
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
 SLEEP_DELAY = 30
 
+TEST_TABLE_PREFIX = 'pytablesync'
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -71,6 +66,47 @@ class TableTestCase(object):
     def generate_fake_token(self):
         return FakeTokenCredential()
 
+    def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
+        table_name = self.get_resource_name(prefix)
+        return table_name
+
+    def _create_table(self, ts, prefix=TEST_TABLE_PREFIX, table_list=None):
+        table_name = self._get_table_reference(prefix)
+        try:
+            table = ts.create_table(table_name)
+            if table_list is not None:
+                table_list.append(table)
+        except ResourceExistsError:
+            table = ts.get_table_client(table_name)
+        return table
+
+    def _delete_table(self, ts, table):
+        if table is None:
+            return
+        ts.delete_table(table.name)
+
+    def _delete_all_tables(self, ts):
+        for table in ts.list_tables():
+            ts.delete_table(table.name)
+
+    def _create_pk_rk(self, pk, rk):
+        try:
+            pk = pk if pk is not None else self.get_resource_name('pk').decode('utf-8')
+            rk = rk if rk is not None else self.get_resource_name('rk').decode('utf-8')
+        except AttributeError:
+            pk = pk if pk is not None else self.get_resource_name('pk')
+            rk = rk if rk is not None else self.get_resource_name('rk')
+        return pk, rk
+
+    def _create_random_base_entity_dict(self):
+        """
+        Creates a dict-based entity with only pk and rk.
+        """
+        partition, row = self._create_pk_rk(None, None)
+        return {
+            'PartitionKey': partition,
+            'RowKey': row,
+        }
 
 class ResponseCallback(object):
     def __init__(self, status=None, new_status=None):

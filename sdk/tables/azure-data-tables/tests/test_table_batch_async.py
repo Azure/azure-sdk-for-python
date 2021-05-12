@@ -73,21 +73,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         await self.table.close()
 
     #--Helpers-----------------------------------------------------------------
-
-    def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
-        table_name = self.get_resource_name(prefix)
-        self.test_tables.append(table_name)
-        return self.ts.get_table_client(table_name)
-
-    def _create_pk_rk(self, pk, rk):
-        try:
-            pk = pk if pk is not None else self.get_resource_name('pk').decode('utf-8')
-            rk = rk if rk is not None else self.get_resource_name('rk').decode('utf-8')
-        except AttributeError:
-            pk = pk if pk is not None else self.get_resource_name('pk')
-            rk = rk if rk is not None else self.get_resource_name('rk')
-        return pk, rk
-
     def _create_random_entity_dict(self, pk=None, rk=None):
         """
         Creates a dictionary-based entity with fixed values, using all

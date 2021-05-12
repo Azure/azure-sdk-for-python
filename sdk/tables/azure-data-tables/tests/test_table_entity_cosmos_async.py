@@ -89,25 +89,16 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await client.create_entity(entity=entity)
         return client
 
-    def _create_random_base_entity_dict(self):
-        """
-        Creates a dict-based entity with only pk and rk.
-        """
-        partition = self.get_resource_name('pk')
-        row = self.get_resource_name('rk')
-        return {
-            'PartitionKey': partition,
-            'RowKey': row,
-        }
-
-    def _create_pk_rk(self, pk, rk):
-        try:
-            pk = pk if pk is not None else self.get_resource_name('pk').decode('utf-8')
-            rk = rk if rk is not None else self.get_resource_name('rk').decode('utf-8')
-        except AttributeError:
-            pk = pk if pk is not None else self.get_resource_name('pk')
-            rk = rk if rk is not None else self.get_resource_name('rk')
-        return pk, rk
+    # def _create_random_base_entity_dict(self):
+    #     """
+    #     Creates a dict-based entity with only pk and rk.
+    #     """
+    #     partition = self.get_resource_name('pk')
+    #     row = self.get_resource_name('rk')
+    #     return {
+    #         'PartitionKey': partition,
+    #         'RowKey': row,
+    #     }
 
     async def _insert_two_opposite_entities(self, pk=None, rk=None):
         entity1 = self._create_random_entity_dict()

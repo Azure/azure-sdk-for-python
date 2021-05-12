@@ -41,48 +41,12 @@ from azure.core.exceptions import (
     ResourceExistsError
 )
 
-from _shared.testcase import TableTestCase
+from _shared.testcase import TableTestCase, TEST_TABLE_PREFIX
 from preparers import tables_decorator, tables_decorator
-# ------------------------------------------------------------------------------
-
-TEST_TABLE_PREFIX = 'pytablesync'
-
 
 # ------------------------------------------------------------------------------
 
 class StorageTableTest(AzureTestCase, TableTestCase):
-
-    # --Helpers-----------------------------------------------------------------
-    def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
-        table_name = self.get_resource_name(prefix)
-        return table_name
-
-    def _create_table(self, ts, prefix=TEST_TABLE_PREFIX, table_list=None):
-        table_name = self._get_table_reference(prefix)
-        try:
-            table = ts.create_table(table_name)
-            if table_list is not None:
-                table_list.append(table)
-        except ResourceExistsError:
-            table = ts.get_table_client(table_name)
-        return table
-
-    def _delete_table(self, ts, table):
-        if table:
-            try:
-                ts.delete_table(table.table_name)
-            except ResourceNotFoundError:
-                pass
-
-    def _delete_all_tables(self, ts):
-        for table in ts.list_tables():
-            try:
-                ts.delete_table(table.name)
-            except ResourceNotFoundError:
-                pass
-
-    # --Test cases for tables --------------------------------------------------
-
     @tables_decorator
     def test_create_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # # Arrange

@@ -19,37 +19,13 @@ from azure.data.tables import (
 )
 from azure.data.tables.aio import TableServiceClient, TableClient
 
-from _shared.asynctestcase import AsyncTableTestCase
+from _shared.asynctestcase import AsyncTableTestCase, TEST_TABLE_PREFIX
 from async_preparers import tables_decorator_async
-
-TEST_TABLE_PREFIX = 'pytableasync'
-
 
 # ------------------------------------------------------------------------------
 
 class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     # --Helpers-----------------------------------------------------------------
-    def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
-        table_name = self.get_resource_name(prefix)
-        return table_name
-
-    async def _create_table(self, ts, prefix=TEST_TABLE_PREFIX, table_list=None):
-        table_name = self._get_table_reference(prefix)
-        try:
-            table = await ts.create_table(table_name)
-            if table_list is not None:
-                table_list.append(table)
-        except ResourceExistsError:
-            table = ts.get_table_client(table_name)
-        return table
-
-    async def _delete_table(self, ts, table):
-        if table is None:
-            return
-        try:
-            await ts.delete_table(table.table_name)
-        except ResourceNotFoundError:
-            pass
 
     # --Test cases for tables --------------------------------------------------
     @tables_decorator_async

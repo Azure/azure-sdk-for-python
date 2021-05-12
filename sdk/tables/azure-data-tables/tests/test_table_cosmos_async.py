@@ -28,38 +28,6 @@ TEST_TABLE_PREFIX = 'pytableasync'
 # ------------------------------------------------------------------------------
 
 class TableTestAsync(AzureTestCase, AsyncTableTestCase):
-    # --Helpers-----------------------------------------------------------------
-    def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
-        table_name = self.get_resource_name(prefix)
-        return table_name
-
-    async def _delete_all_tables(self, account_name, key):
-        client = TableServiceClient(self.account_url(account_name, "cosmos"), key)
-        async for table in client.list_tables():
-            await client.delete_table(table.name)
-
-        if self.is_live:
-            self.sleep(10)
-
-    async def _create_table(self, ts, prefix=TEST_TABLE_PREFIX, table_list=None):
-        table_name = self._get_table_reference(prefix)
-        try:
-            table = await ts.create_table(table_name)
-            if table_list is not None:
-                table_list.append(table)
-        except ResourceExistsError:
-            table = ts.get_table_client(table_name)
-        return table
-
-    async def _delete_table(self, ts, table):
-        if table is None:
-            return
-        try:
-            await ts.delete_table(table.name)
-        except ResourceNotFoundError:
-            pass
-
-    # --Test cases for tables --------------------------------------------------
     @cosmos_decorator_async
     async def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
