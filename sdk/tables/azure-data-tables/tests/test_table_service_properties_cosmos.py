@@ -32,7 +32,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         with pytest.raises(HttpResponseError):
             tsc.set_service_properties(None, None, None, cors)
-        self.sleep(SLEEP_DELAY)
+        # self.sleep(SLEEP_DELAY)
 
     @cosmos_decorator
     def test_retention_too_long(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -41,7 +41,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         with pytest.raises(HttpResponseError):
             tsc.set_service_properties(None, None, minute_metrics)
-        self.sleep(SLEEP_DELAY)
+        # self.sleep(SLEEP_DELAY)
 
 
 class TestTableUnitTest(TableTestCase):

@@ -40,7 +40,7 @@ class TableServiceStatsTest(AzureTestCase, TableTestCase):
         stats = tsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
         self._assert_stats_default(stats)
 
-        self.sleep(SLEEP_DELAY)
+        # self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("JSON is invalid for cosmos")
     @cosmos_decorator
@@ -49,4 +49,4 @@ class TableServiceStatsTest(AzureTestCase, TableTestCase):
         stats = tsc.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)
         self._assert_stats_unavailable(stats)
 
-        self.sleep(SLEEP_DELAY)
+        # self.sleep(SLEEP_DELAY)

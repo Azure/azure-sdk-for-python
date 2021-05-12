@@ -67,7 +67,8 @@ class AsyncTableTestCase(TableTestCase):
         if is_live():
             async for table in self.ts.list_tables():
                 await self.ts.delete_table(table.name)
-            if u"cosmos" in self.ts.endpoint:
+            if self.ts._cosmos_endpoint:
+                print("Cosmos endpoint")
                 self.sleep(SLEEP_DELAY)
             self.test_tables = []
             await self.ts.close()

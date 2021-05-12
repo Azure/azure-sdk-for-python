@@ -354,7 +354,8 @@ class TableTestCase(object):
         if is_live():
             self._delete_all_tables(self.ts)
             self.test_tables = []
-            if "cosmos" in self.ts.endpoint:
+            if self.ts._cosmos_endpoint:
+                print("Cosmos endpoint")
                 self.sleep(SLEEP_DELAY)
             self.ts.close()
 
