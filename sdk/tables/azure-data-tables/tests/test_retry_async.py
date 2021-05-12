@@ -63,22 +63,6 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
 
         self.query_tables = []
 
-    async def _tear_down(self, **kwargs):
-        if self.is_live:
-            try:
-                await self.ts.delete_table(self.table_name, **kwargs)
-            except:
-                pass
-
-            try:
-                for table_name in self.query_tables:
-                    try:
-                        await self.ts.delete_table(table_name, **kwargs)
-                    except:
-                        pass
-            except AttributeError:
-                pass
-
     # --Test Cases --------------------------------------------
     @tables_decorator_async
     async def test_retry_on_server_error_async(self, tables_storage_account_name, tables_primary_storage_account_key):

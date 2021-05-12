@@ -57,3 +57,11 @@ class AsyncTableTestCase(TableTestCase):
 
         if self.is_live:
             self.sleep(10)
+
+    async def _tear_down(self):
+        async for table in self.ts.list_tables():
+            await self.ts.delete_table(table.name)
+        if u"cosmos" in self.ts.endpoint:
+            self.sleep(10)
+        self.test_tables = []
+        await self.ts.close()

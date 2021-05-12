@@ -60,19 +60,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
         self.query_tables = []
 
-    def _tear_down(self):
-        if self.is_live:
-            try:
-                self.ts.delete_table(self.table_name)
-            except:
-                pass
-
-            for table_item in self.ts.list_tables():
-                try:
-                    self.ts.delete_table(table_item.table_name)
-                except:
-                    pass
-
     # --Helpers-----------------------------------------------------------------
 
     def _create_query_table(self, entity_count):
@@ -120,98 +107,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         entity = self._create_random_entity_dict(pk, rk)
         metadata = self.table.create_entity(entity)
         return entity, metadata['etag']
-
-    def _assert_default_entity_json_full_metadata(self, entity, headers=None):
-        '''
-        Asserts that the entity passed in matches the default entity.
-        '''
-        assert entity['age'] ==  39
-        assert entity['sex'] ==  'male'
-        assert entity['married'] ==  True
-        assert entity['deceased'] ==  False
-        assert not "optional" in entity
-        assert not "aquarius" in entity
-        assert entity['ratio'] ==  3.1
-        assert entity['evenratio'] ==  3.0
-        assert entity['large'] ==  933311100
-        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity['birthday'] == datetime(1970, 10, 4, tzinfo=tzutc())
-        assert entity['binary'].value ==  b'binary'
-        assert entity['other'] ==  20
-        assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_default_entity_json_no_metadata(self, entity, headers=None):
-        '''
-        Asserts that the entity passed in matches the default entity.
-        '''
-        assert entity['age'] ==  39
-        assert entity['sex'] ==  'male'
-        assert entity['married'] ==  True
-        assert entity['deceased'] ==  False
-        assert not "optional" in entity
-        assert not "aquarius" in entity
-        assert entity['ratio'] ==  3.1
-        assert entity['evenratio'] ==  3.0
-        assert entity['large'] ==  933311100
-        assert entity['Birthday'].startswith('1973-10-04T00:00:00')
-        assert entity['birthday'].startswith('1970-10-04T00:00:00')
-        assert entity['Birthday'].endswith('00Z')
-        assert entity['birthday'].endswith('00Z')
-        assert entity['binary'] ==  b64encode(b'binary').decode('utf-8')
-        assert entity['other'] ==  20
-        assert entity['clsid'] ==  'c9da6455-213d-42c9-9a79-3e9149a57833'
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_updated_entity(self, entity):
-        '''
-        Asserts that the entity passed in matches the updated entity.
-        '''
-        assert entity['age'] ==  'abc'
-        assert entity['sex'] ==  'female'
-        assert not "married" in entity
-        assert not "deceased" in entity
-        assert entity['sign'] ==  'aquarius'
-        assert not "optional" in entity
-        assert not "ratio" in entity
-        assert not "evenratio" in entity
-        assert not "large" in entity
-        assert not "Birthday" in entity
-        assert entity['birthday'] == datetime(1991, 10, 4, tzinfo=tzutc())
-        assert not "other" in entity
-        assert not "clsid" in entity
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_merged_entity(self, entity):
-        '''
-        Asserts that the entity passed in matches the default entity
-        merged with the updated entity.
-        '''
-        assert entity['age'] ==  'abc'
-        assert entity['sex'] ==  'female'
-        assert entity['sign'] ==  'aquarius'
-        assert entity['married'] ==  True
-        assert entity['deceased'] ==  False
-        assert entity['ratio'] ==  3.1
-        assert entity['evenratio'] ==  3.0
-        assert entity['large'] ==  933311100
-        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity['birthday'] == datetime(1991, 10, 4, tzinfo=tzutc())
-        assert entity['other'] ==  20
-        assert isinstance(entity['clsid'],  uuid.UUID)
-        assert str(entity['clsid']) ==  'c9da6455-213d-42c9-9a79-3e9149a57833'
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_valid_metadata(self, metadata):
-        keys = metadata.keys()
-        assert "version" in  keys
-        assert "date" in  keys
-        assert "etag" in  keys
-        assert len(keys) ==  3
 
     # --Test cases for entities ------------------------------------------
     @cosmos_decorator

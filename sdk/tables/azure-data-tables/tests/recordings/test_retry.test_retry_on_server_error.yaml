@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
+      - Wed, 12 May 2021 16:48:54 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
+      - Wed, 12 May 2021 16:48:54 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
+      - Wed, 12 May 2021 16:48:54 GMT
       location:
       - https://fake_table_account.table.core.windows.net/Tables('uttable270d0f94')
       server:
@@ -63,11 +63,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
+      - Wed, 12 May 2021 16:48:54 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
+      - Wed, 12 May 2021 16:48:54 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -75,14 +75,14 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"TableAlreadyExists","message":{"lang":"en-US","value":"The
-        table specified already exists.\nRequestId:320a0268-0002-0041-5a20-3282c0000000\nTime:2021-04-15T17:53:50.7966768Z"}}}'
+        table specified already exists.\nRequestId:30491345-b002-0026-774e-47923c000000\nTime:2021-05-12T16:48:54.8672720Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
+      - Wed, 12 May 2021 16:48:54 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -106,11 +106,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
+      - Wed, 12 May 2021 16:48:55 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
+      - Wed, 12 May 2021 16:48:55 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -124,7 +124,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
+      - Wed, 12 May 2021 16:48:54 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
@@ -138,34 +138,33 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/json;odata=minimalmetadata
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '0'
+      DataServiceVersion:
+      - '3.0'
       Date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
+      - Wed, 12 May 2021 16:48:55 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
+      - Wed, 12 May 2021 16:48:55 GMT
       x-ms-version:
       - '2019-02-02'
-    method: DELETE
-    uri: https://fake_table_account.table.core.windows.net/Tables('uttable270d0f94')
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:320a027b-0002-0041-6c20-3282c0000000\nTime:2021-04-15T17:53:50.8757336Z"}}}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[]}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
+      - Wed, 12 May 2021 16:48:54 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -175,6 +174,6 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     status:
-      code: 404
-      message: Not Found
+      code: 200
+      message: OK
 version: 1

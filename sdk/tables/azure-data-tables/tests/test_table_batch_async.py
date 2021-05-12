@@ -58,43 +58,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
         self.test_tables = []
 
-    async def _tear_down(self):
-        if self.is_live:
-            try:
-                await self.ts.delete_table(self.table_name)
-            except:
-                pass
-
-            for table_name in self.test_tables:
-                try:
-                    await self.ts.delete_table(table_name)
-                except:
-                    pass
-        await self.table.close()
-
-    def _assert_updated_entity(self, entity):
-        '''
-        Asserts that the entity passed in matches the updated entity.
-        '''
-        assert entity['age'] ==  'abc'
-        assert entity['sex'] ==  'female'
-        assert not "married" in entity
-        assert not "deceased" in entity
-        assert entity['sign'] ==  'aquarius'
-        assert not "optional" in entity
-        assert not "ratio" in entity
-        assert not "evenratio" in entity
-        assert not "large" in entity
-        assert not "Birthday" in entity
-        assert entity['birthday'] == datetime(1991, 10, 4, tzinfo=tzutc())
-        assert not "other" in entity
-        assert not "clsid" in entity
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_valid_batch_transaction(self, transaction, length):
-        assert length ==  len(transaction)
-
     #--Test cases for batch ---------------------------------------------
     @tables_decorator_async
     async def test_batch_single_insert(self, tables_storage_account_name, tables_primary_storage_account_key):

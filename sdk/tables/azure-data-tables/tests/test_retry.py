@@ -64,6 +64,7 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
 
         self.query_tables = []
 
+    # TODO: Figure out why this is needed by the "test_retry_on_socket_timeout" test
     def _tear_down(self, **kwargs):
         if self.is_live:
             try:
