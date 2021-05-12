@@ -1,5 +1,5 @@
 # Release History
 
+## 1.0.0b1 (2021-05-12)
 
-## 1.0.0b1 (2021-05-11)
-  - Release for public preview
+- This is the initial release of the Azure Confidential Ledger library.

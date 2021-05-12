@@ -6,6 +6,8 @@ import os
 
 from azure.core.credentials import AccessToken
 from azure.identity import (
+    AzureCliCredential,
+    AzurePowerShellCredential,
     CredentialUnavailableError,
     DefaultAzureCredential,
     InteractiveBrowserCredential,
@@ -122,6 +124,12 @@ def test_exclude_options():
 
     credential = DefaultAzureCredential(exclude_visual_studio_code_credential=True)
     assert_credentials_not_present(credential, VisualStudioCodeCredential)
+
+    credential = DefaultAzureCredential(exclude_cli_credential=True)
+    assert_credentials_not_present(credential, AzureCliCredential)
+
+    credential = DefaultAzureCredential(exclude_powershell_credential=True)
+    assert_credentials_not_present(credential, AzurePowerShellCredential)
 
     # interactive auth is excluded by default
     credential = DefaultAzureCredential(exclude_interactive_browser_credential=False)
