@@ -65,3 +65,49 @@ class AsyncTableTestCase(TableTestCase):
             self.sleep(10)
         self.test_tables = []
         await self.ts.close()
+
+    async def _create_query_table(self, entity_count):
+        """
+        Creates a table with the specified name and adds entities with the
+        default set of values. PartitionKey is set to 'MyPartition' and RowKey
+        is set to a unique counter value starting at 1 (as a string).
+        """
+        table_name = self.get_resource_name('querytable')
+        table = await self.ts.create_table(table_name)
+        self.query_tables.append(table_name)
+        client = self.ts.get_table_client(table_name)
+        entity = self._create_random_entity_dict()
+        for i in range(1, entity_count + 1):
+            entity['RowKey'] = entity['RowKey'] + str(i)
+            await client.create_entity(entity=entity)
+        return client
+
+    async def _insert_two_opposite_entities(self, pk=None, rk=None):
+        entity1 = self._create_random_entity_dict()
+        resp = await self.table.create_entity(entity1)
+
+        partition, row = self._create_pk_rk(pk, rk)
+        properties = {
+            'PartitionKey': partition + u'1',
+            'RowKey': row + u'1',
+            'age': 49,
+            'sex': u'female',
+            'married': False,
+            'deceased': True,
+            'optional': None,
+            'ratio': 5.2,
+            'evenratio': 6.0,
+            'large': 39999011,
+            'Birthday': datetime(1993, 4, 1, tzinfo=tzutc()),
+            'birthday': datetime(1990, 4, 1, tzinfo=tzutc()),
+            'binary': b'binary-binary',
+            'other': EntityProperty(40, EdmType.INT32),
+            'clsid': uuid.UUID('c8da6455-213e-42d9-9b79-3f9149a57833')
+        }
+        await self.table.create_entity(properties)
+        return entity1, resp
+
+    async def _insert_random_entity(self, pk=None, rk=None):
+        entity = self._create_random_entity_dict(pk, rk)
+        metadata = await self.table.create_entity(entity=entity)
+        return entity, metadata['etag']
