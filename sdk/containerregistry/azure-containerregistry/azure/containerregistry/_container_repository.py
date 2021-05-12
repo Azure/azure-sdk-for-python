@@ -29,6 +29,7 @@ from ._registry_artifact import RegistryArtifact
 if TYPE_CHECKING:
     from typing import Any, Dict
     from azure.core.credentials import TokenCredential
+    from ._models import RepositoryWriteableProperties
 
 
 class ContainerRepository(ContainerRegistryBaseClient):
@@ -197,11 +198,11 @@ class ContainerRepository(ContainerRegistryBaseClient):
 
     @distributed_trace
     def set_properties(self, properties, **kwargs):
-        # type: (RepositoryProperties, Dict[str, Any]) -> RepositoryProperties
+        # type: (RepositoryWriteableProperties, Dict[str, Any]) -> RepositoryProperties
         """Set the properties of a repository
 
         :param properties: Properties to set for the repository
-        :type properties: :class:`~azure.containerregistry.RepositoryProperties`
+        :type properties: :class:`~azure.containerregistry.RepositoryWriteableProperties`
         :returns: :class:`~azure.containerregistry.RepositoryProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """

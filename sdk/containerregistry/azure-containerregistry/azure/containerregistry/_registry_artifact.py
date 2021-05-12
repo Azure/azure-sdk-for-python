@@ -307,7 +307,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         """Set the properties for a manifest
 
         :param permissions: The property's values to be set
-        :type permissions: ManifestWriteableProperties
+        :type permissions: :class:`~azure.containerregistry.ManifestWriteableProperties`
         :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
@@ -344,27 +344,27 @@ class RegistryArtifact(ContainerRegistryBaseClient):
 
     @distributed_trace
     def set_tag_properties(self, tag, permissions, **kwargs):
-        # type: (str, ManifestWriteableProperties, Dict[str, Any]) -> ArtifactTagProperties
+        # type: (str, TagWriteableProperties, Dict[str, Any]) -> ArtifactTagProperties
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
         :type tag: str
         :param permissions: The property's values to be set
-        :type permissions: ManifestWriteableProperties
+        :type permissions: TagWriteableProperties
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
         Example
 
         .. code-block:: python
-            from azure.containerregistry import ContainerRepositoryClient
+            from azure.containerregistry import ContainerRepositoryClient, TagWriteableProperties
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             tag_identifier = "latest"
             received = client.set_tag_properties(
                 tag_identifier,
-                ManifestWriteableProperties(
+                TagWriteableProperties(
                     can_delete=False,
                     can_list=False,
                     can_read=False,

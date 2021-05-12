@@ -24,6 +24,7 @@ from .._models import (
     ManifestWriteableProperties,
     ArtifactManifestProperties,
     ArtifactTagProperties,
+    TagWriteableProperties,
 )
 
 if TYPE_CHECKING:
@@ -342,14 +343,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def set_tag_properties(
-        self, tag: str, permissions: ManifestWriteableProperties, **kwargs: Dict[str, Any]
+        self, tag: str, permissions: TagWriteableProperties, **kwargs: Dict[str, Any]
     ) -> ArtifactTagProperties:
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
         :type tag: str
         :param permissions: The property's values to be set
-        :type permissions: ManifestWriteableProperties
+        :type permissions: TagWriteableProperties
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
@@ -363,7 +364,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             tag_identifier = "latest"
             received = await client.set_tag_properties(
                 tag_identifier,
-                ManifestWriteableProperties(
+                TagWriteableProperties(
                     can_delete=False,
                     can_list=False,
                     can_read=False,

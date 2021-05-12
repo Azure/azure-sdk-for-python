@@ -204,7 +204,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
         """Set the properties of a repository
 
         :param properties: Properties to set for the repository
-        :type properties: :class:`~azure.containerregistry.RepositoryProperties`
+        :type properties: :class:`~azure.containerregistry.RepositoryWriteableProperties`
         :returns: :class:`~azure.containerregistry.RepositoryProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
