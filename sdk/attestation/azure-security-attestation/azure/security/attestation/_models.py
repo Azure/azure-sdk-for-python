@@ -109,76 +109,35 @@ class PolicyResult(object):
 class AttestationResult(object):
     """ An AttestationResult represents the claims returned from the attestation
     service as a result of a call to
-    :meth:`AttestationClient.attest_sgx`, :meth:`AttestationClient.attest_open_enclave`.
+    :meth:`AttestationClient.attest_sgx`, or :meth:`AttestationClient.attest_open_enclave`.
 
     """
-    def __init__(self, 
-        issuer=None, #type:str
-        confirmation=None, #type:str
-        unique_identifier=None, #type:str
-        nonce=None, #type:str
-        version=None, #type:str
-        runtime_claims=None, #type:dict
-        inittime_claims=None, #type:dict
-        policy_claims=None, #type:dict
-        verifier_type=None, #type:str
-        policy_signer=None, #type:AttestationSigner
-        policy_hash=None, #type:str
-        is_debuggable=None, #type:bool
-        product_id=None, #type:int
-        mr_enclave=None, #type:str
-        mr_signer=None, #type:str
-        svn=None, #type:int
-        enclave_held_data=None, #type:bytes
-        sgx_collateral=None, #type:dict
-        deprecated_version = None, #typestr
-        deprecated_is_debuggable = None, #type:bool
-        deprecated_sgx_collateral = None, #type:dict
-        deprecated_enclave_held_data = None, #type:bytes
-        deprecated_enclave_held_data2 = None, #type:bytes
-        deprecated_product_id = None, #type:int
-        deprecated_mr_enclave = None, #type:str
-        deprecated_mr_signer = None, #type:str
-        deprecated_svn = None, #type:int
-        deprecated_tee = None, #type:str
-        deprecated_policy_signer = None, #type:AttestationSigner
-        deprecated_policy_hash = None, #type:str
-        deprecated_rp_data = None #type:str
-        ): #type:(...)->None
-        self._issuer = issuer
-        self._confirmation = confirmation
-        self._unique_identifier = unique_identifier
-        self._nonce = nonce
-        self._version = version
-        self._runtime_claims = runtime_claims
-        self._inittime_claims = inittime_claims
-        self._policy_claims = policy_claims
-        self._verifier_type = verifier_type
-        self._policy_signer = policy_signer
-        self._policy_hash = policy_hash
-        self._is_debuggable = is_debuggable
-        self._product_id = product_id
-        self._mr_enclave = mr_enclave
-        self._mr_signer = mr_signer
-        self._svn = svn
-        self._enclave_held_data = enclave_held_data
-        self._sgx_collateral = sgx_collateral
+    def __init__2(self, **kwargs):
+        self._issuer = kwargs.get("issuer", None) #type:str
+        self._confirmation = kwargs.get("confirmation", None) #type:str
+        self._unique_identifier = kwargs.get("unique_identifier", None) #type:str
 
-        # Deprecated fields.
-        self._deprecated_version = deprecated_version
-        self._deprecated_is_debuggable = deprecated_is_debuggable
-        self._deprecated_sgx_collateral = deprecated_sgx_collateral
-        self._deprecated_enclave_held_data = deprecated_enclave_held_data
-        self._deprecated_enclave_held_data2 = deprecated_enclave_held_data2
-        self._deprecated_product_id = deprecated_product_id
-        self._deprecated_mr_enclave = deprecated_mr_enclave
-        self._deprecated_mr_signer = deprecated_mr_signer
-        self._deprecated_svn = deprecated_svn
-        self._deprecated_tee = deprecated_tee
-        self._deprecated_policy_signer = deprecated_policy_signer
-        self._deprecated_policy_hash = deprecated_policy_hash
-        self._deprecated_rp_data = deprecated_rp_data
 
+    def __init__(self, **kwargs):
+        #type:(Dict[str,Any])->None
+        self._issuer = kwargs.get("issuer", None) #type:str
+        self._confirmation = kwargs.get("confirmation", None) #type:dict
+        self._unique_identifier = kwargs.get("unique_identifier", None) #type:str
+        self._nonce = kwargs.get("nonce", None) #type:str
+        self._version = kwargs.get("version", None) #type:str
+        self._runtime_claims = kwargs.get("runtime_claims", None) #type:dict
+        self._inittime_claims = kwargs.get("inittime_claims", None) #type:dict
+        self._policy_claims = kwargs.get("policy_claims", None) #type:dict
+        self._verifier_type = kwargs.get("verifier_type", None) #type:str
+        self._policy_signer = kwargs.get("policy_signer", None) #type:AttestationSigner
+        self._policy_hash = kwargs.get("policy_hash", None) #type:str
+        self._is_debuggable = kwargs.get("is_debuggable", None) #type:bool
+        self._product_id = kwargs.get("product_id", None) #type:int
+        self._mr_enclave = kwargs.get("mr_enclave", None) #type:str
+        self._mr_signer = kwargs.get("mr_signer", None) #type:str
+        self._svn = kwargs.get("svn", None) #type:int
+        self._enclave_held_data = kwargs.get("enclave_held_data", None) #type:bytes
+        self._sgx_collateral = kwargs.get("sgx_collateral", None) #type:dict
 
     @classmethod
     def _from_generated(cls, generated):
@@ -201,21 +160,7 @@ class AttestationResult(object):
             mr_signer=generated.mr_signer,
             svn=generated.svn,
             enclave_held_data=generated.enclave_held_data,
-            sgx_collateral=generated.sgx_collateral,
-            deprecated_version=generated.deprecated_version,
-            deprecated_is_debuggable=generated.deprecated_is_debuggable,
-            deprecated_sgx_collateral=generated.deprecated_sgx_collateral,
-            deprecated_enclave_held_data=generated.deprecated_enclave_held_data,
-            deprecated_enclave_held_data2=generated.deprecated_enclave_held_data2,
-            deprecated_product_id=generated.deprecated_product_id,
-            deprecated_mr_enclave=generated.deprecated_mr_enclave,
-            deprecated_mr_signer=generated.deprecated_mr_signer,
-            deprecated_svn=generated.deprecated_svn,
-            deprecated_tee=generated.deprecated_tee,
-            deprecated_policy_signer=AttestationSigner._from_generated(generated.deprecated_policy_signer) if generated.deprecated_policy_signer else None,
-            deprecated_policy_hash=generated.policy_hash,
-            deprecated_rp_data=generated.deprecated_rp_data
-            )
+            sgx_collateral=generated.sgx_collateral)
 
     @property
     def issuer(self):
@@ -396,113 +341,6 @@ class AttestationResult(object):
         return self._sgx_collateral
 
         # Deprecated fields.
-
-    @property
-    def deprecated_version(self):
-        #type:() -> Union[str, None]
-        """ Deprecated version of the :meth:`AttestationResult::version` property
-
-        """
-        return self._deprecated_version
-
-    @property
-    def deprecated_is_debuggable(self):
-        #type:() -> Union[str, None]
-        """ Deprecated version of the :meth:`AttestationResult::is_debuggable` property
-
-        """
-        return self._deprecated_is_debuggable
-
-    @property
-    def deprecated_sgx_collateral(self):
-        #type:() -> Union[Dict[str, Any], None]
-        """ Deprecated version of the :meth:`AttestationResult::sgx_collateral` property
-
-        """
-        return self._deprecated_sgx_collateral
-
-    @property
-    def deprecated_enclave_held_data(self):
-        #type:() -> Union[Dict[str, Any], None]
-        """ Deprecated version of the :meth:`AttestationResult::enclave_held_data` property
-
-        """
-        return self._deprecated_enclave_held_data
-
-    @property
-    def deprecated_enclave_held_data2(self):
-        #type:() -> Union[Dict[str, Any], None]
-        """ Deprecated version of the :meth:`AttestationResult::enclave_held_data` property
-
-        """
-        return self._deprecated_enclave_held_data2
-
-    @property
-    def deprecated_mr_enclave(self):
-        #type:() -> Union[str, None]
-        """ Deprecated version of the :meth:`AttestationResult::mr_enclave` property
-
-        """
-        return self._deprecated_mr_enclave
-
-    @property
-    def deprecated_mr_signer(self):
-        #type:() -> Union[str, None]
-        """ Deprecated version of the :meth:`AttestationResult::mr_signer` property
-
-        """
-        return self._deprecated_mr_signer
-
-    @property
-    def deprecated_svn(self):
-        #type:() -> Union[int, None]
-        """ Deprecated version of the :meth:`AttestationResult::svn` property
-
-        """
-        return self._deprecated_svn
-
-    @property
-    def deprecated_product_id(self):
-        #type:() -> Union[float, None]
-        """ Deprecated version of the :meth:`AttestationResult::product_id` property
-
-        """
-        return self._deprecated_product_id
-
-
-    @property
-    def deprecated_tee(self):
-        #type:() -> Union[str, None]
-        """ Deprecated version of the :meth:`AttestationResult::verifier_type` property
-
-        """
-        return self._deprecated_tee
-
-    @property
-    def deprecated_policy_signer(self):
-        #type:() -> Union[AttestationSigner, None]
-        """ Deprecated version of the :meth:`AttestationResult::policy_signer` property
-
-        """
-        if self._deprecated_policy_signer:
-            return AttestationSigner._from_generated(self._deprecated_policy_signer)
-        return None
-
-    @property
-    def deprecated_policy_hash(self):
-        #type:() -> Union[bytes, None]
-        """ Deprecated version of the :meth:`AttestationResult::policy_hash` property
-
-        """
-        return self._deprecated_policy_hash
-
-    @property
-    def deprecated_rp_data(self):
-        #type:() -> Union[bytes, None]
-        """ Deprecated version of the :meth:`AttestationResult::nonce` property
-
-        """
-        return self._deprecated_rp_data
 
 class StoredAttestationPolicy(object):
     """ Represents an attesttion policy in storage.

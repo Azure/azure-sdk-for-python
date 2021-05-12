@@ -220,6 +220,8 @@ class AttestationTest(AzureTestCase):
         assert response.value.runtime_claims['jwk']['crv']=='P-256'
         assert response.value.sgx_collateral is not None
 
+        assert response.token.get_body().iss == response.value.issuer
+
 
     @AttestationPreparer()
     def test_shared_attest_open_enclave(self, attestation_location_short_name):
