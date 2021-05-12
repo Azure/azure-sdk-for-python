@@ -1,6 +1,7 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2021-05-12)
+First bug fix release for Python SDK
 
 ### Features Added
 
@@ -19,6 +20,8 @@
     attribute was renamed `issuer`.
 
 ## 1.0.0b2 (2021-05-11)
+
+Preliminary release for Python SDK
 
 ### Features Added
 
