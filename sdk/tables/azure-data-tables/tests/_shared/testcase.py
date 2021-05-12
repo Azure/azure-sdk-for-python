@@ -355,7 +355,6 @@ class TableTestCase(object):
             self._delete_all_tables(self.ts)
             self.test_tables = []
             if self.ts._cosmos_endpoint:
-                print("Cosmos endpoint")
                 self.sleep(SLEEP_DELAY)
             self.ts.close()
 
