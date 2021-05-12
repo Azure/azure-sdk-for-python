@@ -484,7 +484,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            table2_name = self.get_table_reference('table2')
+            table2_name = self._get_table_reference('table2')
             table2 = self.ts.get_table_client(table2_name)
             table2.create_table()
 

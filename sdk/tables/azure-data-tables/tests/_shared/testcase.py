@@ -84,12 +84,12 @@ class TableTestCase(object):
     def generate_fake_token(self):
         return FakeTokenCredential()
 
-    def get_table_reference(self, prefix=TEST_TABLE_PREFIX):
+    def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
         table_name = self.get_resource_name(prefix)
         return table_name
 
     def _create_table(self, ts, prefix=TEST_TABLE_PREFIX, table_list=None):
-        table_name = self.get_table_reference(prefix)
+        table_name = self._get_table_reference(prefix)
         try:
             table = ts.create_table(table_name)
             if table_list is not None:

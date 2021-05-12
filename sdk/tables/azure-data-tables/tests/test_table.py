@@ -37,7 +37,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         # # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
-        table_name = self.get_table_reference()
+        table_name = self._get_table_reference()
         # Act
         created = ts.create_table(table_name)
 
@@ -66,7 +66,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
-        table_name = self.get_table_reference()
+        table_name = self._get_table_reference()
 
         # Act
         created = ts.create_table(table_name)
@@ -80,7 +80,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
-        table_name = self.get_table_reference()
+        table_name = self._get_table_reference()
 
         # Act
         created = ts.create_table(table_name)
@@ -130,7 +130,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     def test_create_table_if_exists(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
-        table_name = self.get_table_reference()
+        table_name = self._get_table_reference()
 
         t0 = ts.create_table(table_name)
         t1 = ts.create_table_if_not_exists(table_name)
@@ -144,7 +144,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     def test_create_table_if_exists_new_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
-        table_name = self.get_table_reference()
+        table_name = self._get_table_reference()
 
         t = ts.create_table_if_not_exists(table_name)
 
@@ -277,7 +277,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
-        table_name = self.get_table_reference()
+        table_name = self._get_table_reference()
         ts.delete_table(table_name)
 
     @tables_decorator

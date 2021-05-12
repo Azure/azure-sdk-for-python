@@ -28,7 +28,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         # # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
 
-        table_name = self.get_table_reference()
+        table_name = self._get_table_reference()
 
         # Act
         created = ts.create_table(table_name)
@@ -44,7 +44,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
-        table_name = self.get_table_reference()
+        table_name = self._get_table_reference()
 
         # Act
         created = ts.create_table(table_name)
@@ -207,7 +207,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
                                                                  tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
-        table_name = self.get_table_reference()
+        table_name = self._get_table_reference()
         ts.delete_table(table_name)
 
         if self.is_live:
