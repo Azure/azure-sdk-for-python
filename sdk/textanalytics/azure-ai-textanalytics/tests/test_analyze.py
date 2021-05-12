@@ -5,11 +5,13 @@
 # ------------------------------------
 
 import os
+from tests.test_repr import extract_key_phrases_result
 import pytest
 import platform
 import functools
 import itertools
 import datetime
+import json
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
@@ -655,3 +657,31 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
         assert excinfo.value.status_code == 400
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_disable_service_logs(self, client):
+        actions = [
+            RecognizeEntitiesAction(disable_service_logs=True),
+            ExtractKeyPhrasesAction(disable_service_logs=True),
+            RecognizePiiEntitiesAction(disable_service_logs=True),
+            RecognizeLinkedEntitiesAction(disable_service_logs=True),
+            AnalyzeSentimentAction(disable_service_logs=True),
+        ]
+
+        for action in actions:
+            assert action.disable_service_logs
+
+        def callback(resp):
+            tasks = json.loads(resp.http_request.body)["tasks"]
+            assert len(tasks) == len(actions)
+            for task in tasks.values():
+                assert task[0]["parameter"]["loggingOptOut"]
+
+
+        client.begin_analyze_actions(
+            documents=["Test for logging disable"],
+            actions=actions,
+            polling_interval=self._interval(),
+            raw_response_hook=callback,
+        ).result()

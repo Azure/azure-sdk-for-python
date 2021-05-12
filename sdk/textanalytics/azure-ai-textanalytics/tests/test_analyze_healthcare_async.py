@@ -458,3 +458,15 @@ class TestHealth(AsyncTextAnalyticsTest):
         # have an issue to update https://github.com/Azure/azure-sdk-for-python/issues/17088
         meningitis_entity = next(e for e in result[0].entities if e.text == "Meningitis")
         assert meningitis_entity.assertion.certainty == "negativePossible"
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_disable_service_logs(self, client):
+        def callback(resp):
+            assert resp.http_request.query['loggingOptOut']
+        await client.begin_analyze_healthcare_entities(
+            documents=["Test for logging disable"],
+            polling_interval=self._interval(),
+            disable_service_logs=True,
+            raw_response_hook=callback,
+        ).result()
