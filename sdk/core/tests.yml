@@ -1,0 +1,10 @@
+trigger: none
+
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: azure-core
+      ServiceDirectory: core
+      MaxParallel: 1
+      EnvVars:
+        AZURE_CORE_STREAMING_ACCOUNT_NAME: $(core-streaming-account-name)
