@@ -6,12 +6,19 @@
 # --------------------------------------------------------------------------
 from __future__ import division
 from datetime import datetime, timedelta
+from dateutil.tz import tzutc, tzoffset
+import uuid
 
 from azure.core.credentials import AccessToken, AzureNamedKeyCredential
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
-
-LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
+from azure.data.tables import (
+    generate_account_sas,
+    AccountSasPermissions,
+    ResourceTypes,
+    EntityProperty,
+    EdmType,
+    TableEntity,
+)
 
 SLEEP_DELAY = 30
 
@@ -107,6 +114,67 @@ class TableTestCase(object):
             'PartitionKey': partition,
             'RowKey': row,
         }
+
+    def _create_random_entity_dict(self, pk=None, rk=None):
+        """
+        Creates a dictionary-based entity with fixed values, using all
+        of the supported data types.
+        """
+        partition, row = self._create_pk_rk(pk, rk)
+        properties = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'age': 39,
+            'sex': u'male',
+            'married': True,
+            'deceased': False,
+            'optional': None,
+            'ratio': 3.1,
+            'evenratio': 3.0,
+            'large': 933311100,
+            'Birthday': datetime(1973, 10, 4, tzinfo=tzutc()),
+            'birthday': datetime(1970, 10, 4, tzinfo=tzutc()),
+            'binary': b'binary',
+            'other': EntityProperty(20, EdmType.INT32),
+            'clsid': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
+        }
+        return TableEntity(**properties)
+
+    def _create_updated_entity_dict(self, partition, row):
+        '''
+        Creates a dictionary-based entity with fixed values, with a
+        different set of values than the default entity. It
+        adds fields, changes field values, changes field types,
+        and removes fields when compared to the default entity.
+        '''
+        return {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'age': u'abc',
+            'sex': u'female',
+            'sign': u'aquarius',
+            'birthday': datetime(1991, 10, 4, tzinfo=tzutc())
+        }
+
+    def _assert_default_entity(self, entity):
+        '''
+        Asserts that the entity passed in matches the default entity.
+        '''
+        assert entity['age'] ==  39
+        assert entity['sex'] ==  'male'
+        assert entity['married'] ==  True
+        assert entity['deceased'] ==  False
+        assert not "optional" in entity
+        assert entity['ratio'] ==  3.1
+        assert entity['evenratio'] ==  3.0
+        assert entity['large'] ==  933311100
+        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
+        assert entity['birthday'] == datetime(1970, 10, 4, tzinfo=tzutc())
+        assert entity['binary'].value ==  b'binary'
+        assert entity['other'] ==  20
+        assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
+        assert entity.metadata['etag']
+        assert entity.metadata['timestamp']
 
 class ResponseCallback(object):
     def __init__(self, status=None, new_status=None):

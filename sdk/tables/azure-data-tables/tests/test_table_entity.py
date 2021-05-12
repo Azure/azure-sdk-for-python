@@ -92,16 +92,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             client.create_entity(entity)
         return client
 
-    # def _create_random_base_entity_dict(self):
-    #     """
-    #     Creates a dict-based entity with only pk and rk.
-    #     """
-    #     partition, row = self._create_pk_rk(None, None)
-    #     return {
-    #         'PartitionKey': partition,
-    #         'RowKey': row,
-    #     }
-
     def _insert_two_opposite_entities(self, pk=None, rk=None):
         entity1 = self._create_random_entity_dict()
         resp = self.table.create_entity(entity1)
@@ -127,72 +117,10 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         self.table.create_entity(properties)
         return entity1, resp
 
-    def _create_random_entity_dict(self, pk=None, rk=None):
-        """
-        Creates a dictionary-based entity with fixed values, using all
-        of the supported data types.
-        """
-        partition, row = self._create_pk_rk(pk, rk)
-        properties = {
-            'PartitionKey': partition,
-            'RowKey': row,
-            'age': 39,
-            'sex': u'male',
-            'married': True,
-            'deceased': False,
-            'optional': None,
-            'ratio': 3.1,
-            'evenratio': 3.0,
-            'large': 933311100,
-            'Birthday': datetime(1973, 10, 4, tzinfo=tzutc()),
-            'birthday': datetime(1970, 10, 4, tzinfo=tzutc()),
-            'binary': b'binary',
-            'other': EntityProperty(20, EdmType.INT32),
-            'clsid': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        }
-        return TableEntity(**properties)
-
     def _insert_random_entity(self, pk=None, rk=None):
         entity = self._create_random_entity_dict(pk, rk)
         metadata = self.table.create_entity(entity)
         return entity, metadata['etag']
-
-    def _create_updated_entity_dict(self, partition, row):
-        """
-        Creates a dictionary-based entity with fixed values, with a
-        different set of values than the default entity. It
-        adds fields, changes field values, changes field types,
-        and removes fields when compared to the default entity.
-        """
-        return {
-            'PartitionKey': partition,
-            'RowKey': row,
-            'age': u'abc',
-            'sex': u'female',
-            'sign': u'aquarius',
-            'birthday': datetime(1991, 10, 4, tzinfo=tzutc())
-        }
-
-    def _assert_default_entity(self, entity, headers=None):
-        '''
-        Asserts that the entity passed in matches the default entity.
-        '''
-        assert entity['age'] ==  39
-        assert entity['sex'] ==  'male'
-        assert entity['married'] ==  True
-        assert entity['deceased'] ==  False
-        assert not "optional" in entity
-        assert not "aquarius" in entity
-        assert entity['ratio'] ==  3.1
-        assert entity['evenratio'] ==  3.0
-        assert entity['large'] ==  933311100
-        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity['birthday'] == datetime(1970, 10, 4, tzinfo=tzutc())
-        assert entity['binary'].value ==  b'binary'
-        assert entity['other'] ==  20
-        assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
 
     def _assert_default_entity_json_full_metadata(self, entity, headers=None):
         '''
