@@ -11,7 +11,7 @@ autorest --v3 --python
 
 ```yaml
 require: https://github.com/Azure/azure-rest-api-specs/blob/55b3e2d075398ec62f9322829494ff6a4323e299/specification/videoanalyzer/data-plane/readme.md
-output-folder: ../azure/media/videoanalyzer/edge/_generated
+output-folder: ../azure/media/videoanalyzeredge/_generated
 namespace: azure.media.videoanalyzer.edge
 no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION

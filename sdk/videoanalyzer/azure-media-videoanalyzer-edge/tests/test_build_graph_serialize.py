@@ -1,5 +1,5 @@
 import pytest
-from azure.media.videoanalyzer.edge import *
+from azure.media.videoanalyzeredge import *
 
 class TestPipelineBuildSerialize():
     def test_build_pipeline_serialize(self):
