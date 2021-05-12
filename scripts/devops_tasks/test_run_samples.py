@@ -93,13 +93,11 @@ IGNORED_SAMPLES = {
         "mgmt_subscription.py",
         "mgmt_topic.py",
         "proxy.py",
-        "receive_deferred_message_queue.py",
         "mgmt_queue_async.py",
         "mgmt_rule_async.py",
         "mgmt_subscription_async.py",
         "mgmt_topic_async.py",
-        "proxy_async.py",
-        "receive_deferred_message_queue_async.py"
+        "proxy_async.py"
     ],
     "azure-communication-chat": [
         "chat_client_sample_async.py",
