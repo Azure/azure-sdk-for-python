@@ -107,6 +107,11 @@ class PolicyResult(object):
         return cls(generated.policy_resolution, generated.policy_signer, generated.policy_token_hash)
 
 class AttestationResult(object):
+    """ An AttestationResult represents the claims returned from the attestation
+    service as a result of a call to
+    :meth:`AttestationClient.attest_sgx`, :meth:`AttestationClient.attest_open_enclave`.
+
+    """
     def __init__(self, generated):
         #type:(GeneratedAttestationResult) -> None
         self._issuer = generated.iss
