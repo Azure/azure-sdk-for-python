@@ -21,7 +21,10 @@ from azure.data.tables import (
     TableEntity,
     TableAnalyticsLogging,
     Metrics,
+    TableServiceClient,
 )
+
+from devtools_testutils import is_live
 
 SLEEP_DELAY = 30
 
@@ -346,9 +349,10 @@ class TableTestCase(object):
         assert ret1.days ==  ret2.days
 
     def _tear_down(self):
-        self._delete_all_tables(self.ts)
-        self.test_tables = []
-        self.ts.close()
+        if is_live():
+            self._delete_all_tables(self.ts)
+            self.test_tables = []
+            self.ts.close()
 
     def _create_query_table(self, entity_count):
         """
@@ -395,6 +399,23 @@ class TableTestCase(object):
         entity = self._create_random_entity_dict(pk, rk)
         metadata = self.table.create_entity(entity)
         return entity, metadata['etag']
+
+    def set_up_entity_test(self, account_name, account_key, url='table'):
+        self.table_name = self.get_resource_name('uttable')
+        self.ts = TableServiceClient(
+            self.account_url(account_name, url),
+            credential=account_key,
+            table_name = self.table_name
+        )
+        self.table = self.ts.get_table_client(self.table_name)
+        if self.is_live:
+            try:
+                self.ts.create_table(self.table_name)
+            except ResourceExistsError:
+                pass
+
+        self.query_tables = []
+
 
 class ResponseCallback(object):
     def __init__(self, status=None, new_status=None):

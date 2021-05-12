@@ -41,78 +41,10 @@ from preparers import cosmos_decorator
 # ------------------------------------------------------------------------------
 
 class StorageTableEntityTest(AzureTestCase, TableTestCase):
-
-    def _set_up(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        self.ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
-        self.table_name = self.get_resource_name('uttable')
-        try:
-            self.table = self.ts.get_table_client(self.table_name)
-        except:
-            for table_entity in self.ts.list_tables():
-                self.ts.delete_table(table_entity.table_name)
-            self.table = self.ts.get_table_client(self.table_name)
-
-        if self.is_live:
-            try:
-                self.ts.create_table(self.table_name)
-            except ResourceExistsError:
-                pass
-
-        self.query_tables = []
-
-    # --Helpers-----------------------------------------------------------------
-
-    # def _create_query_table(self, entity_count):
-    #     """
-    #     Creates a table with the specified name and adds entities with the
-    #     default set of values. PartitionKey is set to 'MyPartition' and RowKey
-    #     is set to a unique counter value starting at 1 (as a string).
-    #     """
-    #     table_name = self.get_resource_name('querytable')
-    #     table = self.ts.create_table(table_name)
-    #     self.query_tables.append(table_name)
-    #     client = self.ts.get_table_client(table_name)
-    #     entity = self._create_random_entity_dict()
-    #     for i in range(1, entity_count + 1):
-    #         entity['RowKey'] = entity['RowKey'] + str(i)
-    #         client.create_entity(entity)
-    #     return client
-
-    # def _insert_two_opposite_entities(self, pk=None, rk=None):
-    #     entity1 = self._create_random_entity_dict()
-    #     resp = self.table.create_entity(entity1)
-
-    #     partition, row = self._create_pk_rk(pk, rk)
-    #     properties = {
-    #         'PartitionKey': partition + u'1',
-    #         'RowKey': row + u'1',
-    #         'age': 49,
-    #         'sex': u'female',
-    #         'married': False,
-    #         'deceased': True,
-    #         'optional': None,
-    #         'ratio': 5.2,
-    #         'evenratio': 6.0,
-    #         'large': 39999011,
-    #         'Birthday': datetime(1993, 4, 1, tzinfo=tzutc()),
-    #         'birthday': datetime(1990, 4, 1, tzinfo=tzutc()),
-    #         'binary': b'binary-binary',
-    #         'other': EntityProperty(40, EdmType.INT32),
-    #         'clsid': uuid.UUID('c8da6455-213e-42d9-9b79-3f9149a57833')
-    #     }
-    #     self.table.create_entity(properties)
-    #     return entity1, resp
-
-    # def _insert_random_entity(self, pk=None, rk=None):
-    #     entity = self._create_random_entity_dict(pk, rk)
-    #     metadata = self.table.create_entity(entity)
-    #     return entity, metadata['etag']
-
-    # --Test cases for entities ------------------------------------------
     @cosmos_decorator
     def test_url_encoding_at_symbol(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = {
                 u"PartitionKey": u"PK",
@@ -148,7 +80,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_insert_etag(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -166,7 +98,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_user_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._insert_random_entity()
 
@@ -187,7 +119,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_user_filter_multiple_params(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -212,7 +144,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_user_filter_integers(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_two_opposite_entities()
 
@@ -236,7 +168,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_user_filter_floats(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_two_opposite_entities()
 
@@ -260,7 +192,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_user_filter_datetimes(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_two_opposite_entities()
 
@@ -284,7 +216,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_user_filter_guids(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_two_opposite_entities()
 
@@ -308,7 +240,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_user_filter_binary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_two_opposite_entities()
 
@@ -331,7 +263,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_user_filter_int64(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_two_opposite_entities()
             large_entity = {
@@ -360,7 +292,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_invalid_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             base_entity = {
                 u"PartitionKey": u"pk",
@@ -385,7 +317,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_insert_entity_dictionary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
 
@@ -401,7 +333,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_insert_entity_with_hook(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
 
@@ -422,7 +354,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_insert_entity_with_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
             headers = {'Accept': 'application/json;odata=nometadata'}
@@ -448,7 +380,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_insert_entity_with_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
             headers = {'Accept': 'application/json;odata=fullmetadata'}
@@ -474,7 +406,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_insert_entity_conflict(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -493,7 +425,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     def test_insert_entity_with_large_int32_value_throws(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             dict32 = self._create_random_base_entity_dict()
@@ -514,7 +446,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     def test_insert_entity_with_large_int64_value_throws(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             dict64 = self._create_random_base_entity_dict()
@@ -535,7 +467,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     def test_insert_entity_with_large_int_success(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             dict64 = self._create_random_base_entity_dict()
@@ -561,7 +493,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_insert_entity_missing_pk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = {'RowKey': 'rk'}
 
@@ -576,7 +508,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_insert_entity_empty_string_pk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = {'RowKey': 'rk', 'PartitionKey': ''}
 
@@ -593,7 +525,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_insert_entity_missing_rk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = {'PartitionKey': 'pk'}
 
@@ -609,7 +541,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_insert_entity_empty_string_rk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = {'PartitionKey': 'pk', 'RowKey': ''}
 
@@ -624,7 +556,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_get_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -643,7 +575,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_get_entity_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -664,7 +596,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_get_entity_with_hook(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -687,7 +619,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_get_entity_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, etag = self._insert_random_entity()
 
@@ -714,7 +646,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_get_entity_if_match_entity_bad_etag(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, old_etag = self._insert_random_entity()
 
@@ -738,7 +670,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_delete_entity_if_match_table_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, etag = self._insert_random_entity()
             table_entity = TableEntity(**entity)
@@ -761,7 +693,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_get_entity_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -782,7 +714,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_get_entity_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -803,7 +735,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_get_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
 
@@ -820,7 +752,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_get_entity_with_special_doubles(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({
@@ -845,7 +777,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_update_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -867,7 +799,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_update_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -884,7 +816,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_update_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, etag = self._insert_random_entity()
 
@@ -906,7 +838,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_update_entity_with_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -928,7 +860,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     def test_insert_or_merge_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -948,7 +880,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     def test_insert_or_merge_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                              tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -969,7 +901,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     def test_insert_or_replace_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                            tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -989,7 +921,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     def test_insert_or_replace_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                                tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -1009,7 +941,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_merge_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -1028,7 +960,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_merge_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -1045,7 +977,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_merge_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, etag = self._insert_random_entity()
 
@@ -1068,7 +1000,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_merge_entity_with_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -1088,7 +1020,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_delete_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -1105,7 +1037,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_delete_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
             self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
@@ -1116,7 +1048,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_delete_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, etag = self._insert_random_entity()
 
@@ -1138,7 +1070,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_delete_entity_with_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -1159,7 +1091,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_delete_entity_overloads(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -1187,7 +1119,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_delete_entity_overloads_kwargs(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
 
@@ -1215,7 +1147,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_unicode_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
             entity1 = entity.copy()
@@ -1239,7 +1171,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_unicode_property_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
             entity1 = entity.copy()
@@ -1268,7 +1200,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         partition_key_with_single_quote = "a''''b"
         row_key_with_single_quote = "a''''b"
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity(pk=partition_key_with_single_quote, rk=row_key_with_single_quote)
 
@@ -1304,7 +1236,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_empty_and_spaces_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({
@@ -1342,7 +1274,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_none_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({'NoneValue': None})
@@ -1361,7 +1293,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_binary_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             binary_data = b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'
             entity = self._create_random_base_entity_dict()
@@ -1381,7 +1313,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_timezone(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             local_tz = tzoffset('BRST', -10800)
             local_date = datetime(2003, 9, 27, 9, 52, 43, tzinfo=local_tz)
@@ -1404,7 +1336,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_entities(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             table = self._create_query_table(2)
 
@@ -1422,7 +1354,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_entities_each_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             base_entity = {
                 "PartitionKey": u"pk",
@@ -1463,7 +1395,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_zero_entities(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             table = self._create_query_table(0)
 
@@ -1479,7 +1411,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_entities_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             table = self._create_query_table(2)
 
@@ -1497,7 +1429,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_entities_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             table = self._create_query_table(2)
 
@@ -1515,7 +1447,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_entities_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity()
             entity2, _ = self._insert_random_entity(pk="foo" + entity['PartitionKey'])
@@ -1536,7 +1468,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_injection(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             table_name = self.get_resource_name('querytable')
             table = self.ts.create_table_if_not_exists(table_name)
@@ -1564,7 +1496,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_special_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             table_name = self.get_resource_name('querytable')
             table = self.ts.create_table_if_not_exists(table_name)
@@ -1605,7 +1537,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_entities_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             table = self._create_query_table(2)
 
@@ -1628,7 +1560,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_entities_with_top(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             table = self._create_query_table(3)
             # circular dependencies made this return a list not an item paged - problem when calling by page
@@ -1644,7 +1576,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_query_entities_with_top_and_next(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             table = self._create_query_table(5)
 
@@ -1677,7 +1609,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @cosmos_decorator
     def test_datetime_milliseconds(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
 
@@ -1698,7 +1630,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @cosmos_decorator
     def test_datetime_str_passthrough(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        self.set_up_entity_test(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         partition, row = self._create_pk_rk(None, None)
 
         dotnet_timestamp = "2013-08-22T01:12:06.2608595Z"

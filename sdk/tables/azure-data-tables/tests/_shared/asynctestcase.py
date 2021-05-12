@@ -9,6 +9,8 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 from azure.data.tables import TableServiceClient
 
+from devtools_testutils import is_live
+
 from .testcase import TableTestCase
 
 
@@ -59,12 +61,13 @@ class AsyncTableTestCase(TableTestCase):
             self.sleep(10)
 
     async def _tear_down(self):
-        async for table in self.ts.list_tables():
-            await self.ts.delete_table(table.name)
-        if u"cosmos" in self.ts.endpoint:
-            self.sleep(10)
-        self.test_tables = []
-        await self.ts.close()
+        if is_live():
+            async for table in self.ts.list_tables():
+                await self.ts.delete_table(table.name)
+            if u"cosmos" in self.ts.endpoint:
+                self.sleep(10)
+            self.test_tables = []
+            await self.ts.close()
 
     async def _create_query_table(self, entity_count):
         """
@@ -111,3 +114,16 @@ class AsyncTableTestCase(TableTestCase):
         entity = self._create_random_entity_dict(pk, rk)
         metadata = await self.table.create_entity(entity=entity)
         return entity, metadata['etag']
+
+    async def set_up_entity_test(self, tables_storage_account_name, tables_primary_storage_account_key):
+        account_url = self.account_url(tables_storage_account_name, "table")
+        self.ts = TableServiceClient(account_url, tables_primary_storage_account_key)
+        self.table_name = self.get_resource_name('uttable')
+        self.table = self.ts.get_table_client(self.table_name)
+        if self.is_live:
+            try:
+                await self.ts.create_table(table_name=self.table_name)
+            except ResourceExistsError:
+                pass
+
+        self.query_tables = []
