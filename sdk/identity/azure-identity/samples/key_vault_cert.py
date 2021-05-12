@@ -20,7 +20,6 @@ from azure.keyvault.certificates import (
     WellKnownIssuerNames,
 )
 from azure.keyvault.secrets import SecretClient
-from cryptography.hazmat.backends import default_backend
 
 VAULT_URL = os.environ["VAULT_URL"]
 
@@ -53,7 +52,6 @@ def pkcs12_cert():
     assert policy.content_type == CertificateContentType.pkcs12, "Expected PKCS12 because that's Key Vault's default"
 
     # Key Vault stores the complete certificate, with its private key, as a secret sharing the certificate's name
-
     # Because this certificate is stored in PKCS12 format, the secret's value is base64 encoded bytes
     encoded_cert = SECRET_CLIENT.get_secret(cert.name).value
     pkcs12_bytes = base64.b64decode(encoded_cert)
@@ -61,13 +59,14 @@ def pkcs12_cert():
     # cryptography can convert PKCS12 to PEM
     def pkcs12_to_pem(pkcs12_bytes):
         """Convert certificate bytes from PKCS12 format to PEM using the "cryptography" library"""
+        from cryptography.hazmat.backends import default_backend
         from cryptography.hazmat.primitives.serialization import Encoding, pkcs12, PrivateFormat, NoEncryption
 
         private_key, cert, additional_certs = pkcs12.load_key_and_certificates(
             pkcs12_bytes, password=None, backend=default_backend()
         )
 
-        # using NoEncryption because the certificate in this sample is not password protected
+        # using NoEncryption because the certificate created above is not password protected
         private_bytes = private_key.private_bytes(Encoding.PEM, PrivateFormat.PKCS8, NoEncryption())
         pem_sections = [private_bytes] + [c.public_bytes(Encoding.PEM) for c in [cert] + additional_certs]
         return b"".join(pem_sections)
@@ -88,7 +87,13 @@ def pem_cert():
     )
     pem_cert = CERT_CLIENT.begin_create_certificate("azure-identity-sample-pem", pem_policy).result()
 
-    # The cert with its private key is available as a secret
+    # verifying the certificate is exportable and stored in PEM format, to
+    # demonstrate how you would do so when you don't already have its policy
+    policy = CERT_CLIENT.get_certificate_policy(pem_cert.name)
+    assert policy.exportable, "Expected an exportable certificate because that's Key Vault's default"
+    assert policy.content_type == CertificateContentType.pem
+
+    # Because the certificate is exportable, it's available (with its private key) as a secret
     pem_cert_secret = SECRET_CLIENT.get_secret(pem_cert.name)
 
     # The secret's value is a string; CertificateCredential requires bytes
