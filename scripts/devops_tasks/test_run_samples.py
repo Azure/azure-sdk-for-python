@@ -115,7 +115,7 @@ IGNORED_SAMPLES = {
     ],
     "azure-ai-formrecognizer": [
         "sample_authentication.py",
-        "sample_authentication_async.py
+        "sample_authentication_async.py"
     ]
 }
 
