@@ -28,10 +28,7 @@ from azure.core import PipelineClient
 
 def test_decompress_plain_no_header():
     # expect plain text
-    account_name = os.environ.get("AZURE_CORE_STREAMING_ACCOUNT_NAME")
-    # only test when account_name is set
-    if not account_name:
-        return
+    account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     client = PipelineClient(account_url)
@@ -45,10 +42,7 @@ def test_decompress_plain_no_header():
 
 def test_compress_plain_no_header():
     # expect plain text
-    account_name = os.environ.get("AZURE_CORE_STREAMING_ACCOUNT_NAME")
-    # only test when account_name is set
-    if not account_name:
-        return
+    account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     client = PipelineClient(account_url)
@@ -62,10 +56,7 @@ def test_compress_plain_no_header():
 
 def test_decompress_compressed_no_header():
     # expect compressed text
-    account_name = os.environ.get("AZURE_CORE_STREAMING_ACCOUNT_NAME")
-    # only test when account_name is set
-    if not account_name:
-        return
+    account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
     client = PipelineClient(account_url)
@@ -82,10 +73,7 @@ def test_decompress_compressed_no_header():
 
 def test_compress_compressed_no_header():
     # expect compressed text
-    account_name = os.environ.get("AZURE_CORE_STREAMING_ACCOUNT_NAME")
-    # only test when account_name is set
-    if not account_name:
-        return
+    account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
     client = PipelineClient(account_url)
@@ -103,10 +91,7 @@ def test_compress_compressed_no_header():
 def test_decompress_plain_header():
     # expect error
     import requests
-    account_name = os.environ.get("AZURE_CORE_STREAMING_ACCOUNT_NAME")
-    # only test when account_name is set
-    if not account_name:
-        return
+    account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
     client = PipelineClient(account_url)
@@ -122,10 +107,7 @@ def test_decompress_plain_header():
 
 def test_compress_plain_header():
     # expect plain text
-    account_name = os.environ.get("AZURE_CORE_STREAMING_ACCOUNT_NAME")
-    # only test when account_name is set
-    if not account_name:
-        return
+    account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
     client = PipelineClient(account_url)
@@ -139,10 +121,7 @@ def test_compress_plain_header():
 
 def test_decompress_compressed_header():
     # expect plain text
-    account_name = os.environ.get("AZURE_CORE_STREAMING_ACCOUNT_NAME")
-    # only test when account_name is set
-    if not account_name:
-        return
+    account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     client = PipelineClient(account_url)
@@ -156,10 +135,7 @@ def test_decompress_compressed_header():
 
 def test_compress_compressed_header():
     # expect compressed text
-    account_name = os.environ.get("AZURE_CORE_STREAMING_ACCOUNT_NAME")
-    # only test when account_name is set
-    if not account_name:
-        return
+    account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     client = PipelineClient(account_url)
