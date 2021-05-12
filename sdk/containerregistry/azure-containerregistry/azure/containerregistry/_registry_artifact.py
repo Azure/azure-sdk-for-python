@@ -78,6 +78,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     def delete(self, **kwargs):
         # type: (Dict[str, Any]) -> None
         """Delete a repository
+
         :returns: Object containing information about the deleted repository
         :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
@@ -99,8 +100,10 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     def delete_tag(self, tag, **kwargs):
         # type: (str, Dict[str, Any]) -> None
         """Delete a tag from a repository
+
         :param str tag: The tag to be deleted
         :returns: None
+        :rtype: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
         Example
@@ -145,6 +148,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     def get_tag_properties(self, tag, **kwargs):
         # type: (str, Dict[str, Any]) -> ArtifactTagProperties
         """Get the properties for a tag
+
         :param tag: The tag to get properties for
         :type tag: str
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
@@ -169,6 +173,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     def list_tags(self, **kwargs):
         # type: (Dict[str, Any]) -> ItemPaged[ArtifactTagProperties]
         """List the tags for a repository
+
         :keyword last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexically
         :paramtype last: str
@@ -341,6 +346,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     def set_tag_properties(self, tag, permissions, **kwargs):
         # type: (str, ManifestWriteableProperties, Dict[str, Any]) -> ArtifactTagProperties
         """Set the properties for a tag
+
         :param tag: Tag to set properties for
         :type tag: str
         :param permissions: The property's values to be set
