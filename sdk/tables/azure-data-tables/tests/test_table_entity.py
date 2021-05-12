@@ -7,12 +7,10 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from base64 import b64encode
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
 from enum import Enum
 from math import isnan
-import uuid
 
 from devtools_testutils import AzureTestCase
 

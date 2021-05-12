@@ -1,14 +1,11 @@
-import locale
-import os
-import sys
 from datetime import datetime, timedelta
 
 import pytest
 
 from devtools_testutils import AzureTestCase
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
+from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.exceptions import ResourceExistsError
 from azure.data.tables import (
     AccessPolicy,
     TableSasPermissions,
@@ -19,15 +16,11 @@ from azure.data.tables import (
 )
 from azure.data.tables.aio import TableServiceClient, TableClient
 
-from _shared.asynctestcase import AsyncTableTestCase, TEST_TABLE_PREFIX
+from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
 
-# ------------------------------------------------------------------------------
 
 class TableTestAsync(AzureTestCase, AsyncTableTestCase):
-    # --Helpers-----------------------------------------------------------------
-
-    # --Test cases for tables --------------------------------------------------
     @tables_decorator_async
     async def test_create_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange

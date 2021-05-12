@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
-
 from devtools_testutils import AzureTestCase
 
 from azure.data.tables.aio import TableServiceClient
@@ -48,8 +46,7 @@ class TableServiceStatsTest(AzureTestCase, AsyncTableTestCase):
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
 
         # Act
-        stats = await tsc.get_service_stats(
-            raw_response_hook=self.override_response_body_with_unavailable_status)
+        stats = await tsc.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)
 
         # Assert
         self._assert_stats_unavailable(stats)

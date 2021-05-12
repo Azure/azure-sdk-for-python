@@ -6,42 +6,13 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-import sys
-import locale
-import os
 from time import sleep
-from datetime import (
-    datetime,
-    timedelta,
-)
 
 from devtools_testutils import AzureTestCase
 
 from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError,
-    ResourceExistsError
-)
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import (
-    HeadersPolicy,
-    ContentDecodePolicy,
-)
-
-from azure.data.tables import (
-    ResourceTypes,
-    AccountSasPermissions,
-    TableSasPermissions,
-    CorsRule,
-    RetentionPolicy,
-    UpdateMode,
-    AccessPolicy,
-    TableAnalyticsLogging,
-    Metrics,
-    TableServiceClient,
-    generate_account_sas
-)
+from azure.core.exceptions import ResourceExistsError
+from azure.data.tables import TableServiceClient
 
 from _shared.testcase import TableTestCase, SLEEP_DELAY
 from preparers import cosmos_decorator

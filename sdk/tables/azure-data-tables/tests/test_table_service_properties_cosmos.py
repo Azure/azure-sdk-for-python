@@ -5,7 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import time
 import pytest
 
 from devtools_testutils import AzureTestCase
@@ -14,7 +13,6 @@ from azure.core.exceptions import HttpResponseError
 
 from azure.data.tables import (
     TableServiceClient,
-    TableAnalyticsLogging,
     Metrics,
     RetentionPolicy,
     CorsRule

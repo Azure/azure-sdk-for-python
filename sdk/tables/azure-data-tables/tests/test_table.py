@@ -6,10 +6,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-
-import sys
-import locale
-import os
 from datetime import datetime, timedelta
 
 from devtools_testutils import AzureTestCase
@@ -17,8 +13,6 @@ from devtools_testutils import AzureTestCase
 from azure.data.tables import (
     ResourceTypes,
     AccountSasPermissions,
-    TableSasPermissions,
-    CorsRule,
     RetentionPolicy,
     UpdateMode,
     AccessPolicy,
@@ -29,17 +23,8 @@ from azure.data.tables import (
     generate_account_sas,
     ResourceTypes
 )
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import (
-    HeadersPolicy,
-    ContentDecodePolicy,
-)
-from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError,
-    ResourceExistsError
-)
+from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.exceptions import ResourceExistsError
 
 from _shared.testcase import TableTestCase, TEST_TABLE_PREFIX
 from preparers import tables_decorator, tables_decorator

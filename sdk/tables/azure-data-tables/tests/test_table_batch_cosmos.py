@@ -6,27 +6,21 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from dateutil.tz import tzutc
 import os
 import sys
-import uuid
 
 import pytest
 
 from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
-from azure.core.exceptions import (
-    ResourceExistsError,
-    ResourceNotFoundError,
-)
+from azure.core.exceptions import ResourceNotFoundError
 from azure.data.tables import (
     EdmType,
     TableEntity,
     EntityProperty,
     UpdateMode,
     TableTransactionError,
-    TableServiceClient,
     TableEntity,
     UpdateMode,
     TransactionOperation,

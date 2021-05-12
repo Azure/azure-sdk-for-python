@@ -1,7 +1,3 @@
-import locale
-import os
-import sys
-from datetime import datetime, timedelta
 from time import sleep
 
 import pytest
@@ -9,14 +5,7 @@ import pytest
 from devtools_testutils import AzureTestCase
 
 from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError, HttpResponseError
-from azure.data.tables import (
-    AccessPolicy,
-    TableSasPermissions,
-    ResourceTypes,
-    AccountSasPermissions,
-    generate_account_sas
-)
+from azure.core.exceptions import ResourceExistsError
 from azure.data.tables.aio import TableServiceClient
 
 from _shared.asynctestcase import AsyncTableTestCase

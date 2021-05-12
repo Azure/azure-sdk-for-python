@@ -6,7 +6,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-from time import sleep
 
 from devtools_testutils import AzureTestCase
 

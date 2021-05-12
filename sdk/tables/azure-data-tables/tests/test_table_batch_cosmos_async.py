@@ -5,11 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 from datetime import datetime
 import os
 import sys
-
 import pytest
 
 from devtools_testutils import AzureTestCase
@@ -31,7 +29,6 @@ from azure.data.tables import (
 )
 from azure.data.tables.aio import TableServiceClient
 
-from _shared.testcase import SLEEP_DELAY
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import cosmos_decorator_async
 

@@ -9,17 +9,14 @@
 import pytest
 
 from datetime import datetime, timedelta
-from dateutil.tz import tzutc
 import os
 import sys
-import uuid
 
 from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import (
-    ResourceExistsError,
     ResourceNotFoundError,
     ClientAuthenticationError
 )

@@ -1,33 +1,23 @@
 # coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import pytest
 
-from base64 import b64encode
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
-from time import sleep
-import uuid
 
 from devtools_testutils import AzureTestCase
 
 from azure.data.tables import (
-    generate_table_sas,
     TableEntity,
     EntityProperty,
     EdmType,
-    TableSasPermissions,
-    AccessPolicy,
     UpdateMode
 )
-from azure.data.tables.aio import TableServiceClient
-
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     HttpResponseError,
@@ -36,7 +26,6 @@ from azure.core.exceptions import (
 )
 
 from _shared.asynctestcase import AsyncTableTestCase
-from _shared.testcase import SLEEP_DELAY
 from async_preparers import cosmos_decorator_async
 # ------------------------------------------------------------------------------
 # TODO: change to `with table_client as client:` to close sessions

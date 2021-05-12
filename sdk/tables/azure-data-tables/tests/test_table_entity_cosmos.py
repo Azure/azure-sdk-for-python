@@ -5,15 +5,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import pytest
 
-from base64 import b64encode
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
-from time import sleep
-import uuid
 
 from devtools_testutils import AzureTestCase
 
@@ -24,14 +20,9 @@ from azure.core.exceptions import (
     ResourceExistsError
 )
 from azure.data.tables import (
-    TableServiceClient,
-    TableClient,
-    generate_table_sas,
     TableEntity,
     EntityProperty,
     EdmType,
-    TableSasPermissions,
-    AccessPolicy,
     UpdateMode
 )
 

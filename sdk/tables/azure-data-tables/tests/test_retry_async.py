@@ -13,7 +13,6 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     AzureError,
-    ResourceNotFoundError
 )
 from azure.core.pipeline.policies import RetryMode
 from azure.core.pipeline.transport import(
@@ -21,12 +20,10 @@ from azure.core.pipeline.transport import(
 )
 
 from azure.data.tables.aio import TableServiceClient
-from azure.data.tables import LocationMode
 
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import (
     ResponseCallback,
-    RetryCounter
 )
 
 from async_preparers import tables_decorator_async
