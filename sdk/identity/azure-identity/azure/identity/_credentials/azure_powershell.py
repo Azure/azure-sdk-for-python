@@ -77,6 +77,7 @@ class AzurePowerShellCredential(object):
 
 
 def run_command_line(command_line):
+    # type: (List[str]) -> str
     stdout = stderr = ""
     proc = None
     kwargs = {}
@@ -105,6 +106,7 @@ def run_command_line(command_line):
 
 
 def start_process(args):
+    # type: (List[str]) -> subprocess.Popen
     working_directory = get_safe_working_dir()
     proc = subprocess.Popen(
         args,

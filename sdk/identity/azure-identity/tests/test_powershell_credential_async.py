@@ -221,8 +221,8 @@ async def test_windows_powershell_fallback():
 
     calls = 0
 
-    async def subprocess_exec(*args, **kwargs):
-        assert args[:2] == ["cmd", "/c"]
+    async def mock_exec(*args, **kwargs):
+        assert args[:2] == ("cmd", "/c")
         nonlocal calls
         calls += 1
         if args[-1].startswith("pwsh"):
@@ -241,7 +241,7 @@ async def test_windows_powershell_fallback():
 
     credential = AzurePowerShellCredential()
     with pytest.raises(CredentialUnavailableError, match=AZ_ACCOUNT_NOT_INSTALLED):
-        with patch(CREATE_SUBPROCESS_EXEC, subprocess_exec):
+        with patch(CREATE_SUBPROCESS_EXEC, mock_exec):
             await credential.get_token("scope")
 
     assert calls == 2
