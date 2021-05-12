@@ -132,6 +132,9 @@ class Point(namedtuple("Point", "x y")):
 
     :ivar float x: x-coordinate
     :ivar float y: y-coordinate
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     __slots__ = ()
@@ -165,6 +168,9 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
 
     :ivar int first_page_number: The first page number of the form.
     :ivar int last_page_number: The last page number of the form.
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     __slots__ = ()
@@ -216,6 +222,9 @@ class FormElement(object):
         The kind of form element. Possible kinds are "word", "line", or "selectionMark" which
         correspond to a :class:`~azure.ai.formrecognizer.FormWord` :class:`~azure.ai.formrecognizer.FormLine`,
         or :class:`~azure.ai.formrecognizer.FormSelectionMark`, respectively.
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -283,7 +292,8 @@ class RecognizedForm(object):
         words, selection marks, tables and page metadata.
 
     .. versionadded:: v2.1
-        The *form_type_confidence* and *model_id* properties
+        The *form_type_confidence* and *model_id* properties, support for
+        *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -371,6 +381,9 @@ class FormField(object):
         dict[str, :class:`~azure.ai.formrecognizer.FormField`], or list[:class:`~azure.ai.formrecognizer.FormField`]
     :ivar float confidence:
         Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -490,7 +503,8 @@ class FieldData(object):
         ~azure.ai.formrecognizer.FormLine,  ~azure.ai.formrecognizer.FormSelectionMark]]
 
     .. versionadded:: v2.1
-        *FormSelectionMark* is added to the types returned in the list of field_elements
+        *FormSelectionMark* is added to the types returned in the list of field_elements, support for
+        *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -611,7 +625,7 @@ class FormPage(object):
     :vartype selection_marks: list[~azure.ai.formrecognizer.FormSelectionMark]
 
     .. versionadded:: v2.1
-        *selection_marks* property
+        *selection_marks* property, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -704,7 +718,7 @@ class FormLine(FormElement):
     :vartype appearance: ~azure.ai.formrecognizer.Appearance
 
     .. versionadded:: v2.1
-        *appearance* property
+        *appearance* property, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -795,6 +809,9 @@ class FormWord(FormElement):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormWord, this is "word".
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -867,6 +884,9 @@ class FormSelectionMark(FormElement):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormSelectionMark, this is "selectionMark".
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -944,7 +964,7 @@ class FormTable(object):
         Units are in pixels for images and inches for PDF.
 
     .. versionadded:: v2.1
-        The *bounding_box* property.
+        The *bounding_box* property, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1030,7 +1050,8 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
         ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.FormSelectionMark]]
 
     .. versionadded:: v2.1
-        *FormSelectionMark* is added to the types returned in the list of field_elements
+        *FormSelectionMark* is added to the types returned in the list of field_elements, support for
+        *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1169,7 +1190,7 @@ class CustomFormModel(object):
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
 
     .. versionadded:: v2.1
-        The *model_name* and *properties* properties.
+        The *model_name* and *properties* properties, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1311,7 +1332,7 @@ class CustomFormSubmodel(object):
     :ivar str form_type: Type of form this submodel recognizes.
 
     .. versionadded:: v2.1
-        The *model_id* property
+        The *model_id* property, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1428,6 +1449,9 @@ class CustomFormModelField(object):
     :ivar str label: The form fields label on the form.
     :ivar str name: Canonical name; uniquely identifies a field within the form.
     :ivar float accuracy: The estimated recognition accuracy for this field.
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1501,7 +1525,7 @@ class TrainingDocumentInfo(object):
         The model ID that used the document to train.
 
     .. versionadded:: v2.1
-        The *model_id* property
+        The *model_id* property, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1593,6 +1617,9 @@ class FormRecognizerError(object):
 
     :ivar str code: Error code.
     :ivar str message: Error message.
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1656,7 +1683,7 @@ class CustomFormModelInfo(object):
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
 
     .. versionadded:: v2.1
-        The *model_name* and *properties* properties
+        The *model_name* and *properties* properties, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1745,6 +1772,9 @@ class AccountProperties(object):
 
     :ivar int custom_model_count: Current count of trained custom models.
     :ivar int custom_model_limit: Max number of models that can be trained for this account.
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1794,6 +1824,9 @@ class CustomFormModelProperties(object):
     """Optional model properties.
 
     :ivar bool is_composed_model: Is this model composed? (default: false).
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1841,6 +1874,9 @@ class TextAppearance(object):
     :ivar str style_name: The text line style name.
         Possible values include: "other", "handwriting".
     :ivar float style_confidence: The confidence of text line style.
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
