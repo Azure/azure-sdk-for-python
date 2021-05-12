@@ -19,7 +19,8 @@ from phone_number_helper import PhoneNumberUriReplacer
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
 
-SKIP_INT_PHONE_NUMBER_TESTS = os.getenv("COMMUNICATION_SKIP_INT_PHONENUMBERS_TEST", "false") == "true"
+#SKIP_INT_PHONE_NUMBER_TESTS = os.getenv("COMMUNICATION_SKIP_INT_PHONENUMBERS_TEST", "false") == "true"
+SKIP_INT_PHONE_NUMBER_TESTS = True
 INT_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers setting SMS capability does not support in INT. Skip these tests in INT."
 
 class PhoneNumbersClientTest(CommunicationTestCase):
