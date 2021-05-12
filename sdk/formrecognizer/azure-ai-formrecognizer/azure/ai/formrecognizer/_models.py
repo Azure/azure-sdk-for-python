@@ -251,7 +251,7 @@ class FormElement(object):
             text=data.get("text", None),
             page_number=data.get("page_number", None),
             kind=data.get("kind", None),
-            bounding_box=[Point.from_dict(f) for f in data.get("bounding_box")]
+            bounding_box=[Point.from_dict(f) for f in data.get("bounding_box")]  # type: ignore
             if len(data.get("bounding_box", [])) > 0
             else [],
         )
@@ -335,14 +335,15 @@ class RecognizedForm(object):
         :rtype: RecognizedForm
         """
         return cls(
-            fields={k: FormField.from_dict(v) for k, v in data.get("fields").items()} if data.get("fields") else {},
+            fields={k: FormField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
+            if data.get("fields") else {},
             form_type=data.get("form_type", None),
-            pages=[FormPage.from_dict(v) for v in data.get("pages")]
+            pages=[FormPage.from_dict(v) for v in data.get("pages")]  # type: ignore
             if len(data.get("pages", [])) > 0
             else [],
             model_id=data.get("model_id", None),
             form_type_confidence=data.get("form_type_confidence", None),
-            page_range=FormPageRange.from_dict(data.get("page_range"))
+            page_range=FormPageRange.from_dict(data.get("page_range"))  # type: ignore
             if data.get("page_range")
             else None,
         )
@@ -450,19 +451,19 @@ class FormField(object):
         """
         value = data.get("value", None)
         if isinstance(data.get("value"), dict):
-            value = {k: FormField.from_dict(v) for k, v in data.get("value").items()}
+            value = {k: FormField.from_dict(v) for k, v in data.get("value").items()}  # type: ignore
         elif isinstance(data.get("value"), list):
-            value = [FormField.from_dict(v) for v in data.get("value")]
+            value = [FormField.from_dict(v) for v in data.get("value")]  # type: ignore
 
         return cls(
             value_type=data.get("value_type", None),
             name=data.get("name", None),
             value=value,
             confidence=data.get("confidence", None),
-            label_data=FieldData.from_dict(data.get("label_data"))
+            label_data=FieldData.from_dict(data.get("label_data"))  # type: ignore
             if data.get("label_data")
             else None,
-            value_data=FieldData.from_dict(data.get("value_data"))
+            value_data=FieldData.from_dict(data.get("value_data"))  # type: ignore
             if data.get("value_data")
             else None,
         )
@@ -560,20 +561,20 @@ class FieldData(object):
         :rtype: FieldData
         """
         field_elements = []
-        for v in data.get("field_elements"):
+        for v in data.get("field_elements"):  # type: ignore
             if v.get("kind") == "word":
                 field_elements.append(FormWord.from_dict(v))
             elif v.get("kind") == "line":
-                field_elements.append(FormLine.from_dict(v))
+                field_elements.append(FormLine.from_dict(v))  # type: ignore
             elif v.get("kind") == "selectionMark":
-                field_elements.append(FormSelectionMark.from_dict(v))
+                field_elements.append(FormSelectionMark.from_dict(v))  # type: ignore
             else:
-                field_elements.append(FormElement.from_dict(v))
+                field_elements.append(FormElement.from_dict(v))  # type: ignore
 
         return cls(
             text=data.get("text", None),
             page_number=data.get("page_number", None),
-            bounding_box=[Point.from_dict(f) for f in data.get("bounding_box")]
+            bounding_box=[Point.from_dict(f) for f in data.get("bounding_box")]  # type: ignore
             if len(data.get("bounding_box", [])) > 0
             else [],
             field_elements=field_elements,
@@ -671,14 +672,14 @@ class FormPage(object):
             height=data.get("height", None),
             unit=data.get("unit", None),
             page_number=data.get("page_number", None),
-            tables=[FormTable.from_dict(v) for v in data.get("tables")]
+            tables=[FormTable.from_dict(v) for v in data.get("tables")]  # type: ignore
             if len(data.get("tables", [])) > 0
             else [],
-            lines=[FormLine.from_dict(v) for v in data.get("lines")]
+            lines=[FormLine.from_dict(v) for v in data.get("lines")]  # type: ignore
             if len(data.get("lines", [])) > 0
             else [],
             selection_marks=[
-                FormSelectionMark.from_dict(v) for v in data.get("selection_marks")
+                FormSelectionMark.from_dict(v) for v in data.get("selection_marks")  # type: ignore
             ]
             if len(data.get("selection_marks", [])) > 0
             else [],
@@ -768,13 +769,13 @@ class FormLine(FormElement):
         return cls(
             text=data.get("text", None),
             page_number=data.get("page_number", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
             if len(data.get("bounding_box", [])) > 0
             else [],
-            words=[FormWord.from_dict(v) for v in data.get("words")]
+            words=[FormWord.from_dict(v) for v in data.get("words")]  # type: ignore
             if len(data.get("words", [])) > 0
             else [],
-            appearance=TextAppearance.from_dict(data.get("appearance"))
+            appearance=TextAppearance.from_dict(data.get("appearance"))  # type: ignore
             if data.get("appearance")
             else None,
         )
@@ -843,7 +844,7 @@ class FormWord(FormElement):
         return cls(
             text=data.get("text", None),
             page_number=data.get("page_number", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
             if len(data.get("bounding_box", [])) > 0
             else [],
             confidence=data.get("confidence", None),
@@ -917,7 +918,7 @@ class FormSelectionMark(FormElement):
         return cls(
             text=data.get("text", None),
             page_number=data.get("page_number", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
             if len(data.get("bounding_box", [])) > 0
             else [],
             confidence=data.get("confidence", None),
@@ -992,10 +993,10 @@ class FormTable(object):
             row_count=data.get("row_count", None),
             page_number=data.get("page_number", None),
             column_count=data.get("column_count", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
             if len(data.get("bounding_box", [])) > 0
             else [],
-            cells=[FormTableCell.from_dict(v) for v in data.get("cells")]
+            cells=[FormTableCell.from_dict(v) for v in data.get("cells")]  # type: ignore
             if len(data.get("cells", [])) > 0
             else [],
         )
@@ -1117,15 +1118,15 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
         :rtype: FormTableCell
         """
         field_elements = []
-        for v in data.get("field_elements"):
+        for v in data.get("field_elements"):  # type: ignore
             if v.get("kind") == "word":
-                field_elements.append(FormWord.from_dict(v))
+                field_elements.append(FormWord.from_dict(v))  # type: ignore
             elif v.get("kind") == "line":
-                field_elements.append(FormLine.from_dict(v))
+                field_elements.append(FormLine.from_dict(v))  # type: ignore
             elif v.get("kind") == "selectionMark":
-                field_elements.append(FormSelectionMark.from_dict(v))
+                field_elements.append(FormSelectionMark.from_dict(v))  # type: ignore
             else:
-                field_elements.append(FormElement.from_dict(v))
+                field_elements.append(FormElement.from_dict(v))  # type: ignore
 
         return cls(
             text=data.get("text", None),
@@ -1137,7 +1138,7 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
             is_header=data.get("is_header", None),
             is_footer=data.get("is_footer", None),
             page_number=data.get("page_number", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
             if len(data.get("bounding_box", [])) > 0
             else [],
             field_elements=field_elements,
@@ -1278,19 +1279,19 @@ class CustomFormModel(object):
             status=data.get("status", None),
             training_started_on=data.get("training_started_on", None),
             training_completed_on=data.get("training_completed_on", None),
-            submodels=[CustomFormSubmodel.from_dict(v) for v in data.get("submodels")]
+            submodels=[CustomFormSubmodel.from_dict(v) for v in data.get("submodels")]  # type: ignore
             if len(data.get("submodels", [])) > 0
             else [],
-            errors=[FormRecognizerError.from_dict(v) for v in data.get("errors")]
+            errors=[FormRecognizerError.from_dict(v) for v in data.get("errors")]  # type: ignore
             if len(data.get("errors", [])) > 0
             else [],
             training_documents=[
-                TrainingDocumentInfo.from_dict(v) for v in data.get("training_documents")
+                TrainingDocumentInfo.from_dict(v) for v in data.get("training_documents")  # type: ignore
             ]
             if len(data.get("training_documents", [])) > 0
             else [],
             model_name=data.get("model_name", None),
-            properties=CustomFormModelProperties.from_dict(data.get("properties"))
+            properties=CustomFormModelProperties.from_dict(data.get("properties"))  # type: ignore
             if data.get("properties")
             else None,
         )
@@ -1415,7 +1416,7 @@ class CustomFormSubmodel(object):
         return cls(
             model_id=data.get("model_id", None),
             accuracy=data.get("accuracy", None),
-            fields={k: CustomFormModelField.from_dict(v) for k, v in data.get("fields").items()}
+            fields={k: CustomFormModelField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
             if data.get("fields") else {},
             form_type=data.get("form_type", None),
         )
@@ -1581,7 +1582,7 @@ class TrainingDocumentInfo(object):
             status=data.get("status", None),
             page_count=data.get("page_count", None),
             errors=[
-                FormRecognizerError.from_dict(v) for v in data.get("errors")
+                FormRecognizerError.from_dict(v) for v in data.get("errors")  # type: ignore
             ],
             model_id=data.get("model_id", None),
         )
@@ -1733,7 +1734,7 @@ class CustomFormModelInfo(object):
             training_started_on=data.get("training_started_on", None),
             training_completed_on=data.get("training_completed_on", None),
             model_name=data.get("model_name", None),
-            properties=CustomFormModelProperties.from_dict(data.get("properties"))
+            properties=CustomFormModelProperties.from_dict(data.get("properties"))  # type: ignore
             if data.get("properties")
             else None,
         )
