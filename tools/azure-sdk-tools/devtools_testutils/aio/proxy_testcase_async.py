@@ -1,3 +1,4 @@
+import asyncio
 import functools
 from contextlib import contextmanager
 
@@ -27,9 +28,16 @@ def patch_requests_func_async(request_transform):
     AsyncioRequestsTransport.send = original_func
 
 
+def run_in_loop(func, *args, **kwargs):
+    event_loop = asyncio.new_event_loop()
+    event_loop.run_until_complete(
+        func(*args, **kwargs)
+    )
+
+
 def RecordedByProxyAsync(func):
     @functools.wraps(func)
-    async def record_wrap(*args, **kwargs):
+    def record_wrap(*args, **kwargs):
         test_id = get_test_id()
         recording_id = start_record_or_playback(test_id)
 
@@ -52,14 +60,12 @@ def RecordedByProxyAsync(func):
         # this ensures that within this scope, we've monkeypatched the send functionality
         with patch_requests_func_async(transform_args):
             # call the modified function.
-            print("running")
             try:
-                value = await func(*args, **trimmed_kwargs)
+                # value = await func(*args, **trimmed_kwargs)
+                run_in_loop(func, *args, **kwargs)
             finally:
                 stop_record_or_playback(test_id, recording_id)
-                print("stopping")
 
-        stop_record_or_playback(test_id, recording_id)
         return value
 
     return record_wrap

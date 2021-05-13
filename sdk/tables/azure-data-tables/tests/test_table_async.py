@@ -57,7 +57,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @RecordedByProxyAsync
     async def test_create_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        print("running test")
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
