@@ -215,8 +215,8 @@ Clients need to be able to verify that the attestation policy document was not m
 
 There are two properties provided in the [PolicyResult][attestation_policy_result] that can be used to verify that the service received the policy document:
 
-* [`PolicySigner`][attestation_policy_result_signer] - if the `set_policy` call included a signing certificate, this will be the certificate provided at the time of the `set_policy` call. If no policy signer was set, this will be null.
-* [`PolicyTokenHash`][attestation_policy_result_token_hash] - this is the hash of the [JSON Web Token][json_web_token] sent to the service.
+* [`PolicySigner`][attestation_policy_result_parameters] - if the `set_policy` call included a signing certificate, this will be the certificate provided at the time of the `set_policy` call. If no policy signer was set, this will be null.
+* [`PolicyTokenHash`][attestation_policy_result_parameters] - this is the hash of the [JSON Web Token][json_web_token] sent to the service.
 
 To verify the hash, clients can generate an attestation token and verify the hash generated from that token:
 
@@ -340,6 +340,13 @@ section of the project.
 
 <!-- LINKS -->
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/attestation/azure-security-attestation
+[azure_identity]: https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python-preview
+[DefaultAzureCredential]: https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python-preview
+[attestation_policy_result]:https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.policyresult?view=azure-python-preview
+[attestation_client]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.attestationclient?view=azure-python-preview
+[attestation_admin_client]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.attestationadministrationclient?view=azure-python-preview
+[attestation_response]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.attestationresponse?view=azure-python-preview
+[attestation_policy_result_parameters]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.policyresult?view=azure-python-preview#parameters
 [attestation_pypi]: https://aka.ms/azsdk/python/azure-security-attestation
 [API_reference]:https://docs.microsoft.com/python/api/overview/azure/security-attestation-readme?view=azure-python-preview
 [style-guide-msft]: https://docs.microsoft.com/style-guide/capitalization
