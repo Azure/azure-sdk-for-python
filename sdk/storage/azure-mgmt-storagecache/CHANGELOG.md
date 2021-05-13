@@ -1,39 +1,34 @@
 # Release History
 
-## 1.0.0 (2021-05-13)
+## 1.0.0b1 (2021-05-13)
 
-**Features**
+This is beta preview version.
 
-  - Added operation StorageTargetsOperations.begin_dns_refresh
-  - Added operation StorageTargetsOperations.begin_delete
-  - Added operation StorageTargetsOperations.begin_create_or_update
-  - Added operation CachesOperations.begin_upgrade_firmware
-  - Added operation CachesOperations.begin_start
-  - Added operation CachesOperations.begin_create_or_update
-  - Added operation CachesOperations.begin_flush
-  - Added operation CachesOperations.begin_delete
-  - Added operation CachesOperations.begin_stop
-  - Added operation CachesOperations.begin_debug_info
-  - Added operation group AscOperationsOperations
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
 
-**Breaking changes**
+**General breaking changes**
 
-  - Operation StorageTargetsOperations.get has a new signature
-  - Operation StorageTargetsOperations.list_by_cache has a new signature
-  - Operation SkusOperations.list has a new signature
-  - Operation Operations.list has a new signature
-  - Operation UsageModelsOperations.list has a new signature
-  - Removed operation StorageTargetsOperations.create_or_update
-  - Removed operation StorageTargetsOperations.delete
-  - Removed operation StorageTargetsOperations.dns_refresh
-  - Removed operation CachesOperations.delete
-  - Removed operation CachesOperations.upgrade_firmware
-  - Removed operation CachesOperations.start
-  - Removed operation CachesOperations.flush
-  - Removed operation CachesOperations.debug_info
-  - Removed operation CachesOperations.stop
-  - Removed operation CachesOperations.create_or_update
-  - Removed operation group AscOperations
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.3.0 (2020-03-01)
 
