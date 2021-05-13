@@ -575,6 +575,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         """
         new_name = kwargs.pop('new_name', None)
         if new_name:
+            warnings.simplefilter('always', DeprecationWarning)
             warnings.warn("`new_name` is no longer supported.", DeprecationWarning)
         container = self.get_container_client(new_name or deleted_container_name)
         try:

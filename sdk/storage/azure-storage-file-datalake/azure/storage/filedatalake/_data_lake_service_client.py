@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import warnings
 from typing import Optional, Dict, Any
 
 try:
@@ -300,8 +299,6 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
         new_name = kwargs.pop('new_name', None)
-        if new_name:
-            warnings.warn("`new_name` is no longer supported.", DeprecationWarning)
         file_system = self.get_file_system_client(new_name or name)
         self._blob_service_client.undelete_container(
             name, deleted_version, new_name=new_name, **kwargs)  # pylint: disable=protected-access
