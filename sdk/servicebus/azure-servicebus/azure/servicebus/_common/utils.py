@@ -228,8 +228,12 @@ def transform_messages_to_sendable_if_needed(messages):
 
 def _convert_to_single_service_bus_message(message, message_type):
     # type: (SingleMessageType, Type[ServiceBusMessage]) -> ServiceBusMessage
+    # pylint: disable=protected-access
     if isinstance(message, AMQPAnnotatedMessage):
-        message = message_type(body=None, message=message._message)  # pylint: disable=protected-access
+        message = message_type(
+            body=None,
+            message=message._get_outing_amqp_message()
+        )
 
     if isinstance(message, message_type):
         return message
