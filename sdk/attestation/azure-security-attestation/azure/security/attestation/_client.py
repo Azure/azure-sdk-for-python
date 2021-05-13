@@ -49,6 +49,9 @@ class AttestationClient(object):
     :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
+
+    Attestation is the process of verifying 
+
     """
 
     def __init__(
@@ -91,18 +94,19 @@ class AttestationClient(object):
         return signers
 
     @distributed_trace
-    def attest_sgx_enclave(self, quote, inittime_data=None, runtime_data=None, draft_policy=None, **kwargs):
-        # type:(bytes, Optional[AttestationData], Optional[AttestationData], Optional[str], Dict[str, Any]) -> AttestationResponse[AttestationResult]
+    def attest_sgx_enclave(self, quote, inittime_data=None, runtime_data=None, **kwargs):
+        # type:(bytes, Optional[AttestationData], Optional[AttestationData], Dict[str, Any]) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
         :param Optional[AttestationData] inittime_data: Data presented at the time that the SGX enclave was initialized.
         :param Optional[AttestationData] runtime_data: Data presented at the time that the SGX quote was created.
-        :param Optional[str] draft_policy: "draft" or "experimental" policy to be used with
+        :keyword draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API
+        :kwtype str:
 
         :return AttestationResponse[AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
 
@@ -124,7 +128,8 @@ class AttestationClient(object):
             quote=quote,
             init_time_data = inittime,
             runtime_data = runtime,
-            draft_policy_for_attestation=draft_policy)
+            draft_policy_for_attestation=kwargs.get('draft_policy', None))
+
         result = self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)
@@ -132,14 +137,14 @@ class AttestationClient(object):
         return AttestationResponse[AttestationResult](token, AttestationResult._from_generated(token.get_body()))
 
     @distributed_trace
-    def attest_open_enclave(self, report, inittime_data=None, runtime_data=None, draft_policy=None, **kwargs):
+    def attest_open_enclave(self, report, inittime_data=None, runtime_data=None, **kwargs):
         # type:(bytes, Optional[AttestationData], Optional[AttestationData], Optional[str], Dict[str, Any]) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
         :param Optional[AttestationData] inittime_data: Data presented at the time that the SGX enclave was initialized.
         :param Optional[AttestationData] runtime_data: Data presented at the time that the SGX quote was created.
-        :param Optional[str] draft_policy: "draft" or "experimental" policy to be used with
+        :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
@@ -164,7 +169,7 @@ class AttestationClient(object):
             report=report,
             init_time_data = inittime,
             runtime_data = runtime,
-            draft_policy_for_attestation = draft_policy)
+            draft_policy_for_attestation = kwargs.get('draft_policy', None))
         result = self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)

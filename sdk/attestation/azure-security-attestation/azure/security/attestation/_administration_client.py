@@ -93,14 +93,14 @@ class AttestationAdministrationClient(object):
         return AttestationResponse[str](token, actual_policy.decode('utf-8'))
 
     @distributed_trace
-    def set_policy(self, attestation_type, attestation_policy, signing_key=None, **kwargs): 
+    def set_policy(self, attestation_type, attestation_policy, **kwargs): 
         #type:(AttestationType, str, Optional[AttestationSigningKey], **Any) -> AttestationResponse[PolicyResult]
         """ Sets the attestation policy for the specified attestation type.
 
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to set the policy.
         :param str attestation_policy: Attestation policy to be set.
-        :param Optional[AttestationSigningKey] signing_key: Optional signing key to be
+        :keyword AttestationSigningKey signing_key: Signing key to be
             used to sign the policy before sending it to the service.
         :return AttestationResponse[PolicyResult]: Attestation service response encapsulating a :class:`PolicyResult`.
         :raises AttestationTokenValidationException: Raised when an attestation token is invalid.
@@ -114,6 +114,8 @@ class AttestationAdministrationClient(object):
             parameter does not need to be provided.
 
         """
+
+        signing_key = kwargs.get('signing_key', None) #type:AttestationSigningKey
         policy_token = AttestationToken[GeneratedStoredAttestationPolicy](
             body=GeneratedStoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
             signer=signing_key,
@@ -128,14 +130,14 @@ class AttestationAdministrationClient(object):
         return AttestationResponse[PolicyResult](token, PolicyResult._from_generated(token.get_body()))
 
     @distributed_trace
-    def reset_policy(self, attestation_type, signing_key=None, **kwargs): 
-        #type:(AttestationType, Optional[AttestationSigningKey], **Any) -> AttestationResponse[PolicyResult]
+    def reset_policy(self, attestation_type, **kwargs): 
+        #type:(AttestationType,  **dict[str, Any]) -> AttestationResponse[PolicyResult]
         """ Resets the attestation policy for the specified attestation type to the default value.
 
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to set the policy.
         :param str attestation_policy: Attestation policy to be reset.
-        :param Optional[AttestationSigningKey] signing_key: Optional signing key to be
+        :keyword AttestationSigningKey signing_key: Signing key to be
             used to sign the policy before sending it to the service.
         :return AttestationResponse[PolicyResult]: Attestation service response encapsulating a :class:`PolicyResult`.
         :raises AttestationTokenValidationException: Raised when an attestation token is invalid.
@@ -148,6 +150,7 @@ class AttestationAdministrationClient(object):
             If the attestation instance is in *AAD* mode, then the `signing_key` 
             parameter does not need to be provided.
         """
+        signing_key = kwargs.get('signing_key', None) #type:AttestationSigningKey
         policy_token = AttestationToken(
             body=None,
             signer=signing_key)
