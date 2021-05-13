@@ -133,7 +133,7 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         :param pipeline: The pipeline object
         :type pipeline: azure.core.pipeline.Pipeline
         :keyword bool decompress: If True which is default, will attempt to decode the body based
-            on the ‘content-encoding’ header.
+            on the *content-encoding* header.
         """
 
     def parts(self) -> AsyncIterator:

@@ -16,7 +16,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -30,11 +30,11 @@ interactions:
         language code. Supported languages: en,es. For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 8e269fc7-d566-42ce-bee0-64ab0be2c855
+      - 44443643-e4dd-40c0-a3ed-1c02159a5459
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Apr 2021 20:11:56 GMT
+      - Sat, 08 May 2021 07:01:43 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +42,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3'
+      - '1'
     status:
       code: 200
       message: OK
