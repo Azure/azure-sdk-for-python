@@ -410,7 +410,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
     async def test_create_blob_with_requests_async(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
         # Act
-        uri = "http://www.gutenberg.org/files/59466/59466-0.txt"
+        uri = "https://www.gutenberg.org/files/59466/59466-0.txt"
         data = requests.get(uri, stream=True)
         blob = self.bsc.get_blob_client(self.container_name, "gutenberg")
         resp = await blob.upload_blob(data=data.raw, overwrite=True)
@@ -424,7 +424,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         await self._setup(storage_account, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, "gutenberg_async")
         # Act
-        uri = "http://www.gutenberg.org/files/59466/59466-0.txt"
+        uri = "https://www.gutenberg.org/files/59466/59466-0.txt"
         async with aiohttp.ClientSession() as session:
             async with session.get(uri) as data:
                 async for text, _ in data.content.iter_chunks():
@@ -1514,7 +1514,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
     async def test_abort_copy_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account, storage_account_key)
-        source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
+        source_blob = "https://www.gutenberg.org/files/59466/59466-0.txt"
         copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
 
         # Act

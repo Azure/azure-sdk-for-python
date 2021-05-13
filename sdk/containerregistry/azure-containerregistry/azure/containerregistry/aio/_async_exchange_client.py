@@ -3,7 +3,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import re
 import time
 from typing import TYPE_CHECKING, Dict, List, Any
 
@@ -37,12 +36,7 @@ class ACRExchangeClient(object):
     :type credential: :class:`azure.core.credentials.TokenCredential`
     """
 
-    BEARER = "Bearer"
-    AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
-
-    def __init__(
-        self, endpoint: str, credential: "AsyncTokencredential", **kwargs: Dict[str, Any]
-    ) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokencredential", **kwargs: Dict[str, Any]) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint

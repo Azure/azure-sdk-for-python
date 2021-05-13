@@ -9,31 +9,31 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '240'
+      - '228'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyze?includeTextDetails=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 2fec5873-c642-41e0-87df-e2a0f4d189b7
+      - eaadf9b8-0768-4f09-a79a-63cf03d3caae
       content-length:
       - '0'
       date:
-      - Thu, 18 Mar 2021 03:14:37 GMT
+      - Mon, 10 May 2021 23:59:54 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyzeResults/2fec5873-c642-41e0-87df-e2a0f4d189b7
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/eaadf9b8-0768-4f09-a79a-63cf03d3caae
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '94'
+      - '161'
     status:
       code: 202
       message: Accepted
@@ -47,13 +47,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyzeResults/2fec5873-c642-41e0-87df-e2a0f4d189b7
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/eaadf9b8-0768-4f09-a79a-63cf03d3caae
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-18T03:14:38Z",
-        "lastUpdatedDateTime": "2021-03-18T03:14:41Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-05-10T23:59:54Z",
+        "lastUpdatedDateTime": "2021-05-10T23:59:57Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 7.2821, "width": 8.5, "height":
         11, "unit": "inch", "lines": [{"text": "JOHN", "boundingBox": [1.7266, 3.7442,
         2.9551, 3.8771, 2.9108, 4.2205, 1.6934, 4.0765], "words": [{"text": "JOHN",
@@ -242,19 +242,19 @@ interactions:
         "#/readResults/1/lines/6/words/5"]}]}}}]}}'
     headers:
       apim-request-id:
-      - 0fae3abc-622a-4b7e-a605-5d09e4a3f99c
+      - 4383d608-7cda-4f13-8769-99b7db5d993e
       content-length:
       - '13799'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Mar 2021 03:14:43 GMT
+      - Mon, 10 May 2021 23:59:59 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '20'
+      - '21'
     status:
       code: 200
       message: OK

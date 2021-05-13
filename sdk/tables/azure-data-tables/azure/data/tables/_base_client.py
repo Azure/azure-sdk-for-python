@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Optional, Any, List
+from typing import Dict, Optional, Any, List, Mapping
 from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
@@ -13,9 +13,8 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 import six
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.utils import parse_connection_string
-from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from azure.core.pipeline.transport import (
     HttpTransport,
     HttpRequest,
@@ -31,7 +30,7 @@ from azure.core.pipeline.policies import (
     AzureSasCredentialPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
-    RequestIdPolicy
+    RequestIdPolicy,
 )
 
 from ._generated import AzureTable
@@ -41,7 +40,7 @@ from ._constants import (
     STORAGE_OAUTH_SCOPE,
     SERVICE_HOST_BASE,
 )
-from ._error import RequestTooLargeError
+from ._error import RequestTooLargeError, TableTransactionError, _decode_error
 from ._models import LocationMode
 from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
@@ -50,7 +49,6 @@ from ._policies import (
     StorageHosts,
     TablesRetryPolicy,
 )
-from ._models import BatchErrorException
 from ._sdk_moniker import SDK_MONIKER
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07"]
@@ -113,7 +111,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 self.account_name = account[0] if len(account) > 1 else None
 
         secondary_hostname = None
-        self.credential = format_shared_key_credential(account, credential)
+        self.credential = credential
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "account_name"):
@@ -191,17 +189,6 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         return self._hosts[LocationMode.SECONDARY]
 
     @property
-    def location_mode(self):
-        """The location mode that the client is currently using.
-
-        By default this will be "primary". Options include "primary" and "secondary".
-
-        :type: str
-        """
-
-        return self._location_mode
-
-    @property
     def api_version(self):
         """The version of the Storage API used for requests.
 
@@ -214,12 +201,12 @@ class TablesBaseClient(AccountHostsMixin):
 
     def __init__(
         self,
-        account_url,  # type: str
+        endpoint,  # type: str
         credential=None,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        super(TablesBaseClient, self).__init__(account_url, credential=credential, **kwargs)
+        super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),
@@ -261,16 +248,13 @@ class TablesBaseClient(AccountHostsMixin):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
             self._credential_policy = AzureSasCredentialPolicy(credential)
+        elif isinstance(credential, AzureNamedKeyCredential):
+            self._credential_policy = SharedKeyCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
-    def _batch_send(
-        self,
-        entities,  # type: List[TableEntity]
-        *reqs,  # type: List[HttpRequest]
-        **kwargs
-    ):
-        # (...) -> List[HttpResponse]
+    def _batch_send(self, *reqs, **kwargs):
+        # type: (List[HttpRequest], Any) -> List[Mapping[str, Any]]
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
@@ -297,44 +281,27 @@ class TablesBaseClient(AccountHostsMixin):
         )
         pipeline_response = self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
-
-        if response.status_code == 403:
-            raise ClientAuthenticationError(
-                message="There was an error authenticating with the service",
-                response=response,
-            )
-        if response.status_code == 404:
-            raise ResourceNotFoundError(
-                message="The resource could not be found", response=response
-            )
         if response.status_code == 413:
-            raise RequestTooLargeError(
-                message="The request was too large", response=response
-            )
+            raise _decode_error(
+                response,
+                error_message="The transaction request was too large",
+                error_type=RequestTooLargeError)
         if response.status_code != 202:
-            raise BatchErrorException(
-                message="There is a failure in the batch operation.",
-                response=response,
-                parts=None,
-            )
+            raise _decode_error(response)
 
         parts = list(response.parts())
-        if any(p for p in parts if not 200 <= p.status_code < 300):
-            if any(p for p in parts if p.status_code == 404):
-                raise ResourceNotFoundError(
-                    message="The resource could not be found", response=response
-                )
-            if any(p for p in parts if p.status_code == 413):
-                raise RequestTooLargeError(
-                    message="The request was too large", response=response
-                )
-
-            raise BatchErrorException(
-                message="There is a failure in the batch operation.",
-                response=response,
-                parts=parts,
-                )
-        return list(zip(entities, (extract_batch_part_metadata(p) for p in parts)))
+        error_parts = [p for p in parts if not 200 <= p.status_code < 300]
+        if any(error_parts):
+            if error_parts[0].status_code == 413:
+                raise _decode_error(
+                    response,
+                    error_message="The transaction request was too large",
+                    error_type=RequestTooLargeError)
+            raise _decode_error(
+                response=error_parts[0],
+                error_type=TableTransactionError
+            )
+        return [extract_batch_part_metadata(p) for p in parts]
 
     def close(self):
         # type: () -> None
@@ -368,34 +335,17 @@ class TransportWrapper(HttpTransport):
         pass
 
 
-def format_shared_key_credential(account, credential):
-    if isinstance(credential, six.string_types):
-        if len(account) < 2:
-            raise ValueError(
-                "Unable to determine account name for shared key credential."
-            )
-        credential = {"account_name": account[0], "account_key": credential}
-    if isinstance(credential, dict):
-        if "account_name" not in credential:
-            raise ValueError("Shared key credential missing 'account_name")
-        if "account_key" not in credential:
-            raise ValueError("Shared key credential missing 'account_key")
-        return SharedKeyCredentialPolicy(**credential)
-    return credential
-
-
 def parse_connection_str(conn_str, credential, keyword_args):
     conn_settings = parse_connection_string(conn_str)
     primary = None
     secondary = None
     if not credential:
         try:
-            credential = {
-                "account_name": conn_settings["accountname"],
-                "account_key": conn_settings["accountkey"],
-            }
+            credential = AzureNamedKeyCredential(name=conn_settings["accountname"], key=conn_settings["accountkey"])
         except KeyError:
             credential = conn_settings.get("sharedaccesssignature")
+            # if "sharedaccesssignature" in conn_settings:
+            #     credential = AzureSasCredential(conn_settings['sharedaccesssignature'])
 
     primary = conn_settings.get("tableendpoint")
     secondary = conn_settings.get("tablesecondaryendpoint")

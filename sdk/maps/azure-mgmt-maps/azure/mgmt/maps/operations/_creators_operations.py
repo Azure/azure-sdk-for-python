@@ -68,7 +68,7 @@ class CreatorsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-01-preview"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -101,7 +101,7 @@ class CreatorsOperations(object):
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -126,7 +126,7 @@ class CreatorsOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         creator_name,  # type: str
-        creator_create_parameters,  # type: "_models.CreatorCreateParameters"
+        creator_resource,  # type: "_models.Creator"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Creator"
@@ -140,8 +140,8 @@ class CreatorsOperations(object):
         :type account_name: str
         :param creator_name: The name of the Maps Creator instance.
         :type creator_name: str
-        :param creator_create_parameters: The new or updated parameters for the Creator resource.
-        :type creator_create_parameters: ~azure.mgmt.maps.models.CreatorCreateParameters
+        :param creator_resource: The new or updated parameters for the Creator resource.
+        :type creator_resource: ~azure.mgmt.maps.models.Creator
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Creator, or the result of cls(response)
         :rtype: ~azure.mgmt.maps.models.Creator
@@ -152,7 +152,7 @@ class CreatorsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-01-preview"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -176,7 +176,7 @@ class CreatorsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(creator_create_parameters, 'CreatorCreateParameters')
+        body_content = self._serialize.body(creator_resource, 'Creator')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -229,7 +229,7 @@ class CreatorsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-01-preview"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -298,7 +298,7 @@ class CreatorsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-01-preview"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         # Construct URL
@@ -359,7 +359,7 @@ class CreatorsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-01-preview"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         # Construct URL

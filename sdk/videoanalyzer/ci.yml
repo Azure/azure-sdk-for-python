@@ -33,3 +33,5 @@ extends:
     - name: azure-media-videoanalyzer-edge
       safeName: azuremediavideoanalyzeredge
 
+    - name: azure-mgmt-videoanalyzer
+      safeName: azuremgmtvideoanalyzer
