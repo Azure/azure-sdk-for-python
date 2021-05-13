@@ -10,25 +10,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/keyPhrases?showStats=false
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: af,bg,ca,da,de,el,en,es,et,fi,fr,hr,hu,id,it,ja,ko,lv,nl,no,pl,pt-BR,pt-PT,ro,ru,sk,sl,sv,tr.
-        For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=key-phrase-extraction"}}}],"modelVersion":"2020-07-01"}'
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=key-phrase-extraction"}}}],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: 491e6cce-e2e0-4513-a0db-fbd148350135
+      apim-request-id: 23621160-47b4-44da-92e1-6eae930ca24b
       content-type: application/json; charset=utf-8
-      date: Sat, 08 May 2021 07:00:09 GMT
+      date: Thu, 13 May 2021 22:35:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3'
+      x-envoy-upstream-service-time: '2'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/keyPhrases?showStats=false
+    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/keyPhrases?showStats=false
 version: 1
