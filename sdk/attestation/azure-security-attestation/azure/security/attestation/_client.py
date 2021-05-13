@@ -50,8 +50,6 @@ class AttestationClient(object):
 
     For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
 
-    Attestation is the process of verifying 
-
     """
 
     def __init__(
@@ -95,18 +93,17 @@ class AttestationClient(object):
 
     @distributed_trace
     def attest_sgx_enclave(self, quote, inittime_data=None, runtime_data=None, **kwargs):
-        # type:(bytes, Optional[AttestationData], Optional[AttestationData], Dict[str, Any]) -> AttestationResponse[AttestationResult]
+        # type:(bytes, AttestationData, AttestationData, Dict[str, Any]) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
-        :param Optional[AttestationData] inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :param Optional[AttestationData] runtime_data: Data presented at the time that the SGX quote was created.
-        :keyword draft_policy: "draft" or "experimental" policy to be used with
+        :keyword AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :keyword AttestationData runtime_data: Data presented at the time that the SGX quote was created.
+        :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API
-        :kwtype str:
 
         :return AttestationResponse[AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
 
@@ -138,12 +135,12 @@ class AttestationClient(object):
 
     @distributed_trace
     def attest_open_enclave(self, report, inittime_data=None, runtime_data=None, **kwargs):
-        # type:(bytes, Optional[AttestationData], Optional[AttestationData], Optional[str], Dict[str, Any]) -> AttestationResponse[AttestationResult]
+        # type:(bytes, AttestationData, AttestationData, Dict[str, Any]) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
-        :param Optional[AttestationData] inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :param Optional[AttestationData] runtime_data: Data presented at the time that the SGX quote was created.
+        :keyword AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :keyword AttestationData runtime_data: Data presented at the time that the open_enclave report was created.
         :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
