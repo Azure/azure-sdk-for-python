@@ -1,5 +1,30 @@
 # Release History
 
+## 13.0.0 (2021-05-13)
+
+**Features**
+
+  - Model WhatIfChange has a new parameter unsupported_reason
+  - Model TemplateSpecVersion has a new parameter main_template
+  - Model TemplateSpecVersion has a new parameter ui_form_definition
+  - Model TemplateSpecVersion has a new parameter metadata
+  - Model TemplateSpecVersion has a new parameter linked_templates
+  - Model GenericResourceExpanded has a new parameter extended_location
+  - Model Provider has a new parameter provider_authorization_consent_state
+  - Model GenericResource has a new parameter extended_location
+  - Model Resource has a new parameter extended_location
+  - Model TemplateSpec has a new parameter metadata
+  - Added operation ProvidersOperations.provider_permissions
+
+**Breaking changes**
+
+  - Operation ProvidersOperations.register has a new signature
+  - Operation TemplateSpecsOperations.get has a new signature
+  - Operation TemplateSpecsOperations.list_by_resource_group has a new signature
+  - Operation TemplateSpecsOperations.list_by_subscription has a new signature
+  - Model TemplateSpecVersion no longer has parameter artifacts
+  - Model TemplateSpecVersion no longer has parameter template
+
 ## 12.1.0 (2021-03-05)
 
 **Features**

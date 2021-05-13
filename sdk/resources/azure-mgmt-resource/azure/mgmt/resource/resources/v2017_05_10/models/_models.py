@@ -968,6 +968,9 @@ class ProviderResourceType(Model):
      list[~azure.mgmt.resource.resources.v2017_05_10.models.AliasType]
     :param api_versions: The API version.
     :type api_versions: list[str]
+    :param zone_mappings:
+    :type zone_mappings:
+     list[~azure.mgmt.resource.resources.v2017_05_10.models.ZoneMapping]
     :param properties: The properties.
     :type properties: dict[str, str]
     """
@@ -977,6 +980,7 @@ class ProviderResourceType(Model):
         'locations': {'key': 'locations', 'type': '[str]'},
         'aliases': {'key': 'aliases', 'type': '[AliasType]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
+        'zone_mappings': {'key': 'zoneMappings', 'type': '[ZoneMapping]'},
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
@@ -986,6 +990,7 @@ class ProviderResourceType(Model):
         self.locations = kwargs.get('locations', None)
         self.aliases = kwargs.get('aliases', None)
         self.api_versions = kwargs.get('api_versions', None)
+        self.zone_mappings = kwargs.get('zone_mappings', None)
         self.properties = kwargs.get('properties', None)
 
 
@@ -1435,3 +1440,23 @@ class TemplateLink(Model):
         super(TemplateLink, self).__init__(**kwargs)
         self.uri = kwargs.get('uri', None)
         self.content_version = kwargs.get('content_version', None)
+
+
+class ZoneMapping(Model):
+    """ZoneMapping.
+
+    :param location: The location of the zone mapping.
+    :type location: str
+    :param zones:
+    :type zones: list[str]
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ZoneMapping, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.zones = kwargs.get('zones', None)

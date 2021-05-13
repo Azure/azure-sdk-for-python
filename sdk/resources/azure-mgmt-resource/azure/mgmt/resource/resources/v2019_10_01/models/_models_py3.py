@@ -1355,6 +1355,9 @@ class ProviderResourceType(Model):
      list[~azure.mgmt.resource.resources.v2019_10_01.models.Alias]
     :param api_versions: The API version.
     :type api_versions: list[str]
+    :param zone_mappings:
+    :type zone_mappings:
+     list[~azure.mgmt.resource.resources.v2019_10_01.models.ZoneMapping]
     :param capabilities: The additional capabilities offered by this resource
      type.
     :type capabilities: str
@@ -1367,16 +1370,18 @@ class ProviderResourceType(Model):
         'locations': {'key': 'locations', 'type': '[str]'},
         'aliases': {'key': 'aliases', 'type': '[Alias]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
+        'zone_mappings': {'key': 'zoneMappings', 'type': '[ZoneMapping]'},
         'capabilities': {'key': 'capabilities', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource_type: str=None, locations=None, aliases=None, api_versions=None, capabilities: str=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, resource_type: str=None, locations=None, aliases=None, api_versions=None, zone_mappings=None, capabilities: str=None, properties=None, **kwargs) -> None:
         super(ProviderResourceType, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.locations = locations
         self.aliases = aliases
         self.api_versions = api_versions
+        self.zone_mappings = zone_mappings
         self.capabilities = capabilities
         self.properties = properties
 
@@ -2070,3 +2075,23 @@ class WhatIfPropertyChange(Model):
         self.before = before
         self.after = after
         self.children = children
+
+
+class ZoneMapping(Model):
+    """ZoneMapping.
+
+    :param location: The location of the zone mapping.
+    :type location: str
+    :param zones:
+    :type zones: list[str]
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(self, *, location: str=None, zones=None, **kwargs) -> None:
+        super(ZoneMapping, self).__init__(**kwargs)
+        self.location = location
+        self.zones = zones
