@@ -5,6 +5,9 @@
 - Added support `set_service_properties()`,`get_service_properties()` on `DataLakeServiceClient`
 - Added support for `list_deleted_paths()` on `FileSystemClient`
 
+**Fixes**
+- Fixed initiating `PathProperties` problem (#18490)
+
 ## 12.3.1 (2021-04-20)
 **Fixes**
 - Fixed `recursive=True` on file deletion
