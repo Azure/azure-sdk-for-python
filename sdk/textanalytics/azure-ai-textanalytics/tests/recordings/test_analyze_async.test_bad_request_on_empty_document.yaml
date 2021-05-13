@@ -2,17 +2,17 @@ interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
       "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
-      false}}], "entityLinkingTasks": []}, "analysisInput": {"documents": [{"id":
-      "0", "text": "", "language": "en"}]}}'
+      false}}], "entityLinkingTasks": [], "sentimentAnalysisTasks": []}, "analysisInput":
+      {"documents": [{"id": "0", "text": "", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '276'
+      - '306'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
   response:
@@ -20,13 +20,13 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Missing
         input documents."}}}'
     headers:
-      apim-request-id: ac3bc211-ca61-47fb-b7db-ca0fea6123a6
+      apim-request-id: 1f2b7b3a-a61e-4bc5-ac5d-d8d4fdfd8b0e
       content-type: application/json; charset=utf-8
-      date: Tue, 27 Apr 2021 19:36:53 GMT
+      date: Sat, 08 May 2021 06:55:15 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 400
       message: Bad Request

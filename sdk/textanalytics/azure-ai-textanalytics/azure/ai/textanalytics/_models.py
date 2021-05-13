@@ -1356,26 +1356,27 @@ class SentimentConfidenceScores(DictMixin):
             .format(self.positive, self.neutral, self.negative)[:1024]
 
 
-class AnalyzeBatchActionsType(str, Enum):
-    """The type of batch action that was applied to the documents
+class AnalyzeActionsType(str, Enum):
+    """The type of action that was applied to the documents
     """
     RECOGNIZE_ENTITIES = "recognize_entities"  #: Entities Recognition action.
     RECOGNIZE_PII_ENTITIES = "recognize_pii_entities"  #: PII Entities Recognition action.
     EXTRACT_KEY_PHRASES = "extract_key_phrases"  #: Key Phrase Extraction action.
-    RECOGNIZE_LINKED_ENTITIES = "recognize_linked_entities" #: Linked Entities Recognition action.
+    RECOGNIZE_LINKED_ENTITIES = "recognize_linked_entities"  #: Linked Entities Recognition action.
+    ANALYZE_SENTIMENT = "analyze_sentiment"  #: Sentiment Analysis action.
 
 
-class AnalyzeBatchActionsResult(DictMixin):
-    """AnalyzeBatchActionsResult contains the results of a recognize entities action
-    on a list of documents. Returned by `begin_analyze_batch_actions`
+class AnalyzeActionsResult(DictMixin):
+    """AnalyzeActionsResult contains the results of a recognize entities action
+    on a list of documents. Returned by `begin_analyze_actions`
 
     :ivar document_results: A list of objects containing results for all Entity Recognition actions
         included in the analysis.
     :vartype document_results: list[~azure.ai.textanalytics.RecognizeEntitiesResult]
     :ivar bool is_error: Boolean check for error item when iterating over list of
-        actions. Always False for an instance of a AnalyzeBatchActionsResult.
-    :ivar action_type: The type of batch action this class is a result of.
-    :vartype action_type: str or ~azure.ai.textanalytics.AnalyzeBatchActionsType
+        actions. Always False for an instance of a AnalyzeActionsResult.
+    :ivar action_type: The type of action this class is a result of.
+    :vartype action_type: str or ~azure.ai.textanalytics.AnalyzeActionsType
     :ivar ~datetime.datetime completed_on: Date and time (UTC) when the result completed
         on the service.
     :ivar statistics: Overall statistics for the action result.
@@ -1389,7 +1390,7 @@ class AnalyzeBatchActionsResult(DictMixin):
         self.statistics = kwargs.get("statistics")
 
     def __repr__(self):
-        return "AnalyzeBatchActionsResult(document_results={}, is_error={}, action_type={}, completed_on={}, " \
+        return "AnalyzeActionsResult(document_results={}, is_error={}, action_type={}, completed_on={}, " \
             "statistics={})".format(
                 repr(self.document_results),
                 self.is_error,
@@ -1398,8 +1399,9 @@ class AnalyzeBatchActionsResult(DictMixin):
                 repr(self.statistics)
             )[:1024]
 
-class AnalyzeBatchActionsError(DictMixin):
-    """AnalyzeBatchActionsError is an error object which represents an an
+
+class AnalyzeActionsError(DictMixin):
+    """AnalyzeActionsError is an error object which represents an an
     error response for an action.
 
     :ivar error: The action result error.
@@ -1413,7 +1415,7 @@ class AnalyzeBatchActionsError(DictMixin):
         self.is_error = True
 
     def __repr__(self):
-        return "AnalyzeBatchActionsError(error={}, is_error={}".format(
+        return "AnalyzeActionsError(error={}, is_error={}".format(
             repr(self.error), self.is_error
         )
 
@@ -1427,8 +1429,8 @@ class AnalyzeBatchActionsError(DictMixin):
 class RecognizeEntitiesAction(DictMixin):
     """RecognizeEntitiesAction encapsulates the parameters for starting a long-running Entities Recognition operation.
 
-    If you just want to recognize entities in a list of documents, and not perform a batch
-    of long running actions on the input of documents, call method `recognize_entities` instead
+    If you just want to recognize entities in a list of documents, and not perform multiple
+    long running actions on the input of documents, call method `recognize_entities` instead
     of interfacing with this model.
 
     :keyword str model_version: The model version to use for the analysis.
@@ -1460,12 +1462,64 @@ class RecognizeEntitiesAction(DictMixin):
         )
 
 
+class AnalyzeSentimentAction(DictMixin):
+    """AnalyzeSentimentAction encapsulates the parameters for starting a long-running
+    Sentiment Analysis operation.
+
+    If you just want to analyze sentiment in a list of documents, and not perform multiple
+    long running actions on the input of documents, call method `analyze_sentiment` instead
+    of interfacing with this model.
+
+    :keyword str model_version: The model version to use for the analysis.
+    :keyword bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
+        granular analysis around the aspects of a product or service (also known as
+        aspect-based sentiment analysis). If set to true, the returned
+        :class:`~azure.ai.textanalytics.SentenceSentiment` objects
+        will have property `mined_opinions` containing the result of this analysis.
+    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
+        granular analysis around the aspects of a product or service (also known as
+        aspect-based sentiment analysis). If set to true, the returned
+        :class:`~azure.ai.textanalytics.SentenceSentiment` objects
+        will have property `mined_opinions` containing the result of this analysis.
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    """
+
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get('model_version', "latest")
+        self.show_opinion_mining = kwargs.get('show_opinion_mining', False)
+        self.string_index_type = kwargs.get('string_index_type', None)
+
+    def __repr__(self, **kwargs):
+        return "AnalyzeSentimentAction(model_version={}, show_opinion_mining={}, string_index_type={}".format(
+            self.model_version,
+            self.show_opinion_mining,
+            self.string_index_type
+        )[:1024]
+
+    def to_generated(self):
+        return _latest_preview_models.SentimentAnalysisTask(
+            parameters=_latest_preview_models.SentimentAnalysisTaskParameters(
+                model_version=self.model_version,
+                opinion_mining=self.show_opinion_mining,
+                string_index_type=self.string_index_type
+            )
+        )
+
+
 class RecognizePiiEntitiesAction(DictMixin):
     """RecognizePiiEntitiesAction encapsulates the parameters for starting a long-running PII
     Entities Recognition operation.
 
-    If you just want to recognize pii entities in a list of documents, and not perform a batch
-    of long running actions on the input of documents, call method `recognize_pii_entities` instead
+    If you just want to recognize pii entities in a list of documents, and not perform multiple
+    long running actions on the input of documents, call method `recognize_pii_entities` instead
     of interfacing with this model.
 
     :keyword str model_version: The model version to use for the analysis.
@@ -1510,8 +1564,8 @@ class ExtractKeyPhrasesAction(DictMixin):
     """ExtractKeyPhrasesAction encapsulates the parameters for starting a long-running key phrase
     extraction operation
 
-    If you just want to extract key phrases from a list of documents, and not perform a batch
-    of long running actions on the input of documents, call method `extract_key_phrases` instead
+    If you just want to extract key phrases from a list of documents, and not perform multiple
+    long running actions on the input of documents, call method `extract_key_phrases` instead
     of interfacing with this model.
 
     :keyword str model_version: The model version to use for the analysis.
@@ -1537,8 +1591,8 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     """RecognizeEntitiesAction encapsulates the parameters for starting a long-running Linked Entities
     Recognition operation.
 
-    If you just want to recognize linked entities in a list of documents, and not perform a batch
-    of long running actions on the input of documents, call method `recognize_linked_entities` instead
+    If you just want to recognize linked entities in a list of documents, and not perform multiple
+    long running actions on the input of documents, call method `recognize_linked_entities` instead
     of interfacing with this model.
 
     :keyword str model_version: The model version to use for the analysis.

@@ -1,5 +1,14 @@
 # Release History
 
+## 2.0.0 (2021-05-08)
+
+**Breaking changes**
+
+  - Model MaintenanceConfiguration no longer has parameter install_patches
+  - Removed operation ConfigurationAssignmentsOperations.get
+  - Removed operation ConfigurationAssignmentsOperations.get_parent
+  - Removed operation group ConfigurationAssignmentsWithinSubscriptionOperations
+
 ## 1.0.0 (2021-04-20)
 
 **Features**

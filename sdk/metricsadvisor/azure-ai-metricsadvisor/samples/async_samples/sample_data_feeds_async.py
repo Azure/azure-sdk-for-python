@@ -35,7 +35,7 @@ async def sample_create_data_feed_async():
     from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
     from azure.ai.metricsadvisor.aio import MetricsAdvisorAdministrationClient
     from azure.ai.metricsadvisor.models import (
-        SQLServerDataFeed,
+        SQLServerDataFeedSource,
         DataFeedSchema,
         DataFeedMetric,
         DataFeedDimension,
@@ -55,7 +55,7 @@ async def sample_create_data_feed_async():
     async with client:
         data_feed = await client.create_data_feed(
             name="My data feed",
-            source=SQLServerDataFeed(
+            source=SQLServerDataFeedSource(
                 connection_string=sql_server_connection_string,
                 query=query,
             ),

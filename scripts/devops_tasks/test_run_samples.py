@@ -100,6 +100,22 @@ IGNORED_SAMPLES = {
         "mgmt_topic_async.py",
         "proxy_async.py",
         "receive_deferred_message_queue_async.py"
+    ],
+    "azure-communication-chat": [
+        "chat_client_sample_async.py",
+        "chat_client_sample.py",
+        "chat_thread_client_sample_async.py",
+        "chat_thread_client_sample.py"
+    ],
+    "azure-communication-phonenumbers": [
+        "purchase_phone_number_sample_async.py",
+        "purchase_phone_number_sample.py",
+        "release_phone_number_sample_async.py",
+        "release_phone_number_sample.py"
+    ],
+    "azure-ai-formrecognizer": [
+        "sample_authentication.py",
+        "sample_authentication_async.py"
     ]
 }
 

@@ -9,25 +9,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://searchf7671424.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"value":[{"@search.text":"Cheapest hotel in town. Infact, a motel.","hotelId":"2"},{"@search.text":"Secret
-        Point Motel","hotelId":"9"}]}'
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
+        uc4/evS9X/zR79nkWT2dj9v8XfvRo49O5nm2yps2nVdtXqbFMm2rq+U4PVueZ9N2lGbpAl+MPxp9
+        xC3OZvTS3ke/ZNSD9Dqf1nmbvqyKZZt+gbbBOw8/+iXf/yX/D1jCnWCJAAAA
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-length: '216'
       content-type: application/json; odata.metadata=none
-      date: Thu, 25 Mar 2021 20:28:27 GMT
-      elapsed-time: '139'
+      date: Sat, 08 May 2021 06:27:51 GMT
+      elapsed-time: '207'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: a8162aec-8da8-11eb-b692-a0481ca055a9
+      request-id: 83ac1db3-afc6-11eb-82cd-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

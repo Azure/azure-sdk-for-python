@@ -108,7 +108,7 @@ class BlobServiceSamplesAsync(object):
                     test_containers.append(name)
 
                 for container in test_containers:
-                    await blob_service_client.delete_container(container)
+                    print(container['name'], container['metadata'])
                 # [END bsc_list_containers]
 
             finally:

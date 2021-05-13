@@ -12,34 +12,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: "{\"documents\":[{\"id\":\"1\",\"sentiment\":\"neutral\",\"confidenceScores\"\
-        :{\"positive\":0.05,\"neutral\":0.94,\"negative\":0.01},\"sentences\":[{\"\
-        sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.05,\"neutral\"\
-        :0.94,\"negative\":0.01},\"offset\":0,\"length\":41,\"text\":\"I should take\
-        \ my cat to the veterinarian.\"}],\"warnings\":[]},{\"id\":\"2\",\"sentiment\"\
-        :\"neutral\",\"confidenceScores\":{\"positive\":0.03,\"neutral\":0.92,\"negative\"\
-        :0.05},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"\
-        positive\":0.03,\"neutral\":0.92,\"negative\":0.05},\"offset\":0,\"length\"\
-        :39,\"text\":\"Este es un document escrito en Espa\xF1ol.\"}],\"warnings\"\
-        :[]},{\"id\":\"3\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\"\
-        :0.13,\"neutral\":0.81,\"negative\":0.06},\"sentences\":[{\"sentiment\":\"\
-        neutral\",\"confidenceScores\":{\"positive\":0.13,\"neutral\":0.81,\"negative\"\
-        :0.06},\"offset\":0,\"length\":4,\"text\":\"\u732B\u306F\u5E78\u305B\"}],\"\
-        warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}"
+      string: "{\"documents\":[{\"id\":\"1\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.05,\"neutral\":0.94,\"negative\":0.01},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.05,\"neutral\":0.94,\"negative\":0.01},\"offset\":0,\"length\":41,\"text\":\"I
+        should take my cat to the veterinarian.\"}],\"warnings\":[]},{\"id\":\"2\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.03,\"neutral\":0.92,\"negative\":0.05},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.03,\"neutral\":0.92,\"negative\":0.05},\"offset\":0,\"length\":39,\"text\":\"Este
+        es un document escrito en Espa\xF1ol.\"}],\"warnings\":[]},{\"id\":\"3\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.13,\"neutral\":0.81,\"negative\":0.06},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.13,\"neutral\":0.81,\"negative\":0.06},\"offset\":0,\"length\":4,\"text\":\"\u732B\u306F\u5E78\u305B\"}],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}"
     headers:
-      apim-request-id: 0b10d7d4-b3a1-461a-a008-e581b9a83fb7
+      apim-request-id: 930d5655-1a86-424f-9dd9-7ae03a1951b9
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
-      date: Tue, 27 Apr 2021 19:39:10 GMT
+      date: Sat, 08 May 2021 06:58:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '97'
+      x-envoy-upstream-service-time: '113'
     status:
       code: 200
       message: OK
