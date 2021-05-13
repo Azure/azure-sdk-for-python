@@ -15,29 +15,28 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/12.0.0 Azure-SDK-For-Python
+      - python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-resource/13.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Resources/deployments/pytestlinkedafa117b7?api-version=2020-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Resources/deployments/pytestlinkedafa117b7?api-version=2021-04-01
   response:
     body:
-      string: '{"error":{"code":"InvalidTemplateDeployment","message":"The template
-        deployment ''pytestlinkedafa117b7'' is not valid according to the validation
-        procedure. The tracking id is ''0167cf6c-1f0f-4c94-91bb-2bcd9b2e10b2''. See
-        inner errors for details.","details":[{"code":"InvalidDomainNameLabel","message":"The
-        domain name label GEN-UNIQUE is invalid. It must conform to the following
-        regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.","details":[]}]}}'
+      string: '{"error":{"code":"InvalidContentLink","message":"Unable to download
+        deployment content from ''https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.json''.
+        The tracking Id is ''a0f46344-abba-44b7-97c7-a1e0376e0c79''. Please see https://aka.ms/arm-deploy
+        for usage details."}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '447'
+      - '323'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 08 Dec 2020 07:01:57 GMT
+      - Thu, 13 May 2021 01:26:36 GMT
       expires:
       - '-1'
       pragma:
