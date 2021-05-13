@@ -267,3 +267,4 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-peering msrest>=0.6.21
 #override azure-mgmt-confidentialledger msrest>=0.6.21
 #override azure-mgmt-mixedreality msrest>=0.6.21
+#override azure-mgmt-trafficmanager msrest>=0.6.21
