@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .personalizer_client import PersonalizerClient
-from .version import VERSION
+from ._configuration import PersonalizerClientv11Preview1Configuration
+from ._personalizer_clientv11_preview1 import PersonalizerClientv11Preview1
+__all__ = ['PersonalizerClientv11Preview1', 'PersonalizerClientv11Preview1Configuration']
 
-__all__ = ['PersonalizerClient']
+from .version import VERSION
 
 __version__ = VERSION
 

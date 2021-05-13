@@ -9,8 +9,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .events_operations import EventsOperations
+from ._service_configuration_operations import ServiceConfigurationOperations
+from ._policy_operations import PolicyOperations
+from ._evaluation_operations import EvaluationOperations
+from ._evaluations_operations import EvaluationsOperations
+from ._events_operations import EventsOperations
+from ._log_operations import LogOperations
+from ._model_operations import ModelOperations
+from ._multi_slot_events_operations import MultiSlotEventsOperations
+from ._multi_slot_operations import MultiSlotOperations
+from ._personalizer_clientv11_preview1_operations import PersonalizerClientv11Preview1OperationsMixin
 
 __all__ = [
+    'ServiceConfigurationOperations',
+    'PolicyOperations',
+    'EvaluationOperations',
+    'EvaluationsOperations',
     'EventsOperations',
+    'LogOperations',
+    'ModelOperations',
+    'MultiSlotEventsOperations',
+    'MultiSlotOperations',
+    'PersonalizerClientv11Preview1OperationsMixin',
 ]
