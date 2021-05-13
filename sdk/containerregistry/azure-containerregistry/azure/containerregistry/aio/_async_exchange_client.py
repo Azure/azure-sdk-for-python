@@ -51,7 +51,7 @@ class ACRExchangeClient(object):
         )
         self._credential = credential
         self._refresh_token = None
-        self._last_refresh_time = None
+        self._expiration_time = time.time()
 
     async def get_acr_access_token(self, challenge: str, **kwargs: Dict[str, Any]) -> str:
         parsed_challenge = _parse_challenge(challenge)

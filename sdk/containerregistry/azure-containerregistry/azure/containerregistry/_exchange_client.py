@@ -3,8 +3,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import base64
-import json
 import time
 from typing import TYPE_CHECKING
 
@@ -57,7 +55,7 @@ class ACRExchangeClient(object):
         )
         self._credential = credential
         self._refresh_token = None
-        self._expiration_time = 0
+        self._expiration_time = time.time()
 
     def get_acr_access_token(self, challenge, **kwargs):
         # type: (str, Dict[str, Any]) -> str
