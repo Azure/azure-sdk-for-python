@@ -131,7 +131,9 @@ class CreateDeleteTable(object):
         )
         table_name = "CreateDeleteTable"
 
-        async with TableClient.from_connection_string(conn_str=connection_string, table_name=table_name) as table_client:
+        async with TableClient.from_connection_string(
+            conn_str=connection_string, table_name=table_name
+        ) as table_client:
             await table_client.delete_table()
             print("Deleted table {}!".format(table_name))
         # [END delete_from_table_client]

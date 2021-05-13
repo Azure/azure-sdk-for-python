@@ -43,9 +43,7 @@ class CreateClients(object):
             account_name, access_key, endpoint_suffix
         )
 
-        with TableClient.from_connection_string(
-            conn_str=connection_string, table_name="tableName"
-        ) as table_client:
+        with TableClient.from_connection_string(conn_str=connection_string, table_name="tableName") as table_client:
             print("Table name: {}".format(table_client.table_name))
         # [END create_table_client]
 

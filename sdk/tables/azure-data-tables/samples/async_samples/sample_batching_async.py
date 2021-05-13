@@ -21,9 +21,6 @@ USAGE:
 """
 
 
-from datetime import datetime, timedelta
-import os
-from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -41,7 +38,6 @@ class CreateClients(object):
         access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
         connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             account_name, access_key, endpoint_suffix
         )
@@ -74,7 +70,6 @@ class CreateClients(object):
         access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
         connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             account_name, access_key, endpoint_suffix
         )
@@ -86,16 +81,12 @@ class CreateClients(object):
         entity4 = {"PartitionKey": "pk001", "RowKey": "rk004", "Value": 4, "day": "Thursday", "float": 4.003}
 
         # Instantiate a TableServiceClient using a connection string
-        table_client = TableClient.from_connection_string(
-            conn_str=connection_string, table_name=table_name
-        )
-        with table_client:
+        with TableClient.from_connection_string(conn_str=connection_string, table_name=table_name) as table_client:
             try:
                 await table_client.create_table()
                 print("Created table")
             except ResourceExistsError:
                 print("Table already exists")
-
 
             operations = [
                 ("create", entity1),

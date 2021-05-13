@@ -29,6 +29,7 @@ class TableEntitySamples(object):
 
     def create_and_get_entities(self):
         import os
+
         # Instantiate a table service client
         from azure.data.tables import TableClient
 
@@ -69,6 +70,7 @@ class TableEntitySamples(object):
 
     def list_all_entities(self):
         import os
+
         # Instantiate a table service client
         from azure.data.tables import TableClient
 
@@ -117,6 +119,7 @@ class TableEntitySamples(object):
 
     def update_entities(self):
         import os
+
         # Instantiate a table service client
         from azure.data.tables import TableClient
         from azure.data.tables import UpdateMode

@@ -48,11 +48,7 @@ class CreateClients(object):
         )
         table_name = "sampleTransaction"
 
-        table_client = TableClient.from_connection_string(
-            conn_str=connection_string, table_name=table_name
-        )
-
-        with table_client:
+        with TableClient.from_connection_string(conn_str=connection_string, table_name=table_name) as table_client:
             try:
                 table_client.create_table()
                 print("Created table")

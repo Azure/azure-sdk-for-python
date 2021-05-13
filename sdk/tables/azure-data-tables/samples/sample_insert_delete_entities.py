@@ -37,11 +37,8 @@ class InsertDeleteEntity(object):
         access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
-        connection_string = (
-            u"DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-                account_name, access_key, endpoint_suffix
-            )
+        connection_string = u"DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
         )
         table_name = "SampleInsertDelete"
 

@@ -75,7 +75,6 @@ class InsertDeleteEntity(object):
 
         entity = {"PartitionKey": "color", "RowKey": "brand", "text": "Marker", "color": "Purple", "price": "5"}
 
-
         # [START delete_entity]
         async with TableClient.from_connection_string(connection_string, table_name) as table_client:
             try:

@@ -27,7 +27,6 @@ USAGE:
 """
 
 
-from datetime import datetime, timedelta
 from dotenv import find_dotenv, load_dotenv
 
 
@@ -75,6 +74,7 @@ class TableAuthSamples(object):
         # Instantiate a TableServiceClient using a connection string
 
         # [START auth_from_sas]
+        from datetime import datetime, timedelta
         import os
 
         from azure.data.tables import TableServiceClient

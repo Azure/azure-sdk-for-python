@@ -27,7 +27,6 @@ USAGE:
 """
 
 
-from datetime import datetime, timedelta
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -77,6 +76,7 @@ class TableAuthSamples(object):
     async def authentication_by_shared_access_signature(self):
         # Instantiate a TableServiceClient using a connection string
         # [START auth_by_sas]
+        from datetime import datetime, timedelta
         import os
 
         from azure.data.tables.aio import TableServiceClient
