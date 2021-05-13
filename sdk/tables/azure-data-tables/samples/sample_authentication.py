@@ -28,27 +28,27 @@ USAGE:
 
 
 from datetime import datetime, timedelta
-import os
 from dotenv import find_dotenv, load_dotenv
 
 
 class TableAuthSamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
-        )
 
     def authentication_by_connection_string(self):
         # Instantiate a TableServiceClient using a connection string
         # [START auth_from_connection_string]
+        import os
         from azure.data.tables import TableServiceClient
 
-        with TableServiceClient.from_connection_string(conn_str=self.connection_string) as table_service:
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+
+        with TableServiceClient.from_connection_string(conn_str=connection_string) as table_service:
             properties = table_service.get_service_properties()
             print("Connection String: {}".format(properties))
         # [END auth_from_connection_string]
@@ -56,11 +56,17 @@ class TableAuthSamples(object):
     def authentication_by_shared_key(self):
         # Instantiate a TableServiceClient using a shared access key
         # [START auth_from_shared_key]
+        import os
         from azure.data.tables import TableServiceClient
         from azure.core.credentials import AzureNamedKeyCredential
 
-        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
-        with TableServiceClient(endpoint=self.endpoint, credential=credential) as table_service:
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
+
+        credential = AzureNamedKeyCredential(account_name, access_key)
+        with TableServiceClient(endpoint=endpoint, credential=credential) as table_service:
             properties = table_service.get_service_properties()
             print("Shared Key: {}".format(properties))
         # [END auth_from_shared_key]
@@ -69,14 +75,21 @@ class TableAuthSamples(object):
         # Instantiate a TableServiceClient using a connection string
 
         # [START auth_from_sas]
+        import os
+
         from azure.data.tables import TableServiceClient
         from azure.core.credentials import AzureNamedKeyCredential
 
         # Create a SAS token to use for authentication of a client
         from azure.data.tables import generate_account_sas, ResourceTypes, AccountSasPermissions
 
-        print("Account name: {}".format(self.account_name))
-        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
+
+        print("Account name: {}".format(account_name))
+        credential = AzureNamedKeyCredential(account_name, access_key)
         sas_token = generate_account_sas(
             credential,
             resource_types=ResourceTypes(service=True),
@@ -84,7 +97,7 @@ class TableAuthSamples(object):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
-        with TableServiceClient(endpoint=self.endpoint, credential=sas_token) as token_auth_table_service:
+        with TableServiceClient(endpoint=endpoint, credential=sas_token) as token_auth_table_service:
             properties = token_auth_table_service.get_service_properties()
             print("Shared Access Signature: {}".format(properties))
         # [END auth_from_sas]

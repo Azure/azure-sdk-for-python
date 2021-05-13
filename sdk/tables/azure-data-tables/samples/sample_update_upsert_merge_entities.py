@@ -20,28 +20,26 @@ USAGE:
 """
 
 
-from datetime import datetime, timedelta
 from dotenv import find_dotenv, load_dotenv
-import os
 
 
 class TableEntitySamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
-        )
-        self.table_name = "SampleUpdateUpsertMerge"
 
     def create_and_get_entities(self):
+        import os
         # Instantiate a table service client
         from azure.data.tables import TableClient
 
-        with TableClient.from_connection_string(self.connection_string, table_name="mytable3") as table:
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+
+        with TableClient.from_connection_string(connection_string, table_name="mytable3") as table:
 
             # Create the Table
             table.create_table()
@@ -70,10 +68,18 @@ class TableEntitySamples(object):
                 table.delete_table()
 
     def list_all_entities(self):
+        import os
         # Instantiate a table service client
         from azure.data.tables import TableClient
 
-        with TableClient.from_connection_string(self.connection_string, table_name="mytable4") as table:
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+
+        with TableClient.from_connection_string(connection_string, table_name="mytable4") as table:
 
             # Create the table
             table.create_table()
@@ -110,11 +116,19 @@ class TableEntitySamples(object):
                 table.delete_table()
 
     def update_entities(self):
+        import os
         # Instantiate a table service client
         from azure.data.tables import TableClient
         from azure.data.tables import UpdateMode
 
-        with TableClient.from_connection_string(self.connection_string, table_name="mytable6") as table:
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+
+        with TableClient.from_connection_string(connection_string, table_name="mytable6") as table:
 
             # Create the table and Table Client
             table.create_table()

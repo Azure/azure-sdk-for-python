@@ -28,19 +28,19 @@ from dotenv import find_dotenv, load_dotenv
 class QueryTables(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
         )
 
     async def tables_in_account(self):
         # Instantiate the TableServiceClient from a connection string
         from azure.data.tables.aio import TableServiceClient
 
-        table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
+        table_service = TableServiceClient.from_connection_string(conn_str=connection_string)
 
         async with table_service:
             await table_service.create_table("mytableasync1")
@@ -64,12 +64,12 @@ class QueryTables(object):
                 # [END tsc_query_tables]
 
             finally:
-                await self.delete_tables()
+                await delete_tables()
 
     async def delete_tables(self):
         from azure.data.tables.aio import TableServiceClient
 
-        ts = TableServiceClient.from_connection_string(conn_str=self.connection_string)
+        ts = TableServiceClient.from_connection_string(conn_str=connection_string)
         async with ts:
             tables = ["mytableasync1", "mytableasync2"]
             for table in tables:
@@ -81,7 +81,7 @@ class QueryTables(object):
     async def clean_up(self):
         from azure.data.tables.aio import TableServiceClient
 
-        tsc = TableServiceClient.from_connection_string(self.connection_string)
+        tsc = TableServiceClient.from_connection_string(connection_string)
         async with tsc:
             async for table in tsc.list_tables():
                 await tsc.delete_table(table.name)

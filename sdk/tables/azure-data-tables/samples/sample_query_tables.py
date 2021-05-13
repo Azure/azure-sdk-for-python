@@ -20,27 +20,29 @@ USAGE:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-import os
 from dotenv import find_dotenv, load_dotenv
 
 
 class QueryTables(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
-        )
-        self.table_name = "SampleQueryTables"
 
     def tables_in_account(self):
-        # Instantiate the TableServiceClient from a connection string
+        import os
+
         from azure.data.tables import TableServiceClient
 
-        with TableServiceClient.from_connection_string(conn_str=self.connection_string) as table_service:
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+        table_name = "SampleQueryTables"
+
+        # Instantiate the TableServiceClient from a connection string
+        with TableServiceClient.from_connection_string(conn_str=connection_string) as table_service:
 
             # [START tsc_create_table]
             table_service.create_table("mytable1")
@@ -72,9 +74,18 @@ class QueryTables(object):
                 # [END tsc_delete_table]
 
     def delete_tables(self):
+        import os
+
         from azure.data.tables import TableServiceClient
 
-        with TableServiceClient.from_connection_string(conn_str=self.connection_string) as ts:
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+
+        with TableServiceClient.from_connection_string(conn_str=connection_string) as ts:
             tables = ["mytable1", "mytable2"]
             for table in tables:
                 try:

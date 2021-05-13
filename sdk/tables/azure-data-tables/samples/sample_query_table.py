@@ -19,27 +19,36 @@ USAGE:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-import os
-import copy
-import random
 from dotenv import find_dotenv, load_dotenv
 
 
 class SampleTablesQuery(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
         )
-        self.table_name = "SampleQueryTable"
+        table_name = "SampleQueryTable"
 
     def insert_random_entities(self):
+        import copy
+        import os
+        import random
+
         from azure.data.tables import TableClient
         from azure.core.exceptions import ResourceExistsError
+
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+        table_name = "SampleQueryTable"
 
         brands = [u"Crayola", u"Sharpie", u"Chameleon"]
         colors = [u"red", u"blue", u"orange", u"yellow"]
@@ -49,7 +58,7 @@ class SampleTablesQuery(object):
             u"RowKey": u"row",
         }
 
-        with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+        with TableClient.from_connection_string(connection_string, table_name) as table_client:
             try:
                 table_client.create_table()
             except ResourceExistsError:
@@ -68,12 +77,22 @@ class SampleTablesQuery(object):
                 table_client.create_entity(entity=e)
 
     def sample_query_entities(self):
+        # [START query_entities]
+        import os
+
         from azure.data.tables import TableClient
         from azure.core.exceptions import HttpResponseError
 
         print("Entities with name: marker")
-        # [START query_entities]
-        with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+        table_name = "SampleQueryTable"
+
+        with TableClient.from_connection_string(connection_string, table_name) as table_client:
             try:
                 parameters = {u"name": u"marker"}
                 name_filter = u"Name eq @name"
@@ -89,12 +108,22 @@ class SampleTablesQuery(object):
         # [END query_entities]
 
     def sample_query_entities_multiple_params(self):
+        # [START query_entities]
+        import os
+
         from azure.data.tables import TableClient
         from azure.core.exceptions import HttpResponseError
 
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+        table_name = "SampleQueryTable"
+
         print("Entities with name: marker and brand: Crayola")
-        # [START query_entities]
-        with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+        with TableClient.from_connection_string(connection_string, table_name) as table_client:
             try:
                 parameters = {u"name": u"marker", u"brand": u"Crayola"}
                 name_filter = u"Name eq @name and Brand eq @brand"
@@ -110,12 +139,22 @@ class SampleTablesQuery(object):
         # [END query_entities]
 
     def sample_query_entities_values(self):
+        # [START query_entities]
+        import os
+
         from azure.data.tables import TableClient
         from azure.core.exceptions import HttpResponseError
 
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+        table_name = "SampleQueryTable"
+
         print("Entities with 25 < Value < 50")
-        # [START query_entities]
-        with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+        with TableClient.from_connection_string(connection_string, table_name) as table_client:
             try:
                 parameters = {u"lower": 25, u"upper": 50}
                 name_filter = u"Value gt @lower and Value lt @upper"
@@ -131,18 +170,26 @@ class SampleTablesQuery(object):
         # [END query_entities]
 
     def clean_up(self):
+        import os
+
         from azure.data.tables import TableClient
 
-        with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+        table_name = "SampleQueryTable"
+
+        with TableClient.from_connection_string(connection_string, table_name) as table_client:
             table_client.delete_table()
 
 
 if __name__ == "__main__":
     stq = SampleTablesQuery()
-    try:
-        stq.insert_random_entities()
-        stq.sample_query_entities()
-        stq.sample_query_entities_multiple_params()
-        stq.sample_query_entities_values()
-    except:
-        stq.clean_up()
+    stq.insert_random_entities()
+    stq.sample_query_entities()
+    stq.sample_query_entities_multiple_params()
+    stq.sample_query_entities_values()
+    stq.clean_up()

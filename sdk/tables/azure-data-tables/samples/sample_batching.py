@@ -20,9 +20,6 @@ USAGE:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-
-from datetime import datetime, timedelta
-import os
 import sys
 from dotenv import find_dotenv, load_dotenv
 
@@ -30,14 +27,6 @@ from dotenv import find_dotenv, load_dotenv
 class CreateClients(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
-        )
-        self.table_name = "sampleTransaction"
 
     def sample_transaction(self):
         # Instantiate a TableServiceClient using a connection string
@@ -47,45 +36,50 @@ class CreateClients(object):
         entity4 = {"PartitionKey": "pk001", "RowKey": "rk004", "Value": 4, "day": "Thursday", "float": 4.003}
 
         # [START batching]
+        import os
         from azure.data.tables import TableClient, TableTransactionError
         from azure.core.exceptions import ResourceExistsError
 
-        self.table_client = TableClient.from_connection_string(
-            conn_str=self.connection_string, table_name=self.table_name
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+        table_name = "sampleTransaction"
+
+        table_client = TableClient.from_connection_string(
+            conn_str=connection_string, table_name=table_name
         )
 
-        try:
-            self.table_client.create_table()
-            print("Created table")
-        except ResourceExistsError:
-            print("Table already exists")
+        with table_client:
+            try:
+                table_client.create_table()
+                print("Created table")
+            except ResourceExistsError:
+                print("Table already exists")
 
-        self.table_client.upsert_entity(entity2)
-        self.table_client.upsert_entity(entity3)
-        self.table_client.upsert_entity(entity4)
+            table_client.upsert_entity(entity2)
+            table_client.upsert_entity(entity3)
+            table_client.upsert_entity(entity4)
 
-        operations = [
-            ("upsert", entity1),
-            ("delete", entity2),
-            ("upsert", entity3),
-            ("update", entity4, {"mode": "replace"}),
-        ]
-        try:
-            self.table_client.submit_transaction(operations)
-        except TableTransactionError as e:
-            print("There was an error with the transaction operation")
-            print(e)
-        # [END batching]
+            operations = [
+                ("upsert", entity1),
+                ("delete", entity2),
+                ("upsert", entity3),
+                ("update", entity4, {"mode": "replace"}),
+            ]
+            try:
+                table_client.submit_transaction(operations)
+            except TableTransactionError as e:
+                print("There was an error with the transaction operation")
+                print(e)
+            # [END batching]
 
-    def clean_up(self):
-        self.table_client.delete_table()
-        self.table_client.__exit__()
+            table_client.delete_table()
 
 
 if __name__ == "__main__":
     if sys.version_info > (3, 5):
         sample = CreateClients()
-        try:
-            sample.sample_transaction()
-        finally:
-            sample.clean_up()
+        sample.sample_transaction()

@@ -30,14 +30,14 @@ from dotenv import find_dotenv, load_dotenv
 class SampleTablesQuery(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
         )
-        self.table_name = "OfficeSupplies"
+        table_name = "OfficeSupplies"
 
     async def insert_random_entities(self):
         from azure.data.tables.aio import TableClient
@@ -51,7 +51,7 @@ class SampleTablesQuery(object):
             "RowKey": "row",
         }
 
-        table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
+        table_client = TableClient.from_connection_string(connection_string, table_name)
         async with table_client:
             try:
                 await table_client.create_table()
@@ -72,7 +72,7 @@ class SampleTablesQuery(object):
         from azure.core.exceptions import HttpResponseError
 
         print("Entities with name: marker")
-        table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
+        table_client = TableClient.from_connection_string(connection_string, table_name)
         # [START query_entities]
         async with table_client:
             try:
@@ -94,7 +94,7 @@ class SampleTablesQuery(object):
 
         print("Entities with name: marker and brand: Crayola")
         # [START query_entities]
-        async with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+        async with TableClient.from_connection_string(connection_string, table_name) as table_client:
             try:
                 parameters = {u"name": u"marker", u"brand": u"Crayola"}
                 name_filter = u"Name eq @name and Brand eq @brand"
@@ -115,7 +115,7 @@ class SampleTablesQuery(object):
 
         print("Entities with 25 < Value < 50")
         # [START query_entities]
-        async with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+        async with TableClient.from_connection_string(connection_string, table_name) as table_client:
             try:
                 parameters = {u"lower": 25, u"upper": 50}
                 name_filter = u"Value gt @lower and Value lt @upper"
@@ -134,7 +134,7 @@ class SampleTablesQuery(object):
         print("cleaning up")
         from azure.data.tables.aio import TableClient
 
-        async with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+        async with TableClient.from_connection_string(connection_string, table_name) as table_client:
             await table_client.delete_table()
 
 
