@@ -279,7 +279,7 @@ class HttpResponse(object):
     def text(self, encoding=None):
         """Return the whole body as a string."""
 
-    def stream_download(self, chunk_size=None, callback=None):
+    def stream_download(self, pipeline, **kwargs):
         """Generator for streaming request body data.
         Should be implemented by sub-classes if streaming download
         is supported.

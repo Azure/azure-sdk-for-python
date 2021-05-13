@@ -4,8 +4,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.containerregistry.aio import (
-    ContainerRepositoryClient,
+    ContainerRepository,
     ContainerRegistryClient,
+)
+from azure.containerregistry import (
+    ArtifactTagProperties,
+    ContentProperties,
+    ArtifactManifestProperties,
 )
 
 from azure.core.credentials import AccessToken
@@ -42,10 +47,13 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
             **kwargs,
         )
 
-    def create_repository_client(self, endpoint, name, **kwargs):
-        return ContainerRepositoryClient(
+    def create_container_repository(self, endpoint, name, **kwargs):
+        return ContainerRepository(
             endpoint=endpoint,
-            repository=name,
+            name=name,
             credential=self.get_credential(),
             **kwargs,
         )
+
+    def create_anon_client(self, endpoint, **kwargs):
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)

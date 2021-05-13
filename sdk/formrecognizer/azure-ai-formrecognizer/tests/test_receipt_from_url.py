@@ -34,6 +34,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertEqual(poller2._polling_method._timeout, 7)  # goes back to client default
 
     @pytest.mark.live_test_only
+    @pytest.mark.skip("AAD is not deployed yet")
     def test_active_directory_auth(self):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
@@ -314,7 +315,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
     def test_receipt_locale_v2(self, client):
         with pytest.raises(ValueError) as e:
             client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="en-US")
-        assert "'locale' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+        assert "'locale' is only available for API version V2_1 and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

@@ -8,24 +8,24 @@ interactions:
       Content-Type:
       - image/jpeg
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyze?includeTextDetails=false&locale=not%20a%20locale
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyze?includeTextDetails=false&locale=not%20a%20locale
   response:
     body:
       string: '{"error": {"code": "UnsupportedLocale", "innerError": {"requestId":
-        "5007cc7f-facf-42f6-a8cb-63dd65d14180"}, "message": "Locale unsupported. Supported
+        "ee03361d-d37c-41af-877b-70a234bace51"}, "message": "Locale unsupported. Supported
         locales include en-AU, en-CA, en-GB, en-IN and en-US."}}'
     headers:
-      apim-request-id: 5007cc7f-facf-42f6-a8cb-63dd65d14180
+      apim-request-id: ee03361d-d37c-41af-877b-70a234bace51
       content-length: '200'
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Mar 2021 03:04:59 GMT
+      date: Mon, 10 May 2021 23:56:41 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '521'
+      x-envoy-upstream-service-time: '474'
     status:
       code: 400
       message: Bad Request
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyze?includeTextDetails=false&locale=not%20a%20locale
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyze?includeTextDetails=false&locale=not%20a%20locale
 version: 1

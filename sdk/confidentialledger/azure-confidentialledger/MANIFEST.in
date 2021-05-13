@@ -1,0 +1,6 @@
+include *.md
+include azure/__init__.py
+include azure/confidentialledger/__init__.py
+include azure/confidentialledger/py.typed
+recursive-include tests *.py
+recursive-include samples *.py

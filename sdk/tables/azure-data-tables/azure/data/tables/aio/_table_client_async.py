@@ -244,7 +244,7 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def delete_table(self, **kwargs) -> None:
         """Deletes the table under the current account. No error will be raised if
-            the given table name is not found.
+        the given table name is not found.
 
         :return: None
         :rtype: None
@@ -277,12 +277,12 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def delete_entity(self, *args: Union[TableEntity, str], **kwargs: Any) -> None:
         """Deletes the specified entity in a table. No error will be raised if
-            the entity or PartitionKey-RowKey pairing is not found.
+        the entity or PartitionKey-RowKey pairing is not found.
 
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
+        :param str partition_key: The partition key of the entity.
+        :param str row_key: The row key of the entity.
+        :param entity: The entity to delete
+        :type entity: Union[TableEntity, Mapping[str, str]]
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchConditions
@@ -353,7 +353,7 @@ class TableClient(AsyncTablesBaseClient):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
+        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
@@ -393,9 +393,9 @@ class TableClient(AsyncTablesBaseClient):
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: dict[str, str]
+        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: :class:`~azure.data.tables.UpdateMode`
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
@@ -409,7 +409,7 @@ class TableClient(AsyncTablesBaseClient):
                 :start-after: [START update_entity]
                 :end-before: [END update_entity]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Querying entities from a TableClient
         """
         match_condition = kwargs.pop("match_condition", None)
@@ -478,7 +478,7 @@ class TableClient(AsyncTablesBaseClient):
                 :start-after: [START list_entities]
                 :end-before: [END list_entities]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Querying entities from a TableClient
         """
         user_select = kwargs.pop("select", None)
@@ -507,7 +507,8 @@ class TableClient(AsyncTablesBaseClient):
         :keyword int results_per_page: Number of entities returned per service request.
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
-        :keyword Dict[str, Any] parameters: Dictionary for formatting query with additional, user defined parameters
+        :keyword parameters: Dictionary for formatting query with additional, user defined parameters
+        :paramtype parameters: Dict[str, Any]
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
         :rtype: ~azure.core.async_paging.AsyncItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -565,7 +566,7 @@ class TableClient(AsyncTablesBaseClient):
                 :start-after: [START get_entity]
                 :end-before: [END get_entity]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Getting an entity from PartitionKey and RowKey
         """
         user_select = kwargs.pop("select", None)
@@ -594,9 +595,9 @@ class TableClient(AsyncTablesBaseClient):
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: TableEntity or dict[str,str]
+        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: :class:`~azure.data.tables.UpdateMode`
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -607,7 +608,7 @@ class TableClient(AsyncTablesBaseClient):
                 :start-after: [START upsert_entity]
                 :end-before: [END upsert_entity]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Update/Merge or Insert an entity into a table
         """
 

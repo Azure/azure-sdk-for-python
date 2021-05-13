@@ -4912,6 +4912,168 @@ class PhoneNumberIdentifierModel(msrest.serialization.Model):
         self.value = value
 
 
+class PolicyInsightsPolicyStateChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.PolicyInsights.PolicyStateChanged event.
+
+    :param timestamp: The time that the resource was scanned by Azure Policy in the Universal ISO
+     8601 DateTime format yyyy-MM-ddTHH:mm:ss.fffffffZ.
+    :type timestamp: ~datetime.datetime
+    :param policy_assignment_id: The resource ID of the policy assignment.
+    :type policy_assignment_id: str
+    :param policy_definition_id: The resource ID of the policy definition.
+    :type policy_definition_id: str
+    :param policy_definition_reference_id: The reference ID for the policy definition inside the
+     initiative definition, if the policy assignment is for an initiative. May be empty.
+    :type policy_definition_reference_id: str
+    :param compliance_state: The compliance state of the resource with respect to the policy
+     assignment.
+    :type compliance_state: str
+    :param subscription_id: The subscription ID of the resource.
+    :type subscription_id: str
+    :param compliance_reason_code: The compliance reason code. May be empty.
+    :type compliance_reason_code: str
+    """
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'policy_assignment_id': {'key': 'policyAssignmentId', 'type': 'str'},
+        'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
+        'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
+        'compliance_state': {'key': 'complianceState', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'compliance_reason_code': {'key': 'complianceReasonCode', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        timestamp: Optional[datetime.datetime] = None,
+        policy_assignment_id: Optional[str] = None,
+        policy_definition_id: Optional[str] = None,
+        policy_definition_reference_id: Optional[str] = None,
+        compliance_state: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        compliance_reason_code: Optional[str] = None,
+        **kwargs
+    ):
+        super(PolicyInsightsPolicyStateChangedEventData, self).__init__(**kwargs)
+        self.timestamp = timestamp
+        self.policy_assignment_id = policy_assignment_id
+        self.policy_definition_id = policy_definition_id
+        self.policy_definition_reference_id = policy_definition_reference_id
+        self.compliance_state = compliance_state
+        self.subscription_id = subscription_id
+        self.compliance_reason_code = compliance_reason_code
+
+
+class PolicyInsightsPolicyStateCreatedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.PolicyInsights.PolicyStateCreated event.
+
+    :param timestamp: The time that the resource was scanned by Azure Policy in the Universal ISO
+     8601 DateTime format yyyy-MM-ddTHH:mm:ss.fffffffZ.
+    :type timestamp: ~datetime.datetime
+    :param policy_assignment_id: The resource ID of the policy assignment.
+    :type policy_assignment_id: str
+    :param policy_definition_id: The resource ID of the policy definition.
+    :type policy_definition_id: str
+    :param policy_definition_reference_id: The reference ID for the policy definition inside the
+     initiative definition, if the policy assignment is for an initiative. May be empty.
+    :type policy_definition_reference_id: str
+    :param compliance_state: The compliance state of the resource with respect to the policy
+     assignment.
+    :type compliance_state: str
+    :param subscription_id: The subscription ID of the resource.
+    :type subscription_id: str
+    :param compliance_reason_code: The compliance reason code. May be empty.
+    :type compliance_reason_code: str
+    """
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'policy_assignment_id': {'key': 'policyAssignmentId', 'type': 'str'},
+        'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
+        'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
+        'compliance_state': {'key': 'complianceState', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'compliance_reason_code': {'key': 'complianceReasonCode', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        timestamp: Optional[datetime.datetime] = None,
+        policy_assignment_id: Optional[str] = None,
+        policy_definition_id: Optional[str] = None,
+        policy_definition_reference_id: Optional[str] = None,
+        compliance_state: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        compliance_reason_code: Optional[str] = None,
+        **kwargs
+    ):
+        super(PolicyInsightsPolicyStateCreatedEventData, self).__init__(**kwargs)
+        self.timestamp = timestamp
+        self.policy_assignment_id = policy_assignment_id
+        self.policy_definition_id = policy_definition_id
+        self.policy_definition_reference_id = policy_definition_reference_id
+        self.compliance_state = compliance_state
+        self.subscription_id = subscription_id
+        self.compliance_reason_code = compliance_reason_code
+
+
+class PolicyInsightsPolicyStateDeletedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.PolicyInsights.PolicyStateDeleted event.
+
+    :param timestamp: The time that the resource was scanned by Azure Policy in the Universal ISO
+     8601 DateTime format yyyy-MM-ddTHH:mm:ss.fffffffZ.
+    :type timestamp: ~datetime.datetime
+    :param policy_assignment_id: The resource ID of the policy assignment.
+    :type policy_assignment_id: str
+    :param policy_definition_id: The resource ID of the policy definition.
+    :type policy_definition_id: str
+    :param policy_definition_reference_id: The reference ID for the policy definition inside the
+     initiative definition, if the policy assignment is for an initiative. May be empty.
+    :type policy_definition_reference_id: str
+    :param compliance_state: The compliance state of the resource with respect to the policy
+     assignment.
+    :type compliance_state: str
+    :param subscription_id: The subscription ID of the resource.
+    :type subscription_id: str
+    :param compliance_reason_code: The compliance reason code. May be empty.
+    :type compliance_reason_code: str
+    """
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'policy_assignment_id': {'key': 'policyAssignmentId', 'type': 'str'},
+        'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
+        'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
+        'compliance_state': {'key': 'complianceState', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'compliance_reason_code': {'key': 'complianceReasonCode', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        timestamp: Optional[datetime.datetime] = None,
+        policy_assignment_id: Optional[str] = None,
+        policy_definition_id: Optional[str] = None,
+        policy_definition_reference_id: Optional[str] = None,
+        compliance_state: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        compliance_reason_code: Optional[str] = None,
+        **kwargs
+    ):
+        super(PolicyInsightsPolicyStateDeletedEventData, self).__init__(**kwargs)
+        self.timestamp = timestamp
+        self.policy_assignment_id = policy_assignment_id
+        self.policy_definition_id = policy_definition_id
+        self.policy_definition_reference_id = policy_definition_reference_id
+        self.compliance_state = compliance_state
+        self.subscription_id = subscription_id
+        self.compliance_reason_code = compliance_reason_code
+
+
 class RedisExportRDBCompletedEventData(msrest.serialization.Model):
     """Schema of the Data property of an EventGridEvent for a Microsoft.Cache.ExportRDBCompleted event.
 

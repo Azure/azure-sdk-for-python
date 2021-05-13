@@ -81,13 +81,15 @@ async def _run_command(command: str) -> str:
             cwd=working_directory,
             env=dict(os.environ, AZURE_CORE_NO_COLOR="true")
         )
+        stdout, _ = await asyncio.wait_for(proc.communicate(), 10)
+        output = stdout.decode()
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'; CLI may or may not be installed
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
         raise error from ex
-
-    stdout, _ = await asyncio.wait_for(proc.communicate(), 10)
-    output = stdout.decode()
+    except asyncio.TimeoutError as ex:
+        proc.kill()
+        raise CredentialUnavailableError(message="Timed out waiting for Azure CLI") from ex
 
     if proc.returncode == 0:
         return output

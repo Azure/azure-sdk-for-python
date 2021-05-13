@@ -10,7 +10,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
   response:
@@ -21,14 +21,14 @@ interactions:
         Allen","matches":[{"text":"Paul Allen","offset":40,"length":10,"confidenceScore":0.54}],"language":"en","id":"Paul
         Allen","url":"https://en.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 68dd6c25-2a93-4536-b796-4909fdc5a16c
+      apim-request-id: c3865d4c-f7fa-4c5c-ab17-934c195418f1
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
-      date: Tue, 27 Apr 2021 20:12:08 GMT
+      date: Sat, 08 May 2021 07:01:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '18'
+      x-envoy-upstream-service-time: '19'
     status:
       code: 200
       message: OK

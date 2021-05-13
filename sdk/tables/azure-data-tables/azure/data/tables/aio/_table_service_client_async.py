@@ -223,7 +223,7 @@ class TableServiceClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def delete_table(self, table_name: str, **kwargs) -> None:
         """Deletes a table under the current account. No error will be raised if
-            the table is not found.
+        the table is not found.
 
         :param str table_name: The Table name.
         :return: None
@@ -246,7 +246,7 @@ class TableServiceClient(AsyncTablesBaseClient):
     def list_tables(self, **kwargs) -> AsyncItemPaged[TableItem]:
         """Queries tables under the given account.
 
-        :keyword int results_per_page: Number of tables per page in return ItemPaged
+        :keyword int results_per_page: Number of tables per page in returned ItemPaged
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableItem`]
         :rtype: ~azure.core.async_paging.AsyncItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -257,7 +257,7 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :start-after: [START tsc_list_tables]
                 :end-before: [END tsc_list_tables]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Listing all tables in an account
         """
         top = kwargs.pop("results_per_page", None)
@@ -275,7 +275,8 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :param str query_filter: Specify a filter to return certain tables.
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword Dict[str, Any] parameters: Dictionary for formatting query with additional, user defined parameters
+        :keyword parameters: Dictionary for formatting query with additional, user defined parameters
+        :paramtype parameters:  Dict[str, Any]
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableItem`]
         :rtype: ~azure.core.async_paging.AsyncItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -286,7 +287,7 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :start-after: [START tsc_query_tables]
                 :end-before: [END tsc_query_tables]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Querying tables in an account given specific parameters
         """
         parameters = kwargs.pop("parameters", None)
