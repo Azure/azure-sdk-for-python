@@ -23,8 +23,6 @@ USAGE:
     4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
 """
 
-import os
-from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -32,20 +30,22 @@ from dotenv import find_dotenv, load_dotenv
 class CreateDeleteTable(object):
     def __init__(self):
         load_dotenv(find_dotenv())
+
+    async def create_table(self):
+        # [START create_table]
+        import os
+
+        from azure.data.tables.aio import TableServiceClient
+        from azure.core.exceptions import ResourceExistsError
+
         access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
         connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             account_name, access_key, endpoint_suffix
         )
         table_name = "CreateDeleteTable"
 
-    async def create_table(self):
-        from azure.data.tables.aio import TableServiceClient
-        from azure.core.exceptions import ResourceExistsError
-
-        # [START create_table]
         async with TableServiceClient.from_connection_string(connection_string) as table_service_client:
             try:
                 table_item = await table_service_client.create_table(table_name=table_name)
@@ -55,28 +55,58 @@ class CreateDeleteTable(object):
         # [END create_table]
 
     async def create_if_not_exists(self):
+        # [START create_if_not_exists]
+        import os
+
         from azure.data.tables.aio import TableServiceClient
 
-        # [START create_if_not_exists]
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+        table_name = "CreateDeleteTable"
+
         async with TableServiceClient.from_connection_string(connection_string) as table_service_client:
             table_item = await table_service_client.create_table_if_not_exists(table_name=table_name)
             print("Table name: {}".format(table_item.table_name))
         # [END create_if_not_exists]
 
     async def delete_table(self):
-        from azure.data.tables.aio import TableServiceClient
-        from azure.core.exceptions import HttpResponseError
-
         # [START delete_table]
+        import os
+
+        from azure.data.tables.aio import TableServiceClient
+
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+        table_name = "CreateDeleteTable"
+
         async with TableServiceClient.from_connection_string(connection_string) as table_service_client:
             await table_service_client.delete_table(table_name=table_name)
             print("Deleted table {}!".format(table_name))
         # [END delete_table]
 
     async def create_from_table_client(self):
-        from azure.data.tables.aio import TableClient
-
         # [START create_from_table_client]
+        import os
+
+        from azure.data.tables.aio import TableClient
+        from azure.core.exceptions import ResourceExistsError
+
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+        table_name = "CreateDeleteTable"
+
         async with TableClient.from_connection_string(
             conn_str=connection_string, table_name=table_name
         ) as table_client:
@@ -88,13 +118,20 @@ class CreateDeleteTable(object):
         # [END create_from_table_client]
 
     async def delete_from_table_client(self):
-        from azure.data.tables.aio import TableClient
-        from azure.core.exceptions import HttpResponseError
-
         # [START delete_from_table_client]
-        async with TableClient.from_connection_string(
-            conn_str=connection_string, table_name=table_name
-        ) as table_client:
+        import os
+
+        from azure.data.tables.aio import TableClient
+
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+        table_name = "CreateDeleteTable"
+
+        async with TableClient.from_connection_string(conn_str=connection_string, table_name=table_name) as table_client:
             await table_client.delete_table()
             print("Deleted table {}!".format(table_name))
         # [END delete_from_table_client]

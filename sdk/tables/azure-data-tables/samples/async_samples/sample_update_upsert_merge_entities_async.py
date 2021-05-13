@@ -19,9 +19,6 @@ USAGE:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-from datetime import datetime, timedelta
-import os
-from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -29,19 +26,20 @@ from dotenv import find_dotenv, load_dotenv
 class TableEntitySamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
+
+    async def create_and_get_entities(self):
+        # Instantiate a table service client
+        import os
+        from azure.data.tables.aio import TableClient
+
         access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
         connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             account_name, access_key, endpoint_suffix
         )
 
         table_base = "UpdateUpsertMergeAsync"
-
-    async def create_and_get_entities(self):
-        # Instantiate a table service client
-        from azure.data.tables.aio import TableClient
 
         table = TableClient.from_connection_string(connection_string, table_name=table_base + "create")
 
@@ -72,7 +70,18 @@ class TableEntitySamples(object):
 
     async def list_all_entities(self):
         # Instantiate a table service client
+        import os
+
         from azure.data.tables.aio import TableClient
+
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+
+        table_base = "UpdateUpsertMergeAsync"
 
         table = TableClient.from_connection_string(connection_string, table_name=table_base + "list")
 
@@ -100,8 +109,19 @@ class TableEntitySamples(object):
 
     async def update_entities(self):
         # Instantiate a table service client
+        import os
+
         from azure.data.tables.aio import TableClient
         from azure.data.tables import UpdateMode
+
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+
+        table_base = "UpdateUpsertMergeAsync"
 
         table = TableClient.from_connection_string(connection_string, table_name=table_base + "update")
 
@@ -149,15 +169,18 @@ class TableEntitySamples(object):
                 await table.delete_table()
 
     async def clean_up(self):
+        import os
         from azure.data.tables.aio import TableServiceClient
 
-        tsc = TableServiceClient.from_connection_string(connection_string)
-
-        async with tsc:
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+        async with TableServiceClient.from_connection_string(connection_string) as tsc:
             async for table in tsc.list_tables():
                 await tsc.delete_table(table.name)
-
-        print("Cleaned up")
 
 
 async def main():

@@ -28,7 +28,6 @@ USAGE:
 
 
 from datetime import datetime, timedelta
-import os
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -36,18 +35,20 @@ from dotenv import find_dotenv, load_dotenv
 class TableAuthSamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
-        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            account_name, access_key, endpoint_suffix
-        )
 
     async def authentication_by_connection_string(self):
         # Instantiate a TableServiceClient using a connection string
         # [START auth_from_connection_string]
+        import os
+
         from azure.data.tables.aio import TableServiceClient
+
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
 
         async with TableServiceClient.from_connection_string(conn_str=connection_string) as table_service:
             properties = await table_service.get_service_properties()
@@ -57,7 +58,16 @@ class TableAuthSamples(object):
     async def authentication_by_shared_key(self):
         # Instantiate a TableServiceClient using a shared access key
         # [START auth_from_shared_key]
+        import os
+
         from azure.data.tables.aio import TableServiceClient
+
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
 
         async with TableServiceClient.from_connection_string(conn_str=connection_string) as table_service:
             properties = await table_service.get_service_properties()
@@ -67,8 +77,15 @@ class TableAuthSamples(object):
     async def authentication_by_shared_access_signature(self):
         # Instantiate a TableServiceClient using a connection string
         # [START auth_by_sas]
+        import os
+
         from azure.data.tables.aio import TableServiceClient
         from azure.core.credentials import AzureNamedKeyCredential
+
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
 
         # Create a SAS token to use for authentication of a client
         from azure.data.tables import generate_account_sas, ResourceTypes, AccountSasPermissions

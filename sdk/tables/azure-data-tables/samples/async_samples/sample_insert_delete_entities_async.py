@@ -20,7 +20,6 @@ USAGE:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-import os
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -28,10 +27,16 @@ from dotenv import find_dotenv, load_dotenv
 class InsertDeleteEntity(object):
     def __init__(self):
         load_dotenv(find_dotenv())
+
+    async def create_entity(self):
+        import os
+
+        from azure.data.tables.aio import TableClient
+        from azure.core.exceptions import ResourceExistsError, HttpResponseError
+
         access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        endpoint = "{}.table.{}".format(account_name, endpoint_suffix)
         connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             account_name, access_key, endpoint_suffix
         )
@@ -39,14 +44,9 @@ class InsertDeleteEntity(object):
 
         entity = {"PartitionKey": "color", "RowKey": "brand", "text": "Marker", "color": "Purple", "price": "5"}
 
-    async def create_entity(self):
-        from azure.data.tables.aio import TableClient
-        from azure.core.exceptions import ResourceExistsError, HttpResponseError
-
-        table_client = TableClient.from_connection_string(connection_string, table_name)
         # Create a table in case it does not already exist
         # [START create_entity]
-        async with table_client:
+        async with TableClient.from_connection_string(connection_string, table_name) as table_client:
             try:
                 await table_client.create_table()
             except HttpResponseError:
@@ -60,15 +60,24 @@ class InsertDeleteEntity(object):
         # [END create_entity]
 
     async def delete_entity(self):
-        from azure.data.tables.aio import TableClient
-        from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
-        from azure.core.credentials import AzureNamedKeyCredential
+        import os
 
-        credential = AzureNamedKeyCredential(account_name, access_key)
-        table_client = TableClient(endpoint=endpoint, credential=credential, table_name=table_name)
+        from azure.data.tables.aio import TableClient
+        from azure.core.exceptions import ResourceExistsError
+
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
+        table_name = "InsertDeleteAsync"
+
+        entity = {"PartitionKey": "color", "RowKey": "brand", "text": "Marker", "color": "Purple", "price": "5"}
+
 
         # [START delete_entity]
-        async with table_client:
+        async with TableClient.from_connection_string(connection_string, table_name) as table_client:
             try:
                 resp = await table_client.create_entity(entity=entity)
             except ResourceExistsError:
@@ -79,7 +88,15 @@ class InsertDeleteEntity(object):
         # [END delete_entity]
 
     async def clean_up(self):
+        import os
         from azure.data.tables.aio import TableServiceClient
+
+        access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            account_name, access_key, endpoint_suffix
+        )
 
         tsc = TableServiceClient.from_connection_string(connection_string)
         async with tsc:
