@@ -10,6 +10,7 @@ import platform
 import functools
 import itertools
 import json
+import time
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.pipeline.transport import AioHttpTransport
@@ -713,13 +714,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         for action in actions:
             assert action.disable_service_logs
 
+        coroutine = None
         def callback(resp):
-            # tasks = json.loads(resp.http_request.body)["tasks"]
-            # assert len(tasks) == len(actions)
-            # for task in tasks.values():
-            #     assert task[0]["parameter"]["loggingOptOut"]
-            pass
-
+            coroutine = resp
 
         await (await client.begin_analyze_actions(
             documents=["Test for logging disable"],
@@ -727,3 +724,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             polling_interval=self._interval(),
             raw_response_hook=callback,
         )).result()
+
+        response = await coroutine
+        a = "b"

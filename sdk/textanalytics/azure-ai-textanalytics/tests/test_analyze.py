@@ -676,8 +676,7 @@ class TestAnalyze(TextAnalyticsTest):
             tasks = json.loads(resp.http_request.body)["tasks"]
             assert len(tasks) == len(actions)
             for task in tasks.values():
-                assert task[0]["parameter"]["loggingOptOut"]
-
+                assert task[0]["parameters"]["loggingOptOut"]
 
         client.begin_analyze_actions(
             documents=["Test for logging disable"],
