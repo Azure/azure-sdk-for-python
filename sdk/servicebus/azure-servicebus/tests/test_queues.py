@@ -26,8 +26,12 @@ from azure.servicebus import (
     ServiceBusReceivedMessage,
     ServiceBusReceiveMode,
     ServiceBusSubQueue,
+)
+from azure.servicebus.amqp import (
+    AMQPMessageHeader,
+    AMQPMessageBodyType,
     AMQPAnnotatedMessage,
-    AMQPMessageBodyType
+    AMQPMessageProperties,
 )
 from azure.servicebus._common.constants import (
     _X_OPT_LOCK_TOKEN,
@@ -2447,28 +2451,29 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     sender.send_messages(sequence_message)
 
                     for message in receiver:
-                        if message.body_type == AMQPMessageBodyType.DATA:
-                            if message.message.application_properties and message.message.application_properties.get(b'body_type') == b'data':
-                                body = [data for data in message.body]
+                        raw_amqp_message = message.raw_amqp_message
+                        if raw_amqp_message.body_type == AMQPMessageBodyType.DATA:
+                            if raw_amqp_message.application_properties and raw_amqp_message.application_properties.get(b'body_type') == b'data':
+                                body = [data for data in raw_amqp_message.body]
                                 assert data_body == body
-                                assert message.message.delivery_annotations[b'delann_key'] == b'delann_value'
-                                assert message.message.application_properties[b'body_type'] == b'data'
+                                assert raw_amqp_message.delivery_annotations[b'delann_key'] == b'delann_value'
+                                assert raw_amqp_message.application_properties[b'body_type'] == b'data'
                                 recv_data_msg += 1
                             else:
                                 assert str(message) == content
                                 normal_msg += 1
-                        elif message.body_type == AMQPMessageBodyType.SEQUENCE:
-                            body = [sequence for sequence in message.body]
+                        elif raw_amqp_message.body_type == AMQPMessageBodyType.SEQUENCE:
+                            body = [sequence for sequence in raw_amqp_message.body]
                             assert [sequence_body] == body
-                            assert message.message.properties.subject == b'sequence'
-                            assert message.message.footer[b'footer_key'] == b'footer_value'
-                            assert message.message.application_properties[b'body_type'] == b'sequence'
+                            assert raw_amqp_message.footer[b'footer_key'] == b'footer_value'
+                            assert raw_amqp_message.properties.subject == b'sequence'
+                            assert raw_amqp_message.application_properties[b'body_type'] == b'sequence'
                             recv_sequence_msg += 1
-                        elif message.body_type == AMQPMessageBodyType.VALUE:
-                            assert message.body == value_body
-                            assert message.message.header.priority == 10
-                            assert message.message.annotations[b'ann_key'] == b'ann_value'
-                            assert message.message.application_properties[b'body_type'] == b'value'
+                        elif raw_amqp_message.body_type == AMQPMessageBodyType.VALUE:
+                            assert raw_amqp_message.body == value_body
+                            assert raw_amqp_message.header.priority == 10
+                            assert raw_amqp_message.annotations[b'ann_key'] == b'ann_value'
+                            assert raw_amqp_message.application_properties[b'body_type'] == b'value'
                             recv_value_msg += 1
                         receiver.complete_message(message)
 
