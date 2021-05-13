@@ -237,7 +237,6 @@ class GeneralNameReplacer(RecordingProcessor):
             for old, new in self.names_name:
                 response["url"].replace(old, new)
         except KeyError:
-            print("error")
             pass
 
         return response
