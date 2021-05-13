@@ -26,44 +26,36 @@ import os
 class CreateClients(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
     def create_registry_client(self):
         # Instantiate the ContainerRegistryClient
         # [START create_registry_client]
         from azure.containerregistry import ContainerRegistryClient
         from azure.identity import DefaultAzureCredential
+        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
+        client = ContainerRegistryClient(account_url, DefaultAzureCredential())
         # [END create_registry_client]
-
-    def create_repository_client(self):
-        # Instantiate the ContainerRegistryClient
-        # [START create_repository_client]
-        from azure.containerregistry import ContainerRepository
-        from azure.identity import DefaultAzureCredential
-
-        client = ContainerRepository(self.account_url, "my_repository", DefaultAzureCredential())
-        # [END create_repository_client]
 
     def basic_sample(self):
 
         from azure.containerregistry import ContainerRegistryClient
         from azure.identity import DefaultAzureCredential
+        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
         # Instantiate the client
-        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
+        client = ContainerRegistryClient(account_url, DefaultAzureCredential())
         with client:
             # Iterate through all the repositories
             for repository_name in client.list_repository_names():
                 if repository_name == "hello-world":
-                    # Create a repository client from the registry client
-                    repository_client = client.get_repository(repository_name)
+                    # Create a repository object from the registry client
+                    container_repository = client.get_repository(repository_name)
 
-                    with repository_client:
+                    with container_repository:
                         # Show all tags
-                        for tag in repository_client.list_tags():
-                            print(tag.digest)
+                        for manifest in container_repository.list_manifests():
+                            print(manifest.tags)
 
                     # [START delete_repository]
                     client.delete_repository("hello-world")
@@ -73,5 +65,4 @@ class CreateClients(object):
 if __name__ == "__main__":
     sample = CreateClients()
     sample.create_registry_client()
-    sample.create_repository_client()
     sample.basic_sample()
