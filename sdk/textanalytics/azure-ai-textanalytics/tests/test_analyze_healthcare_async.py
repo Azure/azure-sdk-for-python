@@ -462,10 +462,13 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_disable_service_logs(self, client):
         def callback(resp):
-            assert resp.http_request.query['loggingOptOut']
-        await client.begin_analyze_healthcare_entities(
+            # this is called for both the initial post
+            # and the gets. Only care about the initial post
+            if resp.http_request.method == "POST":
+                assert resp.http_request.query['loggingOptOut']
+        await (await client.begin_analyze_healthcare_entities(
             documents=["Test for logging disable"],
             polling_interval=self._interval(),
             disable_service_logs=True,
             raw_response_hook=callback,
-        ).result()
+        )).result()

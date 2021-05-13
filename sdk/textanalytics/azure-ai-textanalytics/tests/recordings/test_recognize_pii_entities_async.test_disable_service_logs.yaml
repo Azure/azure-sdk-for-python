@@ -12,21 +12,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=false&loggingOptOut=true&stringIndexType=UnicodeCodePoint
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=false&loggingOptOut=true&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"redactedText":"Test for logging disable","id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
-      apim-request-id: 99ca2717-f2b2-44ae-96ca-545ebb96049d
+      apim-request-id: 01d77205-0dc3-49c2-a93a-f2deb6375c29
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
-      date: Wed, 12 May 2021 22:08:52 GMT
+      date: Thu, 13 May 2021 23:45:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '9619'
+      x-envoy-upstream-service-time: '42'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=false&loggingOptOut=true&stringIndexType=UnicodeCodePoint
+    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=false&loggingOptOut=true&stringIndexType=UnicodeCodePoint
 version: 1

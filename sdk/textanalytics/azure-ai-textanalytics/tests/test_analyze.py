@@ -5,7 +5,6 @@
 # ------------------------------------
 
 import os
-from tests.test_repr import extract_key_phrases_result
 import pytest
 import platform
 import functools

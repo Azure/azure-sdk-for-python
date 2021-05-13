@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+import copy
 from typing import (  # pylint: disable=unused-import
     Union,
     Optional,
@@ -581,25 +581,30 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         string_index_type = kwargs.pop("string_index_type", self._string_index_type_default)
 
         doc_id_order = [doc.get("id") for doc in docs]
+        my_cls = kwargs.pop(
+            "cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)
+        )
         disable_service_logs = kwargs.pop("disable_service_logs", None)
+        polling_kwargs = kwargs
+        operation_kwargs = copy.copy(kwargs)
         if disable_service_logs is not None:
-            kwargs['logging_opt_out'] = disable_service_logs
+            operation_kwargs['logging_opt_out'] = disable_service_logs
 
         try:
             return self._client.begin_health(
                 docs,
                 model_version=model_version,
                 string_index_type=string_index_type,
-                cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
+                cls=my_cls,
                 polling=AnalyzeHealthcareEntitiesLROPollingMethod(
                     text_analytics_client=self._client,
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
                     ],
-                    **kwargs),
+                    **polling_kwargs),
                 continuation_token=continuation_token,
-                **kwargs
+                **operation_kwargs
             )
 
         except ValueError as error:

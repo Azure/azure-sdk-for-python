@@ -407,7 +407,10 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_disable_service_logs(self, client):
         def callback(resp):
-            assert resp.http_request.query['loggingOptOut']
+            # this is called for both the initial post
+            # and the gets. Only care about the initial post
+            if resp.http_request.method == "POST":
+                assert resp.http_request.query['loggingOptOut']
         client.begin_analyze_healthcare_entities(
             documents=["Test for logging disable"],
             polling_interval=self._interval(),

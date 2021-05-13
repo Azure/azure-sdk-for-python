@@ -12,21 +12,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/languages?showStats=false&loggingOptOut=true
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/languages?showStats=false&loggingOptOut=true
   response:
     body:
       string: '{"documents":[{"id":"0","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":0.88},"warnings":[]}],"errors":[],"modelVersion":"2021-01-05"}'
     headers:
-      apim-request-id: 8b90f439-9f57-4417-8a40-7f9e74f6b6a8
+      apim-request-id: 3fefd94c-eb23-4dc8-9dc0-6dd51d1f010d
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
-      date: Wed, 12 May 2021 22:08:42 GMT
+      date: Thu, 13 May 2021 23:44:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '13'
+      x-envoy-upstream-service-time: '9'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/languages?showStats=false&loggingOptOut=true
+    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/languages?showStats=false&loggingOptOut=true
 version: 1
