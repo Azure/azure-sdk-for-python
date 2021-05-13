@@ -28,16 +28,8 @@ def patch_requests_func_async(request_transform):
     AsyncioRequestsTransport.send = original_func
 
 
-def run_in_loop(func, *args, **kwargs):
-    event_loop = asyncio.new_event_loop()
-    event_loop.run_until_complete(
-        func(*args, **kwargs)
-    )
-
-
 def RecordedByProxyAsync(func):
-    @functools.wraps(func)
-    def record_wrap(*args, **kwargs):
+    async def record_wrap(*args, **kwargs):
         test_id = get_test_id()
         recording_id = start_record_or_playback(test_id)
 
@@ -61,8 +53,7 @@ def RecordedByProxyAsync(func):
         with patch_requests_func_async(transform_args):
             # call the modified function.
             try:
-                # value = await func(*args, **trimmed_kwargs)
-                run_in_loop(func, *args, **kwargs)
+                value = await func(*args, **trimmed_kwargs)
             finally:
                 stop_record_or_playback(test_id, recording_id)
 

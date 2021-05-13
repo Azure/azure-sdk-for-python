@@ -103,7 +103,6 @@ def transform_request(request, recording_id):
 
 
 def RecordedByProxy(func):
-    @functools.wraps(func)
     def record_wrap(*args, **kwargs):
         test_id = get_test_id()
         recording_id = start_record_or_playback(test_id)

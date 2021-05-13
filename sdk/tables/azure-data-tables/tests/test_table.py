@@ -8,10 +8,7 @@
 import pytest
 from datetime import datetime, timedelta
 
-from devtools_testutils import (
-    AzureRecordedTestCase,
-    RecordedByProxy
-)
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.data.tables import (
     ResourceTypes,
@@ -83,7 +80,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
     # --Test cases for tables --------------------------------------------------
 
     @tables_decorator
-    @RecordedByProxy
     def test_create_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -107,7 +103,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         ts.delete_table(table_name)
 
     @tables_decorator
-    @RecordedByProxy
     def test_create_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -123,7 +118,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         ts.delete_table(table_name)
 
     @tables_decorator
-    @RecordedByProxy
     def test_create_table_fail_on_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -143,7 +137,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         ts.delete_table(table_name)
 
     @tables_decorator
-    @RecordedByProxy
     def test_query_tables_per_page(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -176,7 +169,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             self.sleep(10) # wait for tables to be deleted before proceeding
 
     @tables_decorator
-    @RecordedByProxy
     def test_create_table_if_exists(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
@@ -191,7 +183,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         ts.delete_table(table_name)
 
     @tables_decorator
-    @RecordedByProxy
     def test_create_table_if_exists_new_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
@@ -204,7 +195,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         ts.delete_table(table_name)
 
     @tables_decorator
-    @RecordedByProxy
     def test_query_tables(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -227,7 +217,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             self.sleep(10) # wait for tables to be deleted before proceeding
 
     @tables_decorator
-    @RecordedByProxy
     def test_query_tables_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -252,7 +241,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             self.sleep(10) # wait for tables to be deleted before proceeding
 
     @tables_decorator
-    @RecordedByProxy
     def test_query_tables_with_num_results(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         prefix = 'listtable'
@@ -282,7 +270,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             self.sleep(10) # wait for tables to be deleted before proceeding
 
     @tables_decorator
-    @RecordedByProxy
     def test_query_tables_with_marker(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -313,7 +300,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             self.sleep(10) # wait for tables to be deleted before proceeding
 
     @tables_decorator
-    @RecordedByProxy
     def test_delete_table_with_existing_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -329,7 +315,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         assert len(existing) ==  0
 
     @tables_decorator
-    @RecordedByProxy
     def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -338,7 +323,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         ts.delete_table(table_name)
 
     @tables_decorator
-    @RecordedByProxy
     def test_get_table_acl(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -356,7 +340,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             ts.delete_table(table.table_name)
 
     @tables_decorator
-    @RecordedByProxy
     def test_set_table_acl_with_empty_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -376,7 +359,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             ts.delete_table(table.table_name)
 
     @tables_decorator
-    @RecordedByProxy
     def test_set_table_acl_with_empty_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -399,7 +381,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             ts.delete_table(table.table_name)
 
     @tables_decorator
-    @RecordedByProxy
     def test_set_table_acl_with_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -425,7 +406,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             ts.delete_table(table.table_name)
 
     @tables_decorator
-    @RecordedByProxy
     def test_set_table_acl_too_many_ids(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -447,7 +427,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
 
     @pytest.mark.live_test_only
     @tables_decorator
-    @RecordedByProxy
     def test_account_sas(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 

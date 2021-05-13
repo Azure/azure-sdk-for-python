@@ -6,9 +6,8 @@ from datetime import datetime, timedelta
 import pytest
 
 from devtools_testutils import AzureTestCase, AzureRecordedTestCase
-from devtools_testutils.aio import RecordedByProxyAsync
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 from azure.data.tables import (
     AccessPolicy,
@@ -54,7 +53,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     # --Test cases for tables --------------------------------------------------
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_create_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -70,7 +68,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         await ts.delete_table(table_name=table_name)
 
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_create_table_fail_on_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -90,7 +87,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         await ts.delete_table(table_name=table_name)
 
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_query_tables_per_page(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -120,7 +116,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
             await ts.delete_table(table_name + str(i))
 
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_list_tables(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -142,7 +137,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         await ts.delete_table(table.table_name)
 
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_query_tables_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -164,7 +158,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         await ts.delete_table(table.table_name)
 
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_list_tables_with_num_results(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         prefix = 'listtable'
@@ -192,7 +185,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert len(big_page) >=  4
 
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_list_tables_with_marker(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -226,7 +218,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert tables1 != tables2
 
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_delete_table_with_existing_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -243,7 +234,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert tables ==  []
 
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_storage_account_name,
                                                                        tables_primary_storage_account_key):
         # Arrange
@@ -255,7 +245,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         # Assert
 
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_get_table_acl(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -273,7 +262,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
             await ts.delete_table(table.table_name)
 
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_set_table_acl_with_empty_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -292,7 +280,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
             await ts.delete_table(table.table_name)
 
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_set_table_acl_with_empty_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -314,7 +301,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
             await ts.delete_table(table.table_name)
 
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_set_table_acl_with_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -339,7 +325,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
             await ts.delete_table(table.table_name)
 
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_set_table_acl_too_many_ids(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -359,7 +344,6 @@ class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @pytest.mark.live_test_only
     @tables_decorator_async
-    @RecordedByProxyAsync
     async def test_account_sas(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 

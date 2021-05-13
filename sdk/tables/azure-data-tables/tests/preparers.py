@@ -2,7 +2,7 @@ import functools
 import inspect
 
 from azure.core.credentials import AzureNamedKeyCredential
-from devtools_testutils import PowerShellPreparer
+from devtools_testutils import PowerShellPreparer, RecordedByProxy
 
 CosmosPreparer = functools.partial(
     PowerShellPreparer, "tables",
@@ -34,6 +34,7 @@ def trim_kwargs_from_test_function(fn, kwargs):
 def tables_decorator(func, **kwargs):
 
     @TablesPreparer()
+    @RecordedByProxy
     def wrapper(*args, **kwargs):
         key = kwargs.pop("tables_primary_storage_account_key")
         name = kwargs.pop("tables_storage_account_name")
@@ -53,6 +54,7 @@ def tables_decorator(func, **kwargs):
 def cosmos_decorator(func, **kwargs):
 
     @CosmosPreparer()
+    @RecordedByProxy
     def wrapper(*args, **kwargs):
         key = kwargs.pop("tables_primary_cosmos_account_key")
         name = kwargs.pop("tables_cosmos_account_name")
