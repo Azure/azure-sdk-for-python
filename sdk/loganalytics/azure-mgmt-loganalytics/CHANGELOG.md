@@ -1,5 +1,27 @@
 # Release History
 
+## 10.0.0 (2021-05-13)
+
+**Features**
+
+  - Model WorkspacePatch has a new parameter cluster_resource_id
+  - Model WorkspacePatch has a new parameter immediate_purge_data_on30_days
+  - Model WorkspacePatch has a new parameter enable_data_export
+  - Model WorkspacePatch has a new parameter enable_log_access_using_only_resource_permissions
+  - Model Workspace has a new parameter cluster_resource_id
+  - Model Workspace has a new parameter immediate_purge_data_on30_days
+  - Model Workspace has a new parameter enable_data_export
+  - Model Workspace has a new parameter enable_log_access_using_only_resource_permissions
+
+**Breaking changes**
+
+  - Model WorkspacePatch no longer has parameter features
+  - Model Table no longer has parameter is_troubleshooting_allowed
+  - Model Table no longer has parameter is_troubleshoot_enabled
+  - Model Table no longer has parameter last_troubleshoot_date
+  - Model WorkspaceSku no longer has parameter max_capacity_reservation_level
+  - Model Workspace no longer has parameter features
+
 ## 9.0.0 (2021-04-06)
 
 **Features**
