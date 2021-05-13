@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from copy import deepcopy
 import six
 
 from .utilities import is_text_payload, is_json_payload, is_batch_payload
@@ -192,7 +193,7 @@ class GeneralNameReplacer(RecordingProcessor):
 
             if is_text_payload(request) and request.body:
                 if isinstance(request.body, dict):
-                    pass
+                    request.body = self._process_body_as_dict(request.body)
                 else:
                     body = six.ensure_str(request.body)
                     if old in body:
@@ -205,7 +206,17 @@ class GeneralNameReplacer(RecordingProcessor):
                 for matched_object in matched_objects:
                     request.body = body.replace(matched_object, new)
                     body = body.replace(matched_object, new)
+
         return request
+
+    def _process_body_as_dict(self, body):
+        new_body = deepcopy(body)
+
+        for key in new_body.keys():
+            for old, new in self.names_name:
+                new_body[key].replace(old, new)
+
+        return new_body
 
     def process_response(self, response):
         for old, new in self.names_name:
@@ -220,6 +231,14 @@ class GeneralNameReplacer(RecordingProcessor):
             self.replace_header(response, 'location', old, new)
             self.replace_header(response, 'operation-location', old, new)
             self.replace_header(response, 'azure-asyncoperation', old, new)
+            self.replace_header(response, "www-authenticate", old, new)
+
+        try:
+            for old, new in self.names_name:
+                response["url"].replace(old, new)
+        except KeyError:
+            print("error")
+            pass
 
         return response
 
