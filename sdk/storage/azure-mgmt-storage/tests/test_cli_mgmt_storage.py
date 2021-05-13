@@ -118,6 +118,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         else:
             return "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + group_name + "/providers/Microsoft.Network/privateEndpoints/" + endpoint_name
 
+    @unittest.skip("skip test")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_storage(self, resource_group):
 
