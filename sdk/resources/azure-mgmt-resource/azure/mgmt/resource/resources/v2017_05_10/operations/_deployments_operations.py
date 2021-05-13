@@ -689,14 +689,14 @@ class DeploymentsOperations(object):
 
     def calculate_template_hash(
         self,
-        template,  # type: object
+        template,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.TemplateHashResult"
         """Calculate the hash of the given template.
 
         :param template: The template provided to calculate hash.
-        :type template: object
+        :type template: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TemplateHashResult, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.TemplateHashResult
@@ -724,7 +724,7 @@ class DeploymentsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(template, 'object')
+        body_content = self._serialize.body(template, 'str')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
