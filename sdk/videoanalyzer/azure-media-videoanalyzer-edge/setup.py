@@ -57,14 +57,13 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/media/azure-media-analytics-edge',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/videoanalyzer/azure-media-videoanalyzer-edge',
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
@@ -78,8 +77,7 @@ setup(
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
-            "azure.media",
-            "azure.media.video"
+            "azure.media"
         ]
     ),
     install_requires=[
