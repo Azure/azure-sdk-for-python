@@ -5,7 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils.proxy_testcase import RecordedByProxyAsync
 import pytest
 from datetime import datetime, timedelta
 
