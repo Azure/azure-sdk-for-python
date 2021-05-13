@@ -160,7 +160,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
-            https://www.microsoft.com/en-us/ai/responsible-ai.
+            https://www.microsoft.com/ai/responsible-ai.
         :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -183,7 +183,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs:
+        if disable_service_logs is not None:
             kwargs['logging_opt_out'] = disable_service_logs
         try:
             return await self._client.languages(
@@ -240,7 +240,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
-            https://www.microsoft.com/en-us/ai/responsible-ai.
+            https://www.microsoft.com/ai/responsible-ai.
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -263,7 +263,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs:
+        if disable_service_logs is not None:
             kwargs['logging_opt_out'] = disable_service_logs
 
         string_index_type = _check_string_index_type_arg(
@@ -338,7 +338,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
-            https://www.microsoft.com/en-us/ai/responsible-ai.
+            https://www.microsoft.com/ai/responsible-ai.
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -371,7 +371,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs:
+        if disable_service_logs is not None:
             kwargs['logging_opt_out'] = disable_service_logs
 
         try:
@@ -438,7 +438,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
-            https://www.microsoft.com/en-us/ai/responsible-ai.
+            https://www.microsoft.com/ai/responsible-ai.
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -461,7 +461,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs:
+        if disable_service_logs is not None:
             kwargs['logging_opt_out'] = disable_service_logs
 
         string_index_type = _check_string_index_type_arg(
@@ -525,7 +525,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
-            https://www.microsoft.com/en-us/ai/responsible-ai.
+            https://www.microsoft.com/ai/responsible-ai.
         :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -548,7 +548,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs:
+        if disable_service_logs is not None:
             kwargs['logging_opt_out'] = disable_service_logs
         try:
             return await self._client.key_phrases(
@@ -611,7 +611,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
-            https://www.microsoft.com/en-us/ai/responsible-ai.
+            https://www.microsoft.com/ai/responsible-ai.
         .. versionadded:: v3.1-preview
             The *show_opinion_mining* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
@@ -637,7 +637,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", False)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs:
+        if disable_service_logs is not None:
             kwargs['logging_opt_out'] = disable_service_logs
 
         string_index_type = _check_string_index_type_arg(
@@ -729,7 +729,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
-            https://www.microsoft.com/en-us/ai/responsible-ai.
+            https://www.microsoft.com/ai/responsible-ai.
         :return: An instance of an AnalyzeHealthcareEntitiesAsyncLROPoller. Call `result()` on the poller
             object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`.
         :rtype:
@@ -755,7 +755,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         continuation_token = kwargs.pop("continuation_token", None)
         string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs:
+        if disable_service_logs is not None:
             kwargs['logging_opt_out'] = disable_service_logs
 
         doc_id_order = [doc.get("id") for doc in docs]

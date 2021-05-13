@@ -1445,7 +1445,7 @@ class RecognizeEntitiesAction(DictMixin):
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/en-us/ai/responsible-ai.
+        https://www.microsoft.com/ai/responsible-ai.
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -1458,7 +1458,7 @@ class RecognizeEntitiesAction(DictMixin):
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/en-us/ai/responsible-ai.
+        https://www.microsoft.com/ai/responsible-ai.
     """
 
     def __init__(self, **kwargs):
@@ -1505,7 +1505,7 @@ class AnalyzeSentimentAction(DictMixin):
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/en-us/ai/responsible-ai.
+        https://www.microsoft.com/ai/responsible-ai.
     :ivar str model_version: The model version to use for the analysis.
     :ivar bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
         granular analysis around the aspects of a product or service (also known as
@@ -1523,7 +1523,7 @@ class AnalyzeSentimentAction(DictMixin):
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/en-us/ai/responsible-ai.
+        https://www.microsoft.com/ai/responsible-ai.
     """
 
     def __init__(self, **kwargs):
@@ -1574,7 +1574,7 @@ class RecognizePiiEntitiesAction(DictMixin):
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/en-us/ai/responsible-ai.
+        https://www.microsoft.com/ai/responsible-ai.
     :ivar str model_version: The model version to use for the analysis.
     :ivar str domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
@@ -1589,7 +1589,7 @@ class RecognizePiiEntitiesAction(DictMixin):
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/en-us/ai/responsible-ai.
+        https://www.microsoft.com/ai/responsible-ai.
     """
 
     def __init__(self, **kwargs):
@@ -1634,7 +1634,7 @@ class ExtractKeyPhrasesAction(DictMixin):
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/en-us/ai/responsible-ai.
+        https://www.microsoft.com/ai/responsible-ai.
     :ivar str model_version: The model version to use for the analysis.
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -1643,7 +1643,7 @@ class ExtractKeyPhrasesAction(DictMixin):
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/en-us/ai/responsible-ai.
+        https://www.microsoft.com/ai/responsible-ai.
     """
 
     def __init__(self, **kwargs):
@@ -1683,7 +1683,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/en-us/ai/responsible-ai.
+        https://www.microsoft.com/ai/responsible-ai.
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -1696,7 +1696,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/en-us/ai/responsible-ai.
+        https://www.microsoft.com/ai/responsible-ai.
     """
 
     def __init__(self, **kwargs):
