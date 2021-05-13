@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import warnings
 from typing import Optional, Dict, Any
 
 try:
@@ -294,14 +295,13 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             Specifies the name of the deleted filesystem to restore.
         :param str deleted_version:
             Specifies the version of the deleted filesystem to restore.
-        :keyword str new_name:
-            The new name for the deleted filesystem to be restored to.
-            If not specified "name" will be used as the restored filesystem name.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
         new_name = kwargs.pop('new_name', None)
+        if new_name:
+            warnings.warn("`new_name` is no longer supported.", DeprecationWarning)
         file_system = self.get_file_system_client(new_name or name)
         self._blob_service_client.undelete_container(
             name, deleted_version, new_name=new_name, **kwargs)  # pylint: disable=protected-access
