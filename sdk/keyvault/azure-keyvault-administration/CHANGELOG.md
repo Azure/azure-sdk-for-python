@@ -1,6 +1,13 @@
 # Release History
 
 ## 4.0.0b4 (Unreleased)
+### Added
+- `KeyVaultAccessControlClient.set_role_definition` accepts an optional 
+  `assignable_scopes` keyword-only argument
+
+### Breaking Changes
+- Changed parameter order in `KeyVaultAccessControlClient.set_role_definition`.
+  `permissions` is now an optional keyword-only argument
 
 
 ## 4.0.0b3 (2021-02-09)

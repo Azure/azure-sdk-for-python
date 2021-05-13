@@ -13,11 +13,10 @@ from .._internal import AsyncKeyVaultClientBase
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Any, Iterable, Union
+    from typing import Any, Optional, Union
     from uuid import UUID
     from azure.core.async_paging import AsyncItemPaged
     from .._enums import KeyVaultRoleScope
-    from .._models import KeyVaultPermission
 
 
 class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
@@ -119,27 +118,32 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def set_role_definition(
-        self, role_scope: "Union[str, KeyVaultRoleScope]", permissions: "Iterable[KeyVaultPermission]", **kwargs: "Any"
+        self,
+        role_scope: "Union[str, KeyVaultRoleScope]",
+        role_definition_name: "Optional[Union[str, UUID]]" = None,
+        **kwargs: "Any"
     ) -> "KeyVaultRoleDefinition":
         """Creates or updates a custom role definition.
 
         :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
             Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.GLOBAL.
         :type role_scope: str or KeyVaultRoleScope
-        :param permissions: the role definition's permissions. An empty list results in a role definition with no action
-            permissions.
-        :type permissions: Iterable[KeyVaultPermission]
-        :keyword str role_name: the role's name. If unspecified when creating or updating a role definition, the role
-            name will be set to an empty string.
-        :keyword role_definition_name: the role definition's name. Must be a UUID.
+        :param role_definition_name: the unique role definition name. Unless a UUID is provided, a new role definition
+            will be created with a generated unique name. Providing the unique name of an existing role definition will
+            update that role definition.
         :type role_definition_name: str or uuid.UUID
+        :keyword str role_name: the role's display name. If unspecified when creating or updating a role definition, the
+            role name will be set to an empty string.
         :keyword str description: a description of the role definition. If unspecified when creating or updating a role
             definition, the description will be set to an empty string.
+        :keyword permissions: the role definition's permissions. If unspecified when creating or updating a role
+            definition, the role definition will have no action permissions.
+        :type permissions: Iterable[KeyVaultPermission]
+        :keyword assignable_scopes: the scopes for which the role definition can be assigned.
+        :type assignable_scopes: Iterable[str] or Iterable[KeyVaultRoleScope]
         :returns: The created or updated role definition
         :rtype: KeyVaultRoleDefinition
         """
-        role_definition_name = kwargs.pop("role_definition_name", None) or uuid4()
-
         permissions = [
             self._client.role_definitions.models.Permission(
                 actions=p.allowed_actions,
@@ -147,20 +151,21 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
                 data_actions=p.allowed_data_actions,
                 not_data_actions=p.denied_data_actions,
             )
-            for p in permissions
+            for p in kwargs.pop("permissions", None) or []
         ]
 
         properties = self._client.role_definitions.models.RoleDefinitionProperties(
             role_name=kwargs.pop("role_name", None),
             description=kwargs.pop("description", None),
-            permissions=permissions
+            permissions=permissions,
+            assignable_scopes=kwargs.pop("assignable_scopes", None),
         )
         parameters = self._client.role_definitions.models.RoleDefinitionCreateParameters(properties=properties)
 
         definition = await self._client.role_definitions.create_or_update(
             vault_base_url=self._vault_url,
             scope=role_scope,
-            role_definition_name=str(role_definition_name),
+            role_definition_name=str(role_definition_name or uuid4()),
             parameters=parameters,
             **kwargs
         )
