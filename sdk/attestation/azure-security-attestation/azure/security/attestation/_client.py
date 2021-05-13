@@ -78,7 +78,7 @@ class AttestationClient(object):
         # type: (Any) ->list[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
 
-        :return list[AttestationSigner]: A list of :class:`AttestationSigner` objects.
+        :return list[azure.security.attestation.AttestationSigner]: A list of :class:`azure.security.attestation.AttestationSigner` objects.
 
         For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
@@ -97,15 +97,15 @@ class AttestationClient(object):
         """ Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
-        :keyword AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :keyword AttestationData runtime_data: Data presented at the time that the SGX quote was created.
+        :keyword azure.security.attestation.AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :keyword azure.security.attestation.AttestationData runtime_data: Data presented at the time that the SGX quote was created.
         :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API
 
-        :return AttestationResponse[AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
+        :return azure.security.attestation.AttestationResponse[azure.security.attestation.AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
@@ -125,7 +125,7 @@ class AttestationClient(object):
             quote=quote,
             init_time_data = inittime,
             runtime_data = runtime,
-            draft_policy_for_attestation=kwargs.get('draft_policy', None))
+            draft_policy_for_attestation=kwargs.pop('draft_policy', None))
 
         result = self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
@@ -139,14 +139,14 @@ class AttestationClient(object):
         """ Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
-        :keyword AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :keyword AttestationData runtime_data: Data presented at the time that the open_enclave report was created.
+        :keyword azure.security.attestation.AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :keyword azure.security.attestation.AttestationData runtime_data: Data presented at the time that the open_enclave report was created.
         :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
-        :return AttestationResponse[AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
+        :return azure.security.attestation.AttestationResponse[azure.security.attestation.AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
@@ -166,7 +166,7 @@ class AttestationClient(object):
             report=report,
             init_time_data = inittime,
             runtime_data = runtime,
-            draft_policy_for_attestation = kwargs.get('draft_policy', None))
+            draft_policy_for_attestation = kwargs.pop('draft_policy', None))
         result = self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)
@@ -180,8 +180,8 @@ class AttestationClient(object):
 
         See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
 
-        :param TpmAttestationRequest request: Incoming request to send to the TPM attestation service.
-        :returns TpmAttestationResponse: A structure containing the response from the TPM attestation.
+        :param azure.security.attestation.TpmAttestationRequest request: Incoming request to send to the TPM attestation service.
+        :returns azure.security.attestation.TpmAttestationResponse: A structure containing the response from the TPM attestation.
 
         """
         response = self._client.attestation.attest_tpm(request.data, **kwargs)

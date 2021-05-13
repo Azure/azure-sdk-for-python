@@ -7,17 +7,14 @@
 from typing import List, Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from six import python_2_unicode_compatible
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._generated import AzureAttestationRestClient
-from ._generated.models import (
+from .._generated.aio import AzureAttestationRestClient
+from .._generated.models import (
     AttestationType, 
     PolicyResult as GeneratedPolicyResult, 
     PolicyCertificatesResult, 
@@ -26,8 +23,8 @@ from ._generated.models import (
     StoredAttestationPolicy as GeneratedStoredAttestationPolicy,
     PolicyCertificatesModificationResult as GeneratedPolicyCertificatesModificationResult
 )
-from ._configuration import AttestationClientConfiguration
-from ._models import (
+from .._configuration import AttestationClientConfiguration
+from .._models import (
     AttestationSigner, 
     AttestationToken, 
     AttestationResponse, 
@@ -37,8 +34,8 @@ from ._models import (
     AttestationTokenValidationException
 )
 import base64
-from azure.core.tracing.decorator import distributed_trace
-from threading import Lock, Thread
+from azure.core.tracing.decorator_async import distributed_trace_async
+from threading import Lock
 
 
 class AttestationAdministrationClient(object):
@@ -50,6 +47,9 @@ class AttestationAdministrationClient(object):
     :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
     :keyword HttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
+
+    For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
+
     """
 
     def __init__(
@@ -66,8 +66,8 @@ class AttestationAdministrationClient(object):
         self._statelock = Lock()
         self._signing_certificates = None
 
-    @distributed_trace
-    def get_policy(self, attestation_type, **kwargs): 
+    @distributed_trace_async
+    async def get_policy(self, attestation_type, **kwargs): 
         #type(AttestationType, **Any) -> AttestationResult[str]:
         """ Retrieves the attestation policy for a specified attestation type.
 
@@ -79,7 +79,7 @@ class AttestationAdministrationClient(object):
 
         """
         
-        policyResult = self._client.policy.get(attestation_type, **kwargs)
+        policyResult = await self._client.policy.get(attestation_type, **kwargs)
         token = AttestationToken[GeneratedPolicyResult](token=policyResult.token, body_type=GeneratedPolicyResult)
         token_body = token.get_body()
         stored_policy = AttestationToken[GeneratedStoredAttestationPolicy](token=token_body.policy, body_type=GeneratedStoredAttestationPolicy)
@@ -87,13 +87,13 @@ class AttestationAdministrationClient(object):
         actual_policy = stored_policy.get_body().attestation_policy #type: bytes
 
         if self._config.token_validation_options.validate_token:
-            if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
+            if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
                 raise AttestationTokenValidationException("Token Validation of get_policy API failed.")
 
         return AttestationResponse[str](token, actual_policy.decode('utf-8'))
 
-    @distributed_trace
-    def set_policy(self, attestation_type, attestation_policy, signing_key=None, **kwargs): 
+    @distributed_trace_async
+    async def set_policy(self, attestation_type, attestation_policy, signing_key=None, **kwargs): 
         #type:(AttestationType, str, Optional[AttestationSigningKey], **Any) -> AttestationResponse[PolicyResult]
         """ Sets the attestation policy for the specified attestation type.
 
@@ -119,18 +119,18 @@ class AttestationAdministrationClient(object):
             body=GeneratedStoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
             signer=signing_key,
             body_type=GeneratedStoredAttestationPolicy)
-        policyResult = self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.serialize(), **kwargs)
+        policyResult = await self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.serialize(), **kwargs)
         token = AttestationToken[GeneratedPolicyResult](token=policyResult.token,
             body_type=GeneratedPolicyResult)
         if self._config.token_validation_options.validate_token:
-            if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
+            if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
                 raise AttestationTokenValidationException("Token Validation of set_policy API failed.")
 
         return AttestationResponse[PolicyResult](token, PolicyResult._from_generated(token.get_body()))
 
-    @distributed_trace
-    def reset_policy(self, attestation_type, signing_key=None, **kwargs): 
-        #type:(AttestationType, Optional[AttestationSigningKey], **dict[str, Any]) -> AttestationResponse[PolicyResult]
+    @distributed_trace_async
+    async def reset_policy(self, attestation_type, signing_key=None, **kwargs): 
+        #type:(AttestationType,  Optional[AttestationSigningKey], **dict[str, Any]) -> AttestationResponse[PolicyResult]
         """ Resets the attestation policy for the specified attestation type to the default value.
 
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
@@ -152,18 +152,18 @@ class AttestationAdministrationClient(object):
         policy_token = AttestationToken(
             body=None,
             signer=signing_key)
-        policyResult = self._client.policy.reset(attestation_type=attestation_type, policy_jws=policy_token.serialize(), **kwargs)
+        policyResult = await self._client.policy.reset(attestation_type=attestation_type, policy_jws=policy_token.serialize(), **kwargs)
         token = AttestationToken[GeneratedPolicyResult](token=policyResult.token,
             body_type=GeneratedPolicyResult)
         if self._config.token_validation_options.validate_token:
-            if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
+            if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
                 raise AttestationTokenValidationException("Token Validation of reset_policy API failed.")
 
         return AttestationResponse[PolicyResult](token, PolicyResult._from_generated(token.get_body()))
 
 
-    @distributed_trace
-    def get_policy_management_certificates(self, **kwargs):
+    @distributed_trace_async
+    async def get_policy_management_certificates(self, **kwargs):
         #type:(**Any) -> AttestationResponse[list[list[bytes]]]
         """ Retrieves the set of policy management certificates for the instance.
 
@@ -174,12 +174,12 @@ class AttestationAdministrationClient(object):
             encapsulating a list of DER encoded X.509 certificate chains.
         """
 
-        cert_response = self._client.policy_certificates.get(**kwargs)
+        cert_response = await self._client.policy_certificates.get(**kwargs)
         token = AttestationToken[PolicyCertificatesResult](
             token=cert_response.token,
             body_type=PolicyCertificatesResult)
         if self._config.token_validation_options.validate_token:
-            if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
+            if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
                 raise Exception("Token Validation of PolicyCertificates API failed.")
         certificates = []
 
@@ -190,8 +190,8 @@ class AttestationAdministrationClient(object):
             certificates.append(key_certs)
         return AttestationResponse(token, certificates)
 
-    @distributed_trace
-    def add_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
+    @distributed_trace_async
+    async def add_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
         #type:(bytes, AttestationSigningKey, **Any)-> AttestationResponse[PolicyCertificatesModificationResult]
         """ Adds a new policy management certificate to the set of policy management certificates for the instance.
 
@@ -223,16 +223,16 @@ class AttestationAdministrationClient(object):
             signer=signing_key,
             body_type=AttestationCertificateManagementBody)
 
-        cert_response = self._client.policy_certificates.add(cert_add_token.serialize(), **kwargs)
+        cert_response = await self._client.policy_certificates.add(cert_add_token.serialize(), **kwargs)
         token = AttestationToken[GeneratedPolicyCertificatesModificationResult](token=cert_response.token,
             body_type=GeneratedPolicyCertificatesModificationResult)
         if self._config.token_validation_options.validate_token:
-            if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
+            if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
                 raise Exception("Token Validation of PolicyCertificate Add API failed.")
         return AttestationResponse[PolicyCertificatesModificationResult](token, PolicyCertificatesModificationResult._from_generated(token.get_body()))
 
-    @distributed_trace
-    def remove_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
+    @distributed_trace_async
+    async def remove_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
         #type:(bytes, AttestationSigningKey, **Any)-> AttestationResponse[PolicyCertificatesModificationResult]
         """ Removes a new policy management certificate to the set of policy management certificates for the instance.
 
@@ -264,22 +264,22 @@ class AttestationAdministrationClient(object):
             signer=signing_key,
             body_type=AttestationCertificateManagementBody)
 
-        cert_response = self._client.policy_certificates.remove(cert_add_token.serialize(), **kwargs)
+        cert_response = await self._client.policy_certificates.remove(cert_add_token.serialize(), **kwargs)
         token = AttestationToken[GeneratedPolicyCertificatesModificationResult](token=cert_response.token,
             body_type=GeneratedPolicyCertificatesModificationResult)
         if self._config.token_validation_options.validate_token:
-            if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
+            if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
                 raise Exception("Token Validation of PolicyCertificate Remove API failed.")
         return AttestationResponse[PolicyCertificatesModificationResult](token, PolicyCertificatesModificationResult._from_generated(token.get_body()))
 
-    def _get_signers(self, **kwargs):
+    async def _get_signers(self, **kwargs):
         #type(**Any) -> List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
 
         with self._statelock:
             if (self._signing_certificates == None):
-                signing_certificates = self._client.signing_certificates.get(**kwargs)
+                signing_certificates = await self._client.signing_certificates.get(**kwargs)
                 self._signing_certificates = []
                 for key in signing_certificates.keys:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
@@ -291,15 +291,15 @@ class AttestationAdministrationClient(object):
             signers = self._signing_certificates
         return signers
 
-    def close(self):
+    async def close(self):
         # type: () -> None
-        self._client.close()
+        await self._client.close()
 
-    def __enter__(self):
+    async def __aenter__(self):
         # type: () -> AttestationAdministrationClient
-        self._client.__enter__()
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
+    async def __aexit__(self, *exc_details):
         # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+        await self._client.__aexit__(*exc_details)

@@ -6,31 +6,31 @@
 # license information.
 #--------------------------------------------------------------------------
 
-
-from logging import fatal
-from typing import Any, ByteString
-import unittest
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
-from devtools_testutils import AzureTestCase, PowerShellPreparer
-import functools
-import cryptography
-import cryptography.x509
-from cryptography.hazmat.primitives import serialization
-import base64
 import pytest
-from preparers import AttestationPreparer
-from test_policy_getset import Base64Url
-import json
+import asyncio
+import functools
+import os
 
-from azure.security.attestation import (
+
+from devtools_testutils import AzureTestCase, PowerShellPreparer
+from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
+from devtools_testutils.azure_testcase import _is_autorest_v3
+from devtools_testutils import AzureTestCase
+from azure.security.attestation.aio import (
     AttestationClient,
     AttestationAdministrationClient,
     AttestationType,
-    TokenValidationOptions,
     TpmAttestationRequest,
-    TpmAttestationResponse,
-    AttestationData)
+    AttestationData,
+    TokenValidationOptions)
+import cryptography
+import cryptography.x509
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+from preparers import AttestationPreparer
+import json
+
+from test_policy_getset import Base64Url
 
 
 _open_enclave_report = ("AQAAAAIAAADkEQAAAAAAAAMAAg" +
@@ -136,16 +136,17 @@ _runtime_data = ("CiAgICAgICAgewogI" +
     "zRVYUxNZ1BfNGZZNGo4aXI3Y2wxVFhsRmRBZ2N4NTVvN1RrY1NBIgogICAgICAgICAg" +
     "ICB9CiAgICAgICAgfQogICAgICAgIA")
 
+class AsyncAzureAttestationTest(AzureTestCase):
+    def __init__(self, *args, **kwargs):
+        super(AsyncAzureAttestationTest, self).__init__(*args, **kwargs)
 
-class AttestationTest(AzureTestCase):
-
-    # The caching infrastructure won't cache .well-known/openid_metadata responses so
-    # mark the metadata related tests as live-only.
     @AttestationPreparer()
+    @AzureTestCase.await_prepared_test
     @pytest.mark.live_test_only
-    def test_shared_getopenidmetadata(self, attestation_location_short_name):
+    async def test_shared_getopenidmetadataasync(self, attestation_location_short_name):
         attest_client = self.shared_client(attestation_location_short_name)
-        open_id_metadata = attest_client.get_openidmetadata()
+        open_id_metadata = (await attest_client.get_openidmetadata())
+        print ('{}'.format(open_id_metadata))
         assert open_id_metadata["response_types_supported"] is not None
         if self.is_live:
             assert open_id_metadata["jwks_uri"] == self.shared_base_uri(attestation_location_short_name)+"/certs"
@@ -153,58 +154,65 @@ class AttestationTest(AzureTestCase):
 
     @AttestationPreparer()
     @pytest.mark.live_test_only
-    def test_aad_getopenidmetadata(self, attestation_aad_url):
+    @AzureTestCase.await_prepared_test
+    async def test_aad_getopenidmetadataasync(self, attestation_aad_url):
         attest_client = self.create_client(attestation_aad_url)
-        open_id_metadata = attest_client.get_openidmetadata()
+        open_id_metadata = await attest_client.get_openidmetadata()
         assert open_id_metadata["response_types_supported"] is not None
         assert open_id_metadata["jwks_uri"] == attestation_aad_url+"/certs"
         assert open_id_metadata["issuer"] == attestation_aad_url
 
     @AttestationPreparer()
     @pytest.mark.live_test_only
-    def test_isolated_getopenidmetadata(self, attestation_isolated_url):
+    @AzureTestCase.await_prepared_test
+    async def test_isolated_getopenidmetadataasync(self, attestation_isolated_url):
         attest_client = self.create_client(attestation_isolated_url)
-        open_id_metadata = attest_client.get_openidmetadata()
+        open_id_metadata = await attest_client.get_openidmetadata()
         assert open_id_metadata["response_types_supported"] is not None
         assert open_id_metadata["jwks_uri"] == attestation_isolated_url+"/certs"
         assert open_id_metadata["issuer"] == attestation_isolated_url
 
     @AttestationPreparer()
-    def test_shared_getsigningcertificates(self, attestation_location_short_name):
+    @AzureTestCase.await_prepared_test
+    async def test_shared_getsigningcertificatesasync(self, attestation_location_short_name):
         attest_client = self.shared_client(attestation_location_short_name)
-        signers = attest_client.get_signing_certificates()
+        signers = await attest_client.get_signing_certificates()
         for signer in signers:
             x5c = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
 
     @AttestationPreparer()
-    def test_aad_getsigningcertificates(self, attestation_aad_url):
+    @AzureTestCase.await_prepared_test
+    async def test_aad_getsigningcertificatesasync(self, attestation_aad_url):
         #type: (str) -> None
         attest_client = self.create_client(attestation_aad_url)
-        signers = attest_client.get_signing_certificates()
+        signers = await attest_client.get_signing_certificates()
         for signer in signers:
             cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
 
     @AttestationPreparer()
-    def test_isolated_getsigningcertificates(self, attestation_isolated_url):
+    @AzureTestCase.await_prepared_test
+    async def test_isolated_getsigningcertificatesasync(self, attestation_isolated_url):
         #type: (str) -> None
         attest_client = self.create_client(attestation_isolated_url)
-        signers = attest_client.get_signing_certificates()
+        signers = await attest_client.get_signing_certificates()
         for signer in signers:
             cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
 
-    def _test_attest_open_enclave(self, client_uri):
+
+
+    async def _test_attest_open_enclave(self, client_uri):
         #type: (str) -> None
         attest_client = self.create_client(client_uri)
         oe_report = Base64Url.decode(_open_enclave_report)
         runtime_data = Base64Url.decode(_runtime_data)
-        response = attest_client.attest_open_enclave(
+        response = await attest_client.attest_open_enclave(
                 oe_report,
                 runtime_data=AttestationData(runtime_data, is_json=False))
         assert response.value.enclave_held_data == runtime_data
         assert response.value.sgx_collateral is not None
 
         #Now do the validation again, this time specifying runtime data as JSON.
-        response = attest_client.attest_open_enclave(oe_report, runtime_data=AttestationData(runtime_data, is_json=True))
+        response = await attest_client.attest_open_enclave(oe_report, runtime_data=AttestationData(runtime_data, is_json=True))
         # Because the runtime data is JSON, enclave_held_data will be empty.
         assert response.value.enclave_held_data == None
         assert response.value.runtime_claims.get('jwk') is not None
@@ -215,34 +223,37 @@ class AttestationTest(AzureTestCase):
 
 
     @AttestationPreparer()
-    def test_shared_attest_open_enclave(self, attestation_location_short_name):
+    @AzureTestCase.await_prepared_test
+    async def test_shared_attest_open_enclave(self, attestation_location_short_name):
         #type: (str) -> None
-        self._test_attest_open_enclave(self.shared_base_uri(attestation_location_short_name))
+        await self._test_attest_open_enclave(self.shared_base_uri(attestation_location_short_name))
 
     @AttestationPreparer()
-    def test_aad_attest_open_enclave(self, attestation_aad_url):
+    @AzureTestCase.await_prepared_test
+    async def test_aad_attest_open_enclave(self, attestation_aad_url):
         #type: (str) -> None
-        self._test_attest_open_enclave(attestation_aad_url)
+        await self._test_attest_open_enclave(attestation_aad_url)
 
     @AttestationPreparer()
-    def test_isolated_attest_open_enclave(self, attestation_isolated_url):
+    @AzureTestCase.await_prepared_test
+    async def test_isolated_attest_open_enclave(self, attestation_isolated_url):
         #type: (str) -> None
-        self._test_attest_open_enclave(attestation_isolated_url)
+        await self._test_attest_open_enclave(attestation_isolated_url)
 
-    def _test_attest_sgx_enclave(self, base_uri):
+    async def _test_attest_sgx_enclave(self, base_uri):
         #type: (str) -> None
         attest_client = self.create_client(base_uri)
         oe_report = Base64Url.decode(_open_enclave_report)
         # Convert the OE report into an SGX quote by stripping off the first 16 bytes.
         quote = oe_report[16:]
         runtime_data = Base64Url.decode(_runtime_data)
-        response = attest_client.attest_sgx_enclave(
+        response = await attest_client.attest_sgx_enclave(
             quote, runtime_data=AttestationData(runtime_data, is_json=False))
         assert response.value.enclave_held_data == runtime_data
         assert response.value.sgx_collateral is not None
 
         #Now do the validation again, this time specifying runtime data as JSON.
-        response = attest_client.attest_sgx_enclave(quote, runtime_data=AttestationData(runtime_data, is_json=True))
+        response = await attest_client.attest_sgx_enclave(quote, runtime_data=AttestationData(runtime_data, is_json=True))
         # Because the runtime data is JSON, enclave_held_data will be empty.
         assert response.value.enclave_held_data == None
         assert response.value.runtime_claims.get('jwk') is not None
@@ -250,7 +261,7 @@ class AttestationTest(AzureTestCase):
         assert response.value.sgx_collateral is not None
 
         #And try #3, this time letting the AttestationData type figure it out.
-        response = attest_client.attest_sgx_enclave(quote, runtime_data=AttestationData(runtime_data))
+        response = await attest_client.attest_sgx_enclave(quote, runtime_data=AttestationData(runtime_data))
         # Because the runtime data is JSON, enclave_held_data will be empty.
         assert response.value.enclave_held_data == None
         assert response.value.runtime_claims.get('jwk') is not None
@@ -259,24 +270,28 @@ class AttestationTest(AzureTestCase):
 
 
     @AttestationPreparer()
-    def test_aad_attest_sgx_enclave(self, attestation_aad_url):
+    @AzureTestCase.await_prepared_test
+    async def test_aad_attest_sgx_enclave(self, attestation_aad_url):
         #type: (str) -> None
-        self._test_attest_sgx_enclave(attestation_aad_url)
+        await self._test_attest_sgx_enclave(attestation_aad_url)
 
     @AttestationPreparer()
-    def test_isolated_attest_sgx_enclave(self, attestation_isolated_url):
+    @AzureTestCase.await_prepared_test
+    async def test_isolated_attest_sgx_enclave(self, attestation_isolated_url):
         #type: (str) -> None
-        self._test_attest_sgx_enclave(attestation_isolated_url)
-
-
-    @AttestationPreparer()
-    def test_shared_attest_sgx_enclave(self, attestation_location_short_name):
-        #type: (str) -> None
-        self._test_attest_sgx_enclave(self.shared_base_uri(attestation_location_short_name))
+        await self._test_attest_sgx_enclave(attestation_isolated_url)
 
 
     @AttestationPreparer()
-    def test_tpm_attestation(
+    @AzureTestCase.await_prepared_test
+    async def test_shared_attest_sgx_enclave(self, attestation_location_short_name):
+        #type: (str) -> None
+        await self._test_attest_sgx_enclave(self.shared_base_uri(attestation_location_short_name))
+
+
+    @AttestationPreparer()
+    @AzureTestCase.await_prepared_test
+    async def test_tpm_attestation(
         self,
         attestation_aad_url):
         #type: (str) -> None
@@ -285,10 +300,10 @@ class AttestationTest(AzureTestCase):
 
         # TPM attestation requires that there be a policy present, so set one.
         basic_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
-        admin_client.set_policy(AttestationType.TPM, basic_policy)
+        await admin_client.set_policy(AttestationType.TPM, basic_policy)
 
         encoded_payload = json.dumps({ "payload": { "type": "aikcert" } }).encode("ascii")
-        tpm_response = client.attest_tpm(TpmAttestationRequest(encoded_payload))
+        tpm_response = await client.attest_tpm(TpmAttestationRequest(encoded_payload))
 
         decoded_response = json.loads(tpm_response.data)
         assert decoded_response["payload"] is not None
@@ -316,28 +331,16 @@ class AttestationTest(AzureTestCase):
             print(response)
     """
 
-    def shared_client(self, location_name, **kwargs): 
-        #type:(str, Any) -> AttestationClient
-        """
-        docstring
-        """
-        return self.create_client(self.shared_base_uri(location_name), **kwargs)
 
-    def create_client(self, base_uri, **kwargs): 
-        #type:(str, Any) -> AttestationClient
+
+    def create_client(self, base_uri):
         """
         docstring
         """
-        credential = self.get_credential(AttestationClient)
+        credential = self.get_credential(AttestationClient, is_async=True)
         attest_client = self.create_client_from_credential(AttestationClient,
             credential=credential,
-            instance_url=base_uri,
-            token_validation_options = TokenValidationOptions(
-                validate_token=True,
-                validate_signature=True,
-                validate_issuer=self.is_live,
-                issuer=base_uri,
-                validate_expiration=self.is_live))
+            instance_url=base_uri)
         return attest_client
 
     def create_adminclient(self, base_uri, **kwargs): 
@@ -345,7 +348,7 @@ class AttestationTest(AzureTestCase):
         """
         docstring
         """
-        credential = self.get_credential(AttestationAdministrationClient)
+        credential = self.get_credential(AttestationAdministrationClient, is_async=True)
         attest_client = self.create_client_from_credential(AttestationAdministrationClient,
             credential=credential,
             instance_url=base_uri,
@@ -357,11 +360,12 @@ class AttestationTest(AzureTestCase):
                 validate_expiration=self.is_live),
             **kwargs)
         return attest_client
+        
+    def shared_client(self, location_name):
+        """
+        docstring
+        """
+        return self.create_client(self.shared_base_uri(location_name))
 
-    @staticmethod
-    def shared_base_uri(location_name): #type(str) -> str
-        # When run with recorded tests, the location_name may be 'None', deal with it.
-#        return 'https://shareduks.uks.test.attest.azure.net'
-        if location_name is not None:
-            return 'https://shared'+location_name+'.'+location_name+'.attest.azure.net'
-        return 'https://sharedcus.cus.attest.azure.net'
+    def shared_base_uri(self, location_name: str):
+        return 'https://shared' + location_name +'.'+ location_name + '.attest.azure.net'
