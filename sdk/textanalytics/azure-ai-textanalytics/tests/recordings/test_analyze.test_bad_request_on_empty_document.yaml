@@ -2,8 +2,8 @@ interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
       "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
-      false}}], "entityLinkingTasks": []}, "analysisInput": {"documents": [{"id":
-      "0", "text": "", "language": "en"}]}}'
+      false}}], "entityLinkingTasks": [], "sentimentAnalysisTasks": []}, "analysisInput":
+      {"documents": [{"id": "0", "text": "", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -12,11 +12,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '276'
+      - '306'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
   response:
@@ -25,11 +25,11 @@ interactions:
         input documents."}}}'
     headers:
       apim-request-id:
-      - f0b8bd3a-4ad7-404d-ad91-73d0d80341a7
+      - 6b096f85-0e1b-4698-964c-4e3e201d43b6
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Apr 2021 19:33:16 GMT
+      - Sat, 08 May 2021 06:49:26 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
