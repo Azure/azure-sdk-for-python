@@ -58,6 +58,7 @@ class AsyncEventHubAuthTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
+    @pytest.mark.asyncio
     @CachedResourceGroupPreparer(name_prefix='eventhubtest')
     @CachedEventHubNamespacePreparer(name_prefix='eventhubtest')
     @CachedEventHubPreparer(name_prefix='eventhubtest')
@@ -103,6 +104,7 @@ class AsyncEventHubAuthTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
+    @pytest.mark.asyncio
     @CachedResourceGroupPreparer(name_prefix='eventhubtest')
     @CachedEventHubNamespacePreparer(name_prefix='eventhubtest')
     @CachedEventHubPreparer(name_prefix='eventhubtest')
