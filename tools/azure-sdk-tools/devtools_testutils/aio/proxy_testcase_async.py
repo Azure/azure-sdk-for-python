@@ -52,7 +52,12 @@ def RecordedByProxyAsync(func):
         # this ensures that within this scope, we've monkeypatched the send functionality
         with patch_requests_func_async(transform_args):
             # call the modified function.
-            value = await func(*args, **trimmed_kwargs)
+            print("running")
+            try:
+                value = await func(*args, **trimmed_kwargs)
+            finally:
+                stop_record_or_playback(test_id, recording_id)
+                print("stopping")
 
         stop_record_or_playback(test_id, recording_id)
         return value

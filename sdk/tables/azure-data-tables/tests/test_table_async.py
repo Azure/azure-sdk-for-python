@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureTestCase, AzureRecordedTestCase
 from devtools_testutils.aio import RecordedByProxyAsync
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
@@ -28,7 +28,7 @@ TEST_TABLE_PREFIX = 'pytableasync'
 
 # ------------------------------------------------------------------------------
 
-class TableTestAsync(AzureTestCase, AsyncTableTestCase):
+class TestStorageTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
         table_name = self.get_resource_name(prefix)
@@ -57,6 +57,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     @RecordedByProxyAsync
     async def test_create_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
+        print("running test")
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
