@@ -1,5 +1,10 @@
-
 # Release History
+
+## 1.3.0b2 (2021-05-13)
+
+### Changed
+
+- Updated required `azure-core` version
 
 ## 1.3.0b1 (2021-03-10)
 
