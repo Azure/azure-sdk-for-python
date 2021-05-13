@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 21:18:50 GMT
+      - Wed, 12 May 2021 22:48:02 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 21:18:50 GMT
+      - Wed, 12 May 2021 22:48:02 GMT
       server:
       - openresty
       strict-transport-security:
@@ -110,7 +110,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 21:18:51 GMT
+      - Wed, 12 May 2021 22:48:02 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -154,7 +154,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 21:18:51 GMT
+      - Wed, 12 May 2021 22:48:02 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -195,7 +195,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 21:18:51 GMT
+      - Wed, 12 May 2021 22:48:02 GMT
       server:
       - openresty
       strict-transport-security:
@@ -234,7 +234,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 21:18:51 GMT
+      - Wed, 12 May 2021 22:48:03 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
