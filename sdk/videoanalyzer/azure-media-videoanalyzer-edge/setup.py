@@ -14,7 +14,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-media-videoanalyzer-edge"
-NAMESPACE_NAME = "azure.media.videoanalyzer.edge"
+NAMESPACE_NAME = "azure.media.videoanalyzeredge"
 PACKAGE_PPRINT_NAME = "Azure Media Video Analyzer Edge SDK"
 
 # a-b-c => a/b/c
