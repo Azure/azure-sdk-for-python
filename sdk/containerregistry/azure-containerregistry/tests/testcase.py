@@ -6,11 +6,8 @@
 import copy
 from datetime import datetime
 import json
-import logging
 import os
-from azure_devtools.scenario_tests.recording_processors import SubscriptionRecordingProcessor
 import pytest
-import re
 import six
 import time
 
@@ -19,32 +16,19 @@ from azure.containerregistry import (
     ContainerRegistryClient,
     ArtifactTagProperties,
     ContentProperties,
-    ArtifactManifestProperties,
 )
 
 from azure.core.credentials import AccessToken
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
-from azure.mgmt.containerregistry.models import (
-    ImportImageParameters,
-    ImportSource,
-    ImportMode
-)
+from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
 from azure.identity import DefaultAzureCredential
 
 from devtools_testutils import AzureTestCase, is_live
 from azure_devtools.scenario_tests import (
-    GeneralNameReplacer,
-    RequestUrlNormalizer,
-    AuthenticationMetadataFilter,
     OAuthRequestResponsesFilter,
     RecordingProcessor,
 )
-from azure_devtools.scenario_tests import (
-    GeneralNameReplacer,
-    RequestUrlNormalizer,
-    AuthenticationMetadataFilter,
-    RecordingProcessor,
-)
+from azure_devtools.scenario_tests import RecordingProcessor
 
 
 REDACTED = "REDACTED"
@@ -307,7 +291,6 @@ def import_image(repository, tags):
 
 @pytest.fixture(scope="session")
 def load_registry():
-    return
     if not is_live():
         return
     repos = [
