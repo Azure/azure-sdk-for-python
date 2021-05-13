@@ -1,0 +1,69 @@
+interactions:
+- request:
+    body: '{"farmerId": "fake-farmer", "boundaryId": "fake-boundary-scenes", "startDateTime":
+      "2020-01-01T00:00:00.000Z", "endDateTime": "2020-12-31T00:00:00.000Z", "data":
+      {"imageNames": ["LAI"]}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '188'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.6.0 (Darwin-20.4.0-x86_64-i386-64bit)
+    method: PUT
+    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-581-581?api-version=2021-03-31-preview
+  response:
+    body:
+      string: '{"farmerId":"fake-farmer","boundaryId":"fake-boundary-scenes","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-12-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"fake-job-581-581","status":"Waiting","message":"Created
+        job ''fake-job-581-581'' to fetch satellite data for boundary ''fake-boundary-scenes''
+        from startDate ''01/01/2020'' to endDate ''12/31/2020'' (both inclusive).","createdDateTime":"2021-05-13T16:21:38Z","lastActionDateTime":"2021-05-13T16:21:38Z","startTime":"2021-05-13T16:21:37Z"}'
+    headers:
+      api-deprecated-versions: 2020-12-31-preview
+      api-supported-versions: 2021-03-31-preview
+      connection: keep-alive
+      content-length: '597'
+      content-type: application/json; charset=utf-8
+      date: Thu, 13 May 2021 16:21:38 GMT
+      location: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-581-581?api-version=2021-03-31-preview
+      operation-location: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-581-581?api-version=2021-03-31-preview
+      server: nginx/1.19.1
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 202
+      message: Accepted
+    url: https://sdk-testing-wcus-1.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-581?api-version=2021-03-31-preview
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.6.0 (Darwin-20.4.0-x86_64-i386-64bit)
+    method: GET
+    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-581-581?api-version=2021-03-31-preview
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA3xRwWoCMRD9lZCzu+yua6t7E4og2B7qniwiYzKrabNJm2QFEf+9E62lChVyyXtv
+        5s2bOfAGXItuKnnFlRegkjPAe3xtOyPB7f9wFyjxAg16EvkALjxBwFq1SLoiK7Iky+nVWVad3oJk
+        aOStKC+S/rXo09mdkuRd8WclnPW2CdHCdk7EsjmaoAzqVbGaFWNiJATg1YGrFjb4Ai1NVL3x2XjK
+        l70zOLGuhXCC6+nkF35Fb3UXlDWRyrM0Wx6JikEb+MDk3a6TwTA/5wudj+adEIgSZfTtHMTiqZmj
+        sEYSX6ajcpSVPU5DeHKIFRRYaxWQxTmZ8gx2oDSsNbLGOpaXfWL2njXOtuwSninDwhaZw68OfUAZ
+        q+kLZoMpO03hfdNpvWcNBrE9C+CqY0ozCodUd7N1ussgyft1/lAVedUfxq1r8GEsYpx72rJYXK79
+        b7vHn0vf63H8BgAA//8DANG403ByAgAA
+    headers:
+      api-deprecated-versions: 2020-12-31-preview
+      api-supported-versions: 2021-03-31-preview
+      connection: keep-alive
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Thu, 13 May 2021 16:22:09 GMT
+      server: nginx/1.19.1
+      strict-transport-security: max-age=15724800; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://sdk-testing-wcus-1.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-581?api-version=2021-03-31-preview
+version: 1
