@@ -32,5 +32,4 @@ extends:
     Artifacts:
     - name: azure-mgmt-recoveryservices
       safeName: azuremgmtrecoveryservices
-    - name: azure-mgmt-recoveryservicesbackup
-      safeName: azuremgmtrecoveryservicesbackup
+
