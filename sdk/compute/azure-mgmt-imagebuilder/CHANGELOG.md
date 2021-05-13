@@ -1,5 +1,30 @@
 # Release History
 
+## 1.0.0 (2021-05-13)
+
+**Features**
+
+  - Model ImageTemplatePowerShellCustomizer has a new parameter run_as_system
+  - Added operation VirtualMachineImageTemplatesOperations.begin_update
+  - Added operation VirtualMachineImageTemplatesOperations.begin_cancel
+  - Added operation VirtualMachineImageTemplatesOperations.begin_create_or_update
+  - Added operation VirtualMachineImageTemplatesOperations.begin_delete
+  - Added operation VirtualMachineImageTemplatesOperations.begin_run
+
+**Breaking changes**
+
+  - Operation VirtualMachineImageTemplatesOperations.get has a new signature
+  - Operation VirtualMachineImageTemplatesOperations.get_run_output has a new signature
+  - Operation VirtualMachineImageTemplatesOperations.list_by_resource_group has a new signature
+  - Operation VirtualMachineImageTemplatesOperations.list_run_outputs has a new signature
+  - Operation VirtualMachineImageTemplatesOperations.list has a new signature
+  - Operation Operations.list has a new signature
+  - Removed operation VirtualMachineImageTemplatesOperations.delete
+  - Removed operation VirtualMachineImageTemplatesOperations.cancel
+  - Removed operation VirtualMachineImageTemplatesOperations.create_or_update
+  - Removed operation VirtualMachineImageTemplatesOperations.run
+  - Removed operation VirtualMachineImageTemplatesOperations.update
+
 ## 0.4.0 (2020-05-07)
 
 **Features**
