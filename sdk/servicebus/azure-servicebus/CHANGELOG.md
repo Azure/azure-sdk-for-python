@@ -1,5 +1,8 @@
 # Release History
 
+## 7.2.1 (Unreleased)
+
+
 ## 7.2.0 (2021-05-13)
 
 The preview features related to AMQPAnnotatedMessage introduced in 7.2.0b1 are not included in this version.
