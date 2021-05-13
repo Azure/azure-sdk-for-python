@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-loganalytics/9.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-loganalytics/10.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/providers/Microsoft.OperationalInsights/operations?api-version=2020-10-01
@@ -1035,7 +1035,11 @@ interactions:
         \     \"properties\": {\r\n        \"serviceSpecification\": {\r\n          \"logSpecifications\":
         [\r\n            {\r\n              \"name\": \"Audit\",\r\n              \"displayName\":
         \"Audit Logs\"\r\n            }\r\n          ]\r\n        }\r\n      }\r\n
-        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AACHttpRequest/read\",\r\n
+        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AACAudit/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AACAudit\",\r\n        \"operation\":
+        \"Read AACAudit data\",\r\n        \"description\": \"Read data from the AACAudit
+        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AACHttpRequest/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AACHttpRequest\",\r\n
         \       \"operation\": \"Read AACHttpRequest data\",\r\n        \"description\":
@@ -1548,7 +1552,47 @@ interactions:
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"BoundPort\",\r\n        \"operation\":
         \"Read BoundPort data\",\r\n        \"description\": \"Read data from the
-        BoundPort table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/CommonSecurityLog/read\",\r\n
+        BoundPort table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/CDBCassandraRequests/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"CDBCassandraRequests\",\r\n
+        \       \"operation\": \"Read CDBCassandraRequests data\",\r\n        \"description\":
+        \"Read data from the CDBCassandraRequests table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/CDBControlPlaneRequests/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"CDBControlPlaneRequests\",\r\n
+        \       \"operation\": \"Read CDBControlPlaneRequests data\",\r\n        \"description\":
+        \"Read data from the CDBControlPlaneRequests table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/CDBDataPlaneRequests/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"CDBDataPlaneRequests\",\r\n
+        \       \"operation\": \"Read CDBDataPlaneRequests data\",\r\n        \"description\":
+        \"Read data from the CDBDataPlaneRequests table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/CDBGremlinRequests/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"CDBGremlinRequests\",\r\n
+        \       \"operation\": \"Read CDBGremlinRequests data\",\r\n        \"description\":
+        \"Read data from the CDBGremlinRequests table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/CDBMongoRequests/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"CDBMongoRequests\",\r\n
+        \       \"operation\": \"Read CDBMongoRequests data\",\r\n        \"description\":
+        \"Read data from the CDBMongoRequests table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/CDBPartitionKeyRUConsumption/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"CDBPartitionKeyRUConsumption\",\r\n
+        \       \"operation\": \"Read CDBPartitionKeyRUConsumption data\",\r\n        \"description\":
+        \"Read data from the CDBPartitionKeyRUConsumption table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/CDBPartitionKeyStatistics/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"CDBPartitionKeyStatistics\",\r\n
+        \       \"operation\": \"Read CDBPartitionKeyStatistics data\",\r\n        \"description\":
+        \"Read data from the CDBPartitionKeyStatistics table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/CDBQueryRuntimeStatistics/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"CDBQueryRuntimeStatistics\",\r\n
+        \       \"operation\": \"Read CDBQueryRuntimeStatistics data\",\r\n        \"description\":
+        \"Read data from the CDBQueryRuntimeStatistics table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/CommonSecurityLog/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"CommonSecurityLog\",\r\n
         \       \"operation\": \"Read CommonSecurityLog data\",\r\n        \"description\":
@@ -1929,6 +1973,16 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"HDInsightHiveAndLLAPMetrics\",\r\n
         \       \"operation\": \"Read HDInsightHiveAndLLAPMetrics data\",\r\n        \"description\":
         \"Read data from the HDInsightHiveAndLLAPMetrics table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/HDInsightHiveQueryAppStats/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"HDInsightHiveQueryAppStats\",\r\n
+        \       \"operation\": \"Read HDInsightHiveQueryAppStats data\",\r\n        \"description\":
+        \"Read data from the HDInsightHiveQueryAppStats table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/HDInsightHiveTezAppStats/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"HDInsightHiveTezAppStats\",\r\n
+        \       \"operation\": \"Read HDInsightHiveTezAppStats data\",\r\n        \"description\":
+        \"Read data from the HDInsightHiveTezAppStats table\"\r\n      }\r\n    },\r\n
         \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/HDInsightJupyterNotebookEvents/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"HDInsightJupyterNotebookEvents\",\r\n
@@ -3104,16 +3158,35 @@ interactions:
         \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
         \       \"resource\": \"ScopedPrivateLinkProxy\",\r\n        \"operation\":
         \"Delete Scoped Private Link Proxy\",\r\n        \"description\": \"Delete
-        Scoped Private Link Proxy.\"\r\n      }\r\n    }\r\n  ]\r\n}"
+        Scoped Private Link Proxy.\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"microsoft.operationalinsights/workspaces/features/generateMap/read\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"GenerateMap\",\r\n        \"operation\": \"Get the
+        Service Map of a resource\",\r\n        \"description\": \"Get the Service
+        Map of a resource.\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/workspaces/features/servergroups/members/read\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"ServerGroupsMembers\",\r\n        \"operation\": \"Get
+        Server Group Members of a resource\",\r\n        \"description\": \"Get Server
+        Group Members of a resource.\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"microsoft.operationalinsights/workspaces/features/clientgroups/memebers/read\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"ClientGroupsMembers\",\r\n        \"operation\": \"Get
+        Client Group Members of a resource\",\r\n        \"description\": \"Get Client
+        Group Members of a resource.\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"microsoft.operationalinsights/workspaces/features/machineGroups/read\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"MachineGroups\",\r\n        \"operation\": \"Get the
+        Service Map Machine Groups\",\r\n        \"description\": \"Get the Service
+        Map Machine Groups.\"\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '243957'
+      - '249624'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Apr 2021 07:37:06 GMT
+      - Thu, 13 May 2021 06:32:03 GMT
       expires:
       - '-1'
       pragma:
