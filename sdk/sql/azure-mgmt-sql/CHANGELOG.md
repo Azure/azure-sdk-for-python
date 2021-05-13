@@ -1,5 +1,145 @@
 # Release History
 
+## 0.27.0 (2021-05-13)
+
+**Features**
+
+  - Model Database has a new parameter is_ledger_on
+  - Model Database has a new parameter is_infra_encryption_enabled
+  - Model Database has a new parameter current_backup_storage_redundancy
+  - Model Database has a new parameter requested_backup_storage_redundancy
+  - Model DatabaseUpdate has a new parameter is_ledger_on
+  - Model DatabaseUpdate has a new parameter is_infra_encryption_enabled
+  - Model DatabaseUpdate has a new parameter current_backup_storage_redundancy
+  - Model DatabaseUpdate has a new parameter requested_backup_storage_redundancy
+  - Model SyncGroup has a new parameter conflict_logging_retention_in_days
+  - Model SyncGroup has a new parameter enable_conflict_logging
+  - Model SyncGroup has a new parameter sku
+  - Model ServerBlobAuditingPolicy has a new parameter is_devops_audit_enabled
+  - Model VirtualCluster has a new parameter maintenance_configuration_id
+  - Model ManagedInstanceKey has a new parameter auto_rotation_enabled
+  - Model ManagedInstanceLongTermRetentionBackup has a new parameter backup_storage_redundancy
+  - Model RestorableDroppedDatabase has a new parameter tags
+  - Model RestorableDroppedDatabase has a new parameter backup_storage_redundancy
+  - Model RestorableDroppedDatabase has a new parameter elastic_pool_id
+  - Model RestorableDroppedDatabase has a new parameter sku
+  - Model EncryptionProtector has a new parameter auto_rotation_enabled
+  - Model Server has a new parameter workspace_feature
+  - Model Server has a new parameter key_id
+  - Model Server has a new parameter administrators
+  - Model Server has a new parameter primary_user_assigned_identity_id
+  - Model ExtendedServerBlobAuditingPolicy has a new parameter is_devops_audit_enabled
+  - Model ManagedInstanceUpdate has a new parameter key_id
+  - Model ManagedInstanceUpdate has a new parameter administrators
+  - Model ManagedInstanceUpdate has a new parameter primary_user_assigned_identity_id
+  - Model LongTermRetentionBackup has a new parameter backup_storage_redundancy
+  - Model LongTermRetentionBackup has a new parameter requested_backup_storage_redundancy
+  - Model DatabaseUsage has a new parameter type
+  - Model DatabaseUsage has a new parameter id
+  - Model ServerUpdate has a new parameter workspace_feature
+  - Model ServerUpdate has a new parameter identity
+  - Model ServerUpdate has a new parameter administrators
+  - Model ServerUpdate has a new parameter key_id
+  - Model ServerUpdate has a new parameter primary_user_assigned_identity_id
+  - Model ManagedInstanceEncryptionProtector has a new parameter auto_rotation_enabled
+  - Model ServerKey has a new parameter auto_rotation_enabled
+  - Model ManagedServerSecurityAlertPolicy has a new parameter system_data
+  - Model ReplicationLink has a new parameter link_type
+  - Model PrivateLinkResourceProperties has a new parameter required_zone_names
+  - Model DatabaseSecurityAlertPolicy has a new parameter creation_time
+  - Model DatabaseSecurityAlertPolicy has a new parameter system_data
+  - Model ManagedInstance has a new parameter key_id
+  - Model ManagedInstance has a new parameter administrators
+  - Model ManagedInstance has a new parameter primary_user_assigned_identity_id
+  - Model ServerSecurityAlertPolicy has a new parameter system_data
+  - Model SensitivityLabel has a new parameter schema_name
+  - Model SensitivityLabel has a new parameter table_name
+  - Model SensitivityLabel has a new parameter column_name
+  - Model SensitivityLabel has a new parameter managed_by
+  - Model VirtualClusterUpdate has a new parameter maintenance_configuration_id
+  - Added operation LongTermRetentionBackupsOperations.update
+  - Added operation LongTermRetentionBackupsOperations.update_by_resource_group
+  - Added operation LongTermRetentionBackupsOperations.copy_by_resource_group
+  - Added operation LongTermRetentionBackupsOperations.copy
+  - Added operation VirtualClustersOperations.update_dns_servers
+  - Added operation ManagedDatabaseSensitivityLabelsOperations.update
+  - Added operation FirewallRulesOperations.replace
+  - Added operation ServersOperations.import_database
+  - Added operation RestorableDroppedDatabasesOperations.get
+  - Added operation ReplicationLinksOperations.list_by_server
+  - Added operation SensitivityLabelsOperations.update
+  - Added operation group DataWarehouseUserActivitiesOperations
+  - Added operation group DatabaseAdvisorsOperations
+  - Added operation group MaintenanceWindowOptionsOperations
+  - Added operation group DeletedServersOperations
+  - Added operation group DatabaseRecommendedActionsOperations
+  - Added operation group ManagedDatabaseSecurityEventsOperations
+  - Added operation group OperationsHealthOperations
+  - Added operation group ManagedDatabaseQueriesOperations
+  - Added operation group ManagedDatabaseTransparentDataEncryptionOperations
+  - Added operation group ServerAdvisorsOperations
+  - Added operation group SqlAgentOperations
+  - Added operation group ManagedInstancePrivateEndpointConnectionsOperations
+  - Added operation group LedgerDigestUploadsOperations
+  - Added operation group ManagedDatabaseTablesOperations
+  - Added operation group ManagedDatabaseRecommendedSensitivityLabelsOperations
+  - Added operation group DatabaseColumnsOperations
+  - Added operation group ManagedDatabaseSchemasOperations
+  - Added operation group RecommendedSensitivityLabelsOperations
+  - Added operation group ManagedDatabaseColumnsOperations
+  - Added operation group LongTermRetentionPoliciesOperations
+  - Added operation group DatabaseExtensionsOperations
+  - Added operation group TimeZonesOperations
+  - Added operation group MaintenanceWindowsOperations
+  - Added operation group OutboundFirewallRulesOperations
+  - Added operation group DatabaseSchemasOperations
+  - Added operation group ServerOperations
+  - Added operation group DatabaseSecurityAlertPoliciesOperations
+  - Added operation group ManagedInstancePrivateLinkResourcesOperations
+  - Added operation group DatabaseTablesOperations
+
+**Breaking changes**
+
+  - Parameter old_server_dns_alias_id of model ServerDnsAliasAcquisition is now required
+  - Operation ReplicationLinksOperations.get has a new signature
+  - Operation DatabasesOperations.list_by_server has a new signature
+  - Operation ManagedInstancesOperations.get has a new signature
+  - Operation ManagedInstancesOperations.list_by_instance_pool has a new signature
+  - Operation ManagedInstancesOperations.list_by_resource_group has a new signature
+  - Operation ServersOperations.get has a new signature
+  - Operation ServersOperations.list_by_resource_group has a new signature
+  - Operation SensitivityLabelsOperations.list_recommended_by_database has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.list_recommended_by_database has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.list_recommended_by_database has a new signature
+  - Operation SensitivityLabelsOperations.list_recommended_by_database has a new signature
+  - Model Database no longer has parameter storage_account_type
+  - Model DatabaseUpdate no longer has parameter storage_account_type
+  - Model FirewallRule no longer has parameter kind
+  - Model FirewallRule no longer has parameter location
+  - Model RestorableDroppedDatabase no longer has parameter edition
+  - Model RestorableDroppedDatabase no longer has parameter elastic_pool_name
+  - Model RestorableDroppedDatabase no longer has parameter service_level_objective
+  - Model DatabaseUsage no longer has parameter resource_name
+  - Model DatabaseUsage no longer has parameter next_reset_time
+  - Model ReplicationLink no longer has parameter location
+  - Model DatabaseSecurityAlertPolicy no longer has parameter use_server_default
+  - Model DatabaseSecurityAlertPolicy no longer has parameter kind
+  - Model DatabaseSecurityAlertPolicy no longer has parameter location
+  - Operation VirtualClustersOperations.update has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.list_current_by_database has a new signature
+  - Operation FirewallRulesOperations.create_or_update has a new signature
+  - Operation ManagedInstancesOperations.list has a new signature
+  - Operation ServersOperations.list has a new signature
+  - Operation EncryptionProtectorsOperations.create_or_update has a new signature
+  - Operation ServerKeysOperations.create_or_update has a new signature
+  - Operation SensitivityLabelsOperations.list_current_by_database has a new signature
+  - Operation ManagedInstanceEncryptionProtectorsOperations.create_or_update has a new signature
+  - Removed operation DatabasesOperations.import_database
+  - Removed operation group BackupLongTermRetentionPoliciesOperations
+  - Removed operation group ServiceTierAdvisorsOperations
+  - Removed operation group DatabaseThreatDetectionPoliciesOperations
+  - Removed operation group RecommendedElasticPoolsOperations
+
 ## 0.26.0 (2021-01-18)
 
 **Features**
