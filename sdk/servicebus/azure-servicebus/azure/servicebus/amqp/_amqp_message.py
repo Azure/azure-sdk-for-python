@@ -305,6 +305,10 @@ class AMQPMessageHeader(DictMixin):
     set on messages being sent. The properties set on any given message
     will depend on the Service and not all messages will have all properties.
 
+    Please refer to the AMQP spec:
+    http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header
+    for more information on the message header.
+
     :keyword delivery_count: The number of unsuccessful previous attempts to deliver
      this message. If this value is non-zero it can be taken as an indication that the
      delivery might be a duplicate. On first delivery, the value is zero. It is
@@ -375,31 +379,41 @@ class AMQPMessageProperties(DictMixin):
     Not all received messages will have all properties, and not all properties
     will be utilized on a sent message.
 
-    :keyword message_id:
+    Please refer to the AMQP spec:
+    http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-properties
+    for more information on the message properties.
+
+    :keyword message_id: Message-id, if set, uniquely identifies a message within the message system.
+     The message producer is usually responsible for setting the message-id in such a way that it
+     is assured to be globally unique. A broker MAY discard a message as a duplicate if the value
+     of the message-id matches that of a previously received message sent to the same node.
     :paramtype message_id: Optional[Union[str, bytes, uuid.UUID]]
-    :keyword user_id:
+    :keyword user_id: The identity of the user responsible for producing the message. The client sets
+     this value, and it MAY be authenticated by intermediaries.
     :paramtype user_id: Optional[Union[str, bytes]]
-    :keyword to:
+    :keyword to: The to field identifies the node that is the intended destination of the message.
+     On any given transfer this might not be the node at the receiving end of the link.
     :paramtype to: Optional[Union[str, bytes]]
-    :keyword subject:
+    :keyword subject: A common field for summary information about the message content and purpose.
     :paramtype subject: Optional[Union[str, bytes]]
-    :keyword reply_to:
+    :keyword reply_to: The address of the node to send replies to.
     :paramtype reply_to: Optional[Union[str, bytes]]
-    :keyword correlation_id:
+    :keyword correlation_id: This is a client-specific id that can be used to mark or identify messages between clients.
     :paramtype correlation_id: Optional[Union[str, bytes]]
-    :keyword content_type:
+    :keyword content_type: The RFC-2046 MIME type for the message's application-data section (body).
     :paramtype content_type: Optional[Union[str, bytes]]
-    :keyword content_encoding:
+    :keyword content_encoding: The content-encoding property is used as a modifier to the content-type.
     :paramtype content_encoding: Optional[Union[str, bytes]]
-    :keyword creation_time:
+    :keyword creation_time: An absolute time when this message was created.
     :paramtype creation_time: Optional[int]
-    :keyword absolute_expiry_time:
+    :keyword absolute_expiry_time: An absolute time when this message is considered to be expired.
     :paramtype absolute_expiry_time: Optional[int]
-    :keyword group_id:
+    :keyword group_id: Identifies the group the message belongs to.
     :paramtype group_id: Optional[Union[str, bytes]]
-    :keyword group_sequence:
+    :keyword group_sequence: The relative position of this message within its group.
     :paramtype group_sequence: Optional[int]
-    :keyword reply_to_group_id:
+    :keyword reply_to_group_id: This is a client-specific id that is used so that client can send replies
+     to this message to a specific group.
     :paramtype reply_to_group_id: Optional[Union[str, bytes]]
 
     :ivar message_id: Message-id, if set, uniquely identifies a message within the message system.
@@ -413,25 +427,26 @@ class AMQPMessageProperties(DictMixin):
     :ivar to: The to field identifies the node that is the intended destination of the message.
      On any given transfer this might not be the node at the receiving end of the link.
     :vartype to: Optional[Union[str, bytes]]
-    :ivar subject:
+    :ivar subject: A common field for summary information about the message content and purpose.
     :vartype subject: Optional[Union[str, bytes]]
-    :ivar reply_to:
+    :ivar reply_to: The address of the node to send replies to.
     :vartype reply_to: Optional[Union[str, bytes]]
-    :ivar correlation_id:
+    :ivar correlation_id: his is a client-specific id that can be used to mark or identify messages between clients.
     :vartype correlation_id: Optional[Union[str, bytes]]
-    :ivar content_type:
+    :ivar content_type: The RFC-2046 MIME type for the message's application-data section (body).
     :vartype content_type: Optional[Union[str, bytes]]
-    :ivar content_encoding:
+    :ivar content_encoding: The content-encoding property is used as a modifier to the content-type.
     :vartype content_encoding: Optional[Union[str, bytes]]
-    :ivar creation_time:
+    :ivar creation_time: An absolute time when this message was created.
     :vartype creation_time: Optional[int]
-    :ivar absolute_expiry_time:
+    :ivar absolute_expiry_time: An absolute time when this message is considered to be expired.
     :vartype absolute_expiry_time: Optional[int]
-    :ivar group_id:
+    :ivar group_id: Identifies the group the message belongs to.
     :vartype group_id: Optional[Union[str, bytes]]
-    :ivar group_sequence:
+    :ivar group_sequence: The relative position of this message within its group.
     :vartype group_sequence: Optional[int]
-    :ivar reply_to_group_id:
+    :ivar reply_to_group_id: This is a client-specific id that is used so that client can send replies
+     to this message to a specific group.
     :vartype reply_to_group_id: Optional[Union[str, bytes]]
     """
     def __init__(self, **kwargs):

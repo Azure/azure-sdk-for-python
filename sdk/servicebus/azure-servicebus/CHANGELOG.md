@@ -1,5 +1,20 @@
 # Release History
 
+## 7.3.0 (Unreleased)
+
+**New Features**
+
+- Support for sending AMQP annotated message which allows full access to the AMQP message fields is now GA.
+  - Introduced new namespace `azure.servicebus.amqp`.
+  - Introduced new class `azure.servicebus.amqp.AMQPMessageHeader` and `azure.servicebus.amqp.AMQPMessageProperties` for accessing amqp header and properties.
+
+**Breaking Changes from 7.2.0b1**
+  - Moved `azure.servicebus.AMQPAnnotatedMessage` to `azure.servicebus.amqp.AMQPAnnotatedMessage`.
+  - Moved `azure.servicebus.AMQPMessageBodyType` to `azure.servicebus.amqp.AMQPMessageBodyType`.
+  - Removed property `body_type` on `azure.servicebus.ServiceBusMessage`.
+  - `AMQPAnnotatedMessage.header` returns `azure.servicebus.amqp.AMQPMessageHeader` instead of `uamqp.message.MessageHeader`.
+  - `AMQPAnnotatedMessage.properties` returns `azure.servicebus.amqp.AMQPMessageProperties` instead of `uamqp.message.MessageProperties`.
+
 ## 7.2.0 (2021-05-11)
 
 The preview features related to AMQPAnnotatedMessage introduced in 7.2.0b1 are not included in this version.

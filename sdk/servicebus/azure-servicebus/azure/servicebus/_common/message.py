@@ -37,7 +37,7 @@ from .constants import (
     MAX_ABSOLUTE_EXPIRY_TIME,
     MAX_DURATION_VALUE,
 )
-from ..amqp import AMQPAnnotatedMessage
+from ..amqp import AMQPAnnotatedMessage, AMQPMessageBodyType
 from ..exceptions import MessageSizeExceededError
 from .utils import (
     utc_from_timestamp,
@@ -78,7 +78,7 @@ class ServiceBusMessage(
     :keyword Optional[str] reply_to: The address of an entity to send replies to.
     :keyword Optional[str] reply_to_session_id: The session identifier augmenting the `reply_to` address.
 
-    :ivar AMQPAnnotatedMessage raw_amqp_message: Advanced use only.
+    :ivar raw_amqp_message: Advanced use only.
         The internal AMQP message payload that is sent or received.
     :vartype raw_amqp_message: ~azure.servicebus.amqp.AMQPAnnotatedMessage
 
@@ -129,13 +129,15 @@ class ServiceBusMessage(
         )  # type: AMQPAnnotatedMessage
 
     def __str__(self):
-        return str(self.message)
+        if self.raw_amqp_message.body_type == AMQPMessageBodyType.DATA:
+            return str(self.message)
+        return str(None)
 
     def __repr__(self):
         # type: () -> str
         # pylint: disable=bare-except
         message_repr = "body={}".format(
-            str(self.message)
+            str(self)
         )
         try:
             message_repr += ", application_properties={}".format(self.application_properties)
@@ -385,6 +387,12 @@ class ServiceBusMessage(
     def body(self):
         # type: () -> Optional[Union[bytes, Iterable[bytes]]]
         """The body of the Message.
+
+        **Note: `ServiceBusMessage.body` only inspects the data body section of
+        the underlying amqp message. If the underlying amqp message is composed of sequence body or value body,
+        `body` will just return `None` and in this case please refer to the instance variable
+        `ServiceBusMessage.raw_amqp_message` to access the sequence body or value body.**
+
         :rtype: bytes or Iterable[bytes]
         """
         # pylint: disable=protected-access
@@ -392,7 +400,7 @@ class ServiceBusMessage(
             return None
 
         if self.message._body.type != uamqp.MessageBodyType.Data:
-            return None  # TODO: TBD, raise TypeError vs return None
+            return None
 
         return self.message.get_data()
 
@@ -771,7 +779,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         # type: () -> str
         # pylint: disable=bare-except
         message_repr = "body={}".format(
-            str(self.message)
+            str(self)
         )
         try:
             message_repr += ", application_properties={}".format(self.application_properties)
