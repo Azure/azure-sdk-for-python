@@ -714,16 +714,8 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         for action in actions:
             assert action.disable_service_logs
 
-        coroutine = None
-        def callback(resp):
-            coroutine = resp
-
         await (await client.begin_analyze_actions(
             documents=["Test for logging disable"],
             actions=actions,
             polling_interval=self._interval(),
-            raw_response_hook=callback,
         )).result()
-
-        response = await coroutine
-        a = "b"
