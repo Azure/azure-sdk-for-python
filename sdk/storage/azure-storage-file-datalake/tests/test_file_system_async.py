@@ -540,6 +540,7 @@ class FileSystemTest(StorageTestCase):
 
     @DataLakePreparer()
     async def test_get_deleted_paths(self, datalake_storage_account_name, datalake_storage_account_key):
+        # TODO: Needs soft delete enabled account in ARM template.
         if not self.is_playback():
             return
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
