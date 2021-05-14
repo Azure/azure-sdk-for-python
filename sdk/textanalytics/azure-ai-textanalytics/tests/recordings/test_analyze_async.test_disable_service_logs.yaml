@@ -1,0 +1,112 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
+      "latest", "loggingOptOut": true, "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "latest", "loggingOptOut": true, "stringIndexType":
+      "UnicodeCodePoint"}}], "keyPhraseExtractionTasks": [{"parameters": {"model-version":
+      "latest", "loggingOptOut": true}}], "entityLinkingTasks": [{"parameters": {"model-version":
+      "latest", "loggingOptOut": true, "stringIndexType": "UnicodeCodePoint"}}], "sentimentAnalysisTasks":
+      [{"parameters": {"model-version": "latest", "loggingOptOut": true, "opinionMining":
+      false}}]}, "analysisInput": {"documents": [{"id": "0", "text": "Test for logging
+      disable", "language": "en"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '734'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: POST
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 323657d2-890c-4f62-a2ef-dca4bdcbee41
+      date: Thu, 13 May 2021 23:45:01 GMT
+      operation-location: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/55569390-b460-41a9-ba6b-9042a7f1ede1
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '2893'
+    status:
+      code: 202
+      message: Accepted
+    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/analyze
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: GET
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/55569390-b460-41a9-ba6b-9042a7f1ede1
+  response:
+    body:
+      string: '{"jobId":"55569390-b460-41a9-ba6b-9042a7f1ede1","lastUpdateDateTime":"2021-05-13T23:45:07Z","createdDateTime":"2021-05-13T23:44:59Z","expirationDateTime":"2021-05-14T23:44:59Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-05-13T23:45:07Z"},"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-05-13T23:45:03.3358832Z","name":"NA","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"name":"Test
+        (assessment)","matches":[{"text":"Test","offset":0,"length":4,"confidenceScore":0.04}],"language":"en","id":"Test
+        (assessment)","url":"https://en.wikipedia.org/wiki/Test_(assessment)","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}}]}}'
+    headers:
+      apim-request-id: c127cfd4-14ab-45f0-a809-7f0dc242341c
+      content-type: application/json; charset=utf-8
+      date: Thu, 13 May 2021 23:45:07 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '909'
+    status:
+      code: 200
+      message: OK
+    url: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/55569390-b460-41a9-ba6b-9042a7f1ede1
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: GET
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/55569390-b460-41a9-ba6b-9042a7f1ede1
+  response:
+    body:
+      string: '{"jobId":"55569390-b460-41a9-ba6b-9042a7f1ede1","lastUpdateDateTime":"2021-05-13T23:45:07Z","createdDateTime":"2021-05-13T23:44:59Z","expirationDateTime":"2021-05-14T23:44:59Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-05-13T23:45:07Z"},"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-05-13T23:45:03.3358832Z","name":"NA","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"name":"Test
+        (assessment)","matches":[{"text":"Test","offset":0,"length":4,"confidenceScore":0.04}],"language":"en","id":"Test
+        (assessment)","url":"https://en.wikipedia.org/wiki/Test_(assessment)","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}}]}}'
+    headers:
+      apim-request-id: 541ff22c-befe-4627-b1a4-eb4455160410
+      content-type: application/json; charset=utf-8
+      date: Thu, 13 May 2021 23:45:25 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '12647'
+    status:
+      code: 200
+      message: OK
+    url: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/55569390-b460-41a9-ba6b-9042a7f1ede1
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: GET
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/55569390-b460-41a9-ba6b-9042a7f1ede1
+  response:
+    body:
+      string: '{"jobId":"55569390-b460-41a9-ba6b-9042a7f1ede1","lastUpdateDateTime":"2021-05-13T23:45:30Z","createdDateTime":"2021-05-13T23:44:59Z","expirationDateTime":"2021-05-14T23:44:59Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-05-13T23:45:30Z"},"completed":5,"failed":0,"inProgress":0,"total":5,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-05-13T23:45:30.8404617Z","name":"NA","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"text":"logging","category":"Skill","offset":9,"length":7,"confidenceScore":0.8}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"entityLinkingTasks":[{"lastUpdateDateTime":"2021-05-13T23:45:03.3358832Z","name":"NA","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"name":"Test
+        (assessment)","matches":[{"text":"Test","offset":0,"length":4,"confidenceScore":0.04}],"language":"en","id":"Test
+        (assessment)","url":"https://en.wikipedia.org/wiki/Test_(assessment)","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-05-13T23:45:23.5565427Z","name":"NA","state":"succeeded","results":{"documents":[{"redactedText":"Test
+        for logging disable","id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-05-13T23:45:25.8666784Z","name":"NA","state":"succeeded","results":{"documents":[{"id":"0","keyPhrases":["Test","logging"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-05-13T23:45:28.5048381Z","name":"NA","state":"succeeded","results":{"documents":[{"id":"0","sentiment":"negative","confidenceScores":{"positive":0.02,"neutral":0.12,"negative":0.86},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.02,"neutral":0.12,"negative":0.86},"offset":0,"length":24,"text":"Test
+        for logging disable"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}]}}'
+    headers:
+      apim-request-id: 1929d0fd-e2ed-4a1f-a98f-fa74d9aa74e5
+      content-type: application/json; charset=utf-8
+      date: Thu, 13 May 2021 23:45:30 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '207'
+    status:
+      code: 200
+      message: OK
+    url: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/55569390-b460-41a9-ba6b-9042a7f1ede1
+version: 1

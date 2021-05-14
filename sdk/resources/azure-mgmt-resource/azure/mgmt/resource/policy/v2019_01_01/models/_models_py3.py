@@ -109,11 +109,11 @@ class PolicyAssignment(msrest.serialization.Model):
     :param not_scopes: The policy's excluded scopes.
     :type not_scopes: list[str]
     :param parameters: Required if a parameter is used in policy rule.
-    :type parameters: object
+    :type parameters: str
     :param description: This message will be part of response in case of policy violation.
     :type description: str
     :param metadata: The policy assignment metadata.
-    :type metadata: object
+    :type metadata: str
     """
 
     _validation = {
@@ -133,9 +133,9 @@ class PolicyAssignment(msrest.serialization.Model):
         'policy_definition_id': {'key': 'properties.policyDefinitionId', 'type': 'str'},
         'scope': {'key': 'properties.scope', 'type': 'str'},
         'not_scopes': {'key': 'properties.notScopes', 'type': '[str]'},
-        'parameters': {'key': 'properties.parameters', 'type': 'object'},
+        'parameters': {'key': 'properties.parameters', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'metadata': {'key': 'properties.metadata', 'type': 'object'},
+        'metadata': {'key': 'properties.metadata', 'type': 'str'},
     }
 
     def __init__(
@@ -148,9 +148,9 @@ class PolicyAssignment(msrest.serialization.Model):
         policy_definition_id: Optional[str] = None,
         scope: Optional[str] = None,
         not_scopes: Optional[List[str]] = None,
-        parameters: Optional[object] = None,
+        parameters: Optional[str] = None,
         description: Optional[str] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[str] = None,
         **kwargs
     ):
         super(PolicyAssignment, self).__init__(**kwargs)
@@ -217,11 +217,11 @@ class PolicyDefinition(msrest.serialization.Model):
     :param description: The policy definition description.
     :type description: str
     :param policy_rule: The policy rule.
-    :type policy_rule: object
+    :type policy_rule: str
     :param metadata: The policy definition metadata.
-    :type metadata: object
+    :type metadata: str
     :param parameters: Required if a parameter is used in policy rule.
-    :type parameters: object
+    :type parameters: str
     """
 
     _validation = {
@@ -238,9 +238,9 @@ class PolicyDefinition(msrest.serialization.Model):
         'mode': {'key': 'properties.mode', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'policy_rule': {'key': 'properties.policyRule', 'type': 'object'},
-        'metadata': {'key': 'properties.metadata', 'type': 'object'},
-        'parameters': {'key': 'properties.parameters', 'type': 'object'},
+        'policy_rule': {'key': 'properties.policyRule', 'type': 'str'},
+        'metadata': {'key': 'properties.metadata', 'type': 'str'},
+        'parameters': {'key': 'properties.parameters', 'type': 'str'},
     }
 
     def __init__(
@@ -250,9 +250,9 @@ class PolicyDefinition(msrest.serialization.Model):
         mode: Optional[str] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        policy_rule: Optional[object] = None,
-        metadata: Optional[object] = None,
-        parameters: Optional[object] = None,
+        policy_rule: Optional[str] = None,
+        metadata: Optional[str] = None,
+        parameters: Optional[str] = None,
         **kwargs
     ):
         super(PolicyDefinition, self).__init__(**kwargs)
@@ -300,19 +300,19 @@ class PolicyDefinitionReference(msrest.serialization.Model):
     :param policy_definition_id: The ID of the policy definition or policy set definition.
     :type policy_definition_id: str
     :param parameters: Required if a parameter is used in policy rule.
-    :type parameters: object
+    :type parameters: str
     """
 
     _attribute_map = {
         'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'object'},
+        'parameters': {'key': 'parameters', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         policy_definition_id: Optional[str] = None,
-        parameters: Optional[object] = None,
+        parameters: Optional[str] = None,
         **kwargs
     ):
         super(PolicyDefinitionReference, self).__init__(**kwargs)
@@ -339,10 +339,10 @@ class PolicySetDefinition(msrest.serialization.Model):
     :param description: The policy set definition description.
     :type description: str
     :param metadata: The policy set definition metadata.
-    :type metadata: object
+    :type metadata: str
     :param parameters: The policy set definition parameters that can be used in policy definition
      references.
-    :type parameters: object
+    :type parameters: str
     :param policy_definitions: An array of policy definition references.
     :type policy_definitions:
      list[~azure.mgmt.resource.policy.v2019_01_01.models.PolicyDefinitionReference]
@@ -361,8 +361,8 @@ class PolicySetDefinition(msrest.serialization.Model):
         'policy_type': {'key': 'properties.policyType', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'metadata': {'key': 'properties.metadata', 'type': 'object'},
-        'parameters': {'key': 'properties.parameters', 'type': 'object'},
+        'metadata': {'key': 'properties.metadata', 'type': 'str'},
+        'parameters': {'key': 'properties.parameters', 'type': 'str'},
         'policy_definitions': {'key': 'properties.policyDefinitions', 'type': '[PolicyDefinitionReference]'},
     }
 
@@ -372,8 +372,8 @@ class PolicySetDefinition(msrest.serialization.Model):
         policy_type: Optional[Union[str, "PolicyType"]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        metadata: Optional[object] = None,
-        parameters: Optional[object] = None,
+        metadata: Optional[str] = None,
+        parameters: Optional[str] = None,
         policy_definitions: Optional[List["PolicyDefinitionReference"]] = None,
         **kwargs
     ):
