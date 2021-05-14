@@ -31,20 +31,6 @@ PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 # this should also fire the admin mapping updates, and start/end the session for commiting recording updates
 
 
-@contextmanager
-def patch_requests_func(request_transform):
-    original_func = RequestsTransport.send
-
-    def combined_call(*args, **kwargs):
-        adjusted_args, adjusted_kwargs = request_transform(*args, **kwargs)
-        return original_func(*adjusted_args, **adjusted_kwargs)
-
-    RequestsTransport.send = combined_call
-    yield None
-
-    RequestsTransport.send = original_func
-
-
 def get_test_id():
     # pytest sets the current running test in an environment variable
     return os.getenv("PYTEST_CURRENT_TEST").split(" ")[0].replace("::", ".")
@@ -124,13 +110,23 @@ def RecordedByProxy(func):
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
 
-        # this ensures that within this scope, we've monkeypatched the send functionality
-        with patch_requests_func(transform_args):
-            # call the modified function.
-            try:
-                value = func(*args, **trimmed_kwargs)
-            finally:
-                stop_record_or_playback(test_id, recording_id)
+        original_transport_func = RequestsTransport.send
+        # print("Entering patch context. RequestsTransport.send is at {}".format(id(RequestsTransport.send)))
+
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            return original_transport_func(*adjusted_args, **adjusted_kwargs)
+
+        RequestsTransport.send = combined_call
+        # print("Patched context. RequestsTransport.send is now at {}".format(id(RequestsTransport.send)))
+
+        # call the modified function.
+        try:
+            value = func(*args, **trimmed_kwargs)
+        finally:
+            RequestsTransport.send = original_transport_func
+            # print("Exiting patch context. RequestsTransport.send is at {}".format(id(RequestsTransport.send)))
+            stop_record_or_playback(test_id, recording_id)
 
         return value
 
