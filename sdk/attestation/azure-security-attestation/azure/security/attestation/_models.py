@@ -544,19 +544,14 @@ class AttestationToken(Generic[T]):
     """
 
     def __init__(self, **kwargs):
-        body = kwargs.get('body')  # type: Any
-        signer = kwargs.get('signer')  # type: AttestationSigningKey
-        if body:
+        token = kwargs.get('token')
+        if token is None:
+            body = kwargs.get('body')  # type: Any
+            signer = kwargs.get('signer')  # type: AttestationSigningKey
             if signer:
                 token = self._create_secured_jwt(body, signer)
             else:
                 token = self._create_unsecured_jwt(body)
-        else:
-            if signer:
-                token = self._create_secured_jwt(None, signer)
-            token = kwargs.get('token')
-            if token is None:
-                token = self._create_unsecured_jwt(None)
 
 
         self._token = token
@@ -905,7 +900,9 @@ class AttestationToken(Generic[T]):
             body = body.serialize()
         except AttributeError:
             pass
-        json_body = JSONEncoder().encode(body)
+        json_body = ''
+        if body is not None:
+            json_body = JSONEncoder().encode(body)
         return_value += '.'
         return_value += Base64Url.encode(json_body.encode('utf-8'))
 
