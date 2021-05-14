@@ -2,7 +2,7 @@
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/d06fc6e105c57df31284d36c90385bce354490e1/specification/containerregistry/data-plane/Azure.ContainerRegistry/preview/2019-08-15-preview/containerregistry.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/82c504dd1e1eae673a810c4b13361e350e7d0b95/specification/containerregistry/data-plane/Azure.ContainerRegistry/preview/2019-08-15-preview/containerregistry.json
 output-folder: "../azure/containerregistry/_generated"
 no-namespace-folders: true
 python: true

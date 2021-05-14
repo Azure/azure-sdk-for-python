@@ -195,9 +195,11 @@ class ArtifactManifestProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar repository_name: Repository name.
     :vartype repository_name: str
-    :ivar digest: Manifest.
+    :ivar digest: Required. Manifest.
     :vartype digest: str
     :ivar size: Image size.
     :vartype size: long
@@ -223,7 +225,7 @@ class ArtifactManifestProperties(msrest.serialization.Model):
 
     _validation = {
         'repository_name': {'readonly': True},
-        'digest': {'readonly': True},
+        'digest': {'required': True, 'readonly': True},
         'size': {'readonly': True},
         'created_on': {'readonly': True},
         'last_updated_on': {'readonly': True},
@@ -271,8 +273,8 @@ class ArtifactTagProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar repository: Required. Image name.
-    :vartype repository: str
+    :ivar repository_name: Required. Image name.
+    :vartype repository_name: str
     :ivar name: Required. Tag name.
     :vartype name: str
     :ivar digest: Required. Tag digest.
@@ -286,7 +288,7 @@ class ArtifactTagProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'repository': {'required': True, 'readonly': True},
+        'repository_name': {'required': True, 'readonly': True},
         'name': {'required': True, 'readonly': True},
         'digest': {'required': True, 'readonly': True},
         'created_on': {'required': True, 'readonly': True},
@@ -295,7 +297,7 @@ class ArtifactTagProperties(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'repository': {'key': 'imageName', 'type': 'str'},
+        'repository_name': {'key': 'imageName', 'type': 'str'},
         'name': {'key': 'tag.name', 'type': 'str'},
         'digest': {'key': 'tag.digest', 'type': 'str'},
         'created_on': {'key': 'tag.createdTime', 'type': 'iso-8601'},
@@ -308,7 +310,7 @@ class ArtifactTagProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(ArtifactTagProperties, self).__init__(**kwargs)
-        self.repository = None
+        self.repository_name = None
         self.name = None
         self.digest = None
         self.created_on = None
@@ -784,14 +786,14 @@ class ManifestWrapper(Manifest):
 class ManifestWriteableProperties(msrest.serialization.Model):
     """Changeable attributes.
 
-    :param delete_enabled: Delete enabled.
-    :type delete_enabled: bool
-    :param write_enabled: Write enabled.
-    :type write_enabled: bool
-    :param list_enabled: List enabled.
-    :type list_enabled: bool
-    :param read_enabled: Read enabled.
-    :type read_enabled: bool
+    :param can_delete: Delete enabled.
+    :type can_delete: bool
+    :param can_write: Write enabled.
+    :type can_write: bool
+    :param can_list: List enabled.
+    :type can_list: bool
+    :param can_read: Read enabled.
+    :type can_read: bool
     :param quarantine_state: Quarantine state.
     :type quarantine_state: str
     :param quarantine_details: Quarantine details.
@@ -799,10 +801,10 @@ class ManifestWriteableProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'delete_enabled': {'key': 'deleteEnabled', 'type': 'bool'},
-        'write_enabled': {'key': 'writeEnabled', 'type': 'bool'},
-        'list_enabled': {'key': 'listEnabled', 'type': 'bool'},
-        'read_enabled': {'key': 'readEnabled', 'type': 'bool'},
+        'can_delete': {'key': 'deleteEnabled', 'type': 'bool'},
+        'can_write': {'key': 'writeEnabled', 'type': 'bool'},
+        'can_list': {'key': 'listEnabled', 'type': 'bool'},
+        'can_read': {'key': 'readEnabled', 'type': 'bool'},
         'quarantine_state': {'key': 'quarantineState', 'type': 'str'},
         'quarantine_details': {'key': 'quarantineDetails', 'type': 'str'},
     }
@@ -812,10 +814,10 @@ class ManifestWriteableProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(ManifestWriteableProperties, self).__init__(**kwargs)
-        self.delete_enabled = kwargs.get('delete_enabled', None)
-        self.write_enabled = kwargs.get('write_enabled', None)
-        self.list_enabled = kwargs.get('list_enabled', None)
-        self.read_enabled = kwargs.get('read_enabled', None)
+        self.can_delete = kwargs.get('can_delete', None)
+        self.can_write = kwargs.get('can_write', None)
+        self.can_list = kwargs.get('can_list', None)
+        self.can_read = kwargs.get('can_read', None)
         self.quarantine_state = kwargs.get('quarantine_state', None)
         self.quarantine_details = kwargs.get('quarantine_details', None)
 
@@ -1102,24 +1104,24 @@ class RepositoryTags(msrest.serialization.Model):
 class RepositoryWriteableProperties(msrest.serialization.Model):
     """Changeable attributes for Repository.
 
-    :param delete_enabled: Delete enabled.
-    :type delete_enabled: bool
-    :param write_enabled: Write enabled.
-    :type write_enabled: bool
-    :param list_enabled: List enabled.
-    :type list_enabled: bool
-    :param read_enabled: Read enabled.
-    :type read_enabled: bool
+    :param can_delete: Delete enabled.
+    :type can_delete: bool
+    :param can_write: Write enabled.
+    :type can_write: bool
+    :param can_list: List enabled.
+    :type can_list: bool
+    :param can_read: Read enabled.
+    :type can_read: bool
     :param teleport_enabled: Enables Teleport functionality on new images in the repository
      improving Container startup performance.
     :type teleport_enabled: bool
     """
 
     _attribute_map = {
-        'delete_enabled': {'key': 'deleteEnabled', 'type': 'bool'},
-        'write_enabled': {'key': 'writeEnabled', 'type': 'bool'},
-        'list_enabled': {'key': 'listEnabled', 'type': 'bool'},
-        'read_enabled': {'key': 'readEnabled', 'type': 'bool'},
+        'can_delete': {'key': 'deleteEnabled', 'type': 'bool'},
+        'can_write': {'key': 'writeEnabled', 'type': 'bool'},
+        'can_list': {'key': 'listEnabled', 'type': 'bool'},
+        'can_read': {'key': 'readEnabled', 'type': 'bool'},
         'teleport_enabled': {'key': 'teleportEnabled', 'type': 'bool'},
     }
 
@@ -1128,10 +1130,10 @@ class RepositoryWriteableProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(RepositoryWriteableProperties, self).__init__(**kwargs)
-        self.delete_enabled = kwargs.get('delete_enabled', None)
-        self.write_enabled = kwargs.get('write_enabled', None)
-        self.list_enabled = kwargs.get('list_enabled', None)
-        self.read_enabled = kwargs.get('read_enabled', None)
+        self.can_delete = kwargs.get('can_delete', None)
+        self.can_write = kwargs.get('can_write', None)
+        self.can_list = kwargs.get('can_list', None)
+        self.can_read = kwargs.get('can_read', None)
         self.teleport_enabled = kwargs.get('teleport_enabled', None)
 
 

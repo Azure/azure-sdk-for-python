@@ -43,19 +43,19 @@ class ManifestWriteableProperties(object):
     def _from_generated(cls, generated):
         # type: (GenManifestWriteableProperties) -> ManifestWriteableProperties
         return cls(
-            can_delete=generated.delete_enabled,
-            can_list=generated.list_enabled,
-            can_read=generated.read_enabled,
-            can_write=generated.write_enabled,
+            can_delete=generated.can_delete,
+            can_list=generated.can_list,
+            can_read=generated.can_read,
+            can_write=generated.can_write,
         )
 
     def _to_generated(self):
         # type: () -> GenManifestWriteableProperties
         return GenManifestWriteableProperties(
-            delete_enabled=self.can_delete,
-            list_enabled=self.can_list,
-            read_enabled=self.can_read,
-            write_enabled=self.can_write,
+            can_delete=self.can_delete,
+            can_list=self.can_list,
+            can_read=self.can_read,
+            can_write=self.can_write,
         )
 
 
@@ -88,19 +88,19 @@ class RepositoryWriteableProperties(object):
     def _from_generated(cls, generated):
         # type: (GenRepositoryWriteableProperties) -> RepositoryWriteableProperties
         return cls(
-            can_delete=generated.delete_enabled,
-            can_list=generated.list_enabled,
-            can_read=generated.read_enabled,
-            can_write=generated.write_enabled,
+            can_delete=generated.can_delete,
+            can_list=generated.can_list,
+            can_read=generated.can_read,
+            can_write=generated.can_write,
             teleport_enabled=generated.teleport_enabled
         )
 
     def _to_generated(self):
         # type: () -> GenRepositoryWriteableProperties
         return GenRepositoryWriteableProperties(
-            delete_enabled=self.can_delete,
-            list_enabled=self.can_list,
-            read_enabled=self.can_read,
+            can_delete=self.can_delete,
+            can_list=self.can_list,
+            can_read=self.can_read,
             write_enabled=self.can_write,
             teleport_enabled=self.teleport_enabled,
         )
