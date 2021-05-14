@@ -49,6 +49,11 @@ class SubscriptionRecordingProcessor(RecordingProcessor):
         self.replace_header_fn(response, 'location', self._replace_subscription_id)
         self.replace_header_fn(response, 'azure-asyncoperation', self._replace_subscription_id)
 
+        try:
+            response["url"] = self._replace_subscription_id(response["url"])
+        except KeyError:
+            pass
+
         return response
 
     def _replace_subscription_id(self, val):
