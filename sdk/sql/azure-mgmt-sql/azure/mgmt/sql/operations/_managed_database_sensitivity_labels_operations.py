@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,10 +53,10 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         schema_name,  # type: str
         table_name,  # type: str
         column_name,  # type: str
-        sensitivity_label_source,  # type: Union[str, "models.SensitivityLabelSource"]
+        sensitivity_label_source,  # type: Union[str, "_models.SensitivityLabelSource"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SensitivityLabel"
+        # type: (...) -> "_models.SensitivityLabel"
         """Gets the sensitivity label of a given column.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -79,12 +79,12 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         :rtype: ~azure.mgmt.sql.models.SensitivityLabel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SensitivityLabel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SensitivityLabel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -133,10 +133,10 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         schema_name,  # type: str
         table_name,  # type: str
         column_name,  # type: str
-        parameters,  # type: "models.SensitivityLabel"
+        parameters,  # type: "_models.SensitivityLabel"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SensitivityLabel"
+        # type: (...) -> "_models.SensitivityLabel"
         """Creates or updates the sensitivity label of a given column.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -159,13 +159,13 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         :rtype: ~azure.mgmt.sql.models.SensitivityLabel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SensitivityLabel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SensitivityLabel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         sensitivity_label_source = "current"
-        api_version = "2018-06-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -252,7 +252,7 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
         sensitivity_label_source = "current"
-        api_version = "2018-06-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -325,7 +325,7 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
         sensitivity_label_source = "recommended"
-        api_version = "2018-06-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.disable_recommendation.metadata['url']  # type: ignore
@@ -399,7 +399,7 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
         sensitivity_label_source = "recommended"
-        api_version = "2018-06-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.enable_recommendation.metadata['url']  # type: ignore
@@ -440,10 +440,12 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         resource_group_name,  # type: str
         managed_instance_name,  # type: str
         database_name,  # type: str
+        skip_token=None,  # type: Optional[str]
+        count=None,  # type: Optional[bool]
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SensitivityLabelListResult"]
+        # type: (...) -> Iterable["_models.SensitivityLabelListResult"]
         """Gets the sensitivity labels of a given database.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -453,6 +455,10 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         :type managed_instance_name: str
         :param database_name: The name of the database.
         :type database_name: str
+        :param skip_token:
+        :type skip_token: str
+        :param count:
+        :type count: bool
         :param filter: An OData filter expression that filters elements in the collection.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -460,12 +466,12 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.SensitivityLabelListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SensitivityLabelListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SensitivityLabelListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -485,6 +491,10 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -520,17 +530,84 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         )
     list_current_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/currentSensitivityLabels'}  # type: ignore
 
+    def update(
+        self,
+        resource_group_name,  # type: str
+        managed_instance_name,  # type: str
+        database_name,  # type: str
+        parameters,  # type: "_models.SensitivityLabelUpdateList"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Update sensitivity labels of a given database using an operations batch.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param managed_instance_name: The name of the managed instance.
+        :type managed_instance_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param parameters:
+        :type parameters: ~azure.mgmt.sql.models.SensitivityLabelUpdateList
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-11-01-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+
+        # Construct URL
+        url = self.update.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'SensitivityLabelUpdateList')
+        body_content_kwargs['content'] = body_content
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/currentSensitivityLabels'}  # type: ignore
+
     def list_recommended_by_database(
         self,
         resource_group_name,  # type: str
         managed_instance_name,  # type: str
         database_name,  # type: str
-        include_disabled_recommendations=None,  # type: Optional[bool]
         skip_token=None,  # type: Optional[str]
+        include_disabled_recommendations=None,  # type: Optional[bool]
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SensitivityLabelListResult"]
+        # type: (...) -> Iterable["_models.SensitivityLabelListResult"]
         """Gets the sensitivity labels of a given database.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -540,11 +617,11 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         :type managed_instance_name: str
         :param database_name: The name of the database.
         :type database_name: str
+        :param skip_token:
+        :type skip_token: str
         :param include_disabled_recommendations: Specifies whether to include disabled recommendations
          or not.
         :type include_disabled_recommendations: bool
-        :param skip_token:
-        :type skip_token: str
         :param filter: An OData filter expression that filters elements in the collection.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -552,12 +629,12 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.SensitivityLabelListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SensitivityLabelListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SensitivityLabelListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -577,10 +654,10 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                if include_disabled_recommendations is not None:
-                    query_parameters['includeDisabledRecommendations'] = self._serialize.query("include_disabled_recommendations", include_disabled_recommendations, 'bool')
                 if skip_token is not None:
                     query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+                if include_disabled_recommendations is not None:
+                    query_parameters['includeDisabledRecommendations'] = self._serialize.query("include_disabled_recommendations", include_disabled_recommendations, 'bool')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
