@@ -1,6 +1,6 @@
 # Release History
 
-## 5.0.0b1 (2021-05-13)
+## 9.0.0b1 (2021-05-13)
 
 This is beta preview version.
 
@@ -29,6 +29,31 @@ This version uses a next-generation code generator that introduces important bre
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
 - This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
+## 4.1.0 (2021-02-19)
+
+**Features**
+
+  - Model AppTemplate has a new parameter industry
+  - Model AppTemplate has a new parameter locations
+  - Model Operation has a new parameter properties
+  - Model Operation has a new parameter origin
+
+## 4.0.0 (2021-01-05)
+
+**Features**
+
+  - Model AppTemplate has a new parameter name
+
+**Breaking changes**
+
+  - Model AppTemplate no longer has parameter app_template_name
+
+## 3.1.0 (2020-06-30)
+
+**Features**
+
+  - Model AppPatch has a new parameter sku
 
 ## 3.0.0 (2020-03-09)
 
