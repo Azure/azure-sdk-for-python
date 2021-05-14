@@ -36,14 +36,14 @@ class DeleteOperations(object):
         )
         from azure.identity import DefaultAzureCredential
 
-        # [START list_repositories]
+        # [START list_repository_names]
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         credential = DefaultAzureCredential()
         client = ContainerRegistryClient(account_url, credential)
 
-        for repository in client.list_repositories():
+        for repository in client.list_repository_names():
             repository_client = ContainerRepositoryClient(account_url, repository, credential)
-            # [END list_repositories]
+            # [END list_repository_names]
 
             # [START list_tags]
             tag_count = 0

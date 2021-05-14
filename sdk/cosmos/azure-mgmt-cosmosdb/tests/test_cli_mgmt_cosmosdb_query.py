@@ -31,6 +31,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
             azure.mgmt.cosmosdb.CosmosDBManagementClient
         )
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_query(self, resource_group):
 
@@ -167,6 +168,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
         result = self.mgmt_client.database_accounts.begin_delete(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
         result = result.result()
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_query_partition_key(self, resource_group):
 

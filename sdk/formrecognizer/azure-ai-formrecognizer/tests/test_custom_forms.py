@@ -8,7 +8,7 @@ import pytest
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormTrainingClient
+from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormTrainingClient, _models
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from testcase import FormRecognizerTest
@@ -168,6 +168,7 @@ class TestCustomForms(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
+    @pytest.mark.skip("service regression - bounding box not returned for unlabeled tables")
     def test_custom_form_unlabeled_transform(self, client, formrecognizer_storage_container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
@@ -209,6 +210,15 @@ class TestCustomForms(FormRecognizerTest):
         self.assertIsNone(recognized_form_dict[0].get("form_type_confidence"))
         self.assertIsNotNone(recognized_form_dict[0].get("model_id"))
         self.assertEqual(recognized_form_dict[0].get("form_type"), "form-0")
+
+        recognized_form = _models.RecognizedForm.from_dict(recognized_form_dict[0])
+
+        self.assertFormPagesTransformCorrect(recognized_form.pages, read_results, page_results)
+        self.assertEqual(recognized_form.page_range.first_page_number, page_results[0].page)
+        self.assertEqual(recognized_form.page_range.last_page_number, page_results[0].page)
+        self.assertIsNone(recognized_form.form_type_confidence)
+        self.assertIsNotNone(recognized_form.model_id)
+        self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form.fields, actual_fields, read_results)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

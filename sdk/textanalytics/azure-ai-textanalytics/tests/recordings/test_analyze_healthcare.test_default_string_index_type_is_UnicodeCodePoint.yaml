@@ -13,19 +13,19 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 45eacdf3-6d75-4a0b-92c4-3cf3a0c8305c
+      - b5e032f9-c067-4f79-bee3-df51c6f45f1b
       date:
-      - Mon, 01 Mar 2021 19:49:32 GMT
+      - Thu, 13 May 2021 22:35:27 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/6c35f8d1-fed8-4276-bcff-1589b2abfba6
+      - https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/8eee84bf-f25e-467f-931f-ecfb98369673
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -33,7 +33,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '395'
+      - '59'
     status:
       code: 202
       message: Accepted
@@ -47,19 +47,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/6c35f8d1-fed8-4276-bcff-1589b2abfba6
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/8eee84bf-f25e-467f-931f-ecfb98369673
   response:
     body:
-      string: '{"jobId":"6c35f8d1-fed8-4276-bcff-1589b2abfba6","lastUpdateDateTime":"2021-03-01T19:49:34Z","createdDateTime":"2021-03-01T19:49:32Z","expirationDateTime":"2021-03-02T19:49:32Z","status":"running","errors":[]}'
+      string: '{"jobId":"8eee84bf-f25e-467f-931f-ecfb98369673","lastUpdateDateTime":"2021-05-13T22:35:28Z","createdDateTime":"2021-05-13T22:35:28Z","expirationDateTime":"2021-05-14T22:35:28Z","status":"notStarted","errors":[]}'
     headers:
       apim-request-id:
-      - ec99cd97-53b2-4a05-9818-18e6d0a97271
+      - 6d4ff4c2-cfd1-4ede-b7e9-c381d024aaa8
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 01 Mar 2021 19:49:38 GMT
+      - Thu, 13 May 2021 22:35:32 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -67,7 +67,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '7'
     status:
       code: 200
       message: OK
@@ -81,19 +81,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/6c35f8d1-fed8-4276-bcff-1589b2abfba6
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/8eee84bf-f25e-467f-931f-ecfb98369673
   response:
     body:
-      string: '{"jobId":"6c35f8d1-fed8-4276-bcff-1589b2abfba6","lastUpdateDateTime":"2021-03-01T19:49:39Z","createdDateTime":"2021-03-01T19:49:32Z","expirationDateTime":"2021-03-02T19:49:32Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-11"}}'
+      string: '{"jobId":"8eee84bf-f25e-467f-931f-ecfb98369673","lastUpdateDateTime":"2021-05-13T22:35:33Z","createdDateTime":"2021-05-13T22:35:28Z","expirationDateTime":"2021-05-14T22:35:28Z","status":"running","errors":[]}'
     headers:
       apim-request-id:
-      - c3392aa3-f4bc-4f75-8a17-016805dd3661
+      - d6635a1f-2c7f-4574-b8fb-95e2baa37f2d
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 01 Mar 2021 19:49:42 GMT
+      - Thu, 13 May 2021 22:35:37 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -101,7 +101,41 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '30'
+      - '14'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: GET
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/8eee84bf-f25e-467f-931f-ecfb98369673
+  response:
+    body:
+      string: '{"jobId":"8eee84bf-f25e-467f-931f-ecfb98369673","lastUpdateDateTime":"2021-05-13T22:35:38Z","createdDateTime":"2021-05-13T22:35:28Z","expirationDateTime":"2021-05-14T22:35:28Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-03-01"}}'
+    headers:
+      apim-request-id:
+      - 94bbf50b-dafc-4272-859f-fe2fc391cbf1
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 13 May 2021 22:35:43 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '59'
     status:
       code: 200
       message: OK

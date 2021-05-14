@@ -33,7 +33,6 @@ from dotenv import find_dotenv, load_dotenv
 
 
 class TableAuthSamples(object):
-
     def __init__(self):
         load_dotenv(find_dotenv())
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
@@ -41,15 +40,14 @@ class TableAuthSamples(object):
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
         self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name,
-            self.access_key,
-            self.endpoint_suffix
+            self.account_name, self.access_key, self.endpoint_suffix
         )
 
     def authentication_by_connection_string(self):
         # Instantiate a TableServiceClient using a connection string
         # [START auth_from_connection_string]
         from azure.data.tables import TableServiceClient
+
         with TableServiceClient.from_connection_string(conn_str=self.connection_string) as table_service:
             properties = table_service.get_service_properties()
             print("Connection String: {}".format(properties))
@@ -76,13 +74,14 @@ class TableAuthSamples(object):
 
         # Create a SAS token to use for authentication of a client
         from azure.data.tables import generate_account_sas, ResourceTypes, AccountSasPermissions
+
         print("Account name: {}".format(self.account_name))
         credential = AzureNamedKeyCredential(self.account_name, self.access_key)
         sas_token = generate_account_sas(
             credential,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1)
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
         with TableServiceClient(endpoint=self.endpoint, credential=sas_token) as token_auth_table_service:
@@ -90,7 +89,8 @@ class TableAuthSamples(object):
             print("Shared Access Signature: {}".format(properties))
         # [END auth_from_sas]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sample = TableAuthSamples()
     sample.authentication_by_connection_string()
     sample.authentication_by_shared_key()

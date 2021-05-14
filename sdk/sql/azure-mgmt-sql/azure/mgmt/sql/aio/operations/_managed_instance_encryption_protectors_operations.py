@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -55,7 +55,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._revalidate_initial.metadata['url']  # type: ignore
@@ -91,7 +91,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Revalidates an existing encryption protector.
@@ -105,8 +105,8 @@ class ManagedInstanceEncryptionProtectorsOperations:
         :type encryption_protector_name: str or ~azure.mgmt.sql.models.EncryptionProtectorName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -136,7 +136,14 @@ class ManagedInstanceEncryptionProtectorsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
+            'encryptionProtectorName': self._serialize.url("encryption_protector_name", encryption_protector_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -155,7 +162,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ManagedInstanceEncryptionProtectorListResult"]:
+    ) -> AsyncIterable["_models.ManagedInstanceEncryptionProtectorListResult"]:
         """Gets a list of managed instance encryption protectors.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -168,12 +175,12 @@ class ManagedInstanceEncryptionProtectorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ManagedInstanceEncryptionProtectorListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedInstanceEncryptionProtectorListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedInstanceEncryptionProtectorListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -229,9 +236,9 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
         **kwargs
-    ) -> "models.ManagedInstanceEncryptionProtector":
+    ) -> "_models.ManagedInstanceEncryptionProtector":
         """Gets a managed instance encryption protector.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -246,12 +253,12 @@ class ManagedInstanceEncryptionProtectorsOperations:
         :rtype: ~azure.mgmt.sql.models.ManagedInstanceEncryptionProtector
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedInstanceEncryptionProtector"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedInstanceEncryptionProtector"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -292,16 +299,16 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "models.EncryptionProtectorName"],
-        parameters: "models.ManagedInstanceEncryptionProtector",
+        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        parameters: "_models.ManagedInstanceEncryptionProtector",
         **kwargs
-    ) -> Optional["models.ManagedInstanceEncryptionProtector"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ManagedInstanceEncryptionProtector"]]
+    ) -> Optional["_models.ManagedInstanceEncryptionProtector"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ManagedInstanceEncryptionProtector"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -349,10 +356,10 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "models.EncryptionProtectorName"],
-        parameters: "models.ManagedInstanceEncryptionProtector",
+        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        parameters: "_models.ManagedInstanceEncryptionProtector",
         **kwargs
-    ) -> AsyncLROPoller["models.ManagedInstanceEncryptionProtector"]:
+    ) -> AsyncLROPoller["_models.ManagedInstanceEncryptionProtector"]:
         """Updates an existing encryption protector.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -366,8 +373,8 @@ class ManagedInstanceEncryptionProtectorsOperations:
         :type parameters: ~azure.mgmt.sql.models.ManagedInstanceEncryptionProtector
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedInstanceEncryptionProtector or the result of cls(response)
@@ -375,7 +382,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedInstanceEncryptionProtector"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedInstanceEncryptionProtector"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -401,7 +408,14 @@ class ManagedInstanceEncryptionProtectorsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
+            'encryptionProtectorName': self._serialize.url("encryption_protector_name", encryption_protector_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

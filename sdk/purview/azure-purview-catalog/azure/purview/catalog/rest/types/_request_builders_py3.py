@@ -1482,7 +1482,6 @@ def build_delete_type_definitions_request(
                     {}
                 ]
             }
-
     """
     content_type = kwargs.pop("content_type", None)
 

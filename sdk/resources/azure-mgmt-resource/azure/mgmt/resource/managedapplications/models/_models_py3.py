@@ -151,9 +151,9 @@ class Application(GenericResource):
     :type application_definition_id: str
     :param parameters: Name and value pairs that define the managed application parameters. It can
      be a JObject or a well formed JSON string.
-    :type parameters: object
+    :type parameters: str
     :ivar outputs: Name and value pairs that define the managed application outputs.
-    :vartype outputs: object
+    :vartype outputs: str
     :ivar provisioning_state: The managed application provisioning state. Possible values include:
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Updating".
@@ -184,8 +184,8 @@ class Application(GenericResource):
         'kind': {'key': 'kind', 'type': 'str'},
         'managed_resource_group_id': {'key': 'properties.managedResourceGroupId', 'type': 'str'},
         'application_definition_id': {'key': 'properties.applicationDefinitionId', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': 'object'},
-        'outputs': {'key': 'properties.outputs', 'type': 'object'},
+        'parameters': {'key': 'properties.parameters', 'type': 'str'},
+        'outputs': {'key': 'properties.outputs', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -201,7 +201,7 @@ class Application(GenericResource):
         identity: Optional["Identity"] = None,
         plan: Optional["Plan"] = None,
         application_definition_id: Optional[str] = None,
-        parameters: Optional[object] = None,
+        parameters: Optional[str] = None,
         **kwargs
     ):
         super(Application, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
@@ -289,10 +289,10 @@ class ApplicationDefinition(GenericResource):
     :type package_file_uri: str
     :param main_template: The inline main template json which has resources to be provisioned. It
      can be a JObject or well-formed JSON string.
-    :type main_template: object
+    :type main_template: str
     :param create_ui_definition: The createUiDefinition json for the backing template with
      Microsoft.Solutions/applications resource. It can be a JObject or well-formed JSON string.
-    :type create_ui_definition: object
+    :type create_ui_definition: str
     """
 
     _validation = {
@@ -319,8 +319,8 @@ class ApplicationDefinition(GenericResource):
         'artifacts': {'key': 'properties.artifacts', 'type': '[ApplicationArtifact]'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'package_file_uri': {'key': 'properties.packageFileUri', 'type': 'str'},
-        'main_template': {'key': 'properties.mainTemplate', 'type': 'object'},
-        'create_ui_definition': {'key': 'properties.createUiDefinition', 'type': 'object'},
+        'main_template': {'key': 'properties.mainTemplate', 'type': 'str'},
+        'create_ui_definition': {'key': 'properties.createUiDefinition', 'type': 'str'},
     }
 
     def __init__(
@@ -338,8 +338,8 @@ class ApplicationDefinition(GenericResource):
         artifacts: Optional[List["ApplicationArtifact"]] = None,
         description: Optional[str] = None,
         package_file_uri: Optional[str] = None,
-        main_template: Optional[object] = None,
-        create_ui_definition: Optional[object] = None,
+        main_template: Optional[str] = None,
+        create_ui_definition: Optional[str] = None,
         **kwargs
     ):
         super(ApplicationDefinition, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
@@ -439,9 +439,9 @@ class ApplicationPatchable(GenericResource):
     :type application_definition_id: str
     :param parameters: Name and value pairs that define the managed application parameters. It can
      be a JObject or a well formed JSON string.
-    :type parameters: object
+    :type parameters: str
     :ivar outputs: Name and value pairs that define the managed application outputs.
-    :vartype outputs: object
+    :vartype outputs: str
     :ivar provisioning_state: The managed application provisioning state. Possible values include:
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Updating".
@@ -471,8 +471,8 @@ class ApplicationPatchable(GenericResource):
         'kind': {'key': 'kind', 'type': 'str'},
         'managed_resource_group_id': {'key': 'properties.managedResourceGroupId', 'type': 'str'},
         'application_definition_id': {'key': 'properties.applicationDefinitionId', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': 'object'},
-        'outputs': {'key': 'properties.outputs', 'type': 'object'},
+        'parameters': {'key': 'properties.parameters', 'type': 'str'},
+        'outputs': {'key': 'properties.outputs', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -488,7 +488,7 @@ class ApplicationPatchable(GenericResource):
         kind: Optional[str] = None,
         managed_resource_group_id: Optional[str] = None,
         application_definition_id: Optional[str] = None,
-        parameters: Optional[object] = None,
+        parameters: Optional[str] = None,
         **kwargs
     ):
         super(ApplicationPatchable, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)

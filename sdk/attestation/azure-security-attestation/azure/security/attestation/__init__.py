@@ -18,6 +18,7 @@ from ._models import (AttestationResponse,
     AttestationTokenValidationException,
     PolicyCertificatesModificationResult,
     AttestationType,
+    PolicyModification,
     StoredAttestationPolicy,
     CertificateModification)
 from ._configuration import TokenValidationOptions
@@ -40,6 +41,7 @@ __all__ = [
     'AttestationSigningKey',
     'TpmAttestationRequest',
     'TpmAttestationResponse',
+    'PolicyModification',
     'PolicyCertificatesModificationResult',
     'AttestationTokenValidationException',
 ]

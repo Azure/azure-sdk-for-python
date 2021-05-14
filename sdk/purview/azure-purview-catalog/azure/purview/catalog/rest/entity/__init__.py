@@ -13,7 +13,7 @@ try:
     from ._request_builders_py3 import build_delete_by_guids_request
     from ._request_builders_py3 import build_add_classification_request
     from ._request_builders_py3 import build_get_by_guid_request
-    from ._request_builders_py3 import build_create_or_update_by_guid_request
+    from ._request_builders_py3 import build_partial_update_entity_attribute_by_guid_request
     from ._request_builders_py3 import build_delete_by_guid_request
     from ._request_builders_py3 import build_get_classification_request
     from ._request_builders_py3 import build_delete_classification_request
@@ -21,7 +21,7 @@ try:
     from ._request_builders_py3 import build_add_classifications_request
     from ._request_builders_py3 import build_update_classifications_request
     from ._request_builders_py3 import build_get_by_unique_attributes_request
-    from ._request_builders_py3 import build_create_or_update_by_unique_attribute_request
+    from ._request_builders_py3 import build_partial_update_entity_by_unique_attributes_request
     from ._request_builders_py3 import build_delete_by_unique_attribute_request
     from ._request_builders_py3 import build_delete_classification_by_unique_attribute_request
     from ._request_builders_py3 import build_add_classifications_by_unique_attribute_request
@@ -36,7 +36,7 @@ except (SyntaxError, ImportError):
     from ._request_builders import build_delete_by_guids_request  # type: ignore
     from ._request_builders import build_add_classification_request  # type: ignore
     from ._request_builders import build_get_by_guid_request  # type: ignore
-    from ._request_builders import build_create_or_update_by_guid_request  # type: ignore
+    from ._request_builders import build_partial_update_entity_attribute_by_guid_request  # type: ignore
     from ._request_builders import build_delete_by_guid_request  # type: ignore
     from ._request_builders import build_get_classification_request  # type: ignore
     from ._request_builders import build_delete_classification_request  # type: ignore
@@ -44,7 +44,7 @@ except (SyntaxError, ImportError):
     from ._request_builders import build_add_classifications_request  # type: ignore
     from ._request_builders import build_update_classifications_request  # type: ignore
     from ._request_builders import build_get_by_unique_attributes_request  # type: ignore
-    from ._request_builders import build_create_or_update_by_unique_attribute_request  # type: ignore
+    from ._request_builders import build_partial_update_entity_by_unique_attributes_request  # type: ignore
     from ._request_builders import build_delete_by_unique_attribute_request  # type: ignore
     from ._request_builders import build_delete_classification_by_unique_attribute_request  # type: ignore
     from ._request_builders import build_add_classifications_by_unique_attribute_request  # type: ignore
@@ -60,7 +60,7 @@ __all__ = [
     'build_delete_by_guids_request',
     'build_add_classification_request',
     'build_get_by_guid_request',
-    'build_create_or_update_by_guid_request',
+    'build_partial_update_entity_attribute_by_guid_request',
     'build_delete_by_guid_request',
     'build_get_classification_request',
     'build_delete_classification_request',
@@ -68,7 +68,7 @@ __all__ = [
     'build_add_classifications_request',
     'build_update_classifications_request',
     'build_get_by_unique_attributes_request',
-    'build_create_or_update_by_unique_attribute_request',
+    'build_partial_update_entity_by_unique_attributes_request',
     'build_delete_by_unique_attribute_request',
     'build_delete_classification_by_unique_attribute_request',
     'build_add_classifications_by_unique_attribute_request',

@@ -32,7 +32,3 @@ extends:
     Artifacts:
     - name: azure-mgmt-iothub
       safeName: azuremgmtiothub
-    - name: azure-mgmt-iothubprovisioningservices
-      safeName: azuremgmtiothubprovisioningservices
-    - name: azure-mgmt-iotcentral
-      safeName: azuremgmtiotcentral

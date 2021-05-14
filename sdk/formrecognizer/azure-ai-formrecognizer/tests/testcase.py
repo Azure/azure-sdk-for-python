@@ -296,8 +296,8 @@ class FormRecognizerTest(AzureTestCase):
         self.assertEqual(line.text, expected.text)
         self.assertBoundingBoxTransformCorrect(line.bounding_box, expected.bounding_box)
         if expected.appearance:
-            self.assertEqual(line.appearance.style.name, expected.appearance.style.name)
-            self.assertEqual(line.appearance.style.confidence, expected.appearance.style.confidence)
+            self.assertEqual(line.appearance.style_name, expected.appearance.style.name)
+            self.assertEqual(line.appearance.style_confidence, expected.appearance.style.confidence)
         for word, expected_word in zip(line.words, expected.words):
             self.assertFormWordTransformCorrect(word, expected_word)
 
@@ -335,6 +335,10 @@ class FormRecognizerTest(AzureTestCase):
             self.assertEqual(form_field.value, expected.value_phone_number)
         if field_type == "time":
             self.assertEqual(form_field.value, expected.value_time)
+        if field_type == "selectionMark":
+            self.assertEqual(form_field.value, expected.value_selection_mark)
+        if field_type == "countryRegion":
+            self.assertEqual(form_field.value, expected.value_country_region)
         if field_type == "array":
             for i in range(len(expected.value_array)):
                 self.assertFormFieldValueTransformCorrect(form_field.value[i], expected.value_array[i], read_results)
@@ -558,8 +562,8 @@ class FormRecognizerTest(AzureTestCase):
         self.assertIsNotNone(line.text)
         self.assertBoundingBoxHasPoints(line.bounding_box)
         if line.appearance:
-            self.assertIsNotNone(line.appearance.style.name)
-            self.assertIsNotNone(line.appearance.style.confidence)
+            self.assertIsNotNone(line.appearance.style_name)
+            self.assertIsNotNone(line.appearance.style_confidence)
         self.assertEqual(line.page_number, page_number)
         for word in line.words:
             self.assertFormWordHasValues(word, page_number)

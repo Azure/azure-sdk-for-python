@@ -748,7 +748,6 @@ def build_add_classification_request(
                     "str (optional)"
                 ]
             }
-
     """
     content_type = kwargs.pop("content_type", None)
 
@@ -888,7 +887,7 @@ def build_get_by_guid_request(
     )
 
 
-def build_create_or_update_by_guid_request(
+def build_partial_update_entity_attribute_by_guid_request(
     guid: str,
     *,
     json: Any = None,
@@ -1375,7 +1374,6 @@ def build_add_classifications_request(
                     ]
                 }
             ]
-
     """
     content_type = kwargs.pop("content_type", None)
 
@@ -1445,7 +1443,6 @@ def build_update_classifications_request(
                     ]
                 }
             ]
-
     """
     content_type = kwargs.pop("content_type", None)
 
@@ -1600,7 +1597,7 @@ def build_get_by_unique_attributes_request(
     )
 
 
-def build_create_or_update_by_unique_attribute_request(
+def build_partial_update_entity_by_unique_attributes_request(
     type_name: str,
     *,
     json: Any = None,
@@ -2078,7 +2075,6 @@ def build_add_classifications_by_unique_attribute_request(
                     ]
                 }
             ]
-
     """
     content_type = kwargs.pop("content_type", None)
 
@@ -2157,7 +2153,6 @@ def build_update_classifications_by_unique_attribute_request(
                     ]
                 }
             ]
-
     """
     content_type = kwargs.pop("content_type", None)
 

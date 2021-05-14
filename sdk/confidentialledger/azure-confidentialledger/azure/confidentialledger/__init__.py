@@ -21,7 +21,7 @@ from ._models import (
 from ._shared import ConfidentialLedgerCertificateCredential
 
 
-___all__ = [
+__all__ = [
     "ConfidentialLedgerCertificateCredential",
     "ConfidentialLedgerClient",
     # Enums
