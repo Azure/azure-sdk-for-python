@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class PrivateLinkResourcesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class PrivateLinkResourcesOperations(object):
         config_store_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PrivateLinkResourceListResult"]
+        # type: (...) -> Iterable["_models.PrivateLinkResourceListResult"]
         """Gets the private link resources that need to be created for a configuration store.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -64,12 +64,12 @@ class PrivateLinkResourcesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~app_configuration_management_client.models.PrivateLinkResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -111,7 +111,7 @@ class PrivateLinkResourcesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -129,7 +129,7 @@ class PrivateLinkResourcesOperations(object):
         group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateLinkResource"
+        # type: (...) -> "_models.PrivateLinkResource"
         """Gets a private link resource that need to be created for a configuration store.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -144,12 +144,12 @@ class PrivateLinkResourcesOperations(object):
         :rtype: ~app_configuration_management_client.models.PrivateLinkResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -176,7 +176,7 @@ class PrivateLinkResourcesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateLinkResource', pipeline_response)
