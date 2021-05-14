@@ -4,10 +4,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import List, Any, Optional, TYPE_CHECKING
+from typing import Dict, List, Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -18,7 +17,7 @@ if TYPE_CHECKING:
 
 from ._generated import AzureAttestationRestClient
 from ._generated.models import (
-    AttestationResult,
+    AttestationResult as GeneratedAttestationResult,
     RuntimeData,
     InitTimeData,
     DataType,
@@ -29,11 +28,11 @@ from ._models import (
     AttestationSigner,
     AttestationToken,
     AttestationResponse,
+    AttestationResult,
     AttestationData,
     TpmAttestationRequest,
     TpmAttestationResponse)
 import base64
-import cryptography.x509
 from azure.core.tracing.decorator import distributed_trace
 from threading import Lock
 
@@ -50,6 +49,7 @@ class AttestationClient(object):
     :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
+
     """
 
     def __init__(
@@ -92,14 +92,14 @@ class AttestationClient(object):
         return signers
 
     @distributed_trace
-    def attest_sgx_enclave(self, quote, inittime_data=None, runtime_data=None, draft_policy=None, **kwargs):
-        # type:(bytes, Optional[AttestationData], Optional[AttestationData], Optional[str], Any) -> AttestationResponse[AttestationResult]
+    def attest_sgx_enclave(self, quote, inittime_data=None, runtime_data=None, **kwargs):
+        # type:(bytes, AttestationData, AttestationData, Dict[str, Any]) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
-        :param Optional[AttestationData] inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :param Optional[AttestationData] runtime_data: Data presented at the time that the SGX quote was created.
-        :param Optional[str] draft_policy: "draft", or "experimental" policy to be used with
+        :keyword AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :keyword AttestationData runtime_data: Data presented at the time that the SGX quote was created.
+        :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
@@ -125,22 +125,23 @@ class AttestationClient(object):
             quote=quote,
             init_time_data = inittime,
             runtime_data = runtime,
-            draft_policy_for_attestation=draft_policy)
+            draft_policy_for_attestation=kwargs.get('draft_policy', None))
+
         result = self._client.attestation.attest_sgx_enclave(request, **kwargs)
-        token = AttestationToken[AttestationResult](token=result.token,
-            body_type=AttestationResult)
+        token = AttestationToken[GeneratedAttestationResult](token=result.token,
+            body_type=GeneratedAttestationResult)
         token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
-        return AttestationResponse[AttestationResult](token, token.get_body())
+        return AttestationResponse[AttestationResult](token, AttestationResult._from_generated(token.get_body()))
 
     @distributed_trace
-    def attest_open_enclave(self, report, inittime_data=None, runtime_data=None, draft_policy=None, **kwargs):
-        # type:(bytes, Optional[AttestationData], Optional[AttestationData], Optional[str], Any) -> AttestationResponse[AttestationResult]
+    def attest_open_enclave(self, report, inittime_data=None, runtime_data=None, **kwargs):
+        # type:(bytes, AttestationData, AttestationData, Dict[str, Any]) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
-        :param Optional[AttestationData] inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :param Optional[AttestationData] runtime_data: Data presented at the time that the SGX quote was created.
-        :param Optional[str] draft_policy: "draft", or "experimental" policy to be used with
+        :keyword AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :keyword AttestationData runtime_data: Data presented at the time that the open_enclave report was created.
+        :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
@@ -165,12 +166,12 @@ class AttestationClient(object):
             report=report,
             init_time_data = inittime,
             runtime_data = runtime,
-            draft_policy_for_attestation = draft_policy)
+            draft_policy_for_attestation = kwargs.get('draft_policy', None))
         result = self._client.attestation.attest_open_enclave(request, **kwargs)
-        token = AttestationToken[AttestationResult](token=result.token,
-            body_type=AttestationResult)
+        token = AttestationToken[GeneratedAttestationResult](token=result.token,
+            body_type=GeneratedAttestationResult)
         token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
-        return AttestationResponse[AttestationResult](token, token.get_body())
+        return AttestationResponse[AttestationResult](token, AttestationResult._from_generated(token.get_body()))
 
     @distributed_trace
     def attest_tpm(self, request, **kwargs):
