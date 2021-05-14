@@ -28,56 +28,31 @@ from dotenv import find_dotenv, load_dotenv
 
 
 class CreateClients(object):
-
     def __init__(self):
         load_dotenv(find_dotenv())
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name,
-            self.access_key,
-            self.endpoint
+            self.account_name, self.access_key, self.endpoint_suffix
         )
         self.table_name = "sampleTransaction"
 
     def sample_transaction(self):
         # Instantiate a TableServiceClient using a connection string
-        entity1 = {
-            'PartitionKey': 'pk001',
-            'RowKey': 'rk001',
-            'Value': 4,
-            'day': "Monday",
-            'float': 4.003
-        }
-        entity2 = {
-            'PartitionKey': 'pk001',
-            'RowKey': 'rk002',
-            'Value': 4,
-            'day': "Tuesday",
-            'float': 4.003
-        }
-        entity3 = {
-            'PartitionKey': 'pk001',
-            'RowKey': 'rk003',
-            'Value': 4,
-            'day': "Wednesday",
-            'float': 4.003
-        }
-        entity4 = {
-            'PartitionKey': 'pk001',
-            'RowKey': 'rk004',
-            'Value': 4,
-            'day': "Thursday",
-            'float': 4.003
-        }
+        entity1 = {"PartitionKey": "pk001", "RowKey": "rk001", "Value": 4, "day": "Monday", "float": 4.003}
+        entity2 = {"PartitionKey": "pk001", "RowKey": "rk002", "Value": 4, "day": "Tuesday", "float": 4.003}
+        entity3 = {"PartitionKey": "pk001", "RowKey": "rk003", "Value": 4, "day": "Wednesday", "float": 4.003}
+        entity4 = {"PartitionKey": "pk001", "RowKey": "rk004", "Value": 4, "day": "Thursday", "float": 4.003}
 
         # [START batching]
         from azure.data.tables import TableClient, TableTransactionError
         from azure.core.exceptions import ResourceExistsError
+
         self.table_client = TableClient.from_connection_string(
-            conn_str=self.connection_string, table_name=self.table_name)
+            conn_str=self.connection_string, table_name=self.table_name
+        )
 
         try:
             self.table_client.create_table()
@@ -90,10 +65,10 @@ class CreateClients(object):
         self.table_client.upsert_entity(entity4)
 
         operations = [
-            ('upsert', entity1),
-            ('delete', entity2),
-            ('upsert', entity3),
-            ('update', entity4, {'mode': 'replace'})
+            ("upsert", entity1),
+            ("delete", entity2),
+            ("upsert", entity3),
+            ("update", entity4, {"mode": "replace"}),
         ]
         try:
             self.table_client.submit_transaction(operations)
@@ -107,7 +82,7 @@ class CreateClients(object):
         self.table_client.__exit__()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if sys.version_info > (3, 5):
         sample = CreateClients()
         try:

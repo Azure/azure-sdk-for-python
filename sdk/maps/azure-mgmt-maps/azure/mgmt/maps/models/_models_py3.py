@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._azure_maps_resource_provider_enums import *
+from ._azure_maps_management_client_enums import *
 
 
 class Resource(msrest.serialization.Model):
@@ -119,7 +119,7 @@ class Creator(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
-    :param properties: The Creator resource properties.
+    :param properties: Required. The Creator resource properties.
     :type properties: ~azure.mgmt.maps.models.CreatorProperties
     """
 
@@ -128,6 +128,7 @@ class Creator(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'properties': {'required': True},
     }
 
     _attribute_map = {
@@ -143,47 +144,12 @@ class Creator(TrackedResource):
         self,
         *,
         location: str,
+        properties: "CreatorProperties",
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["CreatorProperties"] = None,
         **kwargs
     ):
         super(Creator, self).__init__(tags=tags, location=location, **kwargs)
         self.properties = properties
-
-
-class CreatorCreateParameters(msrest.serialization.Model):
-    """Parameters used to create a new Maps Creator resource.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param location: Required. The location of the resource.
-    :type location: str
-    :param tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
-     These tags can be used in viewing and grouping this resource (across resource groups). A
-     maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
-     characters and value no greater than 256 characters.
-    :type tags: dict[str, str]
-    """
-
-    _validation = {
-        'location': {'required': True},
-    }
-
-    _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(CreatorCreateParameters, self).__init__(**kwargs)
-        self.location = location
-        self.tags = tags
 
 
 class CreatorList(msrest.serialization.Model):
@@ -193,6 +159,9 @@ class CreatorList(msrest.serialization.Model):
 
     :ivar value: a Creator account.
     :vartype value: list[~azure.mgmt.maps.models.Creator]
+    :param next_link: URL client should use to fetch the next page (per server side paging).
+     It's null for now, added for future use.
+    :type next_link: str
     """
 
     _validation = {
@@ -201,60 +170,122 @@ class CreatorList(msrest.serialization.Model):
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Creator]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CreatorList, self).__init__(**kwargs)
-        self.value = None
-
-
-class CreatorProperties(msrest.serialization.Model):
-    """Creator resource properties.
-
-    :param provisioning_state: The state of the resource provisioning, terminal states: Succeeded,
-     Failed, Canceled.
-    :type provisioning_state: str
-    """
-
-    _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        provisioning_state: Optional[str] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(CreatorList, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = next_link
+
+
+class CreatorProperties(msrest.serialization.Model):
+    """Creator resource properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar provisioning_state: The state of the resource provisioning, terminal states: Succeeded,
+     Failed, Canceled.
+    :vartype provisioning_state: str
+    :param storage_units: Required. The storage units to be allocated. Integer values from 1 to
+     100, inclusive.
+    :type storage_units: int
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'storage_units': {'required': True, 'maximum': 100, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'storage_units': {'key': 'storageUnits', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        storage_units: int,
         **kwargs
     ):
         super(CreatorProperties, self).__init__(**kwargs)
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
+        self.storage_units = storage_units
 
 
 class CreatorUpdateParameters(msrest.serialization.Model):
     """Parameters used to update an existing Creator resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     :param tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
      These tags can be used in viewing and grouping this resource (across resource groups). A
      maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
      characters and value no greater than 256 characters.
     :type tags: dict[str, str]
+    :ivar provisioning_state: The state of the resource provisioning, terminal states: Succeeded,
+     Failed, Canceled.
+    :vartype provisioning_state: str
+    :param storage_units: The storage units to be allocated. Integer values from 1 to 100,
+     inclusive.
+    :type storage_units: int
     """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'storage_units': {'maximum': 100, 'minimum': 1},
+    }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'storage_units': {'key': 'properties.storageUnits', 'type': 'int'},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
+        storage_units: Optional[int] = None,
         **kwargs
     ):
         super(CreatorUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
+        self.provisioning_state = None
+        self.storage_units = storage_units
+
+
+class Dimension(msrest.serialization.Model):
+    """Dimension of map account, for example API Category, Api Name, Result Type, and Response Code.
+
+    :param name: Display name of dimension.
+    :type name: str
+    :param display_name: Display name of dimension.
+    :type display_name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        **kwargs
+    ):
+        super(Dimension, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -265,7 +296,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: str
     """
 
     _validation = {
@@ -275,7 +306,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        'info': {'key': 'info', 'type': 'str'},
     }
 
     def __init__(
@@ -372,12 +403,15 @@ class MapsAccount(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
-    :ivar sku: The SKU of this account.
-    :vartype sku: ~azure.mgmt.maps.models.Sku
+    :param sku: Required. The SKU of this account.
+    :type sku: ~azure.mgmt.maps.models.Sku
+    :param kind: Get or Set Kind property. Possible values include: "Gen1", "Gen2". Default value:
+     "Gen1".
+    :type kind: str or ~azure.mgmt.maps.models.Kind
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.maps.models.SystemData
-    :ivar properties: The map account properties.
-    :vartype properties: ~azure.mgmt.maps.models.MapsAccountProperties
+    :param properties: The map account properties.
+    :type properties: ~azure.mgmt.maps.models.MapsAccountProperties
     """
 
     _validation = {
@@ -385,9 +419,8 @@ class MapsAccount(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'sku': {'readonly': True},
+        'sku': {'required': True},
         'system_data': {'readonly': True},
-        'properties': {'readonly': True},
     }
 
     _attribute_map = {
@@ -397,6 +430,7 @@ class MapsAccount(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'properties': {'key': 'properties', 'type': 'MapsAccountProperties'},
     }
@@ -405,53 +439,17 @@ class MapsAccount(TrackedResource):
         self,
         *,
         location: str,
+        sku: "Sku",
         tags: Optional[Dict[str, str]] = None,
+        kind: Optional[Union[str, "Kind"]] = "Gen1",
+        properties: Optional["MapsAccountProperties"] = None,
         **kwargs
     ):
         super(MapsAccount, self).__init__(tags=tags, location=location, **kwargs)
-        self.sku = None
-        self.system_data = None
-        self.properties = None
-
-
-class MapsAccountCreateParameters(msrest.serialization.Model):
-    """Parameters used to create a new Maps Account.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param location: Required. The location of the resource.
-    :type location: str
-    :param tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
-     These tags can be used in viewing and grouping this resource (across resource groups). Each tag
-     must have a key no greater than 128 characters and value no greater than 256 characters.
-    :type tags: dict[str, str]
-    :param sku: Required. The SKU of this account.
-    :type sku: ~azure.mgmt.maps.models.Sku
-    """
-
-    _validation = {
-        'location': {'required': True},
-        'sku': {'required': True},
-    }
-
-    _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        sku: "Sku",
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(MapsAccountCreateParameters, self).__init__(**kwargs)
-        self.location = location
-        self.tags = tags
         self.sku = sku
+        self.kind = kind
+        self.system_data = None
+        self.properties = properties
 
 
 class MapsAccountKeys(msrest.serialization.Model):
@@ -459,24 +457,28 @@ class MapsAccountKeys(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The full Azure resource identifier of the Maps Account.
-    :vartype id: str
+    :ivar primary_key_last_updated: The last updated date and time of the primary key.
+    :vartype primary_key_last_updated: str
     :ivar primary_key: The primary key for accessing the Maps REST APIs.
     :vartype primary_key: str
     :ivar secondary_key: The secondary key for accessing the Maps REST APIs.
     :vartype secondary_key: str
+    :ivar secondary_key_last_updated: The last updated date and time of the secondary key.
+    :vartype secondary_key_last_updated: str
     """
 
     _validation = {
-        'id': {'readonly': True},
+        'primary_key_last_updated': {'readonly': True},
         'primary_key': {'readonly': True},
         'secondary_key': {'readonly': True},
+        'secondary_key_last_updated': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'primary_key_last_updated': {'key': 'primaryKeyLastUpdated', 'type': 'str'},
         'primary_key': {'key': 'primaryKey', 'type': 'str'},
         'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
+        'secondary_key_last_updated': {'key': 'secondaryKeyLastUpdated', 'type': 'str'},
     }
 
     def __init__(
@@ -484,30 +486,47 @@ class MapsAccountKeys(msrest.serialization.Model):
         **kwargs
     ):
         super(MapsAccountKeys, self).__init__(**kwargs)
-        self.id = None
+        self.primary_key_last_updated = None
         self.primary_key = None
         self.secondary_key = None
+        self.secondary_key_last_updated = None
 
 
 class MapsAccountProperties(msrest.serialization.Model):
     """Additional Map account properties.
 
-    :param x_ms_client_id: A unique identifier for the maps account.
-    :type x_ms_client_id: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar unique_id: A unique identifier for the maps account.
+    :vartype unique_id: str
+    :param disable_local_auth: Allows toggle functionality on Azure Policy to disable Azure Maps
+     local authentication support. This will disable Shared Keys authentication from any usage.
+    :type disable_local_auth: bool
+    :ivar provisioning_state: the state of the provisioning.
+    :vartype provisioning_state: str
     """
 
+    _validation = {
+        'unique_id': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
     _attribute_map = {
-        'x_ms_client_id': {'key': 'x-ms-client-id', 'type': 'str'},
+        'unique_id': {'key': 'uniqueId', 'type': 'str'},
+        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        x_ms_client_id: Optional[str] = None,
+        disable_local_auth: Optional[bool] = False,
         **kwargs
     ):
         super(MapsAccountProperties, self).__init__(**kwargs)
-        self.x_ms_client_id = x_ms_client_id
+        self.unique_id = None
+        self.disable_local_auth = disable_local_auth
+        self.provisioning_state = None
 
 
 class MapsAccounts(msrest.serialization.Model):
@@ -517,6 +536,9 @@ class MapsAccounts(msrest.serialization.Model):
 
     :ivar value: a Maps Account.
     :vartype value: list[~azure.mgmt.maps.models.MapsAccount]
+    :param next_link: URL client should use to fetch the next page (per server side paging).
+     It's null for now, added for future use.
+    :type next_link: str
     """
 
     _validation = {
@@ -525,43 +547,74 @@ class MapsAccounts(msrest.serialization.Model):
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[MapsAccount]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
+        *,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         super(MapsAccounts, self).__init__(**kwargs)
         self.value = None
+        self.next_link = next_link
 
 
 class MapsAccountUpdateParameters(msrest.serialization.Model):
     """Parameters used to update an existing Maps Account.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     :param tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
      These tags can be used in viewing and grouping this resource (across resource groups). A
      maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
      characters and value no greater than 256 characters.
     :type tags: dict[str, str]
+    :param kind: Get or Set Kind property. Possible values include: "Gen1", "Gen2". Default value:
+     "Gen1".
+    :type kind: str or ~azure.mgmt.maps.models.Kind
     :param sku: The SKU of this account.
     :type sku: ~azure.mgmt.maps.models.Sku
+    :ivar unique_id: A unique identifier for the maps account.
+    :vartype unique_id: str
+    :param disable_local_auth: Allows toggle functionality on Azure Policy to disable Azure Maps
+     local authentication support. This will disable Shared Keys authentication from any usage.
+    :type disable_local_auth: bool
+    :ivar provisioning_state: the state of the provisioning.
+    :vartype provisioning_state: str
     """
+
+    _validation = {
+        'unique_id': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
+        kind: Optional[Union[str, "Kind"]] = "Gen1",
         sku: Optional["Sku"] = None,
+        disable_local_auth: Optional[bool] = False,
         **kwargs
     ):
         super(MapsAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
+        self.kind = kind
         self.sku = sku
+        self.unique_id = None
+        self.disable_local_auth = disable_local_auth
+        self.provisioning_state = None
 
 
 class MapsKeySpecification(msrest.serialization.Model):
@@ -598,7 +651,10 @@ class MapsOperations(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: An operation available for Maps.
-    :vartype value: list[~azure.mgmt.maps.models.MapsOperationsValueItem]
+    :vartype value: list[~azure.mgmt.maps.models.OperationDetail]
+    :param next_link: URL client should use to fetch the next page (per server side paging).
+     It's null for now, added for future use.
+    :type next_link: str
     """
 
     _validation = {
@@ -606,74 +662,135 @@ class MapsOperations(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MapsOperationsValueItem]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(MapsOperations, self).__init__(**kwargs)
-        self.value = None
-
-
-class MapsOperationsValueItem(msrest.serialization.Model):
-    """MapsOperationsValueItem.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: Operation name: {provider}/{resource}/{operation}.
-    :vartype name: str
-    :param display: The human-readable description of the operation.
-    :type display: ~azure.mgmt.maps.models.MapsOperationsValueItemDisplay
-    :ivar origin: The origin of the operation.
-    :vartype origin: str
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'origin': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'MapsOperationsValueItemDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[OperationDetail]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        display: Optional["MapsOperationsValueItemDisplay"] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
-        super(MapsOperationsValueItem, self).__init__(**kwargs)
-        self.name = None
-        self.display = display
-        self.origin = None
+        super(MapsOperations, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = next_link
 
 
-class MapsOperationsValueItemDisplay(msrest.serialization.Model):
-    """The human-readable description of the operation.
+class MetricSpecification(msrest.serialization.Model):
+    """Metric specification of operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar provider: Service provider: Microsoft Maps.
-    :vartype provider: str
-    :ivar resource: Resource on which the operation is performed.
-    :vartype resource: str
-    :ivar operation: The action that users can perform, based on their permission level.
-    :vartype operation: str
-    :ivar description: The description of the operation.
-    :vartype description: str
+    :param name: Name of metric specification.
+    :type name: str
+    :param display_name: Display name of metric specification.
+    :type display_name: str
+    :param display_description: Display description of metric specification.
+    :type display_description: str
+    :param unit: Unit could be Count.
+    :type unit: str
+    :param dimensions: Dimensions of map account.
+    :type dimensions: list[~azure.mgmt.maps.models.Dimension]
+    :param aggregation_type: Aggregation type could be Average.
+    :type aggregation_type: str
+    :param fill_gap_with_zero: The property to decide fill gap with zero or not.
+    :type fill_gap_with_zero: bool
+    :param category: The category this metric specification belong to, could be Capacity.
+    :type category: str
+    :param resource_id_dimension_name_override: Account Resource Id.
+    :type resource_id_dimension_name_override: str
     """
 
-    _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
+        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
+        'category': {'key': 'category', 'type': 'str'},
+        'resource_id_dimension_name_override': {'key': 'resourceIdDimensionNameOverride', 'type': 'str'},
     }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        display_description: Optional[str] = None,
+        unit: Optional[str] = None,
+        dimensions: Optional[List["Dimension"]] = None,
+        aggregation_type: Optional[str] = None,
+        fill_gap_with_zero: Optional[bool] = None,
+        category: Optional[str] = None,
+        resource_id_dimension_name_override: Optional[str] = None,
+        **kwargs
+    ):
+        super(MetricSpecification, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.display_description = display_description
+        self.unit = unit
+        self.dimensions = dimensions
+        self.aggregation_type = aggregation_type
+        self.fill_gap_with_zero = fill_gap_with_zero
+        self.category = category
+        self.resource_id_dimension_name_override = resource_id_dimension_name_override
+
+
+class OperationDetail(msrest.serialization.Model):
+    """Operation detail payload.
+
+    :param name: Name of the operation.
+    :type name: str
+    :param is_data_action: Indicates whether the operation is a data action.
+    :type is_data_action: bool
+    :param display: Display of the operation.
+    :type display: ~azure.mgmt.maps.models.OperationDisplay
+    :param origin: Origin of the operation.
+    :type origin: str
+    :param service_specification: One property of operation, include metric specifications.
+    :type service_specification: ~azure.mgmt.maps.models.ServiceSpecification
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'service_specification': {'key': 'properties.serviceSpecification', 'type': 'ServiceSpecification'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        is_data_action: Optional[bool] = None,
+        display: Optional["OperationDisplay"] = None,
+        origin: Optional[str] = None,
+        service_specification: Optional["ServiceSpecification"] = None,
+        **kwargs
+    ):
+        super(OperationDetail, self).__init__(**kwargs)
+        self.name = name
+        self.is_data_action = is_data_action
+        self.display = display
+        self.origin = origin
+        self.service_specification = service_specification
+
+
+class OperationDisplay(msrest.serialization.Model):
+    """Operation display payload.
+
+    :param provider: Resource provider of the operation.
+    :type provider: str
+    :param resource: Resource of the operation.
+    :type resource: str
+    :param operation: Localized friendly name for the operation.
+    :type operation: str
+    :param description: Localized friendly description for the operation.
+    :type description: str
+    """
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
@@ -684,170 +801,39 @@ class MapsOperationsValueItemDisplay(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        provider: Optional[str] = None,
+        resource: Optional[str] = None,
+        operation: Optional[str] = None,
+        description: Optional[str] = None,
         **kwargs
     ):
-        super(MapsOperationsValueItemDisplay, self).__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        super(OperationDisplay, self).__init__(**kwargs)
+        self.provider = provider
+        self.resource = resource
+        self.operation = operation
+        self.description = description
 
 
-class PrivateAtlas(TrackedResource):
-    """An Azure resource which represents which will provision the ability to create private location data.
+class ServiceSpecification(msrest.serialization.Model):
+    """One property of operation, include metric specifications.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param properties: The Private Atlas resource properties.
-    :type properties: ~azure.mgmt.maps.models.PrivateAtlasProperties
+    :param metric_specifications: Metric specifications of operation.
+    :type metric_specifications: list[~azure.mgmt.maps.models.MetricSpecification]
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PrivateAtlasProperties'},
+        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
     }
 
     def __init__(
         self,
         *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["PrivateAtlasProperties"] = None,
+        metric_specifications: Optional[List["MetricSpecification"]] = None,
         **kwargs
     ):
-        super(PrivateAtlas, self).__init__(tags=tags, location=location, **kwargs)
-        self.properties = properties
-
-
-class PrivateAtlasCreateParameters(msrest.serialization.Model):
-    """Parameters used to create a new Private Atlas resource.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param location: Required. The location of the resource.
-    :type location: str
-    :param tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
-     These tags can be used in viewing and grouping this resource (across resource groups). A
-     maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
-     characters and value no greater than 256 characters.
-    :type tags: dict[str, str]
-    """
-
-    _validation = {
-        'location': {'required': True},
-    }
-
-    _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(PrivateAtlasCreateParameters, self).__init__(**kwargs)
-        self.location = location
-        self.tags = tags
-
-
-class PrivateAtlasList(msrest.serialization.Model):
-    """A list of Private Atlas resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: a Private Atlas.
-    :vartype value: list[~azure.mgmt.maps.models.PrivateAtlas]
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateAtlas]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateAtlasList, self).__init__(**kwargs)
-        self.value = None
-
-
-class PrivateAtlasProperties(msrest.serialization.Model):
-    """Private Atlas resource properties.
-
-    :param provisioning_state: The state of the resource provisioning, terminal states: Succeeded,
-     Failed, Canceled.
-    :type provisioning_state: str
-    """
-
-    _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
-        super(PrivateAtlasProperties, self).__init__(**kwargs)
-        self.provisioning_state = provisioning_state
-
-
-class PrivateAtlasUpdateParameters(msrest.serialization.Model):
-    """Parameters used to update an existing Private Atlas resource.
-
-    :param tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
-     These tags can be used in viewing and grouping this resource (across resource groups). A
-     maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
-     characters and value no greater than 256 characters.
-    :type tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(PrivateAtlasUpdateParameters, self).__init__(**kwargs)
-        self.tags = tags
+        super(ServiceSpecification, self).__init__(**kwargs)
+        self.metric_specifications = metric_specifications
 
 
 class Sku(msrest.serialization.Model):
@@ -857,8 +843,9 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU, in standard format (such as S0).
-    :type name: str
+    :param name: Required. The name of the SKU, in standard format (such as S0). Possible values
+     include: "S0", "S1", "G2".
+    :type name: str or ~azure.mgmt.maps.models.Name
     :ivar tier: Gets the sku tier. This is based on the SKU name.
     :vartype tier: str
     """
@@ -876,7 +863,7 @@ class Sku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: str,
+        name: Union[str, "Name"],
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)

@@ -279,10 +279,7 @@ class TablePropertiesPaged(PageIterator):
     :param callable command: Function to retrieve the next page of items.
     :keyword int results_per_page: The maximum number of results retrieved per API call.
     :keyword str filter: The filter to apply to results.
-    :keyword str select: The select filter to apply to results.
     :keyword str continuation_token: An opaque continuation token.
-    :keyword str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
     """
 
     def __init__(self, command, **kwargs):
@@ -296,25 +293,22 @@ class TablePropertiesPaged(PageIterator):
         self._response = None
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
-        self.select = kwargs.get("select")
-        self.location_mode = None
+        self._location_mode = None
 
     def _get_next_cb(self, continuation_token, **kwargs):
-        query_options = QueryOptions(
-            top=self.results_per_page, select=self.select, filter=self.filter
-        )
+        query_options = QueryOptions(top=self.results_per_page, filter=self.filter)
         try:
             return self._command(
                 query_options=query_options,
                 next_table_name=continuation_token or None,
                 cls=kwargs.pop("cls", None) or _return_context_and_deserialized,
-                use_location=self.location_mode,
+                use_location=self._location_mode,
             )
         except HttpResponseError as error:
             _process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
-        self.location_mode, self._response, self._headers = get_next_return
+        self._location_mode, self._response, self._headers = get_next_return
         props_list = [
             TableItem._from_generated(t, **self._headers) for t in self._response.value  # pylint: disable=protected-access
         ]
@@ -330,8 +324,6 @@ class TableEntityPropertiesPaged(PageIterator):
     :keyword str filter: The filter to apply to results.
     :keyword str select: The select filter to apply to results.
     :keyword str continuation_token: An opaque continuation token.
-    :keyword str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
     """
 
     def __init__(self, command, table, **kwargs):
@@ -347,7 +339,7 @@ class TableEntityPropertiesPaged(PageIterator):
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
         self.select = kwargs.get("select")
-        self.location_mode = None
+        self._location_mode = None
 
     def _get_next_cb(self, continuation_token, **kwargs):
         next_partition_key, next_row_key = _extract_continuation_token(
@@ -363,13 +355,13 @@ class TableEntityPropertiesPaged(PageIterator):
                 next_partition_key=next_partition_key,
                 table=self.table,
                 cls=kwargs.pop("cls", None) or _return_context_and_deserialized,
-                use_location=self.location_mode,
+                use_location=self._location_mode,
             )
         except HttpResponseError as error:
             _process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
-        self.location_mode, self._response, self._headers = get_next_return
+        self._location_mode, self._response, self._headers = get_next_return
         props_list = [_convert_to_entity(t) for t in self._response.value]
         next_entity = {}
         if self._headers[NEXT_PARTITION_KEY] or self._headers[NEXT_ROW_KEY]:

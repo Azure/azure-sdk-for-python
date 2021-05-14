@@ -32,6 +32,9 @@ extends:
     ServiceDirectory: nspkg
     BuildDocs: False
     Artifacts:
+    - name: azure-agrifood-nspkg
+      safeName: azureagrifood
+      skipVerifyChangeLog: true
     - name: azure-ai-nspkg
       safeName: azureainspkg
       skipVerifyChangeLog: true
@@ -56,21 +59,18 @@ extends:
     - name: azure-messaging-nspkg
       safeName: azuremessagingnspkg
       skipVerifyChangeLog: true
+    - name: azure-purview-nspkg
+      safeName: azurepurviewnspkg
+      skipVerifyChangeLog: true
     - name: azure-search-nspkg
       safeName: azuresearchnspkg
       skipVerifyChangeLog: true
     - name: azure-mixedreality-nspkg
       safeName: azuremixedrealitynspkg
       skipVerifyChangeLog: true
-    - name: azure-search-nspkg
-      safeName: azuresearchnspkg
-      skipVerifyChangeLog: true
     - name: azure-security-nspkg
       safeName: azuresecuritynspkg
       skipVerifyChangeLog: true
     - name: azure-synapse-nspkg
       safeName: azuresynapsenspkg
-      skipVerifyChangeLog: true
-    - name: azure-purview-nspkg
-      safeName: azurepurviewnspkg
       skipVerifyChangeLog: true
