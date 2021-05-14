@@ -1,6 +1,6 @@
 # Release History
 
-## 6.3.0b2 (2021-05-14)
+## 6.3.0 (2021-05-14)
 
 **Breaking changes**
 
