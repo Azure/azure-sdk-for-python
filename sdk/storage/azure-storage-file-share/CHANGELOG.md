@@ -1,5 +1,8 @@
 # Release History
 
+## 12.5.0b2 (Unreleased)
+
+
 ## 12.5.0b1 (2021-05-12)
 **New features**
 - Added support for lease operation on a share, eg. acquire_lease
