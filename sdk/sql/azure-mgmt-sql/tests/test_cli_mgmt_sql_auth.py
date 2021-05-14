@@ -147,6 +147,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         else:
             return ('000', '000')
 
+    @unittest.skip('hard to test')
     def test_managed_instance_encryption_protector(self):
 
         RESOURCE_GROUP = "testManagedInstance"
@@ -208,6 +209,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         # result = self.mgmt_client.managed_instance_keys.begin_delete(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, key_name=KEY_NAME)
         # result = result.result()
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_encryption_protector(self, resource_group):
 
@@ -325,6 +327,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         result = self.mgmt_client.managed_instance_keys.begin_delete(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, key_name=KEY_NAME)
         result = result.result()
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_server_key(self, resource_group):
 
