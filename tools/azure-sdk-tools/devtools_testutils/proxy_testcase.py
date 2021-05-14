@@ -92,6 +92,7 @@ def RecordedByProxy(func):
     def record_wrap(*args, **kwargs):
         test_id = get_test_id()
         recording_id = start_record_or_playback(test_id)
+        print("\n\nRECORDING_ID: ", recording_id)
 
         def transform_args(*args, **kwargs):
             copied_positional_args = list(args)
@@ -114,6 +115,10 @@ def RecordedByProxy(func):
 
         def combined_call(*args, **kwargs):
             adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            req = adjusted_args[1]
+            print("HEADERS: ", req.headers)
+            print("BODY: ", req.body)
+            print("METHOD: ", req.method)
             return original_transport_func(*adjusted_args, **adjusted_kwargs)
 
         RequestsTransport.send = combined_call
