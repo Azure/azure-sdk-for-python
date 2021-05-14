@@ -67,6 +67,7 @@ try:
     from ._models_py3 import WhatIfChange
     from ._models_py3 import WhatIfOperationResult
     from ._models_py3 import WhatIfPropertyChange
+    from ._models_py3 import ZoneMapping
 except (SyntaxError, ImportError):
     from ._models import AliasPathType  # type: ignore
     from ._models import AliasType  # type: ignore
@@ -128,6 +129,7 @@ except (SyntaxError, ImportError):
     from ._models import WhatIfChange  # type: ignore
     from ._models import WhatIfOperationResult  # type: ignore
     from ._models import WhatIfPropertyChange  # type: ignore
+    from ._models import ZoneMapping  # type: ignore
 
 from ._resource_management_client_enums import (
     ChangeType,
@@ -199,6 +201,7 @@ __all__ = [
     'WhatIfChange',
     'WhatIfOperationResult',
     'WhatIfPropertyChange',
+    'ZoneMapping',
     'ChangeType',
     'DeploymentMode',
     'OnErrorDeploymentType',

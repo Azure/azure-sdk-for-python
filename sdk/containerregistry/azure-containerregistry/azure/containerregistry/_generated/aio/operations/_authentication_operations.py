@@ -107,7 +107,7 @@ class AuthenticationOperations:
         service: str,
         scope: str,
         refresh_token: str,
-        grant_type: Union[str, "_models.Enum2"] = "refresh_token",
+        grant_type: Union[str, "_models.TokenGrantType"] = "refresh_token",
         **kwargs
     ) -> "_models.AcrAccessToken":
         """Exchange ACR Refresh token for an ACR Access Token.
@@ -121,7 +121,7 @@ class AuthenticationOperations:
         :param refresh_token: Must be a valid ACR refresh token.
         :type refresh_token: str
         :param grant_type: Grant type is expected to be refresh_token.
-        :type grant_type: str or ~container_registry.models.Enum2
+        :type grant_type: str or ~container_registry.models.TokenGrantType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AcrAccessToken, or the result of cls(response)
         :rtype: ~container_registry.models.AcrAccessToken

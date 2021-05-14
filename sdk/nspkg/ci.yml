@@ -32,6 +32,9 @@ extends:
     ServiceDirectory: nspkg
     BuildDocs: False
     Artifacts:
+    - name: azure-agrifood-nspkg
+      safeName: azureagrifood
+      skipVerifyChangeLog: true
     - name: azure-ai-nspkg
       safeName: azureainspkg
       skipVerifyChangeLog: true
