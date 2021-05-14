@@ -301,12 +301,12 @@ class RegistryArtifact(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def set_manifest_properties(
-        self, permissions: ManifestWriteableProperties, **kwargs: Dict[str, Any]
+        self, properties: ManifestWriteableProperties, **kwargs: Dict[str, Any]
     ) -> ArtifactManifestProperties:
         """Set the properties for a manifest
 
-        :param permissions: The property's values to be set
-        :type permissions: ManifestWriteableProperties
+        :param properties: The property's values to be set
+        :type properties: ManifestWriteableProperties
         :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
@@ -318,7 +318,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             async for artifact in client.list_manifests():
-                received_permissions = await client.set_manifest_properties(
+                received_properties = await client.set_manifest_properties(
                     artifact.digest,
                     ManifestWriteableProperties(
                         can_delete=False,
@@ -335,7 +335,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             await self._client.container_registry.update_manifest_properties(
                 self.repository,
                 self._digest,
-                value=permissions._to_generated(),  # pylint: disable=protected-access
+                value=properties._to_generated(),  # pylint: disable=protected-access
                 **kwargs
             ),
             repository_name=self.repository,
@@ -343,14 +343,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def set_tag_properties(
-        self, tag: str, permissions: TagWriteableProperties, **kwargs: Dict[str, Any]
+        self, tag: str, properties: TagWriteableProperties, **kwargs: Dict[str, Any]
     ) -> ArtifactTagProperties:
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
         :type tag: str
-        :param permissions: The property's values to be set
-        :type permissions: TagWriteableProperties
+        :param properties: The property's values to be set
+        :type properties: TagWriteableProperties
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
@@ -374,7 +374,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.update_tag_attributes(
-                self.repository, tag, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+                self.repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             ),
             repository=self.repository,
         )
