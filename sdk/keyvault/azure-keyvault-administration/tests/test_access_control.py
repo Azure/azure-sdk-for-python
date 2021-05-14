@@ -123,16 +123,16 @@ class AccessControlTests(KeyVaultTestCase):
 
         created = client.create_role_assignment(scope, definition.id, principal_id, role_assignment_name=name)
         assert created.name == name
-        assert created.principal_id == principal_id
-        assert created.role_definition_id == definition.id
-        assert created.scope == scope
+        assert created.properties.principal_id == principal_id
+        assert created.properties.role_definition_id == definition.id
+        assert created.properties.scope == scope
 
         # should be able to get the new assignment
         got = client.get_role_assignment(scope, name)
         assert got.name == name
-        assert got.principal_id == principal_id
-        assert got.role_definition_id == definition.id
-        assert got.scope == scope
+        assert got.properties.principal_id == principal_id
+        assert got.properties.role_definition_id == definition.id
+        assert got.properties.scope == scope
 
         # new assignment should be in the list of all assignments
         matching_assignments = [
@@ -144,8 +144,8 @@ class AccessControlTests(KeyVaultTestCase):
         deleted = client.delete_role_assignment(scope, created.name)
         assert deleted.name == created.name
         assert deleted.role_assignment_id == created.role_assignment_id
-        assert deleted.scope == scope
-        assert deleted.role_definition_id == created.role_definition_id
+        assert deleted.properties.scope == scope
+        assert deleted.properties.role_definition_id == created.properties.role_definition_id
 
         assert not any(a.role_assignment_id == created.role_assignment_id for a in client.list_role_assignments(scope))
 

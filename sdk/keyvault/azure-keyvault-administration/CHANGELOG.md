@@ -4,6 +4,7 @@
 ### Added
 - `KeyVaultAccessControlClient.set_role_definition` accepts an optional 
   `assignable_scopes` keyword-only argument
+- Added `KeyVaultRoleAssignmentProperties` class
 
 ### Breaking Changes
 - Changed parameter order in `KeyVaultAccessControlClient.set_role_definition`.
@@ -12,6 +13,8 @@
 - Renamed `RestoreOperation` to `KeyVaultRestoreOperation`
 - Renamed `SelectiveKeyRestoreOperation` to 
   `KeyVaultSelectiveKeyRestoreOperation`
+- `KeyVaultRoleAssignment`'s `principal_id`, `role_definition_id`, and `scope`
+  are now properties of a `properties` property
 
 
 ## 4.0.0b3 (2021-02-09)

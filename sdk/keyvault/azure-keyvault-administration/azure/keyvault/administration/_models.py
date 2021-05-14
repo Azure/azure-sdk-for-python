@@ -64,25 +64,10 @@ class KeyVaultRoleAssignment(object):
         return self._name
 
     @property
-    def principal_id(self):
-        # type: () -> str
-        """ID of the principal this assignment applies to.
-
-        This maps to the ID inside the Active Directory. It can point to a user, service principal, or security group.
-        """
-        return self._properties.principal_id
-
-    @property
-    def role_definition_id(self):
-        # type: () -> str
-        """ID of the role's definition"""
-        return self._properties.role_definition_id
-
-    @property
-    def scope(self):
-        # type: () -> str
-        """scope of the assignment"""
-        return self._properties.scope
+    def properties(self):
+        # type: () -> KeyVaultRoleAssignmentProperties
+        """properties of the assignment"""
+        return self._properties
 
     @property
     def type(self):
@@ -101,11 +86,34 @@ class KeyVaultRoleAssignment(object):
 
 
 class KeyVaultRoleAssignmentProperties(object):
+    """Properties of a role assignment."""
+
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self.principal_id = kwargs.get("principal_id")
-        self.role_definition_id = kwargs.get("role_definition_id")
-        self.scope = kwargs.get("scope")
+        self._principal_id = kwargs.get("principal_id")
+        self._role_definition_id = kwargs.get("role_definition_id")
+        self._scope = kwargs.get("scope")
+
+    @property
+    def principal_id(self):
+        # type: () -> str
+        """ID of the principal this assignment applies to.
+
+        This maps to the ID inside the Active Directory. It can point to a user, service principal, or security group.
+        """
+        return self._principal_id
+
+    @property
+    def role_definition_id(self):
+        # type: () -> str
+        """ID of the role's definition"""
+        return self._role_definition_id
+
+    @property
+    def scope(self):
+        # type: () -> str
+        """scope of the assignment"""
+        return self._scope
 
     def __repr__(self):
         # type: () -> str
