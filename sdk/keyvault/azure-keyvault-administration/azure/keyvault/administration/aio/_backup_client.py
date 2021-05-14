@@ -80,16 +80,16 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         )
 
     async def begin_selective_restore(
-        self, folder_url: str, sas_token: str, key_name: str, **kwargs: "Any"
+        self, key_name: str, folder_url: str, sas_token: str, **kwargs: "Any"
     ) -> "AsyncLROPoller[KeyVaultSelectiveKeyRestoreOperation]":
         """Restore a single key from a full Key Vault backup.
 
+        :param str key_name: name of the key to restore from the backup
         :param str folder_url: URL for the blob storage resource, including the path to the blob holding the
             backup. This would be the `folder_url` of a :class:`KeyVaultBackupOperation` returned by
             :func:`begin_backup` or :func:`get_backup_status`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
-        :param str key_name: name of the key to restore from the backup
         :rtype: ~azure.core.polling.AsyncLROPoller[KeyVaultRestoreOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)

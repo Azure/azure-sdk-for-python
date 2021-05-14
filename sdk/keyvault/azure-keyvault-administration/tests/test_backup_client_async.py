@@ -96,7 +96,7 @@ class BackupClientTests(KeyVaultTestCase):
 
         # restore the key
         restore_poller = await backup_client.begin_selective_restore(
-            backup_status.folder_url, sas_token, key_name
+            key_name, backup_status.folder_url, sas_token
         )
 
         # check restore status and result

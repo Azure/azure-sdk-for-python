@@ -91,7 +91,7 @@ class BackupClientTests(KeyVaultTestCase):
         assert_successful_operation(backup_status)
 
         # restore the key
-        restore_poller = backup_client.begin_selective_restore(backup_status.folder_url, sas_token, key_name)
+        restore_poller = backup_client.begin_selective_restore(key_name, backup_status.folder_url, sas_token)
 
         # check restore status and result
         job_id = restore_poller.polling_method().resource().job_id
