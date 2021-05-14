@@ -242,8 +242,6 @@ class SystemEventNames(str, Enum):
 
     ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailablePeriodicNotifications'
 
-    ServiceBusDeadletterMessagesAvailableWithNoListenersEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListenersEvent'
-
     SignalRServiceClientConnectionConnectedEventName = 'Microsoft.SignalRService.ClientConnectionConnected'
 
     SignalRServiceClientConnectionDisconnectedEventName = 'Microsoft.SignalRService.ClientConnectionDisconnected'
