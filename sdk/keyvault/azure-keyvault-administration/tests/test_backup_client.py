@@ -10,7 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ResourceExistsError
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
-from azure.keyvault.administration import KeyVaultBackupClient, BackupOperation
+from azure.keyvault.administration import KeyVaultBackupClient, KeyVaultBackupOperation
 from azure.keyvault.administration._internal import parse_folder_url
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 import pytest
@@ -129,7 +129,7 @@ def test_continuation_token():
 
 
 def assert_in_progress_operation(operation):
-    if isinstance(operation, BackupOperation):
+    if isinstance(operation, KeyVaultBackupOperation):
         assert operation.folder_url is None
     assert operation.status == "InProgress"
     assert operation.end_time is None
@@ -137,7 +137,7 @@ def assert_in_progress_operation(operation):
 
 
 def assert_successful_operation(operation):
-    if isinstance(operation, BackupOperation):
+    if isinstance(operation, KeyVaultBackupOperation):
         assert operation.folder_url
     assert operation.status == "Succeeded"
     assert isinstance(operation.end_time, datetime)

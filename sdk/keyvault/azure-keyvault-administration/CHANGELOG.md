@@ -8,6 +8,10 @@
 ### Breaking Changes
 - Changed parameter order in `KeyVaultAccessControlClient.set_role_definition`.
   `permissions` is now an optional keyword-only argument
+- Renamed `BackupOperation` to `KeyVaultBackupOperation`
+- Renamed `RestoreOperation` to `KeyVaultRestoreOperation`
+- Renamed `SelectiveKeyRestoreOperation` to 
+  `KeyVaultSelectiveKeyRestoreOperation`
 
 
 ## 4.0.0b3 (2021-02-09)

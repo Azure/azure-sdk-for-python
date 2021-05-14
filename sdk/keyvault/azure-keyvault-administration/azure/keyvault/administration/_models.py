@@ -218,7 +218,7 @@ class _Operation(object):
         return cls(**deserialized_operation.__dict__)
 
 
-class BackupOperation(_Operation):
+class KeyVaultBackupOperation(_Operation):
     """A Key Vault full backup operation.
 
     :ivar str status: status of the backup operation
@@ -233,10 +233,10 @@ class BackupOperation(_Operation):
 
     def __init__(self, **kwargs):
         self.folder_url = kwargs.pop("azure_storage_blob_container_uri", None)
-        super(BackupOperation, self).__init__(**kwargs)
+        super(KeyVaultBackupOperation, self).__init__(**kwargs)
 
 
-class RestoreOperation(_Operation):
+class KeyVaultRestoreOperation(_Operation):
     """A Key Vault restore operation.
 
     :ivar str status: status of the operation
@@ -249,7 +249,7 @@ class RestoreOperation(_Operation):
     """
 
 
-class SelectiveKeyRestoreOperation(_Operation):
+class KeyVaultSelectiveKeyRestoreOperation(_Operation):
     """A Key Vault operation restoring a single key.
 
     :ivar str status: status of the operation

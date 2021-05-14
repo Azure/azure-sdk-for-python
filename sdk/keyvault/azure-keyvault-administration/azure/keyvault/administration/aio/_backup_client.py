@@ -8,7 +8,7 @@ from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
 from .._internal import AsyncKeyVaultClientBase, parse_folder_url
 from .._internal.polling import KeyVaultBackupClientPolling
-from .._models import BackupOperation, RestoreOperation, SelectiveKeyRestoreOperation
+from .._models import KeyVaultBackupOperation, KeyVaultRestoreOperation, KeyVaultSelectiveKeyRestoreOperation
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
@@ -27,22 +27,22 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
     async def begin_backup(
         self, blob_storage_url: str, sas_token: str, **kwargs: "Any"
-    ) -> "AsyncLROPoller[BackupOperation]":
+    ) -> "AsyncLROPoller[KeyVaultBackupOperation]":
         """Begin a full backup of the Key Vault.
 
         :param str blob_storage_url: URL of the blob storage container in which the backup will be stored, for example
             https://<account>.blob.core.windows.net/backup
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :keyword str continuation_token: a continuation token to restart polling from a saved state
-        :returns: An AsyncLROPoller. Call `result()` on this object to get a :class:`BackupOperation`.
-        :rtype: ~azure.core.polling.AsyncLROPoller[BackupOperation]
+        :returns: An AsyncLROPoller. Call `result()` on this object to get a :class:`KeyVaultBackupOperation`.
+        :rtype: ~azure.core.polling.AsyncLROPoller[KeyVaultBackupOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
         sas_parameter = self._models.SASTokenParameter(storage_resource_uri=blob_storage_url, token=sas_token)
         return await self._client.begin_full_backup(
             vault_base_url=self._vault_url,
             azure_storage_blob_container_uri=sas_parameter,
-            cls=BackupOperation._wrap_generated,
+            cls=KeyVaultBackupOperation._wrap_generated,
             continuation_token=kwargs.pop("continuation_token", None),
             polling=AsyncLROBasePolling(
                 lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
@@ -52,15 +52,15 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
 
     async def begin_restore(
         self, folder_url: str, sas_token: str, **kwargs: "Any"
-    ) -> "AsyncLROPoller[RestoreOperation]":
+    ) -> "AsyncLROPoller[KeyVaultRestoreOperation]":
         """Restore a full backup of a Key Vault.
 
         :param str folder_url: URL for the blob storage resource, including the path to the blob holding the
-            backup. This would be the `folder_url` of a :class:`BackupOperation` returned by
+            backup. This would be the `folder_url` of a :class:`KeyVaultBackupOperation` returned by
             :func:`begin_backup` or :func:`get_backup_status`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
-        :rtype: ~azure.core.polling.AsyncLROPoller[RestoreOperation]
+        :rtype: ~azure.core.polling.AsyncLROPoller[KeyVaultRestoreOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
         container_url, folder_name = parse_folder_url(folder_url)
@@ -71,7 +71,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         return await self._client.begin_full_restore_operation(
             vault_base_url=self._vault_url,
             restore_blob_details=restore_details,
-            cls=RestoreOperation._wrap_generated,
+            cls=KeyVaultRestoreOperation._wrap_generated,
             continuation_token=kwargs.pop("continuation_token", None),
             polling=AsyncLROBasePolling(
                 lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
@@ -81,16 +81,16 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
 
     async def begin_selective_restore(
         self, folder_url: str, sas_token: str, key_name: str, **kwargs: "Any"
-    ) -> "AsyncLROPoller[SelectiveKeyRestoreOperation]":
+    ) -> "AsyncLROPoller[KeyVaultSelectiveKeyRestoreOperation]":
         """Restore a single key from a full Key Vault backup.
 
         :param str folder_url: URL for the blob storage resource, including the path to the blob holding the
-            backup. This would be the `folder_url` of a :class:`BackupOperation` returned by
+            backup. This would be the `folder_url` of a :class:`KeyVaultBackupOperation` returned by
             :func:`begin_backup` or :func:`get_backup_status`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :param str key_name: name of the key to restore from the backup
-        :rtype: ~azure.core.polling.AsyncLROPoller[RestoreOperation]
+        :rtype: ~azure.core.polling.AsyncLROPoller[KeyVaultRestoreOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
         container_url, folder_name = parse_folder_url(folder_url)
@@ -102,7 +102,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             vault_base_url=self._vault_url,
             key_name=key_name,
             restore_blob_details=restore_details,
-            cls=SelectiveKeyRestoreOperation._wrap_generated,
+            cls=KeyVaultSelectiveKeyRestoreOperation._wrap_generated,
             continuation_token=kwargs.pop("continuation_token", None),
             polling=AsyncLROBasePolling(
                 lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
@@ -110,24 +110,24 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-    async def get_backup_status(self, job_id: str, **kwargs: "Any") -> "BackupOperation":
+    async def get_backup_status(self, job_id: str, **kwargs: "Any") -> "KeyVaultBackupOperation":
         """Returns the status of a full backup operation.
 
         :param str job_id: The job ID returned as part of the backup request
-        :returns: The full backup operation status as a :class:`BackupOperation`
-        :rtype: BackupOperation
+        :returns: The full backup operation status as a :class:`KeyVaultBackupOperation`
+        :rtype: KeyVaultBackupOperation
         """
         return await self._client.full_backup_status(
-            vault_base_url=self._vault_url, job_id=job_id, cls=BackupOperation._wrap_generated, **kwargs
+            vault_base_url=self._vault_url, job_id=job_id, cls=KeyVaultBackupOperation._wrap_generated, **kwargs
         )
 
-    async def get_restore_status(self, job_id: str, **kwargs: "Any") -> "RestoreOperation":
+    async def get_restore_status(self, job_id: str, **kwargs: "Any") -> "KeyVaultRestoreOperation":
         """Returns the status of a restore operation.
 
         :param str job_id: The ID returned as part of the restore request
-        :returns: The restore operation status as a :class:`RestoreOperation`
-        :rtype: RestoreOperation
+        :returns: The restore operation status as a :class:`KeyVaultRestoreOperation`
+        :rtype: KeyVaultRestoreOperation
         """
         return await self._client.restore_status(
-            vault_base_url=self._vault_url, job_id=job_id, cls=RestoreOperation._wrap_generated, **kwargs
+            vault_base_url=self._vault_url, job_id=job_id, cls=KeyVaultRestoreOperation._wrap_generated, **kwargs
         )
