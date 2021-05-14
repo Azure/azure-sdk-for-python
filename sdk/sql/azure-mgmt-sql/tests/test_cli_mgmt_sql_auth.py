@@ -283,6 +283,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         result = self.mgmt_client.servers.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME)
         result = result.result()
 
+    @unittest.skip('hard to test')
     def test_instance_key(self):
         
         RESOURCE_GROUP = "testManagedInstance"
