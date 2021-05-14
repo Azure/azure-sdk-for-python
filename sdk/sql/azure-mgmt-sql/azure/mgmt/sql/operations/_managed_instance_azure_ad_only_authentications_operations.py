@@ -28,7 +28,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar authentication_name: The name of server azure active directory only authentication. Constant value: "Default".
-    :ivar api_version: The API version to use for the request. Constant value: "2020-02-02-preview".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-11-01-preview".
     """
 
     models = models
@@ -39,7 +39,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.authentication_name = "Default"
-        self.api_version = "2020-02-02-preview"
+        self.api_version = "2020-11-01-preview"
 
         self.config = config
 

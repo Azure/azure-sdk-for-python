@@ -27,7 +27,7 @@ class ManagedInstancesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2020-02-02-preview".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-11-01-preview".
     """
 
     models = models
@@ -37,12 +37,12 @@ class ManagedInstancesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-02-02-preview"
+        self.api_version = "2020-11-01-preview"
 
         self.config = config
 
     def list_by_instance_pool(
-            self, resource_group_name, instance_pool_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, instance_pool_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of all managed instances in an instance pool.
 
         :param resource_group_name: The name of the resource group that
@@ -51,6 +51,8 @@ class ManagedInstancesOperations(object):
         :type resource_group_name: str
         :param instance_pool_name: The instance pool name.
         :type instance_pool_name: str
+        :param expand: The child resources to include in the response.
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -74,6 +76,8 @@ class ManagedInstancesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -115,14 +119,86 @@ class ManagedInstancesOperations(object):
         return deserialized
     list_by_instance_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/instancePools/{instancePoolName}/managedInstances'}
 
+    def list(
+            self, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of all managed instances in the subscription.
+
+        :param expand: The child resources to include in the response.
+        :type expand: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of ManagedInstance
+        :rtype:
+         ~azure.mgmt.sql.models.ManagedInstancePaged[~azure.mgmt.sql.models.ManagedInstance]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.ManagedInstancePaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/managedInstances'}
+
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of managed instances in a resource group.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
+        :param expand: The child resources to include in the response.
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -145,6 +221,8 @@ class ManagedInstancesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -187,7 +265,7 @@ class ManagedInstancesOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances'}
 
     def get(
-            self, resource_group_name, managed_instance_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, managed_instance_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Gets a managed instance.
 
         :param resource_group_name: The name of the resource group that
@@ -196,6 +274,8 @@ class ManagedInstancesOperations(object):
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
+        :param expand: The child resources to include in the response.
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -217,6 +297,8 @@ class ManagedInstancesOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -733,69 +815,3 @@ class ManagedInstancesOperations(object):
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/failover'}
-
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of all managed instances in the subscription.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ManagedInstance
-        :rtype:
-         ~azure.mgmt.sql.models.ManagedInstancePaged[~azure.mgmt.sql.models.ManagedInstance]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.ManagedInstancePaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/managedInstances'}

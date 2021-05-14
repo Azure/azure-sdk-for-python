@@ -25,7 +25,7 @@ class DatabaseUsagesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
+    :ivar api_version: The API version to use for the request. Constant value: "2021-02-01-preview".
     """
 
     models = models
@@ -35,13 +35,13 @@ class DatabaseUsagesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2014-04-01"
+        self.api_version = "2021-02-01-preview"
 
         self.config = config
 
     def list_by_database(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Returns database usages.
+        """Gets database usages.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -66,10 +66,10 @@ class DatabaseUsagesOperations(object):
                 # Construct URL
                 url = self.list_by_database.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
-                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                    'databaseName': self._serialize.url("database_name", database_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 

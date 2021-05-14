@@ -25,7 +25,7 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2018-06-01-preview".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-11-01-preview".
     """
 
     models = models
@@ -35,7 +35,7 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-06-01-preview"
+        self.api_version = "2020-11-01-preview"
 
         self.config = config
 
@@ -417,7 +417,7 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
     enable_recommendation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/columns/{columnName}/sensitivityLabels/{sensitivityLabelSource}/enable'}
 
     def list_current_by_database(
-            self, resource_group_name, managed_instance_name, database_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, managed_instance_name, database_name, skip_token=None, count=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets the sensitivity labels of a given database.
 
         :param resource_group_name: The name of the resource group that
@@ -428,6 +428,10 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         :type managed_instance_name: str
         :param database_name: The name of the database.
         :type database_name: str
+        :param skip_token:
+        :type skip_token: str
+        :param count:
+        :type count: bool
         :param filter: An OData filter expression that filters elements in the
          collection.
         :type filter: str
@@ -455,6 +459,10 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
@@ -498,8 +506,75 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         return deserialized
     list_current_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/currentSensitivityLabels'}
 
+    def update(
+            self, resource_group_name, managed_instance_name, database_name, operations=None, custom_headers=None, raw=False, **operation_config):
+        """Update sensitivity labels of a given database using an operations
+        batch.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param managed_instance_name: The name of the managed instance.
+        :type managed_instance_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param operations:
+        :type operations: list[~azure.mgmt.sql.models.SensitivityLabelUpdate]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.SensitivityLabelUpdateList(operations=operations)
+
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'SensitivityLabelUpdateList')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/currentSensitivityLabels'}
+
     def list_recommended_by_database(
-            self, resource_group_name, managed_instance_name, database_name, include_disabled_recommendations=None, skip_token=None, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, managed_instance_name, database_name, skip_token=None, include_disabled_recommendations=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets the sensitivity labels of a given database.
 
         :param resource_group_name: The name of the resource group that
@@ -510,11 +585,11 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         :type managed_instance_name: str
         :param database_name: The name of the database.
         :type database_name: str
+        :param skip_token:
+        :type skip_token: str
         :param include_disabled_recommendations: Specifies whether to include
          disabled recommendations or not.
         :type include_disabled_recommendations: bool
-        :param skip_token:
-        :type skip_token: str
         :param filter: An OData filter expression that filters elements in the
          collection.
         :type filter: str
@@ -542,10 +617,10 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                if include_disabled_recommendations is not None:
-                    query_parameters['includeDisabledRecommendations'] = self._serialize.query("include_disabled_recommendations", include_disabled_recommendations, 'bool')
                 if skip_token is not None:
                     query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+                if include_disabled_recommendations is not None:
+                    query_parameters['includeDisabledRecommendations'] = self._serialize.query("include_disabled_recommendations", include_disabled_recommendations, 'bool')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')

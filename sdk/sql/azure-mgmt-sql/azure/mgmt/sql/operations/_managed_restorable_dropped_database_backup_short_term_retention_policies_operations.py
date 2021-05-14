@@ -28,7 +28,7 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar policy_name: The policy name. Constant value: "default".
-    :ivar api_version: The API version to use for the request. Constant value: "2017-03-01-preview".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-11-01-preview".
     """
 
     models = models
@@ -39,7 +39,7 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
         self._serialize = serializer
         self._deserialize = deserializer
         self.policy_name = "default"
-        self.api_version = "2017-03-01-preview"
+        self.api_version = "2020-11-01-preview"
 
         self.config = config
 
@@ -167,7 +167,7 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
 
     def create_or_update(
             self, resource_group_name, managed_instance_name, restorable_dropped_database_id, retention_days=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Sets a database's long term retention policy.
+        """Sets a database's short term retention policy.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -278,7 +278,7 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
 
     def update(
             self, resource_group_name, managed_instance_name, restorable_dropped_database_id, retention_days=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Sets a database's long term retention policy.
+        """Sets a database's short term retention policy.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure

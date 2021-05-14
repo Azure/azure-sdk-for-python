@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ServiceTierAdvisorsOperations(object):
-    """ServiceTierAdvisorsOperations operations.
+class ManagedDatabaseQueriesOperations(object):
+    """ManagedDatabaseQueriesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class ServiceTierAdvisorsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-11-01-preview".
     """
 
     models = models
@@ -35,42 +35,42 @@ class ServiceTierAdvisorsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2014-04-01"
+        self.api_version = "2020-11-01-preview"
 
         self.config = config
 
     def get(
-            self, resource_group_name, server_name, database_name, service_tier_advisor_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a service tier advisor.
+            self, resource_group_name, managed_instance_name, database_name, query_id, custom_headers=None, raw=False, **operation_config):
+        """Get query by query id.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param database_name: The name of database.
+        :param managed_instance_name: The name of the managed instance.
+        :type managed_instance_name: str
+        :param database_name: The name of the database.
         :type database_name: str
-        :param service_tier_advisor_name: The name of service tier advisor.
-        :type service_tier_advisor_name: str
+        :param query_id:
+        :type query_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ServiceTierAdvisor or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.ServiceTierAdvisor or
+        :return: ManagedInstanceQuery or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.ManagedInstanceQuery or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'serviceTierAdvisorName': self._serialize.url("service_tier_advisor_name", service_tier_advisor_name, 'str')
+            'queryId': self._serialize.url("query_id", query_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -99,51 +99,67 @@ class ServiceTierAdvisorsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ServiceTierAdvisor', response)
+            deserialized = self._deserialize('ManagedInstanceQuery', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/serviceTierAdvisors/{serviceTierAdvisorName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/queries/{queryId}'}
 
-    def list_by_database(
-            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Returns service tier advisors for specified database.
+    def list_by_query(
+            self, resource_group_name, managed_instance_name, database_name, query_id, start_time=None, end_time=None, interval=None, custom_headers=None, raw=False, **operation_config):
+        """Get query execution statistics by query id.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param database_name: The name of database.
+        :param managed_instance_name: The name of the managed instance.
+        :type managed_instance_name: str
+        :param database_name: The name of the database.
         :type database_name: str
+        :param query_id:
+        :type query_id: str
+        :param start_time: Start time for observed period.
+        :type start_time: str
+        :param end_time: End time for observed period.
+        :type end_time: str
+        :param interval: The time step to be used to summarize the metric
+         values. Possible values include: 'PT1H', 'P1D'
+        :type interval: str or ~azure.mgmt.sql.models.QueryTimeGrainType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ServiceTierAdvisor
+        :return: An iterator like instance of QueryStatistics
         :rtype:
-         ~azure.mgmt.sql.models.ServiceTierAdvisorPaged[~azure.mgmt.sql.models.ServiceTierAdvisor]
+         ~azure.mgmt.sql.models.QueryStatisticsPaged[~azure.mgmt.sql.models.QueryStatistics]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_database.metadata['url']
+                url = self.list_by_query.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serverName': self._serialize.url("server_name", server_name, 'str'),
-                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                    'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str'),
+                    'queryId': self._serialize.url("query_id", query_id, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
+                if start_time is not None:
+                    query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'str')
+                if end_time is not None:
+                    query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'str')
+                if interval is not None:
+                    query_parameters['interval'] = self._serialize.query("interval", interval, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -180,7 +196,7 @@ class ServiceTierAdvisorsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.ServiceTierAdvisorPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.QueryStatisticsPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/serviceTierAdvisors'}
+    list_by_query.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/queries/{queryId}/statistics'}
