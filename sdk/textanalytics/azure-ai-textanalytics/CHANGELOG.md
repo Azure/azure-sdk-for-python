@@ -11,6 +11,7 @@
 **New Features**
 - Added enums `EntityConditionality`, `EntityCertainty`, and `EntityAssociation`.
 - Added `AnalyzeSentimentAction` as a supported action type for `begin_analyze_batch_actions`.
+- Added kwarg `disable_service_logs`. If set to true, you opt-out of having your text input logged on the service side for troubleshooting.
 
 ## 5.1.0b6 (2021-03-09)
 
@@ -114,7 +115,7 @@ used in conjunction with the Bing Entity Search API to fetch additional relevant
 - Removed `grapheme_offset` and `grapheme_length` from `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`
 - `TextDocumentStatistics` attribute `grapheme_count` has been renamed to `character_count`
 
-## 1.0.0b5 
+## 1.0.0b5
 
 - This was a broken release
 

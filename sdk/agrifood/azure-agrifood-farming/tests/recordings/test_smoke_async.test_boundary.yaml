@@ -1,0 +1,33 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: GET
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer/boundaries/fake-boundaryboundary?api-version=2021-03-31-preview
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA0xOuwrCQBD8lWUbmygJFmo6C8UgWvgH5+0mHiS3snfxQci/m6ABpxnmwTAdsqoo
+        5h1aIcYcLxykVctniXtpPWGCDYdgqv8Qni7ewBHMXLDGza9j0+h74hmQcAAvEfjlQoRSFO4qD0dM
+        UBptWAtaDNvRaMURc9/WdYLE0bg6TNJ5z/o7ODr90FdjuaDhS3o4rY/bVbrcZZssT7/IsP8AAAD/
+        /wMA6lTJ5tMAAAA=
+    headers:
+      api-deprecated-versions: 2020-12-31-preview
+      api-supported-versions: 2021-03-31-preview
+      connection: keep-alive
+      content-encoding: gzip
+      content-type: application/json
+      date: Thu, 13 May 2021 17:53:12 GMT
+      server: nginx/1.19.1
+      strict-transport-security: max-age=15724800; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+    status:
+      code: 404
+      message: Not Found
+    url: https://sdk-testing-wcus-1.farmbeats.azure.net/farmers/iscai-farmer/boundaries/iscai-boundaryboundary?api-version=2021-03-31-preview
+version: 1

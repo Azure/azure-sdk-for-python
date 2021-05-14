@@ -535,3 +535,14 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
         # cause v3.0 calls to fail
         client.extract_key_phrases(["please don't fail"])
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_disable_service_logs(self, client):
+        def callback(resp):
+            assert resp.http_request.query['loggingOptOut']
+        client.extract_key_phrases(
+            documents=["Test for logging disable"],
+            disable_service_logs=True,
+            raw_response_hook=callback,
+        )
