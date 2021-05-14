@@ -50,6 +50,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
 
     # --Helpers-----------------------------------------------------------------
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
+        print("QUAL TEST NAME: ", self.qualified_test_name.encode())
         table_name = self.get_resource_name(prefix)
         return table_name
 
@@ -109,6 +110,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
         table_name = self._get_table_reference()
+        print("TABLE NAME: ", table_name)
 
         # Act
         created = ts.create_table(table_name)
@@ -123,6 +125,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
+        print("TABLE NAME: ", table_name)
 
         # Act
         created = ts.create_table(table_name)
@@ -173,6 +176,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
+        print("TABLE NAME: ", table_name)
 
         t0 = ts.create_table(table_name)
         t1 = ts.create_table_if_not_exists(table_name)
@@ -187,6 +191,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
+        print("TABLE NAME: ", table_name)
 
         t = ts.create_table_if_not_exists(table_name)
 

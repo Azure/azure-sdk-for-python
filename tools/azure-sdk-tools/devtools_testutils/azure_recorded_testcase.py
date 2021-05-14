@@ -177,7 +177,9 @@ class AzureRecordedTestCase(object):
         return self.create_client_from_credential(client_class, credentials, **kwargs)
 
     def create_random_name(self, name):
-        return get_resource_name(name, self.qualified_test_name.encode())
+        unique_test_name = os.getenv("PYTEST_CURRENT_TEST").encode("utf-8")
+        print(unique_test_name)
+        return get_resource_name(name, unique_test_name)
 
     def get_resource_name(self, name):
         """Alias to create_random_name for back compatibility."""
