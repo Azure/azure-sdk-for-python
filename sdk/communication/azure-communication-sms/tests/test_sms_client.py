@@ -77,10 +77,11 @@ class TestSMSClient(unittest.TestCase):
             message=msg,
             enable_delivery_report=True,
             tag=tag)
-
-        self.assertEqual(phone_number, mock_send.call_args[0][0].from_property)
-        self.assertEqual(phone_number, mock_send.call_args[0][0].sms_recipients[0].to)
-        self.assertIsNotNone(mock_send.call_args[0][0].sms_recipients[0].repeatability_request_id)
-        self.assertIsNotNone(mock_send.call_args[0][0].sms_recipients[0].repeatability_first_sent)
-        self.assertTrue(mock_send.call_args[0][0].sms_send_options.enable_delivery_report)
-        self.assertEqual(tag, mock_send.call_args[0][0].sms_send_options.tag)
+        
+        send_message_request = mock_send.call_args[0][0]
+        self.assertEqual(phone_number, send_message_request.from_property)
+        self.assertEqual(phone_number, send_message_request.sms_recipients[0].to)
+        self.assertIsNotNone(send_message_request.sms_recipients[0].repeatability_request_id)
+        self.assertIsNotNone(send_message_request.sms_recipients[0].repeatability_first_sent)
+        self.assertTrue(send_message_request.sms_send_options.enable_delivery_report)
+        self.assertEqual(tag, send_message_request.sms_send_options.tag)

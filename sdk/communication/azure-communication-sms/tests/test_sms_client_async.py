@@ -65,7 +65,7 @@ class TestSMSClientAsync(aiounittest.AsyncTestCase):
     @patch(
         "azure.communication.sms._generated.aio.operations._sms_operations.SmsOperations.send"
     )
-    async def test_send_message_parameters(self, mock_send):
+    async def test_send_message_parameters_async(self, mock_send):
         phone_number = "+14255550123"
         msg = "Hello World via SMS"
         tag = "custom-tag"
@@ -78,9 +78,10 @@ class TestSMSClientAsync(aiounittest.AsyncTestCase):
             enable_delivery_report=True,
             tag=tag)
 
-        self.assertEqual(phone_number, mock_send.call_args[0][0].from_property)
-        self.assertEqual(phone_number, mock_send.call_args[0][0].sms_recipients[0].to)
-        self.assertIsNotNone(mock_send.call_args[0][0].sms_recipients[0].repeatability_request_id)
-        self.assertIsNotNone(mock_send.call_args[0][0].sms_recipients[0].repeatability_first_sent)
-        self.assertTrue(mock_send.call_args[0][0].sms_send_options.enable_delivery_report)
-        self.assertEqual(tag, mock_send.call_args[0][0].sms_send_options.tag)
+        send_message_request = mock_send.call_args[0][0]
+        self.assertEqual(phone_number, send_message_request.from_property)
+        self.assertEqual(phone_number, send_message_request.sms_recipients[0].to)
+        self.assertIsNotNone(send_message_request.sms_recipients[0].repeatability_request_id)
+        self.assertIsNotNone(send_message_request.sms_recipients[0].repeatability_first_sent)
+        self.assertTrue(send_message_request.sms_send_options.enable_delivery_report)
+        self.assertEqual(tag, send_message_request.sms_send_options.tag)
