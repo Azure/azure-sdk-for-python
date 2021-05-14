@@ -64,6 +64,84 @@ class ApiKey(Model):
         self.read_only = None
 
 
+class Resource(Model):
+    """Resource.
+
+    Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class AzureEntityResource(Resource):
+    """Entity Resource.
+
+    The resource model definition for an Azure Resource Manager resource with
+    an etag.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AzureEntityResource, self).__init__(**kwargs)
+        self.etag = None
+
+
 class CheckNameAvailabilityParameters(Model):
     """Parameters used for checking whether a resource name is available.
 
@@ -104,25 +182,29 @@ class CloudError(Model):
     }
 
 
-class Resource(Model):
-    """An Azure resource.
+class TrackedResource(Resource):
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
-    :param location: Required. The location of the resource. This cannot be
-     changed after the resource is created.
-    :type location: str
-    :param tags: The tags of the resource.
+    :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
+    :type location: str
     """
 
     _validation = {
@@ -136,20 +218,17 @@ class Resource(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
     def __init__(self, *, location: str, tags=None, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
+        super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
+        self.location = location
 
 
-class ConfigurationStore(Resource):
+class ConfigurationStore(TrackedResource):
     """The configuration store along with all resource properties. The
     Configuration Store will have all information to begin utilizing it.
 
@@ -158,17 +237,18 @@ class ConfigurationStore(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
-    :param location: Required. The location of the resource. This cannot be
-     changed after the resource is created.
-    :type location: str
-    :param tags: The tags of the resource.
+    :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
+    :type location: str
     :param identity: The managed identity information, if configured.
     :type identity: ~azure.mgmt.appconfiguration.models.ResourceIdentity
     :ivar provisioning_state: The provisioning state of the configuration
@@ -192,8 +272,13 @@ class ConfigurationStore(Resource):
      values include: 'Enabled', 'Disabled'
     :type public_network_access: str or
      ~azure.mgmt.appconfiguration.models.PublicNetworkAccess
+    :param disable_local_auth: Disables all authentication methods other than
+     AAD authentication.
+    :type disable_local_auth: bool
     :param sku: Required. The sku of the configuration store.
     :type sku: ~azure.mgmt.appconfiguration.models.Sku
+    :param system_data: Resource system metadata.
+    :type system_data: ~azure.mgmt.appconfiguration.models.SystemData
     """
 
     _validation = {
@@ -212,8 +297,8 @@ class ConfigurationStore(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
@@ -221,11 +306,13 @@ class ConfigurationStore(Resource):
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnectionReference]'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, *, location: str, sku, tags=None, identity=None, encryption=None, public_network_access=None, **kwargs) -> None:
-        super(ConfigurationStore, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, location: str, sku, tags=None, identity=None, encryption=None, public_network_access=None, disable_local_auth: bool=None, system_data=None, **kwargs) -> None:
+        super(ConfigurationStore, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.provisioning_state = None
         self.creation_date = None
@@ -233,7 +320,9 @@ class ConfigurationStore(Resource):
         self.encryption = encryption
         self.private_endpoint_connections = None
         self.public_network_access = public_network_access
+        self.disable_local_auth = disable_local_auth
         self.sku = sku
+        self.system_data = system_data
 
 
 class ConfigurationStoreUpdateParameters(Model):
@@ -241,11 +330,9 @@ class ConfigurationStoreUpdateParameters(Model):
 
     :param encryption: The encryption settings of the configuration store.
     :type encryption: ~azure.mgmt.appconfiguration.models.EncryptionProperties
-    :param public_network_access: Control permission for data plane traffic
-     coming from public networks while private endpoint is enabled. Possible
-     values include: 'Enabled', 'Disabled'
-    :type public_network_access: str or
-     ~azure.mgmt.appconfiguration.models.PublicNetworkAccess
+    :param disable_local_auth: Disables all authentication methods other than
+     AAD authentication.
+    :type disable_local_auth: bool
     :param identity: The managed identity information for the configuration
      store.
     :type identity: ~azure.mgmt.appconfiguration.models.ResourceIdentity
@@ -257,16 +344,16 @@ class ConfigurationStoreUpdateParameters(Model):
 
     _attribute_map = {
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
         'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, encryption=None, public_network_access=None, identity=None, sku=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, encryption=None, disable_local_auth: bool=None, identity=None, sku=None, tags=None, **kwargs) -> None:
         super(ConfigurationStoreUpdateParameters, self).__init__(**kwargs)
         self.encryption = encryption
-        self.public_network_access = public_network_access
+        self.disable_local_auth = disable_local_auth
         self.identity = identity
         self.sku = sku
         self.tags = tags
@@ -289,28 +376,87 @@ class EncryptionProperties(Model):
         self.key_vault_properties = key_vault_properties
 
 
-class Error(Model):
-    """AppConfiguration error object.
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message.
-    :type message: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
     """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetails(Model):
+    """The details of the error.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.appconfiguration.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
-    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
-        super(Error, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
+    def __init__(self, **kwargs) -> None:
+        super(ErrorDetails, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.additional_info = None
 
 
-class ErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'Error'.
+class ErrorResponse(Model):
+    """Error response indicates that the service is not able to process the
+    incoming request. The reason is provided in the error message.
+
+    :param error: The details of the error.
+    :type error: ~azure.mgmt.appconfiguration.models.ErrorDetails
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetails'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
@@ -318,28 +464,33 @@ class ErrorException(HttpOperationError):
 
     def __init__(self, deserialize, response, *args):
 
-        super(ErrorException, self).__init__(deserialize, response, 'Error', *args)
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
 
 
 class KeyValue(Model):
-    """The result of a request to retrieve a key-value from the specified
-    configuration store.
+    """The key-value resource along with all resource properties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
     :ivar key: The primary identifier of a key-value.
      The key is used in unison with the label to uniquely identify a key-value.
     :vartype key: str
     :ivar label: A value used to group key-values.
      The label is used in unison with the key to uniquely identify a key-value.
     :vartype label: str
-    :ivar value: The value of the key-value.
-    :vartype value: str
-    :ivar content_type: The content type of the key-value's value.
+    :param value: The value of the key-value.
+    :type value: str
+    :param content_type: The content type of the key-value's value.
      Providing a proper content-type can enable transformations of values when
      they are retrieved by applications.
-    :vartype content_type: str
+    :type content_type: str
     :ivar e_tag: An ETag indicating the state of a key-value within a
      configuration store.
     :vartype e_tag: str
@@ -349,43 +500,49 @@ class KeyValue(Model):
     :ivar locked: A value indicating whether the key-value is locked.
      A locked key-value may not be modified until it is unlocked.
     :vartype locked: bool
-    :ivar tags: A dictionary of tags that can help identify what a key-value
+    :param tags: A dictionary of tags that can help identify what a key-value
      may be applicable for.
-    :vartype tags: dict[str, str]
+    :type tags: dict[str, str]
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'key': {'readonly': True},
         'label': {'readonly': True},
-        'value': {'readonly': True},
-        'content_type': {'readonly': True},
         'e_tag': {'readonly': True},
         'last_modified': {'readonly': True},
         'locked': {'readonly': True},
-        'tags': {'readonly': True},
     }
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
-        'locked': {'key': 'locked', 'type': 'bool'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'key': {'key': 'properties.key', 'type': 'str'},
+        'label': {'key': 'properties.label', 'type': 'str'},
+        'value': {'key': 'properties.value', 'type': 'str'},
+        'content_type': {'key': 'properties.contentType', 'type': 'str'},
+        'e_tag': {'key': 'properties.eTag', 'type': 'str'},
+        'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
+        'locked': {'key': 'properties.locked', 'type': 'bool'},
+        'tags': {'key': 'properties.tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, value: str=None, content_type: str=None, tags=None, **kwargs) -> None:
         super(KeyValue, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
         self.key = None
         self.label = None
-        self.value = None
-        self.content_type = None
+        self.value = value
+        self.content_type = content_type
         self.e_tag = None
         self.last_modified = None
         self.locked = None
-        self.tags = None
+        self.tags = tags
 
 
 class KeyVaultProperties(Model):
@@ -409,30 +566,99 @@ class KeyVaultProperties(Model):
         self.identity_client_id = identity_client_id
 
 
-class ListKeyValueParameters(Model):
-    """The parameters used to list a configuration store key-value.
+class LogSpecification(Model):
+    """Specifications of the Log for Azure Monitoring.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param key: Required. The key to retrieve.
-    :type key: str
-    :param label: The label of the key.
-    :type label: str
+    :param name: Name of the log
+    :type name: str
+    :param display_name: Localized friendly display name of the log
+    :type display_name: str
+    :param blob_duration: Blob duration of the log
+    :type blob_duration: str
     """
 
-    _validation = {
-        'key': {'required': True},
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
     }
+
+    def __init__(self, *, name: str=None, display_name: str=None, blob_duration: str=None, **kwargs) -> None:
+        super(LogSpecification, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.blob_duration = blob_duration
+
+
+class MetricDimension(Model):
+    """Specifications of the Dimension of metrics.
+
+    :param name: Name of the dimension
+    :type name: str
+    :param display_name: Localized friendly display name of the dimension
+    :type display_name: str
+    :param internal_name: Internal name of the dimension.
+    :type internal_name: str
+    """
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'internal_name': {'key': 'internalName', 'type': 'str'},
     }
 
-    def __init__(self, *, key: str, label: str=None, **kwargs) -> None:
-        super(ListKeyValueParameters, self).__init__(**kwargs)
-        self.key = key
-        self.label = label
+    def __init__(self, *, name: str=None, display_name: str=None, internal_name: str=None, **kwargs) -> None:
+        super(MetricDimension, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.internal_name = internal_name
+
+
+class MetricSpecification(Model):
+    """Specifications of the Metrics for Azure Monitoring.
+
+    :param name: Name of the metric
+    :type name: str
+    :param display_name: Localized friendly display name of the metric
+    :type display_name: str
+    :param display_description: Localized friendly description of the metric
+    :type display_description: str
+    :param unit: Unit that makes sense for the metric
+    :type unit: str
+    :param aggregation_type: Only provide one value for this field. Valid
+     values: Average, Minimum, Maximum, Total, Count.
+    :type aggregation_type: str
+    :param internal_metric_name: Internal metric name.
+    :type internal_metric_name: str
+    :param dimensions: Dimensions of the metric
+    :type dimensions:
+     list[~azure.mgmt.appconfiguration.models.MetricDimension]
+    :param fill_gap_with_zero: Optional. If set to true, then zero will be
+     returned for time duration where no metric is emitted/published.
+    :type fill_gap_with_zero: bool
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'internal_metric_name': {'key': 'internalMetricName', 'type': 'str'},
+        'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
+    }
+
+    def __init__(self, *, name: str=None, display_name: str=None, display_description: str=None, unit: str=None, aggregation_type: str=None, internal_metric_name: str=None, dimensions=None, fill_gap_with_zero: bool=None, **kwargs) -> None:
+        super(MetricSpecification, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.display_description = display_description
+        self.unit = unit
+        self.aggregation_type = aggregation_type
+        self.internal_metric_name = internal_metric_name
+        self.dimensions = dimensions
+        self.fill_gap_with_zero = fill_gap_with_zero
 
 
 class NameAvailabilityStatus(Model):
@@ -475,21 +701,33 @@ class OperationDefinition(Model):
 
     :param name: Operation name: {provider}/{resource}/{operation}.
     :type name: str
+    :param is_data_action: Indicates whether the operation is a data action
+    :type is_data_action: bool
     :param display: The display information for the configuration store
      operation.
     :type display:
      ~azure.mgmt.appconfiguration.models.OperationDefinitionDisplay
+    :param origin: Origin of the operation
+    :type origin: str
+    :param properties: Properties of the operation
+    :type properties: ~azure.mgmt.appconfiguration.models.OperationProperties
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'display': {'key': 'display', 'type': 'OperationDefinitionDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'OperationProperties'},
     }
 
-    def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, is_data_action: bool=None, display=None, origin: str=None, properties=None, **kwargs) -> None:
         super(OperationDefinition, self).__init__(**kwargs)
         self.name = name
+        self.is_data_action = is_data_action
         self.display = display
+        self.origin = origin
+        self.properties = properties
 
 
 class OperationDefinitionDisplay(Model):
@@ -525,6 +763,23 @@ class OperationDefinitionDisplay(Model):
         self.resource = resource
         self.operation = operation
         self.description = description
+
+
+class OperationProperties(Model):
+    """Extra Operation properties.
+
+    :param service_specification: Service specifications of the operation
+    :type service_specification:
+     ~azure.mgmt.appconfiguration.models.ServiceSpecification
+    """
+
+    _attribute_map = {
+        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+    }
+
+    def __init__(self, *, service_specification=None, **kwargs) -> None:
+        super(OperationProperties, self).__init__(**kwargs)
+        self.service_specification = service_specification
 
 
 class PrivateEndpoint(Model):
@@ -738,6 +993,41 @@ class PrivateLinkServiceConnectionState(Model):
         self.actions_required = None
 
 
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    The resource model definition for a Azure Resource Manager proxy resource.
+    It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ProxyResource, self).__init__(**kwargs)
+
+
 class RegenerateKeyParameters(Model):
     """The parameters used to regenerate an API key.
 
@@ -800,6 +1090,29 @@ class ResourceIdentity(Model):
         self.tenant_id = None
 
 
+class ServiceSpecification(Model):
+    """Service specification payload.
+
+    :param log_specifications: Specifications of the Log for Azure Monitoring
+    :type log_specifications:
+     list[~azure.mgmt.appconfiguration.models.LogSpecification]
+    :param metric_specifications: Specifications of the Metrics for Azure
+     Monitoring
+    :type metric_specifications:
+     list[~azure.mgmt.appconfiguration.models.MetricSpecification]
+    """
+
+    _attribute_map = {
+        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
+        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+    }
+
+    def __init__(self, *, log_specifications=None, metric_specifications=None, **kwargs) -> None:
+        super(ServiceSpecification, self).__init__(**kwargs)
+        self.log_specifications = log_specifications
+        self.metric_specifications = metric_specifications
+
+
 class Sku(Model):
     """Describes a configuration store SKU.
 
@@ -820,6 +1133,47 @@ class Sku(Model):
     def __init__(self, *, name: str, **kwargs) -> None:
         super(Sku, self).__init__(**kwargs)
         self.name = name
+
+
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or
+     ~azure.mgmt.appconfiguration.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.appconfiguration.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC)
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, *, created_by: str=None, created_by_type=None, created_at=None, last_modified_by: str=None, last_modified_by_type=None, last_modified_at=None, **kwargs) -> None:
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class UserIdentity(Model):

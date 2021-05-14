@@ -48,3 +48,11 @@ class PublicNetworkAccess(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
