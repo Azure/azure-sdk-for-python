@@ -1,5 +1,8 @@
 # Release History
 
+## 12.4.0b2 (Unreleased)
+
+
 ## 12.4.0b1 (2021-05-12)
 **New features**
 - Added support `set_service_properties()`,`get_service_properties()` on `DataLakeServiceClient`
