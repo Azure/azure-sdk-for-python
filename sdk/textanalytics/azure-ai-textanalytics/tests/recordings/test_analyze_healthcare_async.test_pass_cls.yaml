@@ -10,45 +10,45 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
-      apim-request-id: ee39b68a-478a-486e-8466-f0e6b5135cb1
-      date: Mon, 01 Mar 2021 19:55:19 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/964176b1-75e3-47f6-b82c-1213c732056b
+      apim-request-id: d6783ede-5420-4271-a9f5-4b9ee3cfb30f
+      date: Thu, 13 May 2021 22:35:48 GMT
+      operation-location: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/0dc53da3-b627-41d0-b7c3-6ab8717e21c7
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '114'
+      x-envoy-upstream-service-time: '83'
     status:
       code: 202
       message: Accepted
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/health/jobs?stringIndexType=UnicodeCodePoint
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/964176b1-75e3-47f6-b82c-1213c732056b
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/0dc53da3-b627-41d0-b7c3-6ab8717e21c7
   response:
     body:
-      string: '{"jobId":"964176b1-75e3-47f6-b82c-1213c732056b","lastUpdateDateTime":"2021-03-01T19:55:20Z","createdDateTime":"2021-03-01T19:55:19Z","expirationDateTime":"2021-03-02T19:55:19Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[{"offset":5,"length":11,"text":"passing
-        cls","category":"Diagnosis","confidenceScore":0.93}],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-11"}}'
+      string: '{"jobId":"0dc53da3-b627-41d0-b7c3-6ab8717e21c7","lastUpdateDateTime":"2021-05-13T22:35:53Z","createdDateTime":"2021-05-13T22:35:49Z","expirationDateTime":"2021-05-14T22:35:49Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[{"offset":13,"length":3,"text":"cls","category":"Diagnosis","confidenceScore":1.0,"name":"Coffin-Lowry
+        syndrome","links":[{"dataSource":"UMLS","id":"C0265252"},{"dataSource":"CHV","id":"0000025867"},{"dataSource":"JABL","id":"238"},{"dataSource":"MDR","id":"10081806"},{"dataSource":"MEDCIN","id":"311935"},{"dataSource":"MSH","id":"D038921"},{"dataSource":"NCI","id":"C84643"},{"dataSource":"NCI_CELLOSAURUS","id":"C84643"},{"dataSource":"OMIM","id":"303600"},{"dataSource":"RCD","id":"Xa0Zc"},{"dataSource":"SNM","id":"D-5122"},{"dataSource":"SNMI","id":"D4-00811"},{"dataSource":"SNOMEDCT_US","id":"15182000"}]}],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-03-01"}}'
     headers:
-      apim-request-id: e86fafb5-09d6-4bf5-8efb-b996af786b51
+      apim-request-id: 264fbd0a-fde0-486a-aff7-a7cdb247505f
       content-type: application/json; charset=utf-8
-      date: Mon, 01 Mar 2021 19:55:24 GMT
+      date: Thu, 13 May 2021 22:35:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '31'
+      x-envoy-upstream-service-time: '33'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/964176b1-75e3-47f6-b82c-1213c732056b
+    url: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/0dc53da3-b627-41d0-b7c3-6ab8717e21c7
 version: 1

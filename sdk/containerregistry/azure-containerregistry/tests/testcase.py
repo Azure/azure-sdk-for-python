@@ -6,14 +6,16 @@
 import copy
 from datetime import datetime
 import json
+import logging
 import os
+from azure_devtools.scenario_tests.recording_processors import SubscriptionRecordingProcessor
 import pytest
 import re
 import six
 import time
 
 from azure.containerregistry import (
-    ContainerRepositoryClient,
+    ContainerRepository,
     ContainerRegistryClient,
     ArtifactTagProperties,
     ContentProperties,
@@ -22,10 +24,20 @@ from azure.containerregistry import (
 
 from azure.core.credentials import AccessToken
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
-from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
+from azure.mgmt.containerregistry.models import (
+    ImportImageParameters,
+    ImportSource,
+    ImportMode
+)
 from azure.identity import DefaultAzureCredential
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureTestCase, is_live
+from azure_devtools.scenario_tests import (
+    GeneralNameReplacer,
+    RequestUrlNormalizer,
+    AuthenticationMetadataFilter,
+    RecordingProcessor,
+)
 from azure_devtools.scenario_tests import (
     GeneralNameReplacer,
     RequestUrlNormalizer,
@@ -110,6 +122,11 @@ class AcrBodyReplacer(RecordingProcessor):
         if "seankane.azurecr.io" in request.url:
             request.url = request.url.replace("seankane.azurecr.io", "fake_url.azurecr.io")
 
+        if "seankaneanon.azurecr.io" in request.uri:
+            request.uri = request.uri.replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
+        if "seankaneanon.azurecr.io" in request.url:
+            request.url = request.url.replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
+
         return request
 
     def process_response(self, response):
@@ -129,6 +146,9 @@ class AcrBodyReplacer(RecordingProcessor):
 
                 if "seankane.azurecr.io" in body["string"]:
                     body["string"] = body["string"].replace("seankane.azurecr.io", "fake_url.azurecr.io")
+
+                if "seankaneanon.azurecr.io" in body["string"]:
+                    body["string"] = body["string"].replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
 
                 refresh = json.loads(body["string"])
                 if "refresh_token" in refresh.keys():
@@ -189,7 +209,6 @@ class ContainerRegistryTestClass(AzureTestCase):
             time.sleep(t)
 
     def import_image(self, repository, tags):
-        # type: (str, List[str]) -> None
         # repository must be a docker hub repository
         # tags is a List of repository/tag combos in the format <repository>:<tag>
         if not self.is_live:
@@ -202,9 +221,9 @@ class ContainerRegistryTestClass(AzureTestCase):
             return
 
         reg_client = self.create_registry_client(endpoint)
-        for repo in reg_client.list_repositories():
+        for repo in reg_client.list_repository_names():
             if repo.startswith("repo"):
-                repo_client = self.create_repository_client(endpoint, repo)
+                repo_client = self.create_container_repository(endpoint, repo)
                 for tag in repo_client.list_tags():
 
                     try:
@@ -214,7 +233,7 @@ class ContainerRegistryTestClass(AzureTestCase):
                     except:
                         pass
 
-                for manifest in repo_client.list_registry_artifacts():
+                for manifest in repo_client.list_manifests():
                     try:
                         p = manifest.writeable_properties
                         p.can_delete = True
@@ -222,7 +241,7 @@ class ContainerRegistryTestClass(AzureTestCase):
                     except:
                         pass
 
-        for repo in reg_client.list_repositories():
+        for repo in reg_client.list_repository_names():
             try:
                 reg_client.delete_repository(repo)
             except:
@@ -236,8 +255,11 @@ class ContainerRegistryTestClass(AzureTestCase):
     def create_registry_client(self, endpoint, **kwargs):
         return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
 
-    def create_repository_client(self, endpoint, name, **kwargs):
-        return ContainerRepositoryClient(endpoint=endpoint, repository=name, credential=self.get_credential(), **kwargs)
+    def create_container_repository(self, endpoint, name, **kwargs):
+        return ContainerRepository(endpoint=endpoint, name=name, credential=self.get_credential(), **kwargs)
+
+    def create_anon_client(self, endpoint, **kwargs):
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)
 
     def assert_content_permission(self, content_perm, content_perm2):
         assert isinstance(content_perm, ContentProperties)
@@ -275,10 +297,6 @@ class ContainerRegistryTestClass(AzureTestCase):
         if repository:
             assert tag.repository == repository
 
-    def assert_registry_artifact(self, tag_or_digest, expected_tag_or_digest):
-        assert isinstance(tag_or_digest, ArtifactManifestProperties)
-        assert tag_or_digest == expected_tag_or_digest
-
 
 # Moving this out of testcase so the fixture and individual tests can use it
 def import_image(repository, tags):
@@ -302,9 +320,32 @@ def import_image(repository, tags):
     while not result.done():
         pass
 
+    # Do the same for anonymous
+    mgmt_client = ContainerRegistryManagementClient(
+        DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
+    )
+    registry_uri = "registry.hub.docker.com"
+    rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
+    registry_name = os.environ["CONTAINERREGISTRY_ANONREGISTRY_NAME"]
+
+    import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
+
+    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
+
+    result = mgmt_client.registries.begin_import_image(
+        rg_name,
+        registry_name,
+        parameters=import_params,
+    )
+
+    while not result.done():
+        pass
+
 
 @pytest.fixture(scope="session")
 def load_registry():
+    if not is_live():
+        return
     repos = [
         "library/hello-world",
         "library/alpine",

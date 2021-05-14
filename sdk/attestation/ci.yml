@@ -29,6 +29,12 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: attestation
+    # Override the base matrix due to https://github.com/Azure/azure-sdk-for-python/issues/17837
+    MatrixConfigs:
+      - Name: attestation_ci_matrix
+        Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
+        Selection: sparse
+        GenerateVMJobs: true
     Artifacts:
     - name: azure-mgmt-attestation
       safeName: azuremgmtattestation

@@ -39,7 +39,6 @@ class AiohttpTestTransport(AioHttpTransport):
             response.content_type = response.headers.get("content-type")
         return response
 
-@pytest.mark.skip("404 Not Found")
 class TestHealth(AsyncTextAnalyticsTest):
     def _interval(self):
         return 5 if self.is_live else 0
@@ -458,3 +457,18 @@ class TestHealth(AsyncTextAnalyticsTest):
         # have an issue to update https://github.com/Azure/azure-sdk-for-python/issues/17088
         meningitis_entity = next(e for e in result[0].entities if e.text == "Meningitis")
         assert meningitis_entity.assertion.certainty == "negativePossible"
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_disable_service_logs(self, client):
+        def callback(resp):
+            # this is called for both the initial post
+            # and the gets. Only care about the initial post
+            if resp.http_request.method == "POST":
+                assert resp.http_request.query['loggingOptOut']
+        await (await client.begin_analyze_healthcare_entities(
+            documents=["Test for logging disable"],
+            polling_interval=self._interval(),
+            disable_service_logs=True,
+            raw_response_hook=callback,
+        )).result()

@@ -1,7 +1,23 @@
 # Release History
 
-## 1.6.0b4 (Unreleased)
+## 1.6.1 (Unreleased)
 
+
+## 1.6.0 (2021-05-13)
+This is the last version to support Python 3.5. The next version will require
+Python 2.7 or 3.6+.
+
+### Added
+- `AzurePowerShellCredential` authenticates as the identity logged in to Azure
+  PowerShell. This credential is part of `DefaultAzureCredential` by default
+  but can be disabled by a keyword argument:
+  `DefaultAzureCredential(exclude_powershell_credential=True)`
+  ([#17341](https://github.com/Azure/azure-sdk-for-python/issues/17341))
+
+### Fixed
+- `AzureCliCredential` raises `CredentialUnavailableError` when the CLI times out,
+  and kills timed out subprocesses
+- Reduced retry delay for `ManagedIdentityCredential` on Azure VMs
 
 ## 1.6.0b3 (2021-04-06)
 ### Breaking Changes
