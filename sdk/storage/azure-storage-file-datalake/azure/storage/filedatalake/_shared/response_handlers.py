@@ -80,7 +80,7 @@ def return_headers_and_deserialized(response, deserialized, response_headers):  
 
 
 def return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
-    return response.location_mode, deserialized
+    return response.http_response.location_mode, deserialized
 
 
 def process_storage_error(storage_error):

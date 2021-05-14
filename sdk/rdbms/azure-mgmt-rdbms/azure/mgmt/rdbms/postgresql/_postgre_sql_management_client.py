@@ -20,14 +20,23 @@ if TYPE_CHECKING:
 
 from ._configuration import PostgreSQLManagementClientConfiguration
 from .operations import ServersOperations
+from .operations import ReplicasOperations
 from .operations import FirewallRulesOperations
-from .operations import ConfigurationsOperations
-from .operations import CheckNameAvailabilityOperations
-from .operations import LocationBasedCapabilitiesOperations
-from .operations import VirtualNetworkSubnetUsageOperations
-from .operations import Operations
+from .operations import VirtualNetworkRulesOperations
 from .operations import DatabasesOperations
-from .operations import GetPrivateDnsZoneSuffixOperations
+from .operations import ConfigurationsOperations
+from .operations import ServerParametersOperations
+from .operations import LogFilesOperations
+from .operations import ServerAdministratorsOperations
+from .operations import RecoverableServersOperations
+from .operations import ServerBasedPerformanceTierOperations
+from .operations import LocationBasedPerformanceTierOperations
+from .operations import CheckNameAvailabilityOperations
+from .operations import Operations
+from .operations import ServerSecurityAlertPoliciesOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
+from .operations import ServerKeysOperations
 from . import models
 
 
@@ -36,22 +45,40 @@ class PostgreSQLManagementClient(object):
 
     :ivar servers: ServersOperations operations
     :vartype servers: azure.mgmt.rdbms.postgresql.operations.ServersOperations
+    :ivar replicas: ReplicasOperations operations
+    :vartype replicas: azure.mgmt.rdbms.postgresql.operations.ReplicasOperations
     :ivar firewall_rules: FirewallRulesOperations operations
     :vartype firewall_rules: azure.mgmt.rdbms.postgresql.operations.FirewallRulesOperations
-    :ivar configurations: ConfigurationsOperations operations
-    :vartype configurations: azure.mgmt.rdbms.postgresql.operations.ConfigurationsOperations
-    :ivar check_name_availability: CheckNameAvailabilityOperations operations
-    :vartype check_name_availability: azure.mgmt.rdbms.postgresql.operations.CheckNameAvailabilityOperations
-    :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
-    :vartype location_based_capabilities: azure.mgmt.rdbms.postgresql.operations.LocationBasedCapabilitiesOperations
-    :ivar virtual_network_subnet_usage: VirtualNetworkSubnetUsageOperations operations
-    :vartype virtual_network_subnet_usage: azure.mgmt.rdbms.postgresql.operations.VirtualNetworkSubnetUsageOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.rdbms.postgresql.operations.Operations
+    :ivar virtual_network_rules: VirtualNetworkRulesOperations operations
+    :vartype virtual_network_rules: azure.mgmt.rdbms.postgresql.operations.VirtualNetworkRulesOperations
     :ivar databases: DatabasesOperations operations
     :vartype databases: azure.mgmt.rdbms.postgresql.operations.DatabasesOperations
-    :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
-    :vartype get_private_dns_zone_suffix: azure.mgmt.rdbms.postgresql.operations.GetPrivateDnsZoneSuffixOperations
+    :ivar configurations: ConfigurationsOperations operations
+    :vartype configurations: azure.mgmt.rdbms.postgresql.operations.ConfigurationsOperations
+    :ivar server_parameters: ServerParametersOperations operations
+    :vartype server_parameters: azure.mgmt.rdbms.postgresql.operations.ServerParametersOperations
+    :ivar log_files: LogFilesOperations operations
+    :vartype log_files: azure.mgmt.rdbms.postgresql.operations.LogFilesOperations
+    :ivar server_administrators: ServerAdministratorsOperations operations
+    :vartype server_administrators: azure.mgmt.rdbms.postgresql.operations.ServerAdministratorsOperations
+    :ivar recoverable_servers: RecoverableServersOperations operations
+    :vartype recoverable_servers: azure.mgmt.rdbms.postgresql.operations.RecoverableServersOperations
+    :ivar server_based_performance_tier: ServerBasedPerformanceTierOperations operations
+    :vartype server_based_performance_tier: azure.mgmt.rdbms.postgresql.operations.ServerBasedPerformanceTierOperations
+    :ivar location_based_performance_tier: LocationBasedPerformanceTierOperations operations
+    :vartype location_based_performance_tier: azure.mgmt.rdbms.postgresql.operations.LocationBasedPerformanceTierOperations
+    :ivar check_name_availability: CheckNameAvailabilityOperations operations
+    :vartype check_name_availability: azure.mgmt.rdbms.postgresql.operations.CheckNameAvailabilityOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.rdbms.postgresql.operations.Operations
+    :ivar server_security_alert_policies: ServerSecurityAlertPoliciesOperations operations
+    :vartype server_security_alert_policies: azure.mgmt.rdbms.postgresql.operations.ServerSecurityAlertPoliciesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections: azure.mgmt.rdbms.postgresql.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: azure.mgmt.rdbms.postgresql.operations.PrivateLinkResourcesOperations
+    :ivar server_keys: ServerKeysOperations operations
+    :vartype server_keys: azure.mgmt.rdbms.postgresql.operations.ServerKeysOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -80,21 +107,39 @@ class PostgreSQLManagementClient(object):
 
         self.servers = ServersOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.replicas = ReplicasOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.configurations = ConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.check_name_availability = CheckNameAvailabilityOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.location_based_capabilities = LocationBasedCapabilitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_network_subnet_usage = VirtualNetworkSubnetUsageOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
+        self.virtual_network_rules = VirtualNetworkRulesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
+        self.configurations = ConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.server_parameters = ServerParametersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.log_files = LogFilesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.server_administrators = ServerAdministratorsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.recoverable_servers = RecoverableServersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.server_based_performance_tier = ServerBasedPerformanceTierOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.location_based_performance_tier = LocationBasedPerformanceTierOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.check_name_availability = CheckNameAvailabilityOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.server_keys = ServerKeysOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):

@@ -10,7 +10,6 @@
 - Fixed `downloader.chunks()` return chunks in different size (#9419, #15648)
 - Fixed unclosed `ThreadPoolExecutor` (#8955)
 
-
 ## 12.4.1 (2021-01-20)
 **Fixes**
 - Fixed msrest dependency issue (#16250)

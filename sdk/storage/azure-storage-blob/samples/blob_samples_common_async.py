@@ -194,7 +194,7 @@ class CommonBlobSamplesAsync(object):
             try:
                 # [START copy_blob_from_url]
                 # Get the blob client with the source blob
-                source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
+                source_blob = "https://www.gutenberg.org/files/59466/59466-0.txt"
                 copied_blob = blob_service_client.get_blob_client("copyblobcontainerasync", '59466-0.txt')
 
                 # start copy and check copy status

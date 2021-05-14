@@ -79,7 +79,7 @@ setup(
         'azure.data',
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.13.0",
+        "azure-core<2.0.0,>=1.14.0",
         "msrest>=0.6.19"
     ],
     extras_require={

@@ -14,19 +14,18 @@ DESCRIPTION:
 USAGE:
     python identity_samples.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
-    2) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - the connection string in your ACS account
-    3) AZURE_CLIENT_ID - the client ID of your active directory application
-    4) AZURE_CLIENT_SECRET - the secret of your active directory application
-    5) AZURE_TENANT_ID - the tenant ID of your active directory application
+    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS resource
+    2) AZURE_CLIENT_ID - the client ID of your active directory application
+    3) AZURE_CLIENT_SECRET - the secret of your active directory application
+    4) AZURE_TENANT_ID - the tenant ID of your active directory application
 """
 import os
+from azure.communication.identity._shared.utils import parse_connection_str
 
 class CommunicationIdentityClientSamples(object):
 
     def __init__(self):
-        self.connection_string = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-        self.endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
+        self.connection_string = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
         self.client_id = os.getenv('AZURE_CLIENT_ID')
         self.client_secret = os.getenv('AZURE_CLIENT_SECRET')
         self.tenant_id = os.getenv('AZURE_TENANT_ID')
@@ -39,7 +38,8 @@ class CommunicationIdentityClientSamples(object):
 
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
-            identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
+            endpoint, _ = parse_connection_str(self.connection_string)
+            identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
@@ -55,7 +55,8 @@ class CommunicationIdentityClientSamples(object):
 
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
-            identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
+            endpoint, _ = parse_connection_str(self.connection_string)
+            identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
@@ -69,7 +70,8 @@ class CommunicationIdentityClientSamples(object):
 
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
-            identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
+            endpoint, _ = parse_connection_str(self.connection_string)
+            identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         print("Creating new user")
@@ -83,7 +85,8 @@ class CommunicationIdentityClientSamples(object):
         )
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
-            identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
+            endpoint, _ = parse_connection_str(self.connection_string)
+            identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         print("Creating new user with token")
@@ -96,7 +99,8 @@ class CommunicationIdentityClientSamples(object):
 
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
-            identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
+            endpoint, _ = parse_connection_str(self.connection_string)
+            identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()

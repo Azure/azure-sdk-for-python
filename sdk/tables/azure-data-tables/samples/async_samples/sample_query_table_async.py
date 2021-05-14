@@ -26,25 +26,23 @@ from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
-class SampleTablesQuery(object):
 
+class SampleTablesQuery(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name,
-            self.access_key,
-            self.endpoint
+            self.account_name, self.access_key, self.endpoint_suffix
         )
         self.table_name = "OfficeSupplies"
 
     async def insert_random_entities(self):
         from azure.data.tables.aio import TableClient
         from azure.core.exceptions import ResourceExistsError
+
         brands = ["Crayola", "Sharpie", "Chameleon"]
         colors = ["red", "blue", "orange", "yellow"]
         names = ["marker", "pencil", "pen"]
@@ -69,7 +67,6 @@ class SampleTablesQuery(object):
                 e["Value"] = random.randint(0, 100)
                 await table_client.create_entity(entity=e)
 
-
     async def sample_query_entities(self):
         from azure.data.tables.aio import TableClient
         from azure.core.exceptions import HttpResponseError
@@ -79,12 +76,12 @@ class SampleTablesQuery(object):
         # [START query_entities]
         async with table_client:
             try:
-                parameters = {
-                    u"name": u"marker"
-                }
+                parameters = {u"name": u"marker"}
                 name_filter = u"Name eq @name"
-                async for entity_chosen in table_client.query_entities(
-                    query_filter=name_filter, select=[u"Brand",u"Color"], parameters=parameters):
+                queried_entities = table_client.query_entities(
+                    query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters
+                )
+                async for entity_chosen in queried_entities:
                     print(entity_chosen)
 
             except HttpResponseError as e:
@@ -99,13 +96,11 @@ class SampleTablesQuery(object):
         # [START query_entities]
         async with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
             try:
-                parameters = {
-                    u"name": u"marker",
-                    u"brand": u"Crayola"
-                }
+                parameters = {u"name": u"marker", u"brand": u"Crayola"}
                 name_filter = u"Name eq @name and Brand eq @brand"
                 queried_entities = table_client.query_entities(
-                    query_filter=name_filter, select=[u"Brand",u"Color"], parameters=parameters)
+                    query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters
+                )
 
                 async for entity_chosen in queried_entities:
                     print(entity_chosen)
@@ -122,13 +117,11 @@ class SampleTablesQuery(object):
         # [START query_entities]
         async with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
             try:
-                parameters = {
-                    u"lower": 25,
-                    u"upper": 50
-                }
+                parameters = {u"lower": 25, u"upper": 50}
                 name_filter = u"Value gt @lower and Value lt @upper"
                 queried_entities = table_client.query_entities(
-                    query_filter=name_filter, select=[u"Value"], parameters=parameters)
+                    query_filter=name_filter, select=[u"Value"], parameters=parameters
+                )
 
                 async for entity_chosen in queried_entities:
                     print(entity_chosen)
@@ -140,6 +133,7 @@ class SampleTablesQuery(object):
     async def clean_up(self):
         print("cleaning up")
         from azure.data.tables.aio import TableClient
+
         async with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
             await table_client.delete_table()
 
@@ -157,7 +151,6 @@ async def main():
         await stq.clean_up()
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())

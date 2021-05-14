@@ -58,7 +58,7 @@ class MaintenanceConfigurationsOperations(object):
 
         :param resource_group_name: Resource Group Name.
         :type resource_group_name: str
-        :param resource_name: Resource Identifier.
+        :param resource_name: Maintenance Configuration Name.
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MaintenanceConfiguration, or the result of cls(response)
@@ -70,7 +70,7 @@ class MaintenanceConfigurationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -121,7 +121,7 @@ class MaintenanceConfigurationsOperations(object):
 
         :param resource_group_name: Resource Group Name.
         :type resource_group_name: str
-        :param resource_name: Resource Identifier.
+        :param resource_name: Maintenance Configuration Name.
         :type resource_name: str
         :param configuration: The configuration.
         :type configuration: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
@@ -135,7 +135,7 @@ class MaintenanceConfigurationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -190,7 +190,7 @@ class MaintenanceConfigurationsOperations(object):
 
         :param resource_group_name: Resource Group Name.
         :type resource_group_name: str
-        :param resource_name: Resource Identifier.
+        :param resource_name: Maintenance Configuration Name.
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MaintenanceConfiguration, or the result of cls(response)
@@ -202,7 +202,7 @@ class MaintenanceConfigurationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -255,7 +255,7 @@ class MaintenanceConfigurationsOperations(object):
 
         :param resource_group_name: Resource Group Name.
         :type resource_group_name: str
-        :param resource_name: Resource Identifier.
+        :param resource_name: Maintenance Configuration Name.
         :type resource_name: str
         :param configuration: The configuration.
         :type configuration: ~azure.mgmt.maintenance.models.MaintenanceConfiguration
@@ -269,7 +269,7 @@ class MaintenanceConfigurationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -330,7 +330,7 @@ class MaintenanceConfigurationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

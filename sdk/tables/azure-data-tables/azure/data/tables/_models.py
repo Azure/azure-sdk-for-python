@@ -4,10 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
+# from azure.core import CaseInsensitiveEnumMeta
+# from six import with_metaclass
 
 from ._generated.models import TableServiceStats as GenTableServiceStats
 from ._generated.models import AccessPolicy as GenAccessPolicy
@@ -26,8 +28,6 @@ from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
 
 if TYPE_CHECKING:
     from ._generated.models import TableQueryResponse
-    from azure.core.pipeline.transport import HttpResponse
-    from typing import Any, Dict, List
 
 
 class TableServiceStats(GenTableServiceStats):
@@ -279,10 +279,7 @@ class TablePropertiesPaged(PageIterator):
     :param callable command: Function to retrieve the next page of items.
     :keyword int results_per_page: The maximum number of results retrieved per API call.
     :keyword str filter: The filter to apply to results.
-    :keyword str select: The select filter to apply to results.
     :keyword str continuation_token: An opaque continuation token.
-    :keyword str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
     """
 
     def __init__(self, command, **kwargs):
@@ -296,25 +293,22 @@ class TablePropertiesPaged(PageIterator):
         self._response = None
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
-        self.select = kwargs.get("select")
-        self.location_mode = None
+        self._location_mode = None
 
     def _get_next_cb(self, continuation_token, **kwargs):
-        query_options = QueryOptions(
-            top=self.results_per_page, select=self.select, filter=self.filter
-        )
+        query_options = QueryOptions(top=self.results_per_page, filter=self.filter)
         try:
             return self._command(
                 query_options=query_options,
                 next_table_name=continuation_token or None,
                 cls=kwargs.pop("cls", None) or _return_context_and_deserialized,
-                use_location=self.location_mode,
+                use_location=self._location_mode,
             )
         except HttpResponseError as error:
             _process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
-        self.location_mode, self._response, self._headers = get_next_return
+        self._location_mode, self._response, self._headers = get_next_return
         props_list = [
             TableItem._from_generated(t, **self._headers) for t in self._response.value  # pylint: disable=protected-access
         ]
@@ -330,8 +324,6 @@ class TableEntityPropertiesPaged(PageIterator):
     :keyword str filter: The filter to apply to results.
     :keyword str select: The select filter to apply to results.
     :keyword str continuation_token: An opaque continuation token.
-    :keyword str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
     """
 
     def __init__(self, command, table, **kwargs):
@@ -347,7 +339,7 @@ class TableEntityPropertiesPaged(PageIterator):
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
         self.select = kwargs.get("select")
-        self.location_mode = None
+        self._location_mode = None
 
     def _get_next_cb(self, continuation_token, **kwargs):
         next_partition_key, next_row_key = _extract_continuation_token(
@@ -363,13 +355,13 @@ class TableEntityPropertiesPaged(PageIterator):
                 next_partition_key=next_partition_key,
                 table=self.table,
                 cls=kwargs.pop("cls", None) or _return_context_and_deserialized,
-                use_location=self.location_mode,
+                use_location=self._location_mode,
             )
         except HttpResponseError as error:
             _process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
-        self.location_mode, self._response, self._headers = get_next_return
+        self._location_mode, self._response, self._headers = get_next_return
         props_list = [_convert_to_entity(t) for t in self._response.value]
         next_entity = {}
         if self._headers[NEXT_PARTITION_KEY] or self._headers[NEXT_ROW_KEY]:
@@ -492,20 +484,14 @@ class TableItem(object):
     Returned by TableServiceClient.list_tables and TableServiceClient.query_tables.
 
     :ivar str name: The name of the table.
-    :ivar str api_version: The API version included in the service call
-    :ivar str date: The date the service call was made
     """
 
-    def __init__(self, name, **kwargs):
+    def __init__(self, name, **kwargs):  # pylint: disable=unused-argument
         # type: (str, Dict[str, Any]) -> None
         """
         :param str name: Name of the Table
-        :keyword str api_version: The API version included in the service call
-        :keyword str date: The date the service call was made
         """
         self.name = name
-        self.api_version = kwargs.get("version")
-        self.date = kwargs.get("date") or kwargs.get("Date")
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
@@ -534,48 +520,19 @@ class UpdateMode(str, Enum):
     MERGE = "merge"
 
 
+class TransactionOperation(str, Enum):
+    CREATE = "create"
+    UPSERT = "upsert"
+    UPDATE = "update"
+    DELETE = "delete"
+
+
 class SASProtocol(str, Enum):
     HTTPS = "https"
     HTTP = "http"
 
 
-# class PartialBatchErrorException(HttpResponseError):
-#     """There is a partial failure in batch operations.
-
-#     :param str message: The message of the exception.
-#     :param response: Server response to be deserialized.
-#     :param list parts: A list of the parts in multipart response.
-#     """
-
-#     def __init__(self, message, response, parts):
-#         self.parts = parts
-#         super(PartialBatchErrorException, self).__init__(
-#             message=message, response=response
-#         )
-
-
-class BatchErrorException(HttpResponseError):
-    """There is a failure in batch operations.
-
-    :param message: The message of the exception.
-    :type message: str
-    :param response: Server response to be deserialized.
-    :type response: str
-    :param parts: A list of the parts in multipart response.
-    :type parts: ~azure.core.pipeline.transport.HttpResponse
-    :param args: Args to be passed through
-    :type args: List[:class:`~azure.core.pipeline.transport.HttpResponse`]
-    """
-
-    def __init__(self, message, response, parts, *args, **kwargs):
-        # type: (str, str, HttpResponse, List[HttpResponse], Dict[str, Any]) -> None
-        self.parts = parts
-        super(BatchErrorException, self).__init__(
-            message=message, response=response, *args, **kwargs
-        )
-
-
-class LocationMode(object):
+class LocationMode(str, Enum):
     """
     Specifies the location the request should be sent to. This mode only applies
     for RA-GRS accounts which allow secondary read access. All other account types

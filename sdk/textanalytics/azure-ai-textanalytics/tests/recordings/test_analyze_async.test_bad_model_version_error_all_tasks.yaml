@@ -4,35 +4,37 @@ interactions:
       "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
       [{"parameters": {"model-version": "bad", "loggingOptOut": true, "stringIndexType":
       "UnicodeCodePoint"}}], "keyPhraseExtractionTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false}}], "entityLinkingTasks": []}, "analysisInput":
-      {"documents": [{"id": "1", "text": "I did not like the hotel we stayed at.",
-      "language": "english"}]}}'
+      "bad", "loggingOptOut": false}}], "entityLinkingTasks": [{"parameters": {"model-version":
+      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}], "sentimentAnalysisTasks":
+      [{"parameters": {"model-version": "bad", "loggingOptOut": false, "opinionMining":
+      false}}]}, "analysisInput": {"documents": [{"id": "1", "text": "I did not like
+      the hotel we stayed at.", "language": "english"}]}}'
     headers:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '521'
+      - '742'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Job task parameter value
         bad is not supported for model-version parameter for job task type KeyPhraseExtraction.
         Supported values latest,2019-10-01,2020-07-01."}}'
     headers:
-      apim-request-id: e5ed606d-4697-4b60-9d8d-0ba7e5fa6165
+      apim-request-id: 675188b4-b90d-4c9f-a339-ff746ffbd2f4
       content-type: application/json; charset=utf-8
-      date: Tue, 27 Apr 2021 19:36:53 GMT
+      date: Thu, 13 May 2021 22:35:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '29'
+      x-envoy-upstream-service-time: '6'
     status:
       code: 400
       message: Bad Request
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/analyze
+    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/analyze
 version: 1
