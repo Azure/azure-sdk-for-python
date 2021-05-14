@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class WorkloadClassifiersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -51,7 +51,7 @@ class WorkloadClassifiersOperations:
         workload_group_name: str,
         workload_classifier_name: str,
         **kwargs
-    ) -> "models.WorkloadClassifier":
+    ) -> "_models.WorkloadClassifier":
         """Gets a workload classifier.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -71,12 +71,12 @@ class WorkloadClassifiersOperations:
         :rtype: ~azure.mgmt.sql.models.WorkloadClassifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkloadClassifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkloadClassifier"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -122,15 +122,15 @@ class WorkloadClassifiersOperations:
         database_name: str,
         workload_group_name: str,
         workload_classifier_name: str,
-        parameters: "models.WorkloadClassifier",
+        parameters: "_models.WorkloadClassifier",
         **kwargs
-    ) -> Optional["models.WorkloadClassifier"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.WorkloadClassifier"]]
+    ) -> Optional["_models.WorkloadClassifier"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.WorkloadClassifier"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -186,9 +186,9 @@ class WorkloadClassifiersOperations:
         database_name: str,
         workload_group_name: str,
         workload_classifier_name: str,
-        parameters: "models.WorkloadClassifier",
+        parameters: "_models.WorkloadClassifier",
         **kwargs
-    ) -> AsyncLROPoller["models.WorkloadClassifier"]:
+    ) -> AsyncLROPoller["_models.WorkloadClassifier"]:
         """Creates or updates a workload classifier.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -207,8 +207,8 @@ class WorkloadClassifiersOperations:
         :type parameters: ~azure.mgmt.sql.models.WorkloadClassifier
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WorkloadClassifier or the result of cls(response)
@@ -216,7 +216,7 @@ class WorkloadClassifiersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkloadClassifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkloadClassifier"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -244,7 +244,16 @@ class WorkloadClassifiersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'workloadGroupName': self._serialize.url("workload_group_name", workload_group_name, 'str'),
+            'workloadClassifierName': self._serialize.url("workload_classifier_name", workload_classifier_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -272,7 +281,7 @@ class WorkloadClassifiersOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -331,8 +340,8 @@ class WorkloadClassifiersOperations:
         :type workload_classifier_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -364,7 +373,16 @@ class WorkloadClassifiersOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'workloadGroupName': self._serialize.url("workload_group_name", workload_group_name, 'str'),
+            'workloadClassifierName': self._serialize.url("workload_classifier_name", workload_classifier_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -385,7 +403,7 @@ class WorkloadClassifiersOperations:
         database_name: str,
         workload_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.WorkloadClassifierListResult"]:
+    ) -> AsyncIterable["_models.WorkloadClassifierListResult"]:
         """Gets the list of workload classifiers for a workload group.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -403,12 +421,12 @@ class WorkloadClassifiersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.WorkloadClassifierListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkloadClassifierListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkloadClassifierListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

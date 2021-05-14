@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ServiceObjectivesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class ServiceObjectivesOperations(object):
         service_objective_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServiceObjective"
+        # type: (...) -> "_models.ServiceObjective"
         """Gets a database service objective.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -67,7 +67,7 @@ class ServiceObjectivesOperations(object):
         :rtype: ~azure.mgmt.sql.models.ServiceObjective
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceObjective"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceObjective"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -115,7 +115,7 @@ class ServiceObjectivesOperations(object):
         server_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ServiceObjectiveListResult"]
+        # type: (...) -> Iterable["_models.ServiceObjectiveListResult"]
         """Returns database service objectives.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -128,7 +128,7 @@ class ServiceObjectivesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.ServiceObjectiveListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceObjectiveListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceObjectiveListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
