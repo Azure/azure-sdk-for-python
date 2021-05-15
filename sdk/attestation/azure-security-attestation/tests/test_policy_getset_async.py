@@ -30,7 +30,8 @@ import pytest
 from preparers import AttestationPreparer
 
 from azure.security.attestation.aio import (
-    AttestationAdministrationClient,
+    AttestationAdministrationClient)
+from azure.security.attestation import (
     AttestationType,
     TokenValidationOptions,
     StoredAttestationPolicy,

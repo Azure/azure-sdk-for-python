@@ -110,6 +110,15 @@ class AttestationClient(object):
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_attest_enclave.py
+                :start-after: [START attest_sgx_enclave_shared]
+                :end-before: [END attest_sgx_enclave_shared]
+                :language: python
+                :dedent: 8
+                :caption: Attesting an SGX Enclave
+
         For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
         """
@@ -147,6 +156,23 @@ class AttestationClient(object):
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
         :return azure.security.attestation.AttestationResponse[azure.security.attestation.AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_attest_enclave.py
+                :start-after: [START attest_open_enclave_shared]
+                :end-before: [END attest_open_enclave_shared]
+                :language: python
+                :dedent: 8
+                :caption: Attesting an open_enclave report for an SGX enclave.
+
+            .. literalinclude:: ../samples/sample_attest_enclave.py
+                :start-after: [START attest_open_enclave_shared_draft]
+                :end-before: [END attest_open_enclave_shared_draft]
+                :language: python
+                :dedent: 8
+                :caption: Attesting using a draft attestation policy.
+
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.

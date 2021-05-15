@@ -18,7 +18,8 @@ from devtools_testutils.azure_testcase import _is_autorest_v3
 from devtools_testutils import AzureTestCase
 from azure.security.attestation.aio import (
     AttestationClient,
-    AttestationAdministrationClient,
+    AttestationAdministrationClient)
+from azure.security.attestation import(
     AttestationType,
     TpmAttestationRequest,
     AttestationData,

@@ -77,7 +77,7 @@ class AttestationClientAttestationSamples(object):
         print('Attest Open enclave using ', self.shared_url)
         attest_client = self._create_client(self.shared_url)
         response = attest_client.attest_open_enclave(
-            oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
+            oe_report, runtime_data=AttestationData(runtime_data))
 
         print("Issuer of token is: ", response.value.issuer)
         # [END attest_open_enclave_shared]
@@ -88,19 +88,19 @@ class AttestationClientAttestationSamples(object):
 
         # [START attest_open_enclave_shared_draft]
         draft_policy="""
-version= 1.0;
-authorizationrules
-{
-    [ type=="x-ms-sgx-is-debuggable", value==false ] &&
-    [ type=="x-ms-sgx-product-id", value==1 ] &&
-    [ type=="x-ms-sgx-svn", value>= 0 ] &&
-    [ type=="x-ms-sgx-mrsigner", value=="2c1a44952ae8207135c6c29b75b8c029372ee94b677e15c20bd42340f10d41aa"]
-        => permit();
-};
-issuancerules {
-    c:[type=="x-ms-sgx-mrsigner"] => issue(type="My-MrSigner", value=c.value);
-};
-"""
+        version= 1.0;
+        authorizationrules
+        {
+            [ type=="x-ms-sgx-is-debuggable", value==false ] &&
+            [ type=="x-ms-sgx-product-id", value==1 ] &&
+            [ type=="x-ms-sgx-svn", value>= 0 ] &&
+            [ type=="x-ms-sgx-mrsigner", value=="2c1a44952ae8207135c6c29b75b8c029372ee94b677e15c20bd42340f10d41aa"]
+                => permit();
+        };
+        issuancerules {
+            c:[type=="x-ms-sgx-mrsigner"] => issue(type="My-MrSigner", value=c.value);
+        };
+        """
         print('Attest Open enclave using ', self.shared_url)
         print('Using draft policy:', draft_policy)
         attest_client = self._create_client(self.shared_url)
