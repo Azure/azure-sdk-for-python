@@ -147,7 +147,7 @@ class CertificateProperties(object):
         # type: (**Any) -> None
         self._attributes = kwargs.pop("attributes", None)
         self._id = kwargs.pop("cert_id", None)
-        self._vault_id = parse_key_vault_id(self._id)
+        self._vault_id = KeyVaultCertificateIdentifier(self._id)
         self._x509_thumbprint = kwargs.pop("x509_thumbprint", None)
         self._tags = kwargs.pop("tags", None)
 
@@ -390,6 +390,45 @@ class KeyVaultCertificate(object):
         :rtype: bytes
         """
         return self._cer
+
+
+class KeyVaultCertificateIdentifier(object):
+    """Information about a KeyVaultCertificate parsed from a certificate ID.
+
+    :param str id: the full original identifier of a certificate
+    :raises ValueError: if the certificate ID is improperly formatted
+    Example:
+        .. literalinclude:: ../tests/test_parse_id.py
+            :start-after: [START parse_key_vault_certificate_id]
+            :end-before: [END parse_key_vault_certificate_id]
+            :language: python
+            :caption: Parse a certificate's ID
+            :dedent: 8
+    """
+
+    def __init__(self, id):
+        # type: (str) -> KeyVaultCertificateIdentifier
+        self._resource_id = parse_key_vault_id(id)
+
+    @property
+    def source_id(self):
+        # type: () -> str
+        return self._resource_id.source_id
+
+    @property
+    def vault_url(self):
+        # type: () -> str
+        return self._resource_id.vault_url
+
+    @property
+    def name(self):
+        # type: () -> str
+        return self._resource_id.name
+
+    @property
+    def version(self):
+        # type: () -> Optional[str]
+        return self._resource_id.version
 
 
 class CertificateOperation(object):
