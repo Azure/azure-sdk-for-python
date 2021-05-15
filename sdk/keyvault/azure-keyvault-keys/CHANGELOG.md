@@ -1,10 +1,10 @@
 # Release History
 
 ## 4.4.0b5 (Unreleased)
-
+### Added
+- `KeyClient` has a `create_oct_key` method for creating symmetric keys
 
 ## 4.4.0b4 (2021-04-06)
-
 ### Added
 - `CryptographyClient` can perform AES-CBCPAD encryption and decryption locally
   ([#17762](https://github.com/Azure/azure-sdk-for-python/pull/17762))
