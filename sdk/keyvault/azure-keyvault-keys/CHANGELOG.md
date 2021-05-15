@@ -4,6 +4,10 @@
 ### Added
 - `KeyClient` has a `create_oct_key` method for creating symmetric keys
 
+### Breaking Changes
+- `parse_key_vault_key_id` and `KeyVaultResourceId` have been replaced by a
+  `KeyVaultKeyIdentifier` class, which can be initialized with a key ID
+
 ## 4.4.0b4 (2021-04-06)
 ### Added
 - `CryptographyClient` can perform AES-CBCPAD encryption and decryption locally
