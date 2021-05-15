@@ -47,6 +47,8 @@ def _validate_arguments(operation, algorithm, **kwargs):
             raise ValueError(
                 "iv should only be provided with AES-CBC algorithms; {} does not accept an iv".format(algorithm)
             )
+        if iv is None and "CBC" in algorithm:
+            raise ValueError("iv is a required parameter for encryption with AES-CBC algorithms.")
         if aad and not ("CBC" in algorithm or "GCM" in algorithm):
             raise ValueError(
                 "additional_authenticated_data should only be provided with AES algorithms; {} does not accept "
@@ -58,12 +60,16 @@ def _validate_arguments(operation, algorithm, **kwargs):
             raise ValueError(
                 "iv should only be provided with AES algorithms; {} does not accept an iv".format(algorithm)
             )
+        if iv is None and ("CBC" in algorithm or "GCM" in algorithm):
+            raise ValueError("iv is a required parameter for decryption with AES algorithms.")
         if tag and "GCM" not in algorithm:
             raise ValueError(
                 "authentication_tag should only be provided with AES-GCM algorithms; {} does not accept a tag".format(
                     algorithm
                 )
             )
+        if tag is None and "GCM" in algorithm:
+            raise ValueError("authentication_tag is a required parameter for AES-GCM decryption.")
         if aad and not ("CBC" in algorithm or "GCM" in algorithm):
             raise ValueError(
                 "additional_authenticated_data should only be provided with AES algorithms; {} does not accept "
@@ -211,7 +217,7 @@ class CryptographyClient(KeyVaultClientBase):
         :param algorithm: encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
         :param bytes plaintext: bytes to encrypt
-        :keyword bytes iv: optional initialization vector. For use with AES-CBC encryption.
+        :keyword bytes iv: optional initialization vector. Required for AES-CBC(PAD) encryption.
         :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
             with AES-GCM encryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
@@ -269,11 +275,11 @@ class CryptographyClient(KeyVaultClientBase):
         :param algorithm: encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
         :param bytes ciphertext: encrypted bytes to decrypt
-        :keyword bytes iv: the initialization vector used during encryption. For use with AES encryption.
-        :keyword bytes authentication_tag: the authentication tag generated during encryption. For use with AES-GCM
-            encryption.
+        :keyword bytes iv: the initialization vector used during encryption. Required for AES decryption.
+        :keyword bytes authentication_tag: the authentication tag generated during encryption. Required for AES-GCM
+            decryption.
         :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
-            with AES-GCM encryption.
+            with AES-GCM decryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
         :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
 

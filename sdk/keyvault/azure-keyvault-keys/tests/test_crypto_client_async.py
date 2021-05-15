@@ -729,7 +729,7 @@ async def test_local_only_mode_raise():
 
     # Algorithm not supported locally
     with pytest.raises(NotImplementedError) as ex:
-        await client.decrypt(EncryptionAlgorithm.a256_gcm, b"...")
+        await client.decrypt(EncryptionAlgorithm.a256_gcm, b"...", iv=b"...", authentication_tag=b"...")
     assert EncryptionAlgorithm.a256_gcm in str(ex.value)
     assert KeyOperation.decrypt in str(ex.value)
 
@@ -854,6 +854,9 @@ async def test_encrypt_argument_validation():
     with pytest.raises(ValueError) as ex:
         await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...", additional_authenticated_data=b"...")
     assert "additional_authenticated_data" in str(ex.value)
+    with pytest.raises(ValueError) as ex:
+        await client.encrypt(EncryptionAlgorithm.a256_cbc, b"...")
+    assert "iv" in str(ex.value) and "required" in str(ex.value)
 
 
 @pytest.mark.asyncio
@@ -878,3 +881,9 @@ async def test_decrypt_argument_validation():
     with pytest.raises(ValueError) as ex:
         await client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...", authentication_tag=b"...")
     assert "authentication_tag" in str(ex.value)
+    with pytest.raises(ValueError) as ex:
+        await client.decrypt(EncryptionAlgorithm.a128_gcm, b"...", iv=b"...")
+    assert "authentication_tag" in str(ex.value) and "required" in str(ex.value)
+    with pytest.raises(ValueError) as ex:
+        await client.decrypt(EncryptionAlgorithm.a192_cbcpad, b"...")
+    assert "iv" in str(ex.value) and "required" in str(ex.value)
