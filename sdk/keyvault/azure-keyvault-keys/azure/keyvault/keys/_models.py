@@ -326,7 +326,18 @@ class KeyVaultKey(object):
 
 
 class KeyVaultKeyIdentifier(object):
-    """Information about a KeyVaultKey parsed from a key ID."""
+    """Information about a KeyVaultKey parsed from a key ID.
+
+    :param str id: the full original identifier of a key
+    :raises ValueError: if the key ID is improperly formatted
+    Example:
+        .. literalinclude:: ../tests/test_parse_id.py
+            :start-after: [START parse_key_vault_key_id]
+            :end-before: [END parse_key_vault_key_id]
+            :language: python
+            :caption: Parse a key's ID
+            :dedent: 8
+    """
 
     def __init__(self, id):
         # type: (str) -> KeyVaultKeyIdentifier
