@@ -40,7 +40,7 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
             self.recording_processors.extend([
             BodyReplacerProcessor(keys=["to", "from", "messageId", "repeatabilityRequestId", "repeatabilityFirstSent"])])
         else:
-            self.phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
+            self.phone_number = os.getenv("AZURE_PHONE_NUMBER")
             self.recording_processors.extend([
                 BodyReplacerProcessor(keys=["to", "from", "messageId", "repeatabilityRequestId", "repeatabilityFirstSent"]),
                 ResponseReplacerProcessor(keys=[self._resource_name])])

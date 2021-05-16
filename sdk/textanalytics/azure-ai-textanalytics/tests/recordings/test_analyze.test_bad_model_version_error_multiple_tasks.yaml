@@ -22,9 +22,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Job task parameter value
@@ -32,11 +32,11 @@ interactions:
         Supported values latest,2019-10-01,2020-07-01."}}'
     headers:
       apim-request-id:
-      - 0c67ecbd-256d-4f19-8612-837f09e3f5ba
+      - ce26429a-d8d3-4d04-ac31-63e9489c441a
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 04 May 2021 01:16:34 GMT
+      - Thu, 13 May 2021 22:35:12 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '5'
     status:
       code: 400
       message: Bad Request

@@ -10,46 +10,46 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 6fb777da-38f0-4d69-bb54-adc719a7ba9f
-      date: Mon, 01 Mar 2021 19:55:09 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/25622281-b164-49b0-bc70-7ee9acd01168
+      apim-request-id: 7468f2c9-28ec-46de-89bb-eeb0f1d739b3
+      date: Thu, 13 May 2021 22:36:24 GMT
+      operation-location: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/11339193-5073-4ada-acef-41572c9725e1
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '191'
+      x-envoy-upstream-service-time: '63'
     status:
       code: 202
       message: Accepted
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/health/jobs?stringIndexType=UnicodeCodePoint
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/25622281-b164-49b0-bc70-7ee9acd01168
+    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/11339193-5073-4ada-acef-41572c9725e1
   response:
     body:
-      string: '{"jobId":"25622281-b164-49b0-bc70-7ee9acd01168","lastUpdateDateTime":"2021-03-01T19:55:10Z","createdDateTime":"2021-03-01T19:55:09Z","expirationDateTime":"2021-03-02T19:55:09Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"11339193-5073-4ada-acef-41572c9725e1","lastUpdateDateTime":"2021-05-13T22:36:29Z","createdDateTime":"2021-05-13T22:36:24Z","expirationDateTime":"2021-05-14T22:36:24Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en"}}}],"modelVersion":"2021-01-11"}}'
+        language code. Supported languages: en. For additional details see https://aka.ms/text-analytics/language-support"}}}],"modelVersion":"2021-03-01"}}'
     headers:
-      apim-request-id: 396a22f6-ce5d-4bf5-86c0-6e96d53379cd
+      apim-request-id: c07d74f7-dd7e-4613-bdd7-dcdbaffe2690
       content-type: application/json; charset=utf-8
-      date: Mon, 01 Mar 2021 19:55:15 GMT
+      date: Thu, 13 May 2021 22:36:29 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '98'
+      x-envoy-upstream-service-time: '37'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/25622281-b164-49b0-bc70-7ee9acd01168
+    url: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/11339193-5073-4ada-acef-41572c9725e1
 version: 1

@@ -544,7 +544,7 @@ to create a resource, then set some Environment Variables
 
 ```bash
 set AZURE_COMMUNICATION_SERVICE_ENDPOINT="https://<RESOURCE_NAME>.communcationservices.azure.com"
-set AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING="<connection string of your Communication service>"
+set COMMUNICATION_SAMPLES_CONNECTION_STRING="<connection string of your Communication service>"
 
 pip install azure-communication-identity
 
