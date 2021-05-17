@@ -12,7 +12,7 @@ import six
 import time
 
 from azure.containerregistry import (
-    ContainerRepository,
+    # ContainerRepository,
     ContainerRegistryClient,
 )
 

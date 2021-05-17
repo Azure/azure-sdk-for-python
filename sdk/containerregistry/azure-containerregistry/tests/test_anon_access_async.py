@@ -10,7 +10,7 @@ from azure.containerregistry import (
     ArtifactManifestProperties,
     ArtifactTagProperties,
 )
-from azure.containerregistry.aio import RegistryArtifact
+# from azure.containerregistry.aio import RegistryArtifact
 
 from azure.core.pipeline.transport import AioHttpTransport
 

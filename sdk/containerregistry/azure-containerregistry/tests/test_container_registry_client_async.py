@@ -6,7 +6,7 @@
 import pytest
 import six
 
-from azure.containerregistry import DeleteRepositoryResult
+# from azure.containerregistry import DeleteRepositoryResult
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.transport import AioHttpTransport
 

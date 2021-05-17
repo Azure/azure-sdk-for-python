@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.containerregistry.aio import (
-    ContainerRepository,
+    # ContainerRepository,
     ContainerRegistryClient,
 )
 

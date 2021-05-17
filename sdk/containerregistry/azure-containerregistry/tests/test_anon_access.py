@@ -4,13 +4,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import six
-from azure import containerregistry
 
 from azure.containerregistry import (
     ArtifactTagProperties,
     RepositoryProperties,
     ArtifactManifestProperties,
-    RegistryArtifact,
+    # RegistryArtifact,
 )
 
 from azure.core.paging import ItemPaged
