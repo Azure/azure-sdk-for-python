@@ -166,17 +166,17 @@ jobs:
             SkipDefaultCheckout: true
 
         - script: |
-            echo "conda install --name ${{ artifact.name }} azure-identity -c $(AzureSDKCondaChannel) --yes"
-            conda install --name ${{ artifact.name }} azure-identity -c $(AzureSDKCondaChannel) --yes
-
-            echo "conda install --force-reinstall --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)"
-            conda install --force-reinstall --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)
-
             echo "$(activate.method) ${{ artifact.name }}"
             $(activate.method) ${{ artifact.name }}
 
             echo "python -m pip install -r $(Build.SourcesDirectory)/eng/conda_test_requirements.txt"
             python -m pip install -r $(Build.SourcesDirectory)/eng/conda_test_requirements.txt
+
+            echo "conda install --name ${{ artifact.name }} azure-identity -c $(AzureSDKCondaChannel) --yes"
+            conda install --name ${{ artifact.name }} azure-identity -c $(AzureSDKCondaChannel) --yes
+
+            echo "conda install --force-reinstall --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)"
+            conda install --force-reinstall --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)
           displayName: 'Install ${{ checkout.package }} Conda Package and Dev Requirements'
           workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
 
