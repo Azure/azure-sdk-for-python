@@ -38,21 +38,28 @@ import base64
 import os
 from dotenv import find_dotenv, load_dotenv
 import base64
+import asyncio
+
+from azure.security.attestation.aio import (
+    AttestationClient)
 
 from azure.security.attestation import (
-    AttestationClient,
     TokenValidationOptions,
     AttestationData)
 
-from sample_collateral import sample_open_enclave_report, sample_runtime_data
+from samples.sample_collateral import sample_open_enclave_report, sample_runtime_data
+from samples.sample_utils import write_banner
+
+#from ..async_samples.sample_collateral import sample_open_enclave_report, sample_runtime_data
 
 class AttestationClientAttestationSamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         shared_short_name  = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
         self.shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
-        
-    def attest_sgx_enclave_shared(self):
+
+    async def attest_sgx_enclave_shared(self):
+        write_banner("attest_sgx_enclave_shared")
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         # Convert the OE report into an SGX quote by stripping off the first 16 bytes.
         quote = oe_report[16:]
@@ -61,28 +68,30 @@ class AttestationClientAttestationSamples(object):
         # [START attest_sgx_enclave_shared]
         print()
         print('Attest SGX enclave using ', self.shared_url)
-        attest_client = self._create_client(self.shared_url)
-        response = attest_client.attest_sgx_enclave(
-            quote, runtime_data=AttestationData(runtime_data, is_json=False))
+        async with self._create_client(self.shared_url) as attest_client:
+            response = await attest_client.attest_sgx_enclave(
+                quote, runtime_data=AttestationData(runtime_data, is_json=False))
 
         print("Issuer of token is: ", response.value.issuer)
         # [END attest_sgx_enclave_shared]
 
-    def attest_open_enclave_shared(self):
+    async def attest_open_enclave_shared(self):
+        write_banner("attest_open_enclave_shared")
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
 
         # [START attest_open_enclave_shared]
         print()
         print('Attest Open enclave using ', self.shared_url)
-        attest_client = self._create_client(self.shared_url)
-        response = attest_client.attest_open_enclave(
-            oe_report, runtime_data=AttestationData(runtime_data))
+        async with self._create_client(self.shared_url) as attest_client:
+            response = await attest_client.attest_open_enclave(
+                oe_report, runtime_data=AttestationData(runtime_data))
 
         print("Issuer of token is: ", response.value.issuer)
         # [END attest_open_enclave_shared]
 
-    def attest_open_enclave_with_draft_policy(self):
+    async def attest_open_enclave_with_draft_policy(self):
+        write_banner("attest_open_enclave_with_draft_policy")
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
 
@@ -103,20 +112,21 @@ class AttestationClientAttestationSamples(object):
         """
         print('Attest Open enclave using ', self.shared_url)
         print('Using draft policy:', draft_policy)
-        attest_client = self._create_client(self.shared_url)
-        response = attest_client.attest_open_enclave(
-            oe_report, runtime_data=AttestationData(runtime_data, is_json=False),
-            draft_policy=draft_policy)
+        async with self._create_client(self.shared_url) as attest_client:
+            response = await attest_client.attest_open_enclave(
+                oe_report, runtime_data=AttestationData(runtime_data, is_json=False),
+                draft_policy=draft_policy)
 
         print("Token algorithm", response.token.algorithm)
         print("Issuer of token is: ", response.value.issuer)
         # [END attest_open_enclave_shared_draft]
 
-    def attest_open_enclave_with_draft_failing_policy(self):
+    async def attest_open_enclave_with_draft_failing_policy(self):
         """
         Set a policy which is guaranteed to fail attestation to show
         how to manage attestation failures.
         """
+        write_banner("attest_open_enclave_with_draft_failing_policy")
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
 
@@ -137,18 +147,19 @@ issuancerules {
 
         print('Attest Open enclave using ', self.shared_url)
         print('Using draft policy which will fail.:', draft_policy)
-        attest_client = self._create_client(self.shared_url)
         try:
-            attest_client.attest_open_enclave(
-                oe_report, runtime_data=AttestationData(runtime_data, is_json=False),
-                draft_policy=draft_policy)
-            print("Unexpectedly passed attestation.")
+            async with self._create_client(self.shared_url) as attest_client:
+                await attest_client.attest_open_enclave(
+                    oe_report, runtime_data=AttestationData(runtime_data, is_json=False),
+                    draft_policy=draft_policy)
+                print("Unexpectedly passed attestation.")
         except HttpResponseError as err:
             print("Caught expected exception: ", err.message)
             print("Error is:", err.error.code)
             pass
 
-    def attest_open_enclave_shared_with_options(self):
+    async def attest_open_enclave_shared_with_options(self):
+        write_banner("attest_open_enclave_shared_with_options")
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
         print()
@@ -183,11 +194,11 @@ issuancerules {
             print("Token passes validation checks.")
             return True
 
-        attest_client = self._create_client(self.shared_url,
+        async with self._create_client(self.shared_url,
             token_validation_options=TokenValidationOptions(
-                validation_callback=validate_token))
-        response = attest_client.attest_open_enclave(
-            oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
+                validation_callback=validate_token)) as attest_client:
+            response = await attest_client.attest_open_enclave(
+                oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
 
         print("Issuer of token is: ", response.value.issuer)
         # [END attest_open_enclave_shared_with_options]
@@ -200,7 +211,7 @@ issuancerules {
 
         if tenant_id and client_id and secret:
             # Create azure-identity class
-            from azure.identity import ClientSecretCredential
+            from azure.identity.aio import ClientSecretCredential
 
             credentials = ClientSecretCredential(
                 tenant_id=tenant_id, client_id=client_id, client_secret=secret
@@ -208,11 +219,27 @@ issuancerules {
 
         return AttestationClient(credentials, instance_url=base_url, **kwargs)
 
+    async def close(self):
+        # type: () -> None
+        pass
+    
+    async def __aenter__(self):
+        # type: () -> AttestationClient
+        return self
+
+    async def __aexit__(self, *exc_details):
+        # type: (Any) -> None
+        pass
+
+async def main():
+    sample = AttestationClientAttestationSamples()
+    await sample.attest_sgx_enclave_shared()
+    await sample.attest_open_enclave_shared()
+    await sample.attest_open_enclave_shared_with_options()
+    await sample.attest_open_enclave_with_draft_policy()
+    await sample.attest_open_enclave_with_draft_failing_policy()
+
 
 if __name__ == "__main__":
-    sample = AttestationClientAttestationSamples()
-    sample.attest_sgx_enclave_shared()
-    sample.attest_open_enclave_shared()
-    sample.attest_open_enclave_shared_with_options()
-    sample.attest_open_enclave_with_draft_policy()
-    sample.attest_open_enclave_with_draft_failing_policy()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

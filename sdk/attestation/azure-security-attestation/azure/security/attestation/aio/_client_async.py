@@ -124,7 +124,7 @@ class AttestationClient(object):
             quote=quote,
             init_time_data = inittime,
             runtime_data = runtime,
-            draft_policy_for_attestation=kwargs.get('draft_policy', None))
+            draft_policy_for_attestation=kwargs.pop('draft_policy', None))
 
         result = await self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
@@ -165,7 +165,7 @@ class AttestationClient(object):
             report=report,
             init_time_data = inittime,
             runtime_data = runtime,
-            draft_policy_for_attestation = kwargs.get('draft_policy', None))
+            draft_policy_for_attestation = kwargs.pop('draft_policy', None))
         result = await self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)
@@ -207,13 +207,13 @@ class AttestationClient(object):
 
     async def close(self):
         # type: () -> None
-        self._client.close()
+        await self._client.close()
 
     async def __aenter__(self):
         # type: () -> AttestationClient
-        self._client.__aenter__()
+        await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *exc_details):
         # type: (Any) -> None
-        self._client.__aexit__(*exc_details)
+        await self._client.__aexit__(*exc_details)
