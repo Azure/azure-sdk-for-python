@@ -282,12 +282,7 @@ class AttestationAdministrationClient(object):
                 signing_certificates = await self._client.signing_certificates.get(**kwargs)
                 self._signing_certificates = []
                 for key in signing_certificates.keys:
-                    # Convert the returned certificate chain into an array of X.509 Certificates.
-                    certificates = []
-                    for x5c in key.x5_c:
-                        der_cert = base64.b64decode(x5c)
-                        certificates.append(der_cert)
-                    self._signing_certificates.append(AttestationSigner(certificates, key.kid))
+                    self._signing_certificates.append(AttestationSigner._from_generated(key))
             signers = self._signing_certificates
         return signers
 

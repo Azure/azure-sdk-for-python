@@ -32,7 +32,8 @@ from datetime import datetime, timedelta
 import os
 from dotenv import find_dotenv, load_dotenv
 import base64
-from azure.identity import DefaultAzureCredential
+import asyncio
+from samples.sample_utils import write_banner
 
 class AttestationClientCreateSamples(object):
     def __init__(self):
@@ -46,10 +47,14 @@ class AttestationClientCreateSamples(object):
         self.shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
         
 
-    def create_attestation_client_aad(self):
-        # Instantiate an attestation client using client secrets.
+    async def create_attestation_client_aad(self):
+        """
+        Instantiate an attestation client using client secrets.
+        """
+
+        write_banner("create_attestation_client_aad")
         # [START client_create]
-        from azure.security.attestation import AttestationClient
+        from azure.security.attestation.aio import AttestationClient
 
         tenant_id = os.getenv("ATTESTATION_TENANT_ID")
         client_id = os.getenv("ATTESTATION_CLIENT_ID")
@@ -57,25 +62,28 @@ class AttestationClientCreateSamples(object):
 
         if tenant_id and client_id and secret:
             # Create azure-identity class
-            from azure.identity import ClientSecretCredential
+            from azure.identity.aio import ClientSecretCredential
 
             credentials = ClientSecretCredential(
                 tenant_id=tenant_id, client_id=client_id, client_secret=secret
             )
 
-        client = AttestationClient(credentials, instance_url=self.aad_url)
-
-        print("Retrieve OpenID metadata from: ", self.aad_url)
-        openid_metadata = client.get_openidmetadata()
-        print(" Certificate URI: ", openid_metadata["jwks_uri"])
-        print(" Issuer: ", openid_metadata["issuer"])
+        async with AttestationClient(credentials, instance_url=self.aad_url) as client:
+            print("Retrieve OpenID metadata from: ", self.aad_url)
+            openid_metadata = await client.get_openidmetadata()
+            print(" Certificate URI: ", openid_metadata["jwks_uri"])
+            print(" Issuer: ", openid_metadata["issuer"])
 
         # [END client_create]
 
-    def create_attestation_client_shared(self):
-        # Instantiate an attestation client using client secrets.
+    async def create_attestation_client_shared(self):
+        """
+        Instantiate an attestation client using client secrets to access the shared attestation provider.
+        """
+
+        write_banner("create_attestation_client_shared")
         # [START sharedclient_create]
-        from azure.security.attestation import AttestationClient
+        from azure.security.attestation.aio import AttestationClient
 
         shared_short_name  = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
         shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
@@ -87,23 +95,27 @@ class AttestationClientCreateSamples(object):
 
         if tenant_id and client_id and secret:
             # Create azure-identity class
-            from azure.identity import ClientSecretCredential
+            from azure.identity.aio import ClientSecretCredential
 
             credentials = ClientSecretCredential(
                 tenant_id=tenant_id, client_id=client_id, client_secret=secret
             )
 
-        client = AttestationClient(credentials, instance_url=shared_url)
-
-        print("Retrieve OpenID metadata from: ", shared_url)
-        openid_metadata = client.get_openidmetadata()
-        print(" Certificate URI: ", openid_metadata["jwks_uri"])
-        print(" Issuer: ", openid_metadata["issuer"])
+        async with AttestationClient(credentials, instance_url=shared_url) as client:
+            print("Retrieve OpenID metadata from: ", shared_url)
+            openid_metadata = await client.get_openidmetadata()
+            print(" Certificate URI: ", openid_metadata["jwks_uri"])
+            print(" Issuer: ", openid_metadata["issuer"])
 
         # [END shared_client_create]
 
 
-if __name__ == "__main__":
+async def main():
     sample = AttestationClientCreateSamples()
-    sample.create_attestation_client_aad()
-    sample.create_attestation_client_shared()
+    await sample.create_attestation_client_aad()
+    await sample.create_attestation_client_shared()
+
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

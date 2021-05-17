@@ -44,7 +44,8 @@ from azure.security.attestation import (
     TokenValidationOptions,
     AttestationData)
 
-from sample_collateral import sample_open_enclave_report, sample_runtime_data
+from samples.sample_collateral import sample_open_enclave_report, sample_runtime_data
+from samples.sample_utils import write_banner
 
 class AttestationClientAttestationSamples(object):
     def __init__(self):
@@ -53,6 +54,10 @@ class AttestationClientAttestationSamples(object):
         self.shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
         
     def attest_sgx_enclave_shared(self):
+        """
+        Demonstrates attesting an SGX Enclave quote, reporting back the issuer of the token.
+        """
+        write_banner("attest_sgx_enclave_shared")
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         # Convert the OE report into an SGX quote by stripping off the first 16 bytes.
         quote = oe_report[16:]
@@ -69,6 +74,10 @@ class AttestationClientAttestationSamples(object):
         # [END attest_sgx_enclave_shared]
 
     def attest_open_enclave_shared(self):
+        """
+        Demonstrates attesting an OpenEnclave report, reporting back the issuer of the token.
+        """
+        write_banner("attest_open_enclave_shared")
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
 
@@ -83,6 +92,13 @@ class AttestationClientAttestationSamples(object):
         # [END attest_open_enclave_shared]
 
     def attest_open_enclave_with_draft_policy(self):
+        """
+        Calls attest_open_enclave specifying a draft attestation policy.
+
+        This functionality can be used to test attestation policies against real attestation
+        collateral. This can be extremely helpful in debugging attestation policies.
+        """
+        write_banner("attest_open_enclave_with_draft_policy")
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
 
@@ -117,6 +133,7 @@ class AttestationClientAttestationSamples(object):
         Set a policy which is guaranteed to fail attestation to show
         how to manage attestation failures.
         """
+        write_banner("attest_open_enclave_with_draft_failing_policy")
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
 
@@ -149,6 +166,13 @@ issuancerules {
             pass
 
     def attest_open_enclave_shared_with_options(self):
+        """
+        Demonstrates calling into the attest_open_enclave API using an attestation
+        token validation callback to perform validation of the attestation collateral
+        received from the server.
+        """
+        write_banner("attest_open_enclave_shared_with_options")
+
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
         print()

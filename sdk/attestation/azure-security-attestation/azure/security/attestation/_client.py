@@ -87,8 +87,7 @@ class AttestationClient(object):
         signers = []
         for key in signing_certificates.keys:
             # Convert the returned certificate chain into an array of X.509 Certificates.
-            certificates = [base64.b64decode(x5c) for x5c in key.x5_c]
-            signers.append(AttestationSigner(certificates, key.kid))
+            signers.append(AttestationSigner._from_generated(key))
         return signers
 
     @distributed_trace
@@ -227,8 +226,7 @@ class AttestationClient(object):
                 self._signing_certificates = []
                 for key in signing_certificates.keys:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
-                    certificates = [base64.b64decode(x5c) for x5c in key.x5_c]
-                    self._signing_certificates.append(AttestationSigner(certificates, key.kid))
+                    self._signing_certificates.append(AttestationSigner._from_generated(key))
             signers = self._signing_certificates
         return signers
 

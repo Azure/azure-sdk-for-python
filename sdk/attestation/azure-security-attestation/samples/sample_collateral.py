@@ -12,6 +12,8 @@ DESCRIPTION:
     This file contains collateral which can be used to attest SGX and OpenEnclave
     enclaves.
 
+    It was captured from a live SGX vm in April 2021.
+
 """
 
 

@@ -44,7 +44,7 @@ class AttestationSigner(object):
     """
     def __init__(self, certificates, key_id, **kwargs):
         # type: (list[bytes], str, Any) -> None
-        self.certificates = certificates
+        self.certificates = [base64.b64decode(cert) for cert in certificates]
         self.key_id = key_id
 
     @classmethod
@@ -783,7 +783,7 @@ class AttestationToken(Generic[T]):
                 if jwk is not None:
                     if jwk.kid  == desired_key_id:
                         if (jwk.x5_c):
-                            signers = self._get_certificates_from_x5c(jwk.x5_c)
+                            signers = jwk.x5_c
                         candidates.append(AttestationSigner(
                             signers, desired_key_id))
         else:
@@ -796,8 +796,7 @@ class AttestationToken(Generic[T]):
             else:
                 jwk = self._json_web_key()
                 if jwk.x5_c is not None:
-                    signers = self._get_certificates_from_x5c(
-                        self._json_web_key().x5_c)
+                    signers = self._json_web_key().x5_c
                     candidates.append(AttestationSigner(signers, None))
                 candidates.append(self.x509_certificate_chain)
 
