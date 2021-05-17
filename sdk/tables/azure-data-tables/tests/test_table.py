@@ -52,6 +52,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
         print("QUAL TEST NAME: ", self.qualified_test_name.encode())
         table_name = self.get_resource_name(prefix)
+        print("TABLE_NAME: {}".format(table_name))
         return table_name
 
     def _create_table(self, ts, prefix=TEST_TABLE_PREFIX, table_list=None):
@@ -441,7 +442,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
 
         table = self._create_table(tsc)
         try:
-            table = tsc.get_table_client(u"pytablesync669b08d7")
             entity = {
                 'PartitionKey': u'test',
                 'RowKey': u'test1',
@@ -465,7 +465,6 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             service = self.create_client_from_credential(TableServiceClient, token, endpoint=account_url)
 
             # Act
-
             sas_table = service.get_table_client(table.table_name)
             entities = list(sas_table.list_entities())
 

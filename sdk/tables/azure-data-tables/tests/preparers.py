@@ -69,4 +69,3 @@ def cosmos_decorator(func, **kwargs):
         func(*args, **trimmed_kwargs)
 
     return wrapper
-
