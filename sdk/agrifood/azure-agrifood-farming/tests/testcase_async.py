@@ -10,7 +10,7 @@ import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.agrifood.farming.aio import FarmBeatsClient
 from azure.agrifood.farming.models import Boundary, Polygon
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError
 
 class FarmBeatsTestAsync(AzureTestCase):
 
@@ -33,7 +33,7 @@ class FarmBeatsTestAsync(AzureTestCase):
     async def create_boundary_if_not_exist(self, client, agrifood_farmer_id, agrifood_boundary_id):
         try:
             return await client.boundaries.get(farmer_id=agrifood_farmer_id, boundary_id=agrifood_boundary_id)
-        except HttpResponseError:
+        except ResourceNotFoundError:
             return await client.boundaries.create_or_update(
                 farmer_id=agrifood_farmer_id,
                 boundary_id=agrifood_boundary_id,

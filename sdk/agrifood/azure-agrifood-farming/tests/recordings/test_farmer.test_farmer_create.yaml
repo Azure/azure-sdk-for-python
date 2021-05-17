@@ -1,6 +1,8 @@
 interactions:
 - request:
-    body: '{}'
+    body: '{"status": "Sample Status", "name": "Test Farmer", "description": "Farmer
+      created during testing.", "properties": {"foo": "bar", "numeric one": 1, "1":
+      "numeric key"}}'
     headers:
       Accept:
       - application/json
@@ -9,16 +11,17 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '2'
+      - '167'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PATCH
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"fake-farmer","eTag":"e10072ae-0000-0600-0000-60a2e4570000","createdDateTime":"2021-05-14T19:29:23Z","modifiedDateTime":"2021-05-17T21:47:03Z","name":"Test
+      string: '{"id":"test-farmer","eTag":"01001050-0000-0600-0000-60a2de220000","status":"Sample
+        Status","createdDateTime":"2021-05-17T16:41:51Z","modifiedDateTime":"2021-05-17T21:20:33Z","name":"Test
         Farmer","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
         one":1,"1":"numeric key"}}'
     headers:
@@ -29,11 +32,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '278'
+      - '303'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 17 May 2021 21:47:03 GMT
+      - Mon, 17 May 2021 21:20:34 GMT
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -57,10 +60,11 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"fake-farmer","eTag":"e10072ae-0000-0600-0000-60a2e4570000","createdDateTime":"2021-05-14T19:29:23Z","modifiedDateTime":"2021-05-17T21:47:03Z","name":"Test
+      string: '{"id":"test-farmer","eTag":"01001050-0000-0600-0000-60a2de220000","status":"Sample
+        Status","createdDateTime":"2021-05-17T16:41:51Z","modifiedDateTime":"2021-05-17T21:20:33Z","name":"Test
         Farmer","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
         one":1,"1":"numeric key"}}'
     headers:
@@ -71,11 +75,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '278'
+      - '303'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 17 May 2021 21:47:04 GMT
+      - Mon, 17 May 2021 21:20:35 GMT
       server:
       - nginx/1.19.1
       strict-transport-security:

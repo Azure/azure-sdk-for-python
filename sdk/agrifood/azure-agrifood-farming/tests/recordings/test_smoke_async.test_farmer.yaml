@@ -14,17 +14,22 @@ interactions:
     uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"fake-farmer","eTag":"2d009dbf-0000-0600-0000-609ecf970000","createdDateTime":"2021-05-14T19:29:23Z","modifiedDateTime":"2021-05-14T19:29:27Z"}'
+      string: !!binary |
+        H4sIAAAAAAAAA2yOQQ7CIBBFr0JmLQawVmVtPAErd7RMzcQUGkoXxnh3B7U7CZmB/99neAIFsDD4
+        O8rB5xEzbACdv7GIWil/6lqpeEnV1lJPrfIGm+OxXpjuM/qC4czF0YgcNMpoqfZSN06frOG9uzI4
+        pkAD/ScPzmjbHOzeVDL6j+twLuKy/irg3GeaCqXI3lcWv+EiLJniTRROcN8yPuU0YS6EM9gnDClx
+        qPP1obhwknqRIg/RG9DsrNodH/B6vQEAAP//AwC+78IMFgEAAA==
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
-      content-length: '149'
+      content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Fri, 14 May 2021 19:29:27 GMT
-      etag: 2d009dbf-0000-0600-0000-609ecf970000
+      date: Mon, 17 May 2021 21:47:52 GMT
       server: nginx/1.19.1
       strict-transport-security: max-age=15724800; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
     status:
       code: 200
       message: OK
@@ -40,17 +45,22 @@ interactions:
     uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"fake-farmer","eTag":"2d009dbf-0000-0600-0000-609ecf970000","createdDateTime":"2021-05-14T19:29:23Z","modifiedDateTime":"2021-05-14T19:29:27Z"}'
+      string: !!binary |
+        H4sIAAAAAAAAA2yOQQ7CIBBFr0JmLQawVmVtPAErd7RMzcQUGkoXxnh3B7U7CZmB/99neAIFsDD4
+        O8rB5xEzbACdv7GIWil/6lqpeEnV1lJPrfIGm+OxXpjuM/qC4czF0YgcNMpoqfZSN06frOG9uzI4
+        pkAD/ScPzmjbHOzeVDL6j+twLuKy/irg3GeaCqXI3lcWv+EiLJniTRROcN8yPuU0YS6EM9gnDClx
+        qPP1obhwknqRIg/RG9DsrNodH/B6vQEAAP//AwC+78IMFgEAAA==
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
-      content-length: '149'
+      content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Fri, 14 May 2021 19:29:27 GMT
-      etag: 2d009dbf-0000-0600-0000-609ecf970000
+      date: Mon, 17 May 2021 21:47:53 GMT
       server: nginx/1.19.1
       strict-transport-security: max-age=15724800; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
     status:
       code: 200
       message: OK
