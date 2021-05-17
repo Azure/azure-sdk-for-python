@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Dict, TYPE_CHECKING, Optional
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -22,14 +22,14 @@ from ._async_container_repository import ContainerRepository
 from .._generated.models import AcrErrors
 from .._helpers import _parse_next_link
 from ._async_registry_artifact import RegistryArtifact
-from .._models import RepositoryProperties, DeleteRepositoryResult
+from .._models import RepositoryProperties#, DeleteRepositoryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Dict[str, Any]) -> None:
+    def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs: Dict[str, Any]) -> None:
         """Create a ContainerRegistryClient from an endpoint and a credential
         :param endpoint: An ACR endpoint
         :type endpoint: str
@@ -54,12 +54,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def delete_repository(self, repository_name: str, **kwargs: Dict[str, Any]) -> DeleteRepositoryResult:
+    async def delete_repository(self, repository_name: str, **kwargs: Dict[str, Any]) -> None:
         """Delete a repository
 
         :param str repository_name: The repository to delete
-        :returns: Object containing information about the deleted repository
-        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
+        :returns: None
+        :rtype: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
         .. admonition:: Example:
@@ -72,7 +72,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :caption: Delete a repository from the `ContainerRegistryClient`
         """
         result = await self._client.container_registry.delete_repository(repository_name, **kwargs)
-        return DeleteRepositoryResult._from_generated(result)  # pylint: disable=protected-access
+        # return DeleteRepositoryResult._from_generated(result)  # pylint: disable=protected-access
 
     @distributed_trace
     def list_repository_names(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[str]:

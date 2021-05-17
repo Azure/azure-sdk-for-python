@@ -20,16 +20,16 @@ from ._container_repository import ContainerRepository
 from ._generated.models import AcrErrors
 from ._helpers import _parse_next_link
 from ._registry_artifact import RegistryArtifact
-from ._models import DeleteRepositoryResult
+# from ._models import DeleteRepositoryResult
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
+    from typing import Any, Dict, Optional
     from azure.core.credentials import TokenCredential
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, TokenCredential, Dict[str, Any]) -> None
+    def __init__(self, endpoint, credential=None, **kwargs):
+        # type: (str, Optional[TokenCredential], Dict[str, Any]) -> None
         """Create a ContainerRegistryClient from an ACR endpoint and a credential
         :param str endpoint: An ACR endpoint
         :param credential: The credential with which to authenticate
@@ -54,12 +54,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def delete_repository(self, repository_name, **kwargs):
-        # type: (str, Dict[str, Any]) -> DeleteRepositoryResult
+        # type: (str, Dict[str, Any]) -> None
         """Delete a repository
 
         :param str repository_name: The repository to delete
-        :returns: Object containing information about the deleted repository
-        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
+        :returns: None
+        :rtype: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
         .. admonition:: Example:
@@ -71,9 +71,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: Delete a repository from the `ContainerRegistryClient`
         """
-        return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.delete_repository(repository_name, **kwargs)
-        )
+        # return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
+        self._client.container_registry.delete_repository(repository_name, **kwargs)
+        # )
 
     @distributed_trace
     def list_repository_names(self, **kwargs):

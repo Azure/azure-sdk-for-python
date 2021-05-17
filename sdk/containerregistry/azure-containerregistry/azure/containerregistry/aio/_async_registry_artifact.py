@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Dict, Any
+from typing import TYPE_CHECKING, Dict, Any, Optional
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -20,11 +20,11 @@ from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
 from .._helpers import _is_tag, _parse_next_link
 from .._models import (
-    DeleteRepositoryResult,
-    ManifestWriteableProperties,
+    # DeleteRepositoryResult,
+    # ManifestWriteableProperties,
     ArtifactManifestProperties,
     ArtifactTagProperties,
-    TagWriteableProperties,
+    # TagWriteableProperties,
 )
 
 if TYPE_CHECKING:
@@ -37,7 +37,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         endpoint: str,
         repository: str,
         tag_or_digest: str,
-        credential: "AsyncTokenCredential",
+        credential: Optional["AsyncTokenCredential"] = None,
         **kwargs: Dict[str, Any]
     ) -> None:
         """Create a RegistryArtifact from an endpoint, repository, a tag or digest, and a credential
@@ -78,11 +78,11 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         return tag_props.digest
 
     @distributed_trace_async
-    async def delete(self, **kwargs: Dict[str, Any]) -> DeleteRepositoryResult:
+    async def delete(self, **kwargs: Dict[str, Any]) -> None:
         """Delete a repository
 
-        :returns: Object containing information about the deleted repository
-        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
+        :returns: None
+        :rtype: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
         Example
@@ -94,9 +94,12 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             await client.delete()
         """
-        return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.delete_repository(self.repository, **kwargs)
-        )
+        if not self._digest:
+            self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else await self._get_digest_from_tag()
+        await self._client.container_registry.delete_manifest(self.repository, self._digest)
+        # return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
+        #     await self._client.container_registry.delete_repository(self.repository, **kwargs)
+        # )
 
     @distributed_trace_async
     async def delete_tag(self, tag: str, **kwargs: Dict[str, Any]) -> None:
@@ -301,12 +304,12 @@ class RegistryArtifact(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def set_manifest_properties(
-        self, properties: ManifestWriteableProperties, **kwargs: Dict[str, Any]
+        self, properties: ArtifactManifestProperties, **kwargs: Dict[str, Any]
     ) -> ArtifactManifestProperties:
         """Set the properties for a manifest
 
         :param properties: The property's values to be set
-        :type properties: ManifestWriteableProperties
+        :type properties: ArtifactManifestProperties
         :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
@@ -343,14 +346,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def set_tag_properties(
-        self, tag: str, properties: TagWriteableProperties, **kwargs: Dict[str, Any]
+        self, tag: str, properties: ArtifactTagProperties, **kwargs: Dict[str, Any]
     ) -> ArtifactTagProperties:
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
         :type tag: str
         :param properties: The property's values to be set
-        :type properties: TagWriteableProperties
+        :type properties: ArtifactTagProperties
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 

@@ -20,21 +20,21 @@ from ._base_client import ContainerRegistryBaseClient, TransportWrapper
 from ._generated.models import AcrErrors
 from ._helpers import _parse_next_link
 from ._models import (
-    DeleteRepositoryResult,
+    # DeleteRepositoryResult,
     ArtifactManifestProperties,
     RepositoryProperties,
 )
 from ._registry_artifact import RegistryArtifact
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
+    from typing import Any, Dict, Optional
     from azure.core.credentials import TokenCredential
-    from ._models import RepositoryWriteableProperties
+    # from ._models import RepositoryWriteableProperties
 
 
 class ContainerRepository(ContainerRegistryBaseClient):
     def __init__(self, endpoint, name, credential, **kwargs):
-        # type: (str, str, TokenCredential, Dict[str, Any]) -> None
+        # type: (str, str, Optional[TokenCredential], Dict[str, Any]) -> None
         """Create a ContainerRepository from an endpoint, repository name, and credential
 
         :param str endpoint: An ACR endpoint
@@ -54,11 +54,11 @@ class ContainerRepository(ContainerRegistryBaseClient):
 
     @distributed_trace
     def delete(self, **kwargs):
-        # type: (Dict[str, Any]) -> DeleteRepositoryResult
+        # type: (Dict[str, Any]) -> None
         """Delete a repository
 
-        :returns: Object containing information about the deleted repository
-        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
+        :returns: None
+        :rtype: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
@@ -198,11 +198,11 @@ class ContainerRepository(ContainerRegistryBaseClient):
 
     @distributed_trace
     def set_properties(self, properties, **kwargs):
-        # type: (RepositoryWriteableProperties, Dict[str, Any]) -> RepositoryProperties
+        # type: (RepositoryProperties, Dict[str, Any]) -> RepositoryProperties
         """Set the properties of a repository
 
         :param properties: Properties to set for the repository
-        :type properties: :class:`~azure.containerregistry.RepositoryWriteableProperties`
+        :type properties: :class:`~azure.containerregistry.RepositoryProperties`
         :returns: :class:`~azure.containerregistry.RepositoryProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """

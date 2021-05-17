@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Dict, Any
+from typing import TYPE_CHECKING, Dict, Any, Optional
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -21,8 +21,8 @@ from ._async_base_client import ContainerRegistryBaseClient, AsyncTransportWrapp
 from .._generated.models import AcrErrors
 from .._helpers import _parse_next_link
 from .._models import (
-    RepositoryWriteableProperties,
-    DeleteRepositoryResult,
+    # RepositoryWriteableProperties,
+    # DeleteRepositoryResult,
     ArtifactManifestProperties,
     RepositoryProperties,
     ArtifactTagProperties,
@@ -35,7 +35,7 @@ if TYPE_CHECKING:
 
 class ContainerRepository(ContainerRegistryBaseClient):
     def __init__(
-        self, endpoint: str, name: str, credential: "AsyncTokenCredential", **kwargs: Dict[str, Any]
+        self, endpoint: str, name: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs: Dict[str, Any]
     ) -> None:
         """Create a ContainerRepository from an endpoint, repository name, and credential
 
@@ -55,16 +55,16 @@ class ContainerRepository(ContainerRegistryBaseClient):
         super(ContainerRepository, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def delete(self, **kwargs: Dict[str, Any]) -> DeleteRepositoryResult:
+    async def delete(self, **kwargs: Dict[str, Any]) -> None:
         """Delete a repository
 
-        :returns: Object containing information about the deleted repository
-        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
+        :returns: None
+        :rtype: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.delete_repository(self.name, **kwargs)
-        )
+        # return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
+        await self._client.container_registry.delete_repository(self.name, **kwargs)
+        # )
 
     @distributed_trace_async
     async def get_properties(self, **kwargs: Dict[str, Any]) -> RepositoryProperties:
@@ -198,13 +198,13 @@ class ContainerRepository(ContainerRegistryBaseClient):
     @distributed_trace_async
     async def set_properties(
         self,
-        properties: RepositoryWriteableProperties,
+        properties: RepositoryProperties,
         **kwargs: Dict[str, Any]
     ) -> RepositoryProperties:
         """Set the properties of a repository
 
         :param properties: Properties to set for the repository
-        :type properties: :class:`~azure.containerregistry.RepositoryWriteableProperties`
+        :type properties: :class:`~azure.containerregistry.RepositoryProperties`
         :returns: :class:`~azure.containerregistry.RepositoryProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """

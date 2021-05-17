@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -19,23 +19,23 @@ from ._base_client import ContainerRegistryBaseClient
 from ._generated.models import AcrErrors
 from ._helpers import _is_tag, _parse_next_link
 from ._models import (
-    DeleteRepositoryResult,
+    # DeleteRepositoryResult,
     ArtifactManifestProperties,
     ArtifactTagProperties,
 )
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from ._models import (
-        ManifestWriteableProperties,
-        TagWriteableProperties,
-        RepositoryWriteableProperties
-    )
+    # from ._models import (
+    #     ManifestWriteableProperties,
+    #     TagWriteableProperties,
+    #     RepositoryWriteableProperties
+    # )
 
 
 class RegistryArtifact(ContainerRegistryBaseClient):
     def __init__(self, endpoint, repository, tag_or_digest, credential, **kwargs):
-        # type: (str, str, str, TokenCredential, Dict[str, Any]) -> None
+        # type: (str, str, str, Optional[TokenCredential], Dict[str, Any]) -> None
         """Create a RegistryArtifact from an endpoint, repository, a tag or digest, and a credential
 
         :param endpoint: An ACR endpoint
@@ -77,10 +77,10 @@ class RegistryArtifact(ContainerRegistryBaseClient):
     @distributed_trace
     def delete(self, **kwargs):
         # type: (Dict[str, Any]) -> None
-        """Delete a repository
+        """Delete a manifest
 
-        :returns: Object containing information about the deleted repository
-        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
+        :returns: None
+        :rtype: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
         Example
@@ -92,9 +92,12 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             client.delete()
         """
-        return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.delete_repository(self.repository, **kwargs)
-        )
+        if not self._digest:
+            self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else self._get_digest_from_tag()
+        self._client.container_registry.delete_manifest(self.repository, self._digest)
+        # return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
+        #     self._client.container_registry.delete_repository(self.repository, **kwargs)
+        # )
 
     @distributed_trace
     def delete_tag(self, tag, **kwargs):
@@ -303,11 +306,11 @@ class RegistryArtifact(ContainerRegistryBaseClient):
 
     @distributed_trace
     def set_manifest_properties(self, properties, **kwargs):
-        # type: (str, ManifestWriteableProperties, Dict[str, Any]) -> ArtifactManifestProperties
+        # type: (str, ArtifactManifestProperties, Dict[str, Any]) -> ArtifactManifestProperties
         """Set the properties for a manifest
 
         :param properties: The property's values to be set
-        :type properties: :class:`~azure.containerregistry.ManifestWriteableProperties`
+        :type properties: :class:`~azure.containerregistry.ArtifactManifestProperties`
         :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
@@ -344,13 +347,13 @@ class RegistryArtifact(ContainerRegistryBaseClient):
 
     @distributed_trace
     def set_tag_properties(self, tag, properties, **kwargs):
-        # type: (str, TagWriteableProperties, Dict[str, Any]) -> ArtifactTagProperties
+        # type: (str, ArtifactTagProperties, Dict[str, Any]) -> ArtifactTagProperties
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
         :type tag: str
         :param properties: The property's values to be set
-        :type properties: TagWriteableProperties
+        :type properties: ArtifactTagProperties
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
