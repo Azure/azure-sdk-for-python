@@ -278,3 +278,4 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-sql msrest>=0.6.21
 #override azure-agrifood-farming azure-core<2.0.0,>=1.8.2
 #override azure-agrifood-farming msrest>=0.6.21
+#override azure-mgmt-appconfiguration msrest>=0.6.21

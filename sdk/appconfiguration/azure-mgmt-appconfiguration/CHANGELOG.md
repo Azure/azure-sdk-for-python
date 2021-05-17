@@ -1,5 +1,27 @@
 # Release History
 
+## 2.0.0 (2021-05-17)
+
+**Features**
+
+  - Model KeyValue has a new parameter name
+  - Model KeyValue has a new parameter id
+  - Model KeyValue has a new parameter type
+  - Model ConfigurationStoreUpdateParameters has a new parameter disable_local_auth
+  - Model OperationDefinition has a new parameter origin
+  - Model OperationDefinition has a new parameter is_data_action
+  - Model OperationDefinition has a new parameter properties
+  - Model ConfigurationStore has a new parameter system_data
+  - Model ConfigurationStore has a new parameter disable_local_auth
+  - Added operation group KeyValuesOperations
+
+**Breaking changes**
+
+  - Model ConfigurationStoreUpdateParameters no longer has parameter public_network_access
+  - Model Resource no longer has parameter tags
+  - Model Resource no longer has parameter location
+  - Removed operation ConfigurationStoresOperations.list_key_value
+
 ## 1.0.1 (2020-09-18)
 
 **Bug fix**
