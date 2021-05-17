@@ -62,7 +62,7 @@
     }
   ],
   "outputs": {
-    "FARMBEATS_ENDPOINT": {
+    "AGRIFOOD_ENDPOINT": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.AgFoodPlatform/farmbeats', variables('resourceName'))).instanceUri]"
     }
