@@ -86,7 +86,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
             call will return values after last lexically
         :paramtype last: str
         :keyword order_by: Query parameter for ordering by time ascending or descending
-        :paramtype order_by: :class:`~azure.containerregistry.ManifestOrder`
+        :paramtype order_by: :class:`~azure.containerregistry.ManifestOrder` or str
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
         :return: ItemPaged[:class:`ArtifactManifestProperties`]
@@ -206,7 +206,9 @@ class ContainerRepository(ContainerRegistryBaseClient):
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.set_properties(
-                self.name, properties._to_generated(), **kwargs  # pylint: disable=protected-access
+                self.name,
+                properties._to_generated(),  # pylint: disable=protected-access
+                **kwargs
             )
         )
 

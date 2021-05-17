@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://search785e1686.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30-Preview
   response:
@@ -13,11 +13,11 @@ interactions:
       string: ''
     headers:
       cache-control: no-cache
-      date: Thu, 25 Mar 2021 20:31:34 GMT
-      elapsed-time: '162'
+      date: Sat, 08 May 2021 06:31:23 GMT
+      elapsed-time: '180'
       expires: '-1'
       pragma: no-cache
-      request-id: 1778f008-8da9-11eb-90ec-a0481ca055a9
+      request-id: 01e13d3a-afc7-11eb-952e-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 204
@@ -29,24 +29,28 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search785e1686.search.windows.net/indexes?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search785e1686.search.windows.net/$metadata#indexes","value":[]}'
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
+        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns4fHNzPdz89+HQsf46viuWsumrGy7y9+7st8jbD2z9O
+        H+bv8uaj0UeXWbnOP3r0ve//kv8Hs/EZO1sAAAA=
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-length: '200'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 25 Mar 2021 20:31:39 GMT
-      elapsed-time: '32'
+      date: Sat, 08 May 2021 06:31:28 GMT
+      elapsed-time: '34'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 1aa948fd-8da9-11eb-8f39-a0481ca055a9
+      request-id: 051f10d1-afc7-11eb-bb2c-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

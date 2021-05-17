@@ -31,7 +31,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None
         """Create a ContainerRegistryClient from an ACR endpoint and a credential
-
         :param str endpoint: An ACR endpoint
         :param credential: The credential with which to authenticate
         :type credential: :class:`~azure.core.credentials.TokenCredential`
@@ -80,7 +79,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def list_repository_names(self, **kwargs):
         # type: (Dict[str, Any]) -> ItemPaged[str]
         """List all repositories
-
         :keyword max: Maximum number of repositories to return
         :paramtype max: int
         :keyword last: Query parameter for the last item in the previous call. Ensuing
@@ -95,8 +93,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_delete_old_tags.py
-                :start-after: [START list_repositories]
-                :end-before: [END list_repositories]
+                :start-after: [START list_repository_names]
+                :end-before: [END list_repository_names]
                 :language: python
                 :dedent: 8
                 :caption: List repositories in a container registry account
@@ -204,13 +202,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRegistryClient(account_url, DefaultAzureCredential())
-            repository_client = client.get_repository_client("my_repository")
+            repository_client = client.get_repository("my_repository")
         """
         _pipeline = Pipeline(
             transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access

@@ -24,10 +24,20 @@ from azure.containerregistry import (
 
 from azure.core.credentials import AccessToken
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
-from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
+from azure.mgmt.containerregistry.models import (
+    ImportImageParameters,
+    ImportSource,
+    ImportMode
+)
 from azure.identity import DefaultAzureCredential
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureTestCase, is_live
+from azure_devtools.scenario_tests import (
+    GeneralNameReplacer,
+    RequestUrlNormalizer,
+    AuthenticationMetadataFilter,
+    RecordingProcessor,
+)
 from azure_devtools.scenario_tests import (
     GeneralNameReplacer,
     RequestUrlNormalizer,
@@ -112,6 +122,11 @@ class AcrBodyReplacer(RecordingProcessor):
         if "seankane.azurecr.io" in request.url:
             request.url = request.url.replace("seankane.azurecr.io", "fake_url.azurecr.io")
 
+        if "seankaneanon.azurecr.io" in request.uri:
+            request.uri = request.uri.replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
+        if "seankaneanon.azurecr.io" in request.url:
+            request.url = request.url.replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
+
         return request
 
     def process_response(self, response):
@@ -131,6 +146,9 @@ class AcrBodyReplacer(RecordingProcessor):
 
                 if "seankane.azurecr.io" in body["string"]:
                     body["string"] = body["string"].replace("seankane.azurecr.io", "fake_url.azurecr.io")
+
+                if "seankaneanon.azurecr.io" in body["string"]:
+                    body["string"] = body["string"].replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
 
                 refresh = json.loads(body["string"])
                 if "refresh_token" in refresh.keys():
@@ -240,6 +258,9 @@ class ContainerRegistryTestClass(AzureTestCase):
     def create_container_repository(self, endpoint, name, **kwargs):
         return ContainerRepository(endpoint=endpoint, name=name, credential=self.get_credential(), **kwargs)
 
+    def create_anon_client(self, endpoint, **kwargs):
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)
+
     def assert_content_permission(self, content_perm, content_perm2):
         assert isinstance(content_perm, ContentProperties)
         assert isinstance(content_perm2, ContentProperties)
@@ -299,9 +320,32 @@ def import_image(repository, tags):
     while not result.done():
         pass
 
+    # Do the same for anonymous
+    mgmt_client = ContainerRegistryManagementClient(
+        DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
+    )
+    registry_uri = "registry.hub.docker.com"
+    rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
+    registry_name = os.environ["CONTAINERREGISTRY_ANONREGISTRY_NAME"]
+
+    import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
+
+    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
+
+    result = mgmt_client.registries.begin_import_image(
+        rg_name,
+        registry_name,
+        parameters=import_params,
+    )
+
+    while not result.done():
+        pass
+
 
 @pytest.fixture(scope="session")
 def load_registry():
+    if not is_live():
+        return
     repos = [
         "library/hello-world",
         "library/alpine",

@@ -52,7 +52,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
             await repo_client.delete()
 
     @acr_preparer()
-    async def test_list_manifests(self, containerregistry_endpoint):
+    async def test_list_registry_artifacts(self, containerregistry_endpoint):
         client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
 
         count = 0
@@ -69,7 +69,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
         assert count > 0
 
     @acr_preparer()
-    async def test_list_manifests_by_page(self, containerregistry_endpoint):
+    async def test_list_registry_artifacts_by_page(self, containerregistry_endpoint):
         client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
         results_per_page = 2
 
@@ -85,7 +85,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
         assert page_count >= 1
 
     @acr_preparer()
-    async def test_list_manifests_descending(self, containerregistry_endpoint):
+    async def test_list_registry_artifacts_descending(self, containerregistry_endpoint):
         client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
 
         prev_last_updated_on = None
@@ -99,7 +99,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
         assert count > 0
 
     @acr_preparer()
-    async def test_list_manifests_ascending(self, containerregistry_endpoint):
+    async def test_list_registry_artifacts_ascending(self, containerregistry_endpoint):
         client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
 
         prev_last_updated_on = None
