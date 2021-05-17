@@ -284,7 +284,7 @@ def _return_context_and_deserialized(
 
 
 def _trim_service_metadata(metadata):
-    # type: (dict[str,str]) -> None
+    # type: (Dict[str, Any]) -> Dict[str, Any]
     return {
         "date": metadata.pop("date", None),
         "etag": metadata.pop("etag", None),
