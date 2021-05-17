@@ -14,15 +14,15 @@ class CloudToDeviceProperties(msrest.serialization.Model):
     """The IoT hub cloud-to-device messaging properties.
 
     :param max_delivery_count: The max delivery count for cloud-to-device messages in the device
-     queue. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-
-     device-messages.
+     queue. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type max_delivery_count: int
     :param default_ttl_as_iso8601: The default time to live for cloud-to-device messages in the
-     device queue. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-
-     to-device-messages.
+     device queue. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type default_ttl_as_iso8601: ~datetime.timedelta
     :param feedback: The properties of the feedback queue for cloud-to-device messages.
-    :type feedback: ~azure.mgmt.iothub.models.FeedbackProperties
+    :type feedback: ~azure.mgmt.iothub.v2017_01_19.models.FeedbackProperties
     """
 
     _validation = {
@@ -150,8 +150,8 @@ class EventHubProperties(msrest.serialization.Model):
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages.
     :type retention_time_in_days: long
     :param partition_count: The number of partitions for receiving device-to-cloud messages in the
-     Event Hub-compatible endpoint. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-
-     messaging#device-to-cloud-messages.
+     Event Hub-compatible endpoint. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages.
     :type partition_count: int
     :ivar partition_ids: The partition ids in the Event Hub-compatible endpoint.
     :vartype partition_ids: list[str]
@@ -226,7 +226,7 @@ class FallbackRouteProperties(msrest.serialization.Model):
     :param source: Required. The source to which the routing rule is to be applied to. e.g.
      DeviceMessages. Possible values include: "DeviceMessages", "TwinChangeEvents",
      "DeviceLifecycleEvents", "DeviceJobLifecycleEvents".
-    :type source: str or ~azure.mgmt.iothub.models.RoutingSource
+    :type source: str or ~azure.mgmt.iothub.v2017_01_19.models.RoutingSource
     :param condition: The condition which is evaluated in order to apply the fallback route. If the
      condition is not provided it will evaluate to true by default. For grammar, See:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language.
@@ -269,12 +269,12 @@ class FeedbackProperties(msrest.serialization.Model):
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type lock_duration_as_iso8601: ~datetime.timedelta
     :param ttl_as_iso8601: The period of time for which a message is available to consume before it
-     is expired by the IoT hub. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-
-     messaging#cloud-to-device-messages.
+     is expired by the IoT hub. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type ttl_as_iso8601: ~datetime.timedelta
     :param max_delivery_count: The number of times the IoT hub attempts to deliver a message on the
-     feedback queue. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-
-     to-device-messages.
+     feedback queue. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type max_delivery_count: int
     """
 
@@ -341,7 +341,7 @@ class IotHubCapacity(msrest.serialization.Model):
     :vartype default: long
     :ivar scale_type: The type of the scaling enabled. Possible values include: "Automatic",
      "Manual", "None".
-    :vartype scale_type: str or ~azure.mgmt.iothub.models.IotHubScaleType
+    :vartype scale_type: str or ~azure.mgmt.iothub.v2017_01_19.models.IotHubScaleType
     """
 
     _validation = {
@@ -441,9 +441,9 @@ class IotHubDescription(Resource):
      also be provided as a header per the normal ETag convention.
     :type etag: str
     :param properties: The properties of an IoT hub.
-    :type properties: ~azure.mgmt.iothub.models.IotHubProperties
+    :type properties: ~azure.mgmt.iothub.v2017_01_19.models.IotHubProperties
     :param sku: Required. Information about the SKU of the IoT hub.
-    :type sku: ~azure.mgmt.iothub.models.IotHubSkuInfo
+    :type sku: ~azure.mgmt.iothub.v2017_01_19.models.IotHubSkuInfo
     """
 
     _validation = {
@@ -487,7 +487,7 @@ class IotHubDescriptionListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: The array of IotHubDescription objects.
-    :type value: list[~azure.mgmt.iothub.models.IotHubDescription]
+    :type value: list[~azure.mgmt.iothub.v2017_01_19.models.IotHubDescription]
     :ivar next_link: The next link.
     :vartype next_link: str
     """
@@ -519,7 +519,7 @@ class IotHubNameAvailabilityInfo(msrest.serialization.Model):
     :vartype name_available: bool
     :ivar reason: The reason for unavailability. Possible values include: "Invalid",
      "AlreadyExists".
-    :vartype reason: str or ~azure.mgmt.iothub.models.IotHubNameUnavailabilityReason
+    :vartype reason: str or ~azure.mgmt.iothub.v2017_01_19.models.IotHubNameUnavailabilityReason
     :param message: The detailed reason message.
     :type message: str
     """
@@ -553,9 +553,9 @@ class IotHubProperties(msrest.serialization.Model):
     :param authorization_policies: The shared access policies you can use to secure a connection to
      the IoT hub.
     :type authorization_policies:
-     list[~azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule]
+     list[~azure.mgmt.iothub.v2017_01_19.models.SharedAccessSignatureAuthorizationRule]
     :param ip_filter_rules: The IP filter rules.
-    :type ip_filter_rules: list[~azure.mgmt.iothub.models.IpFilterRule]
+    :type ip_filter_rules: list[~azure.mgmt.iothub.v2017_01_19.models.IpFilterRule]
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
     :ivar host_name: The name of the host.
@@ -563,23 +563,25 @@ class IotHubProperties(msrest.serialization.Model):
     :param event_hub_endpoints: The Event Hub-compatible endpoint properties. The possible keys to
      this dictionary are events and operationsMonitoringEvents. Both of these keys have to be
      present in the dictionary while making create or update calls for the IoT hub.
-    :type event_hub_endpoints: dict[str, ~azure.mgmt.iothub.models.EventHubProperties]
+    :type event_hub_endpoints: dict[str, ~azure.mgmt.iothub.v2017_01_19.models.EventHubProperties]
     :param routing: The routing related properties of the IoT hub. See:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging.
-    :type routing: ~azure.mgmt.iothub.models.RoutingProperties
+    :type routing: ~azure.mgmt.iothub.v2017_01_19.models.RoutingProperties
     :param storage_endpoints: The list of Azure Storage endpoints where you can upload files.
      Currently you can configure only one Azure Storage account and that MUST have its key as
      $default. Specifying more than one storage account causes an error to be thrown. Not specifying
      a value for this property when the enableFileUploadNotifications property is set to True,
      causes an error to be thrown.
-    :type storage_endpoints: dict[str, ~azure.mgmt.iothub.models.StorageEndpointProperties]
+    :type storage_endpoints: dict[str,
+     ~azure.mgmt.iothub.v2017_01_19.models.StorageEndpointProperties]
     :param messaging_endpoints: The messaging endpoint properties for the file upload notification
      queue.
-    :type messaging_endpoints: dict[str, ~azure.mgmt.iothub.models.MessagingEndpointProperties]
+    :type messaging_endpoints: dict[str,
+     ~azure.mgmt.iothub.v2017_01_19.models.MessagingEndpointProperties]
     :param enable_file_upload_notifications: If True, file upload notifications are enabled.
     :type enable_file_upload_notifications: bool
     :param cloud_to_device: The IoT hub cloud-to-device messaging properties.
-    :type cloud_to_device: ~azure.mgmt.iothub.models.CloudToDeviceProperties
+    :type cloud_to_device: ~azure.mgmt.iothub.v2017_01_19.models.CloudToDeviceProperties
     :param comments: Comments.
     :type comments: str
     :param operations_monitoring_properties: The operations monitoring properties for the IoT hub.
@@ -587,10 +589,10 @@ class IotHubProperties(msrest.serialization.Model):
      DeviceIdentityOperations, FileUploadOperations, Routes, D2CTwinOperations, C2DTwinOperations,
      TwinQueries, JobsOperations, DirectMethods.
     :type operations_monitoring_properties:
-     ~azure.mgmt.iothub.models.OperationsMonitoringProperties
+     ~azure.mgmt.iothub.v2017_01_19.models.OperationsMonitoringProperties
     :param features: The capabilities and features enabled for the IoT hub. Possible values
      include: "None", "DeviceManagement".
-    :type features: str or ~azure.mgmt.iothub.models.Capabilities
+    :type features: str or ~azure.mgmt.iothub.v2017_01_19.models.Capabilities
     """
 
     _validation = {
@@ -675,7 +677,7 @@ class IotHubQuotaMetricInfoListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: The array of quota metrics objects.
-    :type value: list[~azure.mgmt.iothub.models.IotHubQuotaMetricInfo]
+    :type value: list[~azure.mgmt.iothub.v2017_01_19.models.IotHubQuotaMetricInfo]
     :ivar next_link: The next link.
     :vartype next_link: str
     """
@@ -708,9 +710,9 @@ class IotHubSkuDescription(msrest.serialization.Model):
     :ivar resource_type: The type of the resource.
     :vartype resource_type: str
     :param sku: Required. Information about the SKU of the IoT hub.
-    :type sku: ~azure.mgmt.iothub.models.IotHubSkuInfo
+    :type sku: ~azure.mgmt.iothub.v2017_01_19.models.IotHubSkuInfo
     :param capacity: Required. IoT Hub capacity information.
-    :type capacity: ~azure.mgmt.iothub.models.IotHubCapacity
+    :type capacity: ~azure.mgmt.iothub.v2017_01_19.models.IotHubCapacity
     """
 
     _validation = {
@@ -741,7 +743,7 @@ class IotHubSkuDescriptionListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: The array of IotHubSkuDescription.
-    :type value: list[~azure.mgmt.iothub.models.IotHubSkuDescription]
+    :type value: list[~azure.mgmt.iothub.v2017_01_19.models.IotHubSkuDescription]
     :ivar next_link: The next link.
     :vartype next_link: str
     """
@@ -772,9 +774,9 @@ class IotHubSkuInfo(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The name of the SKU. Possible values include: "F1", "S1", "S2", "S3".
-    :type name: str or ~azure.mgmt.iothub.models.IotHubSku
+    :type name: str or ~azure.mgmt.iothub.v2017_01_19.models.IotHubSku
     :ivar tier: The billing tier for the IoT hub. Possible values include: "Free", "Standard".
-    :vartype tier: str or ~azure.mgmt.iothub.models.IotHubSkuTier
+    :vartype tier: str or ~azure.mgmt.iothub.v2017_01_19.models.IotHubSkuTier
     :param capacity: Required. The number of provisioned IoT Hub units. See:
      https://docs.microsoft.com/azure/azure-subscription-service-limits#iot-hub-limits.
     :type capacity: long
@@ -811,7 +813,7 @@ class IpFilterRule(msrest.serialization.Model):
     :type filter_name: str
     :param action: Required. The desired action for requests captured by this rule. Possible values
      include: "Accept", "Reject".
-    :type action: str or ~azure.mgmt.iothub.models.IpFilterActionType
+    :type action: str or ~azure.mgmt.iothub.v2017_01_19.models.IpFilterActionType
     :param ip_mask: Required. A string that contains the IP address range in CIDR notation for the
      rule.
     :type ip_mask: str
@@ -853,10 +855,10 @@ class JobResponse(msrest.serialization.Model):
     :ivar type: The type of the job. Possible values include: "unknown", "export", "import",
      "backup", "readDeviceProperties", "writeDeviceProperties", "updateDeviceConfiguration",
      "rebootDevice", "factoryResetDevice", "firmwareUpdate".
-    :vartype type: str or ~azure.mgmt.iothub.models.JobType
+    :vartype type: str or ~azure.mgmt.iothub.v2017_01_19.models.JobType
     :ivar status: The status of the job. Possible values include: "unknown", "enqueued", "running",
      "completed", "failed", "cancelled".
-    :vartype status: str or ~azure.mgmt.iothub.models.JobStatus
+    :vartype status: str or ~azure.mgmt.iothub.v2017_01_19.models.JobStatus
     :ivar failure_reason: If status == failed, this string containing the reason for the failure.
     :vartype failure_reason: str
     :ivar status_message: The status message for the job.
@@ -908,7 +910,7 @@ class JobResponseListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: The array of JobResponse objects.
-    :type value: list[~azure.mgmt.iothub.models.JobResponse]
+    :type value: list[~azure.mgmt.iothub.v2017_01_19.models.JobResponse]
     :ivar next_link: The next link.
     :vartype next_link: str
     """
@@ -934,12 +936,12 @@ class JobResponseListResult(msrest.serialization.Model):
 class MessagingEndpointProperties(msrest.serialization.Model):
     """The properties of the messaging endpoints used by this IoT hub.
 
-    :param lock_duration_as_iso8601: The lock duration. See: https://docs.microsoft.com/azure/iot-
-     hub/iot-hub-devguide-file-upload.
+    :param lock_duration_as_iso8601: The lock duration. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload.
     :type lock_duration_as_iso8601: ~datetime.timedelta
     :param ttl_as_iso8601: The period of time for which a message is available to consume before it
-     is expired by the IoT hub. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-
-     upload.
+     is expired by the IoT hub. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload.
     :type ttl_as_iso8601: ~datetime.timedelta
     :param max_delivery_count: The number of times the IoT hub attempts to deliver a message. See:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload.
@@ -995,7 +997,7 @@ class OperationsMonitoringProperties(msrest.serialization.Model):
     """The operations monitoring properties for the IoT hub. The possible keys to the dictionary are Connections, DeviceTelemetry, C2DCommands, DeviceIdentityOperations, FileUploadOperations, Routes, D2CTwinOperations, C2DTwinOperations, TwinQueries, JobsOperations, DirectMethods.
 
     :param events: Dictionary of :code:`<OperationMonitoringLevel>`.
-    :type events: dict[str, str or ~azure.mgmt.iothub.models.OperationMonitoringLevel]
+    :type events: dict[str, str or ~azure.mgmt.iothub.v2017_01_19.models.OperationMonitoringLevel]
     """
 
     _attribute_map = {
@@ -1057,7 +1059,7 @@ class RouteProperties(msrest.serialization.Model):
     :param source: Required. The source that the routing rule is to be applied to, such as
      DeviceMessages. Possible values include: "DeviceMessages", "TwinChangeEvents",
      "DeviceLifecycleEvents", "DeviceJobLifecycleEvents".
-    :type source: str or ~azure.mgmt.iothub.models.RoutingSource
+    :type source: str or ~azure.mgmt.iothub.v2017_01_19.models.RoutingSource
     :param condition: The condition that is evaluated to apply the routing rule. If no condition is
      provided, it evaluates to true by default. For grammar, See:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language.
@@ -1102,14 +1104,14 @@ class RoutingEndpoints(msrest.serialization.Model):
     :param service_bus_queues: The list of Service Bus queue endpoints that IoT hub routes the
      messages to, based on the routing rules.
     :type service_bus_queues:
-     list[~azure.mgmt.iothub.models.RoutingServiceBusQueueEndpointProperties]
+     list[~azure.mgmt.iothub.v2017_01_19.models.RoutingServiceBusQueueEndpointProperties]
     :param service_bus_topics: The list of Service Bus topic endpoints that the IoT hub routes the
      messages to, based on the routing rules.
     :type service_bus_topics:
-     list[~azure.mgmt.iothub.models.RoutingServiceBusTopicEndpointProperties]
+     list[~azure.mgmt.iothub.v2017_01_19.models.RoutingServiceBusTopicEndpointProperties]
     :param event_hubs: The list of Event Hubs endpoints that IoT hub routes messages to, based on
      the routing rules. This list does not include the built-in Event Hubs endpoint.
-    :type event_hubs: list[~azure.mgmt.iothub.models.RoutingEventHubProperties]
+    :type event_hubs: list[~azure.mgmt.iothub.v2017_01_19.models.RoutingEventHubProperties]
     """
 
     _attribute_map = {
@@ -1176,16 +1178,16 @@ class RoutingProperties(msrest.serialization.Model):
      messages based on the routing rules. A maximum of 10 custom endpoints are allowed across all
      endpoint types for paid hubs and only 1 custom endpoint is allowed across all endpoint types
      for free hubs.
-    :type endpoints: ~azure.mgmt.iothub.models.RoutingEndpoints
+    :type endpoints: ~azure.mgmt.iothub.v2017_01_19.models.RoutingEndpoints
     :param routes: The list of user-provided routing rules that the IoT hub uses to route messages
      to built-in and custom endpoints. A maximum of 100 routing rules are allowed for paid hubs and
      a maximum of 5 routing rules are allowed for free hubs.
-    :type routes: list[~azure.mgmt.iothub.models.RouteProperties]
+    :type routes: list[~azure.mgmt.iothub.v2017_01_19.models.RouteProperties]
     :param fallback_route: The properties of the route that is used as a fall-back route when none
      of the conditions specified in the 'routes' section are met. This is an optional parameter.
      When this property is not set, the messages which do not meet any of the conditions specified
      in the 'routes' section get routed to the built-in eventhub endpoint.
-    :type fallback_route: ~azure.mgmt.iothub.models.FallbackRouteProperties
+    :type fallback_route: ~azure.mgmt.iothub.v2017_01_19.models.FallbackRouteProperties
     """
 
     _attribute_map = {
@@ -1306,7 +1308,7 @@ class SharedAccessSignatureAuthorizationRule(msrest.serialization.Model):
      "RegistryRead, RegistryWrite, ServiceConnect", "RegistryRead, RegistryWrite, DeviceConnect",
      "RegistryRead, ServiceConnect, DeviceConnect", "RegistryWrite, ServiceConnect, DeviceConnect",
      "RegistryRead, RegistryWrite, ServiceConnect, DeviceConnect".
-    :type rights: str or ~azure.mgmt.iothub.models.AccessRights
+    :type rights: str or ~azure.mgmt.iothub.v2017_01_19.models.AccessRights
     """
 
     _validation = {
@@ -1338,7 +1340,7 @@ class SharedAccessSignatureAuthorizationRuleListResult(msrest.serialization.Mode
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: The list of shared access policies.
-    :type value: list[~azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule]
+    :type value: list[~azure.mgmt.iothub.v2017_01_19.models.SharedAccessSignatureAuthorizationRule]
     :ivar next_link: The next link.
     :vartype next_link: str
     """
@@ -1367,8 +1369,8 @@ class StorageEndpointProperties(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param sas_ttl_as_iso8601: The period of time for which the SAS URI generated by IoT Hub for
-     file upload is valid. See: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-
-     upload#file-upload-notification-configuration-options.
+     file upload is valid. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload#file-upload-notification-configuration-options.
     :type sas_ttl_as_iso8601: ~datetime.timedelta
     :param connection_string: Required. The connection string for the Azure Storage account to
      which files are uploaded.
