@@ -22,9 +22,9 @@ USAGE:
     3) ATTESTATION_LOCATION_SHORT_NAME - the short name for the region in which the
         sample should be run - used to interact with the shared endpoint for that
         region.
-    4) AZURE_TENANT_ID - Tenant Instance for authentication.
-    5) AZURE_CLIENT_ID - Client identity for authentication.
-    6) AZURE_CLIENT_SECRET - Secret used to identify the client.
+    4) ATTESTATION_TENANT_ID - Tenant Instance for authentication.
+    5) ATTESTATION_CLIENT_ID - Client identity for authentication.
+    6) ATTESTATION_CLIENT_SECRET - Secret used to identify the client.
 """
 
 
@@ -81,9 +81,9 @@ class AttestationClientCreateSamples(object):
         shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
 
 
-        tenant_id = os.getenv("AZURE_TENANT_ID")
-        client_id = os.getenv("AZURE_CLIENT_ID")
-        secret = os.getenv("AZURE_CLIENT_SECRET")
+        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
+        client_id = os.getenv("ATTESTATION_CLIENT_ID")
+        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
 
         if tenant_id and client_id and secret:
             # Create azure-identity class

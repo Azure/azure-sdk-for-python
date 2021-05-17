@@ -17,9 +17,9 @@ DESCRIPTION:
     the sample:
     1) ATTESTATION_AAD_URL - the base URL for an attestation service instance in AAD mode.
     2) ATTESTATION_ISOLATED_URL - the base URL for an attestation service instance in Isolated mode.
-    3) AZURE_TENANT_ID - Tenant Instance for authentication.
-    4) AZURE_CLIENT_ID - Client identity for authentication.
-    5) AZURE_CLIENT_SECRET - Secret used to identify the client.
+    3) ATTESTATION_TENANT_ID - Tenant Instance for authentication.
+    4) ATTESTATION_CLIENT_ID - Client identity for authentication.
+    5) ATTESTATION_CLIENT_SECRET - Secret used to identify the client.
     6) ATTESTATION_ISOLATED_SIGNING_CERTIFICATE - Base64 encoded X.509 Certificate
         specified when the isolated mode instance is created. 
     7) ATTESTATION_ISOLATED_SIGNING_KEY - Base64 encoded DER encoded RSA Private key
@@ -290,9 +290,9 @@ class AttestationClientPolicySamples(object):
 
     def _create_admin_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationAdministrationClient
-        tenant_id = os.getenv("AZURE_TENANT_ID")
-        client_id = os.getenv("AZURE_CLIENT_ID")
-        secret = os.getenv("AZURE_CLIENT_SECRET")
+        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
+        client_id = os.getenv("ATTESTATION_CLIENT_ID")
+        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
 
         if tenant_id and client_id and secret:
             # Create azure-identity class
@@ -306,9 +306,9 @@ class AttestationClientPolicySamples(object):
 
     def _create_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationClient
-        tenant_id = os.getenv("AZURE_TENANT_ID")
-        client_id = os.getenv("AZURE_CLIENT_ID")
-        secret = os.getenv("AZURE_CLIENT_SECRET")
+        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
+        client_id = os.getenv("ATTESTATION_CLIENT_ID")
+        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
 
         if tenant_id and client_id and secret:
             # Create azure-identity class
