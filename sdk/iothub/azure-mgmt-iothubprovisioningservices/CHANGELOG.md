@@ -1,45 +1,35 @@
 # Release History
 
-## 1.0.0 (2021-05-14)
+## 1.0.0b1 (2021-05-14)
 
-**Features**
+This is beta preview version.
 
-  - Model CertificateProperties has a new parameter certificate
-  - Model VerificationCodeResponseProperties has a new parameter certificate
-  - Model IotDpsPropertiesDescription has a new parameter ip_filter_rules
-  - Model IotDpsPropertiesDescription has a new parameter private_endpoint_connections
-  - Model IotDpsPropertiesDescription has a new parameter public_network_access
-  - Added operation IotDpsResourceOperations.get_private_endpoint_connection
-  - Added operation IotDpsResourceOperations.list_private_link_resources
-  - Added operation IotDpsResourceOperations.begin_create_or_update
-  - Added operation IotDpsResourceOperations.begin_create_or_update_private_endpoint_connection
-  - Added operation IotDpsResourceOperations.begin_update
-  - Added operation IotDpsResourceOperations.get_private_link_resources
-  - Added operation IotDpsResourceOperations.list_private_endpoint_connections
-  - Added operation IotDpsResourceOperations.begin_delete_private_endpoint_connection
-  - Added operation IotDpsResourceOperations.begin_delete
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
 
-**Breaking changes**
+**General breaking changes**
 
-  - Operation DpsCertificateOperations.create_or_update has a new signature
-  - Operation DpsCertificateOperations.get has a new signature
-  - Operation DpsCertificateOperations.list has a new signature
-  - Operation IotDpsResourceOperations.get has a new signature
-  - Operation IotDpsResourceOperations.get_operation_result has a new signature
-  - Operation IotDpsResourceOperations.list_by_resource_group has a new signature
-  - Operation IotDpsResourceOperations.list_keys has a new signature
-  - Operation IotDpsResourceOperations.list_keys_for_key_name has a new signature
-  - Operation IotDpsResourceOperations.list_valid_skus has a new signature
-  - Operation DpsCertificateOperations.create_or_update has a new signature
-  - Operation DpsCertificateOperations.verify_certificate has a new signature
-  - Operation DpsCertificateOperations.generate_verification_code has a new signature
-  - Operation DpsCertificateOperations.delete has a new signature
-  - Operation Operations.list has a new signature
-  - Operation IotDpsResourceOperations.check_provisioning_service_name_availability has a new signature
-  - Operation IotDpsResourceOperations.list_by_subscription has a new signature
-  - Removed operation IotDpsResourceOperations.create_or_update
-  - Removed operation IotDpsResourceOperations.delete
-  - Removed operation IotDpsResourceOperations.update
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
 
 ## 0.2.0 (2018-04-17)
 
