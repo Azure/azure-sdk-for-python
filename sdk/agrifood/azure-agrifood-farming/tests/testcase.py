@@ -14,11 +14,11 @@ from azure.core.exceptions import HttpResponseError
 
 class FarmBeatsTest(AzureTestCase):
 
-    def create_client(self, farmbeats_endpoint):
+    def create_client(self, agrifood_endpoint):
         credential = self.get_credential(FarmBeatsClient)
         return self.create_client_from_credential(
             FarmBeatsClient,
-            endpoint=farmbeats_endpoint,
+            endpoint=agrifood_endpoint,
             credential=credential,
         )
 
@@ -30,13 +30,13 @@ class FarmBeatsTest(AzureTestCase):
             return created_name
         return name
 
-    def create_boundary_if_not_exist(self, client, farmbeats_farmer_id, farmbeats_boundary_id):
+    def create_boundary_if_not_exist(self, client, agrifood_farmer_id, agrifood_boundary_id):
         try:
-            return client.boundaries.get(farmer_id=farmbeats_farmer_id, boundary_id=farmbeats_boundary_id)
+            return client.boundaries.get(farmer_id=agrifood_farmer_id, boundary_id=agrifood_boundary_id)
         except HttpResponseError:
             return client.boundaries.create_or_update(
-                farmer_id=farmbeats_farmer_id,
-                boundary_id=farmbeats_boundary_id,
+                farmer_id=agrifood_farmer_id,
+                boundary_id=agrifood_boundary_id,
                 body=Boundary(
                     description="Created by SDK",
                     geometry=Polygon(
@@ -55,14 +55,14 @@ class FarmBeatsTest(AzureTestCase):
                 )
             )
 
-    def delete_boundary(self, client, farmbeats_farmer_id, farmbeats_boundary_id):
-        client.boundaries.delete(farmer_id=farmbeats_farmer_id, boundary_id=farmbeats_boundary_id)
+    def delete_boundary(self, client, agrifood_farmer_id, agrifood_boundary_id):
+        client.boundaries.delete(farmer_id=agrifood_farmer_id, boundary_id=agrifood_boundary_id)
 
 FarmBeatsPowerShellPreparer = functools.partial(
     PowerShellPreparer,
-    "farmbeats",
-    farmbeats_endpoint="https://fakeAccount.farmbeats.azure.net",
-    farmbeats_farmer_id="fake-farmer",
-    farmbeats_boundary_id="fake-boundary",
-    farmbeats_job_id_prefix="fake-job",
+    "agrifood",
+    agrifood_endpoint="https://fakeAccount.farmbeats.azure.net",
+    agrifood_farmer_id="fake-farmer",
+    agrifood_boundary_id="fake-boundary",
+    agrifood_job_id_prefix="fake-job",
 )

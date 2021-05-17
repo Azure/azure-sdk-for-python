@@ -13,12 +13,12 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"fake-farmer","eTag":"00001161-0000-0600-0000-609d47740000","createdDateTime":"2021-05-13T15:36:20Z","modifiedDateTime":"2021-05-13T15:36:20Z"}'
+      string: '{"id":"fake-farmer","eTag":"2d00b7be-0000-0600-0000-609ecf930000","createdDateTime":"2021-05-14T19:29:23Z","modifiedDateTime":"2021-05-14T19:29:23Z"}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -27,15 +27,15 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '150'
+      - '149'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 15:36:20 GMT
+      - Fri, 14 May 2021 19:29:23 GMT
       etag:
-      - 00001161-0000-0600-0000-609d47740000
+      - 2d00b7be-0000-0600-0000-609ecf930000
       location:
-      - http://sdk-testing-wcus-1.farmbeats.azure.net/farmers/fake-farmer
+      - http://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/fake-farmer
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -53,12 +53,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"fake-farmer","eTag":"00001161-0000-0600-0000-609d47740000","createdDateTime":"2021-05-13T15:36:20Z","modifiedDateTime":"2021-05-13T15:36:20Z"}'
+      string: '{"id":"fake-farmer","eTag":"2d00b7be-0000-0600-0000-609ecf930000","createdDateTime":"2021-05-14T19:29:23Z","modifiedDateTime":"2021-05-14T19:29:23Z"}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -67,13 +67,13 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '150'
+      - '149'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 15:36:21 GMT
+      - Fri, 14 May 2021 19:29:24 GMT
       etag:
-      - 00001161-0000-0600-0000-609d47740000
+      - 2d00b7be-0000-0600-0000-609ecf930000
       server:
       - nginx/1.19.1
       strict-transport-security:
