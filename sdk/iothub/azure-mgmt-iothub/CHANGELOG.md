@@ -1,5 +1,32 @@
 # Release History
 
+## 0.13.0 (2021-05-14)
+
+**Features**
+
+  - Model RoutingStorageContainerProperties has a new parameter identity
+  - Model RoutingServiceBusQueueEndpointProperties has a new parameter identity
+  - Model IotHubDescription has a new parameter identity
+  - Model RoutingEventHubProperties has a new parameter identity
+  - Model IotHubProperties has a new parameter network_rule_sets
+  - Model ExportDevicesRequest has a new parameter identity
+  - Model ExportDevicesRequest has a new parameter configurations_blob_name
+  - Model ExportDevicesRequest has a new parameter include_configurations
+  - Model StorageEndpointProperties has a new parameter identity
+  - Model ImportDevicesRequest has a new parameter identity
+  - Model ImportDevicesRequest has a new parameter configurations_blob_name
+  - Model ImportDevicesRequest has a new parameter include_configurations
+  - Model RoutingServiceBusTopicEndpointProperties has a new parameter identity
+  - Model EndpointHealthData has a new parameter last_known_error
+  - Model EndpointHealthData has a new parameter last_send_attempt_time
+  - Model EndpointHealthData has a new parameter last_known_error_time
+  - Model EndpointHealthData has a new parameter last_successful_send_attempt_time
+
+**Breaking changes**
+
+  - Operation CertificatesOperations.create_or_update has a new signature
+  - Operation IotHubResourceOperations.create_event_hub_consumer_group has a new signature
+
 ## 0.12.0 (2020-05-12)
 
 **Features**

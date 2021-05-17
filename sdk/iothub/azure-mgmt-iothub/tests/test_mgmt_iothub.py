@@ -19,6 +19,7 @@ class MgmtIoTHubTest(AzureMgmtTestCase):
             azure.mgmt.iothub.IotHubClient
         )
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer()
     def test_iothub(self, resource_group, location):
         account_name = self.get_resource_name('iot')
@@ -94,6 +95,7 @@ class MgmtIoTHubTest(AzureMgmtTestCase):
         )
         async_delete.wait()
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer()
     def test_iothub_consumer_group(self, resource_group, location):
         account_name = self.get_resource_name('iot')

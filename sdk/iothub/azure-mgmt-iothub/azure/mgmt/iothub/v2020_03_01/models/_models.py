@@ -675,7 +675,7 @@ class GroupIdInformation(Model):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'properties': {'required': True},
     }
@@ -1477,7 +1477,7 @@ class PrivateEndpointConnection(Model):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'properties': {'required': True},
     }
