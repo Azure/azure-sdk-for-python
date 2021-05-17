@@ -13,7 +13,6 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     AzureError,
-    ResourceNotFoundError
 )
 from azure.core.pipeline.policies import RetryMode
 from azure.core.pipeline.transport import(
@@ -21,12 +20,10 @@ from azure.core.pipeline.transport import(
 )
 
 from azure.data.tables.aio import TableServiceClient
-from azure.data.tables import LocationMode
 
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import (
     ResponseCallback,
-    RetryCounter
 )
 
 from async_preparers import tables_decorator_async
@@ -62,22 +59,6 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
                 pass
 
         self.query_tables = []
-
-    async def _tear_down(self, **kwargs):
-        if self.is_live:
-            try:
-                await self.ts.delete_table(self.table_name, **kwargs)
-            except:
-                pass
-
-            try:
-                for table_name in self.query_tables:
-                    try:
-                        await self.ts.delete_table(table_name, **kwargs)
-                    except:
-                        pass
-            except AttributeError:
-                pass
 
     # --Test Cases --------------------------------------------
     @tables_decorator_async
