@@ -30,5 +30,9 @@ extends:
   parameters:
     ServiceDirectory: iothub
     Artifacts:
+    - name: azure-mgmt-azure-mgmt-iotcentral
+      safeName: azuremgmtiotcentral
     - name: azure-mgmt-iothub
       safeName: azuremgmtiothub
+    - name: azure-mgmt-iothubprovisioningservices
+      safeName: azuremgmtiothubprovisioningservices
