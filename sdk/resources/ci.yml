@@ -30,8 +30,6 @@ extends:
   parameters:
     ServiceDirectory: resources
     Artifacts:
-    - name: azure-mgmt-msi
-      safeName: azuremgmtmsi
     - name: azure-mgmt-resource
       safeName: azuremgmtresource
     - name: azure-mgmt-resourcegraph
