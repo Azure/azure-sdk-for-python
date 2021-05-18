@@ -34,3 +34,5 @@ extends:
       safeName: azuremgmtiothub
     - name: azure-mgmt-iothubprovisioningservices
       safeName: azuremgmtiothubprovisioningservices
+    - name: azure-mgmt-iotcentral
+      safeName: azuremgmtiotcentral
