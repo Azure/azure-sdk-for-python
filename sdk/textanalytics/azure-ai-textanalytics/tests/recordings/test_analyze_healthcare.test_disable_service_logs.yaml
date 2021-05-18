@@ -16,17 +16,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs?stringIndexType=UnicodeCodePoint&loggingOptOut=true
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs?stringIndexType=UnicodeCodePoint&loggingOptOut=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - c9aaa6dc-99b6-4a75-b8c4-3bc0f667be23
+      - fc029d44-0ea7-4c2c-aae7-10e4232155d6
       date:
-      - Thu, 13 May 2021 23:45:02 GMT
+      - Tue, 18 May 2021 18:25:20 GMT
       operation-location:
-      - https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/0efc93bf-471e-4509-9e56-37d90fb41fba
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/445f6a16-759e-40d6-a2ed-6b6a931e876a
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -34,7 +34,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5183'
+      - '128'
     status:
       code: 202
       message: Accepted
@@ -50,17 +50,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/0efc93bf-471e-4509-9e56-37d90fb41fba
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/445f6a16-759e-40d6-a2ed-6b6a931e876a
   response:
     body:
-      string: '{"jobId":"0efc93bf-471e-4509-9e56-37d90fb41fba","lastUpdateDateTime":"2021-05-13T23:45:12Z","createdDateTime":"2021-05-13T23:44:58Z","expirationDateTime":"2021-05-14T23:44:58Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-03-01"}}'
+      string: '{"jobId":"445f6a16-759e-40d6-a2ed-6b6a931e876a","lastUpdateDateTime":"2021-05-18T18:25:20Z","createdDateTime":"2021-05-18T18:25:20Z","expirationDateTime":"2021-05-19T18:25:20Z","status":"notStarted","errors":[]}'
     headers:
       apim-request-id:
-      - b4996314-b57a-4b33-be75-4e7d14ddb2a9
+      - 099ab82c-34d8-45f3-8376-9479d87942f3
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 23:45:15 GMT
+      - Tue, 18 May 2021 18:25:25 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -68,7 +68,41 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '7770'
+      - '10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/445f6a16-759e-40d6-a2ed-6b6a931e876a
+  response:
+    body:
+      string: '{"jobId":"445f6a16-759e-40d6-a2ed-6b6a931e876a","lastUpdateDateTime":"2021-05-18T18:25:26Z","createdDateTime":"2021-05-18T18:25:20Z","expirationDateTime":"2021-05-19T18:25:20Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-03-01"}}'
+    headers:
+      apim-request-id:
+      - 7033f014-2777-45b7-ae16-d94b9071b773
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 18 May 2021 18:25:30 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '34'
     status:
       code: 200
       message: OK

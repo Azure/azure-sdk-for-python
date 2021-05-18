@@ -14,21 +14,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","entities":[{"text":"veterinarian","category":"PersonType","offset":28,"length":12,"confidenceScore":0.97}],"warnings":[]},{"id":"4","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
-      apim-request-id: 94c9876f-b6c3-44fc-a5e0-b4a68b7f8293
+      apim-request-id: 41802a52-5163-4faf-b4de-35435e39f134
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
-      date: Thu, 13 May 2021 22:36:06 GMT
+      date: Tue, 18 May 2021 17:47:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '49'
+      x-envoy-upstream-service-time: '31'
     status:
       code: 200
       message: OK
-    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

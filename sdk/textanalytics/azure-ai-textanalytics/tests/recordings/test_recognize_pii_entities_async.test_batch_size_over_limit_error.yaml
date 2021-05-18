@@ -721,21 +721,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
         request contains too many records. Max 5 records are permitted."}}}'
     headers:
-      apim-request-id: 0760a72c-619e-40a8-be59-6b1ebbdae71b
+      apim-request-id: d1a707ee-2e28-4d0e-acfe-3fe8e221de9d
       content-type: application/json; charset=utf-8
-      date: Thu, 13 May 2021 22:36:14 GMT
+      date: Tue, 18 May 2021 17:48:07 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '9'
+      x-envoy-upstream-service-time: '10'
     status:
       code: 400
       message: Bad Request
-    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

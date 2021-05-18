@@ -12,22 +12,22 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/linking?model-version=bad&showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/linking?model-version=bad&showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innererror":{"code":"ModelVersionIncorrect","message":"Invalid
         model version. Possible values are: latest,2019-10-01,2020-02-01. For additional
         details see https://aka.ms/text-analytics-model-versioning"}}}'
     headers:
-      apim-request-id: 47cb8bb3-1616-4aab-8eaa-7548382025b0
+      apim-request-id: 99587f8d-5fd2-4f7f-8727-481505e56a79
       content-type: application/json; charset=utf-8
-      date: Thu, 13 May 2021 22:36:14 GMT
+      date: Tue, 18 May 2021 17:48:02 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '8'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 400
       message: Bad Request
-    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/linking?model-version=bad&showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/linking?model-version=bad&showStats=false&stringIndexType=UnicodeCodePoint
 version: 1
