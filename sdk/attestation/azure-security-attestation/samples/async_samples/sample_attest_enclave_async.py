@@ -55,6 +55,21 @@ class AttestationClientAttestationSamples(object):
         load_dotenv(find_dotenv())
         shared_short_name  = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
         self.shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
+        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
+        client_id = os.getenv("ATTESTATION_CLIENT_ID")
+        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
+
+        if not tenant_id or not client_id or not secret:
+            raise Exception("Must provide authentication information.")
+        # Create azure-identity class
+        from azure.identity.aio import ClientSecretCredential
+
+        self._credentials = ClientSecretCredential(
+            tenant_id=tenant_id, client_id=client_id, client_secret=secret
+        )
+
+    async def close(self):
+        await self._credentials.close()
 
     async def attest_sgx_enclave_shared(self):
         """
@@ -84,7 +99,6 @@ class AttestationClientAttestationSamples(object):
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
 
         # [START attest_open_enclave_shared]
-        print()
         print('Attest Open enclave using ', self.shared_url)
         async with self._create_client(self.shared_url) as attest_client:
             response = await attest_client.attest_open_enclave(
@@ -220,19 +234,7 @@ issuancerules {
 
     def _create_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationClient
-        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
-        client_id = os.getenv("ATTESTATION_CLIENT_ID")
-        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
-
-        if tenant_id and client_id and secret:
-            # Create azure-identity class
-            from azure.identity.aio import ClientSecretCredential
-
-            credentials = ClientSecretCredential(
-                tenant_id=tenant_id, client_id=client_id, client_secret=secret
-            )
-
-        return AttestationClient(credentials, instance_url=base_url, **kwargs)
+        return AttestationClient(self._credentials, instance_url=base_url, **kwargs)
 
 async def main():
     sample = AttestationClientAttestationSamples()
@@ -241,6 +243,7 @@ async def main():
     await sample.attest_open_enclave_shared_with_options()
     await sample.attest_open_enclave_with_draft_policy()
     await sample.attest_open_enclave_with_draft_failing_policy()
+    await sample.close()
 
 
 if __name__ == "__main__":

@@ -23,7 +23,7 @@ DESCRIPTION:
     6) ATTESTATION_ISOLATED_SIGNING_CERTIFICATE - Base64 encoded X.509 Certificate
         specified when the isolated mode instance is created. 
     7) ATTESTATION_ISOLATED_SIGNING_KEY - Base64 encoded DER encoded RSA Private key
-        associated with the ATTESTATATION_ISOLATED_SIGNING_CERTIFICATE
+        associated with the ATTESTATION_ISOLATED_SIGNING_CERTIFICATE
 
 
 """
@@ -59,6 +59,22 @@ class AttestationClientPolicySamples(object):
         if self.isolated_url:
             self.isolated_certificate = base64.b64decode(os.getenv("ATTESTATION_ISOLATED_SIGNING_CERTIFICATE"))
             self.isolated_key = base64.b64decode(os.getenv("ATTESTATION_ISOLATED_SIGNING_KEY"))
+        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
+        client_id = os.getenv("ATTESTATION_CLIENT_ID")
+        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
+
+        if not tenant_id or not client_id or not secret:
+            raise Exception("Must provide credentials.")
+
+        # Create azure-identity class
+        from azure.identity.aio import ClientSecretCredential
+
+        self._credentials = ClientSecretCredential(
+            tenant_id=tenant_id, client_id=client_id, client_secret=secret
+        )
+
+    async def close(self):
+        self._credentials.close()
 
     async def get_policy_aad(self):
         """
@@ -69,6 +85,7 @@ class AttestationClientPolicySamples(object):
         async with self._create_admin_client(self.aad_url) as admin_client:
             get_result = await admin_client.get_policy(AttestationType.SGX_ENCLAVE)
             print("SGX Policy is: ", get_result.value)
+
 
     async def set_policy_aad_unsecured(self):
         """
@@ -102,7 +119,6 @@ class AttestationClientPolicySamples(object):
                 print("Policy does not match set policy.")
             # Attest an OpenEnclave using the new policy.
             self._attest_open_enclave(self.aad_url)
-
         
     async def reset_policy_aad_unsecured(self):
         """
@@ -290,35 +306,12 @@ class AttestationClientPolicySamples(object):
 
     def _create_admin_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationAdministrationClient
-        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
-        client_id = os.getenv("ATTESTATION_CLIENT_ID")
-        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
 
-        if tenant_id and client_id and secret:
-            # Create azure-identity class
-            from azure.identity.aio import ClientSecretCredential
-
-            credentials = ClientSecretCredential(
-                tenant_id=tenant_id, client_id=client_id, client_secret=secret
-            )
-
-        return AttestationAdministrationClient(credentials, instance_url=base_url, **kwargs)
+        return AttestationAdministrationClient(self._credentials, instance_url=base_url, **kwargs)
 
     def _create_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationClient
-        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
-        client_id = os.getenv("ATTESTATION_CLIENT_ID")
-        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
-
-        if tenant_id and client_id and secret:
-            # Create azure-identity class
-            from azure.identity.aio import ClientSecretCredential
-
-            credentials = ClientSecretCredential(
-                tenant_id=tenant_id, client_id=client_id, client_secret=secret
-            )
-
-        return AttestationClient(credentials, instance_url=base_url, **kwargs)
+        return AttestationClient(self._credentials, instance_url=base_url, **kwargs)
 
 async def main():
     sample = AttestationClientPolicySamples()
@@ -330,6 +323,7 @@ async def main():
     await sample.set_policy_isolated_secured()
     await sample.get_policy_management_certificates()
     await sample.add_remove_policy_management_certificate()
+    await sample.close()
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
