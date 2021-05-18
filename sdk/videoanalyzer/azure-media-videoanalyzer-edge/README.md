@@ -28,7 +28,7 @@ pip install azure-media-videoanalyzer-edge
 
     | SDK  | Video Analyzer Edge Module  |
     |---|---|
-    | 1.0.0b1  | 2.0  |
+    | 1.0.0b1  | 1.0  |
 
 ### Creating a pipline topology and making requests
 
@@ -56,8 +56,8 @@ To create a pipeline topology you need to define parameters, sources, and sinks.
 
 ```python
 #Parameters
-user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
-password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="dummypassword")
+user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="testusername")
+password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="testpassword")
 url_param = ParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
 hub_param = ParameterDeclaration(name="hubSinkOutputName",type="String")
 
@@ -140,16 +140,16 @@ additional questions or comments.
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
 
-[package]: TODO://link-to-published-package
+[package]: https://aka.ms/ava/sdk/client/python
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/videoanalyzer
 [samples]: https://github.com/Azure-Samples/live-video-analytics-iot-edge-python
 
-[doc_direct_methods]: TODO://link
-[doc_pipelines]: TODO://link
-[doc_product]: TODO://link
+[doc_direct_methods]: https://docs.microsoft.com/azure/azure-video-analyzer/video-analyzer-docs/direct-methods
+[doc_pipelines]: https://docs.microsoft.com/azure/azure-video-analyzer/video-analyzer-docs/pipeline
+[doc_product]: https://docs.microsoft.com/azure/azure-video-analyzer/video-analyzer-docs/overview
 
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/
 [iot-hub-sdk]: https://pypi.org/project/azure-iot-hub/
-[iot_device_connection_string]: TODO://link
+[iot_device_connection_string]: https://docs.microsoft.com/azure/azure-video-analyzer/video-analyzer-docs/get-started-detect-motion-emit-events#obtain-your-iot-hub-connection-string
 
 [github-page-issues]: https://github.com/Azure/azure-sdk-for-python/issues
