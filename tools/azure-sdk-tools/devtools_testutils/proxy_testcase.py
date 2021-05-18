@@ -111,7 +111,6 @@ def RecordedByProxy(func):
         trim_kwargs_from_test_function(func, trimmed_kwargs)
 
         original_transport_func = RequestsTransport.send
-        # print("Entering patch context. RequestsTransport.send is at {}".format(id(RequestsTransport.send)))
 
         def combined_call(*args, **kwargs):
             adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
@@ -122,7 +121,6 @@ def RecordedByProxy(func):
             return original_transport_func(*adjusted_args, **adjusted_kwargs)
 
         RequestsTransport.send = combined_call
-        # print("Patched context. RequestsTransport.send is now at {}".format(id(RequestsTransport.send)))
 
         # call the modified function.
         try:
