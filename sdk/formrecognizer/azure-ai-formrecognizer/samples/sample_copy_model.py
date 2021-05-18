@@ -42,7 +42,7 @@ class CopyModelSample(object):
         source_key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
         target_endpoint = os.environ["AZURE_FORM_RECOGNIZER_TARGET_ENDPOINT"]
         target_key = os.environ["AZURE_FORM_RECOGNIZER_TARGET_KEY"]
-        source_model_id = os.environ["AZURE_SOURCE_MODEL_ID"] or custom_model_id
+        source_model_id = os.getenv("AZURE_SOURCE_MODEL_ID") or custom_model_id
         target_region = os.environ["AZURE_FORM_RECOGNIZER_TARGET_REGION"]
         target_resource_id = os.environ["AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID"]
 

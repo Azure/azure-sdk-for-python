@@ -49,7 +49,7 @@ class TestDifferentiateOutputLabeledTablesAsync(object):
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        model_id_fixed_rows_table = os.environ["MODEL_ID_FIXED_ROW_TABLES"] or custom_model_id
+        model_id_fixed_rows_table = os.getenv("MODEL_ID_FIXED_ROW_TABLES") or custom_model_id
 
         form_recognizer_client = FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -92,7 +92,7 @@ class TestDifferentiateOutputLabeledTablesAsync(object):
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        model_id_dynamic_rows_table = os.environ["MODEL_ID_DYNAMIC_ROW_TABLES"] or custom_model_id
+        model_id_dynamic_rows_table = os.getenv("MODEL_ID_DYNAMIC_ROW_TABLES") or custom_model_id
 
         form_recognizer_client = FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)

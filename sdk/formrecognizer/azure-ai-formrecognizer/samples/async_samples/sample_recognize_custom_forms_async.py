@@ -41,7 +41,7 @@ class RecognizeCustomFormsSampleAsync(object):
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"] or custom_model_id
+        model_id = os.getenv("CUSTOM_TRAINED_MODEL_ID") or custom_model_id
 
         async with FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)

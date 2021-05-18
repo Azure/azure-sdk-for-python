@@ -49,8 +49,8 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        model_trained_with_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITH_LABELS"] or labeled_model_id
-        model_trained_without_labels_id = os.environ["ID_OF_MODEL_TRAINED_WITHOUT_LABELS"] or unlabeled_model_id
+        model_trained_with_labels_id = os.getenv("ID_OF_MODEL_TRAINED_WITH_LABELS") or labeled_model_id
+        model_trained_without_labels_id = os.getenv("ID_OF_MODEL_TRAINED_WITHOUT_LABELS") or unlabeled_model_id
 
         form_recognizer_client = FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
