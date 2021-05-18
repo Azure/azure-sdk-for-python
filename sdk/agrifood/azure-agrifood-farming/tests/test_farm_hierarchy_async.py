@@ -3,24 +3,25 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import pytest
-from datetime import datetime
+from testcase_async import FarmBeatsTestAsync
+from testcase import FarmBeatsPowerShellPreparer
 from azure.agrifood.farming.models import Farmer
 from azure.core.exceptions import ResourceNotFoundError
-from testcase import FarmBeatsPowerShellPreparer, FarmBeatsTest
+from datetime import datetime
+import pytest
 
 
-class FarmHeirarchyTestCase(FarmBeatsTest):
+class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
 
     @FarmBeatsPowerShellPreparer()
-    def test_farmer_operations(self, agrifood_endpoint):
+    async def test_farmer_operations(self, agrifood_endpoint):
 
         # Setup data
-        farmer_id = "test-farmer-farmer-ops"
+        farmer_id = "test-farmer-farmer-ops-async"
         farmer_name = "Test Farmer"
         farmer_description = "Farmer created during testing."
         farmer_status = "Sample Status"
-        farmer_properties= {
+        farmer_properties = {
             "foo": "bar",
             "numeric one": 1,
             1: "numeric key"
@@ -30,7 +31,7 @@ class FarmHeirarchyTestCase(FarmBeatsTest):
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
 
         # Create
-        farmer = client.farmers.create_or_update(
+        farmer = await client.farmers.create_or_update(
             farmer_id=farmer_id,
             body=Farmer(
                 name=farmer_name,
@@ -56,7 +57,7 @@ class FarmHeirarchyTestCase(FarmBeatsTest):
         assert type(farmer.modified_date_time) is datetime
 
         # Retrieve created object
-        retrieved_farmer = client.farmers.get(farmer_id=farmer_id)
+        retrieved_farmer = await client.farmers.get(farmer_id=farmer_id)
 
         # Assert on retrieved object
         assert farmer == retrieved_farmer
@@ -65,7 +66,7 @@ class FarmHeirarchyTestCase(FarmBeatsTest):
         farmer.name += " Updated"
 
         # Update
-        updated_farmer = client.farmers.create_or_update(
+        updated_farmer = await client.farmers.create_or_update(
             farmer_id=farmer_id,
             body=farmer
         )
@@ -76,14 +77,14 @@ class FarmHeirarchyTestCase(FarmBeatsTest):
         assert farmer.modified_date_time != updated_farmer.modified_date_time
 
         # Retrieve updated object
-        updated_retrieved_farmer = client.farmers.get(farmer_id=farmer_id)
+        updated_retrieved_farmer = await client.farmers.get(farmer_id=farmer_id)
 
         # Assert updated object
         assert updated_retrieved_farmer == updated_farmer
 
         # Delete
-        client.farmers.delete(farmer_id=farmer_id)
+        await client.farmers.delete(farmer_id=farmer_id)
 
         # Assert object doesn't exist anymore
         with pytest.raises(ResourceNotFoundError):
-            client.farmers.get(farmer_id=farmer_id)
+            await client.farmers.get(farmer_id=farmer_id)

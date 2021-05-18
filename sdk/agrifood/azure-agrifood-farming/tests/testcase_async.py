@@ -10,7 +10,7 @@ import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.agrifood.farming.aio import FarmBeatsClient
 from azure.agrifood.farming.models import Boundary, Polygon
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 
 class FarmBeatsTestAsync(AzureTestCase):
 
@@ -30,13 +30,13 @@ class FarmBeatsTestAsync(AzureTestCase):
             return created_name
         return name
 
-    async def create_boundary_if_not_exist(self, client, agrifood_farmer_id, agrifood_boundary_id):
+    async def create_boundary_if_not_exist(self, client, farmer_id, boundary_id):
         try:
-            return await client.boundaries.get(farmer_id=agrifood_farmer_id, boundary_id=agrifood_boundary_id)
-        except ResourceNotFoundError:
+            return await client.boundaries.get(farmer_id=farmer_id, boundary_id=boundary_id)
+        except HttpResponseError:
             return await client.boundaries.create_or_update(
-                farmer_id=agrifood_farmer_id,
-                boundary_id=agrifood_boundary_id,
+                farmer_id=farmer_id,
+                boundary_id=boundary_id,
                 body=Boundary(
                     description="Created by SDK",
                     geometry=Polygon(
@@ -55,5 +55,5 @@ class FarmBeatsTestAsync(AzureTestCase):
                 )
             )
 
-    async def delete_boundary(self, client, agrifood_farmer_id, agrifood_boundary_id):
-        await client.boundaries.delete(farmer_id=agrifood_farmer_id, boundary_id=agrifood_boundary_id)
+    async def delete_boundary(self, client, farmer_id, boundary_id):
+        await client.boundaries.delete(farmer_id=farmer_id, boundary_id=boundary_id)

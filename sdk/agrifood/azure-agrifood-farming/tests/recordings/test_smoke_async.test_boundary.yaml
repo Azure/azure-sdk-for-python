@@ -1,5 +1,36 @@
 interactions:
 - request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: PATCH
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/async-test-boundary-farmer?api-version=2021-03-31-preview
+  response:
+    body:
+      string: '{"id":"async-test-boundary-farmer","eTag":"00003f03-0000-0600-0000-60a42fa50000","createdDateTime":"2021-05-18T21:20:37Z","modifiedDateTime":"2021-05-18T21:20:37Z"}'
+    headers:
+      api-deprecated-versions: 2020-12-31-preview
+      api-supported-versions: 2021-03-31-preview
+      connection: keep-alive
+      content-length: '164'
+      content-type: application/json; charset=utf-8
+      date: Tue, 18 May 2021 21:20:37 GMT
+      etag: 00003f03-0000-0600-0000-60a42fa50000
+      location: http://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/async-test-boundary-farmer
+      server: nginx/1.19.1
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 201
+      message: Created
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/async-test-boundary-farmer?api-version=2021-03-31-preview
+- request:
     body: null
     headers:
       Accept:
@@ -7,21 +38,21 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer/boundaries/fake-boundaryboundary?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/async-test-boundary-farmer/boundaries/async-test-boundary?api-version=2021-03-31-preview
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA0xOuw6CQBD8lc02NmiolNBZaCRECgv7k13wItyavcNHCP8uREmcZjKPTKZHVhXF
-        tMdSiDHFE3vptORCwl46Rxhhy96b+j+Epw1XsASLytx4eZmKRt8zL4CEPTgJwC/rA1SicFd5WGKC
-        ymjLmtFqnA5Gaw6Yuq5pIiQOxjZ+ltY51t+/yRnGvpqSMxqvxIdjkm/X511eJHkaf7HB4QMAAP//
-        AwAiFgCO0gAAAA==
+        H4sIAAAAAAAAA0yOSwrCQBBEr9L0JpsoLhRMDhBU8JcbjOlOHEimpafjB8ndjahg7arqUdQTWVUU
+        8ydWQow5lhyl14p3YoX0gTDFjmN0zX8JN29n8ASJi49QTYyjTU5v3OkjARKOEMSA7z4a1KJwUbl6
+        YoLaace6puk4bE4bNsxD37YpEpvzbfxZHwLr9907GUZeXcVrGo/MVtvlodxkxT6bH/PZRwscXgAA
+        AP//AwAiCUs00AAAAA==
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
       content-encoding: gzip
       content-type: application/json
-      date: Mon, 17 May 2021 21:47:45 GMT
+      date: Tue, 18 May 2021 21:20:38 GMT
       server: nginx/1.19.1
       strict-transport-security: max-age=15724800; includeSubDomains
       transfer-encoding: chunked
@@ -29,7 +60,7 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/fake-farmer/boundaries/fake-boundaryboundary?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/async-test-boundary-farmer/boundaries/async-test-boundary?api-version=2021-03-31-preview
 - request:
     body: '{"geometry": {"coordinates": [[[73.70457172393799, 20.545385304358106],
       [73.70457172393799, 20.545385304358106], [73.70448589324951, 20.542411534243367],
@@ -46,26 +77,26 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PATCH
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer/boundaries/fake-boundaryboundary?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/async-test-boundary-farmer/boundaries/async-test-boundary?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"farmerId":"fake-farmer","geometry":{"type":"Polygon","coordinates":[[[73.70457172393799,20.545385304358106],[73.70457172393799,20.545385304358106],[73.70448589324951,20.542411534243367],[73.70877742767334,20.541688176010233],[73.71023654937744,20.545083911372505],[73.70663166046143,20.546992723579137],[73.70457172393799,20.545385304358106]]]},"isPrimary":false,"acreage":60.40491151079627,"id":"fake-boundaryboundary","eTag":"e100bcb5-0000-0600-0000-60a2e4820000","createdDateTime":"2021-05-17T21:47:46Z","modifiedDateTime":"2021-05-17T21:47:46Z","description":"Created
+      string: '{"farmerId":"async-test-boundary-farmer","geometry":{"type":"Polygon","coordinates":[[[73.70457172393799,20.545385304358106],[73.70457172393799,20.545385304358106],[73.70448589324951,20.542411534243367],[73.70877742767334,20.541688176010233],[73.71023654937744,20.545083911372505],[73.70663166046143,20.546992723579137],[73.70457172393799,20.545385304358106]]]},"isPrimary":false,"acreage":60.40491151079627,"id":"async-test-boundary","eTag":"00004203-0000-0600-0000-60a42fa70000","createdDateTime":"2021-05-18T21:20:39Z","modifiedDateTime":"2021-05-18T21:20:39Z","description":"Created
         by SDK"}'
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
-      content-length: '582'
+      content-length: '595'
       content-type: application/json; charset=utf-8
-      date: Mon, 17 May 2021 21:47:46 GMT
-      etag: e100bcb5-0000-0600-0000-60a2e4820000
-      location: http://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/fake-farmer/boundaries/fake-boundaryboundary
+      date: Tue, 18 May 2021 21:20:39 GMT
+      etag: 00004203-0000-0600-0000-60a42fa70000
+      location: http://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/async-test-boundary-farmer/boundaries/async-test-boundary
       server: nginx/1.19.1
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/fake-farmer/boundaries/fake-boundaryboundary?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/async-test-boundary-farmer/boundaries/async-test-boundary?api-version=2021-03-31-preview
 - request:
     body: null
     headers:
@@ -74,23 +105,23 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer/boundaries/fake-boundaryboundary?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/async-test-boundary-farmer/boundaries/async-test-boundary?api-version=2021-03-31-preview
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA5SRwW7CMAyGXwXl3CI7duyk1+0y7YI0TkMcCg2oGqVT6Q4I8e5z1bHzloNjy1/y
-        J/5v7lAPXR5eGldZ+pHLuXaFO+a+y+NwddXNjdfPbMCqP12P/dma+74fmvZcj/niqs1mo7RU4KCo
-        nhJpSoWHZeBAMRAwhYgg2+J/GMcQE3lOAWfMM2Ig24hEH1hUVfYqSsQzhhIjqgCCJ/rBplwCm6by
-        DxYgUkIk9QHC4zYRQhFgQaYZk5S8vTZoMvSvX9hu74VrL6uh7eppgof6dMmFq/dDro82SYElA5t6
-        QNAkXo3+dWDXf50bO/bYbdx5XR+tnRFgt9+FEmyVIFOYMoHaZ45+KiZzTGXMzbOFddtNxnnwWEIo
-        UdceK9aK5d3Arm/aQ/sXssmX/dB+jq25X7mnWWCxuy7enl/d/RsAAP//AwCvb86LRgIAAA==
+        H4sIAAAAAAAAA5SRwW7DIAyGX6XinFQGA4Zc18u0S6X1tKoH1pAIqUkqkh2iqu8+R2mPkzoOxsif
+        +cH/TTQhdzG/16ISYZz7cznFcSq/h5++Dnku17IoRBuHLk55FtVNTPM1Mr8fLnM79Fw8D0OuUx+4
+        V1TH45FwS6ANSVLokbwvFGyNNugMgkbjJNhT8T9MO+M8Ku2NXDGlpTTIG6KlJ+aISCuyhKhXTFrn
+        JFmQoBAf2JJbo1mT9AMz4NBLiaQMmOdt1qK0FrSVGlfMeq/4tYY8o69+4XS6FyKN+5y6sEywCZcx
+        FiKccwwtT9LCVoNmdSOBvFXE9B+G8LDjIbRcBF5aAZZLUoJdwpJZCFo1gZbDYg1rTLHecTikbrFN
+        gZIlmFK6g5KVggr9F4PdUKcmvULWcTzndJ0Se1+Jt1Vg8z1vPncf4v4LAAD//wMA2R9281MCAAA=
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Mon, 17 May 2021 21:47:47 GMT
+      date: Tue, 18 May 2021 21:20:40 GMT
       server: nginx/1.19.1
       strict-transport-security: max-age=15724800; includeSubDomains
       transfer-encoding: chunked
@@ -98,5 +129,53 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/fake-farmer/boundaries/fake-boundaryboundary?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/async-test-boundary-farmer/boundaries/async-test-boundary?api-version=2021-03-31-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/async-test-boundary-farmer/boundaries/async-test-boundary?api-version=2021-03-31-preview
+  response:
+    body:
+      string: ''
+    headers:
+      api-deprecated-versions: 2020-12-31-preview
+      api-supported-versions: 2021-03-31-preview
+      connection: keep-alive
+      content-length: '0'
+      date: Tue, 18 May 2021 21:20:41 GMT
+      server: nginx/1.19.1
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 204
+      message: No Content
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/async-test-boundary-farmer/boundaries/async-test-boundary?api-version=2021-03-31-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/async-test-boundary-farmer?api-version=2021-03-31-preview
+  response:
+    body:
+      string: ''
+    headers:
+      api-deprecated-versions: 2020-12-31-preview
+      api-supported-versions: 2021-03-31-preview
+      connection: keep-alive
+      content-length: '0'
+      date: Tue, 18 May 2021 21:20:42 GMT
+      server: nginx/1.19.1
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 204
+      message: No Content
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/async-test-boundary-farmer?api-version=2021-03-31-preview
 version: 1

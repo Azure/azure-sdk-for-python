@@ -10,7 +10,7 @@ import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.agrifood.farming import FarmBeatsClient
 from azure.agrifood.farming.models import Boundary, Polygon
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 class FarmBeatsTest(AzureTestCase):
 
@@ -30,15 +30,18 @@ class FarmBeatsTest(AzureTestCase):
             return created_name
         return name
 
-    def create_boundary_if_not_exist(self, client, agrifood_farmer_id, agrifood_boundary_id):
+    def create_boundary_if_not_exist(self, client, farmer_id, boundary_id):
         try:
-            return client.boundaries.get(farmer_id=agrifood_farmer_id, boundary_id=agrifood_boundary_id)
-        except ResourceNotFoundError:
+            return client.boundaries.get(farmer_id=farmer_id, boundary_id=boundary_id)
+        except HttpResponseError:
+            return self.create_boundary(client=client, farmer_id=farmer_id, boundary_id=boundary_id)
+
+    def create_boundary(self, client, farmer_id, boundary_id):
+        try:
             return client.boundaries.create_or_update(
-                farmer_id=agrifood_farmer_id,
-                boundary_id=agrifood_boundary_id,
+                farmer_id=farmer_id,
+                boundary_id=boundary_id,
                 body=Boundary(
-                    description="Created by SDK",
                     geometry=Polygon(
                         coordinates=[
                             [
@@ -54,15 +57,18 @@ class FarmBeatsTest(AzureTestCase):
                     )
                 )
             )
+        except Exception as e:
+            print("!!! Unhandlable error in boundary creation")
+            print(e)
+            print(dir(e))
+            print(e.response.body())
+            print(e.status_code)
 
-    def delete_boundary(self, client, agrifood_farmer_id, agrifood_boundary_id):
-        client.boundaries.delete(farmer_id=agrifood_farmer_id, boundary_id=agrifood_boundary_id)
+    def delete_boundary(self, client, farmer_id, boundary_id):
+        client.boundaries.delete(farmer_id=farmer_id, boundary_id=boundary_id)
 
 FarmBeatsPowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "agrifood",
-    agrifood_endpoint="https://fakeAccount.farmbeats.azure.net",
-    agrifood_farmer_id="fake-farmer",
-    agrifood_boundary_id="fake-boundary",
-    agrifood_job_id_prefix="fake-job",
+    agrifood_endpoint="https://fakeAccount.farmbeats.azure.net"
 )

@@ -1,0 +1,194 @@
+interactions:
+- request:
+    body: '{"status": "Sample Status", "name": "Test Farmer", "description": "Farmer
+      created during testing.", "properties": {"foo": "bar", "numeric one": 1, "1":
+      "numeric key"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '167'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: PATCH
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+  response:
+    body:
+      string: '{"id":"test-farmer-farmer-ops-async","eTag":"00003203-0000-0600-0000-60a42f480000","status":"Sample
+        Status","createdDateTime":"2021-05-18T21:19:04Z","modifiedDateTime":"2021-05-18T21:19:04Z","name":"Test
+        Farmer","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
+        one":1,"1":"numeric key"}}'
+    headers:
+      api-deprecated-versions: 2020-12-31-preview
+      api-supported-versions: 2021-03-31-preview
+      connection: keep-alive
+      content-length: '320'
+      content-type: application/json; charset=utf-8
+      date: Tue, 18 May 2021 21:19:04 GMT
+      etag: 00003203-0000-0600-0000-60a42f480000
+      location: http://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async
+      server: nginx/1.19.1
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 201
+      message: Created
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA4yPyY7DIAyGXwX5HEZAM1Un56ov0Jzm5gansjoBBORQVX33MV3u5eDl9+eFG7CH
+        ASqVqmfMC+W3i6loLNcwQQc04lkoI2/jzEa3QJttMy3aGuzd3O9aInSpWNci/BGX9Efq+Mw7mDJh
+        Jb8XM/JCQjjjrDbf2u5GZwf7M5j+V8Alep75EzLgozrK/erwOFxET2XKnCrHILWnrF7LlV8zh7Nq
+        Pxb/JXjKMVGuTHLzDeYYpemEbVBYpZMnFYMssR1Yqby1C13hfv8HAAD//wMAMwfc9kABAAA=
+    headers:
+      api-deprecated-versions: 2020-12-31-preview
+      api-supported-versions: 2021-03-31-preview
+      connection: keep-alive
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 18 May 2021 21:19:05 GMT
+      server: nginx/1.19.1
+      strict-transport-security: max-age=15724800; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+- request:
+    body: '{"status": "Sample Status", "name": "Test Farmer Updated", "description":
+      "Farmer created during testing.", "properties": {"foo": "bar", "numeric one":
+      1, "1": "numeric key"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '175'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: PATCH
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA4SPPW7DMAyFryJwtgrJcYzEc9EL2Fm6MRYdEK0lQZKHIMjdQ6XJXA380fsIPt6A
+        HQxQKBe9YFopvVOIWWO++hkaoAkvQhl5u87sdC206WuoVW+wa5cOayN0Lli2LPyIa/wlNf71DcyJ
+        sJD7lDDxSkK0prXa7LU9TK0d7HEw3beAa3C88D9kX0mPT3US/+rraVydoqtbRHSU58SxcPDCvOSX
+        CeW2xP6i6uWSPwSPKURKhUm832AJQYbOmOqWTSZ5VsHLMtuAFeX990NXuN8fAAAA//8DAJr05YxI
+        AQAA
+    headers:
+      api-deprecated-versions: 2020-12-31-preview
+      api-supported-versions: 2021-03-31-preview
+      connection: keep-alive
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 18 May 2021 21:19:06 GMT
+      server: nginx/1.19.1
+      strict-transport-security: max-age=15724800; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA4SPPW7DMAyFryJwtgrJcYzEc9EL2Fm6MRYdEK0lQZKHIMjdQ6XJXA380fsIPt6A
+        HQxQKBe9YFopvVOIWWO++hkaoAkvQhl5u87sdC206WuoVW+wa5cOayN0Lli2LPyIa/wlNf71DcyJ
+        sJD7lDDxSkK0prXa7LU9TK0d7HEw3beAa3C88D9kX0mPT3US/+rraVydoqtbRHSU58SxcPDCvOSX
+        CeW2xP6i6uWSPwSPKURKhUm832AJQYbOmOqWTSZ5VsHLMtuAFeX990NXuN8fAAAA//8DAJr05YxI
+        AQAA
+    headers:
+      api-deprecated-versions: 2020-12-31-preview
+      api-supported-versions: 2021-03-31-preview
+      connection: keep-alive
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 18 May 2021 21:19:06 GMT
+      server: nginx/1.19.1
+      strict-transport-security: max-age=15724800; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+  response:
+    body:
+      string: ''
+    headers:
+      api-deprecated-versions: 2020-12-31-preview
+      api-supported-versions: 2021-03-31-preview
+      connection: keep-alive
+      content-length: '0'
+      date: Tue, 18 May 2021 21:19:08 GMT
+      server: nginx/1.19.1
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 204
+      message: No Content
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA0xOQQrCQAz8ypKLl1YqiJa96UEUUdCD92U31oV2I0mKSunfrWjBuQwzEzLTATIT
+        g+3AU0CwcEahlj0eSTfUpgAZNCjiqv/QPKLeTAxmoiiaXx03yCPRXXInr+QnJhCKSaQGn1F0OvxS
+        xxUq2NTWdQYB1cVaRhlTQv4N+jj9cM/O4y4M3cX2UO5Xy8VldirXtvhiDv0bAAD//wMA+bTOxMMA
+        AAA=
+    headers:
+      api-deprecated-versions: 2020-12-31-preview
+      api-supported-versions: 2021-03-31-preview
+      connection: keep-alive
+      content-encoding: gzip
+      content-type: application/json
+      date: Tue, 18 May 2021 21:19:08 GMT
+      server: nginx/1.19.1
+      strict-transport-security: max-age=15724800; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+    status:
+      code: 404
+      message: Not Found
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+version: 1

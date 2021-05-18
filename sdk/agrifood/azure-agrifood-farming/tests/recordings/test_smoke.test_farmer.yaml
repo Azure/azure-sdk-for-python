@@ -15,12 +15,10 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PATCH
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"fake-farmer","eTag":"e10072ae-0000-0600-0000-60a2e4570000","createdDateTime":"2021-05-14T19:29:23Z","modifiedDateTime":"2021-05-17T21:47:03Z","name":"Test
-        Farmer","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
-        one":1,"1":"numeric key"}}'
+      string: '{"id":"smoke-test-farmer","eTag":"0000c916-0000-0600-0000-60a42fa30000","createdDateTime":"2021-05-18T21:20:35Z","modifiedDateTime":"2021-05-18T21:20:35Z"}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -29,22 +27,22 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '278'
+      - '155'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 17 May 2021 21:47:03 GMT
+      - Tue, 18 May 2021 21:20:35 GMT
+      etag:
+      - 0000c916-0000-0600-0000-60a42fa30000
+      location:
+      - http://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/smoke-test-farmer
       server:
       - nginx/1.19.1
       strict-transport-security:
       - max-age=15724800; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
     status:
-      code: 200
-      message: OK
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -57,12 +55,10 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"fake-farmer","eTag":"e10072ae-0000-0600-0000-60a2e4570000","createdDateTime":"2021-05-14T19:29:23Z","modifiedDateTime":"2021-05-17T21:47:03Z","name":"Test
-        Farmer","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
-        one":1,"1":"numeric key"}}'
+      string: '{"id":"smoke-test-farmer","eTag":"0000c916-0000-0600-0000-60a42fa30000","createdDateTime":"2021-05-18T21:20:35Z","modifiedDateTime":"2021-05-18T21:20:35Z"}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -71,20 +67,54 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '278'
+      - '155'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 17 May 2021 21:47:04 GMT
+      - Tue, 18 May 2021 21:20:35 GMT
+      etag:
+      - 0000c916-0000-0600-0000-60a42fa30000
       server:
       - nginx/1.19.1
       strict-transport-security:
       - max-age=15724800; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-farmer?api-version=2021-03-31-preview
+  response:
+    body:
+      string: ''
+    headers:
+      api-deprecated-versions:
+      - 2020-12-31-preview
+      api-supported-versions:
+      - 2021-03-31-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '0'
+      date:
+      - Tue, 18 May 2021 21:20:36 GMT
+      server:
+      - nginx/1.19.1
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 204
+      message: No Content
 version: 1
