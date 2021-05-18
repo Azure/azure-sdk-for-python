@@ -380,9 +380,11 @@ class LogCaptured(object):
 
 @pytest.fixture(scope="session")
 def storage_account():
+    from platform import python_version
     test_case = AzureMgmtTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pystorage')
-    storage_preparer = StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage')
+    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pystorage' + str(python_version()))
+    storage_preparer = StorageAccountPreparer(
+        random_name_enabled=True, name_prefix='pyacrstorage' + str(python_version()))
 
     # Create
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", None)
