@@ -48,7 +48,7 @@ client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net
 ## Examples
 
 ### Create a Farmer
-Once you have authenticated and created the client object as shown in the [Authenticate the client](#Authenticate-the-client) 
+Once you have authenticated and created the client object as shown in the [Authenticate the client](#authenticate-the-client) 
 section, you can create a farmer within the FarmBeats resource like this:
 
 ```python
