@@ -618,3 +618,14 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             string_index_type="TextElements_v8",
             raw_response_hook=callback
         )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_disable_service_logs(self, client):
+        def callback(resp):
+            assert resp.http_request.query['loggingOptOut']
+        await client.recognize_entities(
+            documents=["Test for logging disable"],
+            disable_service_logs=True,
+            raw_response_hook=callback,
+        )
