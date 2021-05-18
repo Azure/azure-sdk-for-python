@@ -33,7 +33,7 @@ from distutils.dir_util import copy_tree
 
 VERSION_REGEX = re.compile(r"\s*AZURESDK_CONDA_VERSION\s*:\s*[\'](.*)[\']\s*")
 
-SUMMARY_TEMPLATE = "- Generated from {}."
+SUMMARY_TEMPLATE = " - Generated from {}."
 
 NAMESPACE_EXTENSION_TEMPLATE = """__path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: str
 """
