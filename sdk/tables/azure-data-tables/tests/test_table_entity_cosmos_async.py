@@ -1596,7 +1596,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     async def test_sas_query(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_cosmos_account_name, "cosmos")
 
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1631,7 +1630,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     async def test_sas_add(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -1664,7 +1662,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     async def test_sas_add_outside_range(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -1695,7 +1692,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     async def test_sas_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -1729,7 +1725,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     async def test_sas_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:

@@ -34,9 +34,6 @@ from azure.data.tables import (
 from _shared.testcase import TableTestCase
 from preparers import cosmos_decorator
 
-#------------------------------------------------------------------------------
-TEST_TABLE_PREFIX = 'table'
-#------------------------------------------------------------------------------
 
 class StorageTableClientTest(AzureTestCase, TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
@@ -508,8 +505,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             entity['test2'] = 'value'
             entity['test3'] = 3
             entity['test4'] = EntityProperty(1234567890, EdmType.INT32)
-# 'https://seankaneprim.table.core.windows.net/$batch?st=2021-05-18T16%3A19%3A58Z&se=2021-05-18T17%3A20%3A58Z&sp=raud&sv=2019-02-02&tn=uttabled4f0e8f&sig=cROztTVf0vKXUE1IQyyJpnjA3Ua1a4NMYYF0VnCMt/4%3D'
-# 'https://seankaneprim.table.core.windows.net/$batch?st=2021-05-18T16%3A20%3A57Z&se=2021-05-18T17%3A21%3A57Z&sp=raud&sv=2019-02-02&tn=uttable81841182&sig=Czf9WOvwZT790ZaUqOPanvpa04mtBMQ28xvAr/l%2BPbM%3D'
+
             batch = []
             transaction_count = 0
             for i in range(10):

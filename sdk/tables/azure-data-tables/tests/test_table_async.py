@@ -215,7 +215,6 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_get_table_acl(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
@@ -312,9 +311,6 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_account_sas(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-
-        # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         tsc = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
