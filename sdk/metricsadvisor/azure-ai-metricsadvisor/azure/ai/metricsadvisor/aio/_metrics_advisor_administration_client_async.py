@@ -180,10 +180,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         :param str name: Name for the data feed.
         :param source: The source of the data feed
-        :type source: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-            AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
-            InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-            ElasticsearchDataFeed]
+        :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
+            AzureCosmosDBDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
+            AzureTableDataFeedSource, HttpRequestDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, ElasticsearchDataFeedSource]
         :param granularity: Granularity type. If using custom granularity, you must instantiate a DataFeedGranularity.
         :type granularity: Union[str, ~azure.ai.metricsadvisor.models.DataFeedGranularityType,
             ~azure.ai.metricsadvisor.models.DataFeedGranularity]
@@ -645,10 +645,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword status: Data feed status. Possible values include: "Active", "Paused".
         :paramtype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
         :keyword source: The source of the data feed for update
-        :paramtype source: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-            AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
-            InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-            ElasticsearchDataFeed]
+        :paramtype source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
+            AzureCosmosDBDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
+            AzureTableDataFeedSource, HttpRequestDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, ElasticsearchDataFeedSource]
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 

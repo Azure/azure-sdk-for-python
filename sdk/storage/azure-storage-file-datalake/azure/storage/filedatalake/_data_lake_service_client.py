@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any
+from typing import Optional, Dict, Any
 
 try:
     from urllib.parse import urlparse
@@ -15,6 +15,7 @@ from azure.core.pipeline import Pipeline
 
 from azure.storage.blob import BlobServiceClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
+from ._deserialize import get_datalake_service_properties
 from ._file_system_client import FileSystemClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_file_client import DataLakeFileClient
@@ -462,7 +463,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             or an instance of FileProperties. eg. directory/subdirectory/file
         :type file_path: str or ~azure.storage.filedatalake.FileProperties
         :returns: A DataLakeFileClient.
-        :rtype: ~azure.storage.filedatalake..DataLakeFileClient
+        :rtype: ~azure.storage.filedatalake.DataLakeFileClient
 
         .. admonition:: Example:
 
@@ -492,3 +493,64 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
+
+    def set_service_properties(self, **kwargs):
+        # type: (**Any) -> None
+        """Sets the properties of a storage account's Datalake service, including
+        Azure Storage Analytics.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2020-06-12'.
+
+        If an element (e.g. analytics_logging) is left as None, the
+        existing settings on the service for that functionality are preserved.
+
+        :keyword analytics_logging:
+            Groups the Azure Analytics Logging settings.
+        :type analytics_logging: ~azure.storage.filedatalake.AnalyticsLogging
+        :keyword hour_metrics:
+            The hour metrics settings provide a summary of request
+            statistics grouped by API in hourly aggregates.
+        :type hour_metrics: ~azure.storage.filedatalake.Metrics
+        :keyword minute_metrics:
+            The minute metrics settings provide request statistics
+            for each minute.
+        :type minute_metrics: ~azure.storage.filedatalake.Metrics
+        :keyword cors:
+            You can include up to five CorsRule elements in the
+            list. If an empty list is specified, all CORS rules will be deleted,
+            and CORS will be disabled for the service.
+        :type cors: list[~azure.storage.filedatalake.CorsRule]
+        :keyword str target_version:
+            Indicates the default version to use for requests if an incoming
+            request's version is not specified.
+        :keyword delete_retention_policy:
+            The delete retention policy specifies whether to retain deleted files/directories.
+            It also specifies the number of days and versions of file/directory to keep.
+        :type delete_retention_policy: ~azure.storage.filedatalake.RetentionPolicy
+        :keyword static_website:
+            Specifies whether the static website feature is enabled,
+            and if yes, indicates the index document and 404 error document to use.
+        :type static_website: ~azure.storage.filedatalake.StaticWebsite
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        return self._blob_service_client.set_service_properties(**kwargs)  # pylint: disable=protected-access
+
+    def get_service_properties(self, **kwargs):
+        # type: (**Any) -> Dict[str, Any]
+        """Gets the properties of a storage account's datalake service, including
+        Azure Storage Analytics.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2020-06-12'.
+
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An object containing datalake service properties such as
+            analytics logging, hour/minute metrics, cors rules, etc.
+        :rtype: Dict[str, Any]
+        """
+        props = self._blob_service_client.get_service_properties(**kwargs)  # pylint: disable=protected-access
+        return get_datalake_service_properties(props)

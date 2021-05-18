@@ -51,10 +51,12 @@ class PageBlobOperations(object):
         timeout=None,  # type: Optional[int]
         tier=None,  # type: Optional[Union[str, "_models.PremiumPageBlobAccessTier"]]
         metadata=None,  # type: Optional[str]
-        encryption_algorithm="AES256",  # type: Optional[str]
         blob_sequence_number=0,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         blob_tags_string=None,  # type: Optional[str]
+        immutability_policy_expiry=None,  # type: Optional[datetime.datetime]
+        immutability_policy_mode=None,  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
+        legal_hold=None,  # type: Optional[bool]
         blob_http_headers=None,  # type: Optional["_models.BlobHTTPHeaders"]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         cpk_info=None,  # type: Optional["_models.CpkInfo"]
@@ -84,10 +86,6 @@ class PageBlobOperations(object):
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
         :type metadata: str
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param blob_sequence_number: Set for page blobs only. The sequence number is a user-controlled
          value that you can use to track requests. The value of the sequence number must be between 0
          and 2^63 - 1.
@@ -97,6 +95,13 @@ class PageBlobOperations(object):
         :type request_id_parameter: str
         :param blob_tags_string: Optional.  Used to set blob tags in various blob operations.
         :type blob_tags_string: str
+        :param immutability_policy_expiry: Specifies the date time when the blobs immutability policy
+         is set to expire.
+        :type immutability_policy_expiry: ~datetime.datetime
+        :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
+        :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
+        :param legal_hold: Specified if a legal hold should be set on the blob.
+        :type legal_hold: bool
         :param blob_http_headers: Parameter group.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Parameter group.
@@ -127,6 +132,7 @@ class PageBlobOperations(object):
         _blob_content_disposition = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _if_modified_since = None
         _if_unmodified_since = None
@@ -143,6 +149,7 @@ class PageBlobOperations(object):
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -194,8 +201,8 @@ class PageBlobOperations(object):
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if _if_modified_since is not None:
@@ -216,6 +223,12 @@ class PageBlobOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         if blob_tags_string is not None:
             header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
+        if immutability_policy_expiry is not None:
+            header_parameters['x-ms-immutability-policy-until-date'] = self._serialize.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
+        if immutability_policy_mode is not None:
+            header_parameters['x-ms-immutability-policy-mode'] = self._serialize.header("immutability_policy_mode", immutability_policy_mode, 'str')
+        if legal_hold is not None:
+            header_parameters['x-ms-legal-hold'] = self._serialize.header("legal_hold", legal_hold, 'bool')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
@@ -224,7 +237,7 @@ class PageBlobOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -253,7 +266,6 @@ class PageBlobOperations(object):
         transactional_content_crc64=None,  # type: Optional[bytearray]
         timeout=None,  # type: Optional[int]
         range=None,  # type: Optional[str]
-        encryption_algorithm="AES256",  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         cpk_info=None,  # type: Optional["_models.CpkInfo"]
@@ -281,10 +293,6 @@ class PageBlobOperations(object):
         :type timeout: int
         :param range: Return only the bytes of the blob in the specified range.
         :type range: str
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -312,6 +320,7 @@ class PageBlobOperations(object):
         _lease_id = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _if_sequence_number_less_than_or_equal_to = None
         _if_sequence_number_less_than = None
@@ -324,6 +333,7 @@ class PageBlobOperations(object):
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -372,8 +382,8 @@ class PageBlobOperations(object):
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if _if_sequence_number_less_than_or_equal_to is not None:
@@ -406,7 +416,7 @@ class PageBlobOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -433,7 +443,6 @@ class PageBlobOperations(object):
         content_length,  # type: int
         timeout=None,  # type: Optional[int]
         range=None,  # type: Optional[str]
-        encryption_algorithm="AES256",  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         cpk_info=None,  # type: Optional["_models.CpkInfo"]
@@ -453,10 +462,6 @@ class PageBlobOperations(object):
         :type timeout: int
         :param range: Return only the bytes of the blob in the specified range.
         :type range: str
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -484,6 +489,7 @@ class PageBlobOperations(object):
         _lease_id = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _if_sequence_number_less_than_or_equal_to = None
         _if_sequence_number_less_than = None
@@ -496,6 +502,7 @@ class PageBlobOperations(object):
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -539,8 +546,8 @@ class PageBlobOperations(object):
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if _if_sequence_number_less_than_or_equal_to is not None:
@@ -570,7 +577,7 @@ class PageBlobOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -598,7 +605,6 @@ class PageBlobOperations(object):
         source_content_md5=None,  # type: Optional[bytearray]
         source_contentcrc64=None,  # type: Optional[bytearray]
         timeout=None,  # type: Optional[int]
-        encryption_algorithm="AES256",  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
         cpk_info=None,  # type: Optional["_models.CpkInfo"]
         cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
@@ -632,10 +638,6 @@ class PageBlobOperations(object):
          :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
          timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -664,6 +666,7 @@ class PageBlobOperations(object):
         
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _lease_id = None
         _if_sequence_number_less_than_or_equal_to = None
@@ -681,6 +684,7 @@ class PageBlobOperations(object):
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -732,8 +736,8 @@ class PageBlobOperations(object):
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if _lease_id is not None:
@@ -773,7 +777,7 @@ class PageBlobOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -897,7 +901,7 @@ class PageBlobOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1037,7 +1041,7 @@ class PageBlobOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1060,7 +1064,6 @@ class PageBlobOperations(object):
         self,
         blob_content_length,  # type: int
         timeout=None,  # type: Optional[int]
-        encryption_algorithm="AES256",  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         cpk_info=None,  # type: Optional["_models.CpkInfo"]
@@ -1078,10 +1081,6 @@ class PageBlobOperations(object):
          :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
          timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -1107,6 +1106,7 @@ class PageBlobOperations(object):
         _lease_id = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1116,6 +1116,7 @@ class PageBlobOperations(object):
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -1150,8 +1151,8 @@ class PageBlobOperations(object):
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if _if_modified_since is not None:
@@ -1176,7 +1177,7 @@ class PageBlobOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1294,7 +1295,7 @@ class PageBlobOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1402,7 +1403,7 @@ class PageBlobOperations(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

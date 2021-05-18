@@ -25,7 +25,7 @@ interactions:
         resource="https://managedhsm.azure.net"
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-server-latency: '1'
+      x-ms-server-latency: '0'
     status:
       code: 401
       message: Unauthorized
@@ -45,7 +45,7 @@ interactions:
     uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-keyad3012ae/create?api-version=7.2-preview
   response:
     body:
-      string: '{"attributes":{"created":1618353643,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1618353643},"key":{"e":"EQ","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-keyad3012ae/d0b837d03f9c069780c5d37fd8bce435","kty":"RSA-HSM","n":"nIkUlKQZuvk31cPRCAzYoHZ-lHpSBUHLfSPQsPpyy5LpUrJPHFozMNUAZ2VUKR_-9S17Znn5CVwbAKXfXPx-5dsq6_hqjvfMtwoWJDU4tPa5vqS-SxZQ-CTYj8N4N1rx2qyF5Z18OSwZGQ3up7vl8RsPSeI1SEIhHWPIg6A4VLe0VhByiYXyOIZeDm7MVnpeisQMgaQoiObgYYzN5xBpbGSFd2_7H-AivK58BgRGoAzfd_FXVS1a9244hHH3gFy7oSo3ccPZyI_kKjXlB4kTmvvZBdQeVbWOeaNDemxsH8TsJy1yR9V1lwkZ08M19iYYbYtomeLpAcws46kPWc-wjQ"}}'
+      string: '{"attributes":{"created":1618860845,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1618860845},"key":{"e":"EQ","key_ops":["wrapKey","sign","verify","encrypt","decrypt","unwrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-keyad3012ae/82700cf68f4c0d5f2f5d011a4605991a","kty":"RSA-HSM","n":"15KOMYL2-S8qBOB6Cs5LXXfxbMSPl0rU8oLwzy1vvvQ45m37oYO4qToTuTRu25T-CKew4x57WuXmO5ITGk2fArtIgJ2yCgjVleFokCwOZxxct_EM0OFRtkX0US9BEtmBfbQ73PGVV1CBp1Hvlz3k8dW3mS7yJnbGlZMMCxBX0njvE7LyuCJukRThjmiSIRjKpSl6QRhE8cSjUVL3DJ7GYzJE6CcGixl097KznvpWPDT-7Gy_TOy2bEmLS4zJ8IutxBrvPbRQnve1DCegZ5U5n0f8ClBQ17P4uZxuZKB5a2Z7DI8f9es5KLs25JU7dm9yyn6E9_CZXRlF4GDy30RSoQ"}}'
     headers:
       cache-control: no-cache
       content-length: '722'
@@ -56,7 +56,7 @@ interactions:
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '812'
+      x-ms-server-latency: '992'
     status:
       code: 200
       message: OK

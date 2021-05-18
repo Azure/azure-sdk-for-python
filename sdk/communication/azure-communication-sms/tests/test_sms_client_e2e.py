@@ -16,6 +16,7 @@ from _shared.testcase import (
     ResponseReplacerProcessor
 )
 from azure.identity import DefaultAzureCredential
+from _shared.utils import get_http_logging_policy
 
 class FakeTokenCredential(object):
     def __init__(self):
@@ -36,14 +37,17 @@ class SMSClientTest(CommunicationTestCase):
             self.recording_processors.extend([
                 BodyReplacerProcessor(keys=["to", "from", "messageId", "repeatabilityRequestId", "repeatabilityFirstSent"])])
         else:
-            self.phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
+            self.phone_number = os.getenv("AZURE_PHONE_NUMBER")
             self.recording_processors.extend([
                 BodyReplacerProcessor(keys=["to", "from", "messageId", "repeatabilityRequestId", "repeatabilityFirstSent"]),
                 ResponseReplacerProcessor(keys=[self._resource_name])])
     
     def test_send_sms_single(self):
         
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         # calling send() with sms values
         sms_responses = sms_client.send(
@@ -57,7 +61,10 @@ class SMSClientTest(CommunicationTestCase):
     
     def test_send_sms_multiple_with_options(self):
         
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
         
         # calling send() with sms values
         sms_responses = sms_client.send(
@@ -79,7 +86,11 @@ class SMSClientTest(CommunicationTestCase):
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
-        sms_client = SmsClient(endpoint, credential)
+        sms_client = SmsClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         # calling send() with sms values
         sms_responses = sms_client.send(
@@ -93,7 +104,10 @@ class SMSClientTest(CommunicationTestCase):
 
     def test_send_sms_fake_from_phone_number(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
         
         with pytest.raises(HttpResponseError) as ex:
             # calling send() with sms values
@@ -107,7 +121,10 @@ class SMSClientTest(CommunicationTestCase):
 
     def test_send_sms_fake_to_phone_number(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         # calling send() with sms values
         sms_responses = sms_client.send(
@@ -124,7 +141,10 @@ class SMSClientTest(CommunicationTestCase):
     
     def test_send_sms_unauthorized_from_phone_number(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
         
         with pytest.raises(HttpResponseError) as ex:
             # calling send() with sms values
@@ -133,12 +153,16 @@ class SMSClientTest(CommunicationTestCase):
                 to=[self.phone_number],
                 message="Hello World via SMS")
         
+        assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
     @pytest.mark.live_test_only
     def test_send_sms_unique_message_ids(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         # calling send() with sms values
         sms_responses_1 = sms_client.send(

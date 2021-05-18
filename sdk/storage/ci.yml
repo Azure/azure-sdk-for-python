@@ -12,8 +12,6 @@ trigger:
     include:
     - sdk/storage/
     - sdk/core/
-    - tools/
-    - eng/
 
 pr:
   branches:
@@ -28,8 +26,6 @@ pr:
     include:
     - sdk/storage/
     - sdk/core/
-    - tools/
-    - eng/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -58,11 +54,9 @@ extends:
       safeName: azuremgmtstoragecache
     - name: azure-mgmt-storagesync
       safeName: azuremgmtstoragesync
-    - name: azure-mgmt-storageimportexport
-      safeName: azuremgmtstorageimportexport
     CondaArtifacts:
     - name: azure-storage
-      meta_source: meta.yaml
+      meta_source: conda-recipe/meta.yaml
       common_root: azure/storage
       checkout:
         - package: azure-storage-blob

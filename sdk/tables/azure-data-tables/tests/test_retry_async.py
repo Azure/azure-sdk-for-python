@@ -13,7 +13,6 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     AzureError,
-    ResourceNotFoundError
 )
 from azure.core.pipeline.policies import RetryMode
 from azure.core.pipeline.transport import(
@@ -21,15 +20,13 @@ from azure.core.pipeline.transport import(
 )
 
 from azure.data.tables.aio import TableServiceClient
-from azure.data.tables import LocationMode
 
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import (
     ResponseCallback,
-    RetryCounter
 )
 
-from preparers import TablesPreparer
+from async_preparers import tables_decorator_async
 
 
 class RetryAioHttpTransport(AioHttpTransport):
@@ -37,7 +34,7 @@ class RetryAioHttpTransport(AioHttpTransport):
     def __init__(self, *args, **kwargs):
         super(RetryAioHttpTransport, self).__init__(*args, **kwargs)
         self.count = 0
-    
+
     async def send(self, request, **kwargs):
         self.count += 1
         response = await super(RetryAioHttpTransport, self).send(request, **kwargs)
@@ -63,24 +60,8 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
 
         self.query_tables = []
 
-    async def _tear_down(self, **kwargs):
-        if self.is_live:
-            try:
-                await self.ts.delete_table(self.table_name, **kwargs)
-            except:
-                pass
-
-            try:
-                for table_name in self.query_tables:
-                    try:
-                        await self.ts.delete_table(table_name, **kwargs)
-                    except:
-                        pass
-            except AttributeError:
-                pass
-
     # --Test Cases --------------------------------------------
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_retry_on_server_error_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key, default_table=False)
         try:
@@ -95,7 +76,7 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
             await self.ts.delete_table(new_table_name)
             await self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_retry_on_timeout_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(
             tables_storage_account_name,
@@ -114,7 +95,7 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @pytest.mark.live_test_only
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_retry_on_socket_timeout_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         retry_transport = RetryAioHttpTransport(connection_timeout=11, read_timeout=0.000000000001)
         await self._set_up(
@@ -124,7 +105,7 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
             retry_backoff_factor=1,
             transport=retry_transport,
             default_table=False)
-    
+
         new_table_name = self.get_resource_name('uttable')
         try:
             with pytest.raises(AzureError) as error:
@@ -138,7 +119,7 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_no_retry_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
 

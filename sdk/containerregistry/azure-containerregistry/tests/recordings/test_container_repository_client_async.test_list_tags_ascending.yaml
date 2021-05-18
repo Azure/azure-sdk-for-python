@@ -7,28 +7,27 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_tags?orderby=timeasc
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_tags?orderby=timeasc
   response:
     body:
-      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"library/hello-world","Action":"metadata_read"}]}]}
-
-        '
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "library/busybox", "Action": "metadata_read"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '222'
+      content-length: '218'
       content-type: application/json; charset=utf-8
-      date: Tue, 13 Apr 2021 16:01:35 GMT
+      date: Wed, 28 Apr 2021 22:07:51 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:library/hello-world:metadata_read"
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
       x-content-type-options: nosniff
     status:
       code: 401
       message: Unauthorized
-    url: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_tags?orderby=timeasc
+    url: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_tags?orderby=timeasc
 - request:
     body:
       access_token: REDACTED
@@ -47,11 +46,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Tue, 13 Apr 2021 16:01:36 GMT
+      date: Wed, 28 Apr 2021 22:07:52 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.533333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.45'
     status:
       code: 200
       message: OK
@@ -60,7 +59,7 @@ interactions:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
-      scope: repository:library/hello-world:metadata_read
+      scope: repository:library/busybox:metadata_read
       service: fake_url.azurecr.io
     headers:
       Accept:
@@ -75,11 +74,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Tue, 13 Apr 2021 16:01:36 GMT
+      date: Wed, 28 Apr 2021 22:07:53 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '165.866667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.016667'
     status:
       code: 200
       message: OK
@@ -92,36 +91,20 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_tags?orderby=timeasc
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_tags?orderby=timeasc
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "library/hello-world",
-        "tags": [{"name": "latest", "digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
-        "createdTime": "2021-04-13T15:10:43.9172084Z", "lastUpdateTime": "2021-04-13T15:10:43.9172084Z",
-        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
-        true, "readEnabled": true, "listEnabled": true}}, {"name": "v3", "digest":
-        "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
-        "createdTime": "2021-04-13T15:10:44.2755611Z", "lastUpdateTime": "2021-04-13T15:10:44.2755611Z",
-        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
-        true, "readEnabled": true, "listEnabled": true}}, {"name": "v2", "digest":
-        "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
-        "createdTime": "2021-04-13T15:10:44.668453Z", "lastUpdateTime": "2021-04-13T15:10:44.668453Z",
-        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
-        true, "readEnabled": true, "listEnabled": true}}, {"name": "v1", "digest":
-        "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
-        "createdTime": "2021-04-13T15:10:45.0282838Z", "lastUpdateTime": "2021-04-13T15:10:45.0282838Z",
-        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
-        true, "readEnabled": true, "listEnabled": true}}, {"name": "v4", "digest":
-        "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
-        "createdTime": "2021-04-13T15:10:45.3229504Z", "lastUpdateTime": "2021-04-13T15:10:45.3229504Z",
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "library/busybox",
+        "tags": [{"name": "latest", "digest": "sha256:ae39a6f5c07297d7ab64dbd4f82c77c874cc6a94cea29fdec309d0992574b4f7",
+        "createdTime": "2021-04-13T15:11:15.3146514Z", "lastUpdateTime": "2021-04-13T15:11:15.3146514Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '1625'
+      content-length: '387'
       content-type: application/json; charset=utf-8
-      date: Tue, 13 Apr 2021 16:01:36 GMT
+      date: Wed, 28 Apr 2021 22:07:53 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -129,5 +112,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_tags?orderby=timeasc
+    url: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_tags?orderby=timeasc
 version: 1

@@ -11,25 +11,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://searchf5e02005.search.windows.net/skillsets?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchf5e02005.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D8EFCD68949C3A\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://searchf5e02005.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D911EB5E8AEC4E\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
     headers:
       cache-control: no-cache
       content-length: '608'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 25 Mar 2021 20:34:37 GMT
-      elapsed-time: '79'
-      etag: W/"0x8D8EFCD68949C3A"
+      date: Sat, 08 May 2021 06:34:45 GMT
+      elapsed-time: '142'
+      etag: W/"0x8D911EB5E8AEC4E"
       expires: '-1'
       location: https://searchf5e02005.search.windows.net/skillsets('test-ss')?api-version=2020-06-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 845a129d-8da9-11eb-a50e-a0481ca055a9
+      request-id: 79ac43b1-afc7-11eb-8c3b-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
@@ -50,25 +50,34 @@ interactions:
       Prefer:
       - return=representation
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://searchf5e02005.search.windows.net/skillsets('test-ss')?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchf5e02005.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D8EFCD68A7C096\"","name":"test-ss","description":"updated","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
+        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns7P7+c7ezs798fy5/iqWM6qq2a8zNu7v9sibzO8/ePN
+        26Ism7xt7v5u+bIt2uuPRgYwNbkgqL/vRzvvDp4+3N09fXL/9PjB3snOzu/7EbVaZoucvm7zpt1u
+        GvpgljfTuli1RbWkz9crApLP6HPp4qNH37Mot9crvPrjXxTTumqq83b8mtuM39BAxqeMx6t8Wl0s
+        C0DjLwmQ9Lhcl2WnM/nIEkL/pO4vqrrI0fX38cZ5ti7b59nyYp1d5CfVzAJbFMtisV68rPNp0XgQ
+        i+W0XM/yN4RumTcNI8bwzNerdUt/0cAENSIG9U8jrtb1FH/fnVXT9YIIe5eRW7ovT/A3Ne6C+v4v
+        IVSrdat/WshVfZEtix9kGDCI3Wb1Rd6+iH35SxiGUu8yf53Xl8XUYf12WV2V+ewif91WNb0tn+bL
+        aX3N5Py98mv58Jf8PyKXCmhjAgAA
     headers:
       cache-control: no-cache
       content-encoding: gzip
-      content-length: '478'
+      content-length: '477'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 25 Mar 2021 20:34:37 GMT
-      elapsed-time: '59'
-      etag: W/"0x8D8EFCD68A7C096"
+      date: Sat, 08 May 2021 06:34:45 GMT
+      elapsed-time: '45'
+      etag: W/"0x8D911EB5EA72C00"
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 8491e764-8da9-11eb-a148-a0481ca055a9
+      request-id: 79e93c81-afc7-11eb-847d-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -81,9 +90,9 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       If-Match:
-      - '"0x8D8EFCD68949C3A"'
+      - '"0x8D911EB5E8AEC4E"'
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://searchf5e02005.search.windows.net/skillsets('test-ss')?api-version=2020-06-30-Preview
   response:
@@ -96,13 +105,13 @@ interactions:
       content-language: en
       content-length: '160'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 25 Mar 2021 20:34:37 GMT
-      elapsed-time: '22'
+      date: Sat, 08 May 2021 06:34:45 GMT
+      elapsed-time: '5'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 84a1cca2-8da9-11eb-94e8-a0481ca055a9
+      request-id: 79faf32a-afc7-11eb-b4c9-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 412

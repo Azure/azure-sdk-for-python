@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/languages?showStats=false
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -23,11 +23,11 @@ interactions:
         text is empty."}}}],"modelVersion":"2021-01-05"}'
     headers:
       apim-request-id:
-      - 0c309bfc-5cbc-47ad-b4c5-98f9fd917420
+      - 9b115ba2-fa85-44dc-88f3-804476da5aab
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 23 Feb 2021 17:07:49 GMT
+      - Tue, 18 May 2021 17:47:44 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -35,7 +35,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2'
+      - '4'
     status:
       code: 200
       message: OK

@@ -7,11 +7,12 @@ import json
 import os
 import platform
 import re
+import subprocess
 import sys
 import time
 from typing import TYPE_CHECKING
 
-import subprocess
+import six
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -53,9 +54,7 @@ class AzureCliCredential(object):
         """
 
         resource = _scopes_to_resource(*scopes)
-        output, error = _run_command(COMMAND_LINE.format(resource))
-        if error:
-            raise error
+        output = _run_command(COMMAND_LINE.format(resource))
 
         token = parse_token(output)
         if not token:
@@ -120,25 +119,25 @@ def _run_command(command):
         if platform.python_version() >= "3.3":
             kwargs["timeout"] = 10
 
-        output = subprocess.check_output(args, **kwargs)
-        return output, None
+        return subprocess.check_output(args, **kwargs)
     except subprocess.CalledProcessError as ex:
         # non-zero return from shell
         if ex.returncode == 127 or ex.output.startswith("'az' is not recognized"):
-            error = CredentialUnavailableError(message=CLI_NOT_FOUND)
-        elif "az login" in ex.output or "az account set" in ex.output:
-            error = CredentialUnavailableError(message=NOT_LOGGED_IN)
+            raise CredentialUnavailableError(message=CLI_NOT_FOUND)
+        if "az login" in ex.output or "az account set" in ex.output:
+            raise CredentialUnavailableError(message=NOT_LOGGED_IN)
+
+        # return code is from the CLI -> propagate its output
+        if ex.output:
+            message = sanitize_output(ex.output)
         else:
-            # return code is from the CLI -> propagate its output
-            if ex.output:
-                message = sanitize_output(ex.output)
-            else:
-                message = "Failed to invoke Azure CLI"
-            error = ClientAuthenticationError(message=message)
+            message = "Failed to invoke Azure CLI"
+        raise ClientAuthenticationError(message=message)
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'; CLI may or may not be installed
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
+        six.raise_from(error, ex)
     except Exception as ex:  # pylint:disable=broad-except
-        error = ex
-
-    return None, error
+        # could be a timeout, for example
+        error = CredentialUnavailableError(message="Failed to invoke the Azure CLI")
+        six.raise_from(error, ex)

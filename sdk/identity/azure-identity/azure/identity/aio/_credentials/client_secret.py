@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
-    """Authenticates as a service principal using a client ID and client secret.
+    """Authenticates as a service principal using a client secret.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str client_id: the service principal's client ID

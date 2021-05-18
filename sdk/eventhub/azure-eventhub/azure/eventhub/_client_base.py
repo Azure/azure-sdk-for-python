@@ -20,7 +20,9 @@ except ImportError:
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
 import six
-from azure.core.credentials import AccessToken, AzureSasCredential
+from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
+from azure.core.utils import parse_connection_string as core_parse_connection_string
+
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
 from ._configuration import Configuration
@@ -43,47 +45,79 @@ _Address = collections.namedtuple("Address", "hostname path")
 _AccessToken = collections.namedtuple("AccessToken", "token expires_on")
 
 
-def _parse_conn_str(conn_str, kwargs):
-    # type: (str, Dict[str, Any]) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
+def _parse_conn_str(conn_str, **kwargs):
+    # type: (str, Any) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
     entity_path = None  # type: Optional[str]
     shared_access_signature = None  # type: Optional[str]
-    shared_access_signature_expiry = None # type: Optional[int]
-    eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
-    for element in conn_str.split(";"):
-        key, _, value = element.partition("=")
-        if key.lower() == "endpoint":
-            endpoint = value.rstrip("/")
-        elif key.lower() == "hostname":
-            endpoint = value.rstrip("/")
-        elif key.lower() == "sharedaccesskeyname":
-            shared_access_key_name = value
-        elif key.lower() == "sharedaccesskey":
-            shared_access_key = value
-        elif key.lower() == "entitypath":
-            entity_path = value
-        elif key.lower() == "sharedaccesssignature":
-            shared_access_signature = value
-            try:
-                # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
-                # type: ignore
-                shared_access_signature_expiry = int(shared_access_signature.split('se=')[1].split('&')[0])
-            except (IndexError, TypeError, ValueError): # Fallback since technically expiry is optional.
-                # An arbitrary, absurdly large number, since you can't renew.
-                shared_access_signature_expiry = int(time.time() * 2)
-    if not (all((endpoint, shared_access_key_name, shared_access_key)) or all((endpoint, shared_access_signature))):
+    shared_access_signature_expiry = None
+    eventhub_name = kwargs.pop("eventhub_name", None) # type: Optional[str]
+    check_case = kwargs.pop("check_case", False) # type: bool
+    conn_settings = core_parse_connection_string(conn_str, case_sensitive_keys=check_case)
+    if check_case:
+        shared_access_key = conn_settings.get("SharedAccessKey")
+        shared_access_key_name = conn_settings.get("SharedAccessKeyName")
+        endpoint = conn_settings.get("Endpoint")
+        entity_path = conn_settings.get("EntityPath")
+        # non case sensitive check when parsing connection string for internal use
+        for key, value in conn_settings.items():
+            # only sas check is non case sensitive for both conn str properties and internal use
+            if key.lower() == "sharedaccesssignature":
+                shared_access_signature = value
+
+    if not check_case:
+        endpoint = conn_settings.get("endpoint") or conn_settings.get("hostname")
+        if endpoint:
+            endpoint = endpoint.rstrip("/")
+        shared_access_key_name = conn_settings.get("sharedaccesskeyname")
+        shared_access_key = conn_settings.get("sharedaccesskey")
+        entity_path = conn_settings.get("entitypath")
+        shared_access_signature = conn_settings.get("sharedaccesssignature")
+
+    if shared_access_signature:
+        try:
+            # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
+            shared_access_signature_expiry = int(
+                shared_access_signature.split("se=")[1].split("&")[0]   # type: ignore
+            )
+        except (
+            IndexError,
+            TypeError,
+            ValueError,
+        ):  # Fallback since technically expiry is optional.
+            # An arbitrary, absurdly large number, since you can't renew.
+            shared_access_signature_expiry = int(time.time() * 2)
+
+    entity = cast(str, eventhub_name or entity_path)
+
+    # check that endpoint is valid
+    if not endpoint:
+        raise ValueError("Connection string is either blank or malformed.")
+    parsed = urlparse(endpoint)
+    if not parsed.netloc:
+        raise ValueError("Invalid Endpoint on the Connection String.")
+    host = cast(str, parsed.netloc.strip())
+
+    if any([shared_access_key, shared_access_key_name]) and not all(
+        [shared_access_key, shared_access_key_name]
+    ):
         raise ValueError(
             "Invalid connection string. Should be in the format: "
             "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>"
         )
-    entity = cast(str, eventhub_name or entity_path)
-    left_slash_pos = cast(str, endpoint).find("//")
-    if left_slash_pos != -1:
-        host = cast(str, endpoint)[left_slash_pos + 2 :]
-    else:
-        host = str(endpoint)
+    # Only connection string parser should check that only one of sas and shared access
+    # key exists. For backwards compatibility, client construction should not have this check.
+    if check_case and shared_access_signature and shared_access_key:
+        raise ValueError(
+            "Only one of the SharedAccessKey or SharedAccessSignature must be present."
+        )
+    if not shared_access_signature and not shared_access_key:
+        raise ValueError(
+            "At least one of the SharedAccessKey or SharedAccessSignature must be present."
+        )
+
     return (host,
             str(shared_access_key_name) if shared_access_key_name else None,
             str(shared_access_key) if shared_access_key else None,
@@ -140,6 +174,25 @@ class EventHubSharedKeyCredential(object):
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
+class EventhubAzureNamedKeyTokenCredential(object):
+    """The named key credential used for authentication.
+
+    :param credential: The AzureNamedKeyCredential that should be used.
+    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
+    """
+
+    def __init__(self, azure_named_key_credential):
+        # type: (AzureNamedKeyCredential) -> None
+        self._credential = azure_named_key_credential
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, Any) -> _AccessToken
+        if not scopes:
+            raise ValueError("No token scope provided.")
+        name, key = self._credential.named_key
+        return _generate_sas_token(scopes[0], name, key)
+
 
 class EventHubSASTokenCredential(object):
     """The shared access token credential used for authentication.
@@ -164,7 +217,7 @@ class EventHubSASTokenCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
-class AzureSasTokenCredential(object):
+class EventhubAzureSasTokenCredential(object):
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
 
@@ -193,7 +246,7 @@ class AzureSasTokenCredential(object):
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
-        # type: (str, str, Union[AzureSasCredential, TokenCredential], Any) -> None
+        # type: (str, str, Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential], Any) -> None
         self.eventhub_name = eventhub_name
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")
@@ -201,7 +254,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._address = _Address(hostname=fully_qualified_namespace, path=path)
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         if isinstance(credential, AzureSasCredential):
-            self._credential = AzureSasTokenCredential(credential)
+            self._credential = EventhubAzureSasTokenCredential(credential)
+        elif isinstance(credential, AzureNamedKeyCredential):
+            self._credential = EventhubAzureNamedKeyTokenCredential(credential) # type: ignore
         else:
             self._credential = credential #type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)
@@ -218,7 +273,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
         # type: (str, Any) -> Dict[str, Any]
-        host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, kwargs)
+        host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, **kwargs)
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
         if token and token_expiry:

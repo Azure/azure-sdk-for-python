@@ -31,6 +31,7 @@ try:
     from ._models_py3 import ErrorModelError
     from ._models_py3 import LoadBalancingRule
     from ._models_py3 import ManagedCluster
+    from ._models_py3 import ManagedClusterCodeVersionResult
     from ._models_py3 import ManagedClusterListResult
     from ._models_py3 import ManagedClusterUpdateParameters
     from ._models_py3 import ManagedIdentity
@@ -104,6 +105,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorModelError  # type: ignore
     from ._models import LoadBalancingRule  # type: ignore
     from ._models import ManagedCluster  # type: ignore
+    from ._models import ManagedClusterCodeVersionResult  # type: ignore
     from ._models import ManagedClusterListResult  # type: ignore
     from ._models import ManagedClusterUpdateParameters  # type: ignore
     from ._models import ManagedIdentity  # type: ignore
@@ -157,7 +159,9 @@ from ._service_fabric_managed_clusters_management_client_enums import (
     Access,
     ClusterState,
     ClusterUpgradeCadence,
+    ClusterUpgradeMode,
     Direction,
+    DiskType,
     FailureAction,
     ManagedClusterAddOnFeature,
     ManagedIdentityType,
@@ -203,6 +207,7 @@ __all__ = [
     'ErrorModelError',
     'LoadBalancingRule',
     'ManagedCluster',
+    'ManagedClusterCodeVersionResult',
     'ManagedClusterListResult',
     'ManagedClusterUpdateParameters',
     'ManagedIdentity',
@@ -254,7 +259,9 @@ __all__ = [
     'Access',
     'ClusterState',
     'ClusterUpgradeCadence',
+    'ClusterUpgradeMode',
     'Direction',
+    'DiskType',
     'FailureAction',
     'ManagedClusterAddOnFeature',
     'ManagedIdentityType',

@@ -32,5 +32,4 @@ extends:
     Artifacts:
     - name: azure-mgmt-sql
       safeName: azuremgmtsql
-    - name: azure-mgmt-sqlvirtualmachine
-      safeName: azuremgmtsqlvirtualmachine
+
