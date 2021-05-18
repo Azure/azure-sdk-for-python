@@ -101,12 +101,17 @@ class AttestationClientCreateSamples(object):
 
         # [END shared_client_create]
 
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *exc_type):
+        await self.close()
+
 
 async def main():
-    sample = AttestationClientCreateSamples()
-    await sample.create_attestation_client_aad()
-    await sample.create_attestation_client_shared()
-    await sample.close()
+    async with AttestationClientCreateSamples() as sample:
+        await sample.create_attestation_client_aad()
+        await sample.create_attestation_client_shared()
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

@@ -74,7 +74,7 @@ class AttestationClientPolicySamples(object):
         )
 
     async def close(self):
-        self._credentials.close()
+        await self._credentials.close()
 
     async def get_policy_aad(self):
         """
@@ -118,7 +118,7 @@ class AttestationClientPolicySamples(object):
             if new_policy != get_result.value:
                 print("Policy does not match set policy.")
             # Attest an OpenEnclave using the new policy.
-            self._attest_open_enclave(self.aad_url)
+            await self._attest_open_enclave(self.aad_url)
         
     async def reset_policy_aad_unsecured(self):
         """
@@ -299,31 +299,36 @@ class AttestationClientPolicySamples(object):
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
         print('Attest open enclave using ', client_uri)
-        attest_client = self._create_client(client_uri)
-        await attest_client.attest_open_enclave(
-            oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
-        print("Successfully attested enclave.")
+        async with self._create_client(client_uri) as attest_client:
+            await attest_client.attest_open_enclave(
+                oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
+            print("Successfully attested enclave.")
 
     def _create_admin_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationAdministrationClient
-
         return AttestationAdministrationClient(self._credentials, instance_url=base_url, **kwargs)
 
     def _create_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationClient
         return AttestationClient(self._credentials, instance_url=base_url, **kwargs)
 
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *exc_type):
+        await self.close()
+
+
 async def main():
-    sample = AttestationClientPolicySamples()
-    await sample.get_policy_aad()
-    await sample.set_policy_aad_unsecured()
-    await sample.reset_policy_aad_unsecured()
-    await sample.set_policy_aad_secured()
-    await sample.reset_policy_aad_secured()
-    await sample.set_policy_isolated_secured()
-    await sample.get_policy_management_certificates()
-    await sample.add_remove_policy_management_certificate()
-    await sample.close()
+    async with AttestationClientPolicySamples() as sample:
+        await sample.get_policy_aad()
+        await sample.set_policy_aad_unsecured()
+        await sample.reset_policy_aad_unsecured()
+        await sample.set_policy_aad_secured()
+        await sample.reset_policy_aad_secured()
+        await sample.set_policy_isolated_secured()
+        await sample.get_policy_management_certificates()
+        await sample.add_remove_policy_management_certificate()
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

@@ -140,8 +140,8 @@ class AttestationClientAttestationSamples(object):
                 oe_report, runtime_data=AttestationData(runtime_data, is_json=False),
                 draft_policy=draft_policy)
 
-        print("Token algorithm", response.token.algorithm)
-        print("Issuer of token is: ", response.value.issuer)
+            print("Token algorithm", response.token.algorithm)
+            print("Issuer of token is: ", response.value.issuer)
         # [END attest_open_enclave_shared_draft]
 
     async def attest_open_enclave_with_draft_failing_policy(self):
@@ -236,14 +236,19 @@ issuancerules {
         #type:(str, Dict[str, Any]) -> AttestationClient
         return AttestationClient(self._credentials, instance_url=base_url, **kwargs)
 
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *exc_type):
+        await self.close()
+
 async def main():
-    sample = AttestationClientAttestationSamples()
-    await sample.attest_sgx_enclave_shared()
-    await sample.attest_open_enclave_shared()
-    await sample.attest_open_enclave_shared_with_options()
-    await sample.attest_open_enclave_with_draft_policy()
-    await sample.attest_open_enclave_with_draft_failing_policy()
-    await sample.close()
+    async with AttestationClientAttestationSamples() as sample:
+        await sample.attest_sgx_enclave_shared()
+        await sample.attest_open_enclave_shared()
+        await sample.attest_open_enclave_shared_with_options()
+        await sample.attest_open_enclave_with_draft_policy()
+        await sample.attest_open_enclave_with_draft_failing_policy()
 
 
 if __name__ == "__main__":

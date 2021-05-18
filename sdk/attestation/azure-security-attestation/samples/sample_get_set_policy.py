@@ -42,6 +42,7 @@ import json
 import os
 from dotenv import find_dotenv, load_dotenv
 import base64
+from contextlib import closing
 
 from azure.security.attestation import (
     AttestationAdministrationClient,
@@ -62,6 +63,24 @@ class AttestationClientPolicySamples(object):
         if self.isolated_url:
             self.isolated_certificate = base64.b64decode(os.getenv("ATTESTATION_ISOLATED_SIGNING_CERTIFICATE"))
             self.isolated_key = base64.b64decode(os.getenv("ATTESTATION_ISOLATED_SIGNING_KEY"))
+        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
+        client_id = os.getenv("ATTESTATION_CLIENT_ID")
+        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
+
+        if not tenant_id or not client_id or not secret:
+            raise Exception("Must provide client credentials.")
+
+        # Create azure-identity class
+        from azure.identity import ClientSecretCredential
+
+        self._credentials = ClientSecretCredential(
+            tenant_id=tenant_id, client_id=client_id, client_secret=secret
+        )
+
+    def close(self):
+        # self._credentials.close()
+        pass
+
 
     def get_policy_aad(self):
         """
@@ -69,9 +88,9 @@ class AttestationClientPolicySamples(object):
         """
         write_banner("get_policy_aad")
         print("Retrieve an unsecured Policy on an AAD mode attestation instance.")
-        admin_client = self._create_admin_client(self.aad_url)
-        get_result = admin_client.get_policy(AttestationType.SGX_ENCLAVE)
-        print("SGX Policy is: ", get_result.value)
+        with closing(self._create_admin_client(self.aad_url)) as admin_client:
+            get_result = admin_client.get_policy(AttestationType.SGX_ENCLAVE)
+            print("SGX Policy is: ", get_result.value)
 
     def set_policy_aad_unsecured(self):
         """
@@ -81,8 +100,8 @@ class AttestationClientPolicySamples(object):
 
         write_banner("set_policy_aad_unsecured")
         print("Set an unsecured Policy on an AAD mode attestation instance.")
-        admin_client = self._create_admin_client(self.aad_url)
-        new_policy="""
+        with closing(self._create_admin_client(self.aad_url)) as admin_client:
+            new_policy="""
 version= 1.0;
 authorizationrules
 {
@@ -95,16 +114,16 @@ authorizationrules
 issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="My-MrSigner", value=c.value);
 };
-"""
+    """
 
-        set_result = admin_client.set_policy(AttestationType.OPEN_ENCLAVE, new_policy)
-        print("Policy Set result: ", set_result.value.policy_resolution)
+            set_result = admin_client.set_policy(AttestationType.OPEN_ENCLAVE, new_policy)
+            print("Policy Set result: ", set_result.value.policy_resolution)
 
-        get_result = admin_client.get_policy(AttestationType.OPEN_ENCLAVE)
-        if new_policy != get_result.value:
-            print("Policy does not match set policy.")
-        # Attest an OpenEnclave using the new policy.
-        self._attest_open_enclave(self.aad_url)
+            get_result = admin_client.get_policy(AttestationType.OPEN_ENCLAVE)
+            if new_policy != get_result.value:
+                print("Policy does not match set policy.")
+            # Attest an OpenEnclave using the new policy.
+            self._attest_open_enclave(self.aad_url)
 
         
     def reset_policy_aad_unsecured(self):
@@ -113,10 +132,9 @@ issuancerules {
         default value.
         """
         print("Reset an unsecured Policy on an AAD mode attestation instance.")
-        admin_client = self._create_admin_client(self.aad_url)
-
-        set_result = admin_client.reset_policy(AttestationType.OPEN_ENCLAVE)
-        print("Policy reset result: ", set_result.value.policy_resolution)
+        with closing(self._create_admin_client(self.aad_url)) as admin_client:
+            set_result = admin_client.reset_policy(AttestationType.OPEN_ENCLAVE)
+            print("Policy reset result: ", set_result.value.policy_resolution)
 
     def set_policy_aad_secured(self):
         """
@@ -126,39 +144,37 @@ issuancerules {
 
         write_banner("set_policy_aad_secured")
         print("Set Secured Policy on an AAD mode attestation instance.")
-        admin_client = self._create_admin_client(self.aad_url)
+        with closing(self._create_admin_client(self.aad_url)) as admin_client:
+            # [START set_secured_policy]
+            # Create an RSA Key and wrap an X.509 certificate around
+            # the public key for that certificate.
+            rsa_key = create_rsa_key()
+            cert = create_x509_certificate(rsa_key, u'TestCertificate')
 
-        # [START set_secured_policy]
-        # Create an RSA Key and wrap an X.509 certificate around
-        # the public key for that certificate.
-        rsa_key = create_rsa_key()
-        cert = create_x509_certificate(rsa_key, u'TestCertificate')
+            # Set a minimal policy.
+            set_result=admin_client.set_policy(AttestationType.SGX_ENCLAVE, 
+                """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
+                signing_key=AttestationSigningKey(rsa_key, cert))
+            print("Policy Set Resolution: ", set_result.value.policy_resolution)
+            print("Resulting policy signer should match the input certificate:")
+            print("Policy Signer: ", base64.b64encode(set_result.value.policy_signer.certificates[0]).decode('ascii'))
+            print("Certificate:   ", base64.b64encode(cert).decode('ascii'))
+            # [END set_secured_policy]
 
-        # Set a minimal policy.
-        set_result=admin_client.set_policy(AttestationType.SGX_ENCLAVE, 
-            """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
-            signing_key=AttestationSigningKey(rsa_key, cert))
-        print("Policy Set Resolution: ", set_result.value.policy_resolution)
-        print("Resulting policy signer should match the input certificate:")
-        print("Policy Signer: ", base64.b64encode(set_result.value.policy_signer.certificates[0]).decode('ascii'))
-        print("Certificate:   ", base64.b64encode(cert).decode('ascii'))
-        # [END set_secured_policy]
-
-        # Reset the policy now that we're done.
-        admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
+            # Reset the policy now that we're done.
+            admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
 
     def reset_policy_aad_secured(self):
         """ Set a secured attestation policy on an AAD mode instance"""
         write_banner("reset_policy_aad_secured")
         print("Set Secured Policy on an AAD mode attestation instance.")
-        admin_client = self._create_admin_client(self.aad_url)
+        with closing(self._create_admin_client(self.aad_url)) as admin_client:
+            rsa_key = create_rsa_key()
+            cert = create_x509_certificate(rsa_key, u'TestCertificate')
 
-        rsa_key = create_rsa_key()
-        cert = create_x509_certificate(rsa_key, u'TestCertificate')
-
-        set_result=admin_client.reset_policy(AttestationType.SGX_ENCLAVE, 
-            signing_key=AttestationSigningKey(rsa_key, cert))
-        print("Policy Set Resolution: ", set_result.value.policy_resolution)
+            set_result=admin_client.reset_policy(AttestationType.SGX_ENCLAVE, 
+                signing_key=AttestationSigningKey(rsa_key, cert))
+            print("Policy Set Resolution: ", set_result.value.policy_resolution)
 
     def get_policy_isolated(self):
         """
@@ -166,9 +182,9 @@ issuancerules {
         """
         write_banner("get_policy_isolated")
         print("Retrieve an unsecured Policy on an Isolated mode attestation instance.")
-        admin_client = self._create_admin_client(self.isolated_url)
-        get_result = admin_client.get_policy(AttestationType.SGX_ENCLAVE)
-        print("SGX Policy is: ", get_result.value)
+        with closing(self._create_admin_client(self.isolated_url)) as admin_client:
+            get_result = admin_client.get_policy(AttestationType.SGX_ENCLAVE)
+            print("SGX Policy is: ", get_result.value)
 
     def set_policy_isolated_secured(self):
         """
@@ -180,23 +196,21 @@ issuancerules {
         """
         write_banner("set_policy_isolated_secured")
         print("Set Secured Policy on an AAD mode attestation instance.")
-        admin_client = self._create_admin_client(self.isolated_url)
+        with closing(self._create_admin_client(self.isolated_url)) as admin_client:
+            set_result=admin_client.set_policy(AttestationType.SGX_ENCLAVE, 
+                """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
+                signing_key=AttestationSigningKey(self.isolated_key, self.isolated_certificate))
+            print("Policy Set Resolution: ", set_result.value.policy_resolution)
+            print("Resulting policy signer should match the input certificate:")
+            print("Policy Signer: ", base64.b64encode(set_result.value.policy_signer.certificates[0]).decode('ascii'))
+            print("Certificate:   ", base64.b64encode(self.isolated_certificate).decode('ascii'))
 
-
-        set_result=admin_client.set_policy(AttestationType.SGX_ENCLAVE, 
-            """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
-            signing_key=AttestationSigningKey(self.isolated_key, self.isolated_certificate))
-        print("Policy Set Resolution: ", set_result.value.policy_resolution)
-        print("Resulting policy signer should match the input certificate:")
-        print("Policy Signer: ", base64.b64encode(set_result.value.policy_signer.certificates[0]).decode('ascii'))
-        print("Certificate:   ", base64.b64encode(self.isolated_certificate).decode('ascii'))
-
-        print("Reset the attestation policy to the default now to avoid side effects.")
-        # Reset the policy now that we're done.
-        admin_client.reset_policy(AttestationType.SGX_ENCLAVE, 
-            signing_key=AttestationSigningKey(
-                self.isolated_key,
-                self.isolated_certificate))
+            print("Reset the attestation policy to the default now to avoid side effects.")
+            # Reset the policy now that we're done.
+            admin_client.reset_policy(AttestationType.SGX_ENCLAVE, 
+                signing_key=AttestationSigningKey(
+                    self.isolated_key,
+                    self.isolated_certificate))
 
     def get_policy_management_certificates(self):
         """
@@ -208,21 +222,20 @@ issuancerules {
         """
         write_banner("get_policy_management_certificates_isolated")
         print("Get the policy management certificates for a isolated instance.")
-        admin_client = self._create_admin_client(self.isolated_url)
 
+        with closing(self._create_admin_client(self.isolated_url)) as admin_client:
+            get_result=admin_client.get_policy_management_certificates()
+            print("Isolated instance has", len(get_result.value), "certificates")
 
-        get_result=admin_client.get_policy_management_certificates()
-        print("Isolated instance has", len(get_result.value), "certificates")
-
-        # The signing certificate for the isolated instance should be
-        # the configured isolated_signing_certificate.
-        #
-        # Note that the certificate list returned is an array of certificate chains.
-        actual_cert = base64.b64encode(get_result.value[0][0]).decode('ascii')
-        isolated_cert = base64.b64encode(self.isolated_certificate).decode('ascii')
-        print("Actual Cert:   ", actual_cert)
-        print("Isolated Cert: ", isolated_cert)
-        assert actual_cert == isolated_cert
+            # The signing certificate for the isolated instance should be
+            # the configured isolated_signing_certificate.
+            #
+            # Note that the certificate list returned is an array of certificate chains.
+            actual_cert = base64.b64encode(get_result.value[0][0]).decode('ascii')
+            isolated_cert = base64.b64encode(self.isolated_certificate).decode('ascii')
+            print("Actual Cert:   ", actual_cert)
+            print("Isolated Cert: ", isolated_cert)
+            assert actual_cert == isolated_cert
 
     def add_remove_policy_management_certificate(self):
         """
@@ -232,107 +245,82 @@ issuancerules {
         """
         write_banner("add_remove_policy_management_certificate")
         print("Get and set the policy management certificates for a isolated instance.")
-        admin_client = self._create_admin_client(self.isolated_url)
+        with closing(self._create_admin_client(self.isolated_url)) as admin_client:
+            # [BEGIN add_policy_management_certificate]
+            new_key = create_rsa_key()
+            new_certificate = create_x509_certificate(new_key, u'NewCertificateName')
 
-        # [BEGIN add_policy_management_certificate]
-        new_key = create_rsa_key()
-        new_certificate = create_x509_certificate(new_key, u'NewCertificateName')
+            # Add the new certificate to the list.
+            add_result = admin_client.add_policy_management_certificate(
+                new_certificate,
+                AttestationSigningKey(self.isolated_key, self.isolated_certificate))
+            if add_result.value.certificate_resolution != CertificateModification.IS_PRESENT:
+                raise Exception("Certificate was not added!")
 
-        # Add the new certificate to the list.
-        add_result = admin_client.add_policy_management_certificate(
-            new_certificate,
-            AttestationSigningKey(self.isolated_key, self.isolated_certificate))
-        if add_result.value.certificate_resolution != CertificateModification.IS_PRESENT:
-            raise Exception("Certificate was not added!")
+            # [END add_policy_management_certificate]
 
-        # [END add_policy_management_certificate]
+            get_result = admin_client.get_policy_management_certificates()
+            print("Isolated instance now has", len(get_result.value), "certificates - should be 2")
 
-        get_result = admin_client.get_policy_management_certificates()
-        print("Isolated instance now has", len(get_result.value), "certificates - should be 2")
+            for cert_der in get_result.value:
+                cert = load_der_x509_certificate(cert_der[0], default_backend())
+                print("certificate subject: ", cert.subject)
 
-        for cert_der in get_result.value:
-            cert = load_der_x509_certificate(cert_der[0], default_backend())
-            print("certificate subject: ", cert.subject)
+            # The signing certificate for the isolated instance should be
+            # the configured isolated_signing_certificate.
+            #
+            # Note that the certificate list returned is an array of certificate chains.
+            actual_cert0 = base64.b64encode(get_result.value[0][0]).decode('ascii')
+            isolated_cert = base64.b64encode(self.isolated_certificate).decode('ascii')
+            print("Actual Cert 0:   ", actual_cert0)
+            print("Isolated Cert: ", isolated_cert)
+            if actual_cert0 != isolated_cert:
+                raise Exception("Unexpected certificate mismatch.")
 
-        # The signing certificate for the isolated instance should be
-        # the configured isolated_signing_certificate.
-        #
-        # Note that the certificate list returned is an array of certificate chains.
-        actual_cert0 = base64.b64encode(get_result.value[0][0]).decode('ascii')
-        isolated_cert = base64.b64encode(self.isolated_certificate).decode('ascii')
-        print("Actual Cert 0:   ", actual_cert0)
-        print("Isolated Cert: ", isolated_cert)
-        if actual_cert0 != isolated_cert:
-            raise Exception("Unexpected certificate mismatch.")
+            found_cert = False
+            expected_cert = base64.b64encode(new_certificate).decode('ascii')
+            for cert_der in get_result.value:
+                actual_cert1 = base64.b64encode(cert_der[0]).decode('ascii')
+                if actual_cert1 == expected_cert:
+                    found_cert = True
+            if not found_cert:
+                raise Exception("Could not find new certificate!")
 
-        found_cert = False
-        expected_cert = base64.b64encode(new_certificate).decode('ascii')
-        for cert_der in get_result.value:
-            actual_cert1 = base64.b64encode(cert_der[0]).decode('ascii')
-            if actual_cert1 == expected_cert:
-                found_cert = True
-        if not found_cert:
-            raise Exception("Could not find new certificate!")
+            # Now remove the certificate we just added.
+            print("Remove the newly added certificate.")
+            # [BEGIN remove_policy_management_certificate]
+            remove_result = admin_client.remove_policy_management_certificate(
+                new_certificate,
+                AttestationSigningKey(self.isolated_key, self.isolated_certificate))
 
-        # Now remove the certificate we just added.
-        print("Remove the newly added certificate.")
-        # [BEGIN remove_policy_management_certificate]
-        remove_result = admin_client.remove_policy_management_certificate(
-            new_certificate,
-            AttestationSigningKey(self.isolated_key, self.isolated_certificate))
-
-        if remove_result.value.certificate_resolution != CertificateModification.IS_ABSENT:
-            raise Exception("Certificate was not removed!")
-        # [END remove_policy_management_certificate]
+            if remove_result.value.certificate_resolution != CertificateModification.IS_ABSENT:
+                raise Exception("Certificate was not removed!")
+            # [END remove_policy_management_certificate]
 
     def _attest_open_enclave(self, client_uri):
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
         print('Attest open enclave using ', client_uri)
-        attest_client = self._create_client(client_uri)
-        attest_client.attest_open_enclave(
-            oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
-        print("Successfully attested enclave.")
+        with closing(self._create_client(client_uri)) as attest_client:
+            attest_client.attest_open_enclave(
+                oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
+            print("Successfully attested enclave.")
 
     def _create_admin_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationAdministrationClient
-        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
-        client_id = os.getenv("ATTESTATION_CLIENT_ID")
-        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
-
-        if tenant_id and client_id and secret:
-            # Create azure-identity class
-            from azure.identity import ClientSecretCredential
-
-            credentials = ClientSecretCredential(
-                tenant_id=tenant_id, client_id=client_id, client_secret=secret
-            )
-
-        return AttestationAdministrationClient(credentials, instance_url=base_url, **kwargs)
+        return AttestationAdministrationClient(self._credentials, instance_url=base_url, **kwargs)
 
     def _create_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationClient
-        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
-        client_id = os.getenv("ATTESTATION_CLIENT_ID")
-        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
-
-        if tenant_id and client_id and secret:
-            # Create azure-identity class
-            from azure.identity import ClientSecretCredential
-
-            credentials = ClientSecretCredential(
-                tenant_id=tenant_id, client_id=client_id, client_secret=secret
-            )
-
-        return AttestationClient(credentials, instance_url=base_url, **kwargs)
+        return AttestationClient(self._credentials, instance_url=base_url, **kwargs)
 
 if __name__ == "__main__":
-    sample = AttestationClientPolicySamples()
-    sample.get_policy_aad()
-    sample.set_policy_aad_unsecured()
-    sample.reset_policy_aad_unsecured()
-    sample.set_policy_aad_secured()
-    sample.reset_policy_aad_secured()
-    sample.set_policy_isolated_secured()
-    sample.get_policy_management_certificates()
-    sample.add_remove_policy_management_certificate()
+    with closing(AttestationClientPolicySamples()) as sample:
+        sample.get_policy_aad()
+        sample.set_policy_aad_unsecured()
+        sample.reset_policy_aad_unsecured()
+        sample.set_policy_aad_secured()
+        sample.reset_policy_aad_secured()
+        sample.set_policy_isolated_secured()
+        sample.get_policy_management_certificates()
+        sample.add_remove_policy_management_certificate()
