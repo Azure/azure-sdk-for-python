@@ -147,6 +147,28 @@ jobs:
           Write-Host "##vso[task.setvariable variable=conda.build]$(Agent.BuildDirectory)/conda_checkout"
         displayName: 'Create Conda Working Directory for Testing'
 
+      - script: |
+          echo "$(activate.method) ${{ artifact.name }}"
+          $(activate.method) ${{ artifact.name }}
+
+          echo "python -m pip install -r $(Build.SourcesDirectory)/eng/conda_test_requirements.txt"
+          python -m pip install -r $(Build.SourcesDirectory)/eng/conda_test_requirements.txt
+
+          python -m pip uninstall azure-core -y
+        displayName: 'Prep Conda Environment w/ Dependencies'
+
+      - script: |
+          echo "conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)"
+          conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)
+
+          echo "conda install --name ${{ artifact.name }} azure-identity -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} -c $(AzureSDKCondaChannel) --yes"
+          conda install --name ${{ artifact.name }} azure-identity -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} -c $(AzureSDKCondaChannel) --yes
+
+          echo "$(activate.method) ${{ artifact.name }}"
+          $(activate.method) ${{ artifact.name }}
+          python -m pip freeze
+        displayName: 'Install ${{ checkout.package }} Conda Package'
+
       - ${{ each checkout in artifact.checkout }}:
         - pwsh:
             Write-Host "Clean up Conda Build Directory $(conda.build)"
@@ -168,26 +190,5 @@ jobs:
         - script: |
             echo "$(activate.method) ${{ artifact.name }}"
             $(activate.method) ${{ artifact.name }}
-
-            echo "python -m pip install -r $(Build.SourcesDirectory)/eng/conda_test_requirements.txt"
-            python -m pip install -r $(Build.SourcesDirectory)/eng/conda_test_requirements.txt
-
-            python -m pip uninstall azure-core -y
-          displayName: 'Prep Conda Environment w/ Dependencies'
-          workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
-
-        - script: |
-            echo "conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)"
-            conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)
-
-            echo "conda install --name ${{ artifact.name }} azure-identity -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} -c $(AzureSDKCondaChannel) --yes"
-            conda install --name ${{ artifact.name }} azure-identity -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} -c $(AzureSDKCondaChannel) --yes
-          displayName: 'Install ${{ checkout.package }} Conda Package'
-          workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
-
-        - script: |
-            echo "$(activate.method) ${{ artifact.name }}"
-            $(activate.method) ${{ artifact.name }}
-            python -m pip freeze
             python -m pytest $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
           displayName: 'Run Tests for ${{ checkout.package }}'
