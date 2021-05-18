@@ -14,27 +14,27 @@ interactions:
       Content-Type:
       - image/jpeg
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?readingOrder=basic
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyze?readingOrder=basic
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 9df35c6c-cc96-443a-9bec-a4ce1ba90b18
+      - 2f64362a-a84d-461c-a8bc-a8131b12a0a3
       content-length:
       - '0'
       date:
-      - Mon, 01 Mar 2021 18:49:22 GMT
+      - Tue, 11 May 2021 00:28:30 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/9df35c6c-cc96-443a-9bec-a4ce1ba90b18
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyzeResults/2f64362a-a84d-461c-a8bc-a8131b12a0a3
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '107'
+      - '103'
     status:
       code: 202
       message: Accepted
@@ -48,13 +48,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/9df35c6c-cc96-443a-9bec-a4ce1ba90b18
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyzeResults/2f64362a-a84d-461c-a8bc-a8131b12a0a3
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-01T18:49:23Z",
-        "lastUpdatedDateTime": "2021-03-01T18:49:26Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T00:28:31Z",
+        "lastUpdatedDateTime": "2021-05-11T00:28:32Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 1700, "height":
         2200, "unit": "pixel", "lines": [{"boundingBox": [136, 139, 351, 138, 351,
         166, 136, 166], "text": "Purchase Order", "appearance": {"style": {"name":
@@ -344,84 +344,86 @@ interactions:
         0.994}, {"boundingBox": [563, 1959, 630, 1959, 630, 1991, 564, 1992], "text":
         "total", "confidence": 0.996}, {"boundingBox": [636, 1959, 786, 1961, 786,
         1990, 636, 1991], "text": "purchase.", "confidence": 0.994}]}]}], "pageResults":
-        [{"page": 1, "tables": [{"rows": 5, "columns": 5, "cells": [{"rowIndex": 0,
-        "columnIndex": 0, "columnSpan": 2, "text": "Details", "boundingBox": [157,
-        1038, 847, 1037, 847, 1086, 157, 1086], "elements": ["#/readResults/0/lines/21/words/0"]},
-        {"rowIndex": 0, "columnIndex": 2, "text": "Quantity", "boundingBox": [847,
-        1037, 1071, 1037, 1071, 1086, 847, 1086], "elements": ["#/readResults/0/lines/22/words/0"]},
-        {"rowIndex": 0, "columnIndex": 3, "text": "Unit Price", "boundingBox": [1071,
-        1037, 1310, 1038, 1310, 1086, 1071, 1086], "elements": ["#/readResults/0/lines/23/words/0",
-        "#/readResults/0/lines/23/words/1"]}, {"rowIndex": 0, "columnIndex": 4, "text":
-        "Total", "boundingBox": [1310, 1038, 1543, 1038, 1543, 1086, 1310, 1086],
-        "elements": ["#/readResults/0/lines/24/words/0"]}, {"rowIndex": 1, "columnIndex":
-        0, "columnSpan": 2, "text": "Bindings", "boundingBox": [157, 1086, 847, 1086,
-        847, 1127, 157, 1128], "elements": ["#/readResults/0/lines/25/words/0"]},
-        {"rowIndex": 1, "columnIndex": 2, "text": "20", "boundingBox": [847, 1086,
-        1071, 1086, 1071, 1127, 847, 1127], "elements": ["#/readResults/0/lines/26/words/0"]},
-        {"rowIndex": 1, "columnIndex": 3, "text": "1.00", "boundingBox": [1071, 1086,
-        1310, 1086, 1310, 1127, 1071, 1127], "elements": ["#/readResults/0/lines/27/words/0"]},
-        {"rowIndex": 1, "columnIndex": 4, "text": "20.00", "boundingBox": [1310, 1086,
-        1543, 1086, 1543, 1127, 1310, 1127], "elements": ["#/readResults/0/lines/28/words/0"]},
-        {"rowIndex": 2, "columnIndex": 0, "columnSpan": 2, "text": "Covers Small",
-        "boundingBox": [157, 1128, 847, 1127, 847, 1171, 157, 1171], "elements": ["#/readResults/0/lines/29/words/0",
-        "#/readResults/0/lines/29/words/1"]}, {"rowIndex": 2, "columnIndex": 2, "text":
-        "20", "boundingBox": [847, 1127, 1071, 1127, 1071, 1171, 847, 1171], "elements":
-        ["#/readResults/0/lines/30/words/0"]}, {"rowIndex": 2, "columnIndex": 3, "text":
-        "1.00", "boundingBox": [1071, 1127, 1310, 1127, 1310, 1171, 1071, 1171], "elements":
-        ["#/readResults/0/lines/31/words/0"]}, {"rowIndex": 2, "columnIndex": 4, "text":
-        "20.00", "boundingBox": [1310, 1127, 1543, 1127, 1543, 1171, 1310, 1171],
-        "elements": ["#/readResults/0/lines/32/words/0"]}, {"rowIndex": 3, "columnIndex":
-        0, "columnSpan": 2, "text": "Feather Bookmark", "boundingBox": [157, 1171,
-        847, 1171, 847, 1214, 157, 1214], "elements": ["#/readResults/0/lines/33/words/0",
-        "#/readResults/0/lines/33/words/1"]}, {"rowIndex": 3, "columnIndex": 2, "text":
-        "20", "boundingBox": [847, 1171, 1071, 1171, 1071, 1214, 847, 1214], "elements":
-        ["#/readResults/0/lines/34/words/0"]}, {"rowIndex": 3, "columnIndex": 3, "text":
-        "5.00", "boundingBox": [1071, 1171, 1310, 1171, 1310, 1214, 1071, 1214], "elements":
-        ["#/readResults/0/lines/35/words/0"]}, {"rowIndex": 3, "columnIndex": 4, "text":
-        "100.00", "boundingBox": [1310, 1171, 1543, 1171, 1543, 1215, 1310, 1214],
-        "elements": ["#/readResults/0/lines/36/words/0"]}, {"rowIndex": 4, "columnIndex":
-        0, "columnSpan": 2, "text": "Copper Swirl Marker", "boundingBox": [157, 1214,
-        847, 1214, 847, 1258, 157, 1258], "elements": ["#/readResults/0/lines/37/words/0",
-        "#/readResults/0/lines/37/words/1", "#/readResults/0/lines/37/words/2"]},
-        {"rowIndex": 4, "columnIndex": 2, "text": "20", "boundingBox": [847, 1214,
-        1071, 1214, 1071, 1258, 847, 1258], "elements": ["#/readResults/0/lines/38/words/0"]},
-        {"rowIndex": 4, "columnIndex": 3, "text": "5.00", "boundingBox": [1071, 1214,
-        1310, 1214, 1310, 1258, 1071, 1258], "elements": ["#/readResults/0/lines/39/words/0"]},
-        {"rowIndex": 4, "columnIndex": 4, "text": "100.00", "boundingBox": [1310,
-        1214, 1543, 1215, 1543, 1260, 1310, 1258], "elements": ["#/readResults/0/lines/40/words/0"]}],
-        "boundingBox": [153, 1036, 1547, 1037, 1547, 1265, 153, 1265]}, {"rows": 4,
-        "columns": 2, "cells": [{"rowIndex": 0, "columnIndex": 0, "text": "SUBTOTAL",
-        "boundingBox": [1072, 1564, 1307, 1565, 1308, 1609, 1071, 1608], "elements":
-        ["#/readResults/0/lines/41/words/0"]}, {"rowIndex": 0, "columnIndex": 1, "text":
-        "$140.00", "boundingBox": [1307, 1565, 1542, 1564, 1543, 1609, 1308, 1609],
-        "elements": ["#/readResults/0/lines/42/words/0"]}, {"rowIndex": 1, "columnIndex":
-        0, "text": "TAX", "boundingBox": [1071, 1608, 1308, 1609, 1308, 1652, 1071,
-        1651], "elements": ["#/readResults/0/lines/43/words/0"]}, {"rowIndex": 1,
-        "columnIndex": 1, "text": "$4.00", "boundingBox": [1308, 1609, 1543, 1609,
-        1543, 1652, 1308, 1652], "elements": ["#/readResults/0/lines/44/words/0"]},
-        {"rowIndex": 2, "columnIndex": 0, "text": "", "boundingBox": [1071, 1651,
-        1308, 1652, 1308, 1663, 1071, 1663], "elements": []}, {"rowIndex": 2, "columnIndex":
-        1, "text": "", "boundingBox": [1308, 1652, 1543, 1652, 1543, 1663, 1308, 1663],
-        "elements": []}, {"rowIndex": 3, "columnIndex": 0, "text": "TOTAL", "boundingBox":
-        [1071, 1663, 1308, 1663, 1308, 1707, 1071, 1707], "elements": ["#/readResults/0/lines/46/words/0"]},
-        {"rowIndex": 3, "columnIndex": 1, "text": "$144.00", "boundingBox": [1308,
-        1663, 1543, 1663, 1543, 1708, 1308, 1707], "elements": ["#/readResults/0/lines/47/words/0"]}],
-        "boundingBox": [1058, 1563, 1555, 1563, 1555, 1707, 1058, 1707]}]}]}}'
+        [{"page": 1, "tables": [{"rows": 5, "columns": 4, "cells": [{"rowIndex": 0,
+        "columnIndex": 0, "text": "Details", "boundingBox": [156, 1037, 847, 1037,
+        847, 1086, 156, 1086], "elements": ["#/readResults/0/lines/21/words/0"], "isHeader":
+        true}, {"rowIndex": 0, "columnIndex": 1, "text": "Quantity", "boundingBox":
+        [847, 1037, 1071, 1038, 1071, 1086, 847, 1086], "elements": ["#/readResults/0/lines/22/words/0"],
+        "isHeader": true}, {"rowIndex": 0, "columnIndex": 2, "text": "Unit Price",
+        "boundingBox": [1071, 1038, 1309, 1038, 1309, 1086, 1071, 1086], "elements":
+        ["#/readResults/0/lines/23/words/0", "#/readResults/0/lines/23/words/1"],
+        "isHeader": true}, {"rowIndex": 0, "columnIndex": 3, "text": "Total", "boundingBox":
+        [1309, 1038, 1543, 1038, 1543, 1086, 1309, 1086], "elements": ["#/readResults/0/lines/24/words/0"],
+        "isHeader": true}, {"rowIndex": 1, "columnIndex": 0, "text": "Bindings", "boundingBox":
+        [156, 1086, 847, 1086, 847, 1127, 156, 1127], "elements": ["#/readResults/0/lines/25/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 1, "text": "20", "boundingBox":
+        [847, 1086, 1071, 1086, 1071, 1127, 847, 1127], "elements": ["#/readResults/0/lines/26/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 2, "text": "1.00", "boundingBox":
+        [1071, 1086, 1309, 1086, 1309, 1127, 1071, 1127], "elements": ["#/readResults/0/lines/27/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 3, "text": "20.00", "boundingBox":
+        [1309, 1086, 1543, 1086, 1543, 1127, 1309, 1127], "elements": ["#/readResults/0/lines/28/words/0"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 0, "text": "Covers Small",
+        "boundingBox": [156, 1127, 847, 1127, 847, 1171, 156, 1171], "elements": ["#/readResults/0/lines/29/words/0",
+        "#/readResults/0/lines/29/words/1"], "isHeader": false}, {"rowIndex": 2, "columnIndex":
+        1, "text": "20", "boundingBox": [847, 1127, 1071, 1127, 1071, 1171, 847, 1171],
+        "elements": ["#/readResults/0/lines/30/words/0"], "isHeader": false}, {"rowIndex":
+        2, "columnIndex": 2, "text": "1.00", "boundingBox": [1071, 1127, 1309, 1127,
+        1309, 1171, 1071, 1171], "elements": ["#/readResults/0/lines/31/words/0"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 3, "text": "20.00", "boundingBox":
+        [1309, 1127, 1543, 1127, 1543, 1171, 1309, 1171], "elements": ["#/readResults/0/lines/32/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 0, "text": "Feather Bookmark",
+        "boundingBox": [156, 1171, 847, 1171, 847, 1214, 156, 1214], "elements": ["#/readResults/0/lines/33/words/0",
+        "#/readResults/0/lines/33/words/1"], "isHeader": false}, {"rowIndex": 3, "columnIndex":
+        1, "text": "20", "boundingBox": [847, 1171, 1071, 1171, 1071, 1214, 847, 1214],
+        "elements": ["#/readResults/0/lines/34/words/0"], "isHeader": false}, {"rowIndex":
+        3, "columnIndex": 2, "text": "5.00", "boundingBox": [1071, 1171, 1309, 1171,
+        1309, 1214, 1071, 1214], "elements": ["#/readResults/0/lines/35/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 3, "text": "100.00", "boundingBox":
+        [1309, 1171, 1543, 1171, 1543, 1215, 1309, 1214], "elements": ["#/readResults/0/lines/36/words/0"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 0, "text": "Copper Swirl
+        Marker", "boundingBox": [156, 1214, 847, 1214, 847, 1258, 156, 1258], "elements":
+        ["#/readResults/0/lines/37/words/0", "#/readResults/0/lines/37/words/1", "#/readResults/0/lines/37/words/2"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 1, "text": "20", "boundingBox":
+        [847, 1214, 1071, 1214, 1071, 1258, 847, 1258], "elements": ["#/readResults/0/lines/38/words/0"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 2, "text": "5.00", "boundingBox":
+        [1071, 1214, 1309, 1214, 1309, 1258, 1071, 1258], "elements": ["#/readResults/0/lines/39/words/0"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 3, "text": "100.00", "boundingBox":
+        [1309, 1214, 1543, 1215, 1543, 1260, 1309, 1258], "elements": ["#/readResults/0/lines/40/words/0"],
+        "isHeader": false}], "boundingBox": [153, 1036, 1547, 1037, 1547, 1265, 153,
+        1265]}, {"rows": 4, "columns": 2, "cells": [{"rowIndex": 0, "columnIndex":
+        0, "text": "SUBTOTAL", "boundingBox": [1070, 1564, 1307, 1564, 1308, 1609,
+        1071, 1608], "elements": ["#/readResults/0/lines/41/words/0"], "isHeader":
+        true}, {"rowIndex": 0, "columnIndex": 1, "text": "$140.00", "boundingBox":
+        [1307, 1564, 1544, 1564, 1544, 1609, 1308, 1609], "elements": ["#/readResults/0/lines/42/words/0"],
+        "isHeader": true}, {"rowIndex": 1, "columnIndex": 0, "text": "TAX", "boundingBox":
+        [1071, 1608, 1308, 1609, 1308, 1652, 1071, 1653], "elements": ["#/readResults/0/lines/43/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 1, "text": "$4.00", "boundingBox":
+        [1308, 1609, 1544, 1609, 1544, 1652, 1308, 1652], "elements": ["#/readResults/0/lines/44/words/0"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 0, "text": "", "boundingBox":
+        [1071, 1653, 1308, 1652, 1308, 1664, 1071, 1664], "elements": [], "isHeader":
+        false}, {"rowIndex": 2, "columnIndex": 1, "text": "", "boundingBox": [1308,
+        1652, 1544, 1652, 1544, 1665, 1308, 1664], "elements": [], "isHeader": false},
+        {"rowIndex": 3, "columnIndex": 0, "text": "TOTAL", "boundingBox": [1071, 1664,
+        1308, 1664, 1308, 1707, 1071, 1707], "elements": ["#/readResults/0/lines/46/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 1, "text": "$144.00", "boundingBox":
+        [1308, 1664, 1544, 1665, 1544, 1707, 1308, 1707], "elements": ["#/readResults/0/lines/47/words/0"],
+        "isHeader": false}], "boundingBox": [1058, 1563, 1555, 1563, 1555, 1707, 1058,
+        1707]}]}]}}'
     headers:
       apim-request-id:
-      - 852cd137-3825-4acb-b49c-549032d5d1d1
+      - 71890a38-a943-448f-b9db-fb814defcafe
       content-length:
-      - '24433'
+      - '24828'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 01 Mar 2021 18:49:28 GMT
+      - Tue, 11 May 2021 00:28:35 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '18'
+      - '25'
     status:
       code: 200
       message: OK

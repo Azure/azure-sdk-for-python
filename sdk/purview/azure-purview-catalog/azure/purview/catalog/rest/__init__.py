@@ -7,22 +7,13 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._request_builders_py3 import build_search_request
-    from ._request_builders_py3 import build_suggest_request
-    from ._request_builders_py3 import build_auto_complete_request
     from ._request_builders_py3 import build_get_lineage_graph_request
     from ._request_builders_py3 import build_next_page_lineage_request
 except (SyntaxError, ImportError):
-    from ._request_builders import build_search_request  # type: ignore
-    from ._request_builders import build_suggest_request  # type: ignore
-    from ._request_builders import build_auto_complete_request  # type: ignore
     from ._request_builders import build_get_lineage_graph_request  # type: ignore
     from ._request_builders import build_next_page_lineage_request  # type: ignore
 
 __all__ = [
-    'build_search_request',
-    'build_suggest_request',
-    'build_auto_complete_request',
     'build_get_lineage_graph_request',
     'build_next_page_lineage_request',
 ]

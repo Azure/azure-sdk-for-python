@@ -1060,7 +1060,7 @@ class PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedS
 
     :param grant_type: Required. Grant type is expected to be refresh_token. Possible values
      include: "refresh_token", "password".
-    :type grant_type: str or ~container_registry.models.Enum2
+    :type grant_type: str or ~container_registry.models.TokenGrantType
     :param service: Required. Indicates the name of your Azure container registry.
     :type service: str
     :param scope: Required. Which is expected to be a valid scope, and can be specified more than
@@ -1088,7 +1088,7 @@ class PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedS
     def __init__(
         self,
         *,
-        grant_type: Union[str, "Enum2"] = "refresh_token",
+        grant_type: Union[str, "TokenGrantType"] = "refresh_token",
         service: str,
         scope: str,
         acr_refresh_token: str,

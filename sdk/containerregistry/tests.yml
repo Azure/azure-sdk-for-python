@@ -6,7 +6,7 @@ stages:
       AllocateResourceGroup: false
       BuildTargetingString: azure-containerregistry
       ServiceDirectory: containerregistry
-      TestSamples: false
+      TestSamples: true
       DeployArmTemplate: true
       EnvVars:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)

@@ -7,9 +7,9 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?readingOrder=basic
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyze?readingOrder=basic
   response:
     body:
       string: '{"error": {"code": "InvalidImage", "message": "The file submitted couldn''t
@@ -17,15 +17,15 @@ interactions:
         is not supported ( Supported formats include JPEG, PNG, BMP, PDF and TIFF),
         the file is corrupted or password protected."}}'
     headers:
-      apim-request-id: d238ab3a-40b5-45d8-9299-0899f9e5ef91
+      apim-request-id: 26f5dc4b-c1ab-431d-9253-492e37c2c2b6
       content-length: '270'
       content-type: application/json; charset=utf-8
-      date: Wed, 03 Mar 2021 19:29:33 GMT
+      date: Tue, 11 May 2021 00:42:09 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2'
+      x-envoy-upstream-service-time: '5'
     status:
       code: 400
       message: Bad Request
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?readingOrder=basic
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyze?readingOrder=basic
 version: 1
