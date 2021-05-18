@@ -167,7 +167,7 @@ jobs:
           echo "$(activate.method) ${{ artifact.name }}"
           $(activate.method) ${{ artifact.name }}
           python -m pip freeze
-        displayName: 'Install ${{ checkout.package }} Conda Package'
+        displayName: 'Install ${{ artifact.name }} Conda Package'
 
       - ${{ each checkout in artifact.checkout }}:
         - pwsh:
