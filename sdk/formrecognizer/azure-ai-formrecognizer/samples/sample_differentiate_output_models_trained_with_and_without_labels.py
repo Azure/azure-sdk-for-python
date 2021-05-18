@@ -147,7 +147,7 @@ if __name__ == '__main__':
             model = form_training_client.begin_training(labeled, use_training_labels=True).result()
             labeled_model_id = model.model_id
         if unlabeled:
-            model = form_training_client.begin_training(unlabeled, use_training_labels=True).result()
+            model = form_training_client.begin_training(unlabeled, use_training_labels=False).result()
             unlabeled_model_id = model.model_id
 
     sample.recognize_custom_forms(labeled_model_id, unlabeled_model_id)

@@ -148,7 +148,7 @@ async def main():
                 model = await (await form_training_client.begin_training(labeled, use_training_labels=True)).result()
                 labeled_model_id = model.model_id
             if unlabeled:
-                model = await (await form_training_client.begin_training(unlabeled, use_training_labels=True)).result()
+                model = await (await form_training_client.begin_training(unlabeled, use_training_labels=False)).result()
                 unlabeled_model_id = model.model_id
 
     await sample.recognize_custom_forms(labeled_model_id, unlabeled_model_id)
