@@ -42,7 +42,6 @@ import json
 import os
 from dotenv import find_dotenv, load_dotenv
 import base64
-from contextlib import closing
 
 from azure.security.attestation import (
     AttestationAdministrationClient,
@@ -88,7 +87,7 @@ class AttestationClientPolicySamples(object):
         """
         write_banner("get_policy_aad")
         print("Retrieve an unsecured Policy on an AAD mode attestation instance.")
-        with closing(self._create_admin_client(self.aad_url)) as admin_client:
+        with self._create_admin_client(self.aad_url) as admin_client:
             get_result = admin_client.get_policy(AttestationType.SGX_ENCLAVE)
             print("SGX Policy is: ", get_result.value)
 
@@ -100,7 +99,7 @@ class AttestationClientPolicySamples(object):
 
         write_banner("set_policy_aad_unsecured")
         print("Set an unsecured Policy on an AAD mode attestation instance.")
-        with closing(self._create_admin_client(self.aad_url)) as admin_client:
+        with self._create_admin_client(self.aad_url) as admin_client:
             new_policy="""
 version= 1.0;
 authorizationrules
@@ -132,7 +131,7 @@ issuancerules {
         default value.
         """
         print("Reset an unsecured Policy on an AAD mode attestation instance.")
-        with closing(self._create_admin_client(self.aad_url)) as admin_client:
+        with self._create_admin_client(self.aad_url) as admin_client:
             set_result = admin_client.reset_policy(AttestationType.OPEN_ENCLAVE)
             print("Policy reset result: ", set_result.value.policy_resolution)
 
@@ -144,7 +143,7 @@ issuancerules {
 
         write_banner("set_policy_aad_secured")
         print("Set Secured Policy on an AAD mode attestation instance.")
-        with closing(self._create_admin_client(self.aad_url)) as admin_client:
+        with self._create_admin_client(self.aad_url) as admin_client:
             # [START set_secured_policy]
             # Create an RSA Key and wrap an X.509 certificate around
             # the public key for that certificate.
@@ -168,7 +167,7 @@ issuancerules {
         """ Set a secured attestation policy on an AAD mode instance"""
         write_banner("reset_policy_aad_secured")
         print("Set Secured Policy on an AAD mode attestation instance.")
-        with closing(self._create_admin_client(self.aad_url)) as admin_client:
+        with self._create_admin_client(self.aad_url) as admin_client:
             rsa_key = create_rsa_key()
             cert = create_x509_certificate(rsa_key, u'TestCertificate')
 
@@ -182,7 +181,7 @@ issuancerules {
         """
         write_banner("get_policy_isolated")
         print("Retrieve an unsecured Policy on an Isolated mode attestation instance.")
-        with closing(self._create_admin_client(self.isolated_url)) as admin_client:
+        with self._create_admin_client(self.isolated_url) as admin_client:
             get_result = admin_client.get_policy(AttestationType.SGX_ENCLAVE)
             print("SGX Policy is: ", get_result.value)
 
@@ -196,7 +195,7 @@ issuancerules {
         """
         write_banner("set_policy_isolated_secured")
         print("Set Secured Policy on an AAD mode attestation instance.")
-        with closing(self._create_admin_client(self.isolated_url)) as admin_client:
+        with self._create_admin_client(self.isolated_url) as admin_client:
             set_result=admin_client.set_policy(AttestationType.SGX_ENCLAVE, 
                 """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
                 signing_key=AttestationSigningKey(self.isolated_key, self.isolated_certificate))
@@ -223,7 +222,7 @@ issuancerules {
         write_banner("get_policy_management_certificates_isolated")
         print("Get the policy management certificates for a isolated instance.")
 
-        with closing(self._create_admin_client(self.isolated_url)) as admin_client:
+        with self._create_admin_client(self.isolated_url) as admin_client:
             get_result=admin_client.get_policy_management_certificates()
             print("Isolated instance has", len(get_result.value), "certificates")
 
@@ -245,7 +244,7 @@ issuancerules {
         """
         write_banner("add_remove_policy_management_certificate")
         print("Get and set the policy management certificates for a isolated instance.")
-        with closing(self._create_admin_client(self.isolated_url)) as admin_client:
+        with self._create_admin_client(self.isolated_url) as admin_client:
             # [BEGIN add_policy_management_certificate]
             new_key = create_rsa_key()
             new_certificate = create_x509_certificate(new_key, u'NewCertificateName')
@@ -301,7 +300,7 @@ issuancerules {
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
         print('Attest open enclave using ', client_uri)
-        with closing(self._create_client(client_uri)) as attest_client:
+        with self._create_client(client_uri) as attest_client:
             attest_client.attest_open_enclave(
                 oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
             print("Successfully attested enclave.")
@@ -314,8 +313,14 @@ issuancerules {
         #type:(str, Dict[str, Any]) -> AttestationClient
         return AttestationClient(self._credentials, instance_url=base_url, **kwargs)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc_type):
+        self.close()
+
 if __name__ == "__main__":
-    with closing(AttestationClientPolicySamples()) as sample:
+    with AttestationClientPolicySamples() as sample:
         sample.get_policy_aad()
         sample.set_policy_aad_unsecured()
         sample.reset_policy_aad_unsecured()

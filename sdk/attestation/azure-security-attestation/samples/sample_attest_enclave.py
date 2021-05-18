@@ -38,7 +38,6 @@ import base64
 import os
 from dotenv import find_dotenv, load_dotenv
 import base64
-from contextlib import closing
 
 from azure.security.attestation import (
     AttestationClient,
@@ -84,7 +83,7 @@ class AttestationClientAttestationSamples(object):
         # [START attest_sgx_enclave_shared]
         print()
         print('Attest SGX enclave using ', self.shared_url)
-        with closing(self._create_client(self.shared_url)) as attest_client:
+        with self._create_client(self.shared_url) as attest_client:
             response = attest_client.attest_sgx_enclave(
                 quote, runtime_data=AttestationData(runtime_data, is_json=False))
 
@@ -102,7 +101,7 @@ class AttestationClientAttestationSamples(object):
         # [START attest_open_enclave_shared]
         print()
         print('Attest Open enclave using ', self.shared_url)
-        with closing(self._create_client(self.shared_url)) as attest_client:
+        with self._create_client(self.shared_url) as attest_client:
             response = attest_client.attest_open_enclave(
                 oe_report, runtime_data=AttestationData(runtime_data))
 
@@ -137,7 +136,7 @@ class AttestationClientAttestationSamples(object):
         """
         print('Attest Open enclave using ', self.shared_url)
         print('Using draft policy:', draft_policy)
-        with closing(self._create_client(self.shared_url)) as attest_client:
+        with self._create_client(self.shared_url) as attest_client:
             response = attest_client.attest_open_enclave(
                 oe_report, runtime_data=AttestationData(runtime_data, is_json=False),
                 draft_policy=draft_policy)
@@ -172,7 +171,7 @@ issuancerules {
 
         print('Attest Open enclave using ', self.shared_url)
         print('Using draft policy which will fail.:', draft_policy)
-        with closing(self._create_client(self.shared_url)) as attest_client:
+        with self._create_client(self.shared_url) as attest_client:
             try:
                 attest_client.attest_open_enclave(
                     oe_report, runtime_data=AttestationData(runtime_data, is_json=False),
@@ -225,9 +224,9 @@ issuancerules {
             print("Token passes validation checks.")
             return True
 
-        with closing(self._create_client(self.shared_url,
+        with self._create_client(self.shared_url,
             token_validation_options=TokenValidationOptions(
-                validation_callback=validate_token))) as attest_client:
+                validation_callback=validate_token)) as attest_client:
             response = attest_client.attest_open_enclave(
                 oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
 
@@ -238,8 +237,14 @@ issuancerules {
         #type:(str, Dict[str, Any]) -> AttestationClient
         return AttestationClient(self._credentials, instance_url=base_url, **kwargs)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc_type):
+        self.close()
+
 if __name__ == "__main__":
-    with closing(AttestationClientAttestationSamples()) as sample:
+    with AttestationClientAttestationSamples() as sample:
         sample.attest_sgx_enclave_shared()
         sample.attest_open_enclave_shared()
         sample.attest_open_enclave_shared_with_options()

@@ -8,7 +8,7 @@ products:
 urlFragment: attestation-samples
 ---
 
-# Samples for the Microsoft Azure Attestation client library for Python.
+# Samples for the Microsoft Azure Attestation client library for Python
 
 These code samples show common scenario operations with the Azure Attestation client library.
 
@@ -28,7 +28,7 @@ operates in three different modes:
 * Isolated
 
 The core difference between the three modes of operation is the operations which
-are permitted on each, and whether or not the customer needs to create an 
+are permitted on each, and whether or not the customer needs to create an
 instance of the provider.
 
 Service Mode | Instance Creation  | Attestation | Policy Get | Policy Set | Signed Policies| Policy Management Certificate

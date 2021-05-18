@@ -32,7 +32,7 @@ from datetime import datetime, timedelta
 import os
 from dotenv import find_dotenv, load_dotenv
 import base64
-from contextlib import closing
+from sample_utils import write_banner
 
 class AttestationClientCreateSamples(object):
     def __init__(self):
@@ -63,6 +63,8 @@ class AttestationClientCreateSamples(object):
 
     def create_attestation_client_aad(self):
         # Instantiate an attestation client using client secrets.
+
+        write_banner("create_attestation_client_aad")
         # [START client_create]
         from azure.security.attestation import AttestationClient
 
@@ -76,6 +78,7 @@ class AttestationClientCreateSamples(object):
 
     def create_attestation_client_shared(self):
         # Instantiate an attestation client using client secrets.
+        write_banner("create_attestation_client_shared")
         # [START sharedclient_create]
         from azure.security.attestation import AttestationClient
 
@@ -91,7 +94,13 @@ class AttestationClientCreateSamples(object):
         # [END shared_client_create]
 
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc_type):
+        self.close()
+
 if __name__ == "__main__":
-    with closing(AttestationClientCreateSamples()) as sample:
+    with AttestationClientCreateSamples() as sample:
         sample.create_attestation_client_aad()
         sample.create_attestation_client_shared()
