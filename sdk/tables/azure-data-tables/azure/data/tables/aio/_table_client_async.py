@@ -369,10 +369,6 @@ class TableClient(AsyncTablesBaseClient):
                 :caption: Adding an entity to a Table
         """
         entity = _add_entity_properties(entity)
-        # if "PartitionKey" in entity and "RowKey" in entity:
-        #     entity = _add_entity_properties(entity)
-        # else:
-        #     raise ValueError("PartitionKey and RowKey were not provided in entity")
         try:
             metadata, _ = await self._client.table.insert_entity(
                 table=self.table_name,
