@@ -22,7 +22,7 @@ pip install azure-media-videoanalyzer-edge
 ### Prerequisites
 
 - Python 2.7, or 3.6 or later is required to use this package.
-- You need an active [Azure subscription][azure_sub], and a [IoT device connection string][iot_device_connection_string] to use this package.
+- You need an active [Azure subscription][azure_sub], and a IoT device connection string to use this package.
 - To interact with Azure IoT Hub you will need to run `pip install azure-iot-hub`
 - You will need to use the version of the SDK that corresponds to the version of the Video Analyzer Edge module you are using.
 
@@ -144,12 +144,12 @@ additional questions or comments.
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/videoanalyzer
 [samples]: https://github.com/Azure-Samples/live-video-analytics-iot-edge-python
 
-[doc_direct_methods]: https://docs.microsoft.com/azure/azure-video-analyzer/video-analyzer-docs/direct-methods
-[doc_pipelines]: https://docs.microsoft.com/azure/azure-video-analyzer/video-analyzer-docs/pipeline
-[doc_product]: https://docs.microsoft.com/azure/azure-video-analyzer/video-analyzer-docs/overview
+[doc_direct_methods]: https://go.microsoft.com/fwlink/?linkid=2162396
+[doc_pipelines]: https://go.microsoft.com/fwlink/?linkid=2162396
+[doc_product]: https://go.microsoft.com/fwlink/?linkid=2162396
 
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/
 [iot-hub-sdk]: https://pypi.org/project/azure-iot-hub/
-[iot_device_connection_string]: https://docs.microsoft.com/azure/azure-video-analyzer/video-analyzer-docs/get-started-detect-motion-emit-events#obtain-your-iot-hub-connection-string
+[]: https://docs.microsoft.com/azure/azure-video-analyzer/video-analyzer-docs/get-started-detect-motion-emit-events#obtain-your-iot-hub-connection-string
 
 [github-page-issues]: https://github.com/Azure/azure-sdk-for-python/issues
