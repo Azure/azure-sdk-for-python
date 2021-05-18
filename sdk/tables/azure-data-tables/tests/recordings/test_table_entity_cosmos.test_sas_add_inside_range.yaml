@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 18 May 2021 17:03:26 GMT
+      - Tue, 18 May 2021 17:33:43 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 18 May 2021 17:03:26 GMT
+      - Tue, 18 May 2021 17:33:43 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Tue, 18 May 2021 17:03:27 GMT
+      - Tue, 18 May 2021 17:33:43 GMT
       etag:
-      - W/"datetime'2021-05-18T17%3A03%3A27.0549512Z'"
+      - W/"datetime'2021-05-18T17%3A33%3A44.1566728Z'"
       location:
       - https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttablee5b147a')
       server:
@@ -65,11 +65,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 18 May 2021 17:03:27 GMT
+      - Tue, 18 May 2021 17:33:44 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 18 May 2021 17:03:27 GMT
+      - Tue, 18 May 2021 17:33:44 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -78,14 +78,14 @@ interactions:
     body:
       string: "{\"odata.error\":{\"code\":\"NotImplemented\",\"message\":{\"lang\"\
         :\"en-us\",\"value\":\"Shared access signature with PartitionKey or RowKey\
-        \ are not supported\\r\\nActivityId: f6bcc48e-b7fa-11eb-8a40-002b67128e4c,\
+        \ are not supported\\r\\nActivityId: 31cc6fc3-b7ff-11eb-9d51-002b67128e4c,\
         \ documentdb-dotnet-sdk/2.11.0 Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\\
-        nRequestID:f6bcc48e-b7fa-11eb-8a40-002b67128e4c\\n\"}}}\r\n"
+        nRequestID:31cc6fc3-b7ff-11eb-9d51-002b67128e4c\\n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Tue, 18 May 2021 17:03:27 GMT
+      - Tue, 18 May 2021 17:33:45 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -105,11 +105,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 18 May 2021 17:03:28 GMT
+      - Tue, 18 May 2021 17:33:45 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 18 May 2021 17:03:28 GMT
+      - Tue, 18 May 2021 17:33:45 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -121,7 +121,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Tue, 18 May 2021 17:03:27 GMT
+      - Tue, 18 May 2021 17:33:44 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -141,11 +141,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 18 May 2021 17:03:28 GMT
+      - Tue, 18 May 2021 17:33:45 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 18 May 2021 17:03:28 GMT
+      - Tue, 18 May 2021 17:33:45 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -157,7 +157,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 18 May 2021 17:03:28 GMT
+      - Tue, 18 May 2021 17:33:44 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:

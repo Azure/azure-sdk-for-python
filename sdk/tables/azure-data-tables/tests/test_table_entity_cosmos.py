@@ -1650,40 +1650,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             table.create_entity(entity=entity)
 
             # Assert
-            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
-                                         row_key=entity['RowKey'])
-            self._assert_default_entity(resp)
-        finally:
-            self._tear_down()
-
-    @cosmos_decorator
-    def test_sas_add_inside_range(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
-        try:
-            # Arrange
-            token = self.generate_sas(
-                generate_table_sas,
-                tables_primary_cosmos_account_key,
-                self.table_name,
-                permission=TableSasPermissions(add=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start_pk=u'test', start_rk=u'test1',
-                end_pk=u'test', end_rk=u'test1',
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=AzureSasCredential(token),
-            )
-            table = service.get_table_client(self.table_name)
-            entity = self._create_random_entity_dict(u'test', u'test1')
-            table.create_entity(entity=entity)
-
-            # Assert
-            resp = self.table.get_entity('test', 'test1')
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
             self._assert_default_entity(resp)
         finally:
             self._tear_down()
@@ -1777,87 +1744,5 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Assert
             with pytest.raises(ResourceNotFoundError):
                 self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
-        finally:
-            self._tear_down()
-
-    @cosmos_decorator
-    def test_sas_upper_case_table_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
-        try:
-            # Arrange
-            entity, _ = self._insert_random_entity()
-
-            access_policy = AccessPolicy()
-            access_policy.start = datetime(2011, 10, 11)
-            access_policy.expiry = datetime(2025, 10, 12)
-            access_policy.permission = TableSasPermissions(read=True)
-            identifiers = {'testid': access_policy}
-
-            self.table.set_table_access_policy(identifiers)
-
-            token = self.generate_sas(
-                generate_table_sas,
-                tables_primary_cosmos_account_key,
-                self.table_name.upper(),
-                permission=TableSasPermissions(read=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start=datetime.utcnow() - timedelta(minutes=1),
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=AzureSasCredential(token),
-            )
-            table = service.get_table_client(self.table_name)
-            entities = list(table.query_entities(
-                "PartitionKey eq '{}'".format(entity['PartitionKey'])))
-
-            # Assert
-            assert len(entities) ==  1
-            self._assert_default_entity(entities[0])
-        finally:
-            self._tear_down()
-
-    @cosmos_decorator
-    def test_sas_signed_identifier(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
-        try:
-            # Arrange
-            entity, _ = self._insert_random_entity()
-
-            access_policy = AccessPolicy()
-            access_policy.start = datetime(2011, 10, 11)
-            access_policy.expiry = datetime(2025, 10, 12)
-            access_policy.permission = TableSasPermissions(read=True)
-            identifiers = {'testid': access_policy}
-
-            self.table.set_table_access_policy(identifiers)
-
-            token = self.generate_sas(
-                generate_table_sas,
-                tables_primary_cosmos_account_key,
-                self.table_name,
-                policy_id='testid',
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=AzureSasCredential(token),
-            )
-            table = service.get_table_client(table_name=self.table_name)
-            entities = []
-            for t in table.query_entities(
-                    "PartitionKey eq '{}'".format(entity['PartitionKey'])):
-                entities.append(t)
-
-            # Assert
-            assert len(entities) ==  1
-            self._assert_default_entity(entities[0])
         finally:
             self._tear_down()

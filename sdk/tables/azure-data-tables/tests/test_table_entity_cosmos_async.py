@@ -1663,38 +1663,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
-    async def test_sas_add_inside_range(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
-        try:
-            # Arrange
-            token = self.generate_sas(
-                generate_table_sas,
-                tables_primary_cosmos_account_key,
-                self.table_name,
-                permission=TableSasPermissions(add=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start_pk='test', start_rk='test1',
-                end_pk='test', end_rk='test1',
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=AzureSasCredential(token),
-            )
-            table = service.get_table_client(self.table_name)
-            entity = self._create_random_entity_dict('test', 'test1')
-            await table.create_entity(entity=entity)
-
-            # Assert
-            resp = await self.table.get_entity('test', 'test1')
-            self._assert_default_entity(resp)
-        finally:
-            await self._tear_down()
-
-    @cosmos_decorator_async
     async def test_sas_add_outside_range(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -1786,82 +1754,5 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Assert
             with pytest.raises(ResourceNotFoundError):
                 await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
-        finally:
-            await self._tear_down()
-
-    @cosmos_decorator_async
-    async def test_sas_upper_case_table_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
-        try:
-            # Arrange
-            entity, _ = await self._insert_random_entity()
-
-            # Table names are case insensitive, so simply upper case our existing table name to test
-            token = self.generate_sas(
-                generate_table_sas,
-                tables_primary_cosmos_account_key,
-                self.table_name.upper(),
-                permission=TableSasPermissions(read=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start=datetime.utcnow() - timedelta(minutes=1),
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=AzureSasCredential(token),
-            )
-            table = service.get_table_client(self.table_name)
-            entities = []
-            async for t in table.query_entities(
-                    "PartitionKey eq '{}'".format(entity['PartitionKey'])):
-                entities.append(t)
-
-            # Assert
-            assert len(entities) ==  1
-            self._assert_default_entity(entities[0])
-        finally:
-            await self._tear_down()
-
-    @cosmos_decorator_async
-    async def test_sas_signed_identifier(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
-        try:
-            # Arrange
-            entity, _ = await self._insert_random_entity()
-
-            access_policy = AccessPolicy()
-            access_policy.start = datetime(2011, 10, 11)
-            access_policy.expiry = datetime(2025, 10, 12)
-            access_policy.permission = TableSasPermissions(read=True)
-            identifiers = {'testid': access_policy}
-
-            await self.table.set_table_access_policy(identifiers)
-
-            token = self.generate_sas(
-                generate_table_sas,
-                tables_primary_cosmos_account_key,
-                self.table_name,
-                policy_id='testid',
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=AzureSasCredential(token),
-            )
-            table = service.get_table_client(table_name=self.table_name)
-            entities = []
-            async for t in table.query_entities(
-                    "PartitionKey eq '{}'".format(entity['PartitionKey'])):
-                entities.append(t)
-
-            # Assert
-            assert len(entities) ==  1
-            self._assert_default_entity(entities[0])
         finally:
             await self._tear_down()
