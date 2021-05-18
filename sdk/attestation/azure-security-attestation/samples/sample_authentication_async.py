@@ -33,7 +33,7 @@ import os
 from dotenv import find_dotenv, load_dotenv
 import base64
 import asyncio
-from samples.sample_utils import write_banner
+from sample_utils import write_banner
 
 class AttestationClientCreateSamples(object):
     def __init__(self):

@@ -48,8 +48,8 @@ from azure.security.attestation import (
     AttestationSigningKey,
     CertificateModification)
 
-from samples.sample_collateral import sample_open_enclave_report, sample_runtime_data
-from samples.sample_utils import write_banner, create_rsa_key, create_x509_certificate
+from sample_collateral import sample_open_enclave_report, sample_runtime_data
+from sample_utils import write_banner, create_rsa_key, create_x509_certificate
 
 class AttestationClientPolicySamples(object):
     def __init__(self):

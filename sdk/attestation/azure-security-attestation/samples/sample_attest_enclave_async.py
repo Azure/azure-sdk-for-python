@@ -47,8 +47,8 @@ from azure.security.attestation import (
     TokenValidationOptions,
     AttestationData)
 
-from samples.sample_collateral import sample_open_enclave_report, sample_runtime_data
-from samples.sample_utils import write_banner
+from sample_collateral import sample_open_enclave_report, sample_runtime_data
+from sample_utils import write_banner
 
 class AttestationClientAttestationSamples(object):
     def __init__(self):
