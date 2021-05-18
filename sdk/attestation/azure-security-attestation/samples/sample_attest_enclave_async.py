@@ -27,6 +27,7 @@ DESCRIPTION:
 """
 
 from logging import fatal
+from samples.sample_utils import create_client_credentials_async
 from typing import Any, ByteString, Dict
 from cryptography.hazmat.backends import default_backend
 from cryptography import x509
@@ -48,25 +49,14 @@ from azure.security.attestation import (
     AttestationData)
 
 from sample_collateral import sample_open_enclave_report, sample_runtime_data
-from sample_utils import write_banner
+from sample_utils import write_banner, create_client_credentials_async
 
 class AttestationClientAttestationSamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         shared_short_name  = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
         self.shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
-        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
-        client_id = os.getenv("ATTESTATION_CLIENT_ID")
-        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
-
-        if not tenant_id or not client_id or not secret:
-            raise Exception("Must provide authentication information.")
-        # Create azure-identity class
-        from azure.identity.aio import ClientSecretCredential
-
-        self._credentials = ClientSecretCredential(
-            tenant_id=tenant_id, client_id=client_id, client_secret=secret
-        )
+        self._credentials = create_client_credentials_async()
 
     async def close(self):
         await self._credentials.close()

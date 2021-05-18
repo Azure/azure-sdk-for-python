@@ -49,7 +49,7 @@ from azure.security.attestation import (
     CertificateModification)
 
 from sample_collateral import sample_open_enclave_report, sample_runtime_data
-from sample_utils import write_banner, create_rsa_key, create_x509_certificate
+from sample_utils import write_banner, create_rsa_key, create_x509_certificate, create_client_credentials_async
 
 class AttestationClientPolicySamples(object):
     def __init__(self):
@@ -59,19 +59,7 @@ class AttestationClientPolicySamples(object):
         if self.isolated_url:
             self.isolated_certificate = base64.b64decode(os.getenv("ATTESTATION_ISOLATED_SIGNING_CERTIFICATE"))
             self.isolated_key = base64.b64decode(os.getenv("ATTESTATION_ISOLATED_SIGNING_KEY"))
-        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
-        client_id = os.getenv("ATTESTATION_CLIENT_ID")
-        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
-
-        if not tenant_id or not client_id or not secret:
-            raise Exception("Must provide credentials.")
-
-        # Create azure-identity class
-        from azure.identity.aio import ClientSecretCredential
-
-        self._credentials = ClientSecretCredential(
-            tenant_id=tenant_id, client_id=client_id, client_secret=secret
-        )
+        self._credentials = create_client_credentials_async()
 
     async def close(self):
         await self._credentials.close()

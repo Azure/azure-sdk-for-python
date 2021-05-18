@@ -30,10 +30,11 @@ USAGE:
 
 from datetime import datetime, timedelta
 import os
+from samples.sample_utils import create_client_credentials_async
 from dotenv import find_dotenv, load_dotenv
 import base64
 import asyncio
-from sample_utils import write_banner
+from sample_utils import write_banner, create_client_credentials_async
 
 class AttestationClientCreateSamples(object):
     def __init__(self):
@@ -46,6 +47,17 @@ class AttestationClientCreateSamples(object):
         shared_short_name  = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
         self.shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
 
+    async def close(self):
+        pass
+
+    async def create_attestation_client_aad(self):
+        """
+        Instantiate an attestation client using client secrets.
+        """
+
+        write_banner("create_attestation_client_aad")
+        # [START client_create]
+
         tenant_id = os.getenv("ATTESTATION_TENANT_ID")
         client_id = os.getenv("ATTESTATION_CLIENT_ID")
         secret = os.getenv("ATTESTATION_CLIENT_SECRET")
@@ -56,23 +68,11 @@ class AttestationClientCreateSamples(object):
         # Create azure-identity class
         from azure.identity.aio import ClientSecretCredential
 
-        self._credentials = ClientSecretCredential(
-            tenant_id=tenant_id, client_id=client_id, client_secret=secret
-        )
-
-    async def close(self):
-        await self._credentials.close()
-
-    async def create_attestation_client_aad(self):
-        """
-        Instantiate an attestation client using client secrets.
-        """
-
-        write_banner("create_attestation_client_aad")
-        # [START client_create]
         from azure.security.attestation.aio import AttestationClient
 
-        async with AttestationClient(self._credentials, instance_url=self.aad_url) as client:
+        async with ClientSecretCredential(
+            tenant_id=tenant_id, client_id=client_id, client_secret=secret) as credentials, AttestationClient(
+                credentials, instance_url=self.aad_url) as client:
             print("Retrieve OpenID metadata from: ", self.aad_url)
             openid_metadata = await client.get_openidmetadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])
@@ -88,12 +88,25 @@ class AttestationClientCreateSamples(object):
 
         write_banner("create_attestation_client_shared")
         # [START sharedclient_create]
+        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
+        client_id = os.getenv("ATTESTATION_CLIENT_ID")
+        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
+
+        if not tenant_id or not client_id or not secret:
+            raise Exception("Must provide client credentials.")
+
+        # Create azure-identity class
+        from azure.identity.aio import ClientSecretCredential
+
         from azure.security.attestation.aio import AttestationClient
 
-        shared_short_name  = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
-        shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
+        shared_short_name = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
+        shared_url = 'https://shared' + shared_short_name + \
+            '.' + shared_short_name + '.attest.azure.net'
 
-        async with AttestationClient(self._credentials, instance_url=shared_url) as client:
+        async with ClientSecretCredential(
+            tenant_id=tenant_id, client_id=client_id, client_secret=secret) as credentials, AttestationClient(
+                credentials, instance_url=self.aad_url) as client:
             print("Retrieve OpenID metadata from: ", shared_url)
             openid_metadata = await client.get_openidmetadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])
