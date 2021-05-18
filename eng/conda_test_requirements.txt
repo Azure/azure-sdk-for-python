@@ -1,6 +1,7 @@
+# install from root of repo
 aiohttp>=3.0; python_version >= '3.5'
-../../../tools/azure-devtools
-../../../tools/azure-sdk-tools
+tools/azure-devtools
+tools/azure-sdk-tools
 mock;
 aiodns>=2.0; python_version >= '3.5'
 parameterized>=0.7.3; python_version >= '3.0'
