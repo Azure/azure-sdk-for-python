@@ -14,15 +14,15 @@ interactions:
     uri: https://fakeAccount.farmbeats.azure.net/farmers/async-test-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"async-test-farmer","eTag":"00004303-0000-0600-0000-60a42fab0000","createdDateTime":"2021-05-18T21:20:43Z","modifiedDateTime":"2021-05-18T21:20:43Z"}'
+      string: '{"id":"async-test-farmer","eTag":"00006803-0000-0600-0000-60a437c20000","createdDateTime":"2021-05-18T21:55:14Z","modifiedDateTime":"2021-05-18T21:55:14Z"}'
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
       content-length: '155'
       content-type: application/json; charset=utf-8
-      date: Tue, 18 May 2021 21:20:43 GMT
-      etag: 00004303-0000-0600-0000-60a42fab0000
+      date: Tue, 18 May 2021 21:55:14 GMT
+      etag: 00006803-0000-0600-0000-60a437c20000
       location: http://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/async-test-farmer
       server: nginx/1.19.1
       strict-transport-security: max-age=15724800; includeSubDomains
@@ -41,15 +41,15 @@ interactions:
     uri: https://fakeAccount.farmbeats.azure.net/farmers/async-test-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"async-test-farmer","eTag":"00004303-0000-0600-0000-60a42fab0000","createdDateTime":"2021-05-18T21:20:43Z","modifiedDateTime":"2021-05-18T21:20:43Z"}'
+      string: '{"id":"async-test-farmer","eTag":"00006803-0000-0600-0000-60a437c20000","createdDateTime":"2021-05-18T21:55:14Z","modifiedDateTime":"2021-05-18T21:55:14Z"}'
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
       content-length: '155'
       content-type: application/json; charset=utf-8
-      date: Tue, 18 May 2021 21:20:44 GMT
-      etag: 00004303-0000-0600-0000-60a42fab0000
+      date: Tue, 18 May 2021 21:55:15 GMT
+      etag: 00006803-0000-0600-0000-60a437c20000
       server: nginx/1.19.1
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
@@ -73,7 +73,7 @@ interactions:
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
       content-length: '0'
-      date: Tue, 18 May 2021 21:20:45 GMT
+      date: Tue, 18 May 2021 21:55:16 GMT
       server: nginx/1.19.1
       strict-transport-security: max-age=15724800; includeSubDomains
     status:

@@ -18,7 +18,7 @@ interactions:
     uri: https://fakeAccount.farmbeats.azure.net/farmers/satellite-flow-test-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"satellite-flow-test-farmer","eTag":"00003603-0000-0600-0000-60a42f4e0000","createdDateTime":"2021-05-18T14:17:48Z","modifiedDateTime":"2021-05-18T21:19:10Z"}'
+      string: '{"id":"satellite-flow-test-farmer","eTag":"00006c03-0000-0600-0000-60a43b110000","createdDateTime":"2021-05-18T14:17:48Z","modifiedDateTime":"2021-05-18T22:09:21Z"}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 21:19:10 GMT
+      - Tue, 18 May 2021 22:09:21 GMT
       etag:
-      - 00003603-0000-0600-0000-60a42f4e0000
+      - 00006c03-0000-0600-0000-60a43b110000
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -69,7 +69,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 21:19:11 GMT
+      - Tue, 18 May 2021 22:09:23 GMT
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -99,12 +99,12 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-9207?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"farmerId":"satellite-flow-test-farmer","boundaryId":"satellite-flow-test-boundary","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-01-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"satellite-flow-job-9207","status":"Waiting","message":"Created
-        job ''satellite-flow-job-9207'' to fetch satellite data for boundary ''satellite-flow-test-boundary''
-        from startDate ''01/01/2020'' to endDate ''01/31/2020'' (both inclusive).","createdDateTime":"2021-05-18T21:19:12Z","lastActionDateTime":"2021-05-18T21:19:12Z","startTime":"2021-05-18T21:19:12Z"}'
+      string: '{"farmerId":"satellite-flow-test-farmer","boundaryId":"satellite-flow-test-boundary","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-01-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"satellite-flow-job","status":"Waiting","message":"Created
+        job ''satellite-flow-job'' to fetch satellite data for boundary ''satellite-flow-test-boundary''
+        from startDate ''01/01/2020'' to endDate ''01/31/2020'' (both inclusive).","createdDateTime":"2021-05-18T22:09:23Z","lastActionDateTime":"2021-05-18T22:09:23Z","startTime":"2021-05-18T22:09:23Z"}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -113,15 +113,15 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '647'
+      - '645'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 21:19:12 GMT
+      - Tue, 18 May 2021 22:09:24 GMT
       location:
-      - https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-9207?api-version=2021-03-31-preview
+      - https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job?api-version=2021-03-31-preview
       operation-location:
-      - https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-9207?api-version=2021-03-31-preview
+      - https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job?api-version=2021-03-31-preview
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -141,12 +141,12 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-9207?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"farmerId":"satellite-flow-test-farmer","boundaryId":"satellite-flow-test-boundary","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-01-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"satellite-flow-job-9207","status":"Succeeded","durationInSeconds":2.2953548,"message":"Satellite
+      string: '{"farmerId":"satellite-flow-test-farmer","boundaryId":"satellite-flow-test-boundary","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-01-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"satellite-flow-job","status":"Succeeded","durationInSeconds":4.6599564,"message":"Satellite
         data is available for 12 days from provider in the requested date range. Successfully
-        fetched data for 12 days.","createdDateTime":"2021-05-18T21:19:12Z","lastActionDateTime":"2021-05-18T21:19:14Z","startTime":"2021-05-18T21:19:12Z","endTime":"2021-05-18T21:19:14Z"}'
+        fetched data for 12 days.","createdDateTime":"2021-05-18T22:09:23Z","lastActionDateTime":"2021-05-18T22:09:28Z","startTime":"2021-05-18T22:09:23Z","endTime":"2021-05-18T22:09:28Z"}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -155,11 +155,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '658'
+      - '657'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 21:19:43 GMT
+      - Tue, 18 May 2021 22:09:55 GMT
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -183,12 +183,12 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-9207?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"farmerId":"satellite-flow-test-farmer","boundaryId":"satellite-flow-test-boundary","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-01-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"satellite-flow-job-9207","status":"Succeeded","durationInSeconds":2.2953548,"message":"Satellite
+      string: '{"farmerId":"satellite-flow-test-farmer","boundaryId":"satellite-flow-test-boundary","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-01-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"satellite-flow-job","status":"Succeeded","durationInSeconds":4.6599564,"message":"Satellite
         data is available for 12 days from provider in the requested date range. Successfully
-        fetched data for 12 days.","createdDateTime":"2021-05-18T21:19:12Z","lastActionDateTime":"2021-05-18T21:19:14Z","startTime":"2021-05-18T21:19:12Z","endTime":"2021-05-18T21:19:14Z"}'
+        fetched data for 12 days.","createdDateTime":"2021-05-18T22:09:23Z","lastActionDateTime":"2021-05-18T22:09:28Z","startTime":"2021-05-18T22:09:23Z","endTime":"2021-05-18T22:09:28Z"}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -197,11 +197,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '658'
+      - '657'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 21:19:44 GMT
+      - Tue, 18 May 2021 22:09:56 GMT
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -241,7 +241,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 21:19:45 GMT
+      - Tue, 18 May 2021 22:09:57 GMT
       server:
       - nginx/1.19.1
       strict-transport-security:

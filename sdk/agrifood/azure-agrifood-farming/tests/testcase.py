@@ -26,7 +26,7 @@ class FarmBeatsTest(AzureTestCase):
 
         if self.is_live:
             created_name = "{}-{}".format(name, random.randint(0, 1000))
-            self.scrubber.register_name_pair(name, created_name)
+            self.scrubber.register_name_pair(created_name, name)
             return created_name
         return name
 

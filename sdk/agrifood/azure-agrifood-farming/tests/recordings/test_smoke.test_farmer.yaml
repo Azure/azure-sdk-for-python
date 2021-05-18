@@ -18,7 +18,7 @@ interactions:
     uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"smoke-test-farmer","eTag":"0000c916-0000-0600-0000-60a42fa30000","createdDateTime":"2021-05-18T21:20:35Z","modifiedDateTime":"2021-05-18T21:20:35Z"}'
+      string: '{"id":"smoke-test-farmer","eTag":"0000c318-0000-0600-0000-60a437ba0000","createdDateTime":"2021-05-18T21:55:06Z","modifiedDateTime":"2021-05-18T21:55:06Z"}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 21:20:35 GMT
+      - Tue, 18 May 2021 21:55:06 GMT
       etag:
-      - 0000c916-0000-0600-0000-60a42fa30000
+      - 0000c318-0000-0600-0000-60a437ba0000
       location:
       - http://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/smoke-test-farmer
       server:
@@ -58,7 +58,7 @@ interactions:
     uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"smoke-test-farmer","eTag":"0000c916-0000-0600-0000-60a42fa30000","createdDateTime":"2021-05-18T21:20:35Z","modifiedDateTime":"2021-05-18T21:20:35Z"}'
+      string: '{"id":"smoke-test-farmer","eTag":"0000c318-0000-0600-0000-60a437ba0000","createdDateTime":"2021-05-18T21:55:06Z","modifiedDateTime":"2021-05-18T21:55:06Z"}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -71,9 +71,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 21:20:35 GMT
+      - Tue, 18 May 2021 21:55:07 GMT
       etag:
-      - 0000c916-0000-0600-0000-60a42fa30000
+      - 0000c318-0000-0600-0000-60a437ba0000
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -109,7 +109,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 18 May 2021 21:20:36 GMT
+      - Tue, 18 May 2021 21:55:08 GMT
       server:
       - nginx/1.19.1
       strict-transport-security:
