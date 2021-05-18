@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates the differences in output that arise when begin_recognize_custom_forms
     is called with custom models trained with fixed vs. dynamic table tags.
     The models used in this sample can be created in the sample_train_model_with_labels.py using the
-    training files in http://aka.ms/azsdk/formrecognizer/sampletabletrainingfiles
+    training files in https://aka.ms/azsdk/formrecognizer/sampletabletrainingfiles
 
     Note that Form Recognizer automatically finds and extracts all tables in your documents whether the tables
     are tagged/labeled or not. Tables extracted automatically by Form Recognizer will be included in the

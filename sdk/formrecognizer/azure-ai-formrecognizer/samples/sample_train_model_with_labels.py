@@ -11,7 +11,7 @@ FILE: sample_train_model_with_labels.py
 
 DESCRIPTION:
     This sample demonstrates how to train a model with labels. For this sample, you can use the training
-    forms found in http://aka.ms/azsdk/formrecognizer/sampletrainingfiles
+    forms found in https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
 
     Upload the forms to your storage container and then generate a container SAS URL using these instructions:
     https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/python-labeled-data#train-a-model-using-labeled-data

@@ -16,7 +16,7 @@ DESCRIPTION:
     sample_train_model_without_labels.py and sample_train_model_with_labels.py
 
     The model can be trained using the training files found here:
-    http://aka.ms/azsdk/formrecognizer/sampletrainingfiles
+    https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
 
 USAGE:
     python sample_recognize_custom_forms.py

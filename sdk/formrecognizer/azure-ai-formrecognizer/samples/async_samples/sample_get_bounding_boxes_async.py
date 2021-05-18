@@ -14,7 +14,7 @@ DESCRIPTION:
     form content and fields, which can be used for manual validation and drawing UI as part of an application.
 
     The model used in this sample can be created in the sample_train_model_without_labels_async.py using the
-    training files in http://aka.ms/azsdk/formrecognizer/sampletrainingfiles
+    training files in https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
 
 USAGE:
     python sample_get_bounding_boxes_async.py

@@ -9,7 +9,6 @@
 import os
 import six
 import logging
-import pytest
 from azure.core.credentials import AccessToken
 from azure.ai.formrecognizer._helpers import (
     adjust_value_type,

@@ -15,7 +15,7 @@ DESCRIPTION:
     in the azure portal.
 
     The model used in this sample can be created in the sample_train_model_with_labels.py using the
-    training files in http://aka.ms/azsdk/formrecognizer/sampletrainingfiles
+    training files in https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
 
 USAGE:
     python sample_copy_model.py

@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates the differences in output that arise when begin_recognize_custom_forms
     is called with custom models trained with labels and without labels. The models used in this
     sample can be created in sample_train_model_with_labels_async.py and sample_train_model_without_labels_async.py
-    using the training files found here: http://aka.ms/azsdk/formrecognizer/sampletrainingfiles
+    using the training files found here: https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
 
     For a more general example of recognizing custom forms, see sample_recognize_custom_forms_async.py
 
