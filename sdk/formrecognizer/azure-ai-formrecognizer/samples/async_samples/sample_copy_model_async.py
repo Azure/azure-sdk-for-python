@@ -14,6 +14,9 @@ DESCRIPTION:
     to a target Form Recognizer resource. The resource id and the resource region can be found
     in the azure portal.
 
+    The model used in this sample can be created in the sample_train_model_with_labels_async.py using the
+    training files in http://aka.ms/azsdk/formrecognizer/sampletrainingfiles
+
 USAGE:
     python sample_copy_model_async.py
 
@@ -25,6 +28,7 @@ USAGE:
     5) AZURE_SOURCE_MODEL_ID - the model ID from the source resource to be copied over to the target resource.
         - OR -
        CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your forms.
+       A model will be trained and used to to run the sample.
     6) AZURE_FORM_RECOGNIZER_TARGET_REGION - the region the target resource was created in
     7) AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID - the entire resource ID to the target resource
 """
@@ -92,7 +96,8 @@ async def main():
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         async with form_training_client:
-            model = await (await form_training_client.begin_training(os.getenv("CONTAINER_SAS_URL"), use_training_labels=True)).result()
+            model = await (await form_training_client.begin_training(
+                os.getenv("CONTAINER_SAS_URL"), use_training_labels=True)).result()
             model_id = model.model_id
 
     await sample.copy_model_async(model_id)

@@ -13,8 +13,7 @@ DESCRIPTION:
     This sample demonstrates the differences in output that arise when begin_recognize_custom_forms
     is called with custom models trained with fixed vs. dynamic table tags.
     The models used in this sample can be created in the sample_train_model_with_labels.py using the
-    training files in
-    https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/labeled_tables
+    training files in http://aka.ms/azsdk/formrecognizer/sampletabletrainingfiles
 
     Note that Form Recognizer automatically finds and extracts all tables in your documents whether the tables
     are tagged/labeled or not. Tables extracted automatically by Form Recognizer will be included in the
@@ -31,10 +30,12 @@ USAGE:
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) MODEL_ID_FIXED_ROW_TABLES - the ID of your custom model trained with labels on fixed row tables
             -OR-
-       CONTAINER_SAS_URL_FIXED - The shared access signature (SAS) Url of your Azure Blob Storage container with your labeled data.
+       CONTAINER_SAS_URL_FIXED - The shared access signature (SAS) Url of your Azure Blob Storage container with
+       your labeled data containing a fixed row table. A model will be trained and used to to run the sample.
     4) MODEL_ID_DYNAMIC_ROW_TABLES - the ID of your custom model trained with labels on dynamic row tables
             -OR-
-       CONTAINER_SAS_URL_DYNAMIC - The shared access signature (SAS) Url of your Azure Blob Storage container with your labeled data.
+       CONTAINER_SAS_URL_DYNAMIC - The shared access signature (SAS) Url of your Azure Blob Storage container with
+       your labeled data containing a dynamic row table. A model will be trained and used to to run the sample.
 """
 
 import os

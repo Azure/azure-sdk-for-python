@@ -15,6 +15,9 @@ DESCRIPTION:
     was trained on. To learn how to train your own models, look at
     sample_train_model_without_labels_async.py and sample_train_model_with_labels_async.py
 
+    The model can be trained using the training files found here:
+    http://aka.ms/azsdk/formrecognizer/sampletrainingfiles
+
 USAGE:
     python sample_recognize_custom_forms_async.py
 
@@ -24,6 +27,7 @@ USAGE:
     3) CUSTOM_TRAINED_MODEL_ID - the ID of your custom trained model
         -OR-
        CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your forms.
+       A model will be trained and used to to run the sample.
 """
 
 import os
@@ -120,7 +124,8 @@ async def main():
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         async with form_training_client:
-            model = await (await form_training_client.begin_training(os.getenv("CONTAINER_SAS_URL"), use_training_labels=True)).result()
+            model = await (await form_training_client.begin_training(
+                os.getenv("CONTAINER_SAS_URL"), use_training_labels=True)).result()
             model_id = model.model_id
 
     await sample.recognize_custom_forms(model_id)

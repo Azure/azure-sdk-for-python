@@ -112,7 +112,7 @@ class FakeTokenCredential(object):
     def get_token(self, *args):
         return self.token
 
-@pytest.mark.skip
+
 class FormRecognizerTest(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 

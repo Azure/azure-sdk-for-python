@@ -12,6 +12,10 @@ FILE: sample_get_bounding_boxes.py
 DESCRIPTION:
     This sample demonstrates how to get detailed information to visualize the outlines of
     form content and fields, which can be used for manual validation and drawing UI as part of an application.
+
+    The model used in this sample can be created in the sample_train_model_without_labels.py using the
+    training files in http://aka.ms/azsdk/formrecognizer/sampletrainingfiles
+
 USAGE:
     python sample_get_bounding_boxes.py
 
@@ -21,6 +25,7 @@ USAGE:
     3) CUSTOM_TRAINED_MODEL_ID - the ID of your custom trained model
         -OR-
        CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your forms.
+       A model will be trained and used to to run the sample.
 """
 
 import os

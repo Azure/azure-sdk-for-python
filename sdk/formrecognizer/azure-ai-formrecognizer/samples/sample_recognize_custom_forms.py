@@ -15,6 +15,9 @@ DESCRIPTION:
     was trained on. To learn how to train your own models, look at
     sample_train_model_without_labels.py and sample_train_model_with_labels.py
 
+    The model can be trained using the training files found here:
+    http://aka.ms/azsdk/formrecognizer/sampletrainingfiles
+
 USAGE:
     python sample_recognize_custom_forms.py
 
@@ -24,6 +27,7 @@ USAGE:
     3) CUSTOM_TRAINED_MODEL_ID - the ID of your custom trained model
         -OR-
        CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your forms.
+       A model will be trained and used to to run the sample.
 """
 
 import os
