@@ -6,12 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
-from ._dps_certificate_operations import DpsCertificateOperations
-from ._iot_dps_resource_operations import IotDpsResourceOperations
-
-__all__ = [
-    'Operations',
-    'DpsCertificateOperations',
-    'IotDpsResourceOperations',
-]
+from ._iot_dps_client import IotDpsClient
+__all__ = ['IotDpsClient']
