@@ -14,7 +14,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"0","keyPhrases":["Bill Gates","Paul Allen","Microsoft"],"warnings":[]},{"id":"1","keyPhrases":["Microsoft
@@ -22,16 +22,16 @@ interactions:
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: cadf85ff-7a03-4107-bc9e-1a358b552aa5
+      apim-request-id: 1a6be832-23aa-43c1-90b2-c54b81a99213
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=2,CognitiveServices.TextAnalytics.TextRecords=2
-      date: Thu, 13 May 2021 22:35:57 GMT
+      date: Tue, 18 May 2021 17:47:48 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '12'
+      x-envoy-upstream-service-time: '9'
     status:
       code: 200
       message: OK
-    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/keyPhrases?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/keyPhrases?showStats=false
 version: 1

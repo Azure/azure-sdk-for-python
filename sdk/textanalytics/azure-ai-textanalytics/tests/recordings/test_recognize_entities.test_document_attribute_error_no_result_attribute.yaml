@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -23,11 +23,11 @@ interactions:
         text is empty."}}}],"modelVersion":"2021-01-15"}'
     headers:
       apim-request-id:
-      - 1de10628-560f-4470-ba11-50aa3eb781b2
+      - 45c755bf-7a7b-4249-a4bb-ee0fbe717842
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 22:36:04 GMT
+      - Tue, 18 May 2021 17:47:50 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

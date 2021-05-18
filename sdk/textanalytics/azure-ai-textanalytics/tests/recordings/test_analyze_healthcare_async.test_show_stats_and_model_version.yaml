@@ -14,44 +14,66 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs?model-version=2021-01-11&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs?model-version=2021-01-11&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
-      apim-request-id: fc859b8b-7869-4140-b99b-6be7a5513031
-      date: Thu, 13 May 2021 22:36:52 GMT
-      operation-location: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/63006fe5-57a0-4a82-bae0-7a361cd8d915
+      apim-request-id: 8fe9c4b3-3b24-4cc5-9438-9707168a75a0
+      date: Tue, 18 May 2021 17:48:51 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/5c6b59fe-1cd2-45fb-9412-1e60d9f6bcd2
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '111'
+      x-envoy-upstream-service-time: '154'
     status:
       code: 202
       message: Accepted
-    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/health/jobs?model-version=2021-01-11&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/health/jobs?model-version=2021-01-11&stringIndexType=UnicodeCodePoint
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/63006fe5-57a0-4a82-bae0-7a361cd8d915?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/5c6b59fe-1cd2-45fb-9412-1e60d9f6bcd2?showStats=True
   response:
     body:
-      string: '{"jobId":"63006fe5-57a0-4a82-bae0-7a361cd8d915","lastUpdateDateTime":"2021-05-13T22:36:54Z","createdDateTime":"2021-05-13T22:36:52Z","expirationDateTime":"2021-05-14T22:36:52Z","status":"succeeded","errors":[],"results":{"statistics":{"documentsCount":5,"validDocumentsCount":4,"erroneousDocumentsCount":1,"transactionsCount":4},"documents":[{"id":"56","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"0","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-03-01"}}'
+      string: '{"jobId":"5c6b59fe-1cd2-45fb-9412-1e60d9f6bcd2","lastUpdateDateTime":"2021-05-18T17:48:52Z","createdDateTime":"2021-05-18T17:48:51Z","expirationDateTime":"2021-05-19T17:48:51Z","status":"running","errors":[]}'
     headers:
-      apim-request-id: fbb91ba1-bfdc-4087-9e7e-54a3fe47a96c
+      apim-request-id: 3fcda75b-be0b-4a8c-a66b-1f62042cf3d5
       content-type: application/json; charset=utf-8
-      date: Thu, 13 May 2021 22:36:57 GMT
+      date: Tue, 18 May 2021 17:48:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '87'
+      x-envoy-upstream-service-time: '17'
     status:
       code: 200
       message: OK
-    url: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/63006fe5-57a0-4a82-bae0-7a361cd8d915?showStats=True
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/5c6b59fe-1cd2-45fb-9412-1e60d9f6bcd2?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/5c6b59fe-1cd2-45fb-9412-1e60d9f6bcd2?showStats=True
+  response:
+    body:
+      string: '{"jobId":"5c6b59fe-1cd2-45fb-9412-1e60d9f6bcd2","lastUpdateDateTime":"2021-05-18T17:48:57Z","createdDateTime":"2021-05-18T17:48:51Z","expirationDateTime":"2021-05-19T17:48:51Z","status":"succeeded","errors":[],"results":{"statistics":{"documentsCount":5,"validDocumentsCount":4,"erroneousDocumentsCount":1,"transactionsCount":4},"documents":[{"id":"56","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"0","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2021-03-01"}}'
+    headers:
+      apim-request-id: d7f979f6-38e3-4138-b19c-77af02e6bfa8
+      content-type: application/json; charset=utf-8
+      date: Tue, 18 May 2021 17:49:01 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '1399'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/5c6b59fe-1cd2-45fb-9412-1e60d9f6bcd2?showStats=True
 version: 1

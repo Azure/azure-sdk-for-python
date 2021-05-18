@@ -12,7 +12,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
@@ -20,9 +20,9 @@ interactions:
         language code. Supported languages: af,bg,ca,da,de,el,en,es,et,fi,fr,hr,hu,id,it,ja,ko,lv,nl,no,pl,pt-BR,pt-PT,ro,ru,sk,sl,sv,tr.
         For additional details see https://aka.ms/text-analytics/language-support?tabs=key-phrase-extraction"}}}],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: 23621160-47b4-44da-92e1-6eae930ca24b
+      apim-request-id: b5acc28b-822f-4849-a2eb-1d772a573b5b
       content-type: application/json; charset=utf-8
-      date: Thu, 13 May 2021 22:35:57 GMT
+      date: Tue, 18 May 2021 17:47:49 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -30,5 +30,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/keyPhrases?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/keyPhrases?showStats=false
 version: 1

@@ -17,7 +17,7 @@ from devtools_testutils import (
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
 from azure_devtools.scenario_tests import ReplayableTest
 
-REGION = 'centralus'
+REGION = 'westus2'
 
 
 class FakeTokenCredential(object):

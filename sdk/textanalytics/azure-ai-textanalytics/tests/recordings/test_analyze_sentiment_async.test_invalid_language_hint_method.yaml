@@ -12,7 +12,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
@@ -20,9 +20,9 @@ interactions:
         language code. Supported languages: de,en,es,fr,hi,it,ja,ko,nl,no,pt-BR,pt-PT,tr,zh-Hans,zh-Hant.
         For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 20c26f75-bfd0-4471-9c6e-56ec09369eed
+      apim-request-id: b157cfe0-77ad-4cb0-8200-36a651f598fb
       content-type: application/json; charset=utf-8
-      date: Thu, 13 May 2021 22:35:27 GMT
+      date: Tue, 18 May 2021 17:47:16 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -30,5 +30,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1
