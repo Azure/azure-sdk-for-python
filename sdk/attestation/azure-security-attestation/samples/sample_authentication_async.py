@@ -30,11 +30,10 @@ USAGE:
 
 from datetime import datetime, timedelta
 import os
-from samples.sample_utils import create_client_credentials_async
 from dotenv import find_dotenv, load_dotenv
 import base64
 import asyncio
-from sample_utils import write_banner, create_client_credentials_async
+from sample_utils import write_banner
 
 class AttestationClientCreateSamples(object):
     def __init__(self):

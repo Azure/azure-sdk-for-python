@@ -27,7 +27,6 @@ DESCRIPTION:
 """
 
 from logging import fatal
-from samples.sample_utils import create_client_credentials_async
 from typing import Any, ByteString, Dict
 from cryptography.hazmat.backends import default_backend
 from cryptography import x509
