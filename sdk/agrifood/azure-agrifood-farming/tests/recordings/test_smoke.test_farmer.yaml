@@ -13,12 +13,12 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: PATCH
     uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"smoke-test-farmer","eTag":"0000c318-0000-0600-0000-60a437ba0000","createdDateTime":"2021-05-18T21:55:06Z","modifiedDateTime":"2021-05-18T21:55:06Z"}'
+      string: '{"id":"smoke-test-farmer","eTag":"0000931e-0000-0600-0000-60a44b690000","createdDateTime":"2021-05-18T23:19:05Z","modifiedDateTime":"2021-05-18T23:19:05Z"}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -31,11 +31,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 21:55:06 GMT
+      - Tue, 18 May 2021 23:19:05 GMT
       etag:
-      - 0000c318-0000-0600-0000-60a437ba0000
+      - 0000931e-0000-0600-0000-60a44b690000
       location:
-      - http://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/smoke-test-farmer
+      - http://sdk-testing-wcus-1.farmbeats.azure.net/farmers/smoke-test-farmer
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -53,12 +53,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
     uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"smoke-test-farmer","eTag":"0000c318-0000-0600-0000-60a437ba0000","createdDateTime":"2021-05-18T21:55:06Z","modifiedDateTime":"2021-05-18T21:55:06Z"}'
+      string: '{"id":"smoke-test-farmer","eTag":"0000931e-0000-0600-0000-60a44b690000","createdDateTime":"2021-05-18T23:19:05Z","modifiedDateTime":"2021-05-18T23:19:05Z"}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -71,9 +71,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 21:55:07 GMT
+      - Tue, 18 May 2021 23:19:06 GMT
       etag:
-      - 0000c318-0000-0600-0000-60a437ba0000
+      - 0000931e-0000-0600-0000-60a44b690000
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -93,7 +93,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: DELETE
     uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-farmer?api-version=2021-03-31-preview
   response:
@@ -109,7 +109,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 18 May 2021 21:55:08 GMT
+      - Tue, 18 May 2021 23:19:07 GMT
       server:
       - nginx/1.19.1
       strict-transport-security:
