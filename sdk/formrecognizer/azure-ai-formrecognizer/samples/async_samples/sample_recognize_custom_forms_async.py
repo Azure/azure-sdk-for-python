@@ -22,6 +22,8 @@ USAGE:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) CUSTOM_TRAINED_MODEL_ID - the ID of your custom trained model
+        -OR-
+       CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your forms.
 """
 
 import os
@@ -30,7 +32,7 @@ import asyncio
 
 class RecognizeCustomFormsSampleAsync(object):
 
-    async def recognize_custom_forms(self):
+    async def recognize_custom_forms(self, custom_model_id):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
                                                             "..", "..", "./sample_forms/forms/Form_1.jpg"))
         # [START recognize_custom_forms_async]
@@ -39,7 +41,7 @@ class RecognizeCustomFormsSampleAsync(object):
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
+        model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"] or custom_model_id
 
         async with FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -102,7 +104,26 @@ class RecognizeCustomFormsSampleAsync(object):
 
 async def main():
     sample = RecognizeCustomFormsSampleAsync()
-    await sample.recognize_custom_forms()
+    model_id = None
+    if os.getenv("CONTAINER_SAS_URL"):
+
+        from azure.core.credentials import AzureKeyCredential
+        from azure.ai.formrecognizer.aio import FormTrainingClient
+
+        endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT")
+        key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
+
+        if not endpoint or not key:
+            raise ValueError("Please provide endpoint and API key to run the samples.")
+
+        form_training_client = FormTrainingClient(
+            endpoint=endpoint, credential=AzureKeyCredential(key)
+        )
+        async with form_training_client:
+            model = await (await form_training_client.begin_training(os.getenv("CONTAINER_SAS_URL"), use_training_labels=True)).result()
+            model_id = model.model_id
+
+    await sample.recognize_custom_forms(model_id)
 
 
 if __name__ == '__main__':

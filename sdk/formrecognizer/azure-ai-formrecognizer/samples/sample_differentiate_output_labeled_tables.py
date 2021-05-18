@@ -30,7 +30,11 @@ USAGE:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) MODEL_ID_FIXED_ROW_TABLES - the ID of your custom model trained with labels on fixed row tables
+            -OR-
+       CONTAINER_SAS_URL_FIXED - The shared access signature (SAS) Url of your Azure Blob Storage container with your labeled data.
     4) MODEL_ID_DYNAMIC_ROW_TABLES - the ID of your custom model trained with labels on dynamic row tables
+            -OR-
+       CONTAINER_SAS_URL_DYNAMIC - The shared access signature (SAS) Url of your Azure Blob Storage container with your labeled data.
 """
 
 import os
@@ -38,13 +42,13 @@ import os
 
 class TestDifferentiateOutputLabeledTables(object):
 
-    def test_recognize_tables_fixed_rows(self):
+    def test_recognize_tables_fixed_rows(self, custom_model_id):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        model_id_fixed_rows_table = os.environ["MODEL_ID_FIXED_ROW_TABLES"]
+        model_id_fixed_rows_table = os.environ["MODEL_ID_FIXED_ROW_TABLES"] or custom_model_id
 
         form_recognizer_client = FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -80,13 +84,13 @@ class TestDifferentiateOutputLabeledTables(object):
                         field.confidence
                     ))
 
-    def test_recognize_tables_dynamic_rows(self):
+    def test_recognize_tables_dynamic_rows(self, custom_model_id):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        model_id_dynamic_rows_table = os.environ["MODEL_ID_DYNAMIC_ROW_TABLES"]
+        model_id_dynamic_rows_table = os.environ["MODEL_ID_DYNAMIC_ROW_TABLES"] or custom_model_id
 
         form_recognizer_client = FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -125,5 +129,31 @@ class TestDifferentiateOutputLabeledTables(object):
 
 if __name__ == '__main__':
     sample = TestDifferentiateOutputLabeledTables()
-    sample.test_recognize_tables_fixed_rows()
-    sample.test_recognize_tables_dynamic_rows()
+    fixed_model_id = None
+    dynamic_model_id = None
+    if os.getenv("CONTAINER_SAS_URL_FIXED") or os.getenv("CONTAINER_SAS_URL_DYNAMIC"):
+
+        from azure.core.credentials import AzureKeyCredential
+        from azure.ai.formrecognizer import FormTrainingClient
+
+        endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT")
+        key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
+        fixed = os.getenv("CONTAINER_SAS_URL_FIXED")
+        dynamic = os.getenv("CONTAINER_SAS_URL_DYNAMIC")
+
+        if not endpoint or not key:
+            raise ValueError("Please provide endpoint and API key to run the samples.")
+
+        form_training_client = FormTrainingClient(
+            endpoint=endpoint, credential=AzureKeyCredential(key)
+        )
+
+        if fixed:
+            model = form_training_client.begin_training(fixed, use_training_labels=True).result()
+            fixed_model_id = model.model_id
+        if dynamic:
+            model = form_training_client.begin_training(dynamic, use_training_labels=True).result()
+            dynamic_model_id = model.model_id
+
+    sample.test_recognize_tables_fixed_rows(fixed_model_id)
+    sample.test_recognize_tables_dynamic_rows(dynamic_model_id)
