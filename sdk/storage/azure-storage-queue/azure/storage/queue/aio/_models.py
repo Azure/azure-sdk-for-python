@@ -22,7 +22,7 @@ class MessagesPaged(AsyncPageIterator):
     :param int results_per_page: The maximum number of messages to retrieve per
         call.
     """
-    def __init__(self, command, results_per_page=None, continuation_token=None):
+    def __init__(self, command, results_per_page=32, continuation_token=None, messages_to_retrieve=None):
         if continuation_token is not None:
             raise ValueError("This operation does not support continuation token")
 
@@ -31,10 +31,19 @@ class MessagesPaged(AsyncPageIterator):
             self._extract_data_cb,
         )
         self._command = command
+        self.messages_to_retrieve = messages_to_retrieve
         self.results_per_page = results_per_page
 
     async def _get_next_cb(self, continuation_token):
         try:
+            if self.messages_to_retrieve is not None:
+                if self.messages_to_retrieve == 0:
+                    raise StopIteration("End of paging")
+                if self.results_per_page > self.messages_to_retrieve:
+                    self.results_per_page = self.messages_to_retrieve
+                    self.messages_to_retrieve = 0
+                else:
+                    self.messages_to_retrieve = self.messages_to_retrieve - self.results_per_page
             return await self._command(number_of_messages=self.results_per_page)
         except HttpResponseError as error:
             process_storage_error(error)

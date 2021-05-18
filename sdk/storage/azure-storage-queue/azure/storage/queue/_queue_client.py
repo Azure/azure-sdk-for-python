@@ -585,6 +585,8 @@ class QueueClient(StorageAccountHostsMixin):
             should be set to a value smaller than the time-to-live value.
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :keyword int total_messages:
+            An integer that specifies the maximum number of messages to retrieve from the queue.
         :return:
             Returns a message iterator of dict-like Message objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.queue.QueueMessage]
@@ -598,8 +600,9 @@ class QueueClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Receive messages from the queue.
         """
-        messages_per_page = kwargs.pop('messages_per_page', None)
+        messages_per_page = kwargs.pop('messages_per_page', 32)
         visibility_timeout = kwargs.pop('visibility_timeout', None)
+        total_messages = kwargs.pop('total_messages', None)
         timeout = kwargs.pop('timeout', None)
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
@@ -613,7 +616,9 @@ class QueueClient(StorageAccountHostsMixin):
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
-            return ItemPaged(command, results_per_page=messages_per_page, page_iterator_class=MessagesPaged)
+            return ItemPaged(
+                command, results_per_page=messages_per_page,
+                page_iterator_class=MessagesPaged, messages_to_retrieve=total_messages)
         except HttpResponseError as error:
             process_storage_error(error)
 
