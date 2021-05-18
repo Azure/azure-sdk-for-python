@@ -56,7 +56,7 @@ extends:
       safeName: azuremgmtstoragesync
     CondaArtifacts:
     - name: azure-storage
-      meta_source: meta.yaml
+      meta_source: conda-recipe/meta.yaml
       common_root: azure/storage
       checkout:
         - package: azure-storage-blob
