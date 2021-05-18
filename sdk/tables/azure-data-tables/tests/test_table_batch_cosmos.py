@@ -485,7 +485,8 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_primary_cosmos_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True, read=True, update=True, delete=True),

@@ -1616,7 +1616,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
             token = self.generate_sas(
                 generate_table_sas,
-            # token = generate_table_sas(
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(read=True),

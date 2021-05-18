@@ -557,12 +557,14 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
+    @pytest.mark.live_test_only
     @cosmos_decorator_async
     async def test_batch_sas_auth(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_cosmos_account_name,
                 tables_primary_cosmos_account_key,
                 self.table_name,
