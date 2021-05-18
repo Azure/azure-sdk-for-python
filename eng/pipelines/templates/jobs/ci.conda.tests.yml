@@ -177,8 +177,8 @@ jobs:
           workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
 
         - script: |
-            echo "conda install --force-reinstall --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)"
-            conda install --force-reinstall --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)
+            echo "conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)"
+            conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)
 
             echo "conda install --name ${{ artifact.name }} azure-identity -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} -c $(AzureSDKCondaChannel) --yes"
             conda install --name ${{ artifact.name }} azure-identity -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} -c $(AzureSDKCondaChannel) --yes
