@@ -51,7 +51,7 @@ class AttestationClientAttestationSamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         shared_short_name  = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
-        self.shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
+        self.shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net' #type:str
         self._credentials = create_client_credentials()
 
         
@@ -201,7 +201,7 @@ issuancerules {
             print("     Token was issued at: ", token.issuance_time)
             print("     Token expires at: ", token.expiration_time)
             if token.issuer != self.shared_url:
-                print("Token issuer {} does not match expected issuer {}".format(token.issuer, self.shared_url))
+                print("Token issuer {} does not match expected issuer {}".format(token.issuer, self.shared_url.encode('ascii')))
                 return False
 
             # Check the subject of the signing certificate used to validate the token.

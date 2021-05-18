@@ -28,7 +28,7 @@ def write_banner(banner):
     separator = '*'*80
     print("\n")
     print(separator)
-    print("        ", banner)
+    print("        {}".format(banner))
     print(separator)
 
 def create_rsa_key(): #type() -> RSAPrivateKey
