@@ -16,7 +16,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/languages?model-version=bad&showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/languages?model-version=bad&showStats=false
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innererror":{"code":"ModelVersionIncorrect","message":"Invalid
@@ -24,11 +24,11 @@ interactions:
         For additional details see https://aka.ms/text-analytics-model-versioning"}}}'
     headers:
       apim-request-id:
-      - 1c8aae83-068a-4652-8e18-89d44d16e807
+      - e2aa0897-ac1f-4c07-8ede-b2da4c150077
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 22:35:42 GMT
+      - Tue, 18 May 2021 17:47:37 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
