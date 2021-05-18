@@ -310,7 +310,6 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         finally:
             await ts.delete_table(table.table_name)
 
-    @pytest.mark.live_test_only
     @tables_decorator_async
     async def test_account_sas(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -331,7 +330,8 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             entity['RowKey'] = 'test2'
             await table.upsert_entity(entity=entity)
 
-            token = generate_account_sas(
+            token = self.generate_sas(
+                generate_account_sas,
                 tables_primary_storage_account_key,
                 resource_types=ResourceTypes(object=True),
                 permission=AccountSasPermissions(read=True),
