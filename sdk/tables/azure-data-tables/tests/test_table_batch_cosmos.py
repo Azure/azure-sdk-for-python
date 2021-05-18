@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import sys
 
@@ -14,6 +14,7 @@ import pytest
 from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.data.tables import (
     EdmType,
@@ -24,10 +25,13 @@ from azure.data.tables import (
     TableEntity,
     UpdateMode,
     TransactionOperation,
-    RequestTooLargeError
+    RequestTooLargeError,
+    TableSasPermissions,
+    TableServiceClient,
+    generate_table_sas,
 )
 
-from _shared.testcase import TableTestCase, SLEEP_DELAY
+from _shared.testcase import TableTestCase
 from preparers import cosmos_decorator
 
 #------------------------------------------------------------------------------
@@ -471,6 +475,55 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             resp = self.table.submit_transaction(batch)
 
             assert resp is not None
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @pytest.mark.live_test_only
+    @cosmos_decorator
+    def test_batch_sas_auth(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            token = generate_table_sas(
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                permission=TableSasPermissions(add=True, read=True, update=True, delete=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start=datetime.utcnow() - timedelta(minutes=1),
+            )
+            token = AzureSasCredential(token)
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=token,
+            )
+            table = service.get_table_client(self.table_name)
+
+            entity = TableEntity()
+            entity['PartitionKey'] = 'batch_inserts'
+            entity['test'] = EntityProperty(True, EdmType.BOOLEAN)
+            entity['test2'] = 'value'
+            entity['test3'] = 3
+            entity['test4'] = EntityProperty(1234567890, EdmType.INT32)
+# 'https://seankaneprim.table.core.windows.net/$batch?st=2021-05-18T16%3A19%3A58Z&se=2021-05-18T17%3A20%3A58Z&sp=raud&sv=2019-02-02&tn=uttabled4f0e8f&sig=cROztTVf0vKXUE1IQyyJpnjA3Ua1a4NMYYF0VnCMt/4%3D'
+# 'https://seankaneprim.table.core.windows.net/$batch?st=2021-05-18T16%3A20%3A57Z&se=2021-05-18T17%3A21%3A57Z&sp=raud&sv=2019-02-02&tn=uttable81841182&sig=Czf9WOvwZT790ZaUqOPanvpa04mtBMQ28xvAr/l%2BPbM%3D'
+            batch = []
+            transaction_count = 0
+            for i in range(10):
+                entity['RowKey'] = str(i)
+                batch.append(('create', entity.copy()))
+                transaction_count += 1
+            transaction_result = table.submit_transaction(batch)
+
+            assert transaction_result
+
+            total_entities = 0
+            for e in table.list_entities():
+                total_entities += 1
+
+            assert total_entities == transaction_count
         finally:
             self._tear_down()
 

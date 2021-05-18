@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import sys
 import pytest
@@ -13,6 +13,7 @@ import pytest
 from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     ResourceNotFoundError,
     HttpResponseError,
@@ -25,7 +26,9 @@ from azure.data.tables import (
     EdmType,
     TableTransactionError,
     RequestTooLargeError,
-    TransactionOperation
+    TransactionOperation,
+    TableSasPermissions,
+    generate_table_sas,
 )
 from azure.data.tables.aio import TableServiceClient
 
@@ -554,3 +557,49 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
+    @cosmos_decorator_async
+    async def test_batch_sas_auth(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            token = generate_table_sas(
+                tables_cosmos_account_name,
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                permission=TableSasPermissions(add=True, read=True, update=True, delete=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start=datetime.utcnow() - timedelta(minutes=1),
+            )
+            token = AzureSasCredential(token)
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=token,
+            )
+            table = service.get_table_client(self.table_name)
+
+            entity = TableEntity()
+            entity['PartitionKey'] = 'batch_inserts'
+            entity['test'] = EntityProperty(True, EdmType.BOOLEAN)
+            entity['test2'] = 'value'
+            entity['test3'] = 3
+            entity['test4'] = EntityProperty(1234567890, EdmType.INT32)
+
+            batch = []
+            transaction_count = 0
+            for i in range(10):
+                entity['RowKey'] = str(i)
+                batch.append(('create', entity.copy()))
+                transaction_count += 1
+            transaction_result = await table.submit_transaction(batch)
+
+            assert transaction_result is not None
+
+            total_entities = 0
+            async for e in table.list_entities():
+                total_entities += 1
+
+            assert total_entities == transaction_count
+        finally:
+            await self._tear_down()

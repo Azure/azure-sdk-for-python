@@ -1,0 +1,332 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable81841182"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 18 May 2021 16:32:57 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 18 May 2021 16:32:57 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"TableAlreadyExists\",\"message\":{\"lang\"\
+        :\"en-us\",\"value\":\"The specified table already exists.\\nRequestID:b43c0bc5-b7f6-11eb-906c-002b67128e4c\\\
+        n\"}}}\r\n"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Tue, 18 May 2021 16:32:58 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 409
+      message: Conflict
+- request:
+    body: "--batch_302767e5-c254-4077-b046-cf2c4c4b54d9\r\nContent-Type: multipart/mixed;\
+      \ boundary=changeset_5373c190-f534-479a-a8ea-6689af763aff\r\n\r\n--changeset_5373c190-f534-479a-a8ea-6689af763aff\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 0\r\n\r\nPOST https://seankaneprim.table.cosmos.azure.com/uttable81841182\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 18 May 2021 16:32:58 GMT\r\nDate: Tue, 18 May 2021 16:32:58 GMT\r\n\r\
+      \n{\"PartitionKey\": \"batch_inserts\", \"PartitionKey@odata.type\": \"Edm.String\"\
+      , \"test\": true, \"test2\": \"value\", \"test2@odata.type\": \"Edm.String\"\
+      , \"test3\": 3, \"test4\": 1234567890, \"RowKey\": \"0\", \"RowKey@odata.type\"\
+      : \"Edm.String\"}\r\n--changeset_5373c190-f534-479a-a8ea-6689af763aff\r\nContent-Type:\
+      \ application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\
+      \r\nPOST https://seankaneprim.table.cosmos.azure.com/uttable81841182 HTTP/1.1\r\
+      \nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer: return-no-content\r\
+      \nContent-Type: application/json;odata=nometadata\r\nAccept: application/json;odata=minimalmetadata\r\
+      \nContent-Length: 223\r\nx-ms-date: Tue, 18 May 2021 16:32:58 GMT\r\nDate: Tue,\
+      \ 18 May 2021 16:32:58 GMT\r\n\r\n{\"PartitionKey\": \"batch_inserts\", \"PartitionKey@odata.type\"\
+      : \"Edm.String\", \"test\": true, \"test2\": \"value\", \"test2@odata.type\"\
+      : \"Edm.String\", \"test3\": 3, \"test4\": 1234567890, \"RowKey\": \"1\", \"\
+      RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_5373c190-f534-479a-a8ea-6689af763aff\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 2\r\n\r\nPOST https://seankaneprim.table.cosmos.azure.com/uttable81841182\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 18 May 2021 16:32:58 GMT\r\nDate: Tue, 18 May 2021 16:32:58 GMT\r\n\r\
+      \n{\"PartitionKey\": \"batch_inserts\", \"PartitionKey@odata.type\": \"Edm.String\"\
+      , \"test\": true, \"test2\": \"value\", \"test2@odata.type\": \"Edm.String\"\
+      , \"test3\": 3, \"test4\": 1234567890, \"RowKey\": \"2\", \"RowKey@odata.type\"\
+      : \"Edm.String\"}\r\n--changeset_5373c190-f534-479a-a8ea-6689af763aff\r\nContent-Type:\
+      \ application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 3\r\n\
+      \r\nPOST https://seankaneprim.table.cosmos.azure.com/uttable81841182 HTTP/1.1\r\
+      \nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer: return-no-content\r\
+      \nContent-Type: application/json;odata=nometadata\r\nAccept: application/json;odata=minimalmetadata\r\
+      \nContent-Length: 223\r\nx-ms-date: Tue, 18 May 2021 16:32:58 GMT\r\nDate: Tue,\
+      \ 18 May 2021 16:32:58 GMT\r\n\r\n{\"PartitionKey\": \"batch_inserts\", \"PartitionKey@odata.type\"\
+      : \"Edm.String\", \"test\": true, \"test2\": \"value\", \"test2@odata.type\"\
+      : \"Edm.String\", \"test3\": 3, \"test4\": 1234567890, \"RowKey\": \"3\", \"\
+      RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_5373c190-f534-479a-a8ea-6689af763aff\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 4\r\n\r\nPOST https://seankaneprim.table.cosmos.azure.com/uttable81841182\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 18 May 2021 16:32:58 GMT\r\nDate: Tue, 18 May 2021 16:32:58 GMT\r\n\r\
+      \n{\"PartitionKey\": \"batch_inserts\", \"PartitionKey@odata.type\": \"Edm.String\"\
+      , \"test\": true, \"test2\": \"value\", \"test2@odata.type\": \"Edm.String\"\
+      , \"test3\": 3, \"test4\": 1234567890, \"RowKey\": \"4\", \"RowKey@odata.type\"\
+      : \"Edm.String\"}\r\n--changeset_5373c190-f534-479a-a8ea-6689af763aff\r\nContent-Type:\
+      \ application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 5\r\n\
+      \r\nPOST https://seankaneprim.table.cosmos.azure.com/uttable81841182 HTTP/1.1\r\
+      \nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer: return-no-content\r\
+      \nContent-Type: application/json;odata=nometadata\r\nAccept: application/json;odata=minimalmetadata\r\
+      \nContent-Length: 223\r\nx-ms-date: Tue, 18 May 2021 16:32:58 GMT\r\nDate: Tue,\
+      \ 18 May 2021 16:32:58 GMT\r\n\r\n{\"PartitionKey\": \"batch_inserts\", \"PartitionKey@odata.type\"\
+      : \"Edm.String\", \"test\": true, \"test2\": \"value\", \"test2@odata.type\"\
+      : \"Edm.String\", \"test3\": 3, \"test4\": 1234567890, \"RowKey\": \"5\", \"\
+      RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_5373c190-f534-479a-a8ea-6689af763aff\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 6\r\n\r\nPOST https://seankaneprim.table.cosmos.azure.com/uttable81841182\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 18 May 2021 16:32:58 GMT\r\nDate: Tue, 18 May 2021 16:32:58 GMT\r\n\r\
+      \n{\"PartitionKey\": \"batch_inserts\", \"PartitionKey@odata.type\": \"Edm.String\"\
+      , \"test\": true, \"test2\": \"value\", \"test2@odata.type\": \"Edm.String\"\
+      , \"test3\": 3, \"test4\": 1234567890, \"RowKey\": \"6\", \"RowKey@odata.type\"\
+      : \"Edm.String\"}\r\n--changeset_5373c190-f534-479a-a8ea-6689af763aff\r\nContent-Type:\
+      \ application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 7\r\n\
+      \r\nPOST https://seankaneprim.table.cosmos.azure.com/uttable81841182 HTTP/1.1\r\
+      \nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer: return-no-content\r\
+      \nContent-Type: application/json;odata=nometadata\r\nAccept: application/json;odata=minimalmetadata\r\
+      \nContent-Length: 223\r\nx-ms-date: Tue, 18 May 2021 16:32:58 GMT\r\nDate: Tue,\
+      \ 18 May 2021 16:32:58 GMT\r\n\r\n{\"PartitionKey\": \"batch_inserts\", \"PartitionKey@odata.type\"\
+      : \"Edm.String\", \"test\": true, \"test2\": \"value\", \"test2@odata.type\"\
+      : \"Edm.String\", \"test3\": 3, \"test4\": 1234567890, \"RowKey\": \"7\", \"\
+      RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_5373c190-f534-479a-a8ea-6689af763aff\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 8\r\n\r\nPOST https://seankaneprim.table.cosmos.azure.com/uttable81841182\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Tue, 18 May 2021 16:32:58 GMT\r\nDate: Tue, 18 May 2021 16:32:58 GMT\r\n\r\
+      \n{\"PartitionKey\": \"batch_inserts\", \"PartitionKey@odata.type\": \"Edm.String\"\
+      , \"test\": true, \"test2\": \"value\", \"test2@odata.type\": \"Edm.String\"\
+      , \"test3\": 3, \"test4\": 1234567890, \"RowKey\": \"8\", \"RowKey@odata.type\"\
+      : \"Edm.String\"}\r\n--changeset_5373c190-f534-479a-a8ea-6689af763aff\r\nContent-Type:\
+      \ application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 9\r\n\
+      \r\nPOST https://seankaneprim.table.cosmos.azure.com/uttable81841182 HTTP/1.1\r\
+      \nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer: return-no-content\r\
+      \nContent-Type: application/json;odata=nometadata\r\nAccept: application/json;odata=minimalmetadata\r\
+      \nContent-Length: 223\r\nx-ms-date: Tue, 18 May 2021 16:32:58 GMT\r\nDate: Tue,\
+      \ 18 May 2021 16:32:58 GMT\r\n\r\n{\"PartitionKey\": \"batch_inserts\", \"PartitionKey@odata.type\"\
+      : \"Edm.String\", \"test\": true, \"test2\": \"value\", \"test2@odata.type\"\
+      : \"Edm.String\", \"test3\": 3, \"test4\": 1234567890, \"RowKey\": \"9\", \"\
+      RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_5373c190-f534-479a-a8ea-6689af763aff--\r\
+      \n\r\n--batch_302767e5-c254-4077-b046-cf2c4c4b54d9--\r\n"
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '7348'
+      Content-Type:
+      - multipart/mixed; boundary=batch_302767e5-c254-4077-b046-cf2c4c4b54d9
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 18 May 2021 16:32:58 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 18 May 2021 16:32:58 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/$batch?st=2021-05-18T16%3A31%3A58Z&se=2021-05-18T17%3A32%3A58Z&sp=raud&sv=2019-02-02&tn=uttable81841182&sig=XAQ6WzOAjic1Iz/%2BffZjsAemidi%2BRnrJjHh6FjkYZZI%3D
+  response:
+    body:
+      string: "--batchresponse_02fee534-a5d8-4fd0-8df5-24b4147add70\r\nContent-Type:\
+        \ multipart/mixed; boundary=changesetresponse_0ad60759-92c8-4426-9b2f-ae2946574078\r\
+        \n\r\n--changesetresponse_0ad60759-92c8-4426-9b2f-ae2946574078\nContent-Type:\
+        \ application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1 204 No Content\r\
+        \nETag: W/\"datetime'2021-05-18T16%3A32%3A59.5691528Z'\"\r\nPreference-Applied:\
+        \ return-no-content\r\nLocation: https://seankaneprim.table.cosmos.azure.com/uttable81841182(PartitionKey='batch_inserts',RowKey='0')\r\
+        \nContent-ID: 1\r\n\r\n\r\n--changesetresponse_0ad60759-92c8-4426-9b2f-ae2946574078\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2021-05-18T16%3A32%3A59.5698696Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://seankaneprim.table.cosmos.azure.com/uttable81841182(PartitionKey='batch_inserts',RowKey='1')\r\
+        \nContent-ID: 2\r\n\r\n\r\n--changesetresponse_0ad60759-92c8-4426-9b2f-ae2946574078\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2021-05-18T16%3A32%3A59.5703816Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://seankaneprim.table.cosmos.azure.com/uttable81841182(PartitionKey='batch_inserts',RowKey='2')\r\
+        \nContent-ID: 3\r\n\r\n\r\n--changesetresponse_0ad60759-92c8-4426-9b2f-ae2946574078\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2021-05-18T16%3A32%3A59.5707912Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://seankaneprim.table.cosmos.azure.com/uttable81841182(PartitionKey='batch_inserts',RowKey='3')\r\
+        \nContent-ID: 4\r\n\r\n\r\n--changesetresponse_0ad60759-92c8-4426-9b2f-ae2946574078\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2021-05-18T16%3A32%3A59.5713032Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://seankaneprim.table.cosmos.azure.com/uttable81841182(PartitionKey='batch_inserts',RowKey='4')\r\
+        \nContent-ID: 5\r\n\r\n\r\n--changesetresponse_0ad60759-92c8-4426-9b2f-ae2946574078\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2021-05-18T16%3A32%3A59.5717128Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://seankaneprim.table.cosmos.azure.com/uttable81841182(PartitionKey='batch_inserts',RowKey='5')\r\
+        \nContent-ID: 6\r\n\r\n\r\n--changesetresponse_0ad60759-92c8-4426-9b2f-ae2946574078\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2021-05-18T16%3A32%3A59.5722248Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://seankaneprim.table.cosmos.azure.com/uttable81841182(PartitionKey='batch_inserts',RowKey='6')\r\
+        \nContent-ID: 7\r\n\r\n\r\n--changesetresponse_0ad60759-92c8-4426-9b2f-ae2946574078\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2021-05-18T16%3A32%3A59.5726344Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://seankaneprim.table.cosmos.azure.com/uttable81841182(PartitionKey='batch_inserts',RowKey='7')\r\
+        \nContent-ID: 8\r\n\r\n\r\n--changesetresponse_0ad60759-92c8-4426-9b2f-ae2946574078\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2021-05-18T16%3A32%3A59.5731464Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://seankaneprim.table.cosmos.azure.com/uttable81841182(PartitionKey='batch_inserts',RowKey='8')\r\
+        \nContent-ID: 9\r\n\r\n\r\n--changesetresponse_0ad60759-92c8-4426-9b2f-ae2946574078\n\
+        Content-Type: application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1\
+        \ 204 No Content\r\nETag: W/\"datetime'2021-05-18T16%3A32%3A59.5735560Z'\"\
+        \r\nPreference-Applied: return-no-content\r\nLocation: https://seankaneprim.table.cosmos.azure.com/uttable81841182(PartitionKey='batch_inserts',RowKey='9')\r\
+        \nContent-ID: 10\r\n\r\n\r\n--changesetresponse_0ad60759-92c8-4426-9b2f-ae2946574078--\n\
+        --batchresponse_02fee534-a5d8-4fd0-8df5-24b4147add70--\r\n"
+    headers:
+      content-type:
+      - multipart/mixed; boundary=batchresponse_02fee534-a5d8-4fd0-8df5-24b4147add70
+      date:
+      - Tue, 18 May 2021 16:32:59 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 18 May 2021 16:33:14 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 18 May 2021 16:33:14 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable81841182()?st=2021-05-18T16%3A31%3A58Z&se=2021-05-18T17%3A32%3A58Z&sp=raud&sv=2019-02-02&tn=uttable81841182&sig=XAQ6WzOAjic1Iz/%2BffZjsAemidi%2BRnrJjHh6FjkYZZI%3D
+  response:
+    body:
+      string: '{"value":[{"odata.etag":"W/\"datetime''2021-05-18T16%3A32%3A59.5691528Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"0","Timestamp":"2021-05-18T16:32:59.5691528Z"},{"odata.etag":"W/\"datetime''2021-05-18T16%3A32%3A59.5698696Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"1","Timestamp":"2021-05-18T16:32:59.5698696Z"},{"odata.etag":"W/\"datetime''2021-05-18T16%3A32%3A59.5703816Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"2","Timestamp":"2021-05-18T16:32:59.5703816Z"},{"odata.etag":"W/\"datetime''2021-05-18T16%3A32%3A59.5707912Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"3","Timestamp":"2021-05-18T16:32:59.5707912Z"},{"odata.etag":"W/\"datetime''2021-05-18T16%3A32%3A59.5713032Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"4","Timestamp":"2021-05-18T16:32:59.5713032Z"},{"odata.etag":"W/\"datetime''2021-05-18T16%3A32%3A59.5717128Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"5","Timestamp":"2021-05-18T16:32:59.5717128Z"},{"odata.etag":"W/\"datetime''2021-05-18T16%3A32%3A59.5722248Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"6","Timestamp":"2021-05-18T16:32:59.5722248Z"},{"odata.etag":"W/\"datetime''2021-05-18T16%3A32%3A59.5726344Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"7","Timestamp":"2021-05-18T16:32:59.5726344Z"},{"odata.etag":"W/\"datetime''2021-05-18T16%3A32%3A59.5731464Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"8","Timestamp":"2021-05-18T16:32:59.5731464Z"},{"odata.etag":"W/\"datetime''2021-05-18T16%3A32%3A59.5735560Z''\"","PartitionKey":"batch_inserts","test":true,"test2":"value","test3":3,"test4":1234567890,"RowKey":"9","Timestamp":"2021-05-18T16:32:59.5735560Z"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#uttable81841182"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Tue, 18 May 2021 16:33:15 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 18 May 2021 16:33:15 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 18 May 2021 16:33:15 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"value":[{"TableName":"uttable81841182"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Tue, 18 May 2021 16:33:15 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 18 May 2021 16:33:15 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 18 May 2021 16:33:15 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable81841182')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 18 May 2021 16:33:15 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+version: 1
