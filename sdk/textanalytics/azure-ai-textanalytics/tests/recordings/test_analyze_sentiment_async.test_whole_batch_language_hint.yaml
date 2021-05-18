@@ -14,7 +14,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.07,"neutral":0.93,"negative":0.0},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.07,"neutral":0.93,"negative":0.0},"offset":0,"length":33,"text":"This
@@ -23,16 +23,16 @@ interactions:
         was too expensive."}],"warnings":[]},{"id":"2","sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.32,"negative":0.67},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"neutral":0.32,"negative":0.67},"offset":0,"length":42,"text":"The
         restaurant was not as good as I hoped."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 91cd719b-87bd-4b44-b06a-c6a61c73ecc8
+      apim-request-id: 11e85242-9911-4417-9e08-e50ccd63d91d
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
-      date: Thu, 13 May 2021 22:35:32 GMT
+      date: Tue, 18 May 2021 17:47:29 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '163'
+      x-envoy-upstream-service-time: '96'
     status:
       code: 200
       message: OK
-    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1
