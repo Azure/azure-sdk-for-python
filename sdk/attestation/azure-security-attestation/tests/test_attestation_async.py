@@ -6,6 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
+from typing import Any, Dict
 import pytest
 import asyncio
 import functools
@@ -143,7 +144,6 @@ class AsyncAzureAttestationTest(AzureTestCase):
 
     @AttestationPreparer()
     @AzureTestCase.await_prepared_test
-    @pytest.mark.live_test_only
     async def test_shared_getopenidmetadataasync(self, attestation_location_short_name):
         attest_client = self.shared_client(attestation_location_short_name)
         open_id_metadata = (await attest_client.get_openidmetadata())
@@ -155,7 +155,6 @@ class AsyncAzureAttestationTest(AzureTestCase):
 
     @AttestationPreparer()
     @pytest.mark.live_test_only
-    @AzureTestCase.await_prepared_test
     async def test_aad_getopenidmetadataasync(self, attestation_aad_url):
         attest_client = self.create_client(attestation_aad_url)
         open_id_metadata = await attest_client.get_openidmetadata()
@@ -165,7 +164,6 @@ class AsyncAzureAttestationTest(AzureTestCase):
 
     @AttestationPreparer()
     @pytest.mark.live_test_only
-    @AzureTestCase.await_prepared_test
     async def test_isolated_getopenidmetadataasync(self, attestation_isolated_url):
         attest_client = self.create_client(attestation_isolated_url)
         open_id_metadata = await attest_client.get_openidmetadata()
@@ -174,30 +172,27 @@ class AsyncAzureAttestationTest(AzureTestCase):
         assert open_id_metadata["issuer"] == attestation_isolated_url
 
     @AttestationPreparer()
-    @AzureTestCase.await_prepared_test
     async def test_shared_getsigningcertificatesasync(self, attestation_location_short_name):
         attest_client = self.shared_client(attestation_location_short_name)
         signers = await attest_client.get_signing_certificates()
         for signer in signers:
-            x5c = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
+            cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
 
     @AttestationPreparer()
-    @AzureTestCase.await_prepared_test
     async def test_aad_getsigningcertificatesasync(self, attestation_aad_url):
         #type: (str) -> None
         attest_client = self.create_client(attestation_aad_url)
         signers = await attest_client.get_signing_certificates()
         for signer in signers:
-            cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
+            cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
 
     @AttestationPreparer()
-    @AzureTestCase.await_prepared_test
     async def test_isolated_getsigningcertificatesasync(self, attestation_isolated_url):
         #type: (str) -> None
         attest_client = self.create_client(attestation_isolated_url)
         signers = await attest_client.get_signing_certificates()
         for signer in signers:
-            cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
+            cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
 
 
 
@@ -224,19 +219,16 @@ class AsyncAzureAttestationTest(AzureTestCase):
 
 
     @AttestationPreparer()
-    @AzureTestCase.await_prepared_test
     async def test_shared_attest_open_enclave(self, attestation_location_short_name):
         #type: (str) -> None
         await self._test_attest_open_enclave(self.shared_base_uri(attestation_location_short_name))
 
     @AttestationPreparer()
-    @AzureTestCase.await_prepared_test
     async def test_aad_attest_open_enclave(self, attestation_aad_url):
         #type: (str) -> None
         await self._test_attest_open_enclave(attestation_aad_url)
 
     @AttestationPreparer()
-    @AzureTestCase.await_prepared_test
     async def test_isolated_attest_open_enclave(self, attestation_isolated_url):
         #type: (str) -> None
         await self._test_attest_open_enclave(attestation_isolated_url)
@@ -271,27 +263,23 @@ class AsyncAzureAttestationTest(AzureTestCase):
 
 
     @AttestationPreparer()
-    @AzureTestCase.await_prepared_test
     async def test_aad_attest_sgx_enclave(self, attestation_aad_url):
         #type: (str) -> None
         await self._test_attest_sgx_enclave(attestation_aad_url)
 
     @AttestationPreparer()
-    @AzureTestCase.await_prepared_test
     async def test_isolated_attest_sgx_enclave(self, attestation_isolated_url):
         #type: (str) -> None
         await self._test_attest_sgx_enclave(attestation_isolated_url)
 
 
     @AttestationPreparer()
-    @AzureTestCase.await_prepared_test
     async def test_shared_attest_sgx_enclave(self, attestation_location_short_name):
         #type: (str) -> None
         await self._test_attest_sgx_enclave(self.shared_base_uri(attestation_location_short_name))
 
 
     @AttestationPreparer()
-    @AzureTestCase.await_prepared_test
     async def test_tpm_attestation(
         self,
         attestation_aad_url):
@@ -334,14 +322,22 @@ class AsyncAzureAttestationTest(AzureTestCase):
 
 
 
-    def create_client(self, base_uri):
+    def create_client(self, base_uri, **kwargs):
+        #type: (str, Dict[str, Any]) -> AttestationClient
         """
         docstring
         """
         credential = self.get_credential(AttestationClient, is_async=True)
         attest_client = self.create_client_from_credential(AttestationClient,
             credential=credential,
-            instance_url=base_uri)
+            instance_url=base_uri,
+            token_validation_options = TokenValidationOptions(
+                validate_token=True,
+                validate_signature=True,
+                validate_issuer=self.is_live,
+                issuer=base_uri,
+                validate_expiration=self.is_live),
+            **kwargs)
         return attest_client
 
     def create_adminclient(self, base_uri, **kwargs): 

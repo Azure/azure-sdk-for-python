@@ -46,7 +46,6 @@ class AsyncPolicyGetSetTests(AzureTestCase):
     async def test_shared_get_policy_sgx(self, attestation_location_short_name):
         attest_client = self.shared_admin_client(attestation_location_short_name)
         policy_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        print('Shared policy: ', policy_response.value)
         assert(policy_response.value.startswith('version'))
         print('Token: ', policy_response.token)
 
@@ -54,7 +53,6 @@ class AsyncPolicyGetSetTests(AzureTestCase):
     async def test_shared_get_policy_openenclave(self, attestation_location_short_name):
         attest_client = self.shared_admin_client(attestation_location_short_name)
         policy_response = await attest_client.get_policy(AttestationType.OPEN_ENCLAVE)
-        print('Shared policy: ', policy_response.value)
         assert(policy_response.value.startswith('version'))
         print('Token: ', policy_response.token)
 
@@ -63,17 +61,13 @@ class AsyncPolicyGetSetTests(AzureTestCase):
     async def test_isolated_get_policy_sgx(self, attestation_isolated_url):
         attest_client = self.create_admin_client(attestation_isolated_url)
         policy_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        print('Shared policy: ', policy_response.value)
         assert(policy_response.value.startswith('version'))
-        print('Token: ', policy_response.token)
 
     @AttestationPreparer()
     async def test_aad_get_policy_sgx(self, attestation_aad_url):
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        print('Shared policy: ', policy_response.value)
         assert(policy_response.value.startswith('version'))
-        print('Token: ', policy_response.token)
 
     @AttestationPreparer()
     async def test_aad_set_policy_sgx_unsecured(self, attestation_aad_url):

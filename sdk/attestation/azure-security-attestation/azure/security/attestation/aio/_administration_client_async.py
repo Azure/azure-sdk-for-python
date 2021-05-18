@@ -11,7 +11,8 @@ from azure.core import PipelineClient
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core._pipeline_client_async import AsyncPipelineClient
 
 from .._generated.aio import AzureAttestationRestClient
 from .._generated.models import (
@@ -44,9 +45,9 @@ class AttestationAdministrationClient(object):
     :param str instance_url: base url of the service
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: azure.core.credentials.TokenCredential
-    :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
-    :keyword HttpTransport transport: If omitted, the standard pipeline is used.
-    :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
+    :keyword AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
+    :keyword AsyncHttpTransport transport: If omitted, the standard pipeline is used.
+    :keyword list[AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
 
@@ -54,7 +55,7 @@ class AttestationAdministrationClient(object):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
+        credential,  # type: "AsyncTokenCredential"
         instance_url,  # type: str
         **kwargs  # type: Any
     ):
@@ -180,7 +181,7 @@ class AttestationAdministrationClient(object):
             body_type=PolicyCertificatesResult)
         if self._config.token_validation_options.validate_token:
             if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
-                raise Exception("Token Validation of PolicyCertificates API failed.")
+                raise AttestationTokenValidationException("Token Validation of PolicyCertificates API failed.")
         certificates = []
 
         cert_list = token.get_body()
@@ -269,7 +270,7 @@ class AttestationAdministrationClient(object):
             body_type=GeneratedPolicyCertificatesModificationResult)
         if self._config.token_validation_options.validate_token:
             if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
-                raise Exception("Token Validation of PolicyCertificate Remove API failed.")
+                raise AttestationTokenValidationException("Token Validation of PolicyCertificate Remove API failed.")
         return AttestationResponse[PolicyCertificatesModificationResult](token, PolicyCertificatesModificationResult._from_generated(token.get_body()))
 
     async def _get_signers(self, **kwargs):

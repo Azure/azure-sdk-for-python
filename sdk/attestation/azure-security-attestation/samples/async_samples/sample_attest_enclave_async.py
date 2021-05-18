@@ -50,8 +50,6 @@ from azure.security.attestation import (
 from samples.sample_collateral import sample_open_enclave_report, sample_runtime_data
 from samples.sample_utils import write_banner
 
-#from ..async_samples.sample_collateral import sample_open_enclave_report, sample_runtime_data
-
 class AttestationClientAttestationSamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
@@ -69,8 +67,7 @@ class AttestationClientAttestationSamples(object):
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
 
         # [START attest_sgx_enclave_shared]
-        print()
-        print('Attest SGX enclave using ', self.shared_url)
+        print('\nAttest SGX enclave using {}'.format(self.shared_url))
         async with self._create_client(self.shared_url) as attest_client:
             response = await attest_client.attest_sgx_enclave(
                 quote, runtime_data=AttestationData(runtime_data, is_json=False))

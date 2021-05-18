@@ -112,7 +112,7 @@ into the attestation service instance because they use [DefaultAzureCredential](
 pip install --pre azure-security-attestation
 ```
 
-2. Clone or download this sample repository
+1. Clone or download this sample repository
 1. Open the sample folder in Visual Studio Code or your IDE of choice.
 
 ## Running the samples

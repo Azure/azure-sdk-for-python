@@ -12,8 +12,8 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
-    from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core._pipeline_client_async import AsyncPipelineClient
 
 from .._generated.aio import AzureAttestationRestClient
 from .._generated.models import (
@@ -31,7 +31,8 @@ from .._models import (
     AttestationResult,
     AttestationData,
     TpmAttestationRequest,
-    TpmAttestationResponse)
+    TpmAttestationResponse,
+    AttestationTokenValidationException)
 import base64
 from threading import Lock
 
@@ -44,21 +45,20 @@ class AttestationClient(object):
 
     :param str base_url: base url of the service
     :param credential: Credentials for the caller used to interact with the service.
-    :type credential: ~azure.core.credentials.TokenCredentials
-    :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
-    :keyword HttpTransport transport: If omitted, the standard pipeline is used.
-    :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
+    :keyword AsyncHttpTransport transport: If omitted, the standard pipeline is used.
+    :keyword list[AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
 
     """
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
+        credential,  # type: "AsyncTokenCredential"
         instance_url,  # type: str
         **kwargs  # type: Any
-    ):
-        # type: (TokenCredential, str, **Any) -> None
+    ): # type(...) -> None
         if not credential:
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(credential, instance_url, **kwargs)
@@ -127,7 +127,8 @@ class AttestationClient(object):
         result = await self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)
-        token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs))
+        if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
+            raise AttestationTokenValidationException("Attestation Token Validation Failed")
         return AttestationResponse[AttestationResult](token, AttestationResult._from_generated(token.get_body()))
 
     @distributed_trace_async
@@ -167,7 +168,8 @@ class AttestationClient(object):
         result = await self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)
-        token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs))
+        if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
+            raise AttestationTokenValidationException("Attestation Token Validation Failed")
         return AttestationResponse[AttestationResult](token, AttestationResult._from_generated(token.get_body()))
 
     @distributed_trace_async
