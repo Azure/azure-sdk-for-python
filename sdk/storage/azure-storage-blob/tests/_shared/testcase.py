@@ -382,9 +382,9 @@ class LogCaptured(object):
 def storage_account():
     from platform import python_version
     test_case = AzureMgmtTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pystorage' + str(python_version()))
+    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pystorage' + "".join(str(python_version()).split(".")))
     storage_preparer = StorageAccountPreparer(
-        random_name_enabled=True, name_prefix='pyacrstorage' + str(python_version()))
+        random_name_enabled=True, name_prefix='pyacrstorage' + "".join(str(python_version()).split(".")))
 
     # Create
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", None)
@@ -408,6 +408,9 @@ def storage_account():
                 name=rg_name,
                 id="/subscriptions/{}/resourceGroups/{}".format(subscription_id, rg_name)
             )
+        import logging
+        log = logging.getLogger("my-logger")
+        log.info(rg.name)
         StorageTestCase._RESOURCE_GROUP = rg
 
         try:
