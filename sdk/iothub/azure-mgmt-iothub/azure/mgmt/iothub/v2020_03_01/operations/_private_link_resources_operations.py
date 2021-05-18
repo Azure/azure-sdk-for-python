@@ -29,7 +29,7 @@ class PrivateLinkResourcesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.iothub.models
+    :type models: ~azure.mgmt.iothub.v2020_03_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -61,7 +61,7 @@ class PrivateLinkResourcesOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkResources, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.PrivateLinkResources
+        :rtype: ~azure.mgmt.iothub.v2020_03_01.models.PrivateLinkResources
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResources"]
@@ -95,7 +95,7 @@ class PrivateLinkResourcesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateLinkResources', pipeline_response)
@@ -126,7 +126,7 @@ class PrivateLinkResourcesOperations(object):
         :type group_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GroupIdInformation, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.GroupIdInformation
+        :rtype: ~azure.mgmt.iothub.v2020_03_01.models.GroupIdInformation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GroupIdInformation"]
@@ -161,7 +161,7 @@ class PrivateLinkResourcesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('GroupIdInformation', pipeline_response)

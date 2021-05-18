@@ -45,7 +45,8 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.network.NetworkManagementClient
         )
-    
+
+    @unittest.skip('skip test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network(self, resource_group):
 

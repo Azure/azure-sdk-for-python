@@ -11,6 +11,7 @@
 **New Features**
 - Added enums `EntityConditionality`, `EntityCertainty`, and `EntityAssociation`.
 - Added `AnalyzeSentimentAction` as a supported action type for `begin_analyze_batch_actions`.
+- Added kwarg `disable_service_logs`. If set to true, you opt-out of having your text input logged on the service side for troubleshooting.
 
 ## 5.1.0b6 (2021-03-09)
 
