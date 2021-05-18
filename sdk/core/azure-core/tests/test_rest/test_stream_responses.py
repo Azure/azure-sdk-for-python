@@ -30,6 +30,7 @@ def _create_http_response(url, content=None):
 def _read_jpeg_file():
     with open(HTTPBIN_JPEG_FILE_NAME, "rb") as f:
         file_bytes = f.read()
+    raise ValueError(file_bytes)
     return file_bytes
 
 def _assert_stream_state(response, open):
