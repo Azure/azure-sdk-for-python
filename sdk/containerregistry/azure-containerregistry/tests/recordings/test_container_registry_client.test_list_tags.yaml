@@ -8,17 +8,15 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/repoaf8812b0/_tags
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "not_real_repo", "Action": "delete"}]}]}'
+        "repository", "Name": "repoaf8812b0", "Action": "metadata_read"}]}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -28,11 +26,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '209'
+      - '215'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 18:53:15 GMT
+      - Wed, 19 May 2021 18:56:08 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -73,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 18:53:17 GMT
+      - Wed, 19 May 2021 18:56:10 GMT
       server:
       - openresty
       strict-transport-security:
@@ -81,12 +79,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.533333'
+      - '166.65'
     status:
       code: 200
       message: OK
 - request:
-    body: service=fake_url.azurecr.io&scope=repository%3Anot_real_repo%3Adelete&refresh_token=REDACTED&grant_type=refresh_token
+    body: service=fake_url.azurecr.io&scope=repository%3Arepoaf8812b0%3Ametadata_read&refresh_token=REDACTED&grant_type=refresh_token
     headers:
       Accept:
       - application/json
@@ -95,7 +93,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1136'
+      - '1142'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -111,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 18:53:17 GMT
+      - Wed, 19 May 2021 18:56:10 GMT
       server:
       - openresty
       strict-transport-security:
@@ -119,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.45'
+      - '166.633333'
     status:
       code: 200
       message: OK
@@ -132,16 +130,29 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/repoaf8812b0/_tags
   response:
     body:
-      string: '{"errors": [{"code": "NAME_UNKNOWN", "message": "repository name not
-        known to registry", "detail": {"name": "not_real_repo"}}]}'
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "repoaf8812b0", "tags":
+        [{"name": "tagaf8812b00", "digest": "sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c",
+        "createdTime": "2021-05-19T18:33:28.5848285Z", "lastUpdateTime": "2021-05-19T18:33:28.5848285Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}, {"name": "tagaf8812b01",
+        "digest": "sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c",
+        "createdTime": "2021-05-19T18:33:29.1894843Z", "lastUpdateTime": "2021-05-19T18:33:29.1894843Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}, {"name": "tagaf8812b02",
+        "digest": "sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c",
+        "createdTime": "2021-05-19T18:33:30.0224963Z", "lastUpdateTime": "2021-05-19T18:33:30.0224963Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}, {"name": "tagaf8812b03",
+        "digest": "sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c",
+        "createdTime": "2021-05-19T18:33:28.2588808Z", "lastUpdateTime": "2021-05-19T18:33:28.2588808Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -151,11 +162,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '121'
+      - '1347'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 18:53:17 GMT
+      - Wed, 19 May 2021 18:56:10 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -165,9 +176,7 @@ interactions:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
-      x-ms-ratelimit-remaining-calls-per-second:
-      - '8.000000'
     status:
-      code: 404
-      message: Not Found
+      code: 200
+      message: OK
 version: 1

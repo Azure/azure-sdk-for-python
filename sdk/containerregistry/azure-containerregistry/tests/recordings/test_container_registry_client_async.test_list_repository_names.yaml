@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 14:58:12 GMT
+      date: Wed, 19 May 2021 19:22:27 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -46,7 +46,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 14:58:14 GMT
+      date: Wed, 19 May 2021 19:22:28 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -74,7 +74,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 14:58:14 GMT
+      date: Wed, 19 May 2021 19:22:28 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -94,18 +94,21 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories": ["library/alpine", "library/busybox", "repo25ce0f5d",
-        "repo27331535", "repo28471541", "repo2c591564", "repo2e8319c5", "repo308e19dd",
-        "repo34ab0fa1", "repo3db51597", "repo3e8d15a3", "repo84e316ff", "repo8b5a11da",
-        "repo9b321760", "repo9cb4121e", "repoaf9517b2", "repob0a917be", "repob22512e7",
-        "repoc1b5131a", "repoc28d1326", "repod2be1c42", "repoeb7113db", "repos6ce51658",
-        "reposetb7cc1bf8", "reposetmani160e197b"]}'
+      string: '{"repositories": ["library/alpine", "library/busybox", "repo13cf14de",
+        "repo25ce0f5d", "repo26ab150f", "repo27331535", "repo28471541", "repo2915152d",
+        "repo2c591564", "repo2e8319c5", "repo308e19dd", "repo34ab0fa1", "repo3db51597",
+        "repo3dc21571", "repo3e8d15a3", "repo6969166d", "repo6a411679", "repo7bda1b05",
+        "repo7cee1b11", "repo84e316ff", "repo8b5a11da", "repo99be175b", "repo9b321760",
+        "repo9cb4121e", "repoaf17178c", "repoaf8812b0", "repoaf9517b2", "repob0a917be",
+        "repob22512e7", "repoc1b5131a", "repoc1b812f4", "repoc28d1326", "repod2be1c42",
+        "repodf771888", "repoe08b1894", "repoeb7113db", "repof94c18ea", "repofa2418f6",
+        "repos6ce51658", "reposetb7cc1bf8", "reposetmani160e197b"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '410'
+      content-length: '650'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 14:58:14 GMT
+      date: Wed, 19 May 2021 19:22:28 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains

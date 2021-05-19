@@ -7,7 +7,13 @@
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Any
 
-from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
+from ._generated.models import (
+    ArtifactTagProperties as GeneratedArtifactTagProperties,
+    RepositoryProperties as GeneratedRepositoryProperties,
+    RepositoryWriteableProperties,
+    TagWriteableProperties,
+    ManifestWriteableProperties
+)
 
 if TYPE_CHECKING:
     from ._generated.models import ManifestAttributesBase
@@ -69,7 +75,15 @@ class ArtifactManifestProperties(object):
             can_write=generated.can_write,
             can_list=generated.can_list,
             repository_name=kwargs.get("repository_name", None),
+        )
 
+    def _to_generated(self):
+        # type: () -> ManifestWriteableProperties
+        return ManifestWriteableProperties(
+            can_delete=self.can_delete,
+            can_read=self.can_read,
+            can_write=self.can_write,
+            can_list=self.can_list,
         )
 
 
@@ -118,13 +132,9 @@ class RepositoryProperties(object):
         )
 
     def _to_generated(self):
-        # type: () -> GeneratedRepositoryProperties
-        return GeneratedRepositoryProperties(
-            name=self.name,
-            created_on=self.created_on,
-            last_updated_on=self.last_updated_on,
-            manifest_count=self.manifest_count,
-            tag_count=self.tag_count,
+        # type: () -> RepositoryWriteableProperties
+        return RepositoryWriteableProperties(
+            teleport_enabled=self.teleport_enabled,
             can_delete=self.can_delete,
             can_read=self.can_read,
             can_write=self.can_write,
@@ -189,12 +199,8 @@ class ArtifactTagProperties(object):
         )
 
     def _to_generated(self):
-        # type: () -> GeneratedArtifactTagProperties
-        return GeneratedArtifactTagProperties(
-            created_on=self.created_on,
-            digest=self.digest,
-            last_updated_on=self.last_updated_on,
-            name=self.name,
+        # type: () -> TagWriteableProperties
+        return TagWriteableProperties(
             can_delete=self.can_delete,
             can_read=self.can_read,
             can_write=self.can_write,

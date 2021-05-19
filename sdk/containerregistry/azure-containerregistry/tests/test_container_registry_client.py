@@ -3,16 +3,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime
 import pytest
 import six
 
-# from azure.containerregistry import DeleteRepositoryResult
+from azure.containerregistry import (
+    RepositoryProperties,
+    ArtifactManifestProperties,
+    ManifestOrder,
+    ArtifactTagProperties,
+)
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
-from azure.core.pipeline.transport import RequestsTransport
 
 from testcase import ContainerRegistryTestClass
-from constants import TO_BE_DELETED, HELLO_WORLD
+from constants import TO_BE_DELETED, HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
 from preparer import acr_preparer
 
 
@@ -70,5 +75,270 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_delete_repository_does_not_exist(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
 
+        client.delete_repository("not_real_repo")
+
+    @acr_preparer()
+    def test_get_repository_properties(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        properties = client.get_repository_properties(ALPINE)
+        assert isinstance(properties, RepositoryProperties)
+        assert properties.name == ALPINE
+
+    @acr_preparer()
+    def test_set_properties(self, containerregistry_endpoint):
+        repository = self.get_resource_name("repo")
+        tag_identifier = self.get_resource_name("tag")
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        properties = client.get_repository_properties(repository)
+
+        properties.can_delete = False
+        properties.can_read = False
+        properties.can_list = False
+        properties.can_write = False
+
+        new_properties = client.set_repository_properties(repository, properties)
+
+        assert properties.can_delete == new_properties.can_delete
+        assert properties.can_read == new_properties.can_read
+        assert properties.can_list == new_properties.can_list
+        assert properties.can_write == new_properties.can_write
+
+        new_properties.can_delete = True
+        new_properties.can_read = True
+        new_properties.can_list = True
+        new_properties.can_write = True
+
+        new_properties = client.set_repository_properties(repository, new_properties)
+
+        assert new_properties.can_delete == True
+        assert new_properties.can_read == True
+        assert new_properties.can_list == True
+        assert new_properties.can_write == True
+
+    @acr_preparer()
+    def test_list_registry_artifacts(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        count = 0
+        for artifact in client.list_manifests(BUSYBOX):
+            assert artifact is not None
+            assert isinstance(artifact, ArtifactManifestProperties)
+            assert artifact.created_on is not None
+            assert isinstance(artifact.created_on, datetime)
+            assert artifact.last_updated_on is not None
+            assert isinstance(artifact.last_updated_on, datetime)
+            assert artifact.repository_name == BUSYBOX
+            count += 1
+
+        assert count > 0
+
+    @acr_preparer()
+    def test_list_registry_artifacts_by_page(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+        results_per_page = 2
+
+        pages = client.list_manifests(BUSYBOX, results_per_page=results_per_page)
+        page_count = 0
+        for page in pages.by_page():
+            reg_count = 0
+            for tag in page:
+                reg_count += 1
+            assert reg_count <= results_per_page
+            page_count += 1
+
+        assert page_count >= 1
+
+    @acr_preparer()
+    def test_list_registry_artifacts_descending(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        prev_last_updated_on = None
+        count = 0
+        for artifact in client.list_manifests(BUSYBOX, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
+            if prev_last_updated_on:
+                assert artifact.last_updated_on < prev_last_updated_on
+            prev_last_updated_on = artifact.last_updated_on
+            count += 1
+
+        assert count > 0
+
+    @acr_preparer()
+    def test_list_registry_artifacts_ascending(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        prev_last_updated_on = None
+        count = 0
+        for artifact in client.list_manifests(BUSYBOX, order_by=ManifestOrder.LAST_UPDATE_TIME_ASCENDING):
+            if prev_last_updated_on:
+                assert artifact.last_updated_on > prev_last_updated_on
+            prev_last_updated_on = artifact.last_updated_on
+            count += 1
+
+        assert count > 0
+
+    @acr_preparer()
+    def test_get_manifest_properties(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        properties = client.get_manifest_properties(repo, tag)
+
+        assert isinstance(properties, ArtifactManifestProperties)
+        assert properties.repository_name == repo
+
+    @acr_preparer()
+    def test_get_manifest_properties_does_not_exist(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        properties = client.get_manifest_properties("DOESNOTEXIST", "DOESNOTEXIST")
+
+    @acr_preparer()
+    def test_set_manifest_properties(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        properties = client.get_manifest_properties(repo, tag)
+        properties.can_delete=False
+        properties.can_read=False
+        properties.can_write=False
+        properties.can_list=False
+
+        received = client.set_manifest_properties(repo, tag, properties)
+
+        assert received.can_delete == properties.can_delete
+        assert received.can_read == properties.can_read
+        assert received.can_write == properties.can_write
+        assert received.can_list == properties.can_list
+
+        properties.can_delete=True
+        properties.can_read=True
+        properties.can_write=True
+        properties.can_list=True
+
+        received = client.set_manifest_properties(repo, tag, properties)
+
+        assert received.can_delete == True
+        assert received.can_read == True
+        assert received.can_write == True
+        assert received.can_list == True
+
+    @acr_preparer()
+    def test_get_tag_properties(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        properties = client.get_tag_properties(repo, tag)
+
+        assert isinstance(properties, ArtifactTagProperties)
+        assert properties.name == tag
+
+    @acr_preparer()
+    def test_get_tag_properties_does_not_exist(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+
         with pytest.raises(ResourceNotFoundError):
-            client.delete_repository("not_real_repo")
+            client.get_tag_properties("Nonexistent", "Nonexistent")
+
+    @acr_preparer()
+    def test_set_tag_properties(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        properties = client.get_tag_properties(repo, tag)
+        properties.can_delete=False
+        properties.can_read=False
+        properties.can_write=False
+        properties.can_list=False
+        received = client.set_tag_properties(repo, tag, properties)
+
+        assert received.can_delete == properties.can_delete
+        assert received.can_read == properties.can_read
+        assert received.can_write == properties.can_write
+        assert received.can_list == properties.can_list
+
+        properties.can_delete=True
+        properties.can_read=True
+        properties.can_write=True
+        properties.can_list=True
+
+        received = client.set_tag_properties(repo, tag, properties)
+
+        assert received.can_delete == True
+        assert received.can_read == True
+        assert received.can_write == True
+        assert received.can_list == True
+
+    @acr_preparer()
+    def test_list_tags(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
+        self.import_image(HELLO_WORLD, tags)
+
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        count = 0
+        for tag in client.list_tags(repo):
+            assert "{}:{}".format(repo, tag.name) in tags
+            count += 1
+        assert count == 4
+
+    @acr_preparer()
+    def test_delete_tag(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
+        self.import_image(HELLO_WORLD, tags)
+
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        client.delete_tag(repo, tag + str(0))
+
+        count = 0
+        for tag in client.list_tags(repo):
+            assert "{}:{}".format(repo, tag.name) in tags[1:]
+            count += 1
+        assert count == 3
+
+    @acr_preparer()
+    def test_delete_tag_does_not_exist(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        client.delete_tag(DOES_NOT_EXIST, DOES_NOT_EXIST)
+
+    @acr_preparer()
+    def test_delete_manifest(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+
+        client = self.create_registry_client(containerregistry_endpoint)
+        client.delete_manifest(repo, tag)
+
+        self.sleep(10)
+
+        with pytest.raises(ResourceNotFoundError):
+            client.get_manifest_properties(repo, tag)
+
+    @acr_preparer()
+    def test_delete_manifest_does_not_exist(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        client.delete_manifest(repo, DOES_NOT_EXIST)
