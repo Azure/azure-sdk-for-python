@@ -58,7 +58,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert page_count <= results_per_page
             total_pages += 1
 
-        assert total_pages > 1
+        assert total_pages >= 1
 
     @acr_preparer()
     def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):

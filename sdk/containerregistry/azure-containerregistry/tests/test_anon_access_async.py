@@ -58,7 +58,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             assert page_count <= results_per_page
             total_pages += 1
 
-        assert total_pages > 1
+        assert total_pages >= 1
 
     @acr_preparer()
     async def test_get_repository_properties(self, containerregistry_anonregistry_endpoint):
