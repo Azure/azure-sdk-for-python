@@ -416,8 +416,8 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :type access_tier: str or ~azure.storage.blob.models.AccessTier
     :param access_tier_inferred:
     :type access_tier_inferred: bool
-    :param archive_status:  Possible values include: "rehydrate-pending-to-hot", "rehydrate-
-     pending-to-cool".
+    :param archive_status:  Possible values include: "rehydrate-pending-to-hot",
+     "rehydrate-pending-to-cool".
     :type archive_status: str or ~azure.storage.blob.models.ArchiveStatus
     :param customer_provided_key_sha256:
     :type customer_provided_key_sha256: str
@@ -821,9 +821,9 @@ class ContainerProperties(msrest.serialization.Model):
     :type deleted_time: ~datetime.datetime
     :param remaining_retention_days:
     :type remaining_retention_days: int
-    :param is_version_level_worm_enabled: Indicates if version level worm is enabled on this
-     container.
-    :type is_version_level_worm_enabled: bool
+    :param is_immutable_storage_with_versioning_enabled: Indicates if version level worm is enabled
+     on this container.
+    :type is_immutable_storage_with_versioning_enabled: bool
     """
 
     _validation = {
@@ -844,7 +844,7 @@ class ContainerProperties(msrest.serialization.Model):
         'prevent_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool'},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
         'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
-        'is_version_level_worm_enabled': {'key': 'VersionLevelWormEnabled', 'type': 'bool'},
+        'is_immutable_storage_with_versioning_enabled': {'key': 'ImmutableStorageWithVersioningEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -864,7 +864,7 @@ class ContainerProperties(msrest.serialization.Model):
         self.prevent_encryption_scope_override = kwargs.get('prevent_encryption_scope_override', None)
         self.deleted_time = kwargs.get('deleted_time', None)
         self.remaining_retention_days = kwargs.get('remaining_retention_days', None)
-        self.is_version_level_worm_enabled = kwargs.get('is_version_level_worm_enabled', None)
+        self.is_immutable_storage_with_versioning_enabled = kwargs.get('is_immutable_storage_with_versioning_enabled', None)
 
 
 class CorsRule(msrest.serialization.Model):
@@ -1642,7 +1642,7 @@ class QueryFormat(msrest.serialization.Model):
     :param arrow_configuration: arrow configuration.
     :type arrow_configuration: ~azure.storage.blob.models.ArrowConfiguration
     :param parquet_text_configuration: Any object.
-    :type parquet_text_configuration: object
+    :type parquet_text_configuration: any
     """
 
     _attribute_map = {

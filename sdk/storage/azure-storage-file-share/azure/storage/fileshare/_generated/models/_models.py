@@ -74,8 +74,9 @@ class CopyFileSmbInfo(msrest.serialization.Model):
     """Parameter group.
 
     :param file_permission_copy_mode: Specifies the option to copy file security descriptor from
-     source file or to set it using the value which is defined by the header value of x-ms-file-
-     permission or x-ms-file-permission-key. Possible values include: "source", "override".
+     source file or to set it using the value which is defined by the header value of
+     x-ms-file-permission or x-ms-file-permission-key. Possible values include: "source",
+     "override".
     :type file_permission_copy_mode: str or ~azure.storage.fileshare.models.PermissionCopyModeType
     :param ignore_read_only: Specifies the option to overwrite the target file if it already exists
      and has read-only attribute set.
@@ -868,7 +869,10 @@ class ShareProtocolSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'smb': {'key': 'Smb', 'type': 'ShareSmbSettings', 'xml': {'name': 'SMB'}},
+        'smb': {'key': 'Smb', 'type': 'ShareSmbSettings'},
+    }
+    _xml_map = {
+        'name': 'ProtocolSettings'
     }
 
     def __init__(
@@ -888,6 +892,9 @@ class ShareSmbSettings(msrest.serialization.Model):
 
     _attribute_map = {
         'multichannel': {'key': 'Multichannel', 'type': 'SmbMultichannel'},
+    }
+    _xml_map = {
+        'name': 'SMB'
     }
 
     def __init__(
@@ -1038,7 +1045,7 @@ class StorageServiceProperties(msrest.serialization.Model):
         'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics'},
         'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
         'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'wrapped': True}},
-        'protocol': {'key': 'Protocol', 'type': 'ShareProtocolSettings', 'xml': {'name': 'ProtocolSettings'}},
+        'protocol': {'key': 'Protocol', 'type': 'ShareProtocolSettings'},
     }
 
     def __init__(
