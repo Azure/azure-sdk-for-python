@@ -39,12 +39,12 @@ class AttestationSigner(object):
         Certificates representing an X.509 certificate chain. The first of these
         certificates will be used to sign an :class:`AttestationToken`.
 
-    :paramtype  certificates: list[bytes] 
+    :type  certificates: list[bytes] 
 
     :param key_id: A string which identifies a signing key, See 
         `RFC 7517 Section 4.5 <https://tools.ietf.org/html/rfc7517#section-4.5>`_
 
-    :paramtype  key_id: str
+    :type  key_id: str
 
     """
     def __init__(self, certificates, key_id, **kwargs):
@@ -64,10 +64,10 @@ class PolicyCertificatesModificationResult(object):
 
     :param certificate_thumbprint: Hex encoded SHA1 Hash of the binary representation certificate
      which was added or removed.
-    :paramtype  certificate_thumbprint: str
+    :type  certificate_thumbprint: str
     :param certificate_resolution: The result of the operation. Possible values include:
      "IsPresent", "IsAbsent".
-    :paramtype  certificate_resolution: str or
+    :type  certificate_resolution: str or
      ~azure.security.attestation._generated.models.CertificateModification
     """
 
@@ -92,14 +92,14 @@ class PolicyResult(object):
     
     :param policy_resolution: The result of the policy set or
         reset call.
-    :paramtype  policy_resolution: azure.security.attestation.PolicyModification
+    :type  policy_resolution: azure.security.attestation.PolicyModification
     :param policy_signer: If the call to `set_policy` or `reset_policy`
         had a :class:`AttestationSigningKey` parameter, this will be the certificate
         which was specified in this parameter.
-    :paramtype  policy_signer: azure.security.attestation.AttestationSigner
+    :type  policy_signer: azure.security.attestation.AttestationSigner
     :param policy_token_hash: The hash of the complete JSON Web Signature
         presented to the `set_policy` or `reset_policy` API.
-    :paramtype  policy_token_hash: str
+    :type  policy_token_hash: str
 
     """
     def __init__(self, policy_resolution, policy_signer, policy_token_hash):
@@ -125,44 +125,44 @@ class AttestationResult(object):
         #type:(Dict[str,Any])->None
         """
         :keyword issuer: Entity which issued the attestation token.
-        :paramtype  issuer: str
+        :type  issuer: str
         :keyword confirmation: Confirmation claim for the token.
-        :paramtype  confirmation: dict
+        :type  confirmation: dict
         :keyword unique_identifier: Unique identifier for the token.
-        :paramtype  unique_identifier: str
+        :type  unique_identifier: str
         :keyword nonce: Returns the input `nonce` attribute passed to the `attest` API.
-        :paramtype  nonce: str
+        :type  nonce: str
         :keyword version: Version of the token. Must be "1.0"
-        :paramtype  version: str
+        :type  version: str
         :keyword runtime_claims: Runtime claims passed in from the caller of the attest API.
-        :paramtype  runtime_claims: dict
+        :type  runtime_claims: dict
         :keyword inittime_claims: Inittime claims passed in from the caller of the attest API.
-        :paramtype  inittime_claims: dict
+        :type  inittime_claims: dict
         :keyword enclave_held_data: Runtime data passed in from the caller of the attest API.
-        :paramtype  enclave_held_data: bytes
+        :type  enclave_held_data: bytes
         :keyword policy_claims: Attestation claims issued by policies.
-        :paramtype  policy_claims: dict
+        :type  policy_claims: dict
         :keyword verifier_type: Verifier which generated this token.
-        :paramtype  verifier_type: str
+        :type  verifier_type: str
         :keyword policy_signer: If the policy which processed the request is signed, 
             this will be the certificate which signed the policy.
-        :paramtype  policy_signer: azure.security.attestation.AttestationSigner
+        :type  policy_signer: azure.security.attestation.AttestationSigner
         :keyword policy_hash: The hash of the policy which processed the attestation 
             evidence.
-        :paramtype  policy_hash: str
+        :type  policy_hash: str
         :keyword is_debuggable: True if the SGX enclave being attested is debuggable.
-        :paramtype  is_debuggable: bool
+        :type  is_debuggable: bool
         :keyword product_id: Product ID for the SGX enclave being attested.
-        :paramtype  product_id: int
+        :type  product_id: int
         :keyword mr_enclave: MRENCLAVE value for the SGX enclave being attested.
-        :paramtype  mr_enclave: str
+        :type  mr_enclave: str
         :keyword mr_signer: MRSIGNER value for the SGX enclave being attested.
-        :paramtype  mr_signer: str
+        :type  mr_signer: str
         :keyword svn: Security version number for the SGX enclave being attested.
-        :paramtype  svn: int
+        :type  svn: int
         :keyword sgx_collateral: Collateral which identifies the collateral used to 
             create the token.
-        :paramtype  sgx_collateral: dict
+        :type  sgx_collateral: dict
     
         """
         self._issuer = kwargs.pop("issuer", None) #type:Union[str, None]
@@ -432,7 +432,7 @@ class StoredAttestationPolicy(object):
         #type:(str) -> None
         """
         :param policy: Policy to be saved.
-        :paramtype  policy: str
+        :type  policy: str
         """
         self._policy = policy.encode("ascii")
 
@@ -463,9 +463,9 @@ class AttestationData(object):
     If the `AttestationData` is JSON, then the `AttestationData` is expressed as JSON in the `AttestationResult.runtime_claims` or AttestationResult.inittime_claims claim.
 
     :param data: Input data to be sent to the attestation service.
-    :paramtype  data: bytes
+    :type  data: bytes
     :param is_json: True if the attestation service should treat the input data as JSON.
-    :paramtype  is_json: bool
+    :type  is_json: bool
 
     """
     def __init__(self, data, is_json=None):
@@ -490,7 +490,7 @@ class TokenValidationOptions(object):
 
     :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
     :keyword validation_callback: Callback to allow clients to perform custom validation of the token.
-    :paramtype  validation_callback: Callable[[AttestationToken, AttestationSigner], bool]
+    :type  validation_callback: Callable[[AttestationToken, AttestationSigner], bool]
     :keyword bool validate_signature: if True, validate the signature of the token being validated.
     :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
     :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -525,9 +525,9 @@ class AttestationSigningKey(object):
     # type: (bytes, bytes) -> None
         """
         :param signing_key_der: The RSA or ECDS signing key to sign the token supplied to the customer DER encoded.
-        :paramtype  signing_key_der: bytes
+        :type  signing_key_der: bytes
         :param certificate_der: A DER encoded X.509 Certificate whose public key matches the signing_key's public key.
-        :paramtype  certificate_der: bytes
+        :type  certificate_der: bytes
         """
         signing_key = serialization.load_der_private_key(signing_key_der, password=None, backend=default_backend())
         certificate = load_der_x509_certificate(certificate_der, backend=default_backend())

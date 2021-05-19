@@ -43,9 +43,9 @@ class AttestationAdministrationClient(object):
     """Provides administrative APIs for managing an instance of the Attestation Service.
 
     :param instance_url: base url of the service
-    :paramtype instance_url: str
+    :type instance_url: str
     :param credential: Credentials for the caller used to interact with the service.
-    :paramtype credential: azure.core.credentials.TokenCredential
+    :type credential: azure.core.credentials.TokenCredential
     :keyword AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
     :keyword AsyncHttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
