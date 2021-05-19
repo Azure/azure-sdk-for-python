@@ -16,6 +16,7 @@ import requests
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
 
 from azure.core.tracing.common import with_current_context
+from ._shared.decoders import get_decompressor
 from ._shared.encryption import decrypt_blob
 from ._shared.request_handlers import validate_and_format_range_headers
 from ._shared.response_handlers import process_storage_error, parse_length_from_content_range
@@ -45,7 +46,7 @@ def process_range_and_offset(start_range, end_range, length, encryption):
     return (start_range, end_range), (start_offset, end_offset)
 
 
-def process_content(data, start_offset, end_offset, encryption):
+def process_content(data, start_offset, end_offset, encryption, decompressor=None):
     if data is None:
         raise ValueError("Response cannot be None.")
 
@@ -64,6 +65,10 @@ def process_content(data, start_offset, end_offset, encryption):
             )
         except Exception as error:
             raise HttpResponseError(message="Decryption failed.", response=data.response, error=error)
+
+    if decompressor is not None:
+        content = decompressor.decompress(content)
+
     return content
 
 
@@ -81,6 +86,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         parallel=None,
         validate_content=None,
         encryption_options=None,
+        decompressor=None,
         **kwargs
     ):
         self.client = client
@@ -109,6 +115,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
         # Parameters for each get operation
         self.validate_content = validate_content
+        self.decompressor = decompressor
         self.request_options = kwargs
 
     def _calculate_range(self, chunk_start):
@@ -208,7 +215,8 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                     process_storage_error(error)
 
                 try:
-                    chunk_data = process_content(response, offset[0], offset[1], self.encryption_options)
+                    chunk_data = process_content(response, offset[0], offset[1], self.encryption_options,
+                                                 decompressor=self.decompressor)
                     retry_active = False
                 except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as error:
                     retry_total -= 1
@@ -322,6 +330,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._encoding = encoding
         self._validate_content = validate_content
         self._encryption_options = encryption_options or {}
+        self._decompress = kwargs.pop("decompress", True)
+        self._decompressor = None
         self._request_options = kwargs
         self._location_mode = None
         self._download_complete = False
@@ -392,6 +402,18 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     **self._request_options
                 )
 
+                if response.response.headers.get('Content-Encoding') \
+                        and self._start_range is not None and self._start_range > 0 and self._decompress is True:
+                    raise ValueError("Cannot decompress from middle of the file, please set download offset to 0 or "
+                                     "set decompress to False to download the file")
+                if response.response.headers.get('Content-Encoding') and self._decompress is True \
+                        and self._max_concurrency > 1:
+                    raise ValueError("The file cannot be downloaded with multiple threads, "
+                                     "please set max_concurrency to 1 or set decompress to False to download the file")
+
+                if response.response.headers.get('Content-Encoding') and self._decompress is True:
+                    self._decompressor = get_decompressor(response.response.headers.get('Content-Encoding'))
+
                 # Check the location we read from to ensure we use the same one
                 # for subsequent requests.
                 self._location_mode = location_mode
@@ -436,7 +458,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                         response,
                         self._initial_offset[0],
                         self._initial_offset[1],
-                        self._encryption_options
+                        self._encryption_options,
+                        self._decompressor
                     )
                 retry_active = False
             except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as error:
@@ -500,6 +523,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 parallel=False,
                 validate_content=self._validate_content,
                 encryption_options=self._encryption_options,
+                decompressor=self._decompressor,
                 use_location=self._location_mode,
                 **self._request_options
             )
@@ -603,6 +627,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             validate_content=self._validate_content,
             encryption_options=self._encryption_options,
             use_location=self._location_mode,
+            decompressor=self._decompressor,
             **self._request_options
         )
         if parallel:
