@@ -465,13 +465,13 @@ class SynonymMap(msrest.serialization.Model):
 
     @classmethod
     def create_from_file(cls, name, file_path):
-        f = open(file_path, "r")
-        solr_format_synonyms = f.read()
-        synonyms = solr_format_synonyms.split("\n")
-        return cls(
-            name=name,
-            synonyms=synonyms
-        )
+        with open(file_path, "r") as f:
+            solr_format_synonyms = f.read()
+            synonyms = solr_format_synonyms.split("\n")
+            return cls(
+                name=name,
+                synonyms=synonyms
+            )
 
 class SearchIndexerDataSourceConnection(msrest.serialization.Model):
     """Represents a datasource connection definition, which can be used to configure an indexer.
