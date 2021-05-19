@@ -26,6 +26,15 @@ DESCRIPTION:
         associated with the ATTESTATION_ISOLATED_SIGNING_CERTIFICATE
 
 
+Usage:
+    python sample_get_set_policy.py
+
+This sample demonstrates retrieving, setting policies, and resetting policies
+on both AAD and Isolated mode attestation service instances.
+
+It also demonstrates adding and removing attestation policy management certificates,
+which are used to set attestation policy on isolated mode attestation service instances.
+
 """
 
 from logging import fatal
