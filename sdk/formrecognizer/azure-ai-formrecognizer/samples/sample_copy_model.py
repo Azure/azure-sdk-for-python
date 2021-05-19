@@ -28,7 +28,7 @@ USAGE:
     5) AZURE_SOURCE_MODEL_ID - the model ID from the source resource to be copied over to the target resource.
         - OR -
        CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your forms.
-       A model will be trained and used to to run the sample.
+       A model will be trained and used to run the sample.
     6) AZURE_FORM_RECOGNIZER_TARGET_REGION - the region the target resource was created in
     7) AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID - the entire resource ID to the target resource
 """
@@ -46,7 +46,7 @@ class CopyModelSample(object):
         source_key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
         target_endpoint = os.environ["AZURE_FORM_RECOGNIZER_TARGET_ENDPOINT"]
         target_key = os.environ["AZURE_FORM_RECOGNIZER_TARGET_KEY"]
-        source_model_id = os.getenv("AZURE_SOURCE_MODEL_ID") or custom_model_id
+        source_model_id = os.getenv("AZURE_SOURCE_MODEL_ID", custom_model_id)
         target_region = os.environ["AZURE_FORM_RECOGNIZER_TARGET_REGION"]
         target_resource_id = os.environ["AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID"]
 

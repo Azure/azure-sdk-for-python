@@ -29,11 +29,11 @@ USAGE:
     3) ID_OF_MODEL_TRAINED_WITH_LABELS - the ID of your custom model trained with labels
         -OR-
        CONTAINER_SAS_URL_WITH_LABELS - The shared access signature (SAS) Url of your Azure Blob Storage container with
-       your labeled data. A model will be trained and used to to run the sample.
+       your labeled data. A model will be trained and used to run the sample.
     4) ID_OF_MODEL_TRAINED_WITHOUT_LABELS - the ID of your custom model trained without labels
         -OR-
        CONTAINER_SAS_URL_WITHOUT_LABELS - The shared access signature (SAS) Url of your Azure Blob Storage container with
-        your forms. A model will be trained and used to to run the sample.
+        your forms. A model will be trained and used to run the sample.
 """
 
 import os
@@ -54,8 +54,8 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabelsSampleAsync(object):
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        model_trained_with_labels_id = os.getenv("ID_OF_MODEL_TRAINED_WITH_LABELS") or labeled_model_id
-        model_trained_without_labels_id = os.getenv("ID_OF_MODEL_TRAINED_WITHOUT_LABELS") or unlabeled_model_id
+        model_trained_with_labels_id = os.getenv("ID_OF_MODEL_TRAINED_WITH_LABELS", labeled_model_id)
+        model_trained_without_labels_id = os.getenv("ID_OF_MODEL_TRAINED_WITHOUT_LABELS", unlabeled_model_id)
 
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg"))
         async with FormRecognizerClient(

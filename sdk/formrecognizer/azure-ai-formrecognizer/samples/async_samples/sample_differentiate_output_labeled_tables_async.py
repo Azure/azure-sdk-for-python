@@ -31,11 +31,11 @@ USAGE:
     3) MODEL_ID_FIXED_ROW_TABLES - the ID of your custom model trained with labels on fixed row tables
             -OR-
        CONTAINER_SAS_URL_FIXED - The shared access signature (SAS) Url of your Azure Blob Storage container with
-       your labeled data containing a fixed row table. A model will be trained and used to to run the sample.
+       your labeled data containing a fixed row table. A model will be trained and used to run the sample.
     4) MODEL_ID_DYNAMIC_ROW_TABLES - the ID of your custom model trained with labels on dynamic row tables
             -OR-
        CONTAINER_SAS_URL_DYNAMIC - The shared access signature (SAS) Url of your Azure Blob Storage container with
-       your labeled data containing a dynamic row table. A model will be trained and used to to run the sample.
+       your labeled data containing a dynamic row table. A model will be trained and used to run the sample.
 """
 
 import os
@@ -50,7 +50,7 @@ class TestDifferentiateOutputLabeledTablesAsync(object):
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        model_id_fixed_rows_table = os.getenv("MODEL_ID_FIXED_ROW_TABLES") or custom_model_id
+        model_id_fixed_rows_table = os.getenv("MODEL_ID_FIXED_ROW_TABLES", custom_model_id)
 
         form_recognizer_client = FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -93,7 +93,7 @@ class TestDifferentiateOutputLabeledTablesAsync(object):
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        model_id_dynamic_rows_table = os.getenv("MODEL_ID_DYNAMIC_ROW_TABLES") or custom_model_id
+        model_id_dynamic_rows_table = os.getenv("MODEL_ID_DYNAMIC_ROW_TABLES", custom_model_id)
 
         form_recognizer_client = FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)

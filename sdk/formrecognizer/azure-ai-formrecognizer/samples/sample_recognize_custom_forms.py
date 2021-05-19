@@ -27,7 +27,7 @@ USAGE:
     3) CUSTOM_TRAINED_MODEL_ID - the ID of your custom trained model
         -OR-
        CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your forms.
-       A model will be trained and used to to run the sample.
+       A model will be trained and used to run the sample.
 """
 
 import os
@@ -44,7 +44,7 @@ class RecognizeCustomForms(object):
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        model_id = os.getenv("CUSTOM_TRAINED_MODEL_ID") or custom_model_id
+        model_id = os.getenv("CUSTOM_TRAINED_MODEL_ID", custom_model_id)
 
         form_recognizer_client = FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
