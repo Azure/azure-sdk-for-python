@@ -226,6 +226,11 @@ class GeneralNameReplacer(RecordingProcessor):
             self.replace_header(response, 'operation-location', old, new)
             self.replace_header(response, 'azure-asyncoperation', old, new)
 
+            try:
+                response["url"] = response["url"].replace(old, new)
+            except KeyError:
+                pass
+
         return response
 
 
