@@ -12,7 +12,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
   response:
@@ -20,9 +20,9 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Missing
         input documents."}}}'
     headers:
-      apim-request-id: 1f2b7b3a-a61e-4bc5-ac5d-d8d4fdfd8b0e
+      apim-request-id: 6ec52039-96e3-41a0-b07f-da4cafeb6e39
       content-type: application/json; charset=utf-8
-      date: Sat, 08 May 2021 06:55:15 GMT
+      date: Tue, 18 May 2021 17:47:04 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
