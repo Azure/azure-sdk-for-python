@@ -1602,7 +1602,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_query(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
 
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1637,7 +1636,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_add(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1670,7 +1668,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_add_inside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1702,7 +1699,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_add_outside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1733,7 +1729,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_update(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1767,7 +1762,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1797,7 +1791,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_upper_case_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1833,7 +1826,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
