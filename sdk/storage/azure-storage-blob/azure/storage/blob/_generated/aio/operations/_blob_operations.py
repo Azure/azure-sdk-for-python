@@ -52,23 +52,24 @@ class BlobOperations:
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """The Download operation reads or downloads a blob from the system, including its metadata and
         properties. You can also call Download to read a snapshot.
 
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
         :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param range: Return only the bytes of the blob in the specified range.
         :type range: str
@@ -286,23 +287,24 @@ class BlobOperations:
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Get Properties operation returns all user-defined metadata, standard HTTP properties, and
         system properties for the blob. It does not return the content of the blob.
 
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
         :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -463,33 +465,34 @@ class BlobOperations:
         blob_delete_type: Optional[str] = "Permanent",
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """If the storage account's soft delete feature is disabled then, when a blob is deleted, it is
         permanently removed from the storage account. If the storage account's soft delete feature is
         enabled, then, when a blob is deleted, it is marked for deletion and becomes inaccessible
         immediately. However, the blob service retains the blob or snapshot for the number of days
-        specified by the DeleteRetentionPolicy section of [Storage service properties] (Set-Blob-
-        Service-Properties.md). After the specified number of days has passed, the blob's data is
-        permanently removed from the storage account. Note that you continue to be charged for the
-        soft-deleted blob's storage until it is permanently removed. Use the List Blobs API and specify
-        the "include=deleted" query parameter to discover which blobs and snapshots have been soft
-        deleted. You can then use the Undelete Blob API to restore a soft-deleted blob. All other
+        specified by the DeleteRetentionPolicy section of [Storage service properties]
+        (Set-Blob-Service-Properties.md). After the specified number of days has passed, the blob's
+        data is permanently removed from the storage account. Note that you continue to be charged for
+        the soft-deleted blob's storage until it is permanently removed. Use the List Blobs API and
+        specify the "include=deleted" query parameter to discover which blobs and snapshots have been
+        soft deleted. You can then use the Undelete Blob API to restore a soft-deleted blob. All other
         operations on a soft-deleted blob or snapshot causes the service to return an HTTP status code
         of 404 (ResourceNotFound).
 
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
         :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param delete_snapshots: Required if the blob has associated snapshots. Specify one of the
          following two options: include: Delete the base blob and all of its snapshots. only: Delete
@@ -601,13 +604,14 @@ class BlobOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Set the owner, group, permissions, or access control list for a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param owner: Optional. The owner of the blob or directory.
         :type owner: str
@@ -722,13 +726,14 @@ class BlobOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Get the owner, group, permissions, or access control list for a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param upn: Optional. Valid only when Hierarchical Namespace is enabled for the account. If
          "true", the identity values returned in the x-ms-owner, x-ms-group, and x-ms-acl response
@@ -840,22 +845,22 @@ class BlobOperations:
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Rename a blob/file.  By default, the destination is overwritten and if the destination already
         exists and has a lease the lease is broken.  This operation supports conditional HTTP requests.
         For more information, see `Specifying Conditional Headers for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-
-        blob-service-operations>`_.  To fail if the destination already exists, use a conditional
-        request with If-None-Match: "*".
+        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+        To fail if the destination already exists, use a conditional request with If-None-Match: "*".
 
         :param rename_source: The file or directory to be renamed. The value must have the following
          format: "/{filesysystem}/{path}".  If "x-ms-properties" is specified, the properties will
          overwrite the existing properties; otherwise, the existing properties will be preserved.
         :type rename_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param path_rename_mode: Determines the behavior of the rename operation.
         :type path_rename_mode: str or ~azure.storage.blob.models.PathRenameMode
@@ -1019,13 +1024,14 @@ class BlobOperations:
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Undelete a blob that was previously soft deleted.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1089,15 +1095,16 @@ class BlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         expires_on: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sets the time a blob will expire and be deleted.
 
         :param expiry_options: Required. Indicates mode of the expiry time.
         :type expiry_options: str or ~azure.storage.blob.models.BlobExpiryOptions
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1169,13 +1176,14 @@ class BlobOperations:
         blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Set HTTP Headers operation sets system properties on the blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1301,13 +1309,14 @@ class BlobOperations:
         immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1388,13 +1397,14 @@ class BlobOperations:
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Delete Immutability Policy operation deletes the immutability policy on the blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1457,15 +1467,16 @@ class BlobOperations:
         legal_hold: bool,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Set Legal Hold operation sets a legal hold on the blob.
 
         :param legal_hold: Specified if a legal hold should be set on the blob.
         :type legal_hold: bool
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1534,14 +1545,15 @@ class BlobOperations:
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Set Blob Metadata operation sets user-defined metadata for the specified blob as one or
         more name-value pairs.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -1675,14 +1687,15 @@ class BlobOperations:
         proposed_lease_id: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
          lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
@@ -1787,7 +1800,7 @@ class BlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
@@ -1795,8 +1808,9 @@ class BlobOperations:
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1889,7 +1903,7 @@ class BlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
@@ -1897,8 +1911,9 @@ class BlobOperations:
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1993,7 +2008,7 @@ class BlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
@@ -2005,8 +2020,9 @@ class BlobOperations:
          Constructor (String) for a list of valid GUID string formats.
         :type proposed_lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -2101,22 +2117,23 @@ class BlobOperations:
         break_period: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param break_period: For a break operation, proposed duration the lease should continue before
          it is broken, in seconds, between 0 and 60. This break period is only used if it is shorter
          than the time remaining on the lease. If longer, the time remaining on the lease is used. A new
          lease will not be available before the break period has expired, but the lease may be held for
-         longer than the break period. If this header does not appear with a break operation, a fixed-
-         duration lease breaks after the remaining lease period elapses, and an infinite lease breaks
-         immediately.
+         longer than the break period. If this header does not appear with a break operation, a
+         fixed-duration lease breaks after the remaining lease period elapses, and an infinite lease
+         breaks immediately.
         :type break_period: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -2214,13 +2231,14 @@ class BlobOperations:
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Create Snapshot operation creates a read-only snapshot of a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -2362,7 +2380,7 @@ class BlobOperations:
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Start Copy From URL operation copies a blob or an internet resource to a new blob.
 
@@ -2372,8 +2390,9 @@ class BlobOperations:
          via a shared access signature.
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -2545,7 +2564,7 @@ class BlobOperations:
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Copy From URL operation copies a blob or an internet resource to a new blob. It will not
         return a response until the copy is complete.
@@ -2556,8 +2575,9 @@ class BlobOperations:
          via a shared access signature.
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -2715,7 +2735,7 @@ class BlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Abort Copy From URL operation aborts a pending Copy From URL operation, and leaves a
         destination blob with zero length and full metadata.
@@ -2724,8 +2744,9 @@ class BlobOperations:
          Blob operation.
         :type copy_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -2804,7 +2825,7 @@ class BlobOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Set Tier operation sets the tier on a blob. The operation is allowed on a page blob in a
         premium storage account and on a block blob in a blob storage account (locally redundant
@@ -2816,16 +2837,17 @@ class BlobOperations:
         :type tier: str or ~azure.storage.blob.models.AccessTierRequired
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
         :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param rehydrate_priority: Optional: Indicates the priority with which to rehydrate an archived
          blob.
@@ -2915,7 +2937,7 @@ class BlobOperations:
 
     async def get_account_info(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Returns the sku name and account kind.
 
@@ -2981,20 +3003,21 @@ class BlobOperations:
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """The Query operation enables users to select/project on blob data by providing simple query
         expressions.
 
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -3185,22 +3208,23 @@ class BlobOperations:
         version_id: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BlobTags":
         """The Get Tags operation enables users to get the tags associated with a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
@@ -3289,13 +3313,14 @@ class BlobOperations:
         tags: Optional["_models.BlobTags"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Set Tags operation enables users to set tags on a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.

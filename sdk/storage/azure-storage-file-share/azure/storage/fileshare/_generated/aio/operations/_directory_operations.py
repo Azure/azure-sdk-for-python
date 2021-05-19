@@ -42,28 +42,28 @@ class DirectoryOperations:
     async def create(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         file_permission: Optional[str] = "inherit",
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
         file_creation_time: str = "now",
         file_last_write_time: str = "now",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Creates a new directory under the specified share or parent directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param file_permission: If specified the permission (security descriptor) shall be set for the
-         directory/file. This header can be used if Permission size is <= 8KB, else x-ms-file-
-         permission-key header shall be used. Default value: Inherit. If SDDL is specified as input, it
-         must have owner, group and dacl. Note: Only one of the x-ms-file-permission or x-ms-file-
-         permission-key should be specified.
+         directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified.
         :type file_permission: str
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
@@ -104,7 +104,7 @@ class DirectoryOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if metadata is not None:
-            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
+            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, '{str}')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if file_permission is not None:
             header_parameters['x-ms-file-permission'] = self._serialize.header("file_permission", file_permission, 'str')
@@ -121,7 +121,7 @@ class DirectoryOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -148,7 +148,7 @@ class DirectoryOperations:
         self,
         sharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Returns all system properties for the specified directory, and can also be used to check the
         existence of a directory. The data returned does not include the files in the directory or any
@@ -158,9 +158,9 @@ class DirectoryOperations:
          specifies the share snapshot to query.
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -201,11 +201,11 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
+        response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
@@ -228,15 +228,15 @@ class DirectoryOperations:
     async def delete(
         self,
         timeout: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Removes the specified empty directory. Note that the directory must be empty before it can be
         deleted.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -275,7 +275,7 @@ class DirectoryOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -296,20 +296,20 @@ class DirectoryOperations:
         file_attributes: str = "none",
         file_creation_time: str = "now",
         file_last_write_time: str = "now",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sets properties on the directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param file_permission: If specified the permission (security descriptor) shall be set for the
-         directory/file. This header can be used if Permission size is <= 8KB, else x-ms-file-
-         permission-key header shall be used. Default value: Inherit. If SDDL is specified as input, it
-         must have owner, group and dacl. Note: Only one of the x-ms-file-permission or x-ms-file-
-         permission-key should be specified.
+         directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified.
         :type file_permission: str
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
@@ -367,7 +367,7 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -393,18 +393,18 @@ class DirectoryOperations:
     async def set_metadata(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[str] = None,
-        **kwargs
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> None:
         """Updates user defined metadata for the specified directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -436,7 +436,7 @@ class DirectoryOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if metadata is not None:
-            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
+            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, '{str}')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
@@ -446,7 +446,7 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -468,7 +468,7 @@ class DirectoryOperations:
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
         timeout: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListFilesAndDirectoriesSegmentResponse":
         """Returns a list of files or directories under the specified share or directory. It lists the
         contents only for a single level of the directory hierarchy.
@@ -489,9 +489,9 @@ class DirectoryOperations:
          items.
         :type maxresults: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListFilesAndDirectoriesSegmentResponse, or the result of cls(response)
@@ -540,7 +540,7 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -563,7 +563,7 @@ class DirectoryOperations:
         timeout: Optional[int] = None,
         sharesnapshot: Optional[str] = None,
         recursive: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListHandlesResponse":
         """Lists handles for directory.
 
@@ -577,9 +577,9 @@ class DirectoryOperations:
          items.
         :type maxresults: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the share snapshot to query.
@@ -632,7 +632,7 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -655,7 +655,7 @@ class DirectoryOperations:
         marker: Optional[str] = None,
         sharesnapshot: Optional[str] = None,
         recursive: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Closes all handles open for given directory.
 
@@ -663,9 +663,9 @@ class DirectoryOperations:
          (‘*’) is a wildcard that specifies all handles.
         :type handle_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param marker: A string value that identifies the portion of the list to be returned with the
          next list operation. The operation returns a marker value within the response body if the list
@@ -722,7 +722,7 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
