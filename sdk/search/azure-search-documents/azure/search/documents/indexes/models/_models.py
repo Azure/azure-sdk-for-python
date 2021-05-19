@@ -403,7 +403,7 @@ class SynonymMap(msrest.serialization.Model):
     :vartype format: str
     :param synonyms: Required. A series of synonym rules in the specified synonym map format. The
      rules must be separated by newlines.
-    :type synonyms: str
+    :type synonyms: list[str]
     :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
@@ -461,6 +461,16 @@ class SynonymMap(msrest.serialization.Model):
             # pylint:disable=protected-access
             encryption_key=SearchResourceEncryptionKey._from_generated(synonym_map.encryption_key),
             e_tag=synonym_map.e_tag
+        )
+
+    @classmethod
+    def create_from_file(cls, name, file_path):
+        f = open(file_path, "r")
+        solr_format_synonyms = f.read()
+        synonyms = solr_format_synonyms.split("\n")
+        return cls(
+            name=name,
+            synonyms=synonyms
         )
 
 class SearchIndexerDataSourceConnection(msrest.serialization.Model):
