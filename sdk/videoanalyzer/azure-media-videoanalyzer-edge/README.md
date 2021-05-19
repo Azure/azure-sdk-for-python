@@ -150,6 +150,5 @@ additional questions or comments.
 
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/
 [iot-hub-sdk]: https://pypi.org/project/azure-iot-hub/
-[]: https://docs.microsoft.com/azure/azure-video-analyzer/video-analyzer-docs/get-started-detect-motion-emit-events#obtain-your-iot-hub-connection-string
 
 [github-page-issues]: https://github.com/Azure/azure-sdk-for-python/issues
