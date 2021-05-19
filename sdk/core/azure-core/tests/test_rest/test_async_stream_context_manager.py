@@ -54,7 +54,7 @@ async def test_stream_context_manager_error():
             with pytest.raises(ResponseNotReadError):
                 r.content
             await r.read()
-            assert str(e.value) == "HttpResponseError: 404 NOT FOUND"
+            assert str(e.value) == "Operation returned an invalid status 'NOT FOUND'"
             assert r.content == b''
     assert r.is_closed
     assert r.is_stream_consumed

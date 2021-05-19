@@ -46,6 +46,14 @@ from typing import (
 )
 from abc import abstractmethod
 from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline import Pipeline, AsyncPipeline
+from azure.core.pipeline.transport import (
+    HttpRequest as _PipelineTransportHttpRequest,
+)
+
+from azure.core.pipeline.transport._base import (
+    _HttpResponseBase as _PipelineTransportHttpResponseBase
+)
 
 ################################### TYPES SECTION #########################
 
@@ -75,18 +83,6 @@ FilesType = Union[
     Sequence[Tuple[str, FileType]]
 ]
 
-from azure.core.pipeline import Pipeline, AsyncPipeline
-from azure.core.pipeline.transport import (
-    HttpRequest as _PipelineTransportHttpRequest,
-)
-
-from azure.core.pipeline.transport._base import (
-    _HttpResponseBase as _PipelineTransportHttpResponseBase
-)
-
-from azure.core._pipeline_client import PipelineClient as _PipelineClient
-from azure.core._pipeline_client_async import AsyncPipelineClient as _AsyncPipelineClient
-
 class HttpVerbs(str, Enum):
     GET = "GET"
     PUT = "PUT"
@@ -111,7 +107,9 @@ def _lookup_encoding(encoding: str) -> bool:
     except LookupError:
         return False
 
-def _set_content_length_header(header_name: str, header_value: str, internal_request: _PipelineTransportHttpRequest) -> None:
+def _set_content_length_header(
+    header_name: str, header_value: str, internal_request: _PipelineTransportHttpRequest
+) -> None:
     valid_methods = ["put", "post", "patch"]
     content_length_headers = ["Content-Length", "Transfer-Encoding"]
     if (
@@ -326,8 +324,6 @@ class HttpRequest:
         files: Optional[FilesType] = None,
         **kwargs
     ):
-        # type: (str, str, Any) -> None
-
         self._internal_request = kwargs.pop("_internal_request", _PipelineTransportHttpRequest(
             method=method,
             url=url,
@@ -475,7 +471,6 @@ class _HttpResponseBase:
 
     @encoding.setter
     def encoding(self, value: str) -> None:
-        # type: (str) -> None
         """Sets the response encoding"""
         self._encoding = value
 

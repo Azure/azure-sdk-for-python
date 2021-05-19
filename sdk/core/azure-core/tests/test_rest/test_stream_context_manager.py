@@ -40,7 +40,7 @@ def test_stream_context_manager():
 
 def test_stream_context_manager_error():
     pipeline = Pipeline(transport=RequestsTransport())
-    with _StreamContextManager(pipeline=pipeline, request=HttpRequest(method="GET", url="https://httpbin.org/status/404")) as r:
+    with _StreamContextManager(pipeline=pipeline, request=HttpRequest(method="GET", url="http://localhost:3000/errors/stream")) as r:
         with pytest.raises(HttpResponseError) as e:
             r.raise_for_status()
         assert e.value.status_code == 404
@@ -53,7 +53,7 @@ def test_stream_context_manager_error():
         with pytest.raises(ResponseNotReadError):
             r.content
         r.read()
-        assert str(e.value) == "HttpResponseError: 404 NOT FOUND"
+        assert str(e.value) == "Operation returned an invalid status 'NOT FOUND'"
         assert r.content == b''
     assert r.is_closed
     assert r.is_stream_consumed

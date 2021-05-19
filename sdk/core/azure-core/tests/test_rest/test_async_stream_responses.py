@@ -3,28 +3,17 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import functools
 import os
 import json
 import pytest
 from azure.core.rest import AsyncHttpResponse, HttpRequest, ResponseClosedError, StreamConsumedError
 from azure.core.pipeline.transport import AioHttpTransport
+from testcase_async import _create_http_response
 
 HTTPBIN_JPEG_FILE_NAME = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "httpbin.jpeg"))
 
-async def _create_http_response(url, content=None):
-    # type: (int, Any, Dict[str, Any], bytes) -> AsyncHttpResponse
-    # https://github.com/psf/requests/blob/67a7b2e8336951d527e223429672354989384197/requests/adapters.py#L255
-
-    request = HttpRequest(
-        method="GET",
-        url=url,
-    )
-
-    internal_response = await AioHttpTransport().send(request._internal_request, stream=True)
-    return AsyncHttpResponse(
-        request=request,
-        _internal_response=internal_response
-    )
+create_http_response = functools.partial(_create_http_response, stream=True)
 
 def _read_jpeg_file():
     with open(HTTPBIN_JPEG_FILE_NAME, "rb") as f:
@@ -45,7 +34,7 @@ def _assert_stream_state(response, open):
 
 @pytest.mark.asyncio
 async def test_iter_raw():
-    response = await _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = await create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
     raw = b""
     async for chunk in response.iter_raw():
         _assert_stream_state(response, open=True)
@@ -54,7 +43,7 @@ async def test_iter_raw():
     assert raw == _read_jpeg_file()
 
 async def _iter_raw_with_chunk_size_helper(chunk_size):
-    response = await _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = await create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
     raw = b""
     async for chunk in response.iter_raw(chunk_size=chunk_size):
         _assert_stream_state(response, open=True)
@@ -71,7 +60,7 @@ async def test_iter_raw_with_chunk_size():
 
 @pytest.mark.asyncio
 async def test_iter_raw_num_bytes_downloaded():
-    response = await _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = await create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
 
     num_downloaded = response.num_bytes_downloaded
     async for chunk in response.iter_raw():
@@ -79,7 +68,7 @@ async def test_iter_raw_num_bytes_downloaded():
         num_downloaded = response.num_bytes_downloaded
 
 async def _iter_bytes_with_chunk_size_helper(chunk_size):
-    response = await _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = await create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
     raw = b""
     async for chunk in response.iter_bytes(chunk_size=chunk_size):
         _assert_stream_state(response, open=True)
@@ -90,7 +79,7 @@ async def _iter_bytes_with_chunk_size_helper(chunk_size):
 
 @pytest.mark.asyncio
 async def test_iter_bytes():
-    response = await _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = await create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
     raw = b""
     async for chunk in response.iter_bytes():
         _assert_stream_state(response, open=True)
@@ -106,7 +95,7 @@ async def test_iter_bytes_with_chunk_size():
 
 @pytest.mark.asyncio
 async def test_iter_text():
-    response = await _create_http_response(url="https://httpbin.org/stream/10")
+    response = await create_http_response(HttpRequest("GET", "http://localhost:3000/streams/text"))
     raw = ""
     async for chunk in response.iter_text():
         _assert_stream_state(response, open=True)
@@ -116,7 +105,7 @@ async def test_iter_text():
     assert len([r for r in raw.split("\n") if r]) == 10
 
 async def _iter_text_with_chunk_size_helper(chunk_size):
-    response = await _create_http_response(url="https://httpbin.org/stream/10")
+    response = await create_http_response(HttpRequest("GET", "http://localhost:3000/streams/text"))
     raw = ""
     async for chunk in response.iter_text(chunk_size=chunk_size):
         _assert_stream_state(response, open=True)
@@ -133,22 +122,20 @@ async def test_iter_text_with_chunk_size():
 
 @pytest.mark.asyncio
 async def test_iter_lines():
-    response = await _create_http_response(url="https://httpbin.org/stream/10")
+    response = await create_http_response(HttpRequest("GET", "http://localhost:3000/streams/text"))
     lines = []
     async for chunk in response.iter_lines():
         _assert_stream_state(response, open=True)
         lines.append(chunk)
     _assert_stream_state(response, open=False)
     assert len(lines) == 10
-
-    for idx, line in enumerate(lines):
-        assert json.loads(line)['id'] == idx
-        assert line[-1] == "\n"
+    for line in lines:
+        assert line == "Hello, world!\n"
 
 
 @pytest.mark.asyncio
 async def test_sync_streaming_response():
-    response = await _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = await create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
 
     assert response.status_code == 200
     assert not response.is_closed
@@ -164,7 +151,7 @@ async def test_sync_streaming_response():
 
 @pytest.mark.asyncio
 async def test_cannot_read_after_stream_consumed():
-    response = await _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = await create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
 
     content = b""
     async for chunk in response.iter_bytes():
@@ -176,7 +163,7 @@ async def test_cannot_read_after_stream_consumed():
 
 @pytest.mark.asyncio
 async def test_cannot_read_after_response_closed():
-    response = await _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = await create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
 
     await response.close()
     with pytest.raises(ResponseClosedError) as ex:

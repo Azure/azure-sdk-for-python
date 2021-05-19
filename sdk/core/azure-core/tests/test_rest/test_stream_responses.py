@@ -3,34 +3,21 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import functools
 import os
-import json
 from typing import Type
 import pytest
 from azure.core.rest import HttpResponse, HttpRequest, StreamConsumedError, ResponseClosedError
 from azure.core.pipeline.transport import RequestsTransport
+from testcase import _create_http_response
 
 HTTPBIN_JPEG_FILE_NAME = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "httpbin.jpeg"))
 
-def _create_http_response(url, content=None):
-    # type: (int, Any, Dict[str, Any], bytes) -> HttpResponse
-    # https://github.com/psf/requests/blob/67a7b2e8336951d527e223429672354989384197/requests/adapters.py#L255
-
-    request = HttpRequest(
-        method="GET",
-        url=url,
-    )
-
-    internal_response = RequestsTransport().send(request._internal_request, stream=True)
-    return HttpResponse(
-        request=request,
-        _internal_response=internal_response
-    )
+create_http_response = functools.partial(_create_http_response, stream=True)
 
 def _read_jpeg_file():
     with open(HTTPBIN_JPEG_FILE_NAME, "rb") as f:
         file_bytes = f.read()
-    raise ValueError(file_bytes)
     return file_bytes
 
 def _assert_stream_state(response, open):
@@ -47,7 +34,9 @@ def _assert_stream_state(response, open):
         assert all(checks)
 
 def test_iter_raw():
-    response = _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = create_http_response(
+        request=HttpRequest("GET", "http://localhost:3000/streams/jpeg"),
+    )
     raw = b""
     for chunk in response.iter_raw():
         _assert_stream_state(response, open=True)
@@ -56,7 +45,7 @@ def test_iter_raw():
     assert raw == _read_jpeg_file()
 
 def _iter_raw_with_chunk_size_helper(chunk_size):
-    response = _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
     raw = b""
     for chunk in response.iter_raw(chunk_size=chunk_size):
         _assert_stream_state(response, open=True)
@@ -71,7 +60,7 @@ def test_iter_raw_with_chunk_size():
     _iter_raw_with_chunk_size_helper(chunk_size=20)
 
 def test_iter_raw_num_bytes_downloaded():
-    response = _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
 
     num_downloaded = response.num_bytes_downloaded
     for part in response.iter_raw():
@@ -79,7 +68,7 @@ def test_iter_raw_num_bytes_downloaded():
         num_downloaded = response.num_bytes_downloaded
 
 def _iter_bytes_with_chunk_size_helper(chunk_size):
-    response = _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
     raw = b""
     for chunk in response.iter_bytes(chunk_size=chunk_size):
         _assert_stream_state(response, open=True)
@@ -89,7 +78,7 @@ def _iter_bytes_with_chunk_size_helper(chunk_size):
     assert raw == _read_jpeg_file()
 
 def test_iter_bytes():
-    response = _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
     raw = b""
     for chunk in response.iter_bytes():
         _assert_stream_state(response, open=True)
@@ -103,7 +92,7 @@ def test_iter_bytes_with_chunk_size():
     _iter_bytes_with_chunk_size_helper(chunk_size=20)
 
 def test_iter_text():
-    response = _create_http_response(url="https://httpbin.org/stream/10")
+    response = create_http_response(HttpRequest("GET", "http://localhost:3000/streams/text"))
     raw = ""
     for chunk in response.iter_text():
         _assert_stream_state(response, open=True)
@@ -113,7 +102,7 @@ def test_iter_text():
     assert len([r for r in raw.split("\n") if r]) == 10
 
 def _iter_text_with_chunk_size_helper(chunk_size):
-    response = _create_http_response(url="https://httpbin.org/stream/10")
+    response = create_http_response(HttpRequest("GET", "http://localhost:3000/streams/text"))
     raw = ""
     for chunk in response.iter_text(chunk_size=chunk_size):
         _assert_stream_state(response, open=True)
@@ -128,21 +117,18 @@ def test_iter_text_with_chunk_size():
     _iter_text_with_chunk_size_helper(chunk_size=20)
 
 def test_iter_lines():
-    response = _create_http_response(url="https://httpbin.org/stream/10")
+    response = create_http_response(HttpRequest("GET", "http://localhost:3000/streams/text"))
     lines = []
     for chunk in response.iter_lines():
         _assert_stream_state(response, open=True)
         lines.append(chunk)
     _assert_stream_state(response, open=False)
     assert len(lines) == 10
-
-    for idx, line in enumerate(lines):
-        assert json.loads(line)['id'] == idx
-        assert line[-1] == "\n"
-
+    for line in lines:
+        assert line == "Hello, world!\n"
 
 def test_sync_streaming_response():
-    response = _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
 
     assert response.status_code == 200
     assert not response.is_closed
@@ -156,7 +142,7 @@ def test_sync_streaming_response():
     assert response.is_closed
 
 def test_cannot_read_after_stream_consumed():
-    response = _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
 
     content = b""
     for part in response.iter_bytes():
@@ -168,7 +154,7 @@ def test_cannot_read_after_stream_consumed():
     assert "You can not try to read or stream this response's content, since the response has been closed" in str(ex.value)
 
 def test_cannot_read_after_response_closed():
-    response = _create_http_response(url="https://httpbin.org/image/jpeg")
+    response = create_http_response(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
 
     response.close()
     with pytest.raises(ResponseClosedError) as ex:

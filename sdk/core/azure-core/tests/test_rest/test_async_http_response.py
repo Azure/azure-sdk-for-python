@@ -6,25 +6,20 @@
 
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
-import json
+import functools
 import pytest
 import aiohttp
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.exceptions import HttpResponseError
 from typing import Any, Dict
+from testcase_async import _create_http_response
 
-async def _create_http_response(request=None):
-    internal_response = await AioHttpTransport().send(request._internal_request, stream=False)
-    response = AsyncHttpResponse(
-        request=request,
-        _internal_response=internal_response
-    )
-    return response
+create_http_response = functools.partial(_create_http_response, stream=False)
 
 @pytest.mark.asyncio
 async def test_response():
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/string"),
     )
 
@@ -40,7 +35,7 @@ async def test_response():
 
 @pytest.mark.asyncio
 async def test_response_content():
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/bytes"),
     )
 
@@ -54,7 +49,7 @@ async def test_response_content():
 
 @pytest.mark.asyncio
 async def test_response_text():
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/text"),
     )
 
@@ -70,7 +65,7 @@ async def test_response_text():
 
 @pytest.mark.asyncio
 async def test_response_html():
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/html"),
     )
 
@@ -83,19 +78,19 @@ async def test_response_html():
 
 @pytest.mark.asyncio
 async def test_raise_for_status():
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/text"),
     )
     response.raise_for_status()
 
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/errors/403"),
     )
     assert response.status_code == 403
     with pytest.raises(HttpResponseError):
         response.raise_for_status()
 
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/errors/500"),
     )
     assert response.status_code == 500
@@ -104,7 +99,7 @@ async def test_raise_for_status():
 
 @pytest.mark.asyncio
 async def test_response_repr():
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/text")
     )
     assert repr(response) == "<AsyncHttpResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
@@ -114,7 +109,7 @@ async def test_response_content_type_encoding():
     """
     Use the charset encoding in the Content-Type header if possible.
     """
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/encoding/latin-1")
     )
     await response.read()
@@ -128,7 +123,7 @@ async def test_response_autodetect_encoding():
     """
     Autodetect encoding if there is no Content-Type header.
     """
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/encoding/latin-1")
     )
     await response.read()
@@ -144,7 +139,7 @@ async def test_response_fallback_to_autodetect():
     """
     Fallback to autodetection if we get an invalid charset in the Content-Type header.
     """
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/encoding/latin-1")
     )
     await response.read()
@@ -161,7 +156,7 @@ async def test_response_no_charset_with_ascii_content():
     A response with ascii encoded content should decode correctly,
     even with no charset specified.
     """
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/string"),
     )
 
@@ -181,7 +176,7 @@ async def test_response_no_charset_with_iso_8859_1_content():
     A response with ISO 8859-1 encoded content should decode correctly,
     even with no charset specified.
     """
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/encoding/iso-8859-1"),
     )
     content = await response.read()
@@ -194,7 +189,7 @@ async def test_response_no_charset_with_iso_8859_1_content():
 
 @pytest.mark.asyncio
 async def test_response_set_explicit_encoding():
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/encoding/latin-1-string-with-utf-8"),
     )
     response.encoding = "latin-1"
@@ -205,7 +200,7 @@ async def test_response_set_explicit_encoding():
 
 @pytest.mark.asyncio
 async def test_json():
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/basic/json"),
     )
     await response.read()
@@ -213,7 +208,7 @@ async def test_json():
 
 @pytest.mark.asyncio
 async def test_json_with_specified_encoding():
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/encoding/json"),
     )
     await response.read()
@@ -222,7 +217,7 @@ async def test_json_with_specified_encoding():
 
 @pytest.mark.asyncio
 async def test_emoji():
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/encoding/emoji"),
     )
     await response.read()
@@ -230,7 +225,7 @@ async def test_emoji():
 
 @pytest.mark.asyncio
 async def test_emoji_family_with_skin_tone_modifier():
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/encoding/emoji-family-skin-tone-modifier"),
     )
     await response.read()
@@ -238,7 +233,7 @@ async def test_emoji_family_with_skin_tone_modifier():
 
 @pytest.mark.asyncio
 async def test_korean_nfc():
-    response = await _create_http_response(
+    response = await create_http_response(
         request=HttpRequest("GET", "http://localhost:3000/encoding/korean"),
     )
     await response.read()
