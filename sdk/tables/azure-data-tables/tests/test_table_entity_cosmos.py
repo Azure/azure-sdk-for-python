@@ -1200,15 +1200,15 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
-            assert resp['EmptyByte'].value ==  b''
+            assert resp['EmptyByte'] ==  b''
             assert resp['EmptyUnicode'] ==  u''
-            assert resp['SpacesOnlyByte'].value ==  b'   '
+            assert resp['SpacesOnlyByte'] ==  b'   '
             assert resp['SpacesOnlyUnicode'] ==  u'   '
-            assert resp['SpacesBeforeByte'].value ==  b'   Text'
+            assert resp['SpacesBeforeByte'] ==  b'   Text'
             assert resp['SpacesBeforeUnicode'] ==  u'   Text'
-            assert resp['SpacesAfterByte'].value ==  b'Text   '
+            assert resp['SpacesAfterByte'] ==  b'Text   '
             assert resp['SpacesAfterUnicode'] ==  u'Text   '
-            assert resp['SpacesBeforeAndAfterByte'].value ==  b'   Text   '
+            assert resp['SpacesBeforeAndAfterByte'] ==  b'   Text   '
             assert resp['SpacesBeforeAndAfterUnicode'] ==  u'   Text   '
         finally:
             self._tear_down()
@@ -1246,7 +1246,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Assert
             assert resp is not None
-            assert resp['binary'].value ==  binary_data
+            assert resp['binary'] ==  binary_data
         finally:
             self._tear_down()
 
