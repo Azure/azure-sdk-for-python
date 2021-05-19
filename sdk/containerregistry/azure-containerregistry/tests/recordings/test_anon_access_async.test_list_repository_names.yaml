@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 16:01:33 GMT
+      date: Wed, 19 May 2021 20:59:20 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -47,11 +47,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 16:01:33 GMT
+      date: Wed, 19 May 2021 20:59:20 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.616667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.65'
     status:
       code: 200
       message: OK
@@ -68,16 +68,20 @@ interactions:
   response:
     body:
       string: '{"repositories": ["library/alpine", "library/busybox", "library/hello-world",
-        "repo25ce0f5d", "repo27331535", "repo28471541", "repo2c591564", "repo34ab0fa1",
-        "repo3c82158b", "repo3db51597", "repo3e8d15a3", "repo8b5a11da", "repo9cb4121e",
-        "repoaf9517b2", "repob0a917be", "repob22512e7", "repoc1b5131a", "repoc28d1326",
-        "repoc7611808", "to_be_deleted"]}'
+        "repo13cf14de", "repo25ce0f5d", "repo26ab150f", "repo27331535", "repo28471541",
+        "repo2915152d", "repo2c591564", "repo34ab0fa1", "repo3c82158b", "repo3db51597",
+        "repo3dc21571", "repo3e8d15a3", "repo41a21dd2", "repo6969166d", "repo6a411679",
+        "repo7bda1b05", "repo7cee1b11", "repo80c61ece", "repo8b5a11da", "repo93d41b55",
+        "repo99be175b", "repo9cb4121e", "repoaf17178c", "repoaf8812b0", "repoaf9517b2",
+        "repob0a917be", "repob22512e7", "repoc1b5131a", "repoc1b812f4", "repoc28d1326",
+        "repoc7611808", "repodf771888", "repoe08b1894", "repof94c18ea", "repofa2418f6",
+        "to_be_deleted"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '332'
+      content-length: '617'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 16:01:34 GMT
+      date: Wed, 19 May 2021 20:59:20 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
