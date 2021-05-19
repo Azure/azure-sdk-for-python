@@ -59,7 +59,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: str
+    :vartype info: any
     """
 
     _validation = {
@@ -69,7 +69,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(
@@ -337,7 +337,7 @@ class TemplateSpecTemplateArtifact(TemplateSpecArtifact):
     :type kind: str or
      ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecArtifactKind
     :param template: Required. The Azure Resource Manager template.
-    :type template: str
+    :type template: any
     """
 
     _validation = {
@@ -349,7 +349,7 @@ class TemplateSpecTemplateArtifact(TemplateSpecArtifact):
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'template': {'key': 'template', 'type': 'str'},
+        'template': {'key': 'template', 'type': 'object'},
     }
 
     def __init__(
@@ -429,7 +429,7 @@ class TemplateSpecVersion(AzureResourceBase):
     :param description: Template Spec version description.
     :type description: str
     :param template: The Azure Resource Manager template content.
-    :type template: str
+    :type template: any
     """
 
     _validation = {
@@ -450,7 +450,7 @@ class TemplateSpecVersion(AzureResourceBase):
         'tags': {'key': 'tags', 'type': '{str}'},
         'artifacts': {'key': 'properties.artifacts', 'type': '[TemplateSpecArtifact]'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'template': {'key': 'properties.template', 'type': 'str'},
+        'template': {'key': 'properties.template', 'type': 'object'},
     }
 
     def __init__(

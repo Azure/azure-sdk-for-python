@@ -7,3 +7,4 @@ stages:
      ServiceDirectory: attestation
      Location: westus
      DeployArmTemplate: true
+     TestSamples: true

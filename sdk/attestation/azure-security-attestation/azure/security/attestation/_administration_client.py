@@ -73,9 +73,9 @@ class AttestationAdministrationClient(object):
 
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to retrieve the policy.
-        :return AttestationResponse[str]: Attestation service response encapsulating a string attestation policy.
+        :return azure.security.attestation.AttestationResponse[str]: Attestation service response encapsulating a string attestation policy.
 
-        :raises AttestationTokenValidationException: Raised when an attestation token is invalid.
+        :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
         """
         
@@ -93,17 +93,17 @@ class AttestationAdministrationClient(object):
         return AttestationResponse[str](token, actual_policy.decode('utf-8'))
 
     @distributed_trace
-    def set_policy(self, attestation_type, attestation_policy, **kwargs): 
+    def set_policy(self, attestation_type, attestation_policy, signing_key=None, **kwargs): 
         #type:(AttestationType, str, Optional[AttestationSigningKey], **Any) -> AttestationResponse[PolicyResult]
         """ Sets the attestation policy for the specified attestation type.
 
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to set the policy.
         :param str attestation_policy: Attestation policy to be set.
-        :keyword AttestationSigningKey signing_key: Signing key to be
+        :keyword azure.security.attestation.AttestationSigningKey signing_key: Signing key to be
             used to sign the policy before sending it to the service.
-        :return AttestationResponse[PolicyResult]: Attestation service response encapsulating a :class:`PolicyResult`.
-        :raises AttestationTokenValidationException: Raised when an attestation token is invalid.
+        :return azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyResult]: Attestation service response encapsulating a :class:`PolicyResult`.
+        :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
         .. note::
             If the attestation instance is in *Isolated* mode, then the 
@@ -115,7 +115,6 @@ class AttestationAdministrationClient(object):
 
         """
 
-        signing_key = kwargs.get('signing_key', None) #type:AttestationSigningKey
         policy_token = AttestationToken[GeneratedStoredAttestationPolicy](
             body=GeneratedStoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
             signer=signing_key,
@@ -130,17 +129,17 @@ class AttestationAdministrationClient(object):
         return AttestationResponse[PolicyResult](token, PolicyResult._from_generated(token.get_body()))
 
     @distributed_trace
-    def reset_policy(self, attestation_type, **kwargs): 
-        #type:(AttestationType,  **dict[str, Any]) -> AttestationResponse[PolicyResult]
+    def reset_policy(self, attestation_type, signing_key=None, **kwargs): 
+        #type:(AttestationType, Optional[AttestationSigningKey], **dict[str, Any]) -> AttestationResponse[PolicyResult]
         """ Resets the attestation policy for the specified attestation type to the default value.
 
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to set the policy.
         :param str attestation_policy: Attestation policy to be reset.
-        :keyword AttestationSigningKey signing_key: Signing key to be
+        :keyword azure.security.attestation.AttestationSigningKey signing_key: Signing key to be
             used to sign the policy before sending it to the service.
-        :return AttestationResponse[PolicyResult]: Attestation service response encapsulating a :class:`PolicyResult`.
-        :raises AttestationTokenValidationException: Raised when an attestation token is invalid.
+        :return azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyResult]: Attestation service response encapsulating a :class:`PolicyResult`.
+        :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
         .. note::
             If the attestation instance is in *Isolated* mode, then the 
@@ -150,7 +149,6 @@ class AttestationAdministrationClient(object):
             If the attestation instance is in *AAD* mode, then the `signing_key` 
             parameter does not need to be provided.
         """
-        signing_key = kwargs.get('signing_key', None) #type:AttestationSigningKey
         policy_token = AttestationToken(
             body=None,
             signer=signing_key)
@@ -172,7 +170,7 @@ class AttestationAdministrationClient(object):
         The list of policy management certificates will only be non-empty if the
         attestation service instance is in Isolated mode.
 
-        :return AttestationResponse[list[list[bytes]]: Attestation service response 
+        :return azure.security.attestation.AttestationResponse[list[list[bytes]]: Attestation service response 
             encapsulating a list of DER encoded X.509 certificate chains.
         """
 
@@ -199,9 +197,9 @@ class AttestationAdministrationClient(object):
 
         :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
             the list of attestation policy management certificates.
-        :param AttestationSigningKey signing_key: Signing Key representing one of 
+        :param azure.security.attestation.AttestationSigningKey signing_key: Signing Key representing one of 
             the *existing* attestation signing certificates.
-        :return AttestationResponse[PolicyCertificatesModificationResult]: Attestation service response 
+        :return azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyCertificatesModificationResult]: Attestation service response 
             encapsulating the status of the add request.
 
         The :class:`PolicyCertificatesModificationResult` response to the 
@@ -240,9 +238,9 @@ class AttestationAdministrationClient(object):
 
         :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
             the list of attestation policy management certificates.
-        :param AttestationSigningKey signing_key: Signing Key representing one of 
+        :param azure.security.attestation.AttestationSigningKey signing_key: Signing Key representing one of 
             the *existing* attestation signing certificates.
-        :return AttestationResponse[PolicyCertificatesModificationResult]: Attestation service response 
+        :return azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyCertificatesModificationResult]: Attestation service response 
             encapsulating a list of DER encoded X.509 certificate chains.
 
         The :class:`PolicyCertificatesModificationResult` response to the 
@@ -285,11 +283,7 @@ class AttestationAdministrationClient(object):
                 self._signing_certificates = []
                 for key in signing_certificates.keys:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
-                    certificates = []
-                    for x5c in key.x5_c:
-                        der_cert = base64.b64decode(x5c)
-                        certificates.append(der_cert)
-                    self._signing_certificates.append(AttestationSigner(certificates, key.kid))
+                    self._signing_certificates.append(AttestationSigner._from_generated(key))
             signers = self._signing_certificates
         return signers
 
