@@ -284,7 +284,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def set_manifest_properties(self, permissions, **kwargs):
+    def update_manifest_properties(self, permissions, **kwargs):
         # type: (str, ContentProperties, Dict[str, Any]) -> ArtifactManifestProperties
         """Set the properties for a manifest
 
@@ -301,7 +301,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for artifact in client.list_manifests():
-                received_permissions = client.set_manifest_properties(
+                received_permissions = client.update_manifest_properties(
                     artifact.digest,
                     ContentProperties(
                         can_delete=False,
@@ -325,7 +325,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def set_tag_properties(self, tag, permissions, **kwargs):
+    def update_tag_properties(self, tag, permissions, **kwargs):
         # type: (str, ContentProperties, Dict[str, Any]) -> ArtifactTagProperties
         """Set the properties for a tag
         :param tag: Tag to set properties for
@@ -343,7 +343,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             tag_identifier = "latest"
-            received = client.set_tag_properties(
+            received = client.update_tag_properties(
                 tag_identifier,
                 ContentProperties(
                     can_delete=False,

@@ -323,7 +323,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def set_repository_properties(self, repository, properties, **kwargs):
+    def update_repository_properties(self, repository, properties, **kwargs):
         # type: (str, RepositoryProperties, **Any) -> RepositoryProperties
         """Set the properties of a repository
 
@@ -577,7 +577,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def set_manifest_properties(self, repository, tag_or_digest, properties, **kwargs):
+    def update_manifest_properties(self, repository, tag_or_digest, properties, **kwargs):
         # type: (str, str, ArtifactManifestProperties, **Any) -> ArtifactManifestProperties
         """Set the properties for a manifest
 
@@ -596,7 +596,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for artifact in client.list_manifests():
-                received_properties = client.set_manifest_properties(
+                received_properties = client.update_manifest_properties(
                     artifact.digest,
                     ManifestWriteableProperties(
                         can_delete=False,
@@ -620,7 +620,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def set_tag_properties(self, repository, tag, properties, **kwargs):
+    def update_tag_properties(self, repository, tag, properties, **kwargs):
         # type: (str, str, ArtifactTagProperties, **Any) -> ArtifactTagProperties
         """Set the properties for a tag
 
@@ -639,7 +639,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             tag_identifier = "latest"
-            received = client.set_tag_properties(
+            received = client.update_tag_properties(
                 tag_identifier,
                 TagWriteableProperties(
                     can_delete=False,

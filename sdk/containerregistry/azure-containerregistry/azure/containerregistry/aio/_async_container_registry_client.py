@@ -316,7 +316,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def set_repository_properties(
+    async def update_repository_properties(
         self, repository: str, properties: RepositoryProperties, **kwargs: Any
     ) -> RepositoryProperties:
         """Set the properties of a repository
@@ -568,7 +568,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def set_manifest_properties(
+    async def update_manifest_properties(
         self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs: Any
     ) -> ArtifactManifestProperties:
         """Set the properties for a manifest
@@ -588,7 +588,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             async for artifact in client.list_manifests():
-                received_properties = await client.set_manifest_properties(
+                received_properties = await client.update_manifest_properties(
                     artifact.digest,
                     ManifestWriteableProperties(
                         can_delete=False,
@@ -612,7 +612,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace_async
-    async def set_tag_properties(
+    async def update_tag_properties(
         self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs: Any
     ) -> ArtifactTagProperties:
         """Set the properties for a tag
@@ -632,7 +632,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             tag_identifier = "latest"
-            received = await client.set_tag_properties(
+            received = await client.update_tag_properties(
                 tag_identifier,
                 TagWriteableProperties(
                     can_delete=False,

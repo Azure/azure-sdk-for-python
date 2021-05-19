@@ -99,7 +99,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         properties.can_list = False
         properties.can_write = False
 
-        new_properties = client.set_repository_properties(repository, properties)
+        new_properties = client.update_repository_properties(repository, properties)
 
         assert properties.can_delete == new_properties.can_delete
         assert properties.can_read == new_properties.can_read
@@ -111,7 +111,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         new_properties.can_list = True
         new_properties.can_write = True
 
-        new_properties = client.set_repository_properties(repository, new_properties)
+        new_properties = client.update_repository_properties(repository, new_properties)
 
         assert new_properties.can_delete == True
         assert new_properties.can_read == True
@@ -210,7 +210,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             client.get_manifest_properties(repo, digest)
 
     @acr_preparer()
-    def test_set_manifest_properties(self, containerregistry_endpoint):
+    def test_update_manifest_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
@@ -223,7 +223,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         properties.can_write = False
         properties.can_list = False
 
-        received = client.set_manifest_properties(repo, tag, properties)
+        received = client.update_manifest_properties(repo, tag, properties)
 
         assert received.can_delete == properties.can_delete
         assert received.can_read == properties.can_read
@@ -235,7 +235,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         properties.can_write = True
         properties.can_list = True
 
-        received = client.set_manifest_properties(repo, tag, properties)
+        received = client.update_manifest_properties(repo, tag, properties)
 
         assert received.can_delete == True
         assert received.can_read == True
@@ -263,7 +263,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             client.get_tag("Nonexistent", "Nonexistent")
 
     @acr_preparer()
-    def test_set_tag_properties(self, containerregistry_endpoint):
+    def test_update_tag_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
@@ -275,7 +275,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         properties.can_read = False
         properties.can_write = False
         properties.can_list = False
-        received = client.set_tag_properties(repo, tag, properties)
+        received = client.update_tag_properties(repo, tag, properties)
 
         assert received.can_delete == properties.can_delete
         assert received.can_read == properties.can_read
@@ -287,7 +287,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         properties.can_write = True
         properties.can_list = True
 
-        received = client.set_tag_properties(repo, tag, properties)
+        received = client.update_tag_properties(repo, tag, properties)
 
         assert received.can_delete == True
         assert received.can_read == True
