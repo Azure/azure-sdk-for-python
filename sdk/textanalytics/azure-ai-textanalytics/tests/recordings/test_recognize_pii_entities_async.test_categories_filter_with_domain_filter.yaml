@@ -12,22 +12,22 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint&piiCategories=USSocialSecurityNumber
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint&piiCategories=USSocialSecurityNumber
   response:
     body:
       string: '{"documents":[{"redactedText":"My name is Inigo Montoya, my SSN in
         *********** and my phone number is 333-3333.","id":"0","entities":[{"text":"243-56-0987","category":"USSocialSecurityNumber","offset":36,"length":11,"confidenceScore":0.85}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
-      apim-request-id: f18d01fb-2e5a-4472-85f8-2e741f3d9f02
+      apim-request-id: efa385c3-d693-45a8-87bb-3f480d39bc17
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
-      date: Thu, 13 May 2021 22:36:14 GMT
+      date: Tue, 18 May 2021 17:48:08 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '110'
+      x-envoy-upstream-service-time: '33'
     status:
       code: 200
       message: OK
-    url: https://centralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint&piiCategories=USSocialSecurityNumber
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint&piiCategories=USSocialSecurityNumber
 version: 1
