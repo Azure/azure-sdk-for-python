@@ -54,9 +54,9 @@ class AttestationClient(object):
         # type: (TokenCredential, str, Any) -> None
         """
         :param instance_url: base url of the service
-        :type instance_url: str
+        :paramtype  instance_url: str
         :param credential: Credentials for the caller used to interact with the service.
-        :type credential: ~azure.core.credentials.TokenCredentials
+        :paramtype  credential: ~azure.core.credentials.TokenCredentials
         :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
         :keyword HttpTransport transport: If omitted, the standard pipeline is used.
         :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
@@ -101,18 +101,18 @@ class AttestationClient(object):
         """ Attests the validity of an SGX quote.
 
         :param quote: An SGX quote generated from an Intel(tm) SGX enclave
-        :type quote: bytes
+        :paramtype  quote: bytes
         :param inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :type inittime_data: azure.security.attestation.AttestationData 
+        :paramtype  inittime_data: azure.security.attestation.AttestationData 
         :param runtime_data: Data presented at the time that the SGX quote was created.
-        :type runtime_data: azure.security.attestation.AttestationData
+        :paramtype  runtime_data: azure.security.attestation.AttestationData
         :param draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API
 
-        :type draft_policy: str
+        :paramtype  draft_policy: str
 
         :return: Attestation service response encapsulating an :class:`AttestationResult`.
         
@@ -160,16 +160,16 @@ class AttestationClient(object):
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
         :param inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :type inittime_data: azure.security.attestation.AttestationData 
+        :paramtype  inittime_data: azure.security.attestation.AttestationData 
         :param runtime_data: Data presented at the time that the open_enclave report was created.
-        :type runtime_data: azure.security.attestation.AttestationData 
+        :paramtype  runtime_data: azure.security.attestation.AttestationData 
         :keyword draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
 
-        :type draft_policy: str
+        :paramtype  draft_policy: str
 
         :return: Attestation service response encapsulating an :class:`AttestationResult`.
 
