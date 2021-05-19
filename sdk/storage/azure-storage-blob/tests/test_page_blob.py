@@ -5,6 +5,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from platform import python_version
+
 import pytest
 
 import pytest
@@ -185,7 +187,7 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(content.readall(), data)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     def test_put_page_with_lease_id_and_if_tags(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
@@ -1637,7 +1639,7 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertTrue(copy_blob.copy.source.endswith(sas_blob.url[5:]))
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
+    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage'+"".join(str(python_version()).split(".")))
     def test_blob_tier_on_create(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
@@ -1696,7 +1698,7 @@ class StoragePageBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
+    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage'+"".join(str(python_version()).split(".")))
     def test_blob_tier_set_tier_api(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
@@ -1807,7 +1809,7 @@ class StoragePageBlobTest(StorageTestCase):
     #         container.delete_container()
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
+    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage'+"".join(str(python_version()).split(".")))
     def test_blob_tier_copy_blob(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)

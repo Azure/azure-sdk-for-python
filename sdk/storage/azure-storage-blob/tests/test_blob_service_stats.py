@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+from platform import python_version
+
 import pytest
 
 from azure.storage.blob import BlobServiceClient
@@ -46,7 +48,7 @@ class ServiceStatsTest(StorageTestCase):
 
     # --Test cases per service ---------------------------------------
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage'+"".join(str(python_version()).split(".")), sku='Standard_RAGRS')
     def test_blob_service_stats(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "blob")
@@ -58,7 +60,7 @@ class ServiceStatsTest(StorageTestCase):
         self._assert_stats_default(stats)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage'+"".join(str(python_version()).split(".")), sku='Standard_RAGRS')
     def test_blob_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "blob")

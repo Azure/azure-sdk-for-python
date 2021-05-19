@@ -6,6 +6,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
+from platform import python_version
+
 import pytest
 import requests
 import time
@@ -159,7 +161,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertTrue(exists)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     def test_blob_exists_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -236,7 +238,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(data.readall(), blob_data)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     def test_create_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -469,7 +471,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(props.content_settings.content_disposition, 'inline')
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     def test_set_blob_properties_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -708,7 +710,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     def test_set_blob_metadata_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         # bug in devtools...converts upper case header to lowercase
         # passes live.
@@ -767,7 +769,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNone(resp)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     def test_delete_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -1161,7 +1163,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(copy_content, self.byte_data)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     def test_async_copy_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         source_tags = {"source": "source tag"}
@@ -1299,7 +1301,7 @@ class StorageCommonBlobTest(StorageTestCase):
     #     self.assertIsNotNone(props.copy.id)
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     def test_copy_blob_async_private_blob_no_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account, storage_account_key)
         self._setup_remote(rmt, rmt_key)
@@ -1315,7 +1317,7 @@ class StorageCommonBlobTest(StorageTestCase):
             target_blob.start_copy_from_url(source_blob.url)
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     def test_copy_blob_async_private_blob_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -2075,7 +2077,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     def test_download_to_file_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -2105,7 +2107,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     def test_download_to_file_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -2126,7 +2128,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     def test_download_to_stream_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -2149,7 +2151,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     def test_download_to_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -2173,7 +2175,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     def test_download_to_file_with_existing_file_overwrite(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account, storage_account_key)
         data = b'12345678' * 1024 * 1024

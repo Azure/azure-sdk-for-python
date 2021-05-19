@@ -5,6 +5,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from platform import python_version
+
 import pytest
 
 from os import (
@@ -196,7 +198,7 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertIsNotNone(resp['last_modified'])
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     def test_append_block_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
                                 max_block_size=4 * 1024)
@@ -228,7 +230,7 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     def test_append_block_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)

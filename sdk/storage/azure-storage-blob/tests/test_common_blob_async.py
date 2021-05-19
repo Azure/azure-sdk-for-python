@@ -6,6 +6,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
+from platform import python_version
+
 import pytest
 import aiohttp
 import asyncio
@@ -182,7 +184,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertTrue(exists)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     @AsyncStorageTestCase.await_prepared_test
     async def test_blob_exists_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -560,7 +562,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertEqual(props.content_settings.content_disposition, 'inline')
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_properties_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -832,7 +834,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         # bug in devtools...converts upper case header to lowercase
@@ -896,7 +898,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNone(resp)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -1335,7 +1337,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await self._disable_soft_delete()
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     @AsyncStorageTestCase.await_prepared_test
     async def test_async_copy_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -1458,7 +1460,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
     #     loop.run_until_complete(self._test_copy_blob_with_external_blob_fails())
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     @AsyncStorageTestCase.await_prepared_test
     async def test_copy_blob_async_private_blob_no_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         # Arrange
@@ -1477,7 +1479,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     @AsyncStorageTestCase.await_prepared_test
     async def test_copy_blob_async_private_blob_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         # Arrange
@@ -2193,7 +2195,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     @AsyncStorageTestCase.await_prepared_test
     async def test_download_to_file_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         # Arrange
@@ -2225,7 +2227,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     @AsyncStorageTestCase.await_prepared_test
     async def test_download_to_file_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         # Arrange
@@ -2249,7 +2251,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     @AsyncStorageTestCase.await_prepared_test
     async def test_download_to_stream_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         # Arrange
@@ -2274,7 +2276,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     @AsyncStorageTestCase.await_prepared_test
     async def test_download_to_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         # Arrange
@@ -2300,7 +2302,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage'+"".join(str(python_version()).split(".")), parameter_name='rmt')
     @AsyncStorageTestCase.await_prepared_test
     async def test_download_to_file_with_existing_file_overwrite(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         # Arrange

@@ -8,6 +8,7 @@
 
 import sys
 from datetime import datetime, timedelta
+from platform import python_version
 from time import sleep
 
 import pytest
@@ -1233,7 +1234,7 @@ class StorageContainerTest(StorageTestCase):
         assert response[2].status_code == 202
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     def test_delete_blobs_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
@@ -1496,7 +1497,7 @@ class StorageContainerTest(StorageTestCase):
         )
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     def test_standard_blob_tier_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container = self._create_container(bsc)

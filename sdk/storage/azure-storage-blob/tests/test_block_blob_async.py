@@ -7,6 +7,8 @@
 # --------------------------------------------------------------------------
 import os
 import unittest
+from platform import python_version
+
 import pytest
 import asyncio
 import uuid
@@ -584,7 +586,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(blob_properties.blob_tier, blob_tier)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_block_list_no_blocks(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

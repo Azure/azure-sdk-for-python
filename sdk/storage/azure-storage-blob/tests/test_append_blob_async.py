@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
+from platform import python_version
 
 import pytest
 import asyncio
@@ -218,7 +219,7 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         # Assert
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_block_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
@@ -252,7 +253,7 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         # Assert
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     async def test_append_block_from_url_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,

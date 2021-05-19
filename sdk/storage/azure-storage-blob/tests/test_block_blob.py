@@ -8,6 +8,7 @@
 import os
 import unittest
 from datetime import datetime, timedelta
+from platform import python_version
 
 import pytest
 import uuid
@@ -477,7 +478,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(blob_properties.blob_tier, blob_tier)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename'+"".join(str(python_version()).split(".")))
     def test_get_block_list_no_blocks(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}

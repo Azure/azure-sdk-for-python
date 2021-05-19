@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+from platform import python_version
+
 import pytest
 import asyncio
 
@@ -63,7 +65,7 @@ class ServiceStatsTestAsync(AsyncStorageTestCase):
 
     # --Test cases per service ---------------------------------------
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage'+"".join(str(python_version()).split(".")), sku='Standard_RAGRS')
     @AsyncStorageTestCase.await_prepared_test
     async def test_blob_service_stats_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -75,7 +77,7 @@ class ServiceStatsTestAsync(AsyncStorageTestCase):
         self._assert_stats_default(stats)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage'+"".join(str(python_version()).split(".")), sku='Standard_RAGRS')
     @AsyncStorageTestCase.await_prepared_test
     async def test_blob_service_stats_when_unavailable_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
