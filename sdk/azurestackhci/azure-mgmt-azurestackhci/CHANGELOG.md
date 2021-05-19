@@ -1,5 +1,16 @@
 # Release History
 
+## 6.0.0b2 (2021-05-19)
+
+**Features**
+
+  - Model Cluster has a new parameter created_at
+  - Model Cluster has a new parameter created_by_type
+  - Model Cluster has a new parameter last_modified_by_type
+  - Model Cluster has a new parameter last_modified_at
+  - Model Cluster has a new parameter last_modified_by
+  - Model Cluster has a new parameter created_by
+
 ## 6.0.0b1 (2020-12-08)
 
 This is beta preview version.
