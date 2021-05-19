@@ -63,32 +63,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert total_pages > 1
 
     @acr_preparer()
-    def test_transport_closed_only_once(self, containerregistry_anonregistry_endpoint):
-        transport = RequestsTransport()
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint, transport=transport)
-        assert client._credential is None
-        with client:
-            for r in client.list_repository_names():
-                pass
-            assert transport.session is not None
-
-            with client.get_repository(HELLO_WORLD) as repo_client:
-                assert repo_client._credential is None
-                assert transport.session is not None
-
-            for r in client.list_repository_names():
-                pass
-            assert transport.session is not None
-
-    @acr_preparer()
-    def test_get_properties(self, containerregistry_anonregistry_endpoint):
+    def test_get_repository_properties(self, containerregistry_anonregistry_endpoint):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        container_repository = client.get_repository(HELLO_WORLD)
-        assert container_repository._credential is None
-
-        properties = container_repository.get_properties()
+        properties = client.get_repository_properties("library/hello-world")
 
         assert isinstance(properties, RepositoryProperties)
         assert properties.name == HELLO_WORLD
@@ -98,42 +77,30 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        container_repository = client.get_repository(HELLO_WORLD)
-        assert container_repository._credential is None
-
         count = 0
-        for manifest in container_repository.list_manifests():
+        for manifest in client.list_manifests("library/hello-world"):
             assert isinstance(manifest, ArtifactManifestProperties)
             count += 1
         assert count > 0
 
     @acr_preparer()
-    def test_get_artifact(self, containerregistry_anonregistry_endpoint):
+    def test_get_manifest_properties(self, containerregistry_anonregistry_endpoint):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        container_repository = client.get_repository(HELLO_WORLD)
-        assert container_repository._credential is None
+        registry_artifact = client.get_manifest_properties("library/hello-world", "latest")
 
-        registry_artifact = container_repository.get_artifact("latest")
-        assert registry_artifact._credential is None
-
-        assert isinstance(registry_artifact, RegistryArtifact)
+        assert isinstance(registry_artifact, ArtifactManifestProperties)
+        assert "latest" in registry_artifact.tags
+        assert registry_artifact.repository_name == "library/hello-world"
 
     @acr_preparer()
     def test_list_tags(self, containerregistry_anonregistry_endpoint):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        container_repository = client.get_repository(HELLO_WORLD)
-        assert container_repository._credential is None
-
-        for manifest in container_repository.list_manifests():
-            registry_artifact = container_repository.get_artifact(manifest.digest)
-        assert registry_artifact._credential is None
-
         count = 0
-        for tag in registry_artifact.list_tags():
+        for tag in client.list_tags("library/hello-world"):
             count += 1
             assert isinstance(tag, ArtifactTagProperties)
         assert count > 0

@@ -16,8 +16,8 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
 from ._generated.models import AcrErrors
-from ._helpers import _parse_next_link
-from ._models import RepositoryProperties
+from ._helpers import _parse_next_link, _is_tag
+from ._models import RepositoryProperties, ArtifactTagProperties, ArtifactManifestProperties
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional
@@ -356,8 +356,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             client.delete()
         """
-        if self._is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
+        if _is_tag(tag_or_digest):
+            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
         self._client.container_registry.delete_manifest(repository, tag_or_digest)
 
     @distributed_trace
@@ -403,8 +403,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             for artifact in client.list_manifests():
                 properties = client.get_registry_artifact_properties(artifact.digest)
         """
-        if self._is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
+        if _is_tag(tag_or_digest):
+            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.get_manifest_properties(repository, tag_or_digest, **kwargs),
@@ -596,8 +596,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     ),
                 )
         """
-        if self._is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
+        if _is_tag(tag_or_digest):
+            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.update_manifest_properties(

@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 21:18:55 GMT
+      date: Wed, 19 May 2021 16:01:34 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -47,10 +47,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 21:18:55 GMT
+      date: Wed, 19 May 2021 16:01:34 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.633333'
     status:
       code: 200
       message: OK
@@ -72,7 +73,7 @@ interactions:
       connection: keep-alive
       content-length: '54'
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 21:18:55 GMT
+      date: Wed, 19 May 2021 16:01:35 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/_catalog?last=library%2Fbusybox&n=2&orderby=>; rel="next"
       server: openresty
@@ -101,7 +102,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 21:18:55 GMT
+      date: Wed, 19 May 2021 16:01:35 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -130,10 +131,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 21:18:55 GMT
+      date: Wed, 19 May 2021 16:01:35 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.616667'
     status:
       code: 200
       message: OK
@@ -149,14 +151,15 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=library/busybox&n=2&orderby=
   response:
     body:
-      string: '{"repositories": ["library/hello-world"]}'
+      string: '{"repositories": ["library/hello-world", "repo25ce0f5d"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '41'
+      content-length: '56'
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 21:18:55 GMT
+      date: Wed, 19 May 2021 16:01:35 GMT
       docker-distribution-api-version: registry/2.0
+      link: </acr/v1/_catalog?last=repo25ce0f5d&n=2&orderby=>; rel="next"
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
@@ -164,4 +167,675 @@ interactions:
       code: 200
       message: OK
     url: https://fake_url.azurecr.io/acr/v1/_catalog?last=library/busybox&n=2&orderby=
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo25ce0f5d&n=2&orderby=
+  response:
+    body:
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "registry", "Name": "catalog", "Action": "*"}]}]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '196'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:35 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo25ce0f5d&n=2&orderby=
+- request:
+    body:
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
+      - password
+      scope: registry:catalog:*
+      service: fake_url.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/token
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:35 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.6'
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/oauth2/token
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo25ce0f5d&n=2&orderby=
+  response:
+    body:
+      string: '{"repositories": ["repo27331535", "repo28471541"]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '49'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:35 GMT
+      docker-distribution-api-version: registry/2.0
+      link: </acr/v1/_catalog?last=repo28471541&n=2&orderby=>; rel="next"
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo25ce0f5d&n=2&orderby=
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo28471541&n=2&orderby=
+  response:
+    body:
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "registry", "Name": "catalog", "Action": "*"}]}]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '196'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:35 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo28471541&n=2&orderby=
+- request:
+    body:
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
+      - password
+      scope: registry:catalog:*
+      service: fake_url.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/token
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:35 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.583333'
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/oauth2/token
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo28471541&n=2&orderby=
+  response:
+    body:
+      string: '{"repositories": ["repo2c591564", "repo34ab0fa1"]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '49'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:35 GMT
+      docker-distribution-api-version: registry/2.0
+      link: </acr/v1/_catalog?last=repo34ab0fa1&n=2&orderby=>; rel="next"
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo28471541&n=2&orderby=
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo34ab0fa1&n=2&orderby=
+  response:
+    body:
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "registry", "Name": "catalog", "Action": "*"}]}]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '196'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:36 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo34ab0fa1&n=2&orderby=
+- request:
+    body:
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
+      - password
+      scope: registry:catalog:*
+      service: fake_url.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/token
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:36 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.566667'
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/oauth2/token
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo34ab0fa1&n=2&orderby=
+  response:
+    body:
+      string: '{"repositories": ["repo3c82158b", "repo3db51597"]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '49'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:36 GMT
+      docker-distribution-api-version: registry/2.0
+      link: </acr/v1/_catalog?last=repo3db51597&n=2&orderby=>; rel="next"
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo34ab0fa1&n=2&orderby=
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo3db51597&n=2&orderby=
+  response:
+    body:
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "registry", "Name": "catalog", "Action": "*"}]}]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '196'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:36 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo3db51597&n=2&orderby=
+- request:
+    body:
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
+      - password
+      scope: registry:catalog:*
+      service: fake_url.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/token
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:36 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.55'
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/oauth2/token
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo3db51597&n=2&orderby=
+  response:
+    body:
+      string: '{"repositories": ["repo3e8d15a3", "repo8b5a11da"]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '49'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:36 GMT
+      docker-distribution-api-version: registry/2.0
+      link: </acr/v1/_catalog?last=repo8b5a11da&n=2&orderby=>; rel="next"
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo3db51597&n=2&orderby=
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo8b5a11da&n=2&orderby=
+  response:
+    body:
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "registry", "Name": "catalog", "Action": "*"}]}]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '196'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:36 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo8b5a11da&n=2&orderby=
+- request:
+    body:
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
+      - password
+      scope: registry:catalog:*
+      service: fake_url.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/token
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:36 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.533333'
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/oauth2/token
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo8b5a11da&n=2&orderby=
+  response:
+    body:
+      string: '{"repositories": ["repo9cb4121e", "repoaf9517b2"]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '49'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:36 GMT
+      docker-distribution-api-version: registry/2.0
+      link: </acr/v1/_catalog?last=repoaf9517b2&n=2&orderby=>; rel="next"
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo8b5a11da&n=2&orderby=
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoaf9517b2&n=2&orderby=
+  response:
+    body:
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "registry", "Name": "catalog", "Action": "*"}]}]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '196'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:37 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoaf9517b2&n=2&orderby=
+- request:
+    body:
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
+      - password
+      scope: registry:catalog:*
+      service: fake_url.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/token
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:37 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.516667'
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/oauth2/token
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoaf9517b2&n=2&orderby=
+  response:
+    body:
+      string: '{"repositories": ["repob0a917be", "repob22512e7"]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '49'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:37 GMT
+      docker-distribution-api-version: registry/2.0
+      link: </acr/v1/_catalog?last=repob22512e7&n=2&orderby=>; rel="next"
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoaf9517b2&n=2&orderby=
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repob22512e7&n=2&orderby=
+  response:
+    body:
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "registry", "Name": "catalog", "Action": "*"}]}]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '196'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:37 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repob22512e7&n=2&orderby=
+- request:
+    body:
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
+      - password
+      scope: registry:catalog:*
+      service: fake_url.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/token
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:37 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.5'
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/oauth2/token
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repob22512e7&n=2&orderby=
+  response:
+    body:
+      string: '{"repositories": ["repoc1b5131a", "repoc28d1326"]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '49'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:37 GMT
+      docker-distribution-api-version: registry/2.0
+      link: </acr/v1/_catalog?last=repoc28d1326&n=2&orderby=>; rel="next"
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repob22512e7&n=2&orderby=
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoc28d1326&n=2&orderby=
+  response:
+    body:
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "registry", "Name": "catalog", "Action": "*"}]}]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '196'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:37 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoc28d1326&n=2&orderby=
+- request:
+    body:
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
+      - password
+      scope: registry:catalog:*
+      service: fake_url.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/token
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:37 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.483333'
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/oauth2/token
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoc28d1326&n=2&orderby=
+  response:
+    body:
+      string: '{"repositories": ["repoc7611808", "to_be_deleted"]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '50'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 16:01:37 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoc28d1326&n=2&orderby=
 version: 1

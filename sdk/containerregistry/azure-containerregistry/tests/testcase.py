@@ -270,6 +270,7 @@ def import_image(repository, tags):
 
 @pytest.fixture(scope="session")
 def load_registry():
+    return
     if not is_live():
         return
     repos = [

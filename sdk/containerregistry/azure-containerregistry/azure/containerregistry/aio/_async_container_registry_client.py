@@ -360,7 +360,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             await client.delete()
         """
         if _is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
+            tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
         await self._client.container_registry.delete_manifest(repository, tag_or_digest)
 
     @distributed_trace_async
@@ -410,7 +410,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 properties = await client.get_registry_artifact_properties(artifact.digest)
         """
         if _is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
+            tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.get_manifest_properties(repository, tag_or_digest, **kwargs),
@@ -607,7 +607,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
         """
         if _is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
+            tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.update_manifest_properties(
