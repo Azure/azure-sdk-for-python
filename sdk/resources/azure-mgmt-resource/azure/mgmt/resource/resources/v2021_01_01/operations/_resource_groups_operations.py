@@ -173,6 +173,7 @@ class ResourceGroupsOperations(object):
     def _delete_initial(
         self,
         resource_group_name,  # type: str
+        force_deletion_types=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -194,6 +195,8 @@ class ResourceGroupsOperations(object):
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        if force_deletion_types is not None:
+            query_parameters['forceDeletionTypes'] = self._serialize.query("force_deletion_types", force_deletion_types, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
@@ -216,6 +219,7 @@ class ResourceGroupsOperations(object):
     def begin_delete(
         self,
         resource_group_name,  # type: str
+        force_deletion_types=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -227,6 +231,10 @@ class ResourceGroupsOperations(object):
         :param resource_group_name: The name of the resource group to delete. The name is case
          insensitive.
         :type resource_group_name: str
+        :param force_deletion_types: The resource types you want to force delete. Currently, only the
+         following is supported:
+         forceDeletionTypes=Microsoft.Compute/virtualMachines,Microsoft.Compute/virtualMachineScaleSets.
+        :type force_deletion_types: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the ARMPolling polling method,
@@ -247,6 +255,7 @@ class ResourceGroupsOperations(object):
         if cont_token is None:
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
+                force_deletion_types=force_deletion_types,
                 cls=lambda x,y,z: x,
                 **kwargs
             )

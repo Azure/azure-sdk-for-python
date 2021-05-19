@@ -167,6 +167,7 @@ class ResourceGroupsOperations:
     async def _delete_initial(
         self,
         resource_group_name: str,
+        force_deletion_types: Optional[str] = None,
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -187,6 +188,8 @@ class ResourceGroupsOperations:
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        if force_deletion_types is not None:
+            query_parameters['forceDeletionTypes'] = self._serialize.query("force_deletion_types", force_deletion_types, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
@@ -209,6 +212,7 @@ class ResourceGroupsOperations:
     async def begin_delete(
         self,
         resource_group_name: str,
+        force_deletion_types: Optional[str] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Deletes a resource group.
@@ -219,6 +223,10 @@ class ResourceGroupsOperations:
         :param resource_group_name: The name of the resource group to delete. The name is case
          insensitive.
         :type resource_group_name: str
+        :param force_deletion_types: The resource types you want to force delete. Currently, only the
+         following is supported:
+         forceDeletionTypes=Microsoft.Compute/virtualMachines,Microsoft.Compute/virtualMachineScaleSets.
+        :type force_deletion_types: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
@@ -239,6 +247,7 @@ class ResourceGroupsOperations:
         if cont_token is None:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
+                force_deletion_types=force_deletion_types,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
