@@ -8,7 +8,6 @@ import six
 
 # from azure.containerregistry import DeleteRepositoryResult
 from azure.core.exceptions import ResourceNotFoundError
-from azure.core.pipeline.transport import AioHttpTransport
 
 from asynctestcase import AsyncContainerRegistryTestClass
 from constants import TO_BE_DELETED, HELLO_WORLD
@@ -19,8 +18,6 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_list_repository_names(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
-
-        repositories = client.list_repository_names()
 
         count = 0
         prev = None
@@ -59,10 +56,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         self.import_image(HELLO_WORLD, [TO_BE_DELETED])
         client = self.create_registry_client(containerregistry_endpoint)
 
-        result = await client.delete_repository(TO_BE_DELETED)
-        assert isinstance(result, DeleteRepositoryResult)
-        assert result.deleted_manifests is not None
-        assert result.deleted_tags is not None
+        await client.delete_repository(TO_BE_DELETED)
 
         async for repo in client.list_repository_names():
             if repo == TO_BE_DELETED:
@@ -74,20 +68,3 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         with pytest.raises(ResourceNotFoundError):
             await client.delete_repository("not_real_repo")
-
-    @acr_preparer()
-    async def test_transport_closed_only_once(self, containerregistry_endpoint):
-        transport = AioHttpTransport()
-        client = self.create_registry_client(containerregistry_endpoint, transport=transport)
-        async with client:
-            async for r in client.list_repository_names():
-                pass
-            assert transport.session is not None
-
-            repo_client = client.get_repository(HELLO_WORLD)
-            async with repo_client:
-                assert transport.session is not None
-
-            async for r in client.list_repository_names():
-                pass
-            assert transport.session is not None

@@ -12,15 +12,12 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.paging import ItemPaged
-from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
-from ._base_client import ContainerRegistryBaseClient, TransportWrapper
-# from ._container_repository import ContainerRepository
+from ._base_client import ContainerRegistryBaseClient
 from ._generated.models import AcrErrors
 from ._helpers import _parse_next_link
-# from ._registry_artifact import RegistryArtifact
-# from ._models import DeleteRepositoryResult
+from ._models import RepositoryProperties
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional
@@ -32,6 +29,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint, credential=None, **kwargs):
         # type: (str, Optional[TokenCredential], **Any) -> None
         """Create a ContainerRegistryClient from an ACR endpoint and a credential
+
         :param str endpoint: An ACR endpoint
         :param credential: The credential with which to authenticate
         :type credential: :class:`~azure.core.credentials.TokenCredential`
@@ -53,12 +51,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._credential = credential
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
+    def _get_digest_from_tag(self, repository, tag):
+        # type: (str, str) -> str
+        tag_props = self.get_tag_properties(repository, tag)
+        return tag_props.digest
+
     @distributed_trace
-    def delete_repository(self, repository_name, **kwargs):
+    def delete_repository(self, repository, **kwargs):
         # type: (str, **Any) -> None
         """Delete a repository
 
-        :param str repository_name: The repository to delete
+        :param str repository: The repository to delete
         :returns: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
@@ -72,24 +75,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: Delete a repository from the `ContainerRegistryClient`
         """
-        # return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
-        self._client.container_registry.delete_repository(repository_name, **kwargs)
-        # )
+        self._client.container_registry.delete_repository(repository, **kwargs)
 
     @distributed_trace
     def list_repository_names(self, **kwargs):
         # type: (**Any) -> ItemPaged[str]
         """List all repositories
-        :keyword max: Maximum number of repositories to return
-        :paramtype max: int
-        :keyword last: Query parameter for the last item in the previous call. Ensuing
-            call will return values after last lexically
-        :paramtype last: str
+
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
         :return: ItemPaged[str]
         :rtype: :class:`~azure.core.paging.ItemPaged`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -102,7 +99,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
-
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.Repositories"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
@@ -201,7 +197,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.get_properties(self.name, **kwargs)
+            self._client.container_registry.get_properties(repository, **kwargs)
         )
 
     @distributed_trace
@@ -225,7 +221,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         cls = kwargs.pop(
             "cls",
             lambda objs: [
-                ArtifactManifestProperties._from_generated(x, repository_name=self.name)  # pylint: disable=protected-access
+                ArtifactManifestProperties._from_generated(x, repository_name=repository)  # pylint: disable=protected-access
                 for x in objs
             ],
         )
@@ -334,7 +330,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.set_properties(
-                self.name,
+                repository,
                 properties._to_generated(),  # pylint: disable=protected-access
                 **kwargs
             )
@@ -360,12 +356,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             client.delete()
         """
-        if not self._digest:
-            self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else self._get_digest_from_tag()
-        self._client.container_registry.delete_manifest(self.repository, self._digest)
-        # return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
-        #     self._client.container_registry.delete_repository(self.repository, **kwargs)
-        # )
+        if self._is_tag(tag_or_digest):
+            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
+        self._client.container_registry.delete_manifest(repository, tag_or_digest)
 
     @distributed_trace
     def delete_tag(self, repository, tag, **kwargs):
@@ -388,7 +381,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             for artifact in client.list_tags():
                 client.delete_tag(tag.name)
         """
-        self._client.container_registry.delete_tag(self.repository, tag, **kwargs)
+        self._client.container_registry.delete_tag(repository, tag, **kwargs)
 
     @distributed_trace
     def get_manifest_properties(self, repository, tag_or_digest, **kwargs):
@@ -410,12 +403,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             for artifact in client.list_manifests():
                 properties = client.get_registry_artifact_properties(artifact.digest)
         """
-        if not self._digest:
-            self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else self._get_digest_from_tag()
+        if self._is_tag(tag_or_digest):
+            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.get_manifest_properties(self.repository, self._digest, **kwargs),
-            repository_name=self.repository,
+            self._client.container_registry.get_manifest_properties(repository, tag_or_digest, **kwargs),
+            repository_name=repository,
         )
 
     @distributed_trace
@@ -439,8 +432,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 tag_properties = client.get_tag_properties(tag.name)
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.get_tag_properties(self.repository, tag, **kwargs),
-            repository=self.repository,
+            self._client.container_registry.get_tag_properties(repository, tag, **kwargs),
+            repository=repository,
         )
 
     @distributed_trace
@@ -467,7 +460,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             for tag in client.list_tags():
                 tag_properties = client.get_tag_properties(tag.name)
         """
-        name = self.repository
+        name = repository
         last = kwargs.pop("last", None)
         n = kwargs.pop("results_per_page", None)
         orderby = kwargs.pop("order_by", None)
@@ -475,7 +468,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         cls = kwargs.pop(
             "cls",
             lambda objs: [
-                ArtifactTagProperties._from_generated(o, repository=self.repository)  # pylint: disable=protected-access
+                ArtifactTagProperties._from_generated(o, repository=repository)  # pylint: disable=protected-access
                 for o in objs
             ],
         )
@@ -578,8 +571,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, str, ArtifactManifestProperties, **Any) -> ArtifactManifestProperties
         """Set the properties for a manifest
 
-        :param str repository:
-        :param str tag_or_digest:
+        :param str repository: Repository the manifest belongs to
+        :param str tag_or_digest: Tag or digest of the manifest
         :param properties: The property's values to be set
         :type properties: :class:`~azure.containerregistry.ArtifactManifestProperties`
         :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
@@ -603,17 +596,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     ),
                 )
         """
-        if not self._digest:
-            self._digest = self.tag_or_digest if _is_tag(self.tag_or_digest) else self._get_digest_from_tag()
+        if self._is_tag(tag_or_digest):
+            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.update_manifest_properties(
-                self.repository,
-                self._digest,
+                repository,
+                tag_or_digest,
                 value=properties._to_generated(),  # pylint: disable=protected-access
                 **kwargs
             ),
-            repository_name=self.repository,
+            repository_name=repository,
         )
 
     @distributed_trace
@@ -621,7 +614,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, str, ArtifactTagProperties, **Any) -> ArtifactTagProperties
         """Set the properties for a tag
 
-        :param str repository:
+        :param str repository: Repository the tag belongs to
         :param str tag: Tag to set properties for
         :param properties: The property's values to be set
         :type properties: ArtifactTagProperties
@@ -648,7 +641,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.update_tag_attributes(
-                self.repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
+                repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             ),
-            repository=self.repository,
+            repository=repository,
         )

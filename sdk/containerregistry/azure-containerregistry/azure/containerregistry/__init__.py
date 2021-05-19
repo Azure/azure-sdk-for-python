@@ -7,21 +7,15 @@
 # --------------------------------------------------------------------------
 
 from ._container_registry_client import ContainerRegistryClient
-# from ._container_repository import ContainerRepository
 from ._models import (
     ArtifactArchitecture,
     ArtifactOperatingSystem,
-    # ManifestWriteableProperties,
-    # RepositoryWriteableProperties,
-    # TagWriteableProperties,
-    # DeleteRepositoryResult,
     ManifestOrder,
     ArtifactManifestProperties,
     RepositoryProperties,
     TagOrder,
     ArtifactTagProperties,
 )
-# from ._registry_artifact import RegistryArtifact
 from ._version import VERSION
 
 __version__ = VERSION
@@ -30,12 +24,6 @@ __all__ = [
     "ArtifactArchitecture",
     "ArtifactOperatingSystem",
     "ContainerRegistryClient",
-    # "ContainerRepository",
-    # "ManifestWriteableProperties",
-    # "RepositoryWriteableProperties",
-    # "TagWriteableProperties",
-    # "DeleteRepositoryResult",
-    # "RegistryArtifact",
     "ManifestOrder",
     "ArtifactManifestProperties",
     "RepositoryProperties",

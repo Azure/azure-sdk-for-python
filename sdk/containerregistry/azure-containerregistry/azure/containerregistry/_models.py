@@ -8,163 +8,10 @@ from enum import Enum
 from typing import TYPE_CHECKING, Dict, Any
 
 from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
-from ._generated.models import RepositoryWriteableProperties as GenRepositoryWriteableProperties
-from ._generated.models import TagWriteableProperties as GenTagWriteableProperties
-from ._generated.models import ManifestWriteableProperties as GenManifestWriteableProperties
 
 if TYPE_CHECKING:
     from ._generated.models import ManifestAttributesBase
     from ._generated.models import ArtifactTagProperties as GeneratedArtifactTagProperties
-
-
-# class ManifestWriteableProperties(object):
-#     """Permissions of a manifest
-
-#     :ivar bool can_delete: Ability to delete a manifest
-#     :ivar bool can_list: Ability to list a manifest
-#     :ivar bool can_read: Ability to read a manifest
-#     :ivar bool can_write: Ability to write a manifest
-#     """
-
-#     def __init__(self, **kwargs):
-#         """Create ManifestWriteableProperties for a manifest
-
-#         :keyword bool can_delete: Delete operation status for the manifest
-#         :keyword bool can_list: List operation status for the manifest
-#         :keyword bool can_read: Read operation status for the manifest
-#         :keyword bool can_write: Write operation status for the manifest
-#         """
-#         self.can_delete = kwargs.get("can_delete")
-#         self.can_list = kwargs.get("can_list")
-#         self.can_read = kwargs.get("can_read")
-#         self.can_write = kwargs.get("can_write")
-
-#     @classmethod
-#     def _from_generated(cls, generated):
-#         # type: (GenManifestWriteableProperties) -> ManifestWriteableProperties
-#         return cls(
-#             can_delete=generated.can_delete,
-#             can_list=generated.can_list,
-#             can_read=generated.can_read,
-#             can_write=generated.can_write,
-#         )
-
-#     def _to_generated(self):
-#         # type: () -> GenManifestWriteableProperties
-#         return GenManifestWriteableProperties(
-#             can_delete=self.can_delete,
-#             can_list=self.can_list,
-#             can_read=self.can_read,
-#             can_write=self.can_write,
-#         )
-
-
-# class RepositoryWriteableProperties(object):
-#     """Permissions of a repository
-
-#     :ivar bool can_delete: Ability to delete a repository
-#     :ivar bool can_list: Ability to list a repository
-#     :ivar bool can_read: Ability to read a repository
-#     :ivar bool can_write: Ability to write a repository
-#     :ivar bool teleport_enabled: Teleport enabled for the repository
-#     """
-
-#     def __init__(self, **kwargs):
-#         """Create ManifestWriteableProperties for a repository
-
-#         :keyword bool can_delete: Delete operation status for the repository
-#         :keyword bool can_list: List operation status for the repository
-#         :keyword bool can_read: Read operation status for the repository
-#         :keyword bool can_write: Write operation status for the repository
-#         :keyword bool teleport_enabled: Teleport enabled for the repository
-#         """
-#         self.can_delete = kwargs.get("can_delete")
-#         self.can_list = kwargs.get("can_list")
-#         self.can_read = kwargs.get("can_read")
-#         self.can_write = kwargs.get("can_write")
-#         self.teleport_enabled = kwargs.get("teleport_enabled")
-
-#     @classmethod
-#     def _from_generated(cls, generated):
-#         # type: (GenRepositoryWriteableProperties) -> RepositoryWriteableProperties
-#         return cls(
-#             can_delete=generated.can_delete,
-#             can_list=generated.can_list,
-#             can_read=generated.can_read,
-#             can_write=generated.can_write,
-#             teleport_enabled=generated.teleport_enabled
-#         )
-
-#     def _to_generated(self):
-#         # type: () -> GenRepositoryWriteableProperties
-#         return GenRepositoryWriteableProperties(
-#             can_delete=self.can_delete,
-#             can_list=self.can_list,
-#             can_read=self.can_read,
-#             write_enabled=self.can_write,
-#             teleport_enabled=self.teleport_enabled,
-#         )
-
-
-# class TagWriteableProperties(object):
-#     """Permissions of a tag
-
-#     :ivar bool can_delete: Ability to delete a tag
-#     :ivar bool can_list: Ability to list a tag
-#     :ivar bool can_read: Ability to read a tag
-#     :ivar bool can_write: Ability to write a tag
-#     """
-
-#     def __init__(self, **kwargs):
-#         """Create TagWriteableProperties for a tag
-
-#         :keyword bool can_delete: Delete operation status for the tag
-#         :keyword bool can_list: List operation status for the tag
-#         :keyword bool can_read: Read operation status for the tag
-#         :keyword bool can_write: Write operation status for the tag
-#         """
-#         self.can_delete = kwargs.get("can_delete")
-#         self.can_list = kwargs.get("can_list")
-#         self.can_read = kwargs.get("can_read")
-#         self.can_write = kwargs.get("can_write")
-
-#     @classmethod
-#     def _from_generated(cls, generated):
-#         # type: (GenTagWriteableProperties) -> TagWriteableProperties
-#         return cls(
-#             can_delete=generated.can_delete,
-#             can_list=generated.can_list,
-#             can_read=generated.can_read,
-#             can_write=generated.can_write,
-#         )
-
-#     def _to_generated(self):
-#         # type: () -> GenTagWriteableProperties
-#         return GenTagWriteableProperties(
-#             can_delete=self.can_delete,
-#             can_list=self.can_list,
-#             can_read=self.can_read,
-#             can_write=self.can_write,
-#         )
-
-
-# class DeleteRepositoryResult(object):
-#     """Represents the digests and tags deleted when a repository is deleted
-
-#     :ivar List[str] deleted_manifests: Registry artifact digests that were deleted
-#     :ivar List[str] deleted_tags: Tags that were deleted
-#     """
-
-#     def __init__(self, **kwargs):
-#         self.deleted_manifests = kwargs.get("deleted_manifests", None)
-#         self.deleted_tags = kwargs.get("deleted_tags", None)
-
-#     @classmethod
-#     def _from_generated(cls, gen):
-#         return cls(
-#             deleted_tags=gen.deleted_tags,
-#             deleted_manifests=gen.deleted_manifests,
-#         )
 
 
 class ArtifactManifestProperties(object):
@@ -205,11 +52,6 @@ class ArtifactManifestProperties(object):
         self.can_read = kwargs.get("can_read")
         self.can_list = kwargs.get("can_list")
         self.can_write = kwargs.get("can_write")
-        # self.writeable_properties = kwargs.get("content_permissions", None)
-        # if self.writeable_properties:
-        #     self.writeable_properties = ManifestWriteableProperties._from_generated(
-        #         self.writeable_properties
-        #     )
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
@@ -222,11 +64,10 @@ class ArtifactManifestProperties(object):
             operating_system=generated.operating_system,
             size=generated.size,
             tags=generated.tags,
-            # content_permissions=generated.writeable_properties,
-            can_delete=generated.writeable_properties.can_delete,
-            can_read=generated.writeable_properties.can_read,
-            can_write=generated.writeable_properties.can_write,
-            can_list=generated.writeable_properties.can_list,
+            can_delete=generated.can_delete,
+            can_read=generated.can_read,
+            can_write=generated.can_write,
+            can_list=generated.can_list,
             repository_name=kwargs.get("repository_name", None),
 
         )
@@ -235,8 +76,6 @@ class ArtifactManifestProperties(object):
 class RepositoryProperties(object):
     """Model for storing properties of a single repository
 
-    :ivar writeable_properties: Read/Write/List/Delete permissions for the repository
-    :vartype writeable_properties: ~azure.containerregistry.RepositoryWriteableProperties
     :ivar created_on: Time the repository was created
     :vartype created_on: datetime.datetime
     :ivar last_updated_on: Time the repository was last updated
@@ -252,7 +91,6 @@ class RepositoryProperties(object):
     """
 
     def __init__(self, **kwargs):
-        self.writeable_properties = kwargs.get("content_permissions", None)
         self.created_on = kwargs.get("created_on", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.manifest_count = kwargs.get("manifest_count", None)
@@ -263,10 +101,6 @@ class RepositoryProperties(object):
         self.can_list = kwargs.get("can_list")
         self.can_write = kwargs.get("can_write")
         self.teleport_enabled = kwargs.get("teleport_enabled")
-        # if self.writeable_properties:
-        #     self.writeable_properties = RepositoryWriteableProperties._from_generated(
-        #         self.writeable_properties
-        #     )
 
     @classmethod
     def _from_generated(cls, generated):
@@ -277,11 +111,10 @@ class RepositoryProperties(object):
             name=generated.name,
             manifest_count=generated.manifest_count,
             tag_count=generated.tag_count,
-            content_permissions=generated.writeable_properties,
-            can_delete=generated.writeable_properties.can_delete,
-            can_read=generated.writeable_properties.can_read,
-            can_write=generated.writeable_properties.can_write,
-            can_list=generated.writeable_properties.can_list,
+            can_delete=generated.can_delete,
+            can_read=generated.can_read,
+            can_write=generated.can_write,
+            can_list=generated.can_list,
         )
 
     def _to_generated(self):
@@ -292,7 +125,10 @@ class RepositoryProperties(object):
             last_updated_on=self.last_updated_on,
             manifest_count=self.manifest_count,
             tag_count=self.tag_count,
-            writeable_properties=self.writeable_properties._to_generated(),  # pylint: disable=protected-access
+            can_delete=self.can_delete,
+            can_read=self.can_read,
+            can_write=self.can_write,
+            can_list=self.can_list,
         )
 
 
@@ -313,8 +149,6 @@ class TagOrder(str, Enum):
 class ArtifactTagProperties(object):
     """Model for storing properties of a single tag
 
-    :ivar writeable_properties: Read/Write/List/Delete permissions for the tag
-    :vartype writeable_properties: ~azure.containerregistry.TagWriteableProperties
     :ivar created_on: Time the tag was created
     :vartype created_on: datetime.datetime
     :ivar str digest: Digest for the tag
@@ -329,20 +163,15 @@ class ArtifactTagProperties(object):
     """
 
     def __init__(self, **kwargs):
-        self.writeable_properties = kwargs.get("writeable_properties", None)
         self.created_on = kwargs.get("created_on", None)
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.name = kwargs.get("name", None)
-        self.repository = kwargs.get("repository", None)
+        self.repository_name = kwargs.get("repository_name", None)
         self.can_delete = kwargs.get("can_delete")
         self.can_read = kwargs.get("can_read")
         self.can_list = kwargs.get("can_list")
         self.can_write = kwargs.get("can_write")
-        # if self.writeable_properties:
-        #     self.writeable_properties = TagWriteableProperties._from_generated(
-        #         self.writeable_properties
-        #     )
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
@@ -352,12 +181,24 @@ class ArtifactTagProperties(object):
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
             name=generated.name,
-            writeable_properties=generated.writeable_properties,
-            can_delete=generated.writeable_properties.can_delete,
-            can_read=generated.writeable_properties.can_read,
-            can_write=generated.writeable_properties.can_write,
-            can_list=generated.writeable_properties.can_list,
-            repository=kwargs.get("repository", None),
+            can_delete=generated.can_delete,
+            can_read=generated.can_read,
+            can_write=generated.can_write,
+            can_list=generated.can_list,
+            repository_name=kwargs.get("repository_name", None),
+        )
+
+    def _to_generated(self):
+        # type: () -> GeneratedArtifactTagProperties
+        return GeneratedArtifactTagProperties(
+            created_on=self.created_on,
+            digest=self.digest,
+            last_updated_on=self.last_updated_on,
+            name=self.name,
+            can_delete=self.can_delete,
+            can_read=self.can_read,
+            can_write=self.can_write,
+            can_list=self.can_list,
         )
 
 

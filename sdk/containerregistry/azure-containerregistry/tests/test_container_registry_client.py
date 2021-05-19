@@ -60,10 +60,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         self.import_image(HELLO_WORLD, [TO_BE_DELETED])
         client = self.create_registry_client(containerregistry_endpoint)
 
-        result = client.delete_repository(TO_BE_DELETED)
-        assert isinstance(result, DeleteRepositoryResult)
-        assert result.deleted_manifests is not None
-        assert result.deleted_tags is not None
+        client.delete_repository(TO_BE_DELETED)
 
         for repo in client.list_repository_names():
             if repo == TO_BE_DELETED:
@@ -74,20 +71,4 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
 
         with pytest.raises(ResourceNotFoundError):
-            deleted_result = client.delete_repository("not_real_repo")
-
-    @acr_preparer()
-    def test_transport_closed_only_once(self, containerregistry_endpoint):
-        transport = RequestsTransport()
-        client = self.create_registry_client(containerregistry_endpoint, transport=transport)
-        with client:
-            for r in client.list_repository_names():
-                pass
-            assert transport.session is not None
-
-            with client.get_repository(HELLO_WORLD) as repo_client:
-                assert transport.session is not None
-
-            for r in client.list_repository_names():
-                pass
-            assert transport.session is not None
+            client.delete_repository("not_real_repo")

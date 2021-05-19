@@ -12,6 +12,7 @@ try:
     from ._models_py3 import AcrRefreshToken
     from ._models_py3 import Annotations
     from ._models_py3 import ArtifactManifestProperties
+    from ._models_py3 import ArtifactManifestReference
     from ._models_py3 import ArtifactTagProperties
     from ._models_py3 import DeleteRepositoryResult
     from ._models_py3 import Descriptor
@@ -23,7 +24,6 @@ try:
     from ._models_py3 import Manifest
     from ._models_py3 import ManifestAttributesBase
     from ._models_py3 import ManifestAttributesManifest
-    from ._models_py3 import ManifestAttributesManifestReferences
     from ._models_py3 import ManifestList
     from ._models_py3 import ManifestListAttributes
     from ._models_py3 import ManifestWrapper
@@ -51,6 +51,7 @@ except (SyntaxError, ImportError):
     from ._models import AcrRefreshToken  # type: ignore
     from ._models import Annotations  # type: ignore
     from ._models import ArtifactManifestProperties  # type: ignore
+    from ._models import ArtifactManifestReference  # type: ignore
     from ._models import ArtifactTagProperties  # type: ignore
     from ._models import DeleteRepositoryResult  # type: ignore
     from ._models import Descriptor  # type: ignore
@@ -62,7 +63,6 @@ except (SyntaxError, ImportError):
     from ._models import Manifest  # type: ignore
     from ._models import ManifestAttributesBase  # type: ignore
     from ._models import ManifestAttributesManifest  # type: ignore
-    from ._models import ManifestAttributesManifestReferences  # type: ignore
     from ._models import ManifestList  # type: ignore
     from ._models import ManifestListAttributes  # type: ignore
     from ._models import ManifestWrapper  # type: ignore
@@ -99,6 +99,7 @@ __all__ = [
     'AcrRefreshToken',
     'Annotations',
     'ArtifactManifestProperties',
+    'ArtifactManifestReference',
     'ArtifactTagProperties',
     'DeleteRepositoryResult',
     'Descriptor',
@@ -110,7 +111,6 @@ __all__ = [
     'Manifest',
     'ManifestAttributesBase',
     'ManifestAttributesManifest',
-    'ManifestAttributesManifestReferences',
     'ManifestList',
     'ManifestListAttributes',
     'ManifestWrapper',

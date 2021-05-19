@@ -76,6 +76,9 @@ class AcrErrors(msrest.serialization.Model):
 class AcrManifests(msrest.serialization.Model):
     """Manifest attributes.
 
+    :param registry_login_server: Registry login server name.  This is likely to be similar to
+     {registry-name}.azurecr.io.
+    :type registry_login_server: str
     :param repository: Image name.
     :type repository: str
     :param manifests: List of manifests.
@@ -85,6 +88,7 @@ class AcrManifests(msrest.serialization.Model):
     """
 
     _attribute_map = {
+        'registry_login_server': {'key': 'registry', 'type': 'str'},
         'repository': {'key': 'imageName', 'type': 'str'},
         'manifests': {'key': 'manifests', 'type': '[ManifestAttributesBase]'},
         'link': {'key': 'link', 'type': 'str'},
@@ -95,6 +99,7 @@ class AcrManifests(msrest.serialization.Model):
         **kwargs
     ):
         super(AcrManifests, self).__init__(**kwargs)
+        self.registry_login_server = kwargs.get('registry_login_server', None)
         self.repository = kwargs.get('repository', None)
         self.manifests = kwargs.get('manifests', None)
         self.link = kwargs.get('link', None)
@@ -197,15 +202,18 @@ class ArtifactManifestProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar registry_login_server: Registry login server name.  This is likely to be similar to
+     {registry-name}.azurecr.io.
+    :vartype registry_login_server: str
     :ivar repository_name: Repository name.
     :vartype repository_name: str
     :ivar digest: Required. Manifest.
     :vartype digest: str
     :ivar size: Image size.
     :vartype size: long
-    :ivar created_on: Created time.
+    :ivar created_on: Required. Created time.
     :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: Last update time.
+    :ivar last_updated_on: Required. Last update time.
     :vartype last_updated_on: ~datetime.datetime
     :ivar architecture: CPU architecture. Possible values include: "386", "amd64", "arm", "arm64",
      "mips", "mipsle", "mips64", "mips64le", "ppc64", "ppc64le", "riscv64", "s390x", "wasm". Default
@@ -215,28 +223,40 @@ class ArtifactManifestProperties(msrest.serialization.Model):
      "dragonfly", "freebsd", "illumos", "ios", "js", "linux", "netbsd", "openbsd", "plan9",
      "solaris", "windows".
     :vartype operating_system: str or ~container_registry.models.ArtifactOperatingSystem
-    :ivar references: List of manifest attributes details.
-    :vartype references: list[~container_registry.models.ManifestAttributesManifestReferences]
+    :ivar manifest_references: List of manifests referenced by this manifest list.  List will be
+     empty if this manifest is not a manifest list.
+    :vartype manifest_references: list[~container_registry.models.ArtifactManifestReference]
     :ivar tags: A set of tags. List of tags.
     :vartype tags: list[str]
-    :ivar writeable_properties: Writeable properties of the resource.
-    :vartype writeable_properties: ~container_registry.models.ManifestWriteableProperties
+    :param can_delete: Delete enabled.
+    :type can_delete: bool
+    :param can_write: Write enabled.
+    :type can_write: bool
+    :param can_list: List enabled.
+    :type can_list: bool
+    :param can_read: Read enabled.
+    :type can_read: bool
+    :param quarantine_state: Quarantine state.
+    :type quarantine_state: str
+    :param quarantine_details: Quarantine details.
+    :type quarantine_details: str
     """
 
     _validation = {
+        'registry_login_server': {'readonly': True},
         'repository_name': {'readonly': True},
         'digest': {'required': True, 'readonly': True},
         'size': {'readonly': True},
-        'created_on': {'readonly': True},
-        'last_updated_on': {'readonly': True},
+        'created_on': {'required': True, 'readonly': True},
+        'last_updated_on': {'required': True, 'readonly': True},
         'architecture': {'readonly': True},
         'operating_system': {'readonly': True},
-        'references': {'readonly': True},
+        'manifest_references': {'readonly': True},
         'tags': {'readonly': True},
-        'writeable_properties': {'readonly': True},
     }
 
     _attribute_map = {
+        'registry_login_server': {'key': 'registry', 'type': 'str'},
         'repository_name': {'key': 'imageName', 'type': 'str'},
         'digest': {'key': 'manifest.digest', 'type': 'str'},
         'size': {'key': 'manifest.imageSize', 'type': 'long'},
@@ -244,9 +264,14 @@ class ArtifactManifestProperties(msrest.serialization.Model):
         'last_updated_on': {'key': 'manifest.lastUpdateTime', 'type': 'iso-8601'},
         'architecture': {'key': 'manifest.architecture', 'type': 'str'},
         'operating_system': {'key': 'manifest.os', 'type': 'str'},
-        'references': {'key': 'manifest.references', 'type': '[ManifestAttributesManifestReferences]'},
+        'manifest_references': {'key': 'manifest.references', 'type': '[ArtifactManifestReference]'},
         'tags': {'key': 'manifest.tags', 'type': '[str]'},
-        'writeable_properties': {'key': 'manifest.changeableAttributes', 'type': 'ManifestWriteableProperties'},
+        'can_delete': {'key': 'manifest.changeableAttributes.deleteEnabled', 'type': 'bool'},
+        'can_write': {'key': 'manifest.changeableAttributes.writeEnabled', 'type': 'bool'},
+        'can_list': {'key': 'manifest.changeableAttributes.listEnabled', 'type': 'bool'},
+        'can_read': {'key': 'manifest.changeableAttributes.readEnabled', 'type': 'bool'},
+        'quarantine_state': {'key': 'manifest.changeableAttributes.quarantineState', 'type': 'str'},
+        'quarantine_details': {'key': 'manifest.changeableAttributes.quarantineDetails', 'type': 'str'},
     }
 
     def __init__(
@@ -254,6 +279,7 @@ class ArtifactManifestProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(ArtifactManifestProperties, self).__init__(**kwargs)
+        self.registry_login_server = None
         self.repository_name = None
         self.digest = None
         self.size = None
@@ -261,9 +287,55 @@ class ArtifactManifestProperties(msrest.serialization.Model):
         self.last_updated_on = None
         self.architecture = None
         self.operating_system = None
-        self.references = None
+        self.manifest_references = None
         self.tags = None
-        self.writeable_properties = None
+        self.can_delete = kwargs.get('can_delete', None)
+        self.can_write = kwargs.get('can_write', None)
+        self.can_list = kwargs.get('can_list', None)
+        self.can_read = kwargs.get('can_read', None)
+        self.quarantine_state = kwargs.get('quarantine_state', None)
+        self.quarantine_details = kwargs.get('quarantine_details', None)
+
+
+class ArtifactManifestReference(msrest.serialization.Model):
+    """Manifest attributes details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar digest: Required. Manifest digest.
+    :vartype digest: str
+    :ivar architecture: Required. CPU architecture. Possible values include: "386", "amd64", "arm",
+     "arm64", "mips", "mipsle", "mips64", "mips64le", "ppc64", "ppc64le", "riscv64", "s390x",
+     "wasm". Default value: "none".
+    :vartype architecture: str or ~container_registry.models.ArtifactArchitecture
+    :ivar operating_system: Required. Operating system. Possible values include: "aix", "android",
+     "darwin", "dragonfly", "freebsd", "illumos", "ios", "js", "linux", "netbsd", "openbsd",
+     "plan9", "solaris", "windows".
+    :vartype operating_system: str or ~container_registry.models.ArtifactOperatingSystem
+    """
+
+    _validation = {
+        'digest': {'required': True, 'readonly': True},
+        'architecture': {'required': True, 'readonly': True},
+        'operating_system': {'required': True, 'readonly': True},
+    }
+
+    _attribute_map = {
+        'digest': {'key': 'digest', 'type': 'str'},
+        'architecture': {'key': 'architecture', 'type': 'str'},
+        'operating_system': {'key': 'os', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ArtifactManifestReference, self).__init__(**kwargs)
+        self.digest = None
+        self.architecture = None
+        self.operating_system = None
 
 
 class ArtifactTagProperties(msrest.serialization.Model):
@@ -273,6 +345,9 @@ class ArtifactTagProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar registry_login_server: Required. Registry login server name.  This is likely to be
+     similar to {registry-name}.azurecr.io.
+    :vartype registry_login_server: str
     :ivar repository_name: Required. Image name.
     :vartype repository_name: str
     :ivar name: Required. Tag name.
@@ -283,26 +358,36 @@ class ArtifactTagProperties(msrest.serialization.Model):
     :vartype created_on: ~datetime.datetime
     :ivar last_updated_on: Required. Tag last update time.
     :vartype last_updated_on: ~datetime.datetime
-    :ivar writeable_properties: Required. Writeable properties of the resource.
-    :vartype writeable_properties: ~container_registry.models.TagWriteableProperties
+    :param can_delete: Delete enabled.
+    :type can_delete: bool
+    :param can_write: Write enabled.
+    :type can_write: bool
+    :param can_list: List enabled.
+    :type can_list: bool
+    :param can_read: Read enabled.
+    :type can_read: bool
     """
 
     _validation = {
+        'registry_login_server': {'required': True, 'readonly': True},
         'repository_name': {'required': True, 'readonly': True},
         'name': {'required': True, 'readonly': True},
         'digest': {'required': True, 'readonly': True},
         'created_on': {'required': True, 'readonly': True},
         'last_updated_on': {'required': True, 'readonly': True},
-        'writeable_properties': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {
+        'registry_login_server': {'key': 'registry', 'type': 'str'},
         'repository_name': {'key': 'imageName', 'type': 'str'},
         'name': {'key': 'tag.name', 'type': 'str'},
         'digest': {'key': 'tag.digest', 'type': 'str'},
         'created_on': {'key': 'tag.createdTime', 'type': 'iso-8601'},
         'last_updated_on': {'key': 'tag.lastUpdateTime', 'type': 'iso-8601'},
-        'writeable_properties': {'key': 'tag.changeableAttributes', 'type': 'TagWriteableProperties'},
+        'can_delete': {'key': 'tag.changeableAttributes.deleteEnabled', 'type': 'bool'},
+        'can_write': {'key': 'tag.changeableAttributes.writeEnabled', 'type': 'bool'},
+        'can_list': {'key': 'tag.changeableAttributes.listEnabled', 'type': 'bool'},
+        'can_read': {'key': 'tag.changeableAttributes.readEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -310,12 +395,16 @@ class ArtifactTagProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(ArtifactTagProperties, self).__init__(**kwargs)
+        self.registry_login_server = None
         self.repository_name = None
         self.name = None
         self.digest = None
         self.created_on = None
         self.last_updated_on = None
-        self.writeable_properties = None
+        self.can_delete = kwargs.get('can_delete', None)
+        self.can_write = kwargs.get('can_write', None)
+        self.can_list = kwargs.get('can_list', None)
+        self.can_read = kwargs.get('can_read', None)
 
 
 class DeleteRepositoryResult(msrest.serialization.Model):
@@ -536,9 +625,9 @@ class ManifestAttributesBase(msrest.serialization.Model):
     :vartype digest: str
     :ivar size: Image size.
     :vartype size: long
-    :ivar created_on: Created time.
+    :ivar created_on: Required. Created time.
     :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: Last update time.
+    :ivar last_updated_on: Required. Last update time.
     :vartype last_updated_on: ~datetime.datetime
     :ivar architecture: CPU architecture. Possible values include: "386", "amd64", "arm", "arm64",
      "mips", "mipsle", "mips64", "mips64le", "ppc64", "ppc64le", "riscv64", "s390x", "wasm". Default
@@ -548,24 +637,34 @@ class ManifestAttributesBase(msrest.serialization.Model):
      "dragonfly", "freebsd", "illumos", "ios", "js", "linux", "netbsd", "openbsd", "plan9",
      "solaris", "windows".
     :vartype operating_system: str or ~container_registry.models.ArtifactOperatingSystem
-    :ivar references: List of manifest attributes details.
-    :vartype references: list[~container_registry.models.ManifestAttributesManifestReferences]
+    :ivar manifest_references: List of manifests referenced by this manifest list.  List will be
+     empty if this manifest is not a manifest list.
+    :vartype manifest_references: list[~container_registry.models.ArtifactManifestReference]
     :ivar tags: A set of tags. List of tags.
     :vartype tags: list[str]
-    :ivar writeable_properties: Writeable properties of the resource.
-    :vartype writeable_properties: ~container_registry.models.ManifestWriteableProperties
+    :param can_delete: Delete enabled.
+    :type can_delete: bool
+    :param can_write: Write enabled.
+    :type can_write: bool
+    :param can_list: List enabled.
+    :type can_list: bool
+    :param can_read: Read enabled.
+    :type can_read: bool
+    :param quarantine_state: Quarantine state.
+    :type quarantine_state: str
+    :param quarantine_details: Quarantine details.
+    :type quarantine_details: str
     """
 
     _validation = {
         'digest': {'required': True, 'readonly': True},
         'size': {'readonly': True},
-        'created_on': {'readonly': True},
-        'last_updated_on': {'readonly': True},
+        'created_on': {'required': True, 'readonly': True},
+        'last_updated_on': {'required': True, 'readonly': True},
         'architecture': {'readonly': True},
         'operating_system': {'readonly': True},
-        'references': {'readonly': True},
+        'manifest_references': {'readonly': True},
         'tags': {'readonly': True},
-        'writeable_properties': {'readonly': True},
     }
 
     _attribute_map = {
@@ -575,9 +674,14 @@ class ManifestAttributesBase(msrest.serialization.Model):
         'last_updated_on': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
         'architecture': {'key': 'architecture', 'type': 'str'},
         'operating_system': {'key': 'os', 'type': 'str'},
-        'references': {'key': 'references', 'type': '[ManifestAttributesManifestReferences]'},
+        'manifest_references': {'key': 'references', 'type': '[ArtifactManifestReference]'},
         'tags': {'key': 'tags', 'type': '[str]'},
-        'writeable_properties': {'key': 'changeableAttributes', 'type': 'ManifestWriteableProperties'},
+        'can_delete': {'key': 'changeableAttributes.deleteEnabled', 'type': 'bool'},
+        'can_write': {'key': 'changeableAttributes.writeEnabled', 'type': 'bool'},
+        'can_list': {'key': 'changeableAttributes.listEnabled', 'type': 'bool'},
+        'can_read': {'key': 'changeableAttributes.readEnabled', 'type': 'bool'},
+        'quarantine_state': {'key': 'changeableAttributes.quarantineState', 'type': 'str'},
+        'quarantine_details': {'key': 'changeableAttributes.quarantineDetails', 'type': 'str'},
     }
 
     def __init__(
@@ -591,22 +695,27 @@ class ManifestAttributesBase(msrest.serialization.Model):
         self.last_updated_on = None
         self.architecture = None
         self.operating_system = None
-        self.references = None
+        self.manifest_references = None
         self.tags = None
-        self.writeable_properties = None
+        self.can_delete = kwargs.get('can_delete', None)
+        self.can_write = kwargs.get('can_write', None)
+        self.can_list = kwargs.get('can_list', None)
+        self.can_read = kwargs.get('can_read', None)
+        self.quarantine_state = kwargs.get('quarantine_state', None)
+        self.quarantine_details = kwargs.get('quarantine_details', None)
 
 
 class ManifestAttributesManifest(msrest.serialization.Model):
     """List of manifest attributes.
 
     :param references: List of manifest attributes details.
-    :type references: list[~container_registry.models.ManifestAttributesManifestReferences]
+    :type references: list[~container_registry.models.ArtifactManifestReference]
     :param quarantine_tag: Quarantine tag name.
     :type quarantine_tag: str
     """
 
     _attribute_map = {
-        'references': {'key': 'references', 'type': '[ManifestAttributesManifestReferences]'},
+        'references': {'key': 'references', 'type': '[ArtifactManifestReference]'},
         'quarantine_tag': {'key': 'quarantineTag', 'type': 'str'},
     }
 
@@ -617,47 +726,6 @@ class ManifestAttributesManifest(msrest.serialization.Model):
         super(ManifestAttributesManifest, self).__init__(**kwargs)
         self.references = kwargs.get('references', None)
         self.quarantine_tag = kwargs.get('quarantine_tag', None)
-
-
-class ManifestAttributesManifestReferences(msrest.serialization.Model):
-    """Manifest attributes details.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar digest: Required. Manifest digest.
-    :vartype digest: str
-    :ivar architecture: Required. CPU architecture. Possible values include: "386", "amd64", "arm",
-     "arm64", "mips", "mipsle", "mips64", "mips64le", "ppc64", "ppc64le", "riscv64", "s390x",
-     "wasm". Default value: "none".
-    :vartype architecture: str or ~container_registry.models.ArtifactArchitecture
-    :ivar operating_system: Required. Operating system. Possible values include: "aix", "android",
-     "darwin", "dragonfly", "freebsd", "illumos", "ios", "js", "linux", "netbsd", "openbsd",
-     "plan9", "solaris", "windows".
-    :vartype operating_system: str or ~container_registry.models.ArtifactOperatingSystem
-    """
-
-    _validation = {
-        'digest': {'required': True, 'readonly': True},
-        'architecture': {'required': True, 'readonly': True},
-        'operating_system': {'required': True, 'readonly': True},
-    }
-
-    _attribute_map = {
-        'digest': {'key': 'digest', 'type': 'str'},
-        'architecture': {'key': 'architecture', 'type': 'str'},
-        'operating_system': {'key': 'os', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ManifestAttributesManifestReferences, self).__init__(**kwargs)
-        self.digest = None
-        self.architecture = None
-        self.operating_system = None
 
 
 class ManifestList(Manifest):
@@ -1033,6 +1101,9 @@ class RepositoryProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar registry_login_server: Required. Registry login server name.  This is likely to be
+     similar to {registry-name}.azurecr.io.
+    :vartype registry_login_server: str
     :ivar name: Required. Image name.
     :vartype name: str
     :ivar created_on: Required. Image created time.
@@ -1043,26 +1114,40 @@ class RepositoryProperties(msrest.serialization.Model):
     :vartype manifest_count: int
     :ivar tag_count: Required. Number of the tags.
     :vartype tag_count: int
-    :ivar writeable_properties: Required. Writeable properties of the resource.
-    :vartype writeable_properties: ~container_registry.models.RepositoryWriteableProperties
+    :param can_delete: Delete enabled.
+    :type can_delete: bool
+    :param can_write: Write enabled.
+    :type can_write: bool
+    :param can_list: List enabled.
+    :type can_list: bool
+    :param can_read: Read enabled.
+    :type can_read: bool
+    :param teleport_enabled: Enables Teleport functionality on new images in the repository
+     improving Container startup performance.
+    :type teleport_enabled: bool
     """
 
     _validation = {
+        'registry_login_server': {'required': True, 'readonly': True},
         'name': {'required': True, 'readonly': True},
         'created_on': {'required': True, 'readonly': True},
         'last_updated_on': {'required': True, 'readonly': True},
         'manifest_count': {'required': True, 'readonly': True},
         'tag_count': {'required': True, 'readonly': True},
-        'writeable_properties': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {
+        'registry_login_server': {'key': 'registry', 'type': 'str'},
         'name': {'key': 'imageName', 'type': 'str'},
         'created_on': {'key': 'createdTime', 'type': 'iso-8601'},
         'last_updated_on': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
         'manifest_count': {'key': 'manifestCount', 'type': 'int'},
         'tag_count': {'key': 'tagCount', 'type': 'int'},
-        'writeable_properties': {'key': 'changeableAttributes', 'type': 'RepositoryWriteableProperties'},
+        'can_delete': {'key': 'changeableAttributes.deleteEnabled', 'type': 'bool'},
+        'can_write': {'key': 'changeableAttributes.writeEnabled', 'type': 'bool'},
+        'can_list': {'key': 'changeableAttributes.listEnabled', 'type': 'bool'},
+        'can_read': {'key': 'changeableAttributes.readEnabled', 'type': 'bool'},
+        'teleport_enabled': {'key': 'changeableAttributes.teleportEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -1070,12 +1155,17 @@ class RepositoryProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(RepositoryProperties, self).__init__(**kwargs)
+        self.registry_login_server = None
         self.name = None
         self.created_on = None
         self.last_updated_on = None
         self.manifest_count = None
         self.tag_count = None
-        self.writeable_properties = None
+        self.can_delete = kwargs.get('can_delete', None)
+        self.can_write = kwargs.get('can_write', None)
+        self.can_list = kwargs.get('can_list', None)
+        self.can_read = kwargs.get('can_read', None)
+        self.teleport_enabled = kwargs.get('teleport_enabled', None)
 
 
 class RepositoryTags(msrest.serialization.Model):
@@ -1152,8 +1242,14 @@ class TagAttributesBase(msrest.serialization.Model):
     :vartype created_on: ~datetime.datetime
     :ivar last_updated_on: Required. Tag last update time.
     :vartype last_updated_on: ~datetime.datetime
-    :ivar writeable_properties: Required. Writeable properties of the resource.
-    :vartype writeable_properties: ~container_registry.models.TagWriteableProperties
+    :param can_delete: Delete enabled.
+    :type can_delete: bool
+    :param can_write: Write enabled.
+    :type can_write: bool
+    :param can_list: List enabled.
+    :type can_list: bool
+    :param can_read: Read enabled.
+    :type can_read: bool
     """
 
     _validation = {
@@ -1161,7 +1257,6 @@ class TagAttributesBase(msrest.serialization.Model):
         'digest': {'required': True, 'readonly': True},
         'created_on': {'required': True, 'readonly': True},
         'last_updated_on': {'required': True, 'readonly': True},
-        'writeable_properties': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {
@@ -1169,7 +1264,10 @@ class TagAttributesBase(msrest.serialization.Model):
         'digest': {'key': 'digest', 'type': 'str'},
         'created_on': {'key': 'createdTime', 'type': 'iso-8601'},
         'last_updated_on': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
-        'writeable_properties': {'key': 'changeableAttributes', 'type': 'TagWriteableProperties'},
+        'can_delete': {'key': 'changeableAttributes.deleteEnabled', 'type': 'bool'},
+        'can_write': {'key': 'changeableAttributes.writeEnabled', 'type': 'bool'},
+        'can_list': {'key': 'changeableAttributes.listEnabled', 'type': 'bool'},
+        'can_read': {'key': 'changeableAttributes.readEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -1181,7 +1279,10 @@ class TagAttributesBase(msrest.serialization.Model):
         self.digest = None
         self.created_on = None
         self.last_updated_on = None
-        self.writeable_properties = None
+        self.can_delete = kwargs.get('can_delete', None)
+        self.can_write = kwargs.get('can_write', None)
+        self.can_list = kwargs.get('can_list', None)
+        self.can_read = kwargs.get('can_read', None)
 
 
 class TagAttributesTag(msrest.serialization.Model):
@@ -1208,6 +1309,9 @@ class TagList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param registry_login_server: Required. Registry login server name.  This is likely to be
+     similar to {registry-name}.azurecr.io.
+    :type registry_login_server: str
     :param repository: Required. Image name.
     :type repository: str
     :param tag_attribute_bases: Required. List of tag attribute details.
@@ -1217,11 +1321,13 @@ class TagList(msrest.serialization.Model):
     """
 
     _validation = {
+        'registry_login_server': {'required': True},
         'repository': {'required': True},
         'tag_attribute_bases': {'required': True},
     }
 
     _attribute_map = {
+        'registry_login_server': {'key': 'registry', 'type': 'str'},
         'repository': {'key': 'imageName', 'type': 'str'},
         'tag_attribute_bases': {'key': 'tags', 'type': '[TagAttributesBase]'},
         'link': {'key': 'link', 'type': 'str'},
@@ -1232,6 +1338,7 @@ class TagList(msrest.serialization.Model):
         **kwargs
     ):
         super(TagList, self).__init__(**kwargs)
+        self.registry_login_server = kwargs['registry_login_server']
         self.repository = kwargs['repository']
         self.tag_attribute_bases = kwargs['tag_attribute_bases']
         self.link = kwargs.get('link', None)

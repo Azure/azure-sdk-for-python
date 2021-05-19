@@ -13,16 +13,17 @@ from azure.core.exceptions import (
     HttpResponseError,
     map_error,
 )
-from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ._async_base_client import ContainerRegistryBaseClient, AsyncTransportWrapper
-# from ._async_container_repository import ContainerRepository
+from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
 from .._helpers import _is_tag, _parse_next_link
-# from ._async_registry_artifact import RegistryArtifact
-from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
+from .._models import (
+    RepositoryProperties,
+    ArtifactManifestProperties,
+    ArtifactTagProperties
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -53,14 +54,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._credential = credential
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
+    async def _get_digest_from_tag(self, repository: str, tag: str) -> str:
+        tag_props = await self.get_tag_properties(repository, tag)
+        return tag_props.digest
+
     @distributed_trace_async
-    async def delete_repository(self, repository_name: str, **kwargs: Any) -> None:
+    async def delete_repository(self, repository: str, **kwargs: Any) -> None:
         """Delete a repository
 
-        :param str repository_name: The repository to delete
+        :param str repository: The repository to delete
         :returns: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -71,22 +76,20 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: Delete a repository from the `ContainerRegistryClient`
         """
-        result = await self._client.container_registry.delete_repository(repository_name, **kwargs)
-        # return DeleteRepositoryResult._from_generated(result)  # pylint: disable=protected-access
+        try:
+            await self._client.container_registry.delete_repository(repository, **kwargs)
+        except ResourceNotFoundError:
+            pass
 
     @distributed_trace
     def list_repository_names(self, **kwargs: Any) -> AsyncItemPaged[str]:
         """List all repositories
-        :keyword last: Query parameter for the last item in the previous call. Ensuing
-            call will return values after last lexicallyy
-        :paramtype last: str
-        :keyword max: Maximum number of repositories to return
-        :paramtype max: int
+
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
         :return: ItemPaged[str]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -195,7 +198,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.get_properties(self.name, **kwargs)
+            await self._client.container_registry.get_properties(repository, **kwargs)
         )
 
     @distributed_trace
@@ -209,16 +212,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype results_per_page: int
         :return: ItemPaged[:class:`~azure.containerregistry.ArtifactManifestProperties`]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        name = self.name
+        name = repository
         last = kwargs.pop("last", None)
         n = kwargs.pop("results_per_page", None)
         orderby = kwargs.pop("order_by", None)
         cls = kwargs.pop(
             "cls",
             lambda objs: [
-                ArtifactManifestProperties._from_generated(x, repository_name=self.name)  # pylint: disable=protected-access
+                ArtifactManifestProperties._from_generated(x, repository_name=repository)  # pylint: disable=protected-access
                 for x in objs
             ],
         )
@@ -341,7 +344,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     async def delete_manifest(self, repository: str, tag_or_digest: str, **kwargs: Any) -> None:
         """Delete a manifest
 
-        :param str repository:
+        :param str repository: Repository the manifest belongs to
+        :param str tag_or_digest: Tag or digest of the manifest to be deleted.
         :returns: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
@@ -355,18 +359,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             await client.delete()
         """
-        if not self._digest:
-            self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else await self._get_digest_from_tag()
-        await self._client.container_registry.delete_manifest(self.repository, self._digest)
-        # return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
-        #     await self._client.container_registry.delete_repository(self.repository, **kwargs)
-        # )
+        if _is_tag(tag_or_digest):
+            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
+        await self._client.container_registry.delete_manifest(repository, tag_or_digest)
 
     @distributed_trace_async
     async def delete_tag(self, repository: str, tag: str, **kwargs: Any) -> None:
         """Delete a tag from a repository
 
-        :param str repository:
+        :param str repository: Repository the tag belongs to
         :param str tag: The tag to be deleted
         :returns: None
         :rtype: None
@@ -382,7 +383,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             async for artifact in client.list_tags():
                 await client.delete_tag(tag.name)
         """
-        await self._client.container_registry.delete_tag(self.repository, tag, **kwargs)
+        await self._client.container_registry.delete_tag(repository, tag, **kwargs)
 
     @distributed_trace_async
     async def get_manifest_properties(
@@ -408,19 +409,19 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             async for artifact in client.list_manifests():
                 properties = await client.get_registry_artifact_properties(artifact.digest)
         """
-        if not self._digest:
-            self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else await self._get_digest_from_tag()
+        if _is_tag(tag_or_digest):
+            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.get_manifest_properties(self.repository, self._digest, **kwargs),
-            repository_name=self.repository,
+            await self._client.container_registry.get_manifest_properties(repository, tag_or_digest, **kwargs),
+            repository_name=repository,
         )
 
     @distributed_trace_async
     async def get_tag_properties(self, repository: str, tag: str, **kwargs: Any) -> ArtifactTagProperties:
         """Get the properties for a tag
 
-        :param str repository:
+        :param str repository: Repository the tag belongs to
         :param tag: The tag to get properties for
         :type tag: str
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
@@ -437,8 +438,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 tag_properties = await client.get_tag_properties(tag.name)
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.get_tag_properties(self.repository, tag, **kwargs),
-            repository=self.repository,
+            await self._client.container_registry.get_tag_properties(repository, tag, **kwargs),
+            repository=repository,
         )
 
     @distributed_trace
@@ -464,7 +465,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             async for tag in client.list_tags():
                 tag_properties = await client.get_tag_properties(tag.name)
         """
-        name = self.repository
+        name = repository
         last = kwargs.pop("last", None)
         n = kwargs.pop("results_per_page", None)
         orderby = kwargs.pop("order_by", None)
@@ -472,7 +473,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         cls = kwargs.pop(
             "cls",
             lambda objs: [
-                ArtifactTagProperties._from_generated(o, repository=self.repository)  # pylint: disable=protected-access
+                ArtifactTagProperties._from_generated(o, repository=repository)  # pylint: disable=protected-access
                 for o in objs
             ],
         )
@@ -574,7 +575,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     async def set_manifest_properties(
         self,
         repository: str,
-        tag_or_digest: str ,
+        tag_or_digest: str,
         properties: ArtifactManifestProperties,
         **kwargs: Any
     ) -> ArtifactManifestProperties:
@@ -605,17 +606,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     ),
                 )
         """
-        if not self._digest:
-            self._digest = self.tag_or_digest if _is_tag(self.tag_or_digest) else self._get_digest_from_tag()
+        if _is_tag(tag_or_digest):
+            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.update_manifest_properties(
-                self.repository,
-                self._digest,
+                repository,
+                tag_or_digest,
                 value=properties._to_generated(),  # pylint: disable=protected-access
                 **kwargs
             ),
-            repository_name=self.repository,
+            repository_name=repository,
         )
 
     @distributed_trace_async
@@ -624,7 +625,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     ) -> ArtifactTagProperties:
         """Set the properties for a tag
 
-        :param str repository:
+        :param str repository: Repository the tag belongs to
         :param str tag: Tag to set properties for
         :param properties: The property's values to be set
         :type properties: ArtifactTagProperties
@@ -651,7 +652,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.update_tag_attributes(
-                self.repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
+                repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             ),
-            repository=self.repository,
+            repository=repository,
         )
