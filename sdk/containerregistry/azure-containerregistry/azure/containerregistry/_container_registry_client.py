@@ -22,7 +22,6 @@ from ._models import RepositoryProperties, ArtifactTagProperties, ArtifactManife
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional
     from azure.core.credentials import TokenCredential
-    from ._models import ArtifactTagProperties, ArtifactManifestProperties
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):

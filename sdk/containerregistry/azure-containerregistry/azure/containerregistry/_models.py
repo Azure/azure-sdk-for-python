@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from ._generated.models import ManifestAttributesBase
 
 
-class ArtifactManifestProperties(object):
+class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-attributes
     """Represents properties of a registry artifact
 
     :ivar bool can_delete: Delete Permissions for an artifact

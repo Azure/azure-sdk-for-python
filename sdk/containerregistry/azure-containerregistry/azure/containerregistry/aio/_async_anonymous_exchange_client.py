@@ -22,9 +22,9 @@ class AnonymousACRExchangeClient(object):
     :type endpoint: str
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self, endpoint: str, **kwargs: Dict[str, Any]
-    ) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
+    ) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint

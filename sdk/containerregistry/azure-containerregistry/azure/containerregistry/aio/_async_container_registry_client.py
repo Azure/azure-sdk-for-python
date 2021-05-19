@@ -198,7 +198,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_manifests(self, repository, **kwargs: Any) -> AsyncItemPaged[ArtifactManifestProperties]:
+    def list_manifests(self, repository: str, **kwargs: Any) -> AsyncItemPaged[ArtifactManifestProperties]:
         """List the manifests of a repository
 
         :param str repository:
@@ -355,7 +355,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if _is_tag(tag_or_digest):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
         try:
-            await self._client.container_registry.delete_manifest(repository, tag_or_digest)
+            await self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
         except ResourceNotFoundError:
             pass
 
