@@ -36,6 +36,7 @@ except (SyntaxError, ImportError):
     from ._models import TrackedResource  # type: ignore
 
 from ._azure_stack_hci_client_enums import (
+    CreatedByType,
     ProvisioningState,
     Status,
 )
@@ -54,6 +55,7 @@ __all__ = [
     'OperationDisplay',
     'Resource',
     'TrackedResource',
+    'CreatedByType',
     'ProvisioningState',
     'Status',
 ]
