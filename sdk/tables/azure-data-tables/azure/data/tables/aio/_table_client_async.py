@@ -13,7 +13,7 @@ except ImportError:
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -23,14 +23,19 @@ from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
 from .._models import AccessPolicy
 from .._serialize import serialize_iso, _parameter_filter_substitution
 from .._deserialize import _return_headers_and_deserialized
-from .._error import _process_table_error, _validate_table_name
+from .._error import (
+    _process_table_error,
+    _validate_table_name,
+    _decode_error,
+    _reraise_error
+)
 from .._models import UpdateMode
 from .._deserialize import _convert_to_entity, _trim_service_metadata
 from .._serialize import _add_entity_properties, _get_match_headers
+from .._table_client import EntityType, TransactionOperationType
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
 from ._table_batch_async import TableBatchOperations
-from .._table_client import EntityType, TransactionOperationType
 
 
 class TableClient(AsyncTablesBaseClient):
@@ -368,10 +373,7 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Adding an entity to a Table
         """
-        if "PartitionKey" in entity and "RowKey" in entity:
-            entity = _add_entity_properties(entity)
-        else:
-            raise ValueError("PartitionKey and RowKey were not provided in entity")
+        entity = _add_entity_properties(entity)
         try:
             metadata, _ = await self._client.table.insert_entity(
                 table=self.table_name,
@@ -380,8 +382,15 @@ class TableClient(AsyncTablesBaseClient):
                 **kwargs
             )
             return _trim_service_metadata(metadata)
-        except ResourceNotFoundError as error:
-            _process_table_error(error)
+        except HttpResponseError as error:
+            decoded = _decode_error(error.response, error.message)
+            if decoded.error_code == "PropertiesNeedValue":
+                if entity.get("PartitionKey") is None:
+                    raise ValueError("PartitionKey must be present in an entity")
+                if entity.get("RowKey") is None:
+                    raise ValueError("RowKey must be present in an entity")
+            _reraise_error(error)
+
 
     @distributed_trace_async
     async def update_entity(
