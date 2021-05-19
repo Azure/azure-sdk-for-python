@@ -27,24 +27,25 @@ import os
 class CreateClients(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
     async def create_registry_client(self):
         # Instantiate the ContainerRegistryClient
         # [START create_registry_client]
         from azure.containerregistry.aio import ContainerRegistryClient
         from azure.identity.aio import DefaultAzureCredential
+        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
+        client = ContainerRegistryClient(account_url, DefaultAzureCredential())
         # [END create_registry_client]
 
     async def basic_sample(self):
 
         from azure.containerregistry.aio import ContainerRegistryClient
         from azure.identity.aio import DefaultAzureCredential
+        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
         # Instantiate the client
-        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
+        client = ContainerRegistryClient(account_url, DefaultAzureCredential())
         async with client:
             # Iterate through all the repositories
             async for repository_name in client.list_repository_names():

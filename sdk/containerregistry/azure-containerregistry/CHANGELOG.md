@@ -1,7 +1,11 @@
 # Release History
 
 ## 1.0.0b3 (Unreleased)
+<<<<<<< HEAD
 * Removes `ContentProperties` in favor of more detailed models for each operation. `ContentProperties` is replaced with `TagWriteableProperties`, `RepositoryWriteableProperties`, and `ManifestWriteableProperties`
+=======
+
+>>>>>>> f283843039db493be07a0cf23a1138634fe3bee1
 
 ## 1.0.0b2 (2021-05-11)
 * Rename `DeletedRepositoryResult` to `DeleteRepositoryResult`

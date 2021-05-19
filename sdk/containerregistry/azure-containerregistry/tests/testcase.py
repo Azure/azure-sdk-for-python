@@ -7,12 +7,10 @@ import copy
 import json
 import os
 import pytest
-import re
 import six
 import time
 
 from azure.containerregistry import (
-    # ContainerRepository,
     ContainerRegistryClient,
 )
 
@@ -23,17 +21,10 @@ from azure.identity import DefaultAzureCredential
 
 from devtools_testutils import AzureTestCase, is_live
 from azure_devtools.scenario_tests import (
-    GeneralNameReplacer,
-    RequestUrlNormalizer,
-    AuthenticationMetadataFilter,
+    OAuthRequestResponsesFilter,
     RecordingProcessor,
 )
-from azure_devtools.scenario_tests import (
-    GeneralNameReplacer,
-    RequestUrlNormalizer,
-    AuthenticationMetadataFilter,
-    RecordingProcessor,
-)
+from azure_devtools.scenario_tests import RecordingProcessor
 
 
 REDACTED = "REDACTED"
@@ -43,10 +34,7 @@ class OAuthRequestResponsesFilterACR(RecordingProcessor):
     """Remove oauth authentication requests and responses from recording."""
 
     def process_request(self, request):
-        # filter request like:
-        # GET https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token
-        # POST https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
-        # But we want to leave Azure Container Registry challenge auth requests alone
+        # We want to leave Azure Container Registry challenge auth requests alone
         import re
 
         if not re.search("/oauth2(?:/v2.0)?/token", request.uri) or "azurecr.io" in request.uri:
@@ -68,11 +56,8 @@ class ManagementRequestReplacer(RecordingProcessor):
 class AcrBodyReplacer(RecordingProcessor):
     """Replace request body for oauth2 exchanges"""
 
-    def __init__(self, replacement="redacted"):
-        self._replacement = replacement
+    def __init__(self):
         self._401_replacement = 'Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"'
-        self._redacted_service = "https://fakeurl.azurecr.io"
-        self._regex = r"(https://)[a-zA-Z0-9]+(\.azurecr.io)"
 
     def _scrub_body(self, body):
         # type: (bytes) -> bytes
@@ -99,29 +84,16 @@ class AcrBodyReplacer(RecordingProcessor):
         for k in ["access_token", "refresh_token"]:
             if k in new_body.keys():
                 new_body[k] = REDACTED
-        if "service" in new_body.keys():
-            new_body["service"] = "fake_url.azurecr.io"
         return new_body
 
     def process_request(self, request):
         if request.body:
             request.body = self._scrub_body(request.body)
 
-        if "seankane.azurecr.io" in request.uri:
-            request.uri = request.uri.replace("seankane.azurecr.io", "fake_url.azurecr.io")
-        if "seankane.azurecr.io" in request.url:
-            request.url = request.url.replace("seankane.azurecr.io", "fake_url.azurecr.io")
-
-        if "seankaneanon.azurecr.io" in request.uri:
-            request.uri = request.uri.replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
-        if "seankaneanon.azurecr.io" in request.url:
-            request.url = request.url.replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
-
         return request
 
     def process_response(self, response):
         try:
-            self.process_url(response)
             headers = response["headers"]
 
             if "www-authenticate" in headers:
@@ -134,24 +106,13 @@ class AcrBodyReplacer(RecordingProcessor):
                 if body["string"] == b"" or body["string"] == "null":
                     return response
 
-                if "seankane.azurecr.io" in body["string"]:
-                    body["string"] = body["string"].replace("seankane.azurecr.io", "fake_url.azurecr.io")
-
-                if "seankaneanon.azurecr.io" in body["string"]:
-                    body["string"] = body["string"].replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
-
                 refresh = json.loads(body["string"])
                 if "refresh_token" in refresh.keys():
                     refresh["refresh_token"] = REDACTED
                 if "access_token" in refresh.keys():
                     refresh["access_token"] = REDACTED
-                if "service" in refresh.keys():
-                    s = refresh["service"].split(".")
-                    s[0] = "fake_url"
-                    refresh["service"] = ".".join(s)
                 body["string"] = json.dumps(refresh)
             except ValueError:
-                # Python 2.7 doesn't have the below error
                 pass
             except json.decoder.JSONDecodeError:
                 pass
@@ -159,12 +120,6 @@ class AcrBodyReplacer(RecordingProcessor):
             return response
         except (KeyError, ValueError):
             return response
-
-    def process_url(self, response):
-        try:
-            response["url"] = re.sub(self._regex, r"\1{}\2".format("fake_url"), response["url"])
-        except KeyError:
-            pass
 
 
 class FakeTokenCredential(object):
@@ -181,18 +136,13 @@ class FakeTokenCredential(object):
 
 class ContainerRegistryTestClass(AzureTestCase):
     def __init__(self, method_name):
-        super(ContainerRegistryTestClass, self).__init__(
-            method_name,
-            recording_processors=[
-                GeneralNameReplacer(),
-                OAuthRequestResponsesFilterACR(),
-                AuthenticationMetadataFilter(),
-                RequestUrlNormalizer(),
-                AcrBodyReplacer(),
-                ManagementRequestReplacer(),
-            ],
-        )
+        super(ContainerRegistryTestClass, self).__init__(method_name)
         self.repository = "library/busybox"
+        self.recording_processors.append(AcrBodyReplacer())
+        self.recording_processors.append(ManagementRequestReplacer())
+        for idx, p in enumerate(self.recording_processors):
+            if isinstance(p, OAuthRequestResponsesFilter):
+                self.recording_processors[idx] = OAuthRequestResponsesFilterACR()
 
     def sleep(self, t):
         if self.is_live:

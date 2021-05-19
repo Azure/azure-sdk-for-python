@@ -7,15 +7,6 @@
 #--------------------------------------------------------------------------
 
 
-# TEST SCENARIO COVERAGE
-# ----------------------
-# Methods Total   : 7
-# Methods Covered : 7
-# Examples Total  : 7
-# Examples Tested : 7
-# Coverage %      : 100
-# ----------------------
-
 from logging import fatal
 from typing import Any, ByteString
 import unittest
@@ -219,6 +210,8 @@ class AttestationTest(AzureTestCase):
         assert response.value.runtime_claims.get('jwk') is not None
         assert response.value.runtime_claims['jwk']['crv']=='P-256'
         assert response.value.sgx_collateral is not None
+
+        assert response.token.get_body().iss == response.value.issuer
 
 
     @AttestationPreparer()

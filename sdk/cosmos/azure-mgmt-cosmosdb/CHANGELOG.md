@@ -1,5 +1,116 @@
 # Release History
 
+## 6.3.0 (2021-05-14)
+
+**Breaking changes**
+
+  - Model CassandraKeyspaceCreateUpdateParameters no longer has parameter identity
+  - Model ARMResourceProperties no longer has parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters no longer has parameter identity
+  - Model SqlDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters no longer has parameter identity
+  - Model SqlTriggerGetResults no longer has parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model SqlDatabaseGetResults no longer has parameter identity
+  - Model TableGetResults no longer has parameter identity
+  - Model CassandraTableCreateUpdateParameters no longer has parameter identity
+  - Model GremlinGraphCreateUpdateParameters no longer has parameter identity
+  - Model GremlinDatabaseGetResults no longer has parameter identity
+  - Model ThroughputSettingsUpdateParameters no longer has parameter identity
+  - Model CassandraKeyspaceGetResults no longer has parameter identity
+  - Model SqlContainerGetResults no longer has parameter identity
+  - Model SqlUserDefinedFunctionGetResults no longer has parameter identity
+  - Model SqlTriggerCreateUpdateParameters no longer has parameter identity
+  - Model MongoDBCollectionGetResults no longer has parameter identity
+  - Model MongoDBDatabaseGetResults no longer has parameter identity
+  - Model PeriodicModeProperties no longer has parameter backup_storage_redundancy
+  - Model ThroughputSettingsGetResults no longer has parameter identity
+  - Model GremlinGraphGetResults no longer has parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model CassandraTableGetResults no longer has parameter identity
+  - Model SqlStoredProcedureGetResults no longer has parameter identity
+  - Model TableCreateUpdateParameters no longer has parameter identity
+  - Model DatabaseAccountGetResults no longer has parameter create_mode
+  - Model DatabaseAccountGetResults no longer has parameter restore_parameters
+  - Model DatabaseAccountGetResults no longer has parameter instance_id
+  - Model DatabaseAccountGetResults no longer has parameter system_data
+  - Model SqlUserDefinedFunctionCreateUpdateParameters no longer has parameter identity
+  - Model SqlContainerCreateUpdateParameters no longer has parameter identity
+  - Removed operation SqlResourcesOperations.begin_retrieve_continuous_backup_information
+  - Model DatabaseAccountCreateUpdateParameters has a new signature
+  - Removed operation group RestorableDatabaseAccountsOperations
+  - Removed operation group RestorableMongodbCollectionsOperations
+  - Removed operation group CosmosDBManagementClientOperationsMixin
+  - Removed operation group RestorableSqlResourcesOperations
+  - Removed operation group RestorableMongodbDatabasesOperations
+  - Removed operation group CassandraClustersOperations
+  - Removed operation group RestorableMongodbResourcesOperations
+  - Removed operation group RestorableSqlContainersOperations
+  - Removed operation group CassandraDataCentersOperations
+  - Removed operation group RestorableSqlDatabasesOperations
+  - Removed operation group ServiceOperations
+
+## 6.3.0b1 (2021-05-10)
+
+**Features**
+
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model TableGetResults has a new parameter identity
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model PeriodicModeProperties has a new parameter backup_storage_redundancy
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model ARMResourceProperties has a new parameter identity
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter instance_id
+  - Model DatabaseAccountGetResults has a new parameter restore_parameters
+  - Model DatabaseAccountGetResults has a new parameter system_data
+  - Model DatabaseAccountGetResults has a new parameter create_mode
+  - Added operation SqlResourcesOperations.begin_create_update_sql_role_assignment
+  - Added operation SqlResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation SqlResourcesOperations.begin_delete_sql_role_assignment
+  - Added operation SqlResourcesOperations.begin_create_update_sql_role_definition
+  - Added operation SqlResourcesOperations.list_sql_role_definitions
+  - Added operation SqlResourcesOperations.begin_delete_sql_role_definition
+  - Added operation SqlResourcesOperations.list_sql_role_assignments
+  - Added operation SqlResourcesOperations.get_sql_role_assignment
+  - Added operation SqlResourcesOperations.get_sql_role_definition
+  - Added operation group CassandraDataCentersOperations
+  - Added operation group RestorableSqlContainersOperations
+  - Added operation group CassandraClustersOperations
+  - Added operation group RestorableMongodbResourcesOperations
+  - Added operation group RestorableMongodbDatabasesOperations
+  - Added operation group RestorableDatabaseAccountsOperations
+  - Added operation group RestorableMongodbCollectionsOperations
+  - Added operation group CosmosDBManagementClientOperationsMixin
+  - Added operation group RestorableSqlResourcesOperations
+  - Added operation group ServiceOperations
+  - Added operation group RestorableSqlDatabasesOperations
+
+**Breaking changes**
+
+  - Model DatabaseAccountCreateUpdateParameters has a new signature
+
 ## 6.2.0 (2021-04-06)
 
 **Features**
