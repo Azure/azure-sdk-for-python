@@ -1,6 +1,8 @@
 interactions:
 - request:
-    body: '{}'
+    body: '{"status": "Sample Status", "name": "Test Farmer", "description": "Farmer
+      created during testing.", "properties": {"foo": "bar", "numeric one": 1, "1":
+      "numeric key"}}'
     headers:
       Accept:
       - application/json
@@ -9,16 +11,19 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '2'
+      - '167'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: PATCH
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-boundary-farmer?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"smoke-test-boundary-farmer","eTag":"00009e03-0000-0600-0000-60a44b650000","createdDateTime":"2021-05-18T23:19:01Z","modifiedDateTime":"2021-05-18T23:19:01Z"}'
+      string: '{"id":"test-farmer-farmer-ops","eTag":"00007b03-0000-0600-0000-60a44b150000","status":"Sample
+        Status","createdDateTime":"2021-05-18T23:17:41Z","modifiedDateTime":"2021-05-18T23:17:41Z","name":"Test
+        Farmer","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
+        one":1,"1":"numeric key"}}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -27,15 +32,15 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '164'
+      - '314'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 23:19:01 GMT
+      - Tue, 18 May 2021 23:17:41 GMT
       etag:
-      - 00009e03-0000-0600-0000-60a44b650000
+      - 00007b03-0000-0600-0000-60a44b150000
       location:
-      - http://sdk-testing-wcus-1.farmbeats.azure.net/farmers/smoke-test-boundary-farmer
+      - http://sdk-testing-wcus-1.farmbeats.azure.net/farmers/test-farmer-farmer-ops
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -55,11 +60,13 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-boundary-farmer/boundaries/smoke-test-boundary?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"error":{"code":"ResourceNotFound","message":"Resource with id ''smoke-test-boundary''
-        does not exist for provided farmerId.","target":null,"details":null,"innererror":null},"traceId":"0HM8KA76QDRHR:00000006"}'
+      string: '{"id":"test-farmer-farmer-ops","eTag":"00007b03-0000-0600-0000-60a44b150000","status":"Sample
+        Status","createdDateTime":"2021-05-18T23:17:41Z","modifiedDateTime":"2021-05-18T23:17:41Z","name":"Test
+        Farmer","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
+        one":1,"1":"numeric key"}}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -68,11 +75,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '208'
+      - '314'
       content-type:
-      - application/json
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 23:19:01 GMT
+      - Tue, 18 May 2021 23:17:42 GMT
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -82,14 +89,12 @@ interactions:
       vary:
       - Accept-Encoding
     status:
-      code: 404
-      message: Not Found
+      code: 200
+      message: OK
 - request:
-    body: '{"geometry": {"coordinates": [[[73.70457172393799, 20.545385304358106],
-      [73.70457172393799, 20.545385304358106], [73.70448589324951, 20.542411534243367],
-      [73.70877742767334, 20.541688176010233], [73.71023654937744, 20.545083911372505],
-      [73.70663166046143, 20.546992723579137], [73.70457172393799, 20.545385304358106]]],
-      "type": "Polygon"}}'
+    body: '{"status": "Sample Status", "name": "Test Farmer Updated", "description":
+      "Farmer created during testing.", "properties": {"foo": "bar", "numeric one":
+      1, "1": "numeric key"}}'
     headers:
       Accept:
       - application/json
@@ -98,16 +103,19 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '339'
+      - '175'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: PATCH
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-boundary-farmer/boundaries/smoke-test-boundary?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"farmerId":"smoke-test-boundary-farmer","geometry":{"type":"Polygon","coordinates":[[[73.70457172393799,20.545385304358106],[73.70457172393799,20.545385304358106],[73.70448589324951,20.542411534243367],[73.70877742767334,20.541688176010233],[73.71023654937744,20.545083911372505],[73.70663166046143,20.546992723579137],[73.70457172393799,20.545385304358106]]]},"isPrimary":false,"acreage":60.40491151079627,"id":"smoke-test-boundary","eTag":"0000a003-0000-0600-0000-60a44b660000","createdDateTime":"2021-05-18T23:19:02Z","modifiedDateTime":"2021-05-18T23:19:02Z"}'
+      string: '{"id":"test-farmer-farmer-ops","eTag":"00007d03-0000-0600-0000-60a44b170000","status":"Sample
+        Status","createdDateTime":"2021-05-18T23:17:41Z","modifiedDateTime":"2021-05-18T23:17:43Z","name":"Test
+        Farmer Updated","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
+        one":1,"1":"numeric key"}}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -116,22 +124,22 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '564'
+      - '322'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 23:19:02 GMT
-      etag:
-      - 0000a003-0000-0600-0000-60a44b660000
-      location:
-      - http://sdk-testing-wcus-1.farmbeats.azure.net/farmers/smoke-test-boundary-farmer/boundaries/smoke-test-boundary
+      - Tue, 18 May 2021 23:17:43 GMT
       server:
       - nginx/1.19.1
       strict-transport-security:
       - max-age=15724800; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
     status:
-      code: 201
-      message: Created
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
@@ -144,10 +152,13 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-boundary-farmer/boundaries/smoke-test-boundary?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"farmerId":"smoke-test-boundary-farmer","geometry":{"type":"Polygon","coordinates":[[[73.70457172393799,20.545385304358106],[73.70457172393799,20.545385304358106],[73.70448589324951,20.542411534243367],[73.70877742767334,20.541688176010233],[73.71023654937744,20.545083911372505],[73.70663166046143,20.546992723579137],[73.70457172393799,20.545385304358106]]]},"isPrimary":false,"acreage":60.40491151079627,"id":"smoke-test-boundary","eTag":"0000a003-0000-0600-0000-60a44b660000","createdDateTime":"2021-05-18T23:19:02Z","modifiedDateTime":"2021-05-18T23:19:02Z"}'
+      string: '{"id":"test-farmer-farmer-ops","eTag":"00007d03-0000-0600-0000-60a44b170000","status":"Sample
+        Status","createdDateTime":"2021-05-18T23:17:41Z","modifiedDateTime":"2021-05-18T23:17:43Z","name":"Test
+        Farmer Updated","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
+        one":1,"1":"numeric key"}}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -156,11 +167,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '564'
+      - '322'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 May 2021 23:19:02 GMT
+      - Tue, 18 May 2021 23:17:44 GMT
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -186,7 +197,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: DELETE
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-boundary-farmer/boundaries/smoke-test-boundary?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops?api-version=2021-03-31-preview
   response:
     body:
       string: ''
@@ -200,7 +211,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 18 May 2021 23:19:03 GMT
+      - Tue, 18 May 2021 23:17:45 GMT
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -217,15 +228,14 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
-    method: DELETE
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-boundary-farmer?api-version=2021-03-31-preview
+    method: GET
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops?api-version=2021-03-31-preview
   response:
     body:
-      string: ''
+      string: '{"error":{"code":"ResourceNotFound","message":"Resource with id ''test-farmer-farmer-ops''
+        does not exist.","target":null,"details":null,"innererror":null},"traceId":"0HM8KA6VD5AR8:00000002"}'
     headers:
       api-deprecated-versions:
       - 2020-12-31-preview
@@ -234,14 +244,20 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '0'
+      - '189'
+      content-type:
+      - application/json
       date:
-      - Tue, 18 May 2021 23:19:04 GMT
+      - Tue, 18 May 2021 23:17:45 GMT
       server:
       - nginx/1.19.1
       strict-transport-security:
       - max-age=15724800; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
     status:
-      code: 204
-      message: No Content
+      code: 404
+      message: Not Found
 version: 1
