@@ -15,6 +15,9 @@ DESCRIPTION:
     was trained on. To learn how to train your own models, look at
     sample_train_model_without_labels.py and sample_train_model_with_labels.py
 
+    The model can be trained using the training files found here:
+    https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
+
 USAGE:
     python sample_recognize_custom_forms.py
 
@@ -22,6 +25,9 @@ USAGE:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) CUSTOM_TRAINED_MODEL_ID - the ID of your custom trained model
+        -OR-
+       CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your forms.
+       A model will be trained and used to run the sample.
 """
 
 import os
@@ -29,7 +35,7 @@ import os
 
 class RecognizeCustomForms(object):
 
-    def recognize_custom_forms(self):
+    def recognize_custom_forms(self, custom_model_id):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
                                                             "..", "./sample_forms/forms/Form_1.jpg"))
         # [START recognize_custom_forms]
@@ -38,7 +44,7 @@ class RecognizeCustomForms(object):
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        model_id = os.environ["CUSTOM_TRAINED_MODEL_ID"]
+        model_id = os.getenv("CUSTOM_TRAINED_MODEL_ID", custom_model_id)
 
         form_recognizer_client = FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -101,4 +107,22 @@ class RecognizeCustomForms(object):
 
 if __name__ == '__main__':
     sample = RecognizeCustomForms()
-    sample.recognize_custom_forms()
+    model_id = None
+    if os.getenv("CONTAINER_SAS_URL"):
+
+        from azure.core.credentials import AzureKeyCredential
+        from azure.ai.formrecognizer import FormTrainingClient
+
+        endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT")
+        key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
+
+        if not endpoint or not key:
+            raise ValueError("Please provide endpoint and API key to run the samples.")
+
+        form_training_client = FormTrainingClient(
+            endpoint=endpoint, credential=AzureKeyCredential(key)
+        )
+        model = form_training_client.begin_training(os.getenv("CONTAINER_SAS_URL"), use_training_labels=True).result()
+        model_id = model.model_id
+
+    sample.recognize_custom_forms(model_id)
