@@ -117,7 +117,7 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
             storage_account.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(name, 'file')
 
         logger = logging.getLogger("ACCOUNT INFORMATION")
-        logger.info("storage account", storage_account.name)
+        logger.info("storage account", storage_account)
         return {
             'location': 'westus',
             'resource_group': StorageTestCase._RESOURCE_GROUP,
