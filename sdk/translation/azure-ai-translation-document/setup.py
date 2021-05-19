@@ -26,6 +26,7 @@ with open('CHANGELOG.md', encoding='utf-8') as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
+    include_package_data=True,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + changelog,
     long_description_content_type='text/markdown',
@@ -53,7 +54,7 @@ setup(
         'azure.ai.translation'
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.10.0",
+        "azure-core<2.0.0,>=1.14.0",
         "msrest>=0.6.21",
         'six>=1.11.0'
     ],

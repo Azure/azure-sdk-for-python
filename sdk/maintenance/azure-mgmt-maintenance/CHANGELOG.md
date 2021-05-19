@@ -1,5 +1,31 @@
 # Release History
 
+## 2.0.0 (2021-05-08)
+
+**Breaking changes**
+
+  - Model MaintenanceConfiguration no longer has parameter install_patches
+  - Removed operation ConfigurationAssignmentsOperations.get
+  - Removed operation ConfigurationAssignmentsOperations.get_parent
+  - Removed operation group ConfigurationAssignmentsWithinSubscriptionOperations
+
+## 1.0.0 (2021-04-20)
+
+**Features**
+
+  - Model Resource has a new parameter system_data
+  - Model ApplyUpdate has a new parameter system_data
+  - Model ConfigurationAssignment has a new parameter system_data
+  - Model Operation has a new parameter is_data_action
+  - Model MaintenanceConfiguration has a new parameter system_data
+  - Model MaintenanceConfiguration has a new parameter install_patches
+  - Added operation ConfigurationAssignmentsOperations.get_parent
+  - Added operation ConfigurationAssignmentsOperations.get
+  - Added operation ApplyUpdatesOperations.list
+  - Added operation group ConfigurationAssignmentsWithinSubscriptionOperations
+  - Added operation group ApplyUpdateForResourceGroupOperations
+  - Added operation group MaintenanceConfigurationsForResourceGroupOperations
+
 ## 1.0.0b1 (2020-12-07)
 
 This is beta preview version.

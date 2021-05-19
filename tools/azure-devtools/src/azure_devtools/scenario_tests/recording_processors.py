@@ -49,6 +49,11 @@ class SubscriptionRecordingProcessor(RecordingProcessor):
         self.replace_header_fn(response, 'location', self._replace_subscription_id)
         self.replace_header_fn(response, 'azure-asyncoperation', self._replace_subscription_id)
 
+        try:
+            response["url"] = self._replace_subscription_id(response["url"])
+        except KeyError:
+            pass
+
         return response
 
     def _replace_subscription_id(self, val):
@@ -148,7 +153,7 @@ class OAuthRequestResponsesFilter(RecordingProcessor):
         # GET https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token
         # POST https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
         import re
-        if not re.match('https://login.microsoftonline.com/([^/]+)/oauth2(?:/v2.0)?/token', request.uri):
+        if not re.search('/oauth2(?:/v2.0)?/token', request.uri):
             return request
         return None
 
@@ -215,8 +220,16 @@ class GeneralNameReplacer(RecordingProcessor):
                 except UnicodeDecodeError:
                     body = response['body']['string']
                     response['body']['string'].decode('utf8', 'backslashreplace').replace(old, new).encode('utf8', 'backslashreplace')
+                except TypeError:
+                    pass
             self.replace_header(response, 'location', old, new)
+            self.replace_header(response, 'operation-location', old, new)
             self.replace_header(response, 'azure-asyncoperation', old, new)
+
+            try:
+                response["url"] = response["url"].replace(old, new)
+            except KeyError:
+                pass
 
         return response
 

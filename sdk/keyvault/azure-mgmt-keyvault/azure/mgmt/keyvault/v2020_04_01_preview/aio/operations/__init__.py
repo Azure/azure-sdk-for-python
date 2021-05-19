@@ -10,6 +10,7 @@ from ._vaults_operations import VaultsOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._operations import Operations
+from ._secrets_operations import SecretsOperations
 from ._managed_hsms_operations import ManagedHsmsOperations
 
 __all__ = [
@@ -17,5 +18,6 @@ __all__ = [
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
     'Operations',
+    'SecretsOperations',
     'ManagedHsmsOperations',
 ]

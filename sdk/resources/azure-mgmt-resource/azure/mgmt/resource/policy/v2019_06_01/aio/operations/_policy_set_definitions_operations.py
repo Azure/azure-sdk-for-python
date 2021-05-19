@@ -45,7 +45,7 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         parameters: "_models.PolicySetDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicySetDefinition":
         """Creates or updates a policy set definition.
 
@@ -96,7 +96,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -114,7 +114,7 @@ class PolicySetDefinitionsOperations:
     async def delete(
         self,
         policy_set_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a policy set definition.
 
@@ -157,7 +157,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -168,7 +168,7 @@ class PolicySetDefinitionsOperations:
     async def get(
         self,
         policy_set_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicySetDefinition":
         """Retrieves a policy set definition.
 
@@ -212,7 +212,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicySetDefinition', pipeline_response)
@@ -226,7 +226,7 @@ class PolicySetDefinitionsOperations:
     async def get_built_in(
         self,
         policy_set_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicySetDefinition":
         """Retrieves a built in policy set definition.
 
@@ -268,7 +268,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicySetDefinition', pipeline_response)
@@ -281,7 +281,7 @@ class PolicySetDefinitionsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
         """Retrieves the policy set definitions for a subscription.
 
@@ -337,7 +337,7 @@ class PolicySetDefinitionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -350,7 +350,7 @@ class PolicySetDefinitionsOperations:
 
     def list_built_in(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
         """Retrieves built-in policy set definitions.
 
@@ -402,7 +402,7 @@ class PolicySetDefinitionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -418,7 +418,7 @@ class PolicySetDefinitionsOperations:
         policy_set_definition_name: str,
         management_group_id: str,
         parameters: "_models.PolicySetDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicySetDefinition":
         """Creates or updates a policy set definition.
 
@@ -471,7 +471,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -490,7 +490,7 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         management_group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a policy set definition.
 
@@ -536,7 +536,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -548,7 +548,7 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         management_group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicySetDefinition":
         """Retrieves a policy set definition.
 
@@ -594,7 +594,7 @@ class PolicySetDefinitionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicySetDefinition', pipeline_response)
@@ -608,7 +608,7 @@ class PolicySetDefinitionsOperations:
     def list_by_management_group(
         self,
         management_group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
         """Retrieves all policy set definitions in management group.
 
@@ -667,7 +667,7 @@ class PolicySetDefinitionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

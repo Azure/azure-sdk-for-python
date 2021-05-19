@@ -290,15 +290,15 @@ class FormRecognizerClientOperationsMixin:
          Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -466,15 +466,15 @@ class FormRecognizerClientOperationsMixin:
         :type copy_request: ~azure.ai.formrecognizer.v2_0.models.CopyRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -710,15 +710,15 @@ class FormRecognizerClientOperationsMixin:
          Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -890,15 +890,15 @@ class FormRecognizerClientOperationsMixin:
          Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',

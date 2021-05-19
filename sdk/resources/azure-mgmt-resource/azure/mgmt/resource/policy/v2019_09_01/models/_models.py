@@ -17,7 +17,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -127,9 +127,9 @@ class ParameterDefinitionsValue(msrest.serialization.Model):
      "Object", "Boolean", "Integer", "Float", "DateTime".
     :type type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.ParameterType
     :param allowed_values: The allowed values for the parameter.
-    :type allowed_values: list[object]
+    :type allowed_values: list[any]
     :param default_value: The default value for the parameter if no value is provided.
-    :type default_value: object
+    :type default_value: any
     :param metadata: General metadata for the parameter.
     :type metadata:
      ~azure.mgmt.resource.policy.v2019_09_01.models.ParameterDefinitionsValueMetadata
@@ -158,7 +158,7 @@ class ParameterDefinitionsValueMetadata(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param display_name: The display name for the parameter.
     :type display_name: str
     :param description: The description of the parameter.
@@ -185,7 +185,7 @@ class ParameterValuesValue(msrest.serialization.Model):
     """The value of a parameter.
 
     :param value: The value of the parameter.
-    :type value: object
+    :type value: any
     """
 
     _attribute_map = {
@@ -235,7 +235,7 @@ class PolicyAssignment(msrest.serialization.Model):
     :type description: str
     :param metadata: The policy assignment metadata. Metadata is an open ended object and is
      typically a collection of key value pairs.
-    :type metadata: object
+    :type metadata: any
     :param enforcement_mode: The policy assignment enforcement mode. Possible values are Default
      and DoNotEnforce. Possible values include: "Default", "DoNotEnforce".
     :type enforcement_mode: str or ~azure.mgmt.resource.policy.v2019_09_01.models.EnforcementMode
@@ -330,10 +330,10 @@ class PolicyDefinition(msrest.serialization.Model):
     :param description: The policy definition description.
     :type description: str
     :param policy_rule: The policy rule.
-    :type policy_rule: object
+    :type policy_rule: any
     :param metadata: The policy definition metadata.  Metadata is an open ended object and is
      typically a collection of key value pairs.
-    :type metadata: object
+    :type metadata: any
     :param parameters: The parameter definitions for parameters used in the policy rule. The keys
      are the parameter names.
     :type parameters: dict[str,
@@ -502,7 +502,7 @@ class PolicySetDefinition(msrest.serialization.Model):
     :type description: str
     :param metadata: The policy set definition metadata.  Metadata is an open ended object and is
      typically a collection of key value pairs.
-    :type metadata: object
+    :type metadata: any
     :param parameters: The policy set definition parameters that can be used in policy definition
      references.
     :type parameters: dict[str,

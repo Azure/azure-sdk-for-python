@@ -47,7 +47,7 @@ class TemplateSpecVersionsOperations:
         template_spec_name: str,
         template_spec_version: str,
         template_spec_version_model: "_models.TemplateSpecVersion",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TemplateSpecVersion":
         """Creates or updates a Template Spec version.
 
@@ -101,7 +101,7 @@ class TemplateSpecVersionsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.TemplateSpecsError, response)
+            error = self._deserialize.failsafe_deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -122,7 +122,7 @@ class TemplateSpecVersionsOperations:
         template_spec_name: str,
         template_spec_version: str,
         template_spec_version_update_model: Optional["_models.TemplateSpecVersionUpdateModel"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TemplateSpecVersion":
         """Updates Template Spec Version tags with specified values.
 
@@ -180,7 +180,7 @@ class TemplateSpecVersionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.TemplateSpecsError, response)
+            error = self._deserialize.failsafe_deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('TemplateSpecVersion', pipeline_response)
@@ -196,7 +196,7 @@ class TemplateSpecVersionsOperations:
         resource_group_name: str,
         template_spec_name: str,
         template_spec_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TemplateSpecVersion":
         """Gets a Template Spec version from a specific Template Spec.
 
@@ -243,7 +243,7 @@ class TemplateSpecVersionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.TemplateSpecsError, response)
+            error = self._deserialize.failsafe_deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('TemplateSpecVersion', pipeline_response)
@@ -259,7 +259,7 @@ class TemplateSpecVersionsOperations:
         resource_group_name: str,
         template_spec_name: str,
         template_spec_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a specific version from a Template Spec. When operation completes, status code 200
         returned without content.
@@ -307,7 +307,7 @@ class TemplateSpecVersionsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.TemplateSpecsError, response)
+            error = self._deserialize.failsafe_deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -319,7 +319,7 @@ class TemplateSpecVersionsOperations:
         self,
         resource_group_name: str,
         template_spec_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TemplateSpecVersionsListResult"]:
         """Lists all the Template Spec versions in the specified Template Spec.
 
@@ -379,7 +379,7 @@ class TemplateSpecVersionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.TemplateSpecsError, response)
+                error = self._deserialize.failsafe_deserialize(_models.TemplateSpecsError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

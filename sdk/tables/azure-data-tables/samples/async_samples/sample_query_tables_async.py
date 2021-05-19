@@ -26,22 +26,20 @@ from dotenv import find_dotenv, load_dotenv
 
 
 class QueryTables(object):
-
     def __init__(self):
         load_dotenv(find_dotenv())
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name,
-            self.access_key,
-            self.endpoint
+            self.account_name, self.access_key, self.endpoint_suffix
         )
 
     async def tables_in_account(self):
         # Instantiate the TableServiceClient from a connection string
         from azure.data.tables.aio import TableServiceClient
+
         table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
 
         async with table_service:
@@ -53,7 +51,7 @@ class QueryTables(object):
                 # List all the tables in the service
                 print("Listing tables:")
                 async for table in table_service.list_tables():
-                    print("\t{}".format(table.table_name))
+                    print("\t{}".format(table.name))
                 # [END tsc_list_tables]
 
                 # [START tsc_query_tables]
@@ -61,8 +59,8 @@ class QueryTables(object):
                 table_name = "mytableasync1"
                 name_filter = "TableName eq '{}'".format(table_name)
                 print("Queried_tables")
-                async for table in table_service.query_tables(filter=name_filter):
-                    print("\t{}".format(table.table_name))
+                async for table in table_service.query_tables(name_filter):
+                    print("\t{}".format(table.name))
                 # [END tsc_query_tables]
 
             finally:
@@ -70,6 +68,7 @@ class QueryTables(object):
 
     async def delete_tables(self):
         from azure.data.tables.aio import TableServiceClient
+
         ts = TableServiceClient.from_connection_string(conn_str=self.connection_string)
         async with ts:
             tables = ["mytableasync1", "mytableasync2"]
@@ -81,10 +80,11 @@ class QueryTables(object):
 
     async def clean_up(self):
         from azure.data.tables.aio import TableServiceClient
+
         tsc = TableServiceClient.from_connection_string(self.connection_string)
         async with tsc:
             async for table in tsc.list_tables():
-                await tsc.delete_table(table.table_name)
+                await tsc.delete_table(table.name)
 
             print("Cleaned up")
 
@@ -96,6 +96,6 @@ async def main():
     await sample.clean_up()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())

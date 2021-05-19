@@ -1,5 +1,13 @@
 # Release History
 
+## 8.1.0b1 (2021-04-25)
+
+**Features**
+
+  - Added operation ResourceGraphClientOperationsMixin.resource_change_details
+  - Added operation ResourceGraphClientOperationsMixin.resource_changes
+  - Added operation ResourceGraphClientOperationsMixin.resources_history
+
 ## 8.0.0 (2021-03-31)
 
 **Features**
