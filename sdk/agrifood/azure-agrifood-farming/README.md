@@ -47,7 +47,148 @@ client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net
 
 ## Examples
 
-The following section shows you how to initialize and authenticate your client, then get all of your type-defs.
+### Create a Farmer
+Once you have authenticated and created the client object as shown in the [Authenticate the client](#authenticate-the-client) 
+section, you can create a farmer within the FarmBeats resource like this:
+
+```python
+from azure.agrifood.farming.models import Farmer
+
+farmer = client.farmers.create_or_update(
+    farmer_id="farmer-1",
+    body=Farmer(
+        name="Contoso Farmer",
+        description="Your custom farmer description here",
+        status="Active",
+        properties={
+            "your-custom-key": "queryable value",
+        }
+    )
+)
+```
+
+### Create a Farm
+
+
+```python
+from azure.agrifood.farming.models import Farm
+
+farm = client.farms.create_or_update(
+    farmer_id=farmer.id,
+    farm_id="farm-1",
+    body=Farm(
+        name="Contoso Westlake Farm",
+        properties={
+            "location": "Westlake",
+            "country": "USA"
+        }
+    )
+)
+```
+
+### Create a Season
+
+```python
+from azure.agrifood.farming.models import Season
+from isodate.tzinfo import Utc
+from datetime import datetime
+
+season = client.seasons.create_or_update(
+    season_id="season-summer-2021",
+    body=Season(
+        start_date_time=datetime(2021, 4, 1, tzinfo=Utc()),
+        end_date_time=datetime(2021, 8, 31, tzinfo=Utc()),
+        name="Summer of 2021",
+        year=2021
+    )
+)
+```
+
+### Create a Seasonal Field
+
+```python
+from azure.agrifood.farming.models import SeasonalField
+
+seasonal_field = client.seasonal_fields.create_or_update(
+    farmer_id=farmer.id,
+    seasonal_field_id="westlake-summer-2021",
+    body=SeasonalField(
+        farm_id=farm.id,
+        season_id=season.id
+    )
+)
+```
+
+### Create a Boundary
+
+```python
+from azure.agrifood.farming.models import Boundary, Polygon
+
+boundary = client.boundaries.create_or_update(
+    farmer_id=farmer.id,
+    boundary_id="westlake-boundary-1",
+    body=Boundary(
+        parent_id=seasonal_field.id,
+        geometry=Polygon(
+            coordinates=[
+                [
+                    [73.70457172393799, 20.545385304358106],
+                    [73.70457172393799, 20.545385304358106],
+                    [73.70448589324951, 20.542411534243367],
+                    [73.70877742767334, 20.541688176010233],
+                    [73.71023654937744, 20.545083911372505],
+                    [73.70663166046143, 20.546992723579137],
+                    [73.70457172393799, 20.545385304358106],
+                ]
+            ]
+        )
+    )
+)
+```
+
+### Ingest Satellite Imagery
+
+```python
+from isodate.tzinfo import Utc
+from datetime import datetime
+
+from azure.agrifood.farming.models import SatelliteData, 
+
+# Queue the job
+satellite_job_poller = client.scenes.begin_create_satellite_data_ingestion_job(
+    job_id="westlake-boundary-1-lai-jan2020",
+    body=SatelliteDataIngestionJob(
+        farmer_id=farmer.id,
+        boundary_id=boundary.id,
+        start_date_time=datetime(2020, 1, 1, tzinfo=Utc()),
+        end_date_time=datetime(2020, 1, 31, tzinfo=Utc()),
+        data=SatelliteData(
+            image_names=[
+                "LAI"
+            ]
+        )
+    )
+)
+
+# Wait for the job to terminate
+satellite_job = satellite_job_poller.result()
+```
+
+### Get Ingested Satellite Scenes
+
+```python
+scenes = client.scenes.list(
+    farmer_id=farmer.id,
+    boundary_id=boundary.id,
+    start_date_time=datetime(2020, 1, 1, tzinfo=Utc()),
+    end_date_time=datetime(2020, 1, 31, tzinfo=Utc()),
+)
+
+for scene in scenes:
+    bands = [image_file.name for image_file in scene.image_files]
+    bands_str = ", ".join(bands)
+    print(f"Scene at {scene.scene_date_time} has the bands {bands_str}")
+```
 
 ## Troubleshooting
 
