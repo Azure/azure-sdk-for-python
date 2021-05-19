@@ -194,9 +194,20 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_get_manifest_properties_does_not_exist(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+
         client = self.create_registry_client(containerregistry_endpoint)
 
-        properties = client.get_manifest_properties("DOESNOTEXIST", "DOESNOTEXIST")
+        manifest = client.get_manifest_properties(repo, tag)
+
+        digest = manifest.digest
+
+        digest = digest[:-10] + u"a" * 10
+
+        with pytest.raises(ResourceNotFoundError):
+            client.get_manifest_properties(repo, digest)
 
     @acr_preparer()
     def test_set_manifest_properties(self, containerregistry_endpoint):
@@ -338,7 +349,15 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     def test_delete_manifest_does_not_exist(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
 
-        client.delete_manifest(repo, DOES_NOT_EXIST)
+        manifest = client.get_manifest_properties(repo, tag)
+
+        digest = manifest.digest
+
+        digest = digest[:-10] + u"a" * 10
+
+        client.delete_manifest(repo, digest)

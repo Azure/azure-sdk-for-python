@@ -329,16 +329,24 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
-        client.delete_manifest(repo, tag)
+        await client.delete_manifest(repo, tag)
 
         self.sleep(10)
-
-        await client.get_manifest_properties(repo, tag)
+        with pytest.raises(ResourceNotFoundError):
+            await client.get_manifest_properties(repo, tag)
 
     @acr_preparer()
     async def test_delete_manifest_does_not_exist(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
 
-        client.delete_manifest(repo, DOES_NOT_EXIST)
+        manifest = await client.get_manifest_properties(repo, tag)
+
+        digest = manifest.digest
+
+        digest = digest[:-10] + u"a" * 10
+
+        await client.delete_manifest(repo, digest)
