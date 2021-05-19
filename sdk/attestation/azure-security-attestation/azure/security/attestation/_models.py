@@ -86,6 +86,10 @@ class PolicyResult(object):
     """ PolicyResult represents the result of a :meth:`azure.security.attestation.AttestationAdministrationClient.set_policy` 
     or :meth:`azure.security.attestation.AttestationAdministrationClient.reset_policy`  API call.
 
+    The `PolicyResult` class is returned as the body of an attestation token from
+    the attestation service. It can be used to ensure that the attestation service
+    received the policy object sent from the client without alteration.
+    
     :param policy_resolution: The result of the policy set or
         reset call.
     :type policy_resolution: azure.security.attestation.PolicyModification
@@ -97,9 +101,6 @@ class PolicyResult(object):
         presented to the `set_policy` or `reset_policy` API.
     :type policy_token_hash: str
 
-    The PolicyResult class is returned as the body of an attestation token from
-    the attestation service. It can be used to ensure that the attestation service
-    received the policy object sent from the client without alteration.
     """
     def __init__(self, policy_resolution, policy_signer, policy_token_hash):
         #type:(PolicyModification, JSONWebKey, str) -> None
@@ -449,20 +450,21 @@ class StoredAttestationPolicy(object):
 
 class AttestationData(object):
     """ AttestationData represents an object passed as an input to the Attestation Service.
-    
+
     AttestationData comes in two forms: Binary and JSON. To distinguish between the two, when an :class:`AttestationData`
     object is created, the caller provides an indication that the input binary data will be treated as either JSON or Binary.
 
+    If the `is_json` parameter is not provided, then the AttestationData 
+    constructor will probe the `data` parameter to determine whether the data
+    should be treated as JSON.
+
     The AttestationData is reflected in the generated :class:`AttestationResult` in two possible ways.
-    If the AttestationData is Binary, then the AttestationData is reflected in the AttestationResult.enclave_held_data claim.
-    If the AttestationData is JSON, then the AttestationData is expressed as JSON in the AttestationResult.runtime_claims or AttestationResult.inittime_claims claim.
+    If the `AttestationData` is Binary, then the `AttestationData` is reflected in the `AttestationResult.enclave_held_data` claim.
+    If the `AttestationData` is JSON, then the `AttestationData` is expressed as JSON in the `AttestationResult.runtime_claims` or AttestationResult.inittime_claims claim.
 
     :param data: Input data to be sent to the attestation service.
-
     :type data: bytes
-
     :param is_json: True if the attestation service should treat the input data as JSON.
-
     :type is_json: bool
 
     """
