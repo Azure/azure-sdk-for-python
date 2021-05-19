@@ -5,6 +5,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import gzip
+
 import pytest
 import base64
 import unittest
@@ -18,8 +20,8 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
     StorageErrorCode,
-    BlobProperties
-)
+    BlobProperties,
+    ContentSettings)
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
@@ -143,6 +145,29 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Assert
         self.assertEqual(self.byte_data, content)
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_get_blob_in_raw_stream(self, resource_group, location, storage_account, storage_account_key):
+        # recording mechanism cannot detect the decompress option properly, it always try to decompress the body
+        # as long as the content-encoding header is in response, so mark this as live test only
+        self._setup(storage_account, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        file_path = "C:/Users/xiafu/Downloads/testgzip.txt.gz"
+        data = self.get_random_bytes(1024*1024*1024)
+
+        with gzip.open(file_path, 'wb') as stream2:
+            stream2.write(data)
+
+        with open(file_path, 'rb') as stream:
+            data = stream.read()
+            blob.upload_blob(data, content_settings=ContentSettings(content_encoding='gzip'), overwrite=True)
+
+        content = blob.download_blob(offset=1024, length=512, decompress=False).readall()
+
+        # Assert
+        self.assertEqual(data[1024: 1024 + 512], content)
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
