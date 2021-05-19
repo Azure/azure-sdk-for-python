@@ -116,6 +116,8 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
             storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(name, 'table')
             storage_account.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(name, 'file')
 
+        logger = logging.getLogger("ACCOUNT INFORMATION")
+        logger.info("storage account", storage_account.name)
         return {
             'location': 'westus',
             'resource_group': StorageTestCase._RESOURCE_GROUP,
@@ -123,6 +125,7 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
             'storage_account_key': StorageTestCase._STORAGE_KEY,
             'storage_account_cs': StorageTestCase._STORAGE_CONNECTION_STRING,
         }
+
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):
@@ -143,7 +146,9 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
                 name="rgname",
                 id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname"
             )
-
+        logger = logging.getLogger("ACCOUNT INFORMATION")
+        logger.warning("storage account", storage_account.name)
+        logger.warning("storage account", rg.name)
         return {
             'location': 'westus',
             'resource_group': rg,
@@ -410,7 +415,7 @@ def storage_account():
             )
         import logging
         log = logging.getLogger("my-logger")
-        log.info(rg.name)
+        log.warning(rg.name)
         StorageTestCase._RESOURCE_GROUP = rg
 
         try:
