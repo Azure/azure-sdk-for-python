@@ -18,7 +18,12 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
-from ._error import _process_table_error, _validate_table_name
+from ._error import (
+    _process_table_error,
+    _validate_table_name,
+    _reraise_error,
+    _decode_error
+)
 from ._generated.models import (
     SignedIdentifier,
     TableProperties,
@@ -389,15 +394,13 @@ class TableClient(TablesBaseClient):
             )
             return _trim_service_metadata(metadata)
         except HttpResponseError as error:
-            try:
-                if error.model.additional_properties["odata.error"]["code"] == "PropertiesNeedValue":
-                    if entity.get("PartitionKey") is None:
-                        raise ValueError("PartitionKey must be present in an entity")
-                    if entity.get("RowKey") is None:
-                        raise ValueError("RowKey must be present in an entity")
-            except AttributeError:
-                raise error
-            _process_table_error(error)
+            decoded = _decode_error(error.response, error.message)
+            if decoded.error_code == "PropertiesNeedValue":
+                if entity.get("PartitionKey") is None:
+                    raise ValueError("PartitionKey must be present in an entity")
+                if entity.get("RowKey") is None:
+                    raise ValueError("RowKey must be present in an entity")
+            _reraise_error(error)
 
     @distributed_trace
     def update_entity(
