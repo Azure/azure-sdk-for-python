@@ -19,11 +19,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
 from .._helpers import _is_tag, _parse_next_link
-from .._models import (
-    RepositoryProperties,
-    ArtifactManifestProperties,
-    ArtifactTagProperties
-)
+from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -221,7 +217,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         cls = kwargs.pop(
             "cls",
             lambda objs: [
-                ArtifactManifestProperties._from_generated(x, repository_name=repository)  # pylint: disable=protected-access
+                ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
+                    x, repository_name=repository
+                )
                 for x in objs
             ],
         )
@@ -319,10 +317,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def set_repository_properties(
-        self,
-        repository: str,
-        properties: RepositoryProperties,
-        **kwargs: Any
+        self, repository: str, properties: RepositoryProperties, **kwargs: Any
     ) -> RepositoryProperties:
         """Set the properties of a repository
 
@@ -334,9 +329,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.set_properties(
-                repository,
-                properties._to_generated(),  # pylint: disable=protected-access
-                **kwargs
+                repository, properties._to_generated(), **kwargs  # pylint: disable=protected-access
             )
         )
 
@@ -393,10 +386,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def get_manifest_properties(
-        self,
-        repository: str,
-        tag_or_digest: str,
-        **kwargs: Any
+        self, repository: str, tag_or_digest: str, **kwargs: Any
     ) -> ArtifactManifestProperties:
         """Get the properties of a registry artifact
 
@@ -579,11 +569,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def set_manifest_properties(
-        self,
-        repository: str,
-        tag_or_digest: str,
-        properties: ArtifactManifestProperties,
-        **kwargs: Any
+        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs: Any
     ) -> ArtifactManifestProperties:
         """Set the properties for a manifest
 

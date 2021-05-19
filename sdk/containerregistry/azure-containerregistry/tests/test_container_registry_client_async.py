@@ -208,10 +208,10 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
 
         properties = await client.get_manifest_properties(repo, tag)
-        properties.can_delete=False
-        properties.can_read=False
-        properties.can_write=False
-        properties.can_list=False
+        properties.can_delete = False
+        properties.can_read = False
+        properties.can_write = False
+        properties.can_list = False
 
         received = await client.set_manifest_properties(repo, tag, properties)
 
@@ -220,10 +220,10 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert received.can_write == properties.can_write
         assert received.can_list == properties.can_list
 
-        properties.can_delete=True
-        properties.can_read=True
-        properties.can_write=True
-        properties.can_list=True
+        properties.can_delete = True
+        properties.can_read = True
+        properties.can_write = True
+        properties.can_list = True
 
         received = await client.set_manifest_properties(repo, tag, properties)
 
@@ -261,10 +261,10 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
 
         properties = await client.get_tag_properties(repo, tag)
-        properties.can_delete=False
-        properties.can_read=False
-        properties.can_write=False
-        properties.can_list=False
+        properties.can_delete = False
+        properties.can_read = False
+        properties.can_write = False
+        properties.can_list = False
         received = await client.set_tag_properties(repo, tag, properties)
 
         assert received.can_delete == properties.can_delete
@@ -272,10 +272,10 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert received.can_write == properties.can_write
         assert received.can_list == properties.can_list
 
-        properties.can_delete=True
-        properties.can_read=True
-        properties.can_write=True
-        properties.can_list=True
+        properties.can_delete = True
+        properties.can_read = True
+        properties.can_write = True
+        properties.can_list = True
 
         received = await client.set_tag_properties(repo, tag, properties)
 

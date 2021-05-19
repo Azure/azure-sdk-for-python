@@ -12,7 +12,7 @@ from ._generated.models import (
     RepositoryProperties as GeneratedRepositoryProperties,
     RepositoryWriteableProperties,
     TagWriteableProperties,
-    ManifestWriteableProperties
+    ManifestWriteableProperties,
 )
 
 if TYPE_CHECKING:
