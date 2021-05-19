@@ -243,24 +243,24 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert received.can_list == True
 
     @acr_preparer()
-    def test_get_tag_properties(self, containerregistry_endpoint):
+    def test_get_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
 
-        properties = client.get_tag_properties(repo, tag)
+        properties = client.get_tag(repo, tag)
 
         assert isinstance(properties, ArtifactTagProperties)
         assert properties.name == tag
 
     @acr_preparer()
-    def test_get_tag_properties_does_not_exist(self, containerregistry_endpoint):
+    def test_get_tag_does_not_exist(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
 
         with pytest.raises(ResourceNotFoundError):
-            client.get_tag_properties("Nonexistent", "Nonexistent")
+            client.get_tag("Nonexistent", "Nonexistent")
 
     @acr_preparer()
     def test_set_tag_properties(self, containerregistry_endpoint):
@@ -270,7 +270,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         client = self.create_registry_client(containerregistry_endpoint)
 
-        properties = client.get_tag_properties(repo, tag)
+        properties = client.get_tag(repo, tag)
         properties.can_delete = False
         properties.can_read = False
         properties.can_write = False

@@ -631,7 +631,7 @@ class ContainerRegistryOperations(object):
         )
     get_tags.metadata = {'url': '/acr/v1/{name}/_tags'}  # type: ignore
 
-    def get_tag_properties(
+    def get_tag(
         self,
         name,  # type: str
         reference,  # type: str
@@ -657,7 +657,7 @@ class ContainerRegistryOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.get_tag_properties.metadata['url']  # type: ignore
+        url = self.get_tag.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
             'name': self._serialize.url("name", name, 'str'),
@@ -687,7 +687,7 @@ class ContainerRegistryOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_tag_properties.metadata = {'url': '/acr/v1/{name}/_tags/{reference}'}  # type: ignore
+    get_tag.metadata = {'url': '/acr/v1/{name}/_tags/{reference}'}  # type: ignore
 
     def update_tag_attributes(
         self,

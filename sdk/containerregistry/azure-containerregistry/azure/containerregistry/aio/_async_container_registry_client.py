@@ -51,7 +51,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     async def _get_digest_from_tag(self, repository: str, tag: str) -> str:
-        tag_props = await self.get_tag_properties(repository, tag)
+        tag_props = await self.get_tag(repository, tag)
         return tag_props.digest
 
     @distributed_trace_async
@@ -414,7 +414,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace_async
-    async def get_tag_properties(self, repository: str, tag: str, **kwargs: Any) -> ArtifactTagProperties:
+    async def get_tag(self, repository: str, tag: str, **kwargs: Any) -> ArtifactTagProperties:
         """Get the properties for a tag
 
         :param str repository: Repository the tag belongs to
@@ -431,10 +431,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             async for tag in client.list_tags():
-                tag_properties = await client.get_tag_properties(tag.name)
+                tag_properties = await client.get_tag(tag.name)
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.get_tag_properties(repository, tag, **kwargs),
+            await self._client.container_registry.get_tag(repository, tag, **kwargs),
             repository=repository,
         )
 
@@ -459,7 +459,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             async for tag in client.list_tags():
-                tag_properties = await client.get_tag_properties(tag.name)
+                tag_properties = await client.get_tag(tag.name)
         """
         name = repository
         last = kwargs.pop("last", None)

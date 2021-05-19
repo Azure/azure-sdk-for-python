@@ -53,7 +53,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     def _get_digest_from_tag(self, repository, tag):
         # type: (str, str) -> str
-        tag_props = self.get_tag_properties(repository, tag)
+        tag_props = self.get_tag(repository, tag)
         return tag_props.digest
 
     @distributed_trace
@@ -422,7 +422,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def get_tag_properties(self, repository, tag, **kwargs):
+    def get_tag(self, repository, tag, **kwargs):
         # type: (str, str, **Any) -> ArtifactTagProperties
         """Get the properties for a tag
 
@@ -439,10 +439,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for tag in client.list_tags():
-                tag_properties = client.get_tag_properties(tag.name)
+                tag_properties = client.get_tag(tag.name)
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.get_tag_properties(repository, tag, **kwargs),
+            self._client.container_registry.get_tag(repository, tag, **kwargs),
             repository=repository,
         )
 
@@ -468,7 +468,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for tag in client.list_tags():
-                tag_properties = client.get_tag_properties(tag.name)
+                tag_properties = client.get_tag(tag.name)
         """
         name = repository
         last = kwargs.pop("last", None)
