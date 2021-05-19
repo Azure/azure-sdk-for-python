@@ -182,8 +182,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param source: The source of the data feed
         :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
             AzureCosmosDBDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
-            AzureTableDataFeedSource, HttpRequestDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
-            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, ElasticsearchDataFeedSource]
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
         :param granularity: Granularity type. If using custom granularity, you must instantiate a DataFeedGranularity.
         :type granularity: Union[str, ~azure.ai.metricsadvisor.models.DataFeedGranularityType,
             ~azure.ai.metricsadvisor.models.DataFeedGranularity]
@@ -647,8 +647,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword source: The source of the data feed for update
         :paramtype source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
             AzureCosmosDBDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
-            AzureTableDataFeedSource, HttpRequestDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
-            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, ElasticsearchDataFeedSource]
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 

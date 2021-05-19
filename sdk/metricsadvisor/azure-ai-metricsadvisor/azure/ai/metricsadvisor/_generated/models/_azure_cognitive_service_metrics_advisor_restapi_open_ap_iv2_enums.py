@@ -103,7 +103,7 @@ class DataSourceCredentialType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     SERVICE_PRINCIPAL_IN_KV = "ServicePrincipalInKV"
 
 class DataSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of data source credential
+    """data source type
     """
 
     AZURE_APPLICATION_INSIGHTS = "AzureApplicationInsights"
@@ -112,9 +112,8 @@ class DataSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_DATA_EXPLORER = "AzureDataExplorer"
     AZURE_DATA_LAKE_STORAGE_GEN2 = "AzureDataLakeStorageGen2"
     AZURE_EVENT_HUBS = "AzureEventHubs"
+    AZURE_LOG_ANALYTICS = "AzureLogAnalytics"
     AZURE_TABLE = "AzureTable"
-    ELASTICSEARCH = "Elasticsearch"
-    HTTP_REQUEST = "HttpRequest"
     INFLUX_DB = "InfluxDB"
     MONGO_DB = "MongoDB"
     MY_SQL = "MySql"

@@ -26,7 +26,7 @@ from ._generated.models import (
     AzureCosmosDBDataFeed as _AzureCosmosDBDataFeed,
     AzureDataExplorerDataFeed as _AzureDataExplorerDataFeed,
     AzureTableDataFeed as _AzureTableDataFeed,
-    HttpRequestDataFeed as _HttpRequestDataFeed,
+    AzureLogAnalyticsDataFeed as _AzureLogAnalyticsDataFeed,
     InfluxDBDataFeed as _InfluxDBDataFeed,
     MySqlDataFeed as _MySqlDataFeed,
     PostgreSqlDataFeed as _PostgreSqlDataFeed,
@@ -34,14 +34,14 @@ from ._generated.models import (
     SQLServerDataFeed as _SQLServerDataFeed,
     AzureDataLakeStorageGen2DataFeed as _AzureDataLakeStorageGen2DataFeed,
     AzureDataLakeStorageGen2DataFeedPatch as _AzureDataLakeStorageGen2DataFeedPatch,
-    ElasticsearchDataFeed as _ElasticsearchDataFeed,
-    ElasticsearchDataFeedPatch as _ElasticsearchDataFeedPatch,
+    AzureEventHubsDataFeed as _AzureEventHubsDataFeed,
+    AzureEventHubsDataFeedPatch as _AzureEventHubsDataFeedPatch,
     AzureApplicationInsightsDataFeedPatch as _AzureApplicationInsightsDataFeedPatch,
     AzureBlobDataFeedPatch as _AzureBlobDataFeedPatch,
     AzureCosmosDBDataFeedPatch as _AzureCosmosDBDataFeedPatch,
     AzureDataExplorerDataFeedPatch as _AzureDataExplorerDataFeedPatch,
     AzureTableDataFeedPatch as _AzureTableDataFeedPatch,
-    HttpRequestDataFeedPatch as _HttpRequestDataFeedPatch,
+    AzureLogAnalyticsDataFeedPatch as _AzureLogAnalyticsDataFeedPatch,
     InfluxDBDataFeedPatch as _InfluxDBDataFeedPatch,
     MySqlDataFeedPatch as _MySqlDataFeedPatch,
     PostgreSqlDataFeedPatch as _PostgreSqlDataFeedPatch,
@@ -73,14 +73,14 @@ from .models._models import (
     AzureCosmosDBDataFeedSource,
     AzureDataExplorerDataFeedSource,
     AzureTableDataFeedSource,
-    HttpRequestDataFeedSource,
+    AzureLogAnalyticsDataFeedSource,
     InfluxDBDataFeedSource,
     MySqlDataFeedSource,
     PostgreSqlDataFeedSource,
     SQLServerDataFeedSource,
     MongoDBDataFeedSource,
     AzureDataLakeStorageGen2DataFeedSource,
-    ElasticsearchDataFeedSource,
+    AzureEventHubsDataFeedSource,
 )
 
 if TYPE_CHECKING:
@@ -103,14 +103,14 @@ DataFeedSourceUnion = Union[
     AzureCosmosDBDataFeedSource,
     AzureDataExplorerDataFeedSource,
     AzureTableDataFeedSource,
-    HttpRequestDataFeedSource,
+    AzureLogAnalyticsDataFeedSource,
     InfluxDBDataFeedSource,
     MySqlDataFeedSource,
     PostgreSqlDataFeedSource,
     SQLServerDataFeedSource,
     MongoDBDataFeedSource,
     AzureDataLakeStorageGen2DataFeedSource,
-    ElasticsearchDataFeedSource,
+    AzureEventHubsDataFeedSource,
 ]
 
 DATA_FEED = {
@@ -120,13 +120,13 @@ DATA_FEED = {
     "AzureCosmosDB": _AzureCosmosDBDataFeed,
     "AzureDataExplorer": _AzureDataExplorerDataFeed,
     "AzureTable": _AzureTableDataFeed,
-    "HttpRequest": _HttpRequestDataFeed,
+    "AzureLogAnalytics": _AzureLogAnalyticsDataFeed,
     "InfluxDB": _InfluxDBDataFeed,
     "MySql": _MySqlDataFeed,
     "PostgreSql": _PostgreSqlDataFeed,
     "MongoDB": _MongoDBDataFeed,
     "AzureDataLakeStorageGen2": _AzureDataLakeStorageGen2DataFeed,
-    "Elasticsearch": _ElasticsearchDataFeed
+    "AzureEventHubs": _AzureEventHubsDataFeed
 }
 
 
@@ -137,13 +137,13 @@ DATA_FEED_PATCH = {
     "AzureCosmosDB": _AzureCosmosDBDataFeedPatch,
     "AzureDataExplorer": _AzureDataExplorerDataFeedPatch,
     "AzureTable": _AzureTableDataFeedPatch,
-    "HttpRequest": _HttpRequestDataFeedPatch,
+    "AzureEventHubs": _AzureEventHubsDataFeedPatch,
     "InfluxDB": _InfluxDBDataFeedPatch,
     "MySql": _MySqlDataFeedPatch,
     "PostgreSql": _PostgreSqlDataFeedPatch,
     "MongoDB": _MongoDBDataFeedPatch,
     "AzureDataLakeStorageGen2": _AzureDataLakeStorageGen2DataFeedPatch,
-    "Elasticsearch": _ElasticsearchDataFeedPatch
+    "AzureLogAnalytics": _AzureLogAnalyticsDataFeedPatch
 }
 
 
@@ -271,8 +271,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param source: The source of the data feed
         :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
             AzureCosmosDBDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
-            AzureTableDataFeedSource, HttpRequestDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
-            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, ElasticsearchDataFeedSource]
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
         :param granularity: Granularity type. If using custom granularity, you must instantiate a DataFeedGranularity.
         :type granularity: Union[str, ~azure.ai.metricsadvisor.models.DataFeedGranularityType,
             ~azure.ai.metricsadvisor.models.DataFeedGranularity]
@@ -734,8 +734,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword source: The source of the data feed for update
         :paramtype source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
             AzureCosmosDBDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
-            AzureTableDataFeedSource, HttpRequestDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
-            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, ElasticsearchDataFeedSource]
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 

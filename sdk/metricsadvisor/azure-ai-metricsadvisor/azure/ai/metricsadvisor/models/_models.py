@@ -45,18 +45,18 @@ from .._generated.models import (
     CommentFeedbackValue,
     PeriodFeedback as _PeriodFeedback,
     PeriodFeedbackValue,
-    EmailHookParameter as _EmailHookParameter,
-    WebhookHookParameter as _WebhookHookParameter,
-    AzureBlobParameter as _AzureBlobParameter,
-    SqlSourceParameter as _SqlSourceParameter,
-    AzureApplicationInsightsParameter as _AzureApplicationInsightsParameter,
-    AzureCosmosDBParameter as _AzureCosmosDBParameter,
-    AzureTableParameter as _AzureTableParameter,
-    HttpRequestParameter as _HttpRequestParameter,
-    InfluxDBParameter as _InfluxDBParameter,
-    MongoDBParameter as _MongoDBParameter,
-    AzureDataLakeStorageGen2Parameter as _AzureDataLakeStorageGen2Parameter,
-    ElasticsearchParameter as _ElasticsearchParameter,
+    EmailHookParameterPatch as _EmailHookParameterPatch,
+    WebhookHookParameterPatch as _WebhookHookParameterPatch,
+    AzureBlobParameterPatch as _AzureBlobParameterPatch,
+    SQLSourceParameterPatch as _SqlSourceParameterPatch,
+    AzureApplicationInsightsParameterPatch as _AzureApplicationInsightsParameterPatch,
+    AzureCosmosDBParameterPatch as _AzureCosmosDBParameterPatch,
+    AzureTableParameterPatch as _AzureTableParameterPatch,
+    AzureEventHubsParameterPatch as _AzureEventHubsParameterPatch,
+    InfluxDBParameterPatch as _InfluxDBParameterPatch,
+    MongoDBParameterPatch as _MongoDBParameterPatch,
+    AzureDataLakeStorageGen2ParameterPatch as _AzureDataLakeStorageGen2ParameterPatch,
+    AzureLogAnalyticsParameterPatch as _AzureLogAnalyticsParameterPatch,
     DimensionGroupIdentity as _DimensionGroupIdentity,
     SeriesIdentity as _SeriesIdentity,
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
@@ -348,8 +348,8 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
     :ivar source: Data feed source.
     :vartype source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDBDataFeedSource,
         AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource, AzureTableDataFeedSource,
-        HttpRequestDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
-        SQLServerDataFeedSource, MongoDBDataFeedSource, ElasticsearchDataFeedSource]
+        AzureEventHubsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
+        SQLServerDataFeedSource, MongoDBDataFeedSource, AzureLogAnalyticsDataFeedSource]
     :ivar status: Data feed status. Possible values include: "Active", "Paused".
         Default value: "Active".
     :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
@@ -962,7 +962,7 @@ class AzureApplicationInsightsDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _AzureApplicationInsightsParameter(
+        return _AzureApplicationInsightsParameterPatch(
             azure_cloud=self.azure_cloud,
             application_id=self.application_id,
             api_key=self.api_key,
@@ -1006,7 +1006,7 @@ class AzureBlobDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _AzureBlobParameter(
+        return _AzureBlobParameterPatch(
             connection_string=self.connection_string,
             container=self.container,
             blob_template=self.blob_template
@@ -1060,7 +1060,7 @@ class AzureCosmosDBDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _AzureCosmosDBParameter(
+        return _AzureCosmosDBParameterPatch(
             connection_string=self.connection_string,
             sql_query=self.sql_query,
             database=self.database,
@@ -1098,7 +1098,7 @@ class AzureDataExplorerDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _SqlSourceParameter(
+        return _SqlSourceParameterPatch(
             connection_string=self.connection_string,
             query=self.query,
         )
@@ -1139,57 +1139,46 @@ class AzureTableDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _AzureTableParameter(
+        return _AzureTableParameterPatch(
             connection_string=self.connection_string,
             query=self.query,
             table=self.table
         )
 
 
-class HttpRequestDataFeedSource(object):
-    """HttpRequestDataFeedSource.
+class AzureEventHubsDataFeedSource(object):
+    """AzureEventHubsDataFeedSource.
 
-    :param url: Required. HTTP URL.
-    :type url: str
-    :param http_method: Required. HTTP method.
-    :type http_method: str
-    :keyword str http_header: Required. HTTP header.
-    :keyword str payload: Required. HTTP request body.
+    :param connection_string: Required. The connection string of this Azure Event Hubs.
+    :type connection_string: str
+    :param consumer_group: Required. The consumer group to be used in this data feed.
+    :type consumer_group: str
     """
 
-    def __init__(self, url, http_method, **kwargs):
-        # type: (str, str, Any) -> None
-        self.data_source_type = 'HttpRequest'  # type: str
-        self.url = url
-        self.http_method = http_method
-        self.http_header = kwargs.get("http_header", None)
-        self.payload = kwargs.get("payload", None)
+    def __init__(self, connection_string, consumer_group, **kwargs):
+        # type: (str, str, **Any) -> None
+        self.data_source_type = 'AzureEventHubs'  # type: str
+        self.connection_string = connection_string
+        self.consumer_group = consumer_group
 
     def __repr__(self):
-        return "HttpRequestDataFeedSource(data_source_type={}, url={}, http_method={}, http_header={}, " \
-               "payload={})".format(
+        return "AzureEventHubsDataFeedSource(data_source_type={}, connection_string={}, consumer_group={})".format(
                     self.data_source_type,
-                    self.url,
-                    self.http_method,
-                    self.http_header,
-                    self.payload
+                    self.connection_string,
+                    self.consumer_group,
                 )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
         return cls(
-            url=source.url,
-            http_header=source.http_header,
-            http_method=source.http_method,
-            payload=source.payload
+            connection_string=source.connection_string,
+            consumer_group=source.consumer_group
         )
 
     def _to_generated_patch(self):
-        return _HttpRequestParameter(
-            url=self.url,
-            http_header=self.http_header,
-            http_method=self.http_method,
-            payload=self.payload
+        return _AzureEventHubsParameterPatch(
+            connection_string=self.connection_string,
+            consumer_group=self.consumer_group,
         )
 
 
@@ -1246,7 +1235,7 @@ class InfluxDBDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _InfluxDBParameter(
+        return _InfluxDBParameterPatch(
             connection_string=self.connection_string,
             database=self.database,
             user_name=self.user_name,
@@ -1285,7 +1274,7 @@ class MySqlDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _SqlSourceParameter(
+        return _SqlSourceParameterPatch(
             connection_string=self.connection_string,
             query=self.query
         )
@@ -1321,7 +1310,7 @@ class PostgreSqlDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _SqlSourceParameter(
+        return _SqlSourceParameterPatch(
             connection_string=self.connection_string,
             query=self.query
         )
@@ -1357,7 +1346,7 @@ class SQLServerDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _SqlSourceParameter(
+        return _SqlSourceParameterPatch(
             connection_string=self.connection_string,
             query=self.query,
         )
@@ -1417,7 +1406,7 @@ class AzureDataLakeStorageGen2DataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _AzureDataLakeStorageGen2Parameter(
+        return _AzureDataLakeStorageGen2ParameterPatch(
             account_name=self.account_name,
             account_key=self.account_key,
             file_system_name=self.file_system_name,
@@ -1426,50 +1415,62 @@ class AzureDataLakeStorageGen2DataFeedSource(object):
         )
 
 
-class ElasticsearchDataFeedSource(object):
-    """ElasticsearchDataFeedSource.
+class AzureLogAnalyticsDataFeedSource(object):
+    """AzureLogAnalyticsDataFeedSource.
 
-    :param host: Required. Host.
-    :type host: str
-    :param port: Required. Port.
-    :type port: str
-    :param auth_header: Required. Authorization header.
-    :type auth_header: str
-    :param query: Required. Query.
+    :param tenant_id: Required. The tenant id of service principal that have access to this Log
+     Analytics.
+    :type tenant_id: str
+    :param client_id: Required. The client id of service principal that have access to this Log
+     Analytics.
+    :type client_id: str
+    :param client_secret: Required. The client secret of service principal that have access to this
+     Log Analytics.
+    :type client_secret: str
+    :param workspace_id: Required. The workspace id of this Log Analytics.
+    :type workspace_id: str
+    :param query: Required. The KQL (Kusto Query Language) query to fetch data from this Log
+     Analytics.
     :type query: str
     """
 
-    def __init__(self, host, port, auth_header, query, **kwargs):  # pylint: disable=unused-argument
-        # type: (str, str, str, str, Any) -> None
-        self.data_source_type = 'Elasticsearch'  # type: str
-        self.host = host
-        self.port = port
-        self.auth_header = auth_header
+    def __init__(self, tenant_id, client_id,
+                 client_secret, workspace_id, query, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, str, str, str, **Any) -> None
+        self.data_source_type = 'AzureLogAnalytics'  # type: str
+        self.tenant_id = tenant_id
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.workspace_id = workspace_id
         self.query = query
 
     def __repr__(self):
-        return "ElasticsearchDataFeedSource(data_source_type={}, host={}, port={}, auth_header={}, query={})".format(
-                    self.data_source_type,
-                    self.host,
-                    self.port,
-                    self.auth_header,
-                    self.query
-                )[:1024]
+        return "AzureLogAnalyticsDataFeedSource(data_source_type={}, tenant_id={}, client_id={}, " \
+               "client_secret={}, workspace_id={}, query={})".format(
+            self.data_source_type,
+            self.tenant_id,
+            self.client_id,
+            self.client_secret,
+            self.workspace_id,
+            self.query
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
         return cls(
-            host=source.host,
-            port=source.port,
-            auth_header=source.auth_header,
+            tenant_id=source.tenant_id,
+            client_id=source.client_id,
+            client_secret=source.client_secret,
+            workspace_id=source.workspace_id,
             query=source.query
         )
 
     def _to_generated_patch(self):
-        return _ElasticsearchParameter(
-            host=self.host,
-            port=self.port,
-            auth_header=self.auth_header,
+        return _AzureLogAnalyticsParameterPatch(
+            tenant_id=self.tenant_id,
+            client_id=self.client_id,
+            client_secret=self.client_secret,
+            workspace_id=self.workspace_id,
             query=self.query
         )
 
@@ -1509,7 +1510,7 @@ class MongoDBDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _MongoDBParameter(
+        return _MongoDBParameterPatch(
             connection_string=self.connection_string,
             database=self.database,
             command=self.command
@@ -1595,7 +1596,7 @@ class EmailNotificationHook(NotificationHook):
             description=self.description,
             external_link=self.external_link,
             admins=self.admin_emails,
-            hook_parameter=_EmailHookParameter(
+            hook_parameter=_EmailHookParameterPatch(
                 to_list=self.emails_to_alert
             )
         )
@@ -1606,7 +1607,7 @@ class EmailNotificationHook(NotificationHook):
             description=description or self.description,
             external_link=external_link or self.external_link,
             admins=self.admin_emails,
-            hook_parameter=_EmailHookParameter(
+            hook_parameter=_EmailHookParameterPatch(
                 to_list=emails_to_alert or self.emails_to_alert
             )
         )
@@ -1676,7 +1677,7 @@ class WebNotificationHook(NotificationHook):
             description=self.description,
             external_link=self.external_link,
             admins=self.admin_emails,
-            hook_parameter=_WebhookHookParameter(
+            hook_parameter=_WebhookHookParameterPatch(
                 endpoint=self.endpoint,
                 username=self.username,
                 password=self.password,
@@ -1700,7 +1701,7 @@ class WebNotificationHook(NotificationHook):
             description=description or self.description,
             external_link=external_link or self.external_link,
             admins=self.admin_emails,
-            hook_parameter=_WebhookHookParameter(
+            hook_parameter=_WebhookHookParameterPatch(
                 endpoint=endpoint or self.endpoint,
                 username=username or self.username,
                 password=password or self.password,
@@ -2324,13 +2325,13 @@ DATA_FEED_TRANSFORM = {
     "AzureCosmosDB": AzureCosmosDBDataFeedSource,
     "AzureDataExplorer": AzureDataExplorerDataFeedSource,
     "AzureTable": AzureTableDataFeedSource,
-    "HttpRequest": HttpRequestDataFeedSource,
+    "AzureLogAnalytics": AzureLogAnalyticsDataFeedSource,
     "InfluxDB": InfluxDBDataFeedSource,
     "MySql": MySqlDataFeedSource,
     "PostgreSql": PostgreSqlDataFeedSource,
     "MongoDB": MongoDBDataFeedSource,
     "AzureDataLakeStorageGen2": AzureDataLakeStorageGen2DataFeedSource,
-    "Elasticsearch": ElasticsearchDataFeedSource
+    "AzureEventHubs": AzureEventHubsDataFeedSource
 }
 
 
