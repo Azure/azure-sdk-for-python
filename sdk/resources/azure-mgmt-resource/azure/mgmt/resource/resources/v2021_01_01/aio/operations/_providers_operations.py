@@ -44,7 +44,7 @@ class ProvidersOperations:
     async def unregister(
         self,
         resource_provider_namespace: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Provider":
         """Unregisters a subscription from a resource provider.
 
@@ -99,7 +99,7 @@ class ProvidersOperations:
         self,
         resource_provider_namespace: str,
         group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Registers a management group with a resource provider.
 
@@ -152,7 +152,7 @@ class ProvidersOperations:
     async def register(
         self,
         resource_provider_namespace: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Provider":
         """Registers a subscription with a resource provider.
 
@@ -207,7 +207,7 @@ class ProvidersOperations:
         self,
         top: Optional[int] = None,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProviderListResult"]:
         """Gets all resource providers for a subscription.
 
@@ -285,7 +285,7 @@ class ProvidersOperations:
         self,
         top: Optional[int] = None,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProviderListResult"]:
         """Gets all resource providers for the tenant.
 
@@ -359,7 +359,7 @@ class ProvidersOperations:
         self,
         resource_provider_namespace: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Provider":
         """Gets the specified resource provider.
 
@@ -419,7 +419,7 @@ class ProvidersOperations:
         self,
         resource_provider_namespace: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Provider":
         """Gets the specified resource provider at the tenant level.
 
