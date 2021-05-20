@@ -6,16 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from typing import Any, Optional
 
-from ._configuration import DeploymentManagerClientConfiguration
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
+from ._configuration import AzureDeploymentManagerConfiguration
 from .operations import ServiceTopologiesOperations
 from .operations import ServicesOperations
 from .operations import ServiceUnitsOperations
@@ -23,28 +26,28 @@ from .operations import StepsOperations
 from .operations import RolloutsOperations
 from .operations import ArtifactSourcesOperations
 from .operations import Operations
-from .. import models
+from . import models
 
 
-class DeploymentManagerClient(object):
+class AzureDeploymentManager(object):
     """REST APIs for orchestrating deployments using the Azure Deployment Manager (ADM). See https://docs.microsoft.com/en-us/azure/azure-resource-manager/deployment-manager-overview for more information.
 
     :ivar service_topologies: ServiceTopologiesOperations operations
-    :vartype service_topologies: azure.mgmt.deploymentmanager.aio.operations.ServiceTopologiesOperations
+    :vartype service_topologies: azure.mgmt.deploymentmanager.operations.ServiceTopologiesOperations
     :ivar services: ServicesOperations operations
-    :vartype services: azure.mgmt.deploymentmanager.aio.operations.ServicesOperations
+    :vartype services: azure.mgmt.deploymentmanager.operations.ServicesOperations
     :ivar service_units: ServiceUnitsOperations operations
-    :vartype service_units: azure.mgmt.deploymentmanager.aio.operations.ServiceUnitsOperations
+    :vartype service_units: azure.mgmt.deploymentmanager.operations.ServiceUnitsOperations
     :ivar steps: StepsOperations operations
-    :vartype steps: azure.mgmt.deploymentmanager.aio.operations.StepsOperations
+    :vartype steps: azure.mgmt.deploymentmanager.operations.StepsOperations
     :ivar rollouts: RolloutsOperations operations
-    :vartype rollouts: azure.mgmt.deploymentmanager.aio.operations.RolloutsOperations
+    :vartype rollouts: azure.mgmt.deploymentmanager.operations.RolloutsOperations
     :ivar artifact_sources: ArtifactSourcesOperations operations
-    :vartype artifact_sources: azure.mgmt.deploymentmanager.aio.operations.ArtifactSourcesOperations
+    :vartype artifact_sources: azure.mgmt.deploymentmanager.operations.ArtifactSourcesOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.deploymentmanager.aio.operations.Operations
+    :vartype operations: azure.mgmt.deploymentmanager.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
@@ -53,15 +56,16 @@ class DeploymentManagerClient(object):
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        base_url=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = DeploymentManagerClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = AzureDeploymentManagerConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -83,12 +87,33 @@ class DeploymentManagerClient(object):
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
 
-    async def __aenter__(self) -> "DeploymentManagerClient":
-        await self._client.__aenter__()
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
+
+    def close(self):
+        # type: () -> None
+        self._client.close()
+
+    def __enter__(self):
+        # type: () -> AzureDeploymentManager
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)
