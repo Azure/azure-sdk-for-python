@@ -49,14 +49,14 @@ class QuotaOperations:
         provider_id: str,
         location: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CurrentQuotaLimitBase":
-        """Gets the current service limits (quotas) and usage of a resource. The response from Get API can
-        be leveraged to submit quota update requests.
+        """Get the current quota (service limit) and usage of a resource. You can use the response from
+        the GET operation to submit quota update request.
 
-        :param subscription_id: Azure subscription id.
+        :param subscription_id: Azure subscription ID.
         :type subscription_id: str
-        :param provider_id: Azure resource provider id.
+        :param provider_id: Azure resource provider ID.
         :type provider_id: str
         :param location: Azure region.
         :type location: str
@@ -73,7 +73,7 @@ class QuotaOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-19-preview"
+        api_version = "2020-10-25"
         accept = "application/json"
 
         # Construct URL
@@ -100,7 +100,7 @@ class QuotaOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ExceptionResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -120,14 +120,14 @@ class QuotaOperations:
         location: str,
         resource_name: str,
         create_quota_request: "_models.CurrentQuotaLimitBase",
-        **kwargs
+        **kwargs: Any
     ) -> Union["_models.QuotaRequestOneResourceSubmitResponse", "_models.QuotaRequestSubmitResponse201"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.QuotaRequestOneResourceSubmitResponse", "_models.QuotaRequestSubmitResponse201"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-19-preview"
+        api_version = "2020-10-25"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -159,7 +159,7 @@ class QuotaOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ExceptionResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -181,9 +181,9 @@ class QuotaOperations:
         location: str,
         resource_name: str,
         create_quota_request: "_models.CurrentQuotaLimitBase",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[Union["_models.QuotaRequestOneResourceSubmitResponse", "_models.QuotaRequestSubmitResponse201"]]:
-        """Create or update the service limits (quota) of a resource to requested value.
+        """Create or update the quota (service limits) of a resource to the requested value.
          Steps:
 
 
@@ -198,9 +198,9 @@ class QuotaOperations:
            The Create quota request may be constructed as follows. The PUT operation can be used to
         update the quota.
 
-        :param subscription_id: Azure subscription id.
+        :param subscription_id: Azure subscription ID.
         :type subscription_id: str
-        :param provider_id: Azure resource provider id.
+        :param provider_id: Azure resource provider ID.
         :type provider_id: str
         :param location: Azure region.
         :type location: str
@@ -211,8 +211,8 @@ class QuotaOperations:
         :type create_quota_request: ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either QuotaRequestOneResourceSubmitResponse or the result of cls(response)
@@ -275,14 +275,14 @@ class QuotaOperations:
         location: str,
         resource_name: str,
         create_quota_request: "_models.CurrentQuotaLimitBase",
-        **kwargs
+        **kwargs: Any
     ) -> Union["_models.QuotaRequestOneResourceSubmitResponse", "_models.QuotaRequestSubmitResponse201"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.QuotaRequestOneResourceSubmitResponse", "_models.QuotaRequestSubmitResponse201"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-19-preview"
+        api_version = "2020-10-25"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -314,7 +314,7 @@ class QuotaOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ExceptionResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -336,38 +336,33 @@ class QuotaOperations:
         location: str,
         resource_name: str,
         create_quota_request: "_models.CurrentQuotaLimitBase",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[Union["_models.QuotaRequestOneResourceSubmitResponse", "_models.QuotaRequestSubmitResponse201"]]:
-        """Update the service limits (quota) of a resource to requested value.
-         Steps:
+        """Update the quota (service limits) of this resource to the requested value.
 
+          • To get the quota information for specific resource, send a GET request.
 
-        #.
-           Make the Get request to get the quota information for specific resource.
+          • To increase the quota, update the limit field from the GET response to a new value.
 
-        #.
-           To increase the quota, update the limit field in the response from Get request to new value.
+          • To update the quota value, submit the JSON response to the quota request API to update the
+        quota.
+          • To update the quota. use the PATCH operation.
 
-        #.
-           Submit the JSON to the quota request API to update the quota.
-           The Update quota request may be constructed as follows. The PATCH operation can be used to
-        update the quota.
-
-        :param subscription_id: Azure subscription id.
+        :param subscription_id: Azure subscription ID.
         :type subscription_id: str
-        :param provider_id: Azure resource provider id.
+        :param provider_id: Azure resource provider ID.
         :type provider_id: str
         :param location: Azure region.
         :type location: str
         :param resource_name: The resource name for a resource provider, such as SKU name for
          Microsoft.Compute, Sku or TotalLowPriorityCores for Microsoft.MachineLearningServices.
         :type resource_name: str
-        :param create_quota_request: Quota requests payload.
+        :param create_quota_request: Payload for the quota request.
         :type create_quota_request: ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either QuotaRequestOneResourceSubmitResponse or the result of cls(response)
@@ -428,14 +423,14 @@ class QuotaOperations:
         subscription_id: str,
         provider_id: str,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.QuotaLimits"]:
-        """Get a list of current service limits (quota) and usages of all the resources. The response from
-        List API can be leveraged to submit quota update requests.
+        """Gets a list of current quotas (service limits) and usage for all resources. The response from
+        the list quota operation can be leveraged to request quota updates.
 
-        :param subscription_id: Azure subscription id.
+        :param subscription_id: Azure subscription ID.
         :type subscription_id: str
-        :param provider_id: Azure resource provider id.
+        :param provider_id: Azure resource provider ID.
         :type provider_id: str
         :param location: Azure region.
         :type location: str
@@ -449,7 +444,7 @@ class QuotaOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-19-preview"
+        api_version = "2020-10-25"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -491,7 +486,7 @@ class QuotaOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ExceptionResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

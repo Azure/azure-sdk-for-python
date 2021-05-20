@@ -10,25 +10,6 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
-class Actions(msrest.serialization.Model):
-    """The actions for auto quota increase.
-
-    :param email_actions: The email actions for auto quota increase.
-    :type email_actions: ~azure.mgmt.reservations.models.EmailActions
-    """
-
-    _attribute_map = {
-        'email_actions': {'key': 'emailActions', 'type': 'EmailActions'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Actions, self).__init__(**kwargs)
-        self.email_actions = kwargs.get('email_actions', None)
-
-
 class AppliedReservationList(msrest.serialization.Model):
     """AppliedReservationList.
 
@@ -89,77 +70,6 @@ class AppliedReservations(msrest.serialization.Model):
         self.name = None
         self.type = None
         self.reservation_order_ids = kwargs.get('reservation_order_ids', None)
-
-
-class AqiSettings(msrest.serialization.Model):
-    """Settings for auto quota increase.
-
-    :param auto_quota_increase_state: If the subscription has enabled automatic quota increase.
-     Possible values include: "enabled", "disabled".
-    :type auto_quota_increase_state: str or ~azure.mgmt.reservations.models.AqiStateType
-    """
-
-    _attribute_map = {
-        'auto_quota_increase_state': {'key': 'autoQuotaIncreaseState', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AqiSettings, self).__init__(**kwargs)
-        self.auto_quota_increase_state = kwargs.get('auto_quota_increase_state', None)
-
-
-class AutoQuotaIncreaseDetail(msrest.serialization.Model):
-    """Auto Quota Increase settings.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The subscription Id.
-    :vartype id: str
-    :ivar name: The name of the auto quota increase.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :param settings: Settings for automatic quota increase.
-    :type settings: ~azure.mgmt.reservations.models.AqiSettings
-    :param on_failure: The on failure Actions.
-    :type on_failure: ~azure.mgmt.reservations.models.Actions
-    :param on_success: The on success Actions.
-    :type on_success: ~azure.mgmt.reservations.models.Actions
-    :param support_ticket_action: The support ticket action.
-    :type support_ticket_action: ~azure.mgmt.reservations.models.SupportRequestAction
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'settings': {'key': 'properties.settings', 'type': 'AqiSettings'},
-        'on_failure': {'key': 'properties.onFailure', 'type': 'Actions'},
-        'on_success': {'key': 'properties.onSuccess', 'type': 'Actions'},
-        'support_ticket_action': {'key': 'properties.supportTicketAction', 'type': 'SupportRequestAction'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AutoQuotaIncreaseDetail, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.settings = kwargs.get('settings', None)
-        self.on_failure = kwargs.get('on_failure', None)
-        self.on_success = kwargs.get('on_success', None)
-        self.support_ticket_action = kwargs.get('support_ticket_action', None)
 
 
 class AvailableScopeProperties(msrest.serialization.Model):
@@ -539,80 +449,6 @@ class Catalog(msrest.serialization.Model):
         self.restrictions = None
 
 
-class ChangeDirectoryRequest(msrest.serialization.Model):
-    """ChangeDirectoryRequest.
-
-    :param destination_tenant_id: Tenant id GUID that reservation order is to be transferred to.
-    :type destination_tenant_id: str
-    """
-
-    _attribute_map = {
-        'destination_tenant_id': {'key': 'destinationTenantId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ChangeDirectoryRequest, self).__init__(**kwargs)
-        self.destination_tenant_id = kwargs.get('destination_tenant_id', None)
-
-
-class ChangeDirectoryResponse(msrest.serialization.Model):
-    """Change directory response.
-
-    :param reservation_order: Change directory result for reservation order or reservation.
-    :type reservation_order: ~azure.mgmt.reservations.models.ChangeDirectoryResult
-    :param reservations:
-    :type reservations: list[~azure.mgmt.reservations.models.ChangeDirectoryResult]
-    """
-
-    _attribute_map = {
-        'reservation_order': {'key': 'reservationOrder', 'type': 'ChangeDirectoryResult'},
-        'reservations': {'key': 'reservations', 'type': '[ChangeDirectoryResult]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ChangeDirectoryResponse, self).__init__(**kwargs)
-        self.reservation_order = kwargs.get('reservation_order', None)
-        self.reservations = kwargs.get('reservations', None)
-
-
-class ChangeDirectoryResult(msrest.serialization.Model):
-    """Change directory result for reservation order or reservation.
-
-    :param id: Identifier of the reservation order or reservation.
-    :type id: str
-    :param name: Name of the reservation order or reservation.
-    :type name: str
-    :param is_succeeded: True if change directory operation succeeded on this reservation order or
-     reservation.
-    :type is_succeeded: bool
-    :param error: Error reason if operation failed. Null otherwise.
-    :type error: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'is_succeeded': {'key': 'isSucceeded', 'type': 'bool'},
-        'error': {'key': 'error', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ChangeDirectoryResult, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.is_succeeded = kwargs.get('is_succeeded', None)
-        self.error = kwargs.get('error', None)
-
-
 class CreateGenericQuotaRequestParameters(msrest.serialization.Model):
     """Quota change requests information.
 
@@ -633,12 +469,12 @@ class CreateGenericQuotaRequestParameters(msrest.serialization.Model):
 
 
 class CurrentQuotaLimit(msrest.serialization.Model):
-    """Quota limits.
+    """Current quota limits.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_state: The quota request status. Possible values include: "Accepted",
-     "Invalid", "Succeeded", "Failed", "InProgress".
+    :ivar provisioning_state: The details of the quota request status. Possible values include:
+     "Accepted", "Invalid", "Succeeded", "Failed", "InProgress".
     :vartype provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
     :ivar message: A user friendly message.
     :vartype message: str
@@ -668,7 +504,7 @@ class CurrentQuotaLimit(msrest.serialization.Model):
 
 
 class CurrentQuotaLimitBase(msrest.serialization.Model):
-    """Quota limits.
+    """Quota properties.
 
     :param properties: Quota properties for the resource.
     :type properties: ~azure.mgmt.reservations.models.QuotaProperties
@@ -684,44 +520,6 @@ class CurrentQuotaLimitBase(msrest.serialization.Model):
     ):
         super(CurrentQuotaLimitBase, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
-
-
-class EmailAction(msrest.serialization.Model):
-    """Email Action.
-
-    :param email_address: The email address for the action.
-    :type email_address: str
-    """
-
-    _attribute_map = {
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EmailAction, self).__init__(**kwargs)
-        self.email_address = kwargs.get('email_address', None)
-
-
-class EmailActions(msrest.serialization.Model):
-    """The email actions.
-
-    :param email_addresses: The list of email actions.
-    :type email_addresses: list[~azure.mgmt.reservations.models.EmailAction]
-    """
-
-    _attribute_map = {
-        'email_addresses': {'key': 'emailAddresses', 'type': '[EmailAction]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EmailActions, self).__init__(**kwargs)
-        self.email_addresses = kwargs.get('email_addresses', None)
 
 
 class Error(msrest.serialization.Model):
@@ -744,9 +542,9 @@ class Error(msrest.serialization.Model):
 
 
 class ExceptionResponse(msrest.serialization.Model):
-    """The api error.
+    """The API error.
 
-    :param error: The api error details.
+    :param error: The API error details.
     :type error: ~azure.mgmt.reservations.models.ServiceError
     """
 
@@ -1224,30 +1022,6 @@ class PaymentDetail(msrest.serialization.Model):
         self.extended_status_info = kwargs.get('extended_status_info', None)
 
 
-class PhoneAction(msrest.serialization.Model):
-    """Phone Action.
-
-    :param phone_number: The phone number for the action.
-    :type phone_number: str
-    :param preferred_channel: The preferred communication channel. Possible values include:
-     "Email", "Phone".
-    :type preferred_channel: str or ~azure.mgmt.reservations.models.ContactMethodType
-    """
-
-    _attribute_map = {
-        'phone_number': {'key': 'phoneNumber', 'type': 'str'},
-        'preferred_channel': {'key': 'preferredChannel', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PhoneAction, self).__init__(**kwargs)
-        self.phone_number = kwargs.get('phone_number', None)
-        self.preferred_channel = kwargs.get('preferred_channel', None)
-
-
 class Price(msrest.serialization.Model):
     """Price.
 
@@ -1370,10 +1144,10 @@ class PurchaseRequestPropertiesReservedResourceProperties(msrest.serialization.M
 class QuotaLimits(msrest.serialization.Model):
     """Quota limits.
 
-    :param value: List of Quota limits.
+    :param value: List of quotas (service limits).
     :type value: list[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
-    :param next_link: The uri to fetch the next page of quota limits. When there are no more pages,
-     this is null.
+    :param next_link: The URI for fetching the next page of quotas (service limits). When no more
+     pages exist, the value is null.
     :type next_link: str
     """
 
@@ -1392,12 +1166,12 @@ class QuotaLimits(msrest.serialization.Model):
 
 
 class QuotaLimitsResponse(msrest.serialization.Model):
-    """Quota limits request response.
+    """Quotas (service limits) in the request response.
 
-    :param value: List of Quota limits with the quota request status.
+    :param value: List of quotas with the quota request status.
     :type value: list[~azure.mgmt.reservations.models.CurrentQuotaLimit]
-    :param next_link: The uri to fetch the next page of quota limits. When there are no more pages,
-     this is null.
+    :param next_link: The URI for fetching the next page of quota limits. When no more pages exist,
+     the value is null.
     :type next_link: str
     """
 
@@ -1420,25 +1194,25 @@ class QuotaProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param limit: The quota limit.
+    :param limit: Quota properties.
     :type limit: int
-    :ivar current_value: The current resource usages information.
+    :ivar current_value: Current usage value for the resource.
     :vartype current_value: int
-    :param unit: The units of the limit, such as - Count, Bytes, etc. Use the unit field provided
-     in the Get quota response.
+    :param unit: The limit units, such as **count** and **bytes**. Use the unit field provided in
+     the response of the GET quota operation.
     :type unit: str
-    :param name: Name of the resource provide by the resource Provider. Please use this name
-     property for quotaRequests.
+    :param name: Name of the resource provide by the resource provider. Use this property for
+     quotaRequests resource operations.
     :type name: ~azure.mgmt.reservations.models.ResourceName
-    :param resource_type: The Resource Type Name. Possible values include: "standard", "dedicated",
-     "lowPriority", "shared", "serviceSpecific".
+    :param resource_type: The name of the resource type. Possible values include: "standard",
+     "dedicated", "lowPriority", "shared", "serviceSpecific".
     :type resource_type: str or ~azure.mgmt.reservations.models.ResourceType
-    :ivar quota_period: The quota period over which the usage values are summarized, such as - P1D
-     (Per one day), PT1M (Per one minute), PT1S (Per one second). This parameter is optional
-     because, for some resources like compute, the period doesn’t matter.
+    :ivar quota_period: The time period over which the quota usage values are summarized. For
+     example, P1D (per one day), PT1M (per one minute), and PT1S (per one second). This parameter is
+     optional because, for some resources such as compute, the time period is irrelevant.
     :vartype quota_period: str
-    :param properties: Additional properties for the specific resource provider.
-    :type properties: object
+    :param properties: Additional properties for the specified resource provider.
+    :type properties: any
     """
 
     _validation = {
@@ -1471,23 +1245,23 @@ class QuotaProperties(msrest.serialization.Model):
 
 
 class QuotaRequestDetails(msrest.serialization.Model):
-    """The details of the quota Request.
+    """Quota request details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The quota request Id.
+    :ivar id: Quota request ID.
     :vartype id: str
-    :ivar name: The name of the quota request.
+    :ivar name: Quota request name.
     :vartype name: str
-    :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits".
+    :ivar type: Resource type.
     :vartype type: str
     :param provisioning_state: The quota request status. Possible values include: "Accepted",
      "Invalid", "Succeeded", "Failed", "InProgress".
     :type provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
     :ivar message: User friendly status message.
     :vartype message: str
-    :ivar request_submit_time: The quota request submit time. The date conforms to the following
-     format: yyyy-MM-ddTHH:mm:ssZ as specified by the ISO 8601 standard.
+    :ivar request_submit_time: The time when the quota request was submitted using format:
+     yyyy-MM-ddTHH:mm:ssZ as specified by the ISO 8601 standard.
     :vartype request_submit_time: ~datetime.datetime
     :param value: The quotaRequests.
     :type value: list[~azure.mgmt.reservations.models.SubRequest]
@@ -1526,11 +1300,11 @@ class QuotaRequestDetails(msrest.serialization.Model):
 
 
 class QuotaRequestDetailsList(msrest.serialization.Model):
-    """Quota requests information.
+    """Quota request details.
 
-    :param value: The quota Requests.
+    :param value: The quota requests.
     :type value: list[~azure.mgmt.reservations.models.QuotaRequestDetails]
-    :param next_link: The uri to fetch the next page of quota limits. When there are no more pages,
+    :param next_link: The URI to fetch the next page of quota limits. When there are no more pages,
      this is null.
     :type next_link: str
     """
@@ -1550,11 +1324,11 @@ class QuotaRequestDetailsList(msrest.serialization.Model):
 
 
 class QuotaRequestOneResourceSubmitResponse(msrest.serialization.Model):
-    """Quota submit request response.
+    """Response for the quota submission request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The quota request Id.
+    :ivar id: The quota request ID.
     :vartype id: str
     :ivar name: The name of the quota request.
     :vartype name: str
@@ -1565,8 +1339,8 @@ class QuotaRequestOneResourceSubmitResponse(msrest.serialization.Model):
     :vartype provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
     :ivar message: User friendly status message.
     :vartype message: str
-    :ivar request_submit_time: The quota request submit time. The date conforms to the following
-     format: yyyy-MM-ddTHH:mm:ssZ as specified by the ISO 8601 standard.
+    :ivar request_submit_time: The time when the quota request was submitted using format:
+     yyyy-MM-ddTHH:mm:ssZ as specified by the ISO 8601 standard.
     :vartype request_submit_time: ~datetime.datetime
     :param properties: Quota properties for the resource.
     :type properties: ~azure.mgmt.reservations.models.QuotaProperties
@@ -1615,8 +1389,8 @@ class QuotaRequestProperties(msrest.serialization.Model):
     :type provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
     :ivar message: User friendly status message.
     :vartype message: str
-    :ivar request_submit_time: The quota request submit time. The date conforms to the following
-     format: yyyy-MM-ddTHH:mm:ssZ as specified by the ISO 8601 standard.
+    :ivar request_submit_time: The time when the quota request was submitted using format:
+     yyyy-MM-ddTHH:mm:ssZ as specified by the ISO 8601 standard.
     :vartype request_submit_time: ~datetime.datetime
     :param value: The quotaRequests.
     :type value: list[~azure.mgmt.reservations.models.SubRequest]
@@ -1646,11 +1420,11 @@ class QuotaRequestProperties(msrest.serialization.Model):
 
 
 class QuotaRequestSubmitResponse(msrest.serialization.Model):
-    """Quota submit request response.
+    """Response for the quota submission request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The quota request Id.
+    :ivar id: The quota request ID.
     :vartype id: str
     :ivar name: The name of the quota request.
     :vartype name: str
@@ -1685,18 +1459,18 @@ class QuotaRequestSubmitResponse(msrest.serialization.Model):
 
 
 class QuotaRequestSubmitResponse201(msrest.serialization.Model):
-    """The quota request submit response with request id.
+    """Response with request ID that the quota request was accepted.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The quota request id. Please use the requestId to check the request status.
+    :ivar id: The quota request ID. Use the requestId parameter to check the request status.
     :vartype id: str
-    :ivar name: The operation Id.
+    :ivar name: Operation ID.
     :vartype name: str
-    :ivar type: The resource type.
+    :ivar type: Resource type.
     :vartype type: str
-    :ivar provisioning_state: The quota request status. Possible values include: "Accepted",
-     "Invalid", "Succeeded", "Failed", "InProgress".
+    :ivar provisioning_state: The details of the quota request status. Possible values include:
+     "Accepted", "Invalid", "Succeeded", "Failed", "InProgress".
     :vartype provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
     :ivar message: A user friendly message.
     :vartype message: str
@@ -2228,11 +2002,14 @@ class ReservationToExchange(msrest.serialization.Model):
 class ReservationToPurchaseCalculateExchange(msrest.serialization.Model):
     """Reservation purchase details.
 
+    :param properties:
+    :type properties: ~azure.mgmt.reservations.models.PurchaseRequest
     :param billing_currency_total:
     :type billing_currency_total: ~azure.mgmt.reservations.models.Price
     """
 
     _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'PurchaseRequest'},
         'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'Price'},
     }
 
@@ -2241,6 +2018,7 @@ class ReservationToPurchaseCalculateExchange(msrest.serialization.Model):
         **kwargs
     ):
         super(ReservationToPurchaseCalculateExchange, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
         self.billing_currency_total = kwargs.get('billing_currency_total', None)
 
 
@@ -2249,6 +2027,11 @@ class ReservationToPurchaseExchange(msrest.serialization.Model):
 
     :param reservation_order_id: Fully qualified id of the ReservationOrder being purchased.
     :type reservation_order_id: str
+    :param reservation_id: Fully qualified id of the Reservation being purchased. This value is
+     only guaranteed to be non-null if the purchase is successful.
+    :type reservation_id: str
+    :param properties:
+    :type properties: ~azure.mgmt.reservations.models.PurchaseRequest
     :param billing_currency_total:
     :type billing_currency_total: ~azure.mgmt.reservations.models.Price
     :param status: Status of the individual operation. Possible values include: "Succeeded",
@@ -2258,6 +2041,8 @@ class ReservationToPurchaseExchange(msrest.serialization.Model):
 
     _attribute_map = {
         'reservation_order_id': {'key': 'reservationOrderId', 'type': 'str'},
+        'reservation_id': {'key': 'reservationId', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PurchaseRequest'},
         'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'Price'},
         'status': {'key': 'status', 'type': 'str'},
     }
@@ -2268,6 +2053,8 @@ class ReservationToPurchaseExchange(msrest.serialization.Model):
     ):
         super(ReservationToPurchaseExchange, self).__init__(**kwargs)
         self.reservation_order_id = kwargs.get('reservation_order_id', None)
+        self.reservation_id = kwargs.get('reservation_id', None)
+        self.properties = kwargs.get('properties', None)
         self.billing_currency_total = kwargs.get('billing_currency_total', None)
         self.status = kwargs.get('status', None)
 
@@ -2332,13 +2119,13 @@ class ReservationToReturnForExchange(msrest.serialization.Model):
 
 
 class ResourceName(msrest.serialization.Model):
-    """Name of the resource provide by the resource Provider. Please use this name property for quotaRequests.
+    """Resource name provided by the resource provider. Use this property for quotaRequest parameter.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: Resource name.
     :type value: str
-    :ivar localized_value: Resource display name.
+    :ivar localized_value: Resource display localized name.
     :vartype localized_value: str
     """
 
@@ -2384,13 +2171,13 @@ class ScopeProperties(msrest.serialization.Model):
 
 
 class ServiceError(msrest.serialization.Model):
-    """The api error details.
+    """The API error details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param code: The error code.
     :type code: str
-    :param message: The error message.
+    :param message: The error message text.
     :type message: str
     :ivar details: The list of error details.
     :vartype details: list[~azure.mgmt.reservations.models.ServiceErrorDetail]
@@ -2546,21 +2333,21 @@ class SubRequest(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar limit: The Resource limit.
+    :ivar limit: Quota (resource limit).
     :vartype limit: int
-    :param name: The Resource name.
+    :param name: The resource name.
     :type name: ~azure.mgmt.reservations.models.ResourceName
     :ivar resource_type: Resource type for which the quota check was made.
     :vartype resource_type: str
-    :param unit: The units of the limit, such as - Count, Bytes, etc. Use the unit field provided
-     in the Get quota response.
+    :param unit: The limit units, such as **count** and **bytes**. Use the unit field provided in
+     the response of the GET quota operation.
     :type unit: str
     :param provisioning_state: The quota request status. Possible values include: "Accepted",
      "Invalid", "Succeeded", "Failed", "InProgress".
     :type provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
-    :ivar message: User friendly status message.
+    :ivar message: User-friendly status message.
     :vartype message: str
-    :ivar sub_request_id: Sub request id for individual request.
+    :ivar sub_request_id: Sub request ID for individual request.
     :vartype sub_request_id: str
     """
 
@@ -2612,56 +2399,3 @@ class SubscriptionScopeProperties(msrest.serialization.Model):
     ):
         super(SubscriptionScopeProperties, self).__init__(**kwargs)
         self.scopes = kwargs.get('scopes', None)
-
-
-class SupportRequestAction(msrest.serialization.Model):
-    """The SupportRequest action.
-
-    :param severity: The support request severity. Possible values include: "Critical", "Moderate",
-     "Minimal".
-    :type severity: str or ~azure.mgmt.reservations.models.SeverityType
-    :param first_name: The first name of the recipient.
-    :type first_name: str
-    :param last_name: The last name of the recipient.
-    :type last_name: str
-    :param country: The country of the recipient.
-    :type country: str
-    :param phone_number: The phone number of the recipient.
-    :type phone_number: str
-    :param primary_email_address: The primary email addresses of the recipients.
-    :type primary_email_address: str
-    :param support_language: The support language.
-    :type support_language: str
-    :param preferred_contact_method: The preferred communication channel. Possible values include:
-     "Email", "Phone".
-    :type preferred_contact_method: str or ~azure.mgmt.reservations.models.ContactMethodType
-    :param alternate_email_addresses: The alternate email address of the recipient.
-    :type alternate_email_addresses: list[str]
-    """
-
-    _attribute_map = {
-        'severity': {'key': 'severity', 'type': 'str'},
-        'first_name': {'key': 'firstName', 'type': 'str'},
-        'last_name': {'key': 'lastName', 'type': 'str'},
-        'country': {'key': 'country', 'type': 'str'},
-        'phone_number': {'key': 'phoneNumber', 'type': 'str'},
-        'primary_email_address': {'key': 'primaryEmailAddress', 'type': 'str'},
-        'support_language': {'key': 'supportLanguage', 'type': 'str'},
-        'preferred_contact_method': {'key': 'preferredContactMethod', 'type': 'str'},
-        'alternate_email_addresses': {'key': 'alternateEmailAddresses', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SupportRequestAction, self).__init__(**kwargs)
-        self.severity = kwargs.get('severity', None)
-        self.first_name = kwargs.get('first_name', None)
-        self.last_name = kwargs.get('last_name', None)
-        self.country = kwargs.get('country', None)
-        self.phone_number = kwargs.get('phone_number', None)
-        self.primary_email_address = kwargs.get('primary_email_address', None)
-        self.support_language = kwargs.get('support_language', None)
-        self.preferred_contact_method = kwargs.get('preferred_contact_method', None)
-        self.alternate_email_addresses = kwargs.get('alternate_email_addresses', None)
