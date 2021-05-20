@@ -144,6 +144,8 @@ class TableClient(AsyncTablesBaseClient):
             parsed_url.query,
         )
         table_name = unquote(table_path[-1])
+        if table_name.lower().startswith("tables('"):
+            table_name = table_name[8:-2]
         if not table_name:
             raise ValueError(
                 "Invalid URL. Please provide a URL with a valid table name"
@@ -680,6 +682,7 @@ class TableClient(AsyncTablesBaseClient):
             self._client._deserialize,  # pylint: disable=protected-access
             self._client._config,  # pylint: disable=protected-access
             self.table_name,
+            is_cosmos_endpoint=self._cosmos_endpoint,
             **kwargs
         )
         for operation in operations:

@@ -402,13 +402,3 @@ class TestTablesUnitTest(AsyncTableTestCase):
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
-
-    def test_azurite_url(self):
-        account_url = "https://127.0.0.1:10002/my_account"
-        tsc = TableServiceClient(account_url, credential=self.credential)
-
-        assert tsc.account_name == "my_account"
-        assert tsc.url == "https://127.0.0.1:10002/my_account"
-        assert tsc._location_mode == "primary"
-        assert tsc.credential.named_key.key == self.credential.named_key.key
-        assert tsc.credential.named_key.name == self.credential.named_key.name
