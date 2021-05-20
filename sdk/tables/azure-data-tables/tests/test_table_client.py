@@ -6,7 +6,7 @@
 import pytest
 import platform
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables import __version__ as VERSION
@@ -29,7 +29,7 @@ _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
 
-class TestTableClient(AzureTestCase, TableTestCase):
+class TestTableClient(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     def test_user_agent_custom(self, tables_storage_account_name, tables_primary_storage_account_key):

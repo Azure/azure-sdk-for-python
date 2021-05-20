@@ -13,7 +13,7 @@ import logging
 
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 from azure.core.credentials import AccessToken, AzureNamedKeyCredential
 from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
 

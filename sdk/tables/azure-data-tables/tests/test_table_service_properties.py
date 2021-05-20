@@ -8,7 +8,7 @@
 import time
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.data.tables import (
     TableServiceClient,
@@ -25,7 +25,7 @@ from preparers import tables_decorator
 # ------------------------------------------------------------------------------
 
 
-class TableServicePropertiesTest(AzureTestCase, TableTestCase):
+class TableServicePropertiesTest(AzureRecordedTestCase, TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None

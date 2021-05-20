@@ -8,7 +8,7 @@ import pytest
 import platform
 from time import sleep
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables import __version__ as VERSION
@@ -16,7 +16,7 @@ from azure.data.tables import __version__ as VERSION
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import SLEEP_DELAY
 from async_preparers import cosmos_decorator_async
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 # ------------------------------------------------------------------------------
 
@@ -29,7 +29,7 @@ _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
 
-class TestTableClient(AzureTestCase, AsyncTableTestCase):
+class TestTableClient(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     async def test_user_agent_default_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):

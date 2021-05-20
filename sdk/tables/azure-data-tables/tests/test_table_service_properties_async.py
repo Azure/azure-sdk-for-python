@@ -8,7 +8,7 @@
 import time
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.core.exceptions import HttpResponseError
 
@@ -21,7 +21,7 @@ from async_preparers import tables_decorator_async
 # ------------------------------------------------------------------------------
 
 
-class TableServicePropertiesTest(AzureTestCase, TableTestCase):
+class TableServicePropertiesTest(AzureRecordedTestCase, TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None

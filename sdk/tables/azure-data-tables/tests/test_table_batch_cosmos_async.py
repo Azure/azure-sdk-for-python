@@ -14,7 +14,7 @@ import uuid
 
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
@@ -42,7 +42,7 @@ from async_preparers import cosmos_decorator_async
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
-class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
+class StorageTableBatchTest(AzureRecordedTestCase, AsyncTableTestCase):
 
     async def _set_up(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         self.ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)

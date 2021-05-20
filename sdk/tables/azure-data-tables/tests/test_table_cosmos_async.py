@@ -6,7 +6,7 @@ from time import sleep
 
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError, HttpResponseError
@@ -27,7 +27,7 @@ TEST_TABLE_PREFIX = 'pytableasync'
 
 # ------------------------------------------------------------------------------
 
-class TableTestAsync(AzureTestCase, AsyncTableTestCase):
+class TableTestAsync(AzureRecordedTestCase, AsyncTableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
         table_name = self.get_resource_name(prefix)

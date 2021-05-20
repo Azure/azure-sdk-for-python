@@ -8,7 +8,7 @@
 import time
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.core.exceptions import HttpResponseError
 
@@ -24,7 +24,7 @@ from _shared.testcase import TableTestCase, SLEEP_DELAY
 from preparers import cosmos_decorator
 # ------------------------------------------------------------------------------
 
-class TableServicePropertiesTest(AzureTestCase, TableTestCase):
+class TableServicePropertiesTest(AzureRecordedTestCase, TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None

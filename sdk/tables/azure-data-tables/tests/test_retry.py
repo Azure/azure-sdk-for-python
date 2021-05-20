@@ -6,7 +6,7 @@
 import unittest
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 
 from azure.core.exceptions import (
@@ -46,7 +46,7 @@ class RetryRequestTransport(RequestsTransport):
         return response
 
 # --Test Class -----------------------------------------------------------------
-class StorageRetryTest(AzureTestCase, TableTestCase):
+class StorageRetryTest(AzureRecordedTestCase, TableTestCase):
 
     def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='table', default_table=True, **kwargs):
         self.table_name = self.get_resource_name('uttable')

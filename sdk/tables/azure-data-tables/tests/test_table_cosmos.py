@@ -15,7 +15,7 @@ from datetime import (
     timedelta,
 )
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import (
@@ -50,7 +50,7 @@ from preparers import cosmos_decorator
 TEST_TABLE_PREFIX = 'pytablesync'
 # ------------------------------------------------------------------------------
 
-class StorageTableTest(AzureTestCase, TableTestCase):
+class StorageTableTest(AzureRecordedTestCase, TableTestCase):
 
     # --Helpers-----------------------------------------------------------------
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):

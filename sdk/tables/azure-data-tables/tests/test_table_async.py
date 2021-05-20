@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from devtools_testutils import AzureTestCase, AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, AzureRecordedTestCase
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError

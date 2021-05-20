@@ -14,7 +14,7 @@ import os
 import sys
 import uuid
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
@@ -44,7 +44,7 @@ from async_preparers import tables_decorator_async
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
-class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
+class StorageTableBatchTest(AzureRecordedTestCase, AsyncTableTestCase):
 
     async def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key):
         self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)

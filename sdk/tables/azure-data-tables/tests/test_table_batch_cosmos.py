@@ -13,7 +13,7 @@ import uuid
 
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
@@ -40,7 +40,7 @@ from preparers import cosmos_decorator
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
-class StorageTableClientTest(AzureTestCase, TableTestCase):
+class StorageTableClientTest(AzureRecordedTestCase, TableTestCase):
 
     def _set_up(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         self.ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)

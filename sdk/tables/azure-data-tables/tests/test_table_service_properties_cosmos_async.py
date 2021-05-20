@@ -8,7 +8,7 @@
 import pytest
 from time import sleep
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.data.tables import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
 from azure.data.tables.aio import TableServiceClient
@@ -19,7 +19,7 @@ from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import cosmos_decorator_async
 # ------------------------------------------------------------------------------
 
-class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
+class TableServicePropertiesTest(AzureRecordedTestCase, AsyncTableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None
