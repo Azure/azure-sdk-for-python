@@ -26,12 +26,11 @@
 import asyncio
 import codecs
 import cgi
-import json
 import collections
 
 import xml.etree.ElementTree as ET
-from abc import abstractmethod
 from enum import Enum
+from json import loads
 from typing import (
     Any,
     AsyncIterable,
@@ -166,15 +165,19 @@ def _set_content_body(content: ContentType, internal_request: _PipelineTransport
     internal_request.headers = headers
 
 def _set_body(
-    content: Optional[ContentType], data: Optional[dict], files: Any, json_body: Any, internal_request: _PipelineTransportHttpRequest
+    content: Optional[ContentType],
+    data: Optional[dict],
+    files: Any,
+    json: Any,
+    internal_request: _PipelineTransportHttpRequest
 ) -> None:
     if data is not None and not isinstance(data, dict):
         content = data
         data = None
     if content is not None:
         _set_content_body(content, internal_request)
-    elif json_body is not None:
-        internal_request.set_json_body(json_body)
+    elif json is not None:
+        internal_request.set_json_body(json)
         _set_content_type_header("application/json", internal_request)
     elif files or data:
         if files:
@@ -187,7 +190,8 @@ def _set_body(
             _set_content_type_header("application/x-www-form-urlencoded", internal_request)
         if files and data:
             internal_request.files = {
-                f: internal_request._format_data(d) for f, d in files.items() if d is not None
+                f: internal_request._format_data(d)  # pylint: disable=protected-access
+                for f, d in files.items() if d is not None
             }
 
 def _parse_lines_from_text(text):
@@ -243,19 +247,7 @@ class _StreamContextManagerBase:
         self.pipeline = pipeline
         self.request = request
         self.kwargs = kwargs
-
-    @property
-    @abstractmethod
-    def response(self):
-        ...
-
-    @response.setter
-    def response(self, val):
-        self._response = val
-
-    @abstractmethod
-    def close(self):
-        ...
+        self.response: Optional[Union[HttpResponse, AsyncHttpResponse]] = None
 
 class _StreamContextManager(_StreamContextManagerBase):
 
@@ -363,7 +355,7 @@ class HttpRequest:
             content=content,
             data=data,
             files=files,
-            json_body=json,
+            json=json,
             internal_request=self._internal_request
         )
 
@@ -447,8 +439,7 @@ class _HttpResponseBase:
         self.is_closed = False
         self.is_stream_consumed = False
         self._num_bytes_downloaded = 0
-        self._content = None
-        self._content_read_in = False
+        self._content: Optional[bytes] = None
 
     @property
     def status_code(self) -> int:
@@ -516,7 +507,7 @@ class _HttpResponseBase:
     @property
     def text(self) -> str:
         """Returns the response body as a string"""
-        if not self._content_read_in:
+        if not self._content:
             raise ResponseNotReadError()
         return self._internal_response.text(encoding=self.encoding)
 
@@ -549,7 +540,7 @@ class _HttpResponseBase:
         :rtype: any
         :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
         """
-        return json.loads(self.text)
+        return loads(self.text)
 
     def raise_for_status(self) -> None:
         """Raises an HttpResponseError if the response has an error status code.
@@ -562,7 +553,7 @@ class _HttpResponseBase:
     @property
     def content(self) -> bytes:
         """Return the response's content in bytes."""
-        if not self._content_read_in:
+        if not self._content:
             raise ResponseNotReadError()
         return self._content
 
@@ -595,26 +586,25 @@ class HttpResponse(_HttpResponseBase):
         Read the response's bytes.
 
         """
-        if not self._content_read_in:
+        if not self._content:
             self._validate_streaming_access()
             self._content: bytes = (
                 self._internal_response.body() or
                 b"".join(self.iter_raw())
             )
             self._close_stream()
-            self._content_read_in = True
             return self._content
         return self._content
 
     def iter_bytes(self, chunk_size: int = None) -> Iterator[bytes]:
         """Iterate over the bytes in the response stream
         """
-        try:
+        if self._content:
             chunk_size = len(self._content) if chunk_size is None else chunk_size
             for i in range(0, len(self._content), chunk_size):
                 yield self._content[i: i + chunk_size]
 
-        except AttributeError:
+        else:
             for raw_bytes in self.iter_raw(chunk_size=chunk_size):
                 yield raw_bytes
 
@@ -660,24 +650,22 @@ class AsyncHttpResponse(_HttpResponseBase):
         Read the response's bytes.
 
         """
-        if not self._content_read_in:
+        if not self._content:
             self._validate_streaming_access()
             await self._internal_response.load_body()  # type: ignore
-            self._content = self._internal_response._body
+            self._content = self._internal_response.body()
             await self._close_stream()
-            self._content_read_in = True
             return self._content
         return self._content
 
     async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
         """Iterate over the bytes in the response stream
         """
-        try:
+        if self._content:
             chunk_size = len(self._content) if chunk_size is None else chunk_size
             for i in range(0, len(self._content), chunk_size):
                 yield self._content[i: i + chunk_size]
-
-        except AttributeError:
+        else:
             async for raw_bytes in self.iter_raw(chunk_size=chunk_size):
                 yield raw_bytes
 

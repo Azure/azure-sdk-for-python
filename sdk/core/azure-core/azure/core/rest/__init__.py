@@ -53,7 +53,7 @@ __all__ = [
 ]
 
 try:
-    from ._rest_py3 import (  # pylint: ignore=unused-import
+    from ._rest_py3 import (  # pylint: disable=unused-import
         AsyncHttpResponse,
         _AsyncStreamContextManager,
     )

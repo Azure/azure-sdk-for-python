@@ -25,10 +25,11 @@
 # --------------------------------------------------------------------------
 import codecs
 import cgi
-import json
 import collections
 import xml.etree.ElementTree as ET
 from enum import Enum
+from json import loads
+
 from typing import TYPE_CHECKING, Iterable, cast
 import six
 
@@ -132,24 +133,30 @@ def _set_content_body(content, internal_request):
         internal_request.data = content
     internal_request.headers = headers
 
-def _set_body(content, data, files, json_body, internal_request):
+def _set_body(content, data, files, json, internal_request):
     # type: (ContentType, dict, Any, Any, _PipelineTransportHttpRequest) -> None
     if data is not None and not isinstance(data, dict):
         content = data
         data = None
     if content is not None:
         _set_content_body(content, internal_request)
-    elif json_body is not None:
-        internal_request.set_json_body(json_body)
+    elif json is not None:
+        internal_request.set_json_body(json)
         _set_content_type_header("application/json", internal_request)
-    elif files is not None:
-        internal_request.set_formdata_body(files)
-    elif data:
-        _set_content_type_header("application/x-www-form-urlencoded", internal_request)
-        internal_request.set_formdata_body(data)
-        # need to set twice because Content-Type is being popped in set_formdata_body
-        # don't want to risk changing pipeline.transport, so doing twice here
-        _set_content_type_header("application/x-www-form-urlencoded", internal_request)
+    elif files or data:
+        if files:
+            internal_request.set_formdata_body(files)
+        if data:
+            _set_content_type_header("application/x-www-form-urlencoded", internal_request)
+            internal_request.set_formdata_body(data)
+            # need to set twice because Content-Type is being popped in set_formdata_body
+            # don't want to risk changing pipeline.transport, so doing twice here
+            _set_content_type_header("application/x-www-form-urlencoded", internal_request)
+        if files and data:
+            internal_request.files = {
+                f: internal_request._format_data(d)  # pylint: disable=protected-access
+                for f, d in files.items() if d is not None
+            }
 
 def _parse_lines_from_text(text):
     # largely taken from httpx's LineDecoder code
@@ -197,7 +204,7 @@ class _StreamContextManager(object):
         self.pipeline = pipeline
         self.request = request
         self.kwargs = kwargs
-        self.response = None
+        self.response = None  # type: Optional[HttpResponse]
 
     def __enter__(self):
         # type: (...) -> HttpResponse
@@ -256,7 +263,7 @@ class HttpRequest(object):
 
         data = kwargs.pop("data", None)
         content = kwargs.pop("content", None)
-        json_body = kwargs.pop("json", None)
+        json = kwargs.pop("json", None)
         files = kwargs.pop("files", None)
 
         self._internal_request = kwargs.pop("_internal_request", _PipelineTransportHttpRequest(
@@ -273,7 +280,7 @@ class HttpRequest(object):
             content=content,
             data=data,
             files=files,
-            json_body=json_body,
+            json=json,
             internal_request=self._internal_request
         )
 
@@ -354,8 +361,7 @@ class HttpResponse(object):
         self.is_closed = False
         self.is_stream_consumed = False
         self._num_bytes_downloaded = 0
-        self._content = None
-        self._content_read_in = False
+        self._content = None  # type: Optional[bytes]
 
     @property
     def status_code(self):
@@ -390,7 +396,7 @@ class HttpResponse(object):
     def content(self):
         # type: (...) -> bytes
         """Returns the response content in bytes"""
-        if not self._content_read_in:
+        if not self._content:
             raise ResponseNotReadError()
         return self._content
 
@@ -434,7 +440,7 @@ class HttpResponse(object):
     def text(self):
         # type: (...) -> str
         """Returns the response body as a string"""
-        if not self._content_read_in:
+        if not self._content:
             raise ResponseNotReadError()
         return self._internal_response.text(encoding=self.encoding)
 
@@ -481,7 +487,7 @@ class HttpResponse(object):
         :rtype: any
         :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
         """
-        return json.loads(self.text)
+        return loads(self.text)
 
     def raise_for_status(self):
         # type: (...) -> None
@@ -523,14 +529,13 @@ class HttpResponse(object):
         Read the response's bytes.
 
         """
-        if not self._content_read_in:
+        if not self._content:
             self._validate_streaming_access()
             self._content = (
                 self._internal_response.body() or
                 b"".join(self.iter_raw())
             )
             self._close_stream()
-            self._content_read_in = True
             return self._content
         return self._content
 
@@ -538,12 +543,11 @@ class HttpResponse(object):
         # type: (int) -> Iterator[bytes]
         """Iterate over the bytes in the response stream
         """
-        try:
+        if self._content:
             chunk_size = len(self._content) if chunk_size is None else chunk_size
             for i in range(0, len(self._content), chunk_size):
                 yield self._content[i: i + chunk_size]
-
-        except AttributeError:
+        else:
             for raw_bytes in self.iter_raw(chunk_size=chunk_size):
                 yield raw_bytes
 
