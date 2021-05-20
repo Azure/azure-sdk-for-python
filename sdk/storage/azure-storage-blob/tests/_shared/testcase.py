@@ -147,7 +147,7 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
                 id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname"
             )
         logger = logging.getLogger("ACCOUNT INFORMATION")
-        logger.warning("storage account", storage_account.name)
+        logger.warning("storage account", storage_account)
         logger.warning("storage account", rg.name)
         return {
             'location': 'westus',
