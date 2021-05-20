@@ -13,13 +13,16 @@ from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.exceptions import HttpResponseError
 from typing import Any, Dict
-from testcase_async import _create_http_response
 
-create_http_response = functools.partial(_create_http_response, stream=False)
+@pytest.fixture
+def send_request(client):
+    async def _send_request(request):
+        return await client.send_request(request, stream=False)
+    return _send_request
 
 @pytest.mark.asyncio
-async def test_response():
-    response = await create_http_response(
+async def test_response(send_request):
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/string"),
     )
 
@@ -34,8 +37,8 @@ async def test_response():
 
 
 @pytest.mark.asyncio
-async def test_response_content():
-    response = await create_http_response(
+async def test_response_content(send_request):
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/bytes"),
     )
 
@@ -48,8 +51,8 @@ async def test_response_content():
 
 
 @pytest.mark.asyncio
-async def test_response_text():
-    response = await create_http_response(
+async def test_response_text(send_request):
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/text"),
     )
 
@@ -64,8 +67,8 @@ async def test_response_text():
 
 
 @pytest.mark.asyncio
-async def test_response_html():
-    response = await create_http_response(
+async def test_response_html(send_request):
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/html"),
     )
 
@@ -77,20 +80,20 @@ async def test_response_html():
     response.raise_for_status()
 
 @pytest.mark.asyncio
-async def test_raise_for_status():
-    response = await create_http_response(
+async def test_raise_for_status(send_request):
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/text"),
     )
     response.raise_for_status()
 
-    response = await create_http_response(
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/errors/403"),
     )
     assert response.status_code == 403
     with pytest.raises(HttpResponseError):
         response.raise_for_status()
 
-    response = await create_http_response(
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/errors/500"),
     )
     assert response.status_code == 500
@@ -98,18 +101,18 @@ async def test_raise_for_status():
         response.raise_for_status()
 
 @pytest.mark.asyncio
-async def test_response_repr():
-    response = await create_http_response(
+async def test_response_repr(send_request):
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/text")
     )
     assert repr(response) == "<AsyncHttpResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
 
 @pytest.mark.asyncio
-async def test_response_content_type_encoding():
+async def test_response_content_type_encoding(send_request):
     """
     Use the charset encoding in the Content-Type header if possible.
     """
-    response = await create_http_response(
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/encoding/latin-1")
     )
     await response.read()
@@ -119,27 +122,27 @@ async def test_response_content_type_encoding():
 
 
 @pytest.mark.asyncio
-async def test_response_autodetect_encoding():
+async def test_response_autodetect_encoding(send_request):
     """
     Autodetect encoding if there is no Content-Type header.
     """
-    response = await create_http_response(
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/encoding/latin-1")
     )
     await response.read()
 
     # going to hack no content type response header being sent back
-    response._internal_response.headers["Content-Type"] = None
+    response._internal_response.headers["Content-Type"] = ""
     assert response.text == u'Latin 1: ÿ'
     assert response.encoding is None
 
 
 @pytest.mark.asyncio
-async def test_response_fallback_to_autodetect():
+async def test_response_fallback_to_autodetect(send_request):
     """
     Fallback to autodetection if we get an invalid charset in the Content-Type header.
     """
-    response = await create_http_response(
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/encoding/latin-1")
     )
     await response.read()
@@ -151,12 +154,12 @@ async def test_response_fallback_to_autodetect():
 
 
 @pytest.mark.asyncio
-async def test_response_no_charset_with_ascii_content():
+async def test_response_no_charset_with_ascii_content(send_request):
     """
     A response with ascii encoded content should decode correctly,
     even with no charset specified.
     """
-    response = await create_http_response(
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/basic/helloWorld/string"),
     )
 
@@ -171,12 +174,12 @@ async def test_response_no_charset_with_ascii_content():
 
 
 @pytest.mark.asyncio
-async def test_response_no_charset_with_iso_8859_1_content():
+async def test_response_no_charset_with_iso_8859_1_content(send_request):
     """
     A response with ISO 8859-1 encoded content should decode correctly,
     even with no charset specified.
     """
-    response = await create_http_response(
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/encoding/iso-8859-1"),
     )
     content = await response.read()
@@ -188,8 +191,8 @@ async def test_response_no_charset_with_iso_8859_1_content():
     assert response.encoding is None
 
 @pytest.mark.asyncio
-async def test_response_set_explicit_encoding():
-    response = await create_http_response(
+async def test_response_set_explicit_encoding(send_request):
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/encoding/latin-1-string-with-utf-8"),
     )
     response.encoding = "latin-1"
@@ -199,16 +202,16 @@ async def test_response_set_explicit_encoding():
     assert response.encoding == "latin-1"
 
 @pytest.mark.asyncio
-async def test_json():
-    response = await create_http_response(
+async def test_json(send_request):
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/basic/json"),
     )
     await response.read()
     assert response.json() == {"greeting": "hello", "recipient": "world"}
 
 @pytest.mark.asyncio
-async def test_json_with_specified_encoding():
-    response = await create_http_response(
+async def test_json_with_specified_encoding(send_request):
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/encoding/json"),
     )
     await response.read()
@@ -216,24 +219,24 @@ async def test_json_with_specified_encoding():
     assert response.encoding == "utf-16"
 
 @pytest.mark.asyncio
-async def test_emoji():
-    response = await create_http_response(
+async def test_emoji(send_request):
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/encoding/emoji"),
     )
     await response.read()
     assert response.text == "👩"
 
 @pytest.mark.asyncio
-async def test_emoji_family_with_skin_tone_modifier():
-    response = await create_http_response(
+async def test_emoji_family_with_skin_tone_modifier(send_request):
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/encoding/emoji-family-skin-tone-modifier"),
     )
     await response.read()
     assert response.text == "👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
 
 @pytest.mark.asyncio
-async def test_korean_nfc():
-    response = await create_http_response(
+async def test_korean_nfc(send_request):
+    response = await send_request(
         request=HttpRequest("GET", "http://localhost:3000/encoding/korean"),
     )
     await response.read()

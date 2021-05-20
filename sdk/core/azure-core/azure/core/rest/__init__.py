@@ -23,30 +23,18 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+
 try:
     from ._rest_py3 import (
         HttpRequest,
         HttpResponse,
-        AsyncHttpResponse,
         _StreamContextManager,
-        _AsyncStreamContextManager,
         StreamConsumedError,
         ResponseNotReadError,
         ResponseClosedError,
     )
-
-    __all__ = [
-        "HttpRequest",
-        "HttpResponse",
-        "AsyncHttpResponse",
-        "_StreamContextManager",
-        "_AsyncStreamContextManager",
-        "StreamConsumedError",
-        "ResponseNotReadError",
-        "ResponseClosedError",
-    ]
 except (SyntaxError, ImportError):
-    from ._rest import (
+    from ._rest import (  # type: ignore
         HttpRequest,
         HttpResponse,
         _StreamContextManager,
@@ -55,11 +43,24 @@ except (SyntaxError, ImportError):
         ResponseClosedError,
     )
 
-    __all__ = [
-        "HttpRequest",
-        "HttpResponse",
-        "_StreamContextManager",
-        "StreamConsumedError",
-        "ResponseNotReadError",
-        "ResponseClosedError",
-    ]
+__all__ = [
+    "HttpRequest",
+    "HttpResponse",
+    "_StreamContextManager",
+    "StreamConsumedError",
+    "ResponseNotReadError",
+    "ResponseClosedError",
+]
+
+try:
+    from ._rest_py3 import (  # pylint: ignore=unused-import
+        AsyncHttpResponse,
+        _AsyncStreamContextManager,
+    )
+
+    __all__.extend([
+        "AsyncHttpResponse",
+        "_AsyncStreamContextManager",
+    ])
+except (SyntaxError, ImportError):
+    pass

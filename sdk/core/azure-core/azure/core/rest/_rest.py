@@ -23,36 +23,30 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
-from abc import abstractmethod
-import sys
-import six
-import os
-import binascii
 import codecs
 import cgi
 import json
-from enum import Enum
+import collections
 import xml.etree.ElementTree as ET
-from typing import TYPE_CHECKING, Iterable
+from enum import Enum
+from typing import TYPE_CHECKING, Iterable, cast
+import six
 
 from azure.core.pipeline.transport import (
     HttpRequest as _PipelineTransportHttpRequest,
 )
+from azure.core.exceptions import HttpResponseError
 
 if TYPE_CHECKING:
     from typing import (
-        Any, Optional, Union, Mapping, Sequence, Tuple, Iterator
+        Any, Optional, Union, Mapping, Iterator
     )
     ByteStream = Iterable[bytes]
 
-    HeadersType = Union[
-        Mapping[str, str],
-        Sequence[Tuple[str, str]]
-    ]
+    HeadersType = Mapping[str, str]
     ContentType = Union[str, bytes, ByteStream]
     from azure.core.pipeline.transport._base import (
-        _HttpResponseBase as _PipelineTransportHttpResponseBase
+        HttpResponse as _PipelineTransportHttpResponse
     )
     from azure.core.pipeline import Pipeline
 
@@ -64,7 +58,6 @@ class HttpVerbs(str, Enum):
     PATCH = "PATCH"
     DELETE = "DELETE"
     MERGE = "MERGE"
-from azure.core.exceptions import HttpResponseError
 
 ########################### UTILS SECTION #################################
 
@@ -105,23 +98,35 @@ def _set_content_body(content, internal_request):
         # stream will be bytes / str, or iterator of bytes / str
         internal_request.set_streamed_data_body(content)
         if isinstance(content, (str, bytes)) and content:
-            _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+            _set_content_length_header(
+                "Content-Length",
+                str(len(cast(str, internal_request.data))),
+                internal_request
+            )
             if isinstance(content, six.string_types):
                 _set_content_type_header("text/plain", internal_request)
             else:
                 _set_content_type_header("application/octet-stream", internal_request)
-        elif isinstance(content, Iterable):
+        elif isinstance(content, collections.Iterable):
             _set_content_length_header("Transfer-Encoding", "chunked", internal_request)
             _set_content_type_header("application/octet-stream", internal_request)
     elif isinstance(content, ET.Element):
         # XML body
         internal_request.set_xml_body(content)
         _set_content_type_header("application/xml", internal_request)
-        _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+        _set_content_length_header(
+            "Content-Length",
+            str(len(cast(ET.Element, internal_request.data))),
+            internal_request
+        )
     elif content_type and content_type.startswith("text/"):
         # Text body
         internal_request.set_text_body(content)
-        _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+        _set_content_length_header(
+            "Content-Length",
+            str(len(cast(str, internal_request.data))),
+            internal_request
+        )
     else:
         # Other body
         internal_request.data = content
@@ -139,9 +144,6 @@ def _set_body(content, data, files, json_body, internal_request):
         _set_content_type_header("application/json", internal_request)
     elif files is not None:
         internal_request.set_formdata_body(files)
-        # if you don't supply your content type, we'll create a boundary for you with multipart/form-data
-        boundary = binascii.hexlify(os.urandom(16)).decode("ascii")  # got logic from httpx, thanks httpx!
-        # _set_content_type_header("multipart/form-data; boundary={}".format(boundary), internal_request)
     elif data:
         _set_content_type_header("application/x-www-form-urlencoded", internal_request)
         internal_request.set_formdata_body(data)
@@ -195,6 +197,7 @@ class _StreamContextManager(object):
         self.pipeline = pipeline
         self.request = request
         self.kwargs = kwargs
+        self.response = None
 
     def __enter__(self):
         # type: (...) -> HttpResponse
@@ -324,8 +327,8 @@ class HttpRequest(object):
             _internal_request=self._internal_request.__deepcopy__(memo)
         )
 
-class _HttpResponseBase(object):
-    """Base class for HttpResponse and AsyncHttpResponse.
+class HttpResponse(object):
+    """Class for HttpResponse.
 
     :keyword request: The request that resulted in this response.
     :paramtype request: ~azure.core.rest.HttpRequest
@@ -346,17 +349,21 @@ class _HttpResponseBase(object):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        self._internal_response = kwargs.pop("_internal_response")  # type: _PipelineTransportHttpResponseBase
+        self._internal_response = kwargs.pop("_internal_response")  # type: _PipelineTransportHttpResponse
         self._request = kwargs.pop("request")
         self.is_closed = False
         self.is_stream_consumed = False
         self._num_bytes_downloaded = 0
+        self._content = None
+        self._content_read_in = False
 
     @property
     def status_code(self):
         # type: (...) -> int
         """Returns the status code of the response"""
-        return self._internal_response.status_code
+        if self._internal_response.status_code is not None:
+            return self._internal_response.status_code
+        raise ValueError("status code can not be None")
 
     @status_code.setter
     def status_code(self, val):
@@ -374,22 +381,36 @@ class _HttpResponseBase(object):
     def reason(self):
         # type: (...) -> str
         """Returns the reason phrase for the response"""
-        return self._internal_response.reason
+        if self._internal_response.reason is not None:
+            return self._internal_response.reason
+        raise ValueError("reason can not be None")
+
 
     @property
     def content(self):
         # type: (...) -> bytes
         """Returns the response content in bytes"""
-        try:
-            return self._content
-        except AttributeError:
+        if not self._content_read_in:
             raise ResponseNotReadError()
+        return self._content
+
 
     @property
     def url(self):
         # type: (...) -> str
         """Returns the URL that resulted in this response"""
         return self._internal_response.request.url
+
+    def _get_charset_encoding(self):
+        content_type = self.headers.get("Content-Type")
+
+        if not content_type:
+            return None
+        _, params = cgi.parse_header(content_type)
+        encoding = params.get('charset') # -> utf-8
+        if encoding is None or not _lookup_encoding(encoding):
+            return None
+        return encoding
 
     @property
     def encoding(self):
@@ -403,17 +424,6 @@ class _HttpResponseBase(object):
         except AttributeError:
             return self._get_charset_encoding()
 
-    def _get_charset_encoding(self):
-        content_type = self.headers.get("Content-Type")
-
-        if not content_type:
-            return None
-        _, params = cgi.parse_header(content_type)
-        encoding = params.get('charset') # -> utf-8
-        if encoding is None or not _lookup_encoding(encoding):
-            return None
-        return encoding
-
     @encoding.setter
     def encoding(self, value):
         # type: (str) -> None
@@ -424,7 +434,8 @@ class _HttpResponseBase(object):
     def text(self):
         # type: (...) -> str
         """Returns the response body as a string"""
-        self.content  # access content to make sure we trigger if response not fully read in
+        if not self._content_read_in:
+            raise ResponseNotReadError()
         return self._internal_response.text(encoding=self.encoding)
 
     @property
@@ -497,8 +508,6 @@ class _HttpResponseBase(object):
         if self.is_stream_consumed:
             raise StreamConsumedError()
 
-class HttpResponse(_HttpResponseBase):
-
     def close(self):
         # type: (...) -> None
         self.is_closed = True
@@ -514,16 +523,16 @@ class HttpResponse(_HttpResponseBase):
         Read the response's bytes.
 
         """
-        try:
-            return self._content
-        except AttributeError:
+        if not self._content_read_in:
             self._validate_streaming_access()
             self._content = (
                 self._internal_response.body() or
                 b"".join(self.iter_raw())
             )
             self._close_stream()
+            self._content_read_in = True
             return self._content
+        return self._content
 
     def iter_bytes(self, chunk_size=None):
         # type: (int) -> Iterator[bytes]

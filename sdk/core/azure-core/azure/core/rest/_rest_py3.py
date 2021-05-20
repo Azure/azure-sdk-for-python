@@ -24,27 +24,29 @@
 #
 # --------------------------------------------------------------------------
 import asyncio
-import os
-import binascii
 import codecs
 import cgi
 import json
-from enum import Enum
+import collections
+
 import xml.etree.ElementTree as ET
+from abc import abstractmethod
+from enum import Enum
 from typing import (
     Any,
     AsyncIterable,
+    AsyncIterator,
     IO,
     Iterable, Iterator,
     Optional,
-    Type,
     Union,
     Mapping,
     Sequence,
     Tuple,
     List,
+    cast,
 )
-from abc import abstractmethod
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline, AsyncPipeline
 from azure.core.pipeline.transport import (
@@ -57,7 +59,6 @@ from azure.core.pipeline.transport._base import (
 
 ################################### TYPES SECTION #########################
 
-ByteStream = Union[Iterable[bytes], AsyncIterable[bytes]]
 PrimitiveData = Optional[Union[str, int, float, bool]]
 
 
@@ -66,12 +67,9 @@ ParamsType = Union[
     List[Tuple[str, PrimitiveData]]
 ]
 
-HeadersType = Union[
-    Mapping[str, str],
-    Sequence[Tuple[str, str]]
-]
+HeadersType = Mapping[str, str]
 
-ContentType = Union[str, bytes, ByteStream]
+ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 FileContent = Union[str, bytes, IO[str], IO[bytes]]
 FileType = Union[
@@ -129,30 +127,46 @@ def _set_content_body(content: ContentType, internal_request: _PipelineTransport
         # stream will be bytes / str, or iterator of bytes / str
         internal_request.set_streamed_data_body(content)
         if isinstance(content, str) and content:
-            _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+            _set_content_length_header(
+                "Content-Length",
+                str(len(cast(str, internal_request.data))),
+                internal_request
+            )
             _set_content_type_header("text/plain", internal_request)
         elif isinstance(content, bytes) and content:
-            _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+            _set_content_length_header(
+                "Content-Length",
+                str(len(cast(bytes, internal_request.data))),
+                internal_request
+            )
             _set_content_type_header("application/octet-stream", internal_request)
-        elif isinstance(content, (Iterable, AsyncIterable)):
+        elif isinstance(content, (collections.Iterable, collections.AsyncIterable)):
             _set_content_length_header("Transfer-Encoding", "chunked", internal_request)
             _set_content_type_header("application/octet-stream", internal_request)
     elif isinstance(content, ET.Element):
         # XML body
         internal_request.set_xml_body(content)
         _set_content_type_header("application/xml", internal_request)
-        _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+        _set_content_length_header(
+            "Content-Length",
+            str(len(cast(ET.Element, internal_request.data))),
+            internal_request
+        )
     elif content_type and content_type.startswith("text/"):
         # Text body
         internal_request.set_text_body(content)
-        _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+        _set_content_length_header(
+            "Content-Length",
+            str(len(cast(str, internal_request.data))),
+            internal_request
+        )
     else:
         # Other body
         internal_request.data = content
     internal_request.headers = headers
 
 def _set_body(
-    content: ContentType, data: dict, files: Any, json_body: Any, internal_request: _PipelineTransportHttpRequest
+    content: Optional[ContentType], data: Optional[dict], files: Any, json_body: Any, internal_request: _PipelineTransportHttpRequest
 ) -> None:
     if data is not None and not isinstance(data, dict):
         content = data
@@ -162,17 +176,19 @@ def _set_body(
     elif json_body is not None:
         internal_request.set_json_body(json_body)
         _set_content_type_header("application/json", internal_request)
-    elif files is not None:
-        internal_request.set_formdata_body(files)
-        # if you don't supply your content type, we'll create a boundary for you with multipart/form-data
-        boundary = binascii.hexlify(os.urandom(16)).decode("ascii")  # got logic from httpx, thanks httpx!
-        # _set_content_type_header("multipart/form-data; boundary={}".format(boundary), internal_request)
-    elif data:
-        _set_content_type_header("application/x-www-form-urlencoded", internal_request)
-        internal_request.set_formdata_body(data)
-        # need to set twice because Content-Type is being popped in set_formdata_body
-        # don't want to risk changing pipeline.transport, so doing twice here
-        _set_content_type_header("application/x-www-form-urlencoded", internal_request)
+    elif files or data:
+        if files:
+            internal_request.set_formdata_body(files)
+        if data:
+            _set_content_type_header("application/x-www-form-urlencoded", internal_request)
+            internal_request.set_formdata_body(data)
+            # need to set twice because Content-Type is being popped in set_formdata_body
+            # don't want to risk changing pipeline.transport, so doing twice here
+            _set_content_type_header("application/x-www-form-urlencoded", internal_request)
+        if files and data:
+            internal_request.files = {
+                f: internal_request._format_data(d) for f, d in files.items() if d is not None
+            }
 
 def _parse_lines_from_text(text):
     # largely taken from httpx's LineDecoder code
@@ -228,14 +244,24 @@ class _StreamContextManagerBase:
         self.request = request
         self.kwargs = kwargs
 
+    @property
+    @abstractmethod
+    def response(self):
+        ...
+
+    @response.setter
+    def response(self, val):
+        self._response = val
+
     @abstractmethod
     def close(self):
         ...
 
 class _StreamContextManager(_StreamContextManagerBase):
+
     def __enter__(self) -> "HttpResponse":
         """Actually make the call only when we enter. For sync stream_response calls"""
-        pipeline_transport_response = self.pipeline.run(
+        pipeline_transport_response = cast(Pipeline, self.pipeline).run(
             self.request._internal_request,
             stream=True,
             **self.kwargs
@@ -421,11 +447,19 @@ class _HttpResponseBase:
         self.is_closed = False
         self.is_stream_consumed = False
         self._num_bytes_downloaded = 0
+        self._content = None
+        self._content_read_in = False
 
     @property
     def status_code(self) -> int:
         """Returns the status code of the response"""
-        return self._internal_response.status_code
+        # only reason it's optional in Pipeline Transport
+        # HttpResponse is because we initialize it as None
+
+        # throwing to satisfy mypy
+        if self._internal_response.status_code is not None:
+            return self._internal_response.status_code
+        raise ValueError("status_code can not be None")
 
     @status_code.setter
     def status_code(self, val: int) -> None:
@@ -440,25 +474,20 @@ class _HttpResponseBase:
     @property
     def reason(self) -> str:
         """Returns the reason phrase for the response"""
-        return self._internal_response.reason
+        # only reason it's optional in Pipeline Transport
+        # HtttpResponse is because we initialize it as None
+
+        # throwing to satisfy mypy
+        if self._internal_response.reason is not None:
+            return self._internal_response.reason
+        raise ValueError("status_code can not be None")
 
     @property
     def url(self) -> str:
         """Returns the URL that resulted in this response"""
         return self._internal_response.request.url
 
-    @property
-    def encoding(self) -> str:
-        """Returns the response encoding. By default, is specified
-        by the response Content-Type header.
-        """
-
-        try:
-            return self._encoding
-        except AttributeError:
-            return self._get_charset_encoding()
-
-    def _get_charset_encoding(self) -> str:
+    def _get_charset_encoding(self) -> Optional[str]:
         content_type = self.headers.get("Content-Type")
 
         if not content_type:
@@ -469,6 +498,16 @@ class _HttpResponseBase:
             return None
         return encoding
 
+    @property
+    def encoding(self) -> Optional[str]:
+        """Returns the response encoding. By default, is specified
+        by the response Content-Type header.
+        """
+        try:
+            return self._encoding
+        except AttributeError:
+            return self._get_charset_encoding()
+
     @encoding.setter
     def encoding(self, value: str) -> None:
         """Sets the response encoding"""
@@ -477,7 +516,8 @@ class _HttpResponseBase:
     @property
     def text(self) -> str:
         """Returns the response body as a string"""
-        self.content  # access content to make sure we trigger if response not fully read in
+        if not self._content_read_in:
+            raise ResponseNotReadError()
         return self._internal_response.text(encoding=self.encoding)
 
     @property
@@ -522,10 +562,9 @@ class _HttpResponseBase:
     @property
     def content(self) -> bytes:
         """Return the response's content in bytes."""
-        try:
-            return self._content
-        except AttributeError:
+        if not self._content_read_in:
             raise ResponseNotReadError()
+        return self._content
 
     def __repr__(self) -> str:
         content_type_str = (
@@ -556,16 +595,16 @@ class HttpResponse(_HttpResponseBase):
         Read the response's bytes.
 
         """
-        try:
-            return self._content
-        except AttributeError:
+        if not self._content_read_in:
             self._validate_streaming_access()
-            self._content = (
+            self._content: bytes = (
                 self._internal_response.body() or
                 b"".join(self.iter_raw())
             )
             self._close_stream()
+            self._content_read_in = True
             return self._content
+        return self._content
 
     def iter_bytes(self, chunk_size: int = None) -> Iterator[bytes]:
         """Iterate over the bytes in the response stream
@@ -600,7 +639,9 @@ class HttpResponse(_HttpResponseBase):
         """Iterate over the raw response bytes
         """
         self._validate_streaming_access()
-        stream_download = self._internal_response.stream_download(None, chunk_size=chunk_size)
+        stream_download = self._internal_response.stream_download(  # type: ignore
+            None, chunk_size=chunk_size
+        )
         for raw_bytes in stream_download:
             self._num_bytes_downloaded += len(raw_bytes)
             yield raw_bytes
@@ -619,16 +660,16 @@ class AsyncHttpResponse(_HttpResponseBase):
         Read the response's bytes.
 
         """
-        try:
-            return self._content
-        except AttributeError:
+        if not self._content_read_in:
             self._validate_streaming_access()
-            await self._internal_response.load_body()
+            await self._internal_response.load_body()  # type: ignore
             self._content = self._internal_response._body
             await self._close_stream()
+            self._content_read_in = True
             return self._content
+        return self._content
 
-    async def iter_bytes(self, chunk_size: int = None) -> Iterator[bytes]:
+    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
         """Iterate over the bytes in the response stream
         """
         try:
@@ -640,24 +681,26 @@ class AsyncHttpResponse(_HttpResponseBase):
             async for raw_bytes in self.iter_raw(chunk_size=chunk_size):
                 yield raw_bytes
 
-    async def iter_text(self, chunk_size: int = None) -> Iterator[str]:
+    async def iter_text(self, chunk_size: int = None) -> AsyncIterator[str]:
         """Iterate over the response text
         """
         async for byte in self.iter_bytes(chunk_size):
             text = byte.decode(self.encoding or "utf-8")
             yield text
 
-    async def iter_lines(self, chunk_size: int = None) -> Iterator[str]:
+    async def iter_lines(self, chunk_size: int = None) -> AsyncIterator[str]:
         async for text in self.iter_text(chunk_size):
             lines = _parse_lines_from_text(text)
             for line in lines:
                 yield line
 
-    async def iter_raw(self, chunk_size: int = None) -> Iterator[bytes]:
+    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
         """Iterate over the raw response bytes
         """
         self._validate_streaming_access()
-        stream_download = self._internal_response.stream_download(None, chunk_size=chunk_size)
+        stream_download = self._internal_response.stream_download(  # type: ignore
+            None, chunk_size=chunk_size
+        )
         async for raw_bytes in stream_download:
             self._num_bytes_downloaded += len(raw_bytes)
             yield raw_bytes
