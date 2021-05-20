@@ -19,7 +19,7 @@ class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
         farmer_id = "async-test-farmer"
         farmer = await client.farmers.create_or_update(
             farmer_id=farmer_id,
-            body=Farmer()
+            farmer=Farmer()
         )
 
         assert farmer.id == farmer_id
@@ -40,7 +40,7 @@ class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
         boundary_id = "async-test-boundary"
         farmer_id = boundary_id + "-farmer"
-        farmer = await client.farmers.create_or_update(farmer_id=farmer_id, body=Farmer())
+        farmer = await client.farmers.create_or_update(farmer_id=farmer_id, farmer=Farmer())
         boundary = await self.create_boundary_if_not_exist(client, farmer_id, boundary_id)
         assert boundary == await client.boundaries.get(
             farmer_id=farmer_id,
