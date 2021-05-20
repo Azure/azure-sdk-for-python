@@ -16,6 +16,12 @@ from azure.identity import ClientSecretCredential
 from azure.identity.aio import ClientSecretCredential as ClientSecretCredentialAsync
 from logger import get_logger
 from process_monitor import ProcessMonitor
+from opencensus.ext.azure import metrics_exporter
+from opencensus.stats import aggregation as aggregation_module
+from opencensus.stats import measure as measure_module
+from opencensus.stats import stats as stats_module
+from opencensus.stats import view as view_module
+from opencensus.tags import tag_map as tag_map_module
 
 
 def stress_send_sync(producer: EventHubProducerClient, args, logger):
@@ -243,6 +249,23 @@ class StressTestRunner(object):
 
     def run_test_method(self, test_method, worker, logger):
         deadline = time.time() + self.args.duration
+        exporter = metrics_exporter.new_metrics_exporter(
+            connection_string=os.environ['APP_INSIGHTS_CONN_STR']
+        )
+        sync_producer_measure = measure_module.MeasureInt("sync producer events sent",
+                                                   "number of events being sent by sync producer",
+                                                   "events")
+        tmap = tag_map_module.TagMap()
+        sync_producer_view = view_module.View("sync producer events sent view",
+                                       "number of events being sent by sync producer",
+                                       ["event hub stress test"],
+                                       sync_producer_measure,
+                                       aggregation_module.SumAggregation())
+        stats = stats_module.stats
+        view_manager = stats.view_manager
+        view_manager.register_view(sync_producer_view)
+        stats_recorder = stats.stats_recorder
+        mmap = stats_recorder.new_measurement_map()
         with worker:
             total_processed = 0
             iter_processed = 0
@@ -257,13 +280,25 @@ class StressTestRunner(object):
                     iter_processed += processed
                     if iter_processed >= self.args.output_interval:
                         time_elapsed = now_time - start_time
+                        extra_info = {
+                            "custom_dimensions":
+                                {
+                                    "overall_processed": total_processed,
+                                    "cur_iter_processed": processed,
+                                    "overall_speed": total_processed / time_elapsed,
+                                    "cur_iter_speed": processed / cur_iter_time_elapsed
+                                }
+                        }
                         logger.info(
                             "Total sent: %r, Time elapsed: %r, Speed: %r/s, Current Iteration Speed: %r/s",
                             total_processed,
                             time_elapsed,
                             total_processed / time_elapsed,
-                            processed / cur_iter_time_elapsed
+                            processed / cur_iter_time_elapsed,
+                            #extra=extra_info
                         )
+                        mmap.measure_int_put(sync_producer_measure, iter_processed)
+                        mmap.record(tmap)
                         iter_processed -= self.args.output_interval
                 except KeyboardInterrupt:
                     logger.info("keyboard interrupted")
@@ -347,12 +382,22 @@ class StressTestRunner(object):
                     iter_processed += processed
                     if iter_processed >= self.args.output_interval:
                         time_elapsed = now_time - start_time
+                        extra_info = {
+                            "custom_dimensions":
+                                {
+                                    "overall_processed": total_processed,
+                                    "cur_iter_processed": processed,
+                                    "overall_speed": total_processed / time_elapsed,
+                                    "cur_iter_speed": processed / cur_iter_time_elapsed
+                                }
+                        }
                         logger.info(
                             "Total sent: %r, Time elapsed: %r, Overall Speed: %r/s, Current Iteration Speed: %r/s",
                             total_processed,
                             time_elapsed,
                             total_processed / time_elapsed,
                             processed / cur_iter_time_elapsed,
+                            #extra=extra_info
                         )
                         iter_processed -= self.args.output_interval
                 except KeyboardInterrupt:

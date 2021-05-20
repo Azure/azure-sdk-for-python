@@ -54,6 +54,15 @@ class ProcessMonitor:
                     self._process_instance.memory_percent()
                 )
             self._logger.info(log_content)
+            # extra_info = {
+            #     "custom_dimensions":
+            #         {
+            #             "process_status": self._process_instance.status(),
+            #             "cpu_percent": self._process_instance.cpu_percent(),
+            #             "memory_percent": self._process_instance.memory_percent()
+            #         }
+            # }
+            # self._logger.info(log_content, extra=extra_info)
             time.sleep(self._log_interval)
 
     def start(self):

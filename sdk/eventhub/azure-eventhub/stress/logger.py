@@ -3,9 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import os
 import sys
 import logging
 from logging.handlers import RotatingFileHandler
+
+use_azure_log_handler = False  # Azure Application Insights
+try:
+    from opencensus.ext.azure.log_exporter import AzureLogHandler
+    use_azure_log_handler = True
+except ImportError:
+    pass
 
 
 def get_base_logger(log_filename, logger_name, level=logging.INFO, print_console=False, log_format=None,
@@ -28,6 +36,13 @@ def get_base_logger(log_filename, logger_name, level=logging.INFO, print_console
         )
         logger_file_handler.setFormatter(formatter)
         logger.addHandler(logger_file_handler)
+
+    # if use_azure_log_handler:
+    #     try:
+    #         app_insights_conn_str = os.environ['APP_INSIGHTS_CONN_STR']
+    #         logger.addHandler(AzureLogHandler(connection_string=app_insights_conn_str))
+    #     except KeyError:
+    #         pass
 
     return logger
 
@@ -74,5 +89,15 @@ def get_logger(log_filename, logger_name, level=logging.INFO, print_console=Fals
         eventhub_logger.addHandler(eventhub_file_handler)
         uamqp_logger.addHandler(uamqp_file_handler)
         stress_logger.addHandler(stress_file_handler)
+
+    # if use_azure_log_handler:
+    #     try:
+    #         app_insights_conn_str = os.environ['APP_INSIGHTS_CONN_STR']
+    #         azure_log_handler = AzureLogHandler(connection_string=app_insights_conn_str)
+    #         eventhub_logger.addHandler(azure_log_handler)
+    #         uamqp_logger.addHandler(azure_log_handler)
+    #         stress_logger.addHandler(azure_log_handler)
+    #     except KeyError:
+    #         pass
 
     return stress_logger
