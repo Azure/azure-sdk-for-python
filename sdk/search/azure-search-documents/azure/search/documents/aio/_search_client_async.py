@@ -209,7 +209,6 @@ class SearchClient(HeadersMixin):
         search_fields = kwargs.pop("search_fields", None)
         search_fields_str = ",".join(search_fields) if search_fields else None
         search_mode = kwargs.pop("search_mode", None)
-        query_language = kwargs.pop("query_language", None)
         select = kwargs.pop("select", None)
         skip = kwargs.pop("skip", None)
         top = kwargs.pop("top", None)
@@ -228,7 +227,6 @@ class SearchClient(HeadersMixin):
             scoring_profile=scoring_profile,
             search_fields=search_fields_str,
             search_mode=search_mode,
-            query_language=query_language,
             select=select if isinstance(select, six.string_types) else None,
             skip=skip,
             top=top
