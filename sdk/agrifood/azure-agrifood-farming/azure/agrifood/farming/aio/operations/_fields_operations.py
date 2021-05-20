@@ -57,11 +57,11 @@ class FieldsOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FieldListResponse"]:
         """Returns a paginated list of field resources under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
         :param farm_ids: Farm Ids of the resource.
         :type farm_ids: list[str]
@@ -189,7 +189,7 @@ class FieldsOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FieldListResponse"]:
         """Returns a paginated list of field resources across all farmers.
 
@@ -308,13 +308,13 @@ class FieldsOperations:
         self,
         farmer_id: str,
         field_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Field":
         """Gets a specified field resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
-        :param field_id: Id of the field.
+        :param field_id: ID of the field.
         :type field_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Field, or the result of cls(response)
@@ -367,17 +367,17 @@ class FieldsOperations:
         self,
         farmer_id: str,
         field_id: str,
-        body: Optional["_models.Field"] = None,
-        **kwargs
+        field: Optional["_models.Field"] = None,
+        **kwargs: Any
     ) -> "_models.Field":
         """Creates or Updates a field resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer resource.
+        :param farmer_id: ID of the associated farmer resource.
         :type farmer_id: str
-        :param field_id: Id of the field resource.
+        :param field_id: ID of the field resource.
         :type field_id: str
-        :param body: Field resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.Field
+        :param field: Field resource payload to create or update.
+        :type field: ~azure.agrifood.farming.models.Field
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Field, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.Field
@@ -411,8 +411,8 @@ class FieldsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Field')
+        if field is not None:
+            body_content = self._serialize.body(field, 'Field')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -441,13 +441,13 @@ class FieldsOperations:
         self,
         farmer_id: str,
         field_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a specified field resource under a particular farmer.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: ID of the farmer.
         :type farmer_id: str
-        :param field_id: Id of the field.
+        :param field_id: ID of the field.
         :type field_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -496,11 +496,11 @@ class FieldsOperations:
     async def get_cascade_delete_job_details(
         self,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CascadeDeleteJob":
         """Get a cascade delete job for specified field.
 
-        :param job_id: Id of the job.
+        :param job_id: ID of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CascadeDeleteJob, or the result of cls(response)
@@ -553,7 +553,7 @@ class FieldsOperations:
         job_id: str,
         farmer_id: str,
         field_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CascadeDeleteJob":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJob"]
         error_map = {
@@ -603,7 +603,7 @@ class FieldsOperations:
         job_id: str,
         farmer_id: str,
         field_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CascadeDeleteJob"]:
         """Create a cascade delete job for specified field.
 

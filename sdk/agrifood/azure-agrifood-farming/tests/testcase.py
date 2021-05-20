@@ -41,7 +41,7 @@ class FarmBeatsTest(AzureTestCase):
             return client.boundaries.create_or_update(
                 farmer_id=farmer_id,
                 boundary_id=boundary_id,
-                body=Boundary(
+                boundary=Boundary(
                     geometry=Polygon(
                         coordinates=[
                             [

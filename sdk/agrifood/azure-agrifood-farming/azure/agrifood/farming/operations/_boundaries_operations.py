@@ -70,7 +70,7 @@ class BoundariesOperations(object):
         # type: (...) -> Iterable["_models.BoundaryListResponse"]
         """Returns a paginated list of boundary resources under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
         :param is_primary: Is the boundary primary.
         :type is_primary: bool
@@ -204,16 +204,16 @@ class BoundariesOperations(object):
     def search_by_farmer_id(
         self,
         farmer_id,  # type: str
-        body=None,  # type: Optional["_models.SearchBoundaryQuery"]
+        query=None,  # type: Optional["_models.SearchBoundaryQuery"]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.BoundaryListResponse"]
         """Search for boundaries by fields and intersecting geometry.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: ID of the farmer.
         :type farmer_id: str
-        :param body: Query filters.
-        :type body: ~azure.agrifood.farming.models.SearchBoundaryQuery
+        :param query: Query filters.
+        :type query: ~azure.agrifood.farming.models.SearchBoundaryQuery
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BoundaryListResponse or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.agrifood.farming.models.BoundaryListResponse]
@@ -247,8 +247,8 @@ class BoundariesOperations(object):
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 body_content_kwargs = {}  # type: Dict[str, Any]
-                if body is not None:
-                    body_content = self._serialize.body(body, 'SearchBoundaryQuery')
+                if query is not None:
+                    body_content = self._serialize.body(query, 'SearchBoundaryQuery')
                 else:
                     body_content = None
                 body_content_kwargs['content'] = body_content
@@ -262,8 +262,8 @@ class BoundariesOperations(object):
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 body_content_kwargs = {}  # type: Dict[str, Any]
-                if body is not None:
-                    body_content = self._serialize.body(body, 'SearchBoundaryQuery')
+                if query is not None:
+                    body_content = self._serialize.body(query, 'SearchBoundaryQuery')
                 else:
                     body_content = None
                 body_content_kwargs['content'] = body_content
@@ -446,14 +446,14 @@ class BoundariesOperations(object):
 
     def search(
         self,
-        body=None,  # type: Optional["_models.SearchBoundaryQuery"]
+        query=None,  # type: Optional["_models.SearchBoundaryQuery"]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.BoundaryListResponse"]
         """Search for boundaries across all farmers by fields and intersecting geometry.
 
-        :param body: Query filters.
-        :type body: ~azure.agrifood.farming.models.SearchBoundaryQuery
+        :param query: Query filters.
+        :type query: ~azure.agrifood.farming.models.SearchBoundaryQuery
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BoundaryListResponse or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.agrifood.farming.models.BoundaryListResponse]
@@ -486,8 +486,8 @@ class BoundariesOperations(object):
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 body_content_kwargs = {}  # type: Dict[str, Any]
-                if body is not None:
-                    body_content = self._serialize.body(body, 'SearchBoundaryQuery')
+                if query is not None:
+                    body_content = self._serialize.body(query, 'SearchBoundaryQuery')
                 else:
                     body_content = None
                 body_content_kwargs['content'] = body_content
@@ -500,8 +500,8 @@ class BoundariesOperations(object):
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 body_content_kwargs = {}  # type: Dict[str, Any]
-                if body is not None:
-                    body_content = self._serialize.body(body, 'SearchBoundaryQuery')
+                if query is not None:
+                    body_content = self._serialize.body(query, 'SearchBoundaryQuery')
                 else:
                     body_content = None
                 body_content_kwargs['content'] = body_content
@@ -541,7 +541,7 @@ class BoundariesOperations(object):
         # type: (...) -> "_models.CascadeDeleteJob"
         """Get cascade delete job for specified boundary.
 
-        :param job_id: Id of the job.
+        :param job_id: ID of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CascadeDeleteJob, or the result of cls(response)
@@ -720,9 +720,9 @@ class BoundariesOperations(object):
         # type: (...) -> "_models.Boundary"
         """Gets a specified boundary resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
-        :param boundary_id: Id of the boundary.
+        :param boundary_id: ID of the boundary.
         :type boundary_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Boundary, or the result of cls(response)
@@ -775,18 +775,18 @@ class BoundariesOperations(object):
         self,
         farmer_id,  # type: str
         boundary_id,  # type: str
-        body=None,  # type: Optional["_models.Boundary"]
+        boundary=None,  # type: Optional["_models.Boundary"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Boundary"
         """Creates or updates a boundary resource.
 
-        :param farmer_id: Id of the farmer resource.
+        :param farmer_id: ID of the farmer resource.
         :type farmer_id: str
-        :param boundary_id: Id of the boundary resource.
+        :param boundary_id: ID of the boundary resource.
         :type boundary_id: str
-        :param body: Boundary resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.Boundary
+        :param boundary: Boundary resource payload to create or update.
+        :type boundary: ~azure.agrifood.farming.models.Boundary
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Boundary, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.Boundary
@@ -820,8 +820,8 @@ class BoundariesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Boundary')
+        if boundary is not None:
+            body_content = self._serialize.body(boundary, 'Boundary')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -855,9 +855,9 @@ class BoundariesOperations(object):
         # type: (...) -> None
         """Deletes a specified boundary resource under a particular farmer.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: ID of the farmer.
         :type farmer_id: str
-        :param boundary_id: Id of the boundary.
+        :param boundary_id: ID of the boundary.
         :type boundary_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -914,13 +914,13 @@ class BoundariesOperations(object):
         # type: (...) -> "_models.BoundaryOverlapResponse"
         """Returns overlapping acreage between two boundary Ids.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: ID of the farmer.
         :type farmer_id: str
-        :param boundary_id: Id of the boundary.
+        :param boundary_id: ID of the boundary.
         :type boundary_id: str
         :param other_farmer_id: FarmerId of the other field.
         :type other_farmer_id: str
-        :param other_boundary_id: Id of the other boundary.
+        :param other_boundary_id: ID of the other boundary.
         :type other_boundary_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BoundaryOverlapResponse, or the result of cls(response)
