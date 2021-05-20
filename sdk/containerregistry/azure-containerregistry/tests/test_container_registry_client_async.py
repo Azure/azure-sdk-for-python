@@ -86,7 +86,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert properties.name == ALPINE
 
     @acr_preparer()
-    async def test_set_properties(self, containerregistry_endpoint):
+    async def test_update_properties(self, containerregistry_endpoint):
         repository = self.get_resource_name("repo")
         tag_identifier = self.get_resource_name("tag")
         self.import_image(HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
@@ -117,6 +117,61 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert new_properties.can_read == True
         assert new_properties.can_list == True
         assert new_properties.can_write == True
+
+    @acr_preparer()
+    async def test_update_repository_properties_kwargs(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        properties = await client.get_repository_properties(repo)
+        properties = self.set_all_properties(properties, True)
+        received = await client.update_repository_properties(repo, properties)
+        self.assert_all_properties(properties, True)
+
+        received = await client.update_repository_properties(repo, can_delete=False)
+        assert received.can_delete == False
+        assert received.can_list == True
+        assert received.can_read == True
+        assert received.can_write == True
+        # assert received.teleport_enabled == True
+
+        received = await client.update_repository_properties(repo, can_read=False)
+        assert received.can_delete == False
+        assert received.can_list == True
+        assert received.can_read == False
+        assert received.can_write == True
+        # assert received.teleport_enabled == True
+
+        received = await client.update_repository_properties(repo, can_write=False)
+        assert received.can_delete == False
+        assert received.can_list == True
+        assert received.can_read == False
+        assert received.can_write == False
+        # assert received.teleport_enabled == True
+
+        received = await client.update_repository_properties(repo, can_list=False)
+        assert received.can_delete == False
+        assert received.can_list == False
+        assert received.can_read == False
+        assert received.can_write == False
+        # assert received.teleport_enabled == True
+
+        # received = await client.update_repository_properties(repo, teleport_enabled=True)
+        # self.assert_all_properties(received, True)
+
+        received = await client.update_repository_properties(
+            repo,
+            can_delete=True,
+            can_read=True,
+            can_write=True,
+            can_list=True,
+            # teleport_enabled=True,
+        )
+
+        self.assert_all_properties(received, True)
 
     @acr_preparer()
     async def test_list_registry_artifacts(self, containerregistry_endpoint):
@@ -233,6 +288,41 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert received.can_list == True
 
     @acr_preparer()
+    async def test_update_manifest_properties_kwargs(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        properties = await client.get_manifest_properties(repo, tag)
+        received = await client.update_manifest_properties(repo, tag, can_delete=False)
+        assert received.can_delete == False
+
+        received = await client.update_manifest_properties(repo, tag, can_read=False)
+        assert received.can_read == False
+
+        received = await client.update_manifest_properties(repo, tag, can_write=False)
+        assert received.can_write == False
+
+        received = await client.update_manifest_properties(repo, tag, can_list=False)
+        assert received.can_list == False
+
+        received = await client.update_manifest_properties(
+            repo,
+            tag,
+            can_delete=True,
+            can_read=True,
+            can_write=True,
+            can_list=True
+        )
+
+        assert received.can_delete == True
+        assert received.can_read == True
+        assert received.can_write == True
+        assert received.can_list == True
+
+    @acr_preparer()
     async def test_get_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
@@ -278,6 +368,41 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         properties.can_list = True
 
         received = await client.update_tag_properties(repo, tag, properties)
+
+        assert received.can_delete == True
+        assert received.can_read == True
+        assert received.can_write == True
+        assert received.can_list == True
+
+    @acr_preparer()
+    async def test_update_tag_properties_kwargs(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        properties = await client.get_tag(repo, tag)
+        received = await client.update_tag_properties(repo, tag, can_delete=False)
+        assert received.can_delete == False
+
+        received = await client.update_tag_properties(repo, tag, can_read=False)
+        assert received.can_read == False
+
+        received = await client.update_tag_properties(repo, tag, can_write=False)
+        assert received.can_write == False
+
+        received = await client.update_tag_properties(repo, tag, can_list=False)
+        assert received.can_list == False
+
+        received = await client.update_tag_properties(
+            repo,
+            tag,
+            can_delete=True,
+            can_read=True,
+            can_write=True,
+            can_list=True
+        )
 
         assert received.can_delete == True
         assert received.can_read == True
