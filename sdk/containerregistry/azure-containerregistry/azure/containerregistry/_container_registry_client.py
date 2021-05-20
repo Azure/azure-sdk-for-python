@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
@@ -20,7 +20,7 @@ from ._helpers import _parse_next_link, _is_tag
 from ._models import RepositoryProperties, ArtifactTagProperties, ArtifactManifestProperties
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional
+    from typing import Any, Dict, Optional, Union
     from azure.core.credentials import TokenCredential
 
 
@@ -322,23 +322,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def update_repository_properties(self, repository, properties, **kwargs):
-        # type: (str, RepositoryProperties, **Any) -> RepositoryProperties
-        """Set the properties of a repository
-
-        :param str repository:
-        :param properties: Properties to set for the repository
-        :type properties: :class:`~azure.containerregistry.RepositoryProperties`
-        :returns: :class:`~azure.containerregistry.RepositoryProperties`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
-        """
-        return RepositoryProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.set_properties(
-                repository, properties._to_generated(), **kwargs  # pylint: disable=protected-access
-            )
-        )
-
-    @distributed_trace
     def delete_manifest(self, repository, tag_or_digest, **kwargs):
         # type: (str, str, **Any) -> None
         """Delete a manifest
@@ -575,9 +558,19 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         return ItemPaged(get_next, extract_data)
 
-    @distributed_trace
+    @overload
     def update_manifest_properties(self, repository, tag_or_digest, properties, **kwargs):
         # type: (str, str, ArtifactManifestProperties, **Any) -> ArtifactManifestProperties
+        pass
+
+    @overload
+    def update_manifest_properties(self, repository, tag_or_digest, **kwargs):
+        # type: (str, str, **Any) -> ArtifactManifestProperties
+        pass
+
+    @distributed_trace
+    def update_manifest_properties(self, *args, **kwargs):
+        # type: (Union[str, ArtifactManifestProperties], **Any) -> ArtifactManifestProperties
         """Set the properties for a manifest
 
         :param str repository: Repository the manifest belongs to
@@ -605,6 +598,19 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     ),
                 )
         """
+        repository, tag_or_digest, properties = None, None, None
+        if len(args) == 3:
+            [repository, tag_or_digest, properties] = list(args)
+        else:
+            repository = args[0]
+            tag_or_digest = args[1]
+            properties = ArtifactManifestProperties(
+                can_delete=kwargs.pop("can_delete", None),
+                can_list=kwargs.pop("can_list", None),
+                can_read=kwargs.pop("can_read", None),
+                can_write=kwargs.pop("can_write", None),
+            )
+
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
 
@@ -618,9 +624,19 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             repository_name=repository,
         )
 
-    @distributed_trace
+    @overload
     def update_tag_properties(self, repository, tag, properties, **kwargs):
         # type: (str, str, ArtifactTagProperties, **Any) -> ArtifactTagProperties
+        pass
+
+    @overload
+    def update_tag_properties(self, repository, tag, **kwargs):
+        # type: (str, str, **Any) -> ArtifactTagProperties
+        pass
+
+    @distributed_trace
+    def update_tag_properties(self, *args, **kwargs):
+        # type: (Union[str, ArtifactTagProperties], **Any) -> ArtifactTagProperties
         """Set the properties for a tag
 
         :param str repository: Repository the tag belongs to
@@ -648,9 +664,62 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 ),
             )
         """
+        repository, tag, properties = None, None, None
+        if len(args) == 3:
+            [repository, tag, properties] = list(args)
+        else:
+            repository = args[0]
+            tag = args[1]
+            properties = ArtifactTagProperties(
+                can_delete=kwargs.pop("can_delete", None),
+                can_list=kwargs.pop("can_list", None),
+                can_read=kwargs.pop("can_read", None),
+                can_write=kwargs.pop("can_write", None),
+            )
+
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.update_tag_attributes(
                 repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             ),
             repository=repository,
+        )
+
+    @overload
+    def update_repository_properties(self, repository, properties, **kwargs):
+        # type: (str, RepositoryProperties, **Any) -> RepositoryProperties
+        pass
+
+    @overload
+    def update_repository_properties(self, repository, **kwargs):
+        # type: (str, **Any) -> RepositoryProperties
+        pass
+
+    @distributed_trace
+    def update_repository_properties(self, *args, **kwargs):
+        # type: (Union[str, RepositoryProperties], **Any) -> RepositoryProperties
+        """Set the properties of a repository
+
+        :param str repository:
+        :param properties: Properties to set for the repository
+        :type properties: :class:`~azure.containerregistry.RepositoryProperties`
+        :returns: :class:`~azure.containerregistry.RepositoryProperties`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        """
+        repository, properties = None, None
+        if len(args) == 2:
+            [repository, properties] = list(args)
+        else:
+            repository = args[0]
+            properties = RepositoryProperties(
+                can_delete=kwargs.pop("can_delete", None),
+                can_list=kwargs.pop("can_list", None),
+                can_read=kwargs.pop("can_read", None),
+                can_write=kwargs.pop("can_write", None),
+                teleport_enabled=kwargs.pop("teleport_enabled", None),
+            )
+
+        return RepositoryProperties._from_generated(  # pylint: disable=protected-access
+            self._client.container_registry.set_properties(
+                repository, properties._to_generated(), **kwargs  # pylint: disable=protected-access
+            )
         )

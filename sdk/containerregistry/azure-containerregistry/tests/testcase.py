@@ -163,12 +163,29 @@ class ContainerRegistryTestClass(AzureTestCase):
     def create_registry_client(self, endpoint, **kwargs):
         return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
 
-    def create_container_repository(self, endpoint, name, **kwargs):
-        return ContainerRepository(endpoint=endpoint, name=name, credential=self.get_credential(), **kwargs)
-
     def create_anon_client(self, endpoint, **kwargs):
         return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)
 
+    def set_all_properties(self, properties, value):
+        properties.can_delete = value
+        properties.can_read = value
+        properties.can_write = value
+        properties.can_list = value
+        # try:
+        #     properties.teleport_enabled = value
+        # except AttributeError:
+        #     pass
+        return properties
+
+    def assert_all_properties(self, properties, value):
+        assert properties.can_delete == value
+        assert properties.can_read == value
+        assert properties.can_write == value
+        assert properties.can_list == value
+        # try:
+        #     assert properties.teleport_enabled == value
+        # except AttributeError:
+        #     pass
 
 # Moving this out of testcase so the fixture and individual tests can use it
 def import_image(repository, tags):

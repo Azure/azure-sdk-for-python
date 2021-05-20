@@ -150,6 +150,7 @@ class RepositoryProperties(object):
             can_read=generated.can_read,
             can_write=generated.can_write,
             can_list=generated.can_list,
+            teleport_enabled=generated.teleport_enabled
         )
 
     def _to_generated(self):
