@@ -196,11 +196,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRegistryClient(account_url, DefaultAzureCredential())
             repository_client = client.get_repository("my_repository")
+
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(

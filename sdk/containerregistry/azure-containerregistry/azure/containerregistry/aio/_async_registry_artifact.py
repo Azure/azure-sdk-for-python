@@ -86,11 +86,13 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             await client.delete()
+
         """
         return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.delete_repository(self.repository, **kwargs)
@@ -106,12 +108,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             async for artifact in client.list_tags():
                 await client.delete_tag(tag.name)
+
         """
         await self._client.container_registry.delete_tag(self.repository, tag, **kwargs)
 
@@ -125,12 +129,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             async for artifact in client.list_manifests():
                 properties = await client.get_registry_artifact_properties(artifact.digest)
+
         """
         if not self._digest:
             self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else await self._get_digest_from_tag()
@@ -151,12 +157,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             async for tag in client.list_tags():
                 tag_properties = await client.get_tag_properties(tag.name)
+
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.get_tag_properties(self.repository, tag, **kwargs),
@@ -180,12 +188,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             async for tag in client.list_tags():
                 tag_properties = await client.get_tag_properties(tag.name)
+
         """
         name = self.repository
         last = kwargs.pop("last", None)
@@ -307,6 +317,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
@@ -321,6 +332,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
                         can_write=False,
                     ),
                 )
+
         """
         if not self._digest:
             self._digest = self.tag_or_digest if _is_tag(self.tag_or_digest) else self._get_digest_from_tag()
@@ -350,6 +362,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
@@ -364,6 +377,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
                     can_write=False,
                 ),
             )
+
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.update_tag_attributes(

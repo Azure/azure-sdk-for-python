@@ -202,11 +202,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRegistryClient(account_url, DefaultAzureCredential())
             repository_client = client.get_repository("my_repository")
+
         """
         _pipeline = Pipeline(
             transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access

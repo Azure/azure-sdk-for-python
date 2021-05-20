@@ -72,11 +72,13 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             client.delete()
+
         """
         return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.delete_repository(self.repository, **kwargs)
@@ -93,12 +95,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for artifact in client.list_tags():
                 client.delete_tag(tag.name)
+
         """
         self._client.container_registry.delete_tag(self.repository, tag, **kwargs)
 
@@ -113,12 +117,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for artifact in client.list_manifests():
                 properties = client.get_registry_artifact_properties(artifact.digest)
+
         """
         if not self._digest:
             self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else self._get_digest_from_tag()
@@ -140,12 +146,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for tag in client.list_tags():
                 tag_properties = client.get_tag_properties(tag.name)
+
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.get_tag_properties(self.repository, tag, **kwargs),
@@ -170,12 +178,14 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for tag in client.list_tags():
                 tag_properties = client.get_tag_properties(tag.name)
+
         """
         name = self.repository
         last = kwargs.pop("last", None)
@@ -296,6 +306,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
@@ -310,6 +321,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
                         can_write=False,
                     ),
                 )
+
         """
         if not self._digest:
             self._digest = self.tag_or_digest if _is_tag(self.tag_or_digest) else self._get_digest_from_tag()
@@ -338,6 +350,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
@@ -352,6 +365,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
                     can_write=False,
                 ),
             )
+
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.update_tag_attributes(
