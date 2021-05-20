@@ -48,7 +48,6 @@ Then for common search index operations:
 * You must have an [Azure subscription](https://azure.microsoft.com/free/)
 * You must create the "Hotels" sample index [in the Azure Portal](https://docs.microsoft.com/azure/search/search-get-started-portal)
 
-
 ## Setup
 
 1. Install the Azure Cognitive Search client library for Python with [pip](https://pypi.org/project/pip/):
