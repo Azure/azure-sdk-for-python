@@ -43,7 +43,7 @@ class AttestationClient(object):
 
     :param str instance_url: base url of the service
     :param credential: Credentials for the caller used to interact with the service.
-    :type credential: ~azure.core.credentials.TokenCredentials
+    :type credential: :class:`~azure.core.credentials.TokenCredential`
     :keyword pipeline: If omitted, the standard pipeline is used.
     :paramtype pipeline: Pipeline
     :keyword policies: If omitted, the standard pipeline is used.
