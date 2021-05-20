@@ -6,7 +6,7 @@
 from typing import Dict, Any, Optional, Union, TYPE_CHECKING
 import msrest
 
-from .._common_conversion import _is_cosmos_endpoint, _transform_patch_to_cosmos_post
+from .._common_conversion import _transform_patch_to_cosmos_post
 from .._models import UpdateMode
 from .._entity import TableEntity
 from .._table_batch import EntityType
@@ -41,12 +41,14 @@ class TableBatchOperations(object):
         deserializer: msrest.Deserializer,
         config: AzureTableConfiguration,
         table_name: str,
+        is_cosmos_endpoint: bool = False,
         **kwargs: Dict[str, Any]
     ) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
+        self._is_cosmos_endpoint = is_cosmos_endpoint
         self.table_name = table_name
 
         self._partition_key = kwargs.pop("partition_key", None)
@@ -456,7 +458,7 @@ class TableBatchOperations(object):
         request = self._client._client.patch(  # pylint: disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
         )
-        if _is_cosmos_endpoint(url):
+        if self._is_cosmos_endpoint:
             _transform_patch_to_cosmos_post(request)
         self.requests.append(request)
 
