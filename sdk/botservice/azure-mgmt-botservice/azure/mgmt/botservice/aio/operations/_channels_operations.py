@@ -47,7 +47,7 @@ class ChannelsOperations:
         resource_name: str,
         channel_name: Union[str, "_models.ChannelName"],
         parameters: "_models.BotChannel",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BotChannel":
         """Creates a Channel registration for a Bot Service.
 
@@ -69,7 +69,7 @@ class ChannelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-02"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -101,7 +101,7 @@ class ChannelsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -127,7 +127,7 @@ class ChannelsOperations:
         kind: Optional[Union[str, "_models.Kind"]] = None,
         etag: Optional[str] = None,
         properties: Optional["_models.Channel"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BotChannel":
         """Updates a Channel registration for a Bot Service.
 
@@ -161,7 +161,7 @@ class ChannelsOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _parameters = _models.BotChannel(location=location, tags=tags, sku=sku, kind=kind, etag=etag, properties=properties)
-        api_version = "2020-06-02"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -193,7 +193,7 @@ class ChannelsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -213,7 +213,7 @@ class ChannelsOperations:
         resource_group_name: str,
         resource_name: str,
         channel_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a Channel registration from a Bot Service.
 
@@ -233,7 +233,7 @@ class ChannelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-02"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -260,7 +260,7 @@ class ChannelsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -273,7 +273,7 @@ class ChannelsOperations:
         resource_group_name: str,
         resource_name: str,
         channel_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BotChannel":
         """Returns a BotService Channel registration specified by the parameters.
 
@@ -293,7 +293,7 @@ class ChannelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-02"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -320,7 +320,7 @@ class ChannelsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BotChannel', pipeline_response)
@@ -336,7 +336,7 @@ class ChannelsOperations:
         resource_group_name: str,
         resource_name: str,
         channel_name: Union[str, "_models.ChannelName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BotChannel":
         """Lists a Channel registration for a Bot Service including secrets.
 
@@ -356,7 +356,7 @@ class ChannelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-02"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -383,7 +383,7 @@ class ChannelsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BotChannel', pipeline_response)
@@ -398,7 +398,7 @@ class ChannelsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ChannelResponseList"]:
         """Returns all the Channel registrations of a particular BotService resource.
 
@@ -416,7 +416,7 @@ class ChannelsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-02"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -458,7 +458,7 @@ class ChannelsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
