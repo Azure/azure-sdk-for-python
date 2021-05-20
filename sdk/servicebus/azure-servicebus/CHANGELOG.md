@@ -1,5 +1,11 @@
 # Release History
 
+## 7.3.0 (Unreleased)
+
+**Bug Fixes**
+
+* Fixed a bug that `ServiceBusReceiver` iterator stops iteration after recovery from connection error (#18795).
+
 ## 7.2.0 (2021-05-13)
 
 The preview features related to AMQPAnnotatedMessage introduced in 7.2.0b1 are not included in this version.
