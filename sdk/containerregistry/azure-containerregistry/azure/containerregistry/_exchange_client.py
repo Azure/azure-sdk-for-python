@@ -3,7 +3,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import re
 import time
 from typing import TYPE_CHECKING
 
@@ -40,9 +39,6 @@ class ACRExchangeClient(object):
     :type credential: :class:`~azure.core.credentials.TokenCredential`
     """
 
-    BEARER = "Bearer"
-    AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
-
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
@@ -70,7 +66,7 @@ class ACRExchangeClient(object):
         )
 
     def get_refresh_token(self, service, **kwargs):
-        # type: (str, **Any) -> str
+        # type: (str, Dict[str, Any]) -> str
         if not self._refresh_token or time.time() - self._last_refresh_time > 300:
             self._refresh_token = self.exchange_aad_token_for_refresh_token(service, **kwargs)
             self._last_refresh_time = time.time()

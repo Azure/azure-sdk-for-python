@@ -13,8 +13,6 @@ from devtools_testutils import AzureRecordedTestCase
 from azure.data.tables import (
     ResourceTypes,
     AccountSasPermissions,
-    TableSasPermissions,
-    CorsRule,
     RetentionPolicy,
     UpdateMode,
     AccessPolicy,
@@ -25,62 +23,15 @@ from azure.data.tables import (
     generate_account_sas,
     ResourceTypes
 )
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import (
-    HeadersPolicy,
-    ContentDecodePolicy,
-)
-from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError,
-    ResourceExistsError
-)
+from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.exceptions import ResourceExistsError
 
 from _shared.testcase import TableTestCase
 from preparers import tables_decorator, tables_decorator
-# ------------------------------------------------------------------------------
-
-TEST_TABLE_PREFIX = 'pytablesync'
-
 
 # ------------------------------------------------------------------------------
 
-class TestStorageTable(AzureRecordedTestCase, TableTestCase):
-
-    # --Helpers-----------------------------------------------------------------
-    def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
-        print("QUAL TEST NAME: ", self.qualified_test_name.encode())
-        table_name = self.get_resource_name(prefix)
-        print("TABLE_NAME: {}".format(table_name))
-        return table_name
-
-    def _create_table(self, ts, prefix=TEST_TABLE_PREFIX, table_list=None):
-        table_name = self._get_table_reference(prefix)
-        try:
-            table = ts.create_table(table_name)
-            if table_list is not None:
-                table_list.append(table)
-        except ResourceExistsError:
-            table = ts.get_table_client(table_name)
-        return table
-
-    def _delete_table(self, ts, table):
-        if table:
-            try:
-                ts.delete_table(table.table_name)
-            except ResourceNotFoundError:
-                pass
-
-    def _delete_all_tables(self, ts):
-        for table in ts.list_tables():
-            try:
-                ts.delete_table(table.name)
-            except ResourceNotFoundError:
-                pass
-
-    # --Test cases for tables --------------------------------------------------
-
+class TestTable(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     def test_create_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # # Arrange
@@ -98,8 +49,13 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         # have to wait for return to service
         p = ts.get_service_properties()
         # have to wait for return to service
-        ts.set_service_properties(minute_metrics= Metrics(enabled=True, include_apis=True,
-                                 retention_policy=RetentionPolicy(enabled=True, days=5)))
+        ts.set_service_properties(
+            minute_metrics=Metrics(
+                enabled=True,
+                include_apis=True,
+                retention_policy=RetentionPolicy(enabled=True, days=5)
+            )
+        )
 
         ps = ts.get_service_properties()
         ts.delete_table(table_name)
@@ -431,12 +387,8 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @pytest.mark.live_test_only
     @tables_decorator
     def test_account_sas(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-
-        # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         tsc = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
@@ -452,7 +404,8 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             entity['RowKey'] = u'test2'
             table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
-            token = generate_account_sas(
+            token = self.generate_sas(
+                generate_account_sas,
                 tables_primary_storage_account_key,
                 resource_types=ResourceTypes(object=True),
                 permission=AccountSasPermissions(read=True),
@@ -473,7 +426,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             assert entities[0]['text'] == u'hello'
             assert entities[1]['text'] == u'hello'
         finally:
-            self._delete_table(table=table, ts=tsc)
+            tsc.delete_table(table.table_name)
 
 
 class TestTablesUnit(TableTestCase):

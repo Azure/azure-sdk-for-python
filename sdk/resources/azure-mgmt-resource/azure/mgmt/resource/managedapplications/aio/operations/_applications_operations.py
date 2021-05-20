@@ -47,7 +47,7 @@ class ApplicationsOperations:
         self,
         resource_group_name: str,
         application_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Application"]:
         """Gets the managed application.
 
@@ -108,7 +108,7 @@ class ApplicationsOperations:
         self,
         resource_group_name: str,
         application_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -153,7 +153,7 @@ class ApplicationsOperations:
         self,
         resource_group_name: str,
         application_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the managed application.
 
@@ -163,8 +163,8 @@ class ApplicationsOperations:
         :type application_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -218,7 +218,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         application_name: str,
         parameters: "_models.Application",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Application":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Application"]
         error_map = {
@@ -276,7 +276,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         application_name: str,
         parameters: "_models.Application",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Application"]:
         """Creates a new managed application.
 
@@ -288,8 +288,8 @@ class ApplicationsOperations:
         :type parameters: ~azure.mgmt.resource.managedapplications.models.Application
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Application or the result of cls(response)
@@ -347,7 +347,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         application_name: str,
         parameters: Optional["_models.ApplicationPatchable"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Application":
         """Updates an existing managed application. The only value that can be updated via PATCH currently
         is the tags.
@@ -416,7 +416,7 @@ class ApplicationsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationListResult"]:
         """Gets all the applications within a resource group.
 
@@ -486,7 +486,7 @@ class ApplicationsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationListResult"]:
         """Gets all the applications within a subscription.
 
@@ -554,7 +554,7 @@ class ApplicationsOperations:
     async def get_by_id(
         self,
         application_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Application"]:
         """Gets the managed application.
 
@@ -612,7 +612,7 @@ class ApplicationsOperations:
     async def _delete_by_id_initial(
         self,
         application_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -654,7 +654,7 @@ class ApplicationsOperations:
     async def begin_delete_by_id(
         self,
         application_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the managed application.
 
@@ -664,8 +664,8 @@ class ApplicationsOperations:
         :type application_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -715,7 +715,7 @@ class ApplicationsOperations:
         self,
         application_id: str,
         parameters: "_models.Application",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Application":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Application"]
         error_map = {
@@ -770,7 +770,7 @@ class ApplicationsOperations:
         self,
         application_id: str,
         parameters: "_models.Application",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Application"]:
         """Creates a new managed application.
 
@@ -782,8 +782,8 @@ class ApplicationsOperations:
         :type parameters: ~azure.mgmt.resource.managedapplications.models.Application
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Application or the result of cls(response)
@@ -837,7 +837,7 @@ class ApplicationsOperations:
         self,
         application_id: str,
         parameters: Optional["_models.Application"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Application":
         """Updates an existing managed application. The only value that can be updated via PATCH currently
         is the tags.

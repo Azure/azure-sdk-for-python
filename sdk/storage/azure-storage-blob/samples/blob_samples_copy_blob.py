@@ -31,7 +31,7 @@ def main():
 
     status = None
     blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
-    source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
+    source_blob = "https://www.gutenberg.org/files/59466/59466-0.txt"
     copied_blob = blob_service_client.get_blob_client("mycontainer", '59466-0.txt')
     # Copy started
     copied_blob.start_copy_from_url(source_blob)

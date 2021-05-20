@@ -24,17 +24,16 @@ from form documents. It includes the following main functionalities:
 Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer --pre
+pip install azure-ai-formrecognizer
 ```
 
-> Note: This version of the client library defaults to the v2.1-preview.3 version of the service
+> Note: This version of the client library defaults to the v2.1 version of the service
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
 |SDK version|Supported API version of service
 |-|-
-|3.0.0 - Latest GA release (can be installed by removing the `--pre` flag)| 2.0
-|3.1.0b4 - Latest release (beta)| 2.0, 2.1-preview.3
+|3.1.0 - Latest GA release| 2.0, 2.1 (default)
 
 
 #### Create a Form Recognizer resource

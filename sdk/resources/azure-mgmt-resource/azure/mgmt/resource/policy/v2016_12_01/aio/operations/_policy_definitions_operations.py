@@ -45,7 +45,7 @@ class PolicyDefinitionsOperations:
         self,
         policy_definition_name: str,
         parameters: "_models.PolicyDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyDefinition":
         """Creates or updates a policy definition.
 
@@ -106,7 +106,7 @@ class PolicyDefinitionsOperations:
     async def delete(
         self,
         policy_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a policy definition.
 
@@ -155,7 +155,7 @@ class PolicyDefinitionsOperations:
     async def get(
         self,
         policy_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyDefinition":
         """Gets the policy definition.
 
@@ -209,7 +209,7 @@ class PolicyDefinitionsOperations:
     async def get_built_in(
         self,
         policy_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyDefinition":
         """Gets the built in policy definition.
 
@@ -264,7 +264,7 @@ class PolicyDefinitionsOperations:
         policy_definition_name: str,
         management_group_id: str,
         parameters: "_models.PolicyDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyDefinition":
         """Creates or updates a policy definition at management group level.
 
@@ -328,7 +328,7 @@ class PolicyDefinitionsOperations:
         self,
         policy_definition_name: str,
         management_group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a policy definition at management group level.
 
@@ -380,7 +380,7 @@ class PolicyDefinitionsOperations:
         self,
         policy_definition_name: str,
         management_group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyDefinition":
         """Gets the policy definition at management group level.
 
@@ -435,7 +435,7 @@ class PolicyDefinitionsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyDefinitionListResult"]:
         """Gets all the policy definitions for a subscription.
 
@@ -501,7 +501,7 @@ class PolicyDefinitionsOperations:
 
     def list_built_in(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyDefinitionListResult"]:
         """Gets all the built in policy definitions.
 
@@ -564,7 +564,7 @@ class PolicyDefinitionsOperations:
     def list_by_management_group(
         self,
         management_group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyDefinitionListResult"]:
         """Gets all the policy definitions for a subscription at management group level.
 

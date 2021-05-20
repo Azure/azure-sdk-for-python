@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
-
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.data.tables.aio import TableServiceClient
@@ -21,22 +19,7 @@ SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceS
                          '></StorageServiceStats> '
 
 
-# --Test Class -----------------------------------------------------------------
-class TableServiceStats(AzureRecordedTestCase, AsyncTableTestCase):
-    # --Helpers-----------------------------------------------------------------
-    def _assert_stats_default(self, stats):
-        assert stats is not None
-        assert stats['geo_replication'] is not None
-
-        assert stats['geo_replication']['status'] ==  'live'
-        assert stats['geo_replication']['last_sync_time'] is not None
-
-    def _assert_stats_unavailable(self, stats):
-        assert stats is not None
-        assert stats['geo_replication'] is not None
-
-        assert stats['geo_replication']['status'] ==  'unavailable'
-        assert stats['geo_replication']['last_sync_time'] is None
+class TestTableServiceStats(AzureRecordedTestCase, AsyncTableTestCase):
 
     @staticmethod
     def override_response_body_with_unavailable_status(response):
@@ -45,7 +28,6 @@ class TableServiceStats(AzureRecordedTestCase, AsyncTableTestCase):
     @staticmethod
     def override_response_body_with_live_status(response):
         response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
-        #  response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
     @tables_decorator_async
@@ -64,8 +46,7 @@ class TableServiceStats(AzureRecordedTestCase, AsyncTableTestCase):
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
 
         # Act
-        stats = await tsc.get_service_stats(
-            raw_response_hook=self.override_response_body_with_unavailable_status)
+        stats = await tsc.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)
 
         # Assert
         self._assert_stats_unavailable(stats)

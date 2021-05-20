@@ -6,42 +6,13 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-import sys
-import locale
-import os
 from time import sleep
-from datetime import (
-    datetime,
-    timedelta,
-)
 
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError,
-    ResourceExistsError
-)
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import (
-    HeadersPolicy,
-    ContentDecodePolicy,
-)
-
-from azure.data.tables import (
-    ResourceTypes,
-    AccountSasPermissions,
-    TableSasPermissions,
-    CorsRule,
-    RetentionPolicy,
-    UpdateMode,
-    AccessPolicy,
-    TableAnalyticsLogging,
-    Metrics,
-    TableServiceClient,
-    generate_account_sas
-)
+from azure.core.exceptions import ResourceExistsError
+from azure.data.tables import TableServiceClient
 
 from _shared.testcase import TableTestCase, SLEEP_DELAY
 from preparers import cosmos_decorator
@@ -52,38 +23,6 @@ TEST_TABLE_PREFIX = 'pytablesync'
 
 class TestStorageTable(AzureRecordedTestCase, TableTestCase):
 
-    # --Helpers-----------------------------------------------------------------
-    def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
-        table_name = self.get_resource_name(prefix)
-        return table_name
-
-    def _create_table(self, ts, prefix=TEST_TABLE_PREFIX, table_list=None):
-        table_name = self._get_table_reference(prefix)
-        try:
-            table = ts.create_table(table_name)
-            if table_list is not None:
-                table_list.append(table)
-        except ResourceExistsError:
-            table = ts.get_table_client(table_name)
-        return table
-
-    def _delete_table(self, ts, table):
-        if table is None:
-            return
-        try:
-            ts.delete_table(table.name)
-        except ResourceNotFoundError:
-            pass
-
-    def _delete_all_tables(self, ts):
-        tables = ts.list_tables()
-        for table in tables:
-            try:
-                ts.delete_table(table.name)
-            except ResourceNotFoundError:
-                pass
-
-    # --Test cases for tables --------------------------------------------------
     @cosmos_decorator
     def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # # Arrange

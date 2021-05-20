@@ -12,13 +12,18 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import unquote  # type: ignore
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
-from ._error import _process_table_error, _validate_table_name
+from ._error import (
+    _process_table_error,
+    _validate_table_name,
+    _reraise_error,
+    _decode_error
+)
 from ._generated.models import (
     SignedIdentifier,
     TableProperties,
@@ -252,7 +257,7 @@ class TableClient(TablesBaseClient):
     ):
         # type: (...) -> None
         """Deletes the table under the current account. No error will be raised
-            if the table does not exist
+        if the table does not exist
 
         :return: None
         :rtype: None
@@ -288,12 +293,12 @@ class TableClient(TablesBaseClient):
     def delete_entity(self, *args, **kwargs):
         # type: (Union[TableEntity, str], Any) -> None
         """Deletes the specified entity in a table. No error will be raised if
-            the entity or PartitionKey-RowKey pairing is not found.
+        the entity or PartitionKey-RowKey pairing is not found.
 
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
+        :param str partition_key: The partition key of the entity.
+        :param str row_key: The row key of the entity.
+        :param entity: The entity to delete
+        :type entity: Union[TableEntity, Mapping[str, str]]
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchConditions
@@ -307,8 +312,8 @@ class TableClient(TablesBaseClient):
                 :start-after: [START delete_entity]
                 :end-before: [END delete_entity]
                 :language: python
-                :dedent: 8
-                :caption: Deleting an entity to a Table
+                :dedent: 12
+                :caption: Deleting an entity of a Table
         """
         try:
             entity = kwargs.pop('entity', None)
@@ -365,7 +370,7 @@ class TableClient(TablesBaseClient):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
+        :type entity: Dict[str,str] or :class:`~azure.data.tables.TableEntity`
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -376,13 +381,10 @@ class TableClient(TablesBaseClient):
                 :start-after: [START create_entity]
                 :end-before: [END create_entity]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Creating and adding an entity to a Table
         """
-        if "PartitionKey" in entity and "RowKey" in entity:
-            entity = _add_entity_properties(entity)
-        else:
-            raise ValueError("PartitionKey and RowKey were not provided in entity")
+        entity = _add_entity_properties(entity)
         try:
             metadata, _ = self._client.table.insert_entity(
                 table=self.table_name,
@@ -391,8 +393,14 @@ class TableClient(TablesBaseClient):
                 **kwargs
             )
             return _trim_service_metadata(metadata)
-        except ResourceNotFoundError as error:
-            _process_table_error(error)
+        except HttpResponseError as error:
+            decoded = _decode_error(error.response, error.message)
+            if decoded.error_code == "PropertiesNeedValue":
+                if entity.get("PartitionKey") is None:
+                    raise ValueError("PartitionKey must be present in an entity")
+                if entity.get("RowKey") is None:
+                    raise ValueError("RowKey must be present in an entity")
+            _reraise_error(error)
 
     @distributed_trace
     def update_entity(
@@ -405,9 +413,9 @@ class TableClient(TablesBaseClient):
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
+        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: :class:`~azure.data.tables.UpdateMode`
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
@@ -421,7 +429,7 @@ class TableClient(TablesBaseClient):
                 :start-after: [START update_entity]
                 :end-before: [END update_entity]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Updating an already exiting entity in a Table
         """
         match_condition = kwargs.pop("match_condition", None)
@@ -493,7 +501,7 @@ class TableClient(TablesBaseClient):
                 :start-after: [START query_entities]
                 :end-before: [END query_entities]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: List all entities held within a table
         """
         user_select = kwargs.pop("select", None)
@@ -523,7 +531,8 @@ class TableClient(TablesBaseClient):
         :keyword int results_per_page: Number of entities returned per service request.
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
-        :keyword Dict[str, Any] parameters: Dictionary for formatting query with additional, user defined parameters
+        :keyword parameters: Dictionary for formatting query with additional, user defined parameters
+        :paramtype parameters: Dict[str, Any]
         :return: ItemPaged[:class:`~azure.data.tables.TableEntity`]
         :rtype: ~azure.core.paging.ItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -578,11 +587,11 @@ class TableClient(TablesBaseClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_update_upsert_merge_table.py
+            .. literalinclude:: ../samples/sample_update_upsert_merge_entities.py
                 :start-after: [START get_entity]
                 :end-before: [END get_entity]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Get a single entity from a table
         """
         user_select = kwargs.pop("select", None)
@@ -612,9 +621,9 @@ class TableClient(TablesBaseClient):
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
+        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: :class:`~azure.data.tables.UpdateMode`
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -625,7 +634,7 @@ class TableClient(TablesBaseClient):
                 :start-after: [START upsert_entity]
                 :end-before: [END upsert_entity]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Update/merge or insert an entity into a table
         """
 
@@ -679,7 +688,7 @@ class TableClient(TablesBaseClient):
         :type operations: Iterable[Tuple[str, EntityType]]
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: List[Mapping[str, Any]]
-        :raises ~azure.data.tables.TableTransactionError:
+        :raises: :class:`~azure.data.tables.TableTransactionError`
 
         .. admonition:: Example:
 

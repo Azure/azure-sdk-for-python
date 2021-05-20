@@ -229,7 +229,7 @@ class TableServiceClient(TablesBaseClient):
     def delete_table(self, table_name, **kwargs):
         # type: (str, Any) -> None
         """Deletes the table under the current account. No error will be raised
-            if the given table is not found.
+        if the given table is not found.
 
         :param table_name: The Table name.
         :type table_name: str
@@ -256,7 +256,8 @@ class TableServiceClient(TablesBaseClient):
 
         :param str query_filter: Specify a filter to return certain tables.
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword Dict[str, str] parameters: Dictionary for formatting query with additional, user defined parameters
+        :keyword parameters: Dictionary for formatting query with additional, user defined parameters
+        :paramtype parameters:  Dict[str, Any]
         :return: ItemPaged[:class:`~azure.data.tables.TableItem`]
         :rtype: ~azure.core.paging.ItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -267,7 +268,7 @@ class TableServiceClient(TablesBaseClient):
                 :start-after: [START tsc_query_tables]
                 :end-before: [END tsc_query_tables]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Querying tables in a storage account
         """
         parameters = kwargs.pop("parameters", None)
@@ -289,7 +290,7 @@ class TableServiceClient(TablesBaseClient):
         # type: (Any) -> ItemPaged[TableItem]
         """Queries tables under the given account.
 
-        :keyword int results_per_page: Number of tables per page in return ItemPaged
+        :keyword int results_per_page: Number of tables per page in returned ItemPaged
         :return: ItemPaged[:class:`~azure.data.tables.TableItem`]
         :rtype: ~azure.core.paging.ItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -300,7 +301,7 @@ class TableServiceClient(TablesBaseClient):
                 :start-after: [START tsc_list_tables]
                 :end-before: [END tsc_list_tables]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Listing all tables in a storage account
         """
         top = kwargs.pop("results_per_page", None)

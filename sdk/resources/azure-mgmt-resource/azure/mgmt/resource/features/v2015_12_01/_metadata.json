@@ -111,7 +111,7 @@
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_operations(\n    self,\n    **kwargs\n) -\u003e AsyncItemPaged[\"_models.OperationListResult\"]:\n",
+                    "signature": "def list_operations(\n    self,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.OperationListResult\"]:\n",
                     "doc": "\"\"\"Lists all of the available Microsoft.Features REST API operations.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OperationListResult or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.features.v2015_12_01.models.OperationListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "call": ""

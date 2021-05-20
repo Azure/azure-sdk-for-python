@@ -32,22 +32,22 @@ class DeleteOperations(object):
         from azure.containerregistry import (
             ContainerRegistryClient,
             ContainerRepositoryClient,
-            TagOrderBy
+            TagOrder
         )
         from azure.identity import DefaultAzureCredential
 
-        # [START list_repositories]
+        # [START list_repository_names]
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         credential = DefaultAzureCredential()
         client = ContainerRegistryClient(account_url, credential)
 
-        for repository in client.list_repositories():
+        for repository in client.list_repository_names():
             repository_client = ContainerRepositoryClient(account_url, repository, credential)
-            # [END list_repositories]
+            # [END list_repository_names]
 
             # [START list_tags]
             tag_count = 0
-            for tag in repository_client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING):
+            for tag in repository_client.list_tags(order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
                 tag_count += 1
                 if tag_count > 3:
                     repository_client.delete_tag(tag.name)

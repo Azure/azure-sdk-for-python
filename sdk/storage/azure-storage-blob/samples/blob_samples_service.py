@@ -96,7 +96,7 @@ class BlobServiceSamples(object):
             # Filter results with name prefix
             test_containers = blob_service_client.list_containers(name_starts_with='test-')
             for container in test_containers:
-                blob_service_client.delete_container(container)
+                print(container['name'], container['metadata'])
             # [END bsc_list_containers]
 
         finally:

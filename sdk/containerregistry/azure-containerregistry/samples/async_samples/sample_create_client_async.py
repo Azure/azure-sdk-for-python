@@ -10,7 +10,7 @@
 FILE: sample_create_client_async.py
 
 DESCRIPTION:
-    These samples demonstrate creating a ContainerRegistryClient and a ContainerRepositoryClient
+    These samples demonstrate creating a ContainerRegistryClient and a ContainerRepository
 
 USAGE:
     python sample_create_client_async.py
@@ -27,53 +27,40 @@ import os
 class CreateClients(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
     async def create_registry_client(self):
         # Instantiate the ContainerRegistryClient
         # [START create_registry_client]
         from azure.containerregistry.aio import ContainerRegistryClient
         from azure.identity.aio import DefaultAzureCredential
+        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
+        client = ContainerRegistryClient(account_url, DefaultAzureCredential())
         # [END create_registry_client]
-
-    async def create_repository_client(self):
-        # Instantiate the ContainerRegistryClient
-        # [START create_repository_client]
-        from azure.containerregistry.aio import ContainerRepositoryClient
-        from azure.identity.aio import DefaultAzureCredential
-
-        client = ContainerRepositoryClient(self.account_url, "my_repository", DefaultAzureCredential())
-        # [END create_repository_client]
 
     async def basic_sample(self):
 
         from azure.containerregistry.aio import ContainerRegistryClient
         from azure.identity.aio import DefaultAzureCredential
+        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
         # Instantiate the client
-        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
+        client = ContainerRegistryClient(account_url, DefaultAzureCredential())
         async with client:
             # Iterate through all the repositories
-            async for repository_name in client.list_repositories():
+            async for repository_name in client.list_repository_names():
                 if repository_name == "hello-world":
-                    # Create a repository client from the registry client
-                    repository_client = client.get_repository_client(repository_name)
+                    # Create a repository object from the registry client
+                    container_repository = client.get_repository(repository_name)
 
-                    async with repository_client:
+                    async with container_repository:
                         # Show all tags
-                        async for tag in repository_client.list_tags():
-                            print(tag.digest)
-
-                    # [START delete_repository]
-                    await client.delete_repository("hello-world")
-                    # [END delete_repository]
+                        async for manifest in container_repository.list_manifests():
+                            print(manifest.tags)
 
 async def main():
     sample = CreateClients()
     await sample.create_registry_client()
-    await sample.create_repository_client()
     await sample.basic_sample()
 
 

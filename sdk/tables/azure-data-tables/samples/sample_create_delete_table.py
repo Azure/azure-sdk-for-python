@@ -24,7 +24,6 @@ from dotenv import find_dotenv, load_dotenv
 
 
 class CreateDeleteTable(object):
-
     def __init__(self):
         load_dotenv(find_dotenv())
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
@@ -32,11 +31,8 @@ class CreateDeleteTable(object):
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
         self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name,
-            self.access_key,
-            self.endpoint_suffix
+            self.account_name, self.access_key, self.endpoint_suffix
         )
-
 
     def create_table(self):
         from azure.data.tables import TableServiceClient
@@ -94,7 +90,7 @@ class CreateDeleteTable(object):
         # [END delete_table_from_table_client]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = CreateDeleteTable()
     sample.create_table()
     sample.delete_table()

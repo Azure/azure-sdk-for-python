@@ -373,6 +373,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         )
         async_delete.wait()
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer()
     def test_deployments_basic(self, resource_group, location):
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
@@ -483,6 +484,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         )
         async_delete.wait()
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer()
     def test_deployments_at_scope(self, resource_group, location):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID

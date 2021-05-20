@@ -91,6 +91,7 @@ azure-mixedreality-nspkg
 azure-nspkg
 azure-keyvault-nspkg
 azure-media-nspkg
+azure-agrifood-nspkg
 azure-purview-nspkg
 azure-schemaregistry==1.0.0b1
 azure-search-nspkg
@@ -136,25 +137,25 @@ pyjwt>=1.7.1
 #override azure-keyvault-administration msrest>=0.6.21
 #override azure-keyvault-certificates msrest>=0.6.0
 #override azure-keyvault-keys msrest>=0.6.21
-#override azure-keyvault-secrets msrest>=0.6.0
+#override azure-keyvault-secrets msrest>=0.6.21
 #override azure-keyvault-certificates azure-core<2.0.0,>=1.7.0
 #override azure-keyvault-keys azure-core<2.0.0,>=1.7.0
 #override azure-keyvault-secrets azure-core<2.0.0,>=1.7.0
 #override azure-keyvault-administration azure-core<2.0.0,>=1.7.0
 #override azure-ai-textanalytics msrest>=0.6.0
-#override azure-ai-textanalytics azure-core<2.0.0,>=1.8.2
-#override azure-search-documents azure-core<2.0.0,>=1.6.0
+#override azure-ai-textanalytics azure-core<2.0.0,>=1.14.0
+#override azure-search-documents azure-core<2.0.0,>=1.14.0
 #override azure-ai-formrecognizer msrest>=0.6.21
 #override azure-ai-formrecognizer azure-core<2.0.0,>=1.8.2
 #override azure-storage-blob azure-core<2.0.0,>=1.10.0
-#override azure-storage-blob msrest>=0.6.18
+#override azure-storage-blob msrest>=0.6.21
 #override azure-storage-blob-changefeed azure-storage-blob>=12.5.0,<13.0.0
 #override azure-storage-queue azure-core<2.0.0,>=1.10.0
 #override azure-storage-queue msrest>=0.6.18
 #override azure-storage-file-share msrest>=0.6.18
 #override azure-storage-file-share azure-core<2.0.0,>=1.10.0
 #override azure-storage-file-datalake azure-core<2.0.0,>=1.10.0
-#override azure-storage-file-datalake msrest>=0.6.18
+#override azure-storage-file-datalake msrest>=0.6.21
 #override azure-storage-file-datalake azure-storage-blob<13.0.0,>=12.8.0b1
 #override azure-security-attestation msrest>=0.6.0
 #override azure-security-attestation azure-core<2.0.0,>=1.8.2
@@ -195,7 +196,7 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-communication azure-core<2.0.0,>=1.9.0
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.6.0
 #override azure-ai-metricsadvisor msrest>=0.6.21
-#override azure-ai-translation-document azure-core<2.0.0,>=1.10.0
+#override azure-ai-translation-document azure-core<2.0.0,>=1.14.0
 #override azure-ai-translation-document msrest>=0.6.21
 #override azure-monitor-opentelemetry-exporter azure-core<2.0.0,>=1.6.0
 #override azure-monitor-opentelemetry-exporter msrest>=0.6.10
@@ -260,10 +261,31 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-databoxedge msrest>=0.6.21
 #override azure-mgmt-kusto msrest>=0.6.21
 #override azure-mgmt-managedservices msrest>=0.6.21
-#override azure-mgmt-resourcegraph msrest>=0.6.21
-#override azure-purview-scanning msrest>=0.6.21
+#override azure-purview-catalog azure-core<2.0.0,>=1.8.2
 #override azure-purview-catalog msrest>=0.6.21
+#override azure-mgmt-resourcegraph msrest>=0.6.21
+#override azure-purview-scanning azure-core<2.0.0,>=1.8.2
+#override azure-purview-scanning msrest>=0.6.21
 #override azure-mgmt-rdbms msrest>=0.6.21
 #override azure-mgmt-peering msrest>=0.6.21
+#override azure-mgmt-elastic msrest>=0.6.21
 #override azure-mgmt-confidentialledger msrest>=0.6.21
 #override azure-mgmt-mixedreality msrest>=0.6.21
+#override azure-mgmt-extendedlocation msrest>=0.6.21
+#override azure-mgmt-digitaltwins msrest>=0.6.21
+#override azure-mgmt-trafficmanager msrest>=0.6.21
+#override azure-mgmt-storagecache msrest>=0.6.21
+#override azure-mgmt-videoanalyzer msrest>=0.6.21
+#override azure-mgmt-extendedlocation msrest>=0.6.21
+#override azure-mgmt-iothubprovisioningservices msrest>=0.6.21
+#override azure-mgmt-recoveryservicesbackup msrest>=0.6.21
+#override azure-mgmt-network msrest>=0.6.21
+#override azure-mgmt-iothub msrest>=0.6.21
+#override azure-mgmt-iotcentral msrest>=0.6.21
+#override azure-mgmt-sql msrest>=0.6.21
+#override azure-agrifood-farming azure-core<2.0.0,>=1.14.0
+#override azure-agrifood-farming msrest>=0.6.21
+#override azure-mgmt-machinelearningcompute msrest>=0.6.21
+#override azure-mgmt-agfood msrest>=0.6.21
+#override azure-mgmt-sqlvirtualmachine msrest>=0.6.21
+#override azure-mgmt-msi msrest>=0.6.21

@@ -22,7 +22,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
   response:
@@ -32,11 +32,11 @@ interactions:
         Supported values latest,2019-10-01,2020-07-01."}}'
     headers:
       apim-request-id:
-      - 0c67ecbd-256d-4f19-8612-837f09e3f5ba
+      - 16e48d44-51c2-4184-8908-994e9ed37503
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 04 May 2021 01:16:34 GMT
+      - Tue, 18 May 2021 17:46:49 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '10'
     status:
       code: 400
       message: Bad Request

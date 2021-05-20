@@ -47,7 +47,7 @@ class ResourcesOperations:
         self,
         source_resource_group_name: str,
         parameters: "_models.ResourcesMoveInfo",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -93,7 +93,7 @@ class ResourcesOperations:
         self,
         source_resource_group_name: str,
         parameters: "_models.ResourcesMoveInfo",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Move resources from one resource group to another. The resources being moved should all be in
         the same resource group.
@@ -104,8 +104,8 @@ class ResourcesOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourcesMoveInfo
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -158,7 +158,7 @@ class ResourcesOperations:
         filter: Optional[str] = None,
         expand: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceListResult"]:
         """Get all of the resources under a subscription.
 
@@ -244,7 +244,7 @@ class ResourcesOperations:
         resource_type: str,
         resource_name: str,
         api_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks whether resource exists.
 
@@ -312,7 +312,7 @@ class ResourcesOperations:
         resource_type: str,
         resource_name: str,
         api_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete resource and all of its resources.
 
@@ -380,7 +380,7 @@ class ResourcesOperations:
         resource_name: str,
         api_version: str,
         parameters: "_models.GenericResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GenericResource":
         """Create a resource.
 
@@ -464,7 +464,7 @@ class ResourcesOperations:
         resource_name: str,
         api_version: str,
         parameters: "_models.GenericResource",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.GenericResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.GenericResource"]]
         error_map = {
@@ -525,7 +525,7 @@ class ResourcesOperations:
         resource_name: str,
         api_version: str,
         parameters: "_models.GenericResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.GenericResource"]:
         """Updates a resource.
 
@@ -546,8 +546,8 @@ class ResourcesOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.GenericResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either GenericResource or the result of cls(response)
@@ -615,7 +615,7 @@ class ResourcesOperations:
         resource_type: str,
         resource_name: str,
         api_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GenericResource":
         """Returns a resource belonging to a resource group.
 
