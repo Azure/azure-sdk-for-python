@@ -24,7 +24,7 @@ from _shared.testcase import TableTestCase, SLEEP_DELAY
 from preparers import cosmos_decorator
 # ------------------------------------------------------------------------------
 
-class TableServicePropertiesTest(AzureRecordedTestCase, TableTestCase):
+class TableServiceProperties(AzureRecordedTestCase, TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None
@@ -121,7 +121,7 @@ class TableServicePropertiesTest(AzureRecordedTestCase, TableTestCase):
         self.sleep(SLEEP_DELAY)
 
 
-class TestTableUnitTest(TableTestCase):
+class TestTableUnit(TableTestCase):
 
     def test_retention_no_days(self):
         # Assert

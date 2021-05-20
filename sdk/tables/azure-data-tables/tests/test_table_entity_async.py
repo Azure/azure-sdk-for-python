@@ -37,7 +37,7 @@ from azure.data.tables.aio import TableServiceClient
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
 
-class StorageTableEntityTest(AzureRecordedTestCase, AsyncTableTestCase):
+class TestStorageTableEntity(AzureRecordedTestCase, AsyncTableTestCase):
 
     async def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")

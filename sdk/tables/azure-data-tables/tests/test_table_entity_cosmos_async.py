@@ -42,7 +42,7 @@ from async_preparers import cosmos_decorator_async
 # TODO: change to `with table_client as client:` to close sessions
 # ------------------------------------------------------------------------------
 
-class StorageTableEntityTest(AzureRecordedTestCase, AsyncTableTestCase):
+class TestStorageTableEntity(AzureRecordedTestCase, AsyncTableTestCase):
 
     async def _set_up(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         account_url = self.account_url(tables_cosmos_account_name, "cosmos")

@@ -40,7 +40,7 @@ from preparers import cosmos_decorator
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
-class StorageTableClientTest(AzureRecordedTestCase, TableTestCase):
+class TestStorageTableClient(AzureRecordedTestCase, TableTestCase):
 
     def _set_up(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         self.ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)

@@ -8,7 +8,7 @@ def cosmos_decorator_async(func, **kwargs):
 
     @CosmosPreparer()
     @RecordedByProxyAsync
-    def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs):
         key = kwargs.pop("tables_primary_cosmos_account_key")
         name = kwargs.pop("tables_cosmos_account_name")
         key = AzureNamedKeyCredential(key=key, name=name)

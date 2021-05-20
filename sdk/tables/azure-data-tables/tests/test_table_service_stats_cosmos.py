@@ -21,7 +21,7 @@ SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceS
 
 
 # --Test Class -----------------------------------------------------------------
-class TableServiceStatsTest(AzureRecordedTestCase, TableTestCase):
+class TableServiceStats(AzureRecordedTestCase, TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
         assert stats is not None

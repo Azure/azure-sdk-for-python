@@ -476,7 +476,7 @@ class TestStorageTable(AzureRecordedTestCase, TableTestCase):
             self._delete_table(table=table, ts=tsc)
 
 
-class TestTablesUnitTest(TableTestCase):
+class TestTablesUnit(TableTestCase):
     tables_storage_account_name = "fake_storage_account"
     tables_primary_storage_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
     credential = AzureNamedKeyCredential(name=tables_storage_account_name, key=tables_primary_storage_account_key)

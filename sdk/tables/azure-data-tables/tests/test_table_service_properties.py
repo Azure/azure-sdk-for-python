@@ -25,7 +25,7 @@ from preparers import tables_decorator
 # ------------------------------------------------------------------------------
 
 
-class TableServicePropertiesTest(AzureRecordedTestCase, TableTestCase):
+class TableServiceProperties(AzureRecordedTestCase, TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None
@@ -225,7 +225,7 @@ class TableServicePropertiesTest(AzureRecordedTestCase, TableTestCase):
                           None, None, minute_metrics)
 
 
-class TestTableUnitTest(TableTestCase):
+class TestTableUnit(TableTestCase):
     def test_retention_no_days(self):
         # Assert
         pytest.raises(ValueError,

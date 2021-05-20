@@ -46,7 +46,7 @@ class RetryRequestTransport(RequestsTransport):
         return response
 
 # --Test Class -----------------------------------------------------------------
-class StorageRetryTest(AzureRecordedTestCase, TableTestCase):
+class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
 
     def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='table', default_table=True, **kwargs):
         self.table_name = self.get_resource_name('uttable')

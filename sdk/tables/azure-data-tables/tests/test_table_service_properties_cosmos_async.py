@@ -19,7 +19,7 @@ from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import cosmos_decorator_async
 # ------------------------------------------------------------------------------
 
-class TableServicePropertiesTest(AzureRecordedTestCase, AsyncTableTestCase):
+class TableServiceProperties(AzureRecordedTestCase, AsyncTableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None
@@ -121,7 +121,7 @@ class TableServicePropertiesTest(AzureRecordedTestCase, AsyncTableTestCase):
         self.sleep(SLEEP_DELAY)
 
 
-class TestTableUnitTest(AsyncTableTestCase):
+class TestTableUnit(AsyncTableTestCase):
 
     @pytest.mark.asyncio
     async def test_retention_no_days_async(self):

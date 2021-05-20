@@ -50,7 +50,7 @@ from preparers import cosmos_decorator
 TEST_TABLE_PREFIX = 'pytablesync'
 # ------------------------------------------------------------------------------
 
-class StorageTableTest(AzureRecordedTestCase, TableTestCase):
+class TestStorageTable(AzureRecordedTestCase, TableTestCase):
 
     # --Helpers-----------------------------------------------------------------
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
@@ -275,7 +275,7 @@ class StorageTableTest(AzureRecordedTestCase, TableTestCase):
             sleep(SLEEP_DELAY)
 
 
-class TestTableUnitTest(TableTestCase):
+class TestTableUnit(TableTestCase):
     tables_cosmos_account_name = "fake_storage_account"
     tables_primary_cosmos_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
     credential = AzureNamedKeyCredential(name=tables_cosmos_account_name, key=tables_primary_cosmos_account_key)

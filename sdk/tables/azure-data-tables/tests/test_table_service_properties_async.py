@@ -21,7 +21,7 @@ from async_preparers import tables_decorator_async
 # ------------------------------------------------------------------------------
 
 
-class TableServicePropertiesTest(AzureRecordedTestCase, TableTestCase):
+class TableServiceProperties(AzureRecordedTestCase, TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None
@@ -220,7 +220,7 @@ class TableServicePropertiesTest(AzureRecordedTestCase, TableTestCase):
             await tsc.set_service_properties(None, None, minute_metrics)
 
 
-class TestTableUnitTest(TableTestCase):
+class TestTableUnit(TableTestCase):
 
     @pytest.mark.asyncio
     async def test_retention_no_days_async(self):
