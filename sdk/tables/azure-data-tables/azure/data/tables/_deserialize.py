@@ -4,19 +4,21 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
 from uuid import UUID
 import logging
 import datetime
+from typing import (
+    Union,
+    Optional,
+    Any,
+    Dict,
+    List
+)
 
-from azure.core.exceptions import ResourceExistsError
+import six
 
 from ._entity import EntityProperty, EdmType, TableEntity
 from ._common_conversion import _decode_base64_to_bytes, TZ_UTC
-from ._error import TableErrorCode
-
-if TYPE_CHECKING:
-    from azure.core.exceptions import AzureError
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,18 +27,6 @@ try:
     from urllib.parse import quote
 except ImportError:
     from urllib2 import quote  # type: ignore
-
-if TYPE_CHECKING:
-    from typing import (  # pylint: disable=ungrouped-imports
-        Union,
-        Optional,
-        Any,
-        Iterable,
-        Dict,
-        List,
-        Type,
-        Tuple,
-    )
 
 
 class TablesEntityDatetime(datetime.datetime):
