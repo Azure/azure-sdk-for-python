@@ -469,7 +469,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            entity = {'RowKey': 'rk'}
+            entity = {'RowKey': u'rk'}
 
             # Act
             with pytest.raises(ValueError):
@@ -483,7 +483,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            entity = {'RowKey': 'rk', 'PartitionKey': ''}
+            entity = {'RowKey': u'rk', 'PartitionKey': u''}
 
             # Act
             with pytest.raises(HttpResponseError):
@@ -499,7 +499,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            entity = {'PartitionKey': 'pk'}
+            entity = {'PartitionKey': u'pk'}
 
             # Act
             with pytest.raises(ValueError):
@@ -514,7 +514,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            entity = {'PartitionKey': 'pk', 'RowKey': ''}
+            entity = {'PartitionKey': u'pk', 'RowKey': u''}
 
             # Act
             with pytest.raises(HttpResponseError):
@@ -551,12 +551,10 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             resp = self.table.get_entity(partition_key=entity['PartitionKey'],
                                          row_key=entity['RowKey'],
                                          select=['age', 'ratio'])
-            resp.pop('_metadata', None)
             assert resp == {'age': 39, 'ratio': 3.1}
             resp = self.table.get_entity(partition_key=entity['PartitionKey'],
                                          row_key=entity['RowKey'],
                                          select='age,ratio')
-            resp.pop('_metadata', None)
             assert resp == {'age': 39, 'ratio': 3.1}
         finally:
             self._tear_down()

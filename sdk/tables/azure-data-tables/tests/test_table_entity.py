@@ -480,7 +480,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            entity = {'RowKey': 'rk'}
+            entity = {'RowKey': u'rk'}
 
             # Act
             with pytest.raises(ValueError):
@@ -508,7 +508,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            entity = {'PartitionKey': 'pk'}
+            entity = {'PartitionKey': u'pk'}
 
             # Act
             with pytest.raises(ValueError):

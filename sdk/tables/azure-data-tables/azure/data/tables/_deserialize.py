@@ -7,13 +7,6 @@
 from uuid import UUID
 import logging
 import datetime
-from typing import (
-    Union,
-    Optional,
-    Any,
-    Dict,
-    List
-)
 
 import six
 
