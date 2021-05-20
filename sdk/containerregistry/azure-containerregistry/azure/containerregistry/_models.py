@@ -150,7 +150,7 @@ class RepositoryProperties(object):
             can_read=generated.can_read,
             can_write=generated.can_write,
             can_list=generated.can_list,
-            teleport_enabled=generated.teleport_enabled
+            teleport_enabled=generated.teleport_enabled,
         )
 
     def _to_generated(self):
@@ -187,6 +187,7 @@ class RepositoryProperties(object):
     def tag_count(self):
         # type: () -> int
         return self._tag_count
+
 
 class ManifestOrder(str, Enum):
     """Enum for ordering registry artifacts"""

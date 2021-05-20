@@ -187,6 +187,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         # except AttributeError:
         #     pass
 
+
 # Moving this out of testcase so the fixture and individual tests can use it
 def import_image(repository, tags):
     mgmt_client = ContainerRegistryManagementClient(

@@ -550,7 +550,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    def update_repository_properties(self, repository: str, properties: RepositoryProperties, **kwargs: Any) -> RepositoryProperties:
+    def update_repository_properties(
+        self, repository: str, properties: RepositoryProperties, **kwargs: Any
+    ) -> RepositoryProperties:
         ...
 
     @overload
@@ -571,7 +573,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         repository, properties = None, None
         if len(args) == 2:
-            [repository, properties] = list(args)
+            repository = args[0]
+            properties = args[1]
         else:
             repository = args[0]
             properties = RepositoryProperties(
@@ -589,11 +592,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @overload
-    def update_manifest_properties(self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs: Any) -> ArtifactManifestProperties:
+    def update_manifest_properties(
+        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs: Any
+    ) -> ArtifactManifestProperties:
         ...
 
     @overload
-    def update_manifest_properties(self, repository: str, tag_or_digest: str, **kwargs: Any) -> ArtifactManifestProperties:
+    def update_manifest_properties(
+        self, repository: str, tag_or_digest: str, **kwargs: Any
+    ) -> ArtifactManifestProperties:
         ...
 
     @distributed_trace_async
@@ -627,12 +634,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     ),
                 )
         """
-        repository, tag_or_digest, properties = None, None, None
+        repository = args[0]
+        tag_or_digest = args[1]
+        properties = None
         if len(args) == 3:
-            [repository, tag_or_digest, properties] = list(args)
+            properties = args[2]
         else:
-            repository = args[0]
-            tag_or_digest = args[1]
             properties = ArtifactManifestProperties(
                 can_delete=kwargs.pop("can_delete", None),
                 can_list=kwargs.pop("can_list", None),
@@ -654,7 +661,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @overload
-    def update_tag_properties(self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs: Any) -> ArtifactTagProperties:
+    def update_tag_properties(
+        self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs: Any
+    ) -> ArtifactTagProperties:
         ...
 
     @overload
@@ -692,12 +701,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 ),
             )
         """
-        repository, tag, properties = None, None, None
+        repository = args[0]
+        tag = args[1]
+        properties = None
         if len(args) == 3:
-            [repository, tag, properties] = list(args)
+            properties = args[2]
         else:
-            repository = args[0]
-            tag = args[1]
             properties = ArtifactTagProperties(
                 can_delete=kwargs.pop("can_delete", None),
                 can_list=kwargs.pop("can_list", None),

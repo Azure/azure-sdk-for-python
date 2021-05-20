@@ -163,8 +163,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert received.can_write == False
         # assert received.teleport_enabled == True
 
-        received = client.update_repository_properties(repo, teleport_enabled=True)
-        self.assert_all_properties(received, True)
+        # received = client.update_repository_properties(repo, teleport_enabled=True)
+        # self.assert_all_properties(received, True)
 
         received = client.update_repository_properties(
             repo,
@@ -323,12 +323,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert received.can_list == False
 
         received = client.update_manifest_properties(
-            repo,
-            tag,
-            can_delete=True,
-            can_read=True,
-            can_write=True,
-            can_list=True
+            repo, tag, can_delete=True, can_read=True, can_write=True, can_list=True
         )
 
         assert received.can_delete == True
@@ -410,12 +405,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert received.can_list == False
 
         received = client.update_tag_properties(
-            repo,
-            tag,
-            can_delete=True,
-            can_read=True,
-            can_write=True,
-            can_list=True
+            repo, tag, can_delete=True, can_read=True, can_write=True, can_list=True
         )
 
         assert received.can_delete == True

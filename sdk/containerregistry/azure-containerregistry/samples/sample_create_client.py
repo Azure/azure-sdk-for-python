@@ -32,6 +32,7 @@ class CreateClients(object):
         # [START create_registry_client]
         from azure.containerregistry import ContainerRegistryClient
         from azure.identity import DefaultAzureCredential
+
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
         client = ContainerRegistryClient(account_url, DefaultAzureCredential())
@@ -41,6 +42,7 @@ class CreateClients(object):
 
         from azure.containerregistry import ContainerRegistryClient
         from azure.identity import DefaultAzureCredential
+
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
         # Instantiate the client

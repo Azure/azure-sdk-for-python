@@ -598,12 +598,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     ),
                 )
         """
-        repository, tag_or_digest, properties = None, None, None
+        repository = args[0]
+        tag_or_digest = args[1]
+        properties = None
         if len(args) == 3:
-            [repository, tag_or_digest, properties] = list(args)
+            properties = args[2]
         else:
-            repository = args[0]
-            tag_or_digest = args[1]
             properties = ArtifactManifestProperties(
                 can_delete=kwargs.pop("can_delete", None),
                 can_list=kwargs.pop("can_list", None),
@@ -664,12 +664,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 ),
             )
         """
-        repository, tag, properties = None, None, None
+        repository = args[0]
+        tag = args[1]
+        properties = None
         if len(args) == 3:
-            [repository, tag, properties] = list(args)
+            properties = args[2]
         else:
-            repository = args[0]
-            tag = args[1]
             properties = ArtifactTagProperties(
                 can_delete=kwargs.pop("can_delete", None),
                 can_list=kwargs.pop("can_list", None),
@@ -707,7 +707,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         repository, properties = None, None
         if len(args) == 2:
-            [repository, properties] = list(args)
+            repository = args[0]
+            properties = args[1]
         else:
             repository = args[0]
             properties = RepositoryProperties(

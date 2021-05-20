@@ -309,12 +309,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert received.can_list == False
 
         received = await client.update_manifest_properties(
-            repo,
-            tag,
-            can_delete=True,
-            can_read=True,
-            can_write=True,
-            can_list=True
+            repo, tag, can_delete=True, can_read=True, can_write=True, can_list=True
         )
 
         assert received.can_delete == True
@@ -396,12 +391,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert received.can_list == False
 
         received = await client.update_tag_properties(
-            repo,
-            tag,
-            can_delete=True,
-            can_read=True,
-            can_write=True,
-            can_list=True
+            repo, tag, can_delete=True, can_read=True, can_write=True, can_list=True
         )
 
         assert received.can_delete == True
