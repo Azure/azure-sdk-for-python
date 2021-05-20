@@ -41,16 +41,15 @@ class AttestationClient(object):
     """An AttestationClient object enables access to the Attestation family of APIs provided
       by the attestation service.
 
-    :param instance_url: base url of the service
-    :type instance_url: str
+    :param str instance_url: base url of the service
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: ~azure.core.credentials.TokenCredentials
     :keyword pipeline: If omitted, the standard pipeline is used.
     :paramtype pipeline: Pipeline
-    :keyword HttpTransport transport: If omitted, the standard pipeline is used.
-    :paramtype transport: HttpTransport
     :keyword policies: If omitted, the standard pipeline is used.
     :paramtype policies: list[HTTPPolicy]
+    :keyword HttpTransport transport: If omitted, the standard pipeline is used.
+    :paramtype transport: HttpTransport
 
     For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
 
@@ -105,8 +104,7 @@ class AttestationClient(object):
         # type:(bytes, AttestationData, AttestationData, Dict[str, Any]) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an SGX quote.
 
-        :param quote: An SGX quote generated from an Intel(tm) SGX enclave
-        :type quote: bytes
+        :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
         :param inittime_data: Data presented at the time that the SGX enclave was initialized.
         :type inittime_data: azure.security.attestation.AttestationData 
         :param runtime_data: Data presented at the time that the SGX quote was created.
@@ -232,7 +230,8 @@ class AttestationClient(object):
 
         See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
 
-        :param azure.security.attestation.TpmAttestationRequest request: Incoming request to send to the TPM attestation service.
+        :param request: Incoming request to send to the TPM attestation service.
+        :type request: azure.security.attestation.TpmAttestationRequest
         :returns: A structure containing the response from the TPM attestation.
         :rtype: azure.security.attestation.TpmAttestationResponse
         """

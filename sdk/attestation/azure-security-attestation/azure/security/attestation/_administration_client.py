@@ -221,8 +221,9 @@ class AttestationAdministrationClient(object):
 
         :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
             the list of attestation policy management certificates.
-        :param azure.security.attestation.AttestationSigningKey signing_key: Signing Key representing one of 
+        :param signing_key: Signing Key representing one of 
             the *existing* attestation signing certificates.
+        :type signing_key: azure.security.attestation.AttestationSigningKey 
 
         :return: Attestation service response 
             encapsulating the status of the add request.
@@ -265,8 +266,9 @@ class AttestationAdministrationClient(object):
 
         :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
             the list of attestation policy management certificates.
-        :param azure.security.attestation.AttestationSigningKey signing_key: Signing Key representing one of 
+        :param signing_key: Signing Key representing one of 
             the *existing* attestation signing certificates.
+        :type signing_key: azure.security.attestation.AttestationSigningKey
         :return: Attestation service response 
             encapsulating a list of DER encoded X.509 certificate chains.
         :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyCertificatesModificationResult]

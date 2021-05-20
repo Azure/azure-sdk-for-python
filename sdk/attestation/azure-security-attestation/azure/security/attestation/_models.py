@@ -39,12 +39,10 @@ class AttestationSigner(object):
         Certificates representing an X.509 certificate chain. The first of these
         certificates will be used to sign an :class:`AttestationToken`.
 
-    :paramtype certificates: list[bytes] 
+    :type certificates: list[bytes] 
 
-    :param key_id: A string which identifies a signing key, See 
+    :param str key_id: A string which identifies a signing key, See 
         `RFC 7517 Section 4.5 <https://tools.ietf.org/html/rfc7517#section-4.5>`_
-
-    :paramtype key_id: str
 
     """
     def __init__(self, certificates, key_id, **kwargs):
@@ -62,12 +60,11 @@ class AttestationSigner(object):
 class PolicyCertificatesModificationResult(object):
     """The result of a policy certificate modification.
 
-    :param certificate_thumbprint: Hex encoded SHA1 Hash of the binary representation certificate
+    :param str certificate_thumbprint: Hex encoded SHA1 Hash of the binary representation certificate
      which was added or removed.
-    :paramtype certificate_thumbprint: str
     :param certificate_resolution: The result of the operation. Possible values include:
      "IsPresent", "IsAbsent".
-    :paramtype certificate_resolution: str or
+    :type certificate_resolution: str or
      ~azure.security.attestation._generated.models.CertificateModification
     """
 
@@ -92,14 +89,13 @@ class PolicyResult(object):
     
     :param policy_resolution: The result of the policy set or
         reset call.
-    :paramtype policy_resolution: azure.security.attestation.PolicyModification
+    :type policy_resolution: azure.security.attestation.PolicyModification
     :param policy_signer: If the call to `set_policy` or `reset_policy`
         had a :class:`AttestationSigningKey` parameter, this will be the certificate
         which was specified in this parameter.
-    :paramtype policy_signer: azure.security.attestation.AttestationSigner
-    :param policy_token_hash: The hash of the complete JSON Web Signature
+    :type policy_signer: azure.security.attestation.AttestationSigner
+    :param str policy_token_hash: The hash of the complete JSON Web Signature
         presented to the `set_policy` or `reset_policy` API.
-    :paramtype policy_token_hash: str
 
     """
     def __init__(self, policy_resolution, policy_signer, policy_token_hash):
@@ -431,14 +427,13 @@ class StoredAttestationPolicy(object):
     def __init__(self, policy):
         #type:(str) -> None
         """
-        :param policy: Policy to be saved.
-        :paramtype policy: str
+        :param str policy: Policy to be saved.
         """
         self._policy = policy.encode("ascii")
 
-    def serialize(self):
-        #type:() -> str
-        return GeneratedStoredAttestationPolicy(attestation_policy=self._policy).serialize()
+    def serialize(self, **kwargs):
+        #type:(Any) -> str
+        return GeneratedStoredAttestationPolicy(attestation_policy=self._policy).serialize(**kwargs)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -462,10 +457,8 @@ class AttestationData(object):
     If the `AttestationData` is Binary, then the `AttestationData` is reflected in the `AttestationResult.enclave_held_data` claim.
     If the `AttestationData` is JSON, then the `AttestationData` is expressed as JSON in the `AttestationResult.runtime_claims` or AttestationResult.inittime_claims claim.
 
-    :param data: Input data to be sent to the attestation service.
-    :paramtype data: bytes
-    :param is_json: True if the attestation service should treat the input data as JSON.
-    :paramtype is_json: bool
+    :param bytes data: Input data to be sent to the attestation service.
+    :param bool is_json: True if the attestation service should treat the input data as JSON.
 
     """
     def __init__(self, data, is_json=None):
@@ -519,16 +512,13 @@ class AttestationSigningKey(object):
     Typically the signing key used by the service consists of two components: An RSA or ECDS private key and an X.509 Certificate wrapped around
     the public key portion of the private key.
 
+    :param bytes signing_key_der: The RSA or ECDS signing key to sign the token supplied to the customer DER encoded.
+    :param bytes certificate_der: A DER encoded X.509 Certificate whose public key matches the signing_key's public key.
+
     """
 
     def __init__(self, signing_key_der, certificate_der):
     # type: (bytes, bytes) -> None
-        """
-        :param signing_key_der: The RSA or ECDS signing key to sign the token supplied to the customer DER encoded.
-        :paramtype signing_key_der: bytes
-        :param certificate_der: A DER encoded X.509 Certificate whose public key matches the signing_key's public key.
-        :paramtype certificate_der: bytes
-        """
         signing_key = serialization.load_der_private_key(signing_key_der, password=None, backend=default_backend())
         certificate = load_der_x509_certificate(certificate_der, backend=default_backend())
 
@@ -552,8 +542,9 @@ class AttestationToken(Generic[T]):
     """ Represents a token returned from the attestation service.
 
     :keyword Any body: The body of the newly created token, if provided.
-    :keyword azure.security.attestation.AttestationSigningKey signer: If specified, the key used to sign the token.
+    :keyword signer: If specified, the key used to sign the token.
         If the `signer` property is not specified, the token created is unsecured.
+    :paramtype signer: azure.security.attestation.AttestationSigningKey
     :keyword str token: If no body or signer is provided, the string representation of the token.
     :keyword Type body_type: The underlying type of the body of the 'token' parameter, used to deserialize the underlying body when parsing the token.
     """
@@ -850,7 +841,7 @@ class AttestationToken(Generic[T]):
                         SHA256())
                 return signer
             except:
-                raise AttestationTokenValidationException("Could not verify signature of attestatoin token.")
+                raise AttestationTokenValidationException("Could not verify signature of attestation token.")
         return None
 
     def _validate_static_properties(self, options):
@@ -902,7 +893,8 @@ class AttestationToken(Generic[T]):
         # type: (Any, AttestationSigningKey) -> str
         """ Return a secured JWT expressing the body, secured with the specified signing key.
         :param Any body: The body of the token to be serialized.
-        :param AttestationSigningKey signer: the certificate and key to sign the token.
+        :param signer: the certificate and key to sign the token.
+        :type signer: AttestationSigningKey
         """
         header = {
             "alg": "RSA256" if isinstance(signer._signing_key, RSAPrivateKey) else "ECDH256",

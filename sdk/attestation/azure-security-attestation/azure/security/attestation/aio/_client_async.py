@@ -55,10 +55,10 @@ class AttestationClient(object):
     """
     def __init__(
         self,
-        credential : 'AsyncTokenCredential',  # type: "AsyncTokenCredential"
-        instance_url: str,
-        **kwargs: Any
-    ) -> None:
+        credential,  # type: 'AsyncTokenCredential'
+        instance_url, #type: str
+        **kwargs #type: Any
+    ): #type: (...) -> None
         if not credential:
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(credential, instance_url, **kwargs)
@@ -69,10 +69,10 @@ class AttestationClient(object):
     @distributed_trace_async
     async def get_openidmetadata(
         self, 
-        **kwargs: Any
-        ) -> Any:
+        **kwargs #type: Any
+        ): #type: (...) -> Any
         """ Retrieves the OpenID metadata configuration document for this attestation instance.
-        
+
         :return: OpenId Metadata document for the attestation service instance.
         :rtype: Any
         """
@@ -81,8 +81,8 @@ class AttestationClient(object):
     @distributed_trace_async
     async def get_signing_certificates(
         self, 
-        **kwargs: Any
-        ) -> List[AttestationSigner]:
+        **kwargs #type: Any
+        ): #type: (...) -> List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
 
         :return: A list of :class:`azure.security.attestation.AttestationSigner` objects.
@@ -101,10 +101,10 @@ class AttestationClient(object):
     async def attest_sgx_enclave(
         self,
         quote : bytes,
-        inittime_data : AttestationData=None,
-        runtime_data : AttestationData=None,
-        **kwargs:Any
-        ) -> AttestationResponse[AttestationResult]: 
+        inittime_data=None, #type: AttestationData
+        runtime_data=None, #type: AttestationData
+        **kwargs #type:Any
+        ): #type: (...) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
@@ -153,10 +153,10 @@ class AttestationClient(object):
     async def attest_open_enclave(
         self,
         report : bytes,
-        inittime_data : AttestationData=None,
-        runtime_data : AttestationData=None,
-        **kwargs : Any
-        ) -> AttestationResponse[AttestationResult]: 
+        inittime_data=None, #type: AttestationData
+        runtime_data=None, #type: AttestationData
+        **kwargs #type: Any
+        ): #type: (...) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
@@ -203,9 +203,9 @@ class AttestationClient(object):
     @distributed_trace_async
     async def attest_tpm(
         self, 
-        request : TpmAttestationRequest,
-        **kwargs : Any
-        ) -> TpmAttestationResponse:
+        request, #type: TpmAttestationRequest
+        **kwargs #type: Any
+        ): #type: (...) -> TpmAttestationResponse
         """ Attest a TPM based enclave.
 
         See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
@@ -218,7 +218,7 @@ class AttestationClient(object):
         response = await self._client.attestation.attest_tpm(request.data, **kwargs)
         return TpmAttestationResponse(response.data)
 
-    async def _get_signers(self, **kwargs : Any) -> list[AttestationSigner]:
+    async def _get_signers(self, **kwargs: Any): #type: (Any) -> list[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
 
