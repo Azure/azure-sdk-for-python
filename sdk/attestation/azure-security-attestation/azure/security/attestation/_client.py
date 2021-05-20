@@ -42,12 +42,15 @@ class AttestationClient(object):
       by the attestation service.
 
     :param instance_url: base url of the service
-    :paramtype instance_url: str
+    :type instance_url: str
     :param credential: Credentials for the caller used to interact with the service.
-    :paramtype credential: ~azure.core.credentials.TokenCredentials
-    :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
+    :type credential: ~azure.core.credentials.TokenCredentials
+    :keyword pipeline: If omitted, the standard pipeline is used.
+    :paramtype pipeline: Pipeline
     :keyword HttpTransport transport: If omitted, the standard pipeline is used.
-    :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
+    :paramtype transport: HttpTransport
+    :keyword policies: If omitted, the standard pipeline is used.
+    :paramtype policies: list[HTTPPolicy]
 
     For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
 
@@ -72,6 +75,9 @@ class AttestationClient(object):
     def get_openidmetadata(self, **kwargs):
         #type:(Dict[str, Any]) -> Any
         """ Retrieves the OpenID metadata configuration document for this attestation instance.
+
+        :return: OpenID metadata configuration
+        :rtype: Any
         """
         return self._client.metadata_configuration.get(**kwargs)
 
@@ -100,12 +106,12 @@ class AttestationClient(object):
         """ Attests the validity of an SGX quote.
 
         :param quote: An SGX quote generated from an Intel(tm) SGX enclave
-        :paramtype quote: bytes
+        :type quote: bytes
         :param inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :paramtype inittime_data: azure.security.attestation.AttestationData 
+        :type inittime_data: azure.security.attestation.AttestationData 
         :param runtime_data: Data presented at the time that the SGX quote was created.
-        :paramtype runtime_data: azure.security.attestation.AttestationData
-        :param draft_policy: "draft" or "experimental" policy to be used with
+        :type runtime_data: azure.security.attestation.AttestationData
+        :keyword draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
@@ -159,9 +165,9 @@ class AttestationClient(object):
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
         :param inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :paramtype inittime_data: azure.security.attestation.AttestationData 
+        :type inittime_data: azure.security.attestation.AttestationData 
         :param runtime_data: Data presented at the time that the open_enclave report was created.
-        :paramtype runtime_data: azure.security.attestation.AttestationData 
+        :type runtime_data: azure.security.attestation.AttestationData 
         :keyword draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
@@ -173,9 +179,6 @@ class AttestationClient(object):
         :return: Attestation service response encapsulating an :class:`AttestationResult`.
 
         :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.AttestationResult]
-
-        .. note::
-            Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
 
         .. admonition:: Example: Simple OpenEnclave attestation.
 

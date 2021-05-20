@@ -76,7 +76,7 @@ class AttestationAdministrationClient(object):
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to retrieve the policy.
         
-        :paramtype attestation_type: azure.security.attestation.AttestationType 
+        :type attestation_type: azure.security.attestation.AttestationType 
 
         :return: Attestation service response encapsulating a string attestation policy.
 
@@ -106,13 +106,13 @@ class AttestationAdministrationClient(object):
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to set the policy.
-        :paramtype attestation_type: azure.security.attestation.AttestationType
+        :type attestation_type: azure.security.attestation.AttestationType
         :param attestation_policy: Attestation policy to be set.
-        :paramtype attestation_policy: str
+        :type attestation_policy: str
         :param signing_key: Signing key to be used to sign the policy
             before sending it to the service.
 
-        :paramtype signing_key: azure.security.attestation.AttestationSigningKey 
+        :type signing_key: azure.security.attestation.AttestationSigningKey 
 
         :return: Attestation service response encapsulating a :class:`PolicyResult`.
 
@@ -150,9 +150,9 @@ class AttestationAdministrationClient(object):
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to set the policy.
-        :paramtype attestation_type: azure.security.attestation.AttestationType
+        :type attestation_type: azure.security.attestation.AttestationType
         :param attestation_policy: Attestation policy to be reset.
-        :paramtype attestation_policy: str
+        :type attestation_policy: str
         :param signing_key: Signing key to be
             used to sign the policy before sending it to the service.
 

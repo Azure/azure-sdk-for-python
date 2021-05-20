@@ -954,8 +954,10 @@ class AttestationTokenValidationException(Exception):
 class AttestationResponse(Generic[T]):
     """ Represents a response from the attestation service.
 
-    :param azure.security.attestation.AttestationToken token: Attestation Token returned from the service.
-    :param T value: Value of the body of the attestation token.
+    :param token: Attestation Token returned from the service.
+    :type token: azure.security.attestation.AttestationToken
+    :param value: Value of the body of the attestation token.
+    :type value: T
     """
     def __init__(self, token, value):
         # type (AttestationToken, T) -> None
