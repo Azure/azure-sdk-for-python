@@ -1,15 +1,8 @@
 # Release History
 
-## 6.0.0b2 (2021-05-19)
+## 6.0.0 (2021-05-20)
 
-**Features**
-
-  - Model Cluster has a new parameter created_at
-  - Model Cluster has a new parameter created_by_type
-  - Model Cluster has a new parameter last_modified_by_type
-  - Model Cluster has a new parameter last_modified_at
-  - Model Cluster has a new parameter last_modified_by
-  - Model Cluster has a new parameter created_by
+- GA release
 
 ## 6.0.0b1 (2020-12-08)
 
