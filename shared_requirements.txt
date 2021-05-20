@@ -287,3 +287,4 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-agrifood-farming msrest>=0.6.21
 #override azure-mgmt-machinelearningcompute msrest>=0.6.21
 #override azure-mgmt-agfood msrest>=0.6.21
+#override azure-mgmt-msi msrest>=0.6.21
