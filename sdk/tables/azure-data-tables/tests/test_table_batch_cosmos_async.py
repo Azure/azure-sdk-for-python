@@ -565,7 +565,6 @@ class TestTableBatch(AzureRecordedTestCase, AsyncTableTestCase):
         try:
             token = self.generate_sas(
                 generate_table_sas,
-                tables_cosmos_account_name,
                 tables_primary_cosmos_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True, read=True, update=True, delete=True),

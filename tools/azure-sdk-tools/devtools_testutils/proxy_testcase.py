@@ -82,7 +82,8 @@ def transform_request(request, recording_id):
 
     # quiet passthrough if neither are set
     if os.getenv("AZURE_RECORD_MODE") == "record" or os.getenv("AZURE_RECORD_MODE") == "playback":
-        headers["x-recording-upstream-base-uri"] = upstream_url
+        if headers.get("x-recording-upstream-base-uri", None) is None:
+            headers["x-recording-upstream-base-uri"] = upstream_url
         headers["x-recording-id"] = recording_id
         headers["x-recording-mode"] = os.getenv("AZURE_RECORD_MODE")
         request.url = PROXY_URL
@@ -116,9 +117,6 @@ def RecordedByProxy(func):
         def combined_call(*args, **kwargs):
             adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
             req = adjusted_args[1]
-            print("HEADERS: ", req.headers)
-            print("BODY: ", req.body)
-            print("METHOD: ", req.method)
             return original_transport_func(*adjusted_args, **adjusted_kwargs)
 
         RequestsTransport.send = combined_call

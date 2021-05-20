@@ -11,11 +11,8 @@ import uuid
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ResourceExistsError
-from azure.data.tables import (
-    EntityProperty,
-    EdmType,
-    TableServiceClient,
-)
+from azure.data.tables import EntityProperty, EdmType
+from azure.data.tables.aio import TableServiceClient
 
 from devtools_testutils import is_live
 

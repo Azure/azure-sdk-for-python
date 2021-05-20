@@ -95,7 +95,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             default_table=False,
             retry_mode=RetryMode.Exponential,
             retry_backoff_factor=1
-            )
+        )
 
         callback = ResponseCallback(status=200, new_status=408).override_first_status
         try:
@@ -117,7 +117,6 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             retry_mode=RetryMode.Fixed,
             retry_backoff_factor=1)
 
-        new_table_name = self.get_resource_name('uttable')
         try:
             with pytest.raises(AzureError) as error:
                 self.ts.get_service_properties()
@@ -125,9 +124,13 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             # 3 retries + 1 original == 4
             assert retry_transport.count == 4
             # This call should succeed on the server side, but fail on the client side due to socket timeout
-            self.assertTrue('read timeout' in str(error.value), 'Expected socket timeout but got different exception.')
+            assert 'read timeout' in str(error.value)
 
         finally:
+            self.ts = TableServiceClient(
+                self.account_url(tables_storage_account_name, "table"),
+                credential=tables_primary_storage_account_key,
+            )
             self._tear_down()
 
     @tables_decorator
