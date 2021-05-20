@@ -45,7 +45,7 @@ class AttestationClient(object):
 
     :param str instance_url: base url of the service
     :param credential: Credentials for the caller used to interact with the service.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :paramtype credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
     :keyword AsyncHttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
