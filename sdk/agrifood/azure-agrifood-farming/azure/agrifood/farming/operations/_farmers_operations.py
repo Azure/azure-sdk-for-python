@@ -230,16 +230,16 @@ class FarmersOperations(object):
     def create_or_update(
         self,
         farmer_id,  # type: str
-        body=None,  # type: Optional["_models.Farmer"]
+        farmer=None,  # type: Optional["_models.Farmer"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Farmer"
         """Creates or updates a farmer resource.
 
-        :param farmer_id: Id of the farmer resource.
+        :param farmer_id: ID of the farmer resource.
         :type farmer_id: str
-        :param body: Farmer resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.Farmer
+        :param farmer: Farmer resource payload to create or update.
+        :type farmer: ~azure.agrifood.farming.models.Farmer
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Farmer, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.Farmer
@@ -272,8 +272,8 @@ class FarmersOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Farmer')
+        if farmer is not None:
+            body_content = self._serialize.body(farmer, 'Farmer')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -306,7 +306,7 @@ class FarmersOperations(object):
         # type: (...) -> None
         """Deletes a specified farmer resource.
 
-        :param farmer_id: Id of farmer to be deleted.
+        :param farmer_id: ID of farmer to be deleted.
         :type farmer_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -359,7 +359,7 @@ class FarmersOperations(object):
         # type: (...) -> "_models.CascadeDeleteJob"
         """Get a cascade delete job for specified farmer.
 
-        :param job_id: Id of the job.
+        :param job_id: ID of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CascadeDeleteJob, or the result of cls(response)

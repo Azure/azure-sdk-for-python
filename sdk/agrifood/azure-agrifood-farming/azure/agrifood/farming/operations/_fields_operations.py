@@ -66,7 +66,7 @@ class FieldsOperations(object):
         # type: (...) -> Iterable["_models.FieldListResponse"]
         """Returns a paginated list of field resources under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
         :param farm_ids: Farm Ids of the resource.
         :type farm_ids: list[str]
@@ -319,9 +319,9 @@ class FieldsOperations(object):
         # type: (...) -> "_models.Field"
         """Gets a specified field resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
-        :param field_id: Id of the field.
+        :param field_id: ID of the field.
         :type field_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Field, or the result of cls(response)
@@ -374,18 +374,18 @@ class FieldsOperations(object):
         self,
         farmer_id,  # type: str
         field_id,  # type: str
-        body=None,  # type: Optional["_models.Field"]
+        field=None,  # type: Optional["_models.Field"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Field"
         """Creates or Updates a field resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer resource.
+        :param farmer_id: ID of the associated farmer resource.
         :type farmer_id: str
-        :param field_id: Id of the field resource.
+        :param field_id: ID of the field resource.
         :type field_id: str
-        :param body: Field resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.Field
+        :param field: Field resource payload to create or update.
+        :type field: ~azure.agrifood.farming.models.Field
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Field, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.Field
@@ -419,8 +419,8 @@ class FieldsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Field')
+        if field is not None:
+            body_content = self._serialize.body(field, 'Field')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -454,9 +454,9 @@ class FieldsOperations(object):
         # type: (...) -> None
         """Deletes a specified field resource under a particular farmer.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: ID of the farmer.
         :type farmer_id: str
-        :param field_id: Id of the field.
+        :param field_id: ID of the field.
         :type field_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -510,7 +510,7 @@ class FieldsOperations(object):
         # type: (...) -> "_models.CascadeDeleteJob"
         """Get a cascade delete job for specified field.
 
-        :param job_id: Id of the job.
+        :param job_id: ID of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CascadeDeleteJob, or the result of cls(response)

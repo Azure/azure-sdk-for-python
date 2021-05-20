@@ -19,7 +19,7 @@ class FarmBeatsSmokeTestCase(FarmBeatsTest):
         farmer_id = "smoke-test-farmer"
         farmer = client.farmers.create_or_update(
             farmer_id=farmer_id,
-            body=Farmer()
+            farmer=Farmer()
         )
 
         assert farmer.id == farmer_id
@@ -43,7 +43,7 @@ class FarmBeatsSmokeTestCase(FarmBeatsTest):
         boundary_id = "smoke-test-boundary"
         farmer = client.farmers.create_or_update(
             farmer_id=farmer_id,
-            body=Farmer()
+            farmer=Farmer()
         )
         boundary = self.create_boundary_if_not_exist(
             client, farmer_id, boundary_id)
