@@ -7,11 +7,8 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import Actions
     from ._models_py3 import AppliedReservationList
     from ._models_py3 import AppliedReservations
-    from ._models_py3 import AqiSettings
-    from ._models_py3 import AutoQuotaIncreaseDetail
     from ._models_py3 import AvailableScopeProperties
     from ._models_py3 import AvailableScopeRequest
     from ._models_py3 import AvailableScopeRequestProperties
@@ -25,14 +22,9 @@ try:
     from ._models_py3 import CalculatePriceResponsePropertiesBillingCurrencyTotal
     from ._models_py3 import CalculatePriceResponsePropertiesPricingCurrencyTotal
     from ._models_py3 import Catalog
-    from ._models_py3 import ChangeDirectoryRequest
-    from ._models_py3 import ChangeDirectoryResponse
-    from ._models_py3 import ChangeDirectoryResult
     from ._models_py3 import CreateGenericQuotaRequestParameters
     from ._models_py3 import CurrentQuotaLimit
     from ._models_py3 import CurrentQuotaLimitBase
-    from ._models_py3 import EmailAction
-    from ._models_py3 import EmailActions
     from ._models_py3 import Error
     from ._models_py3 import ExceptionResponse
     from ._models_py3 import ExchangeOperationResultResponse
@@ -51,7 +43,6 @@ try:
     from ._models_py3 import Patch
     from ._models_py3 import PatchPropertiesRenewProperties
     from ._models_py3 import PaymentDetail
-    from ._models_py3 import PhoneAction
     from ._models_py3 import Price
     from ._models_py3 import PurchaseRequest
     from ._models_py3 import PurchaseRequestPropertiesReservedResourceProperties
@@ -90,13 +81,9 @@ try:
     from ._models_py3 import SplitRequest
     from ._models_py3 import SubRequest
     from ._models_py3 import SubscriptionScopeProperties
-    from ._models_py3 import SupportRequestAction
 except (SyntaxError, ImportError):
-    from ._models import Actions  # type: ignore
     from ._models import AppliedReservationList  # type: ignore
     from ._models import AppliedReservations  # type: ignore
-    from ._models import AqiSettings  # type: ignore
-    from ._models import AutoQuotaIncreaseDetail  # type: ignore
     from ._models import AvailableScopeProperties  # type: ignore
     from ._models import AvailableScopeRequest  # type: ignore
     from ._models import AvailableScopeRequestProperties  # type: ignore
@@ -110,14 +97,9 @@ except (SyntaxError, ImportError):
     from ._models import CalculatePriceResponsePropertiesBillingCurrencyTotal  # type: ignore
     from ._models import CalculatePriceResponsePropertiesPricingCurrencyTotal  # type: ignore
     from ._models import Catalog  # type: ignore
-    from ._models import ChangeDirectoryRequest  # type: ignore
-    from ._models import ChangeDirectoryResponse  # type: ignore
-    from ._models import ChangeDirectoryResult  # type: ignore
     from ._models import CreateGenericQuotaRequestParameters  # type: ignore
     from ._models import CurrentQuotaLimit  # type: ignore
     from ._models import CurrentQuotaLimitBase  # type: ignore
-    from ._models import EmailAction  # type: ignore
-    from ._models import EmailActions  # type: ignore
     from ._models import Error  # type: ignore
     from ._models import ExceptionResponse  # type: ignore
     from ._models import ExchangeOperationResultResponse  # type: ignore
@@ -136,7 +118,6 @@ except (SyntaxError, ImportError):
     from ._models import Patch  # type: ignore
     from ._models import PatchPropertiesRenewProperties  # type: ignore
     from ._models import PaymentDetail  # type: ignore
-    from ._models import PhoneAction  # type: ignore
     from ._models import Price  # type: ignore
     from ._models import PurchaseRequest  # type: ignore
     from ._models import PurchaseRequestPropertiesReservedResourceProperties  # type: ignore
@@ -175,13 +156,10 @@ except (SyntaxError, ImportError):
     from ._models import SplitRequest  # type: ignore
     from ._models import SubRequest  # type: ignore
     from ._models import SubscriptionScopeProperties  # type: ignore
-    from ._models import SupportRequestAction  # type: ignore
 
 from ._azure_reservation_api_enums import (
     AppliedScopeType,
-    AqiStateType,
     CalculateExchangeOperationResultStatus,
-    ContactMethodType,
     ErrorResponseCode,
     ExchangeOperationResultStatus,
     InstanceFlexibility,
@@ -193,16 +171,11 @@ from ._azure_reservation_api_enums import (
     ReservationTerm,
     ReservedResourceType,
     ResourceType,
-    SeverityType,
-    SupportContactType,
 )
 
 __all__ = [
-    'Actions',
     'AppliedReservationList',
     'AppliedReservations',
-    'AqiSettings',
-    'AutoQuotaIncreaseDetail',
     'AvailableScopeProperties',
     'AvailableScopeRequest',
     'AvailableScopeRequestProperties',
@@ -216,14 +189,9 @@ __all__ = [
     'CalculatePriceResponsePropertiesBillingCurrencyTotal',
     'CalculatePriceResponsePropertiesPricingCurrencyTotal',
     'Catalog',
-    'ChangeDirectoryRequest',
-    'ChangeDirectoryResponse',
-    'ChangeDirectoryResult',
     'CreateGenericQuotaRequestParameters',
     'CurrentQuotaLimit',
     'CurrentQuotaLimitBase',
-    'EmailAction',
-    'EmailActions',
     'Error',
     'ExceptionResponse',
     'ExchangeOperationResultResponse',
@@ -242,7 +210,6 @@ __all__ = [
     'Patch',
     'PatchPropertiesRenewProperties',
     'PaymentDetail',
-    'PhoneAction',
     'Price',
     'PurchaseRequest',
     'PurchaseRequestPropertiesReservedResourceProperties',
@@ -281,11 +248,8 @@ __all__ = [
     'SplitRequest',
     'SubRequest',
     'SubscriptionScopeProperties',
-    'SupportRequestAction',
     'AppliedScopeType',
-    'AqiStateType',
     'CalculateExchangeOperationResultStatus',
-    'ContactMethodType',
     'ErrorResponseCode',
     'ExchangeOperationResultStatus',
     'InstanceFlexibility',
@@ -297,6 +261,4 @@ __all__ = [
     'ReservationTerm',
     'ReservedResourceType',
     'ResourceType',
-    'SeverityType',
-    'SupportContactType',
 ]
