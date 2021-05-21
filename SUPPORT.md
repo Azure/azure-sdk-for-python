@@ -6,7 +6,7 @@ Customers with an [Azure support plan](https://azure.microsoft.com/en-us/support
 **We recommend this option if your problem requires immediate attention.** 
 
 ### Github issues
-We use [GitHub Issues](https://github.com/Azure/azure-sdk-for-js/issues/new/choose) to track bugs, questions, and feature requests. 
+We use [GitHub Issues](https://github.com/Azure/azure-sdk-for-python/issues/new/choose) to track bugs, questions, and feature requests. 
 GitHub issues are free, but **response time is not guaranteed.** See [GitHub issues support process](https://devblogs.microsoft.com/azure-sdk/github-issue-support-process/) for more details.
 
 ### Community resources
