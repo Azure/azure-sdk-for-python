@@ -64,7 +64,8 @@ parameters:
 stages:
   - stage: Build
     variables:
-      BuildTargetingString: $[coalesce(variables.BuildTargetingString, '${{ parameters.BuildTargetingString }}', 'azure-*')]
+      - name: BuildTargetingStringValue
+        value: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
     jobs:
     - template: /eng/pipelines/templates/jobs/ci.yml
       parameters:
@@ -75,7 +76,7 @@ stages:
           TestPipeline: true
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BuildTargetingString: $(BuildTargetingString)
+        BuildTargetingString: $(BuildTargetingStringValue)
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}

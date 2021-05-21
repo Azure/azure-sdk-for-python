@@ -119,7 +119,7 @@ stages:
               BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
               AfterTestSteps: ${{ parameters.AfterTestSteps }}
               AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
-              BuildTargetingString: ${{ coalesce(variables.BuildTargetingString, parameters.BuildTargetingString) }} 
+              BuildTargetingString: ${{ parameters.BuildTargetingString }}
               TestMarkArgument: ${{ parameters.TestMarkArgument }}
               InjectedPackages: ${{ parameters.InjectedPackages }}
               BuildDocs: ${{ parameters.BuildDocs }}
