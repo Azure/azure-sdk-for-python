@@ -54,7 +54,8 @@ def start_record_or_playback(test_id):
     elif os.getenv("AZURE_RECORD_MODE") == "playback":
         result = requests.post(
             PLAYBACK_START_URL,
-            headers={"x-recording-file": test_id, "x-recording-id": recording_id},
+            # headers={"x-recording-file": test_id, "x-recording-id": recording_id},
+            headers={"x-recording-file": test_id, "x-recording-sha": get_current_sha()},
             verify=False,
         )
         recording_id = result.headers["x-recording-id"]
