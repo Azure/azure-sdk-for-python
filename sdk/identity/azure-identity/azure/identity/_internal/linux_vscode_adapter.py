@@ -72,7 +72,7 @@ def _get_refresh_token(service_name, account_name):
         _c_str(account_name),
         None,
     )
-    if err.value == 0:
+    if err.value == 0 and p_str:
         return p_str.decode("utf-8")
 
     return None
