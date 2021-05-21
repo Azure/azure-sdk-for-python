@@ -7,7 +7,8 @@ stages:
       DeployArmTemplate: true
       ServiceDirectory: formrecognizer
       TestTimeoutInMinutes: 200
-      TestSamples: true
+      MatrixReplace:
+        - TestSamples=.*/true
       Clouds: 'Prod,Canary'
       # This is a specific request from the formrecognizer service team
       # their claim is that the full matrix ends up stress-testing their service.
