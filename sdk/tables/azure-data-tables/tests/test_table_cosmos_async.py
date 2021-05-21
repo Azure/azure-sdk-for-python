@@ -215,7 +215,7 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
             sleep(SLEEP_DELAY)
 
 
-class TestTableUnit(AsyncTableTestCase):
+class TestTableUnitTest(AsyncTableTestCase):
     tables_cosmos_account_name = "fake_storage_account"
     tables_primary_cosmos_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
     credential = AzureNamedKeyCredential(name=tables_cosmos_account_name, key=tables_primary_cosmos_account_key)

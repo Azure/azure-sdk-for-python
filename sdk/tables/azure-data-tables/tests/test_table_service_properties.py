@@ -150,7 +150,7 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
                           None, None, minute_metrics)
 
 
-class TestTableUnit(TableTestCase):
+class TestTableUnitTest(TableTestCase):
     def test_retention_no_days(self):
         # Assert
         pytest.raises(ValueError,

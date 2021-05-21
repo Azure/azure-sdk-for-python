@@ -42,7 +42,7 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
             tsc.set_service_properties(None, None, minute_metrics)
 
 
-class TestTableUnit(TableTestCase):
+class TestTableUnitTest(TableTestCase):
 
     def test_retention_no_days(self):
         # Assert

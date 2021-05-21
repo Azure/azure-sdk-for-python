@@ -15,7 +15,6 @@ from azure.data.tables._version import VERSION
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
-from devtools_testutils import AzureRecordedTestCase
 # ------------------------------------------------------------------------------
 SERVICES = {
     TableServiceClient: 'table',

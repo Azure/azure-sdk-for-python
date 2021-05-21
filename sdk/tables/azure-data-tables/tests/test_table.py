@@ -67,7 +67,6 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
         table_name = self._get_table_reference()
-        print("TABLE NAME: ", table_name)
 
         # Act
         created = ts.create_table(table_name)
@@ -82,7 +81,6 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
-        print("TABLE NAME: ", table_name)
 
         # Act
         created = ts.create_table(table_name)
@@ -133,7 +131,6 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
-        print("TABLE NAME: ", table_name)
 
         t0 = ts.create_table(table_name)
         t1 = ts.create_table_if_not_exists(table_name)
@@ -148,7 +145,6 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
-        print("TABLE NAME: ", table_name)
 
         t = ts.create_table_if_not_exists(table_name)
 
@@ -429,7 +425,7 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
             tsc.delete_table(table.table_name)
 
 
-class TestTablesUnit(TableTestCase):
+class TestTablesUnitTest(TableTestCase):
     tables_storage_account_name = "fake_storage_account"
     tables_primary_storage_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
     credential = AzureNamedKeyCredential(name=tables_storage_account_name, key=tables_primary_storage_account_key)

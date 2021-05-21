@@ -145,7 +145,7 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
             await tsc.set_service_properties(None, None, minute_metrics)
 
 
-class TestTableUnit(TableTestCase):
+class TestTableUnitTest(TableTestCase):
 
     @pytest.mark.asyncio
     async def test_retention_no_days_async(self):
