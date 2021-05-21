@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import msrest.serialization
 
@@ -559,8 +559,8 @@ class LBFrontendIPConfigurationResourceSettings(msrest.serialization.Model):
     :type private_ip_address: str
     :param private_ip_allocation_method: Gets or sets PrivateIP allocation method (Static/Dynamic).
     :type private_ip_allocation_method: str
-    :param subnet: Defines reference to a proxy resource.
-    :type subnet: ~resource_mover_service_api.models.ProxyResourceReference
+    :param subnet: Defines reference to subnet.
+    :type subnet: ~resource_mover_service_api.models.SubnetReference
     :param zones: Gets or sets the csv list of zones.
     :type zones: str
     """
@@ -569,7 +569,7 @@ class LBFrontendIPConfigurationResourceSettings(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
         'private_ip_allocation_method': {'key': 'privateIpAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'subnet', 'type': 'ProxyResourceReference'},
+        'subnet': {'key': 'subnet', 'type': 'SubnetReference'},
         'zones': {'key': 'zones', 'type': 'str'},
     }
 
@@ -579,7 +579,7 @@ class LBFrontendIPConfigurationResourceSettings(msrest.serialization.Model):
         name: Optional[str] = None,
         private_ip_address: Optional[str] = None,
         private_ip_allocation_method: Optional[str] = None,
-        subnet: Optional["ProxyResourceReference"] = None,
+        subnet: Optional["SubnetReference"] = None,
         zones: Optional[str] = None,
         **kwargs
     ):
@@ -840,7 +840,7 @@ class MoveCollectionProperties(msrest.serialization.Model):
      "Succeeded", "Updating", "Creating", "Failed".
     :vartype provisioning_state: str or ~resource_mover_service_api.models.ProvisioningState
     :ivar errors: Defines the move collection errors.
-    :vartype errors: ~resource_mover_service_api.models.MoveResourceError
+    :vartype errors: ~resource_mover_service_api.models.MoveCollectionPropertiesErrors
     """
 
     _validation = {
@@ -854,7 +854,7 @@ class MoveCollectionProperties(msrest.serialization.Model):
         'source_region': {'key': 'sourceRegion', 'type': 'str'},
         'target_region': {'key': 'targetRegion', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'errors': {'key': 'errors', 'type': 'MoveResourceError'},
+        'errors': {'key': 'errors', 'type': 'MoveCollectionPropertiesErrors'},
     }
 
     def __init__(
@@ -1233,7 +1233,7 @@ class MoveResourceProperties(msrest.serialization.Model):
     :ivar source_resource_settings: Gets or sets the source resource settings.
     :vartype source_resource_settings: ~resource_mover_service_api.models.ResourceSettings
     :ivar move_status: Defines the move resource status.
-    :vartype move_status: ~resource_mover_service_api.models.MoveResourceStatus
+    :vartype move_status: ~resource_mover_service_api.models.MoveResourcePropertiesMoveStatus
     :ivar depends_on: Gets or sets the move resource dependencies.
     :vartype depends_on: list[~resource_mover_service_api.models.MoveResourceDependency]
     :param depends_on_overrides: Gets or sets the move resource dependencies overrides.
@@ -1243,7 +1243,7 @@ class MoveResourceProperties(msrest.serialization.Model):
      the move collection.
     :vartype is_resolve_required: bool
     :ivar errors: Defines the move resource errors.
-    :vartype errors: ~resource_mover_service_api.models.MoveResourceError
+    :vartype errors: ~resource_mover_service_api.models.MoveResourcePropertiesErrors
     """
 
     _validation = {
@@ -1264,11 +1264,11 @@ class MoveResourceProperties(msrest.serialization.Model):
         'existing_target_id': {'key': 'existingTargetId', 'type': 'str'},
         'resource_settings': {'key': 'resourceSettings', 'type': 'ResourceSettings'},
         'source_resource_settings': {'key': 'sourceResourceSettings', 'type': 'ResourceSettings'},
-        'move_status': {'key': 'moveStatus', 'type': 'MoveResourceStatus'},
+        'move_status': {'key': 'moveStatus', 'type': 'MoveResourcePropertiesMoveStatus'},
         'depends_on': {'key': 'dependsOn', 'type': '[MoveResourceDependency]'},
         'depends_on_overrides': {'key': 'dependsOnOverrides', 'type': '[MoveResourceDependencyOverride]'},
         'is_resolve_required': {'key': 'isResolveRequired', 'type': 'bool'},
-        'errors': {'key': 'errors', 'type': 'MoveResourceError'},
+        'errors': {'key': 'errors', 'type': 'MoveResourcePropertiesErrors'},
     }
 
     def __init__(
@@ -1482,29 +1482,30 @@ class NicIpConfigurationResourceSettings(msrest.serialization.Model):
     :type private_ip_address: str
     :param private_ip_allocation_method: Gets or sets the private IP address allocation method.
     :type private_ip_allocation_method: str
-    :param subnet: Defines reference to a proxy resource.
-    :type subnet: ~resource_mover_service_api.models.ProxyResourceReference
+    :param subnet: Defines reference to subnet.
+    :type subnet: ~resource_mover_service_api.models.SubnetReference
     :param primary: Gets or sets a value indicating whether this IP configuration is the primary.
     :type primary: bool
     :param load_balancer_backend_address_pools: Gets or sets the references of the load balancer
      backend address pools.
     :type load_balancer_backend_address_pools:
-     list[~resource_mover_service_api.models.ProxyResourceReference]
+     list[~resource_mover_service_api.models.LoadBalancerBackendAddressPoolReference]
     :param load_balancer_nat_rules: Gets or sets the references of the load balancer NAT rules.
-    :type load_balancer_nat_rules: list[~resource_mover_service_api.models.ProxyResourceReference]
-    :param public_ip: Defines reference to an Azure resource.
-    :type public_ip: ~resource_mover_service_api.models.AzureResourceReference
+    :type load_balancer_nat_rules:
+     list[~resource_mover_service_api.models.LoadBalancerNatRuleReference]
+    :param public_ip: Defines reference to a public IP.
+    :type public_ip: ~resource_mover_service_api.models.PublicIpReference
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
         'private_ip_allocation_method': {'key': 'privateIpAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'subnet', 'type': 'ProxyResourceReference'},
+        'subnet': {'key': 'subnet', 'type': 'SubnetReference'},
         'primary': {'key': 'primary', 'type': 'bool'},
-        'load_balancer_backend_address_pools': {'key': 'loadBalancerBackendAddressPools', 'type': '[ProxyResourceReference]'},
-        'load_balancer_nat_rules': {'key': 'loadBalancerNatRules', 'type': '[ProxyResourceReference]'},
-        'public_ip': {'key': 'publicIp', 'type': 'AzureResourceReference'},
+        'load_balancer_backend_address_pools': {'key': 'loadBalancerBackendAddressPools', 'type': '[LoadBalancerBackendAddressPoolReference]'},
+        'load_balancer_nat_rules': {'key': 'loadBalancerNatRules', 'type': '[LoadBalancerNatRuleReference]'},
+        'public_ip': {'key': 'publicIp', 'type': 'PublicIpReference'},
     }
 
     def __init__(
@@ -1513,11 +1514,11 @@ class NicIpConfigurationResourceSettings(msrest.serialization.Model):
         name: Optional[str] = None,
         private_ip_address: Optional[str] = None,
         private_ip_allocation_method: Optional[str] = None,
-        subnet: Optional["ProxyResourceReference"] = None,
+        subnet: Optional["SubnetReference"] = None,
         primary: Optional[bool] = None,
-        load_balancer_backend_address_pools: Optional[List["ProxyResourceReference"]] = None,
-        load_balancer_nat_rules: Optional[List["ProxyResourceReference"]] = None,
-        public_ip: Optional["AzureResourceReference"] = None,
+        load_balancer_backend_address_pools: Optional[List["LoadBalancerBackendAddressPoolReference"]] = None,
+        load_balancer_nat_rules: Optional[List["LoadBalancerNatRuleReference"]] = None,
+        public_ip: Optional["PublicIpReference"] = None,
         **kwargs
     ):
         super(NicIpConfigurationResourceSettings, self).__init__(**kwargs)
@@ -1711,7 +1712,7 @@ class OperationsDiscovery(msrest.serialization.Model):
      Default value is "user,system".
     :type origin: str
     :param properties: Any object.
-    :type properties: object
+    :type properties: any
     """
 
     _attribute_map = {
@@ -1729,7 +1730,7 @@ class OperationsDiscovery(msrest.serialization.Model):
         is_data_action: Optional[bool] = None,
         display: Optional["Display"] = None,
         origin: Optional[str] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
         super(OperationsDiscovery, self).__init__(**kwargs)
@@ -1785,7 +1786,7 @@ class OperationStatus(msrest.serialization.Model):
     :ivar error: Error stating all error details for the operation.
     :vartype error: ~resource_mover_service_api.models.OperationStatusError
     :ivar properties: Custom data.
-    :vartype properties: object
+    :vartype properties: any
     """
 
     _validation = {
@@ -2226,14 +2227,14 @@ class SubnetResourceSettings(msrest.serialization.Model):
     :type name: str
     :param address_prefix: Gets or sets address prefix for the subnet.
     :type address_prefix: str
-    :param network_security_group: Defines reference to an Azure resource.
-    :type network_security_group: ~resource_mover_service_api.models.AzureResourceReference
+    :param network_security_group: Defines reference to NSG.
+    :type network_security_group: ~resource_mover_service_api.models.NsgReference
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'address_prefix': {'key': 'addressPrefix', 'type': 'str'},
-        'network_security_group': {'key': 'networkSecurityGroup', 'type': 'AzureResourceReference'},
+        'network_security_group': {'key': 'networkSecurityGroup', 'type': 'NsgReference'},
     }
 
     def __init__(
@@ -2241,7 +2242,7 @@ class SubnetResourceSettings(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         address_prefix: Optional[str] = None,
-        network_security_group: Optional["AzureResourceReference"] = None,
+        network_security_group: Optional["NsgReference"] = None,
         **kwargs
     ):
         super(SubnetResourceSettings, self).__init__(**kwargs)
