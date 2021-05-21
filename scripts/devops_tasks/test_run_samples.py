@@ -42,6 +42,7 @@ TIMEOUT_SAMPLES = {
         "recv_with_checkpoint_store.py": (10),
         "recv_with_custom_starting_position.py": (10),
         "sample_code_eventhub.py": (10),
+        "iot_hub_connection_string_receive_async.py": (10),
         "receive_batch_with_checkpoint_async.py": (10),
         "recv_async.py": (10),
         "recv_track_last_enqueued_event_prop_async.py": (10),
@@ -84,7 +85,6 @@ IGNORED_SAMPLES = {
         "connection_to_custom_endpoint_address.py",
         "proxy.py",
         "connection_to_custom_endpoint_address_async.py",
-        "iot_hub_connection_string_receive_async.py",
         "proxy_async.py"
     ],
     "azure-servicebus": [

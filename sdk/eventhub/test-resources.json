@@ -61,6 +61,27 @@
       "metadata": {
         "description": "The maximum duration, in minutes, that a single test is permitted to run before it is considered at-risk for being hung."
       }
+    },
+    "iotSkuName": {
+      "type": "string",
+      "defaultValue": "S1",
+      "metadata": {
+        "description": "The SKU to use for the IoT Hub."
+      }
+    },
+    "iotSkuUnits": {
+      "type": "string",
+      "defaultValue": "1",
+      "metadata": {
+        "description": "The number of IoT Hub units."
+      }
+    },
+    "iotEHd2cPartitions": {
+      "type": "string",
+      "defaultValue": "4",
+      "metadata": {
+        "description": "Partitions used for the event stream."
+      }
     }
   },
   "variables": {
@@ -75,6 +96,8 @@
     "defaultSASKeyName": "RootManageSharedAccessKey",
     "eventHubsAuthRuleResourceId": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('eventHubsNamespace'), variables('defaultSASKeyName'))]",
     "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccount'))]",
+    "iotHubName": "[concat('eh-', parameters('baseName'), '-iot-hub')]",
+    "iotHubDeviceName": "[concat('eh-', parameters('baseName'), '-device-iot-hub')]"
   },
   "resources": [
     {
@@ -159,6 +182,149 @@
         "principalId": "[parameters('testApplicationOid')]",
         "scope": "[resourceGroup().id]"
       }
+    },
+    {
+      "name": "[variables('iotHubName')]",
+      "type": "Microsoft.Devices/IotHubs",
+      "apiVersion": "2020-08-01",
+      "location": "[parameters('location')]",
+      "tags": {},
+      "properties": {
+        "authorizationPolicies": [
+          {
+            "keyName": "string",
+            "primaryKey": "string",
+            "secondaryKey": "string",
+            "rights": "string"
+          }
+        ],
+        "publicNetworkAccess": "string",
+        "ipFilterRules": [
+          {
+            "filterName": "string",
+            "action": "string",
+            "ipMask": "string"
+          }
+        ],
+        "minTlsVersion": "string",
+        "privateEndpointConnections": [
+          {
+            "properties": {
+              "privateEndpoint": {},
+              "privateLinkServiceConnectionState": {
+                "status": "string",
+                "description": "string",
+                "actionsRequired": "string"
+              }
+            }
+          }
+        ],
+        "eventHubEndpoints": {},
+        "routing": {
+          "endpoints": {
+            "serviceBusQueues": [
+              {
+                "id": "string",
+                "connectionString": "string",
+                "endpointUri": "string",
+                "entityPath": "string",
+                "authenticationType": "string",
+                "name": "string",
+                "subscriptionId": "string",
+                "resourceGroup": "string"
+              }
+            ],
+            "serviceBusTopics": [
+              {
+                "id": "string",
+                "connectionString": "string",
+                "endpointUri": "string",
+                "entityPath": "string",
+                "authenticationType": "string",
+                "name": "string",
+                "subscriptionId": "string",
+                "resourceGroup": "string"
+              }
+            ],
+            "eventHubs": [
+              {
+                "id": "string",
+                "connectionString": "string",
+                "endpointUri": "string",
+                "entityPath": "string",
+                "authenticationType": "string",
+                "name": "string",
+                "subscriptionId": "string",
+                "resourceGroup": "string"
+              }
+            ],
+            "storageContainers": [
+              {
+                "id": "string",
+                "connectionString": "string",
+                "endpointUri": "string",
+                "authenticationType": "string",
+                "name": "string",
+                "subscriptionId": "string",
+                "resourceGroup": "string",
+                "containerName": "string",
+                "fileNameFormat": "string",
+                "batchFrequencyInSeconds": "integer",
+                "maxChunkSizeInBytes": "integer",
+                "encoding": "string"
+              }
+            ]
+          },
+          "routes": [
+            {
+              "name": "string",
+              "source": "string",
+              "condition": "string",
+              "endpointNames": [
+                "string"
+              ],
+              "isEnabled": "boolean"
+            }
+          ],
+          "fallbackRoute": {
+            "name": "string",
+            "source": "DeviceMessages",
+            "condition": "string",
+            "endpointNames": [
+              "string"
+            ],
+            "isEnabled": "boolean"
+          },
+          "enrichments": [
+            {
+              "key": "string",
+              "value": "string",
+              "endpointNames": [
+                "string"
+              ]
+            }
+          ]
+        },
+        "storageEndpoints": {},
+        "messagingEndpoints": {},
+        "enableFileUploadNotifications": "boolean",
+        "cloudToDevice": {
+          "maxDeliveryCount": "integer",
+          "defaultTtlAsIso8601": "string",
+          "feedback": {
+            "lockDurationAsIso8601": "string",
+            "ttlAsIso8601": "string",
+            "maxDeliveryCount": "integer"
+          }
+        },
+        "comments": "string",
+        "features": "string"
+      },
+      "sku": {
+        "name": "S1",
+        "capacity": 1
+      },
+      "resources": []
     }
   ],
   "outputs": {
