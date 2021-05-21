@@ -176,7 +176,7 @@ class TableTestCase(object):
         assert entity["large"] == 933311100
         assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
         assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=tzutc())
-        assert entity["binary"].value == b"binary"
+        assert entity["binary"] == b"binary"
         assert entity["other"] == 20
         assert entity["clsid"] == uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
         assert entity.metadata["etag"]
@@ -197,7 +197,7 @@ class TableTestCase(object):
         assert entity["large"] == 933311100
         assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
         assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=tzutc())
-        assert entity["binary"].value == b"binary"
+        assert entity["binary"] == b"binary"
         assert entity["other"] == 20
         assert entity["clsid"] == uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
         assert entity.metadata["etag"]

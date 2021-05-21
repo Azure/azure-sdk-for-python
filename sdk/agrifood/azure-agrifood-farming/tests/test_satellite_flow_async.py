@@ -33,7 +33,7 @@ class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
 
         # Create farmer
-        farmer = await client.farmers.create_or_update(farmer_id=farmer_id, body=Farmer())
+        farmer = await client.farmers.create_or_update(farmer_id=farmer_id, farmer=Farmer())
 
         # Create boundary if not exists
         boundary = await self.create_boundary_if_not_exist(client, farmer_id, boundary_id)
@@ -41,7 +41,7 @@ class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
         # Create satellite job
         satellite_job_poller = await client.scenes.begin_create_satellite_data_ingestion_job(
             job_id=job_id,
-            body=SatelliteDataIngestionJob(
+            job=SatelliteDataIngestionJob(
                 farmer_id=farmer_id,
                 boundary_id=boundary_id,
                 start_date_time=start_date_time,

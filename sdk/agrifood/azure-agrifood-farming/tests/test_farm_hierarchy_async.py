@@ -33,7 +33,7 @@ class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
         # Create
         farmer = await client.farmers.create_or_update(
             farmer_id=farmer_id,
-            body=Farmer(
+            farmer=Farmer(
                 name=farmer_name,
                 description=farmer_description,
                 status=farmer_status,
@@ -68,7 +68,7 @@ class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
         # Update
         updated_farmer = await client.farmers.create_or_update(
             farmer_id=farmer_id,
-            body=farmer
+            farmer=farmer
         )
 
         # Assert on immediate response
