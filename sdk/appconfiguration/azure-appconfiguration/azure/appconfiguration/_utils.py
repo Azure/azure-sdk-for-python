@@ -5,10 +5,12 @@
 # -------------------------------------------------------------------------
 
 from datetime import datetime
+from typing import Optional, Tuple
 from azure.core import MatchConditions
 
 
 def quote_etag(etag):
+    # type: (Optional[str]) -> Optional[str]
     if not etag or etag == "*":
         return etag
     if etag.startswith('"') and etag.endswith('"'):
@@ -19,7 +21,7 @@ def quote_etag(etag):
 
 
 def prep_if_match(etag, match_condition):
-    # type: (str, MatchConditions) -> str
+    # type: (Optional[str], Optional[MatchConditions]) -> Optional[str]
     if match_condition == MatchConditions.IfNotModified:
         if_match = quote_etag(etag) if etag else None
         return if_match
@@ -29,7 +31,7 @@ def prep_if_match(etag, match_condition):
 
 
 def prep_if_none_match(etag, match_condition):
-    # type: (str, MatchConditions) -> str
+    # type: (Optional[str], Optional[MatchConditions]) -> Optional[str]
     if match_condition == MatchConditions.IfModified:
         if_none_match = quote_etag(etag) if etag else None
         return if_none_match
@@ -39,11 +41,13 @@ def prep_if_none_match(etag, match_condition):
 
 
 def get_endpoint_from_connection_string(connection_string):
+    # type: (str) -> str
     endpoint, _, _ = parse_connection_string(connection_string)
     return endpoint
 
 
 def parse_connection_string(connection_string):
+    # type: (str) -> Tuple[str, str, str]
     # connection_string looks like Endpoint=https://xxxxx;Id=xxxxx;Secret=xxxx
     segments = connection_string.split(";")
     if len(segments) != 3:
@@ -70,4 +74,5 @@ def parse_connection_string(connection_string):
 
 
 def get_current_utc_time():
+    # type: () -> str
     return str(datetime.utcnow().strftime("%b, %d %Y %H:%M:%S.%f ")) + "GMT"
