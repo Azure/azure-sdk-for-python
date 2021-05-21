@@ -38,6 +38,7 @@ try:
 except ImportError:
     from io import StringIO
 
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.credentials import AccessToken
 from azure.storage.queue import generate_account_sas, AccountSasPermissions, ResourceTypes
 from azure.mgmt.storage.models import StorageAccount, Endpoints
@@ -51,6 +52,7 @@ import pytest
 
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
+
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -108,6 +110,7 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
             'storage_account_key': StorageTestCase._STORAGE_KEY,
             'storage_account_cs': StorageTestCase._STORAGE_CONNECTION_STRING,
         }
+
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):
@@ -482,5 +485,9 @@ def storage_account():
                 )
     finally:
         if i_need_to_create_rg:
-            rg_preparer.remove_resource(rg_name)
+            try:
+                rg_preparer.remove_resource(rg_name)
+            # This covers the case where another test had already removed the resource group
+            except ResourceNotFoundError:
+                pass
         StorageTestCase._RESOURCE_GROUP = None
