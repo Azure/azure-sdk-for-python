@@ -64,6 +64,8 @@ parameters:
 stages:
   - stage: Build
     jobs:
+
+
     - template: /eng/pipelines/templates/jobs/ci.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -73,7 +75,7 @@ stages:
           TestPipeline: true
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BuildTargetingString: ${{ coalesce(variables.BuildTargetingString, parameters.BuildTargetingString) }} 
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
