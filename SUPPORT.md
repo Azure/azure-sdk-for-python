@@ -2,7 +2,7 @@
 
 ## How to file issues and get help  
 
-Customers with an [Azure support plan](https://azure.microsoft.com/en-us/support/options/) can open an [Azure support ticket](https://azure.microsoft.com/support/create-ticket/).
+Customers with an [Azure support plan](https://azure.microsoft.com/support/options/) can open an [Azure support ticket](https://azure.microsoft.com/support/create-ticket/).
 **We recommend this option if your problem requires immediate attention.** 
 
 ### Github issues
