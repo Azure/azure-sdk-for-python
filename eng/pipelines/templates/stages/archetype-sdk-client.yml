@@ -64,7 +64,7 @@ parameters:
 stages:
   - stage: Build
     variables:
-      BuildTargetingString: coalesce(variables.BuildTargetingString, parameters.BuildTargetingString)
+      BuildTargetingString: $[coalesce(variables.BuildTargetingString, parameters.BuildTargetingString)]
     jobs:
     - template: /eng/pipelines/templates/jobs/ci.yml
       parameters:
