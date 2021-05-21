@@ -1,5 +1,9 @@
 # Release History
 
+## 6.0.0 (2021-05-18)
+
+- GA release
+
 ## 6.0.0b2 (2021-02-26)
 * Fix version problem.
 

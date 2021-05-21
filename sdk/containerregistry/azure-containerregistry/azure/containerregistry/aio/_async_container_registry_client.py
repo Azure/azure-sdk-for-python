@@ -31,7 +31,6 @@ if TYPE_CHECKING:
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Dict[str, Any]) -> None:
         """Create a ContainerRegistryClient from an endpoint and a credential
-
         :param endpoint: An ACR endpoint
         :type endpoint: str
         :param credential: The credential with which to authenticate
@@ -78,7 +77,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     @distributed_trace
     def list_repository_names(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[str]:
         """List all repositories
-
         :keyword last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexicallyy
         :paramtype last: str
@@ -93,8 +91,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_delete_old_tags_async.py
-                :start-after: [START list_repositories]
-                :end-before: [END list_repositories]
+                :start-after: [START list_repository_names]
+                :end-before: [END list_repository_names]
                 :language: python
                 :dedent: 8
                 :caption: List repositories in a container registry account
@@ -198,13 +196,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
-
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRegistryClient(account_url, DefaultAzureCredential())
-            repository_client = client.get_repository_client("my_repository")
+            repository_client = client.get_repository("my_repository")
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(

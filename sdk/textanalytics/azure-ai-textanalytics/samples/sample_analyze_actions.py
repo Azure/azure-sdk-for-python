@@ -39,7 +39,6 @@ class AnalyzeSample(object):
             RecognizePiiEntitiesAction,
             ExtractKeyPhrasesAction,
             AnalyzeSentimentAction,
-            PiiEntityDomainType,
         )
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
@@ -64,7 +63,7 @@ class AnalyzeSample(object):
             display_name="Sample Text Analysis",
             actions=[
                 RecognizeEntitiesAction(),
-                RecognizePiiEntitiesAction(domain_filter=PiiEntityDomainType.PROTECTED_HEALTH_INFORMATION),
+                RecognizePiiEntitiesAction(),
                 ExtractKeyPhrasesAction(),
                 RecognizeLinkedEntitiesAction(),
                 AnalyzeSentimentAction()

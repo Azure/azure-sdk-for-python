@@ -14,27 +14,27 @@ interactions:
       Content-Type:
       - image/jpeg
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyze?includeTextDetails=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/idDocument/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 5c59ad38-0e95-4594-9f3d-158976b6f91a
+      - 2de6fe67-b2b4-41e9-8e59-fa65b4c17775
       content-length:
       - '0'
       date:
-      - Fri, 26 Mar 2021 03:41:27 GMT
+      - Tue, 11 May 2021 02:16:01 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/5c59ad38-0e95-4594-9f3d-158976b6f91a
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/idDocument/analyzeResults/2de6fe67-b2b4-41e9-8e59-fa65b4c17775
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '514'
+      - '71'
     status:
       code: 202
       message: Accepted
@@ -48,13 +48,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/5c59ad38-0e95-4594-9f3d-158976b6f91a
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/idDocument/analyzeResults/2de6fe67-b2b4-41e9-8e59-fa65b4c17775
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-26T03:41:27Z",
-        "lastUpdatedDateTime": "2021-03-26T03:41:30Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T02:16:01Z",
+        "lastUpdatedDateTime": "2021-05-11T02:16:03Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": -0.2823, "width": 450, "height":
         294, "unit": "pixel", "lines": [{"text": "USA WASHINGTON", "boundingBox":
         [17, 25, 232, 22, 233, 47, 17, 49], "words": [{"text": "USA", "boundingBox":
@@ -183,15 +183,15 @@ interactions:
         177], "page": 1, "confidence": 0.965, "elements": ["#/readResults/0/lines/10/words/1",
         "#/readResults/0/lines/10/words/2", "#/readResults/0/lines/10/words/3", "#/readResults/0/lines/11/words/0",
         "#/readResults/0/lines/11/words/1", "#/readResults/0/lines/11/words/2", "#/readResults/0/lines/11/words/3"]},
-        "Country": {"type": "country", "valueCountry": "USA", "confidence": 0.99},
-        "DateOfBirth": {"type": "date", "valueDate": "1958-01-06", "text": "01/06/1958",
-        "boundingBox": [187, 133, 272, 132, 272, 148, 187, 149], "page": 1, "confidence":
-        0.99, "elements": ["#/readResults/0/lines/8/words/2"]}, "DateOfExpiration":
+        "CountryRegion": {"type": "countryRegion", "confidence": 0.99, "valueCountryRegion":
+        "USA"}, "DateOfBirth": {"type": "date", "valueDate": "1958-01-06", "text":
+        "01/06/1958", "boundingBox": [187, 133, 272, 132, 272, 148, 187, 149], "page":
+        1, "confidence": 0.99, "elements": ["#/readResults/0/lines/8/words/2"]}, "DateOfExpiration":
         {"type": "date", "valueDate": "2020-08-12", "text": "08/12/2020", "boundingBox":
         [332, 230, 414, 228, 414, 244, 332, 245], "page": 1, "confidence": 0.99, "elements":
         ["#/readResults/0/lines/19/words/2"]}, "DocumentNumber": {"type": "string",
-        "valueString": "LICWDLACD5DG", "text": "LIC#WDLABCD456DG", "boundingBox":
-        [162, 70, 307, 68, 307, 84, 163, 85], "page": 1, "confidence": 0.99, "elements":
+        "valueString": "WDLABCD456DG", "text": "LIC#WDLABCD456DG", "boundingBox":
+        [162, 70, 307, 68, 307, 84, 163, 85], "page": 1, "confidence": 0.987, "elements":
         ["#/readResults/0/lines/4/words/1"]}, "FirstName": {"type": "string", "valueString":
         "LIAM R.", "text": "LIAM R.", "boundingBox": [158, 102, 216, 102, 216, 116,
         158, 116], "page": 1, "confidence": 0.985, "elements": ["#/readResults/0/lines/7/words/1",
@@ -199,24 +199,24 @@ interactions:
         "TALBOT", "text": "TALBOT", "boundingBox": [160, 86, 213, 85, 213, 99, 160,
         100], "page": 1, "confidence": 0.987, "elements": ["#/readResults/0/lines/6/words/1"]},
         "Region": {"type": "string", "valueString": "Washington", "confidence": 0.99},
-        "Sex": {"type": "gender", "valueGender": "M", "text": "M", "boundingBox":
+        "Sex": {"type": "string", "valueString": "M", "text": "M", "boundingBox":
         [226, 190, 232, 190, 233, 201, 226, 201], "page": 1, "confidence": 0.99, "elements":
         ["#/readResults/0/lines/13/words/2"]}}}]}}'
     headers:
       apim-request-id:
-      - f792d4c5-6125-443f-a25b-5dd996e1dc66
+      - 062b5941-8dc6-4f7c-a18d-96d17b03bb91
       content-length:
-      - '10387'
+      - '10406'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 03:41:32 GMT
+      - Tue, 11 May 2021 02:16:05 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '116'
+      - '21'
     status:
       code: 200
       message: OK

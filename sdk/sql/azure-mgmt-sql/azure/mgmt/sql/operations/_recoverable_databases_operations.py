@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class RecoverableDatabasesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class RecoverableDatabasesOperations(object):
         database_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RecoverableDatabase"
+        # type: (...) -> "_models.RecoverableDatabase"
         """Gets a recoverable database, which is a resource representing a database's geo backup.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -67,7 +67,7 @@ class RecoverableDatabasesOperations(object):
         :rtype: ~azure.mgmt.sql.models.RecoverableDatabase
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecoverableDatabase"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecoverableDatabase"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -115,7 +115,7 @@ class RecoverableDatabasesOperations(object):
         server_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RecoverableDatabaseListResult"]
+        # type: (...) -> Iterable["_models.RecoverableDatabaseListResult"]
         """Gets a list of recoverable databases.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -128,7 +128,7 @@ class RecoverableDatabasesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.RecoverableDatabaseListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecoverableDatabaseListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecoverableDatabaseListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -503,6 +503,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             timeout=timeout,
         )
 
+    async def _close_handler(self):
+        self._message_iter = None
+        await super(ServiceBusReceiver, self)._close_handler()
+
     @property
     def session(self) -> ServiceBusSession:
         """
