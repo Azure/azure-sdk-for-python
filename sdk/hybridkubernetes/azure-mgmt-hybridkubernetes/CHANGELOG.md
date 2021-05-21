@@ -1,5 +1,17 @@
 # Release History
 
+## 1.0.0 (2021-05-19)
+
+**Features**
+
+  - Model ConnectedCluster has a new parameter system_data
+
+**Breaking changes**
+
+  - Model ConnectedCluster no longer has parameter aad_profile
+  - Removed operation ConnectedClusterOperations.list_cluster_user_credentials
+  - Model ConnectedClusterPatch has a new signature
+
 ## 1.0.0b1 (2020-12-09)
 
 This is beta preview version.

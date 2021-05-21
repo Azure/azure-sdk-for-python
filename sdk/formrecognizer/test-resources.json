@@ -260,6 +260,58 @@
         "PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL": {
             "type": "string",
             "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataSasProperties')).serviceSasToken)]"
+        },
+        "AZURE_FORM_RECOGNIZER_ENDPOINT": {
+            "type": "string",
+            "value": "[variables('azureFormRecognizerUrl')]"
+        },
+        "AZURE_FORM_RECOGNIZER_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('formRecognizerBaseName')), variables('formRecognizerApiVersion')).key1]"
+        },
+        "AZURE_FORM_RECOGNIZER_SOURCE_ENDPOINT": {
+            "type": "string",
+            "value": "[variables('azureFormRecognizerUrl')]"
+        },
+        "AZURE_FORM_RECOGNIZER_SOURCE_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('formRecognizerBaseName')), variables('formRecognizerApiVersion')).key1]"
+        },
+        "AZURE_FORM_RECOGNIZER_TARGET_ENDPOINT": {
+            "type": "string",
+            "value": "[variables('azureFormRecognizerUrl')]"
+        },
+        "AZURE_FORM_RECOGNIZER_TARGET_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('formRecognizerBaseName')), variables('formRecognizerApiVersion')).key1]"
+        },
+        "AZURE_FORM_RECOGNIZER_TARGET_REGION": {
+            "type": "string",
+            "value": "[parameters('location')]"
+        },
+        "AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.CognitiveServices/accounts', variables('formRecognizerBaseName'))]"
+        },
+        "CONTAINER_SAS_URL": {
+            "type": "string",
+            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataSasProperties')).serviceSasToken)]"
+        },
+        "CONTAINER_SAS_URL_WITH_LABELS": {
+            "type": "string",
+            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataSasProperties')).serviceSasToken)]"
+        },
+        "CONTAINER_SAS_URL_WITHOUT_LABELS": {
+            "type": "string",
+            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataSasProperties')).serviceSasToken)]"
+        },
+        "CONTAINER_SAS_URL_FIXED": {
+            "type": "string",
+            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('labelTablesFixedRowsContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('labelTablesFixedRowsSasProperties')).serviceSasToken)]"
+        },
+        "CONTAINER_SAS_URL_DYNAMIC": {
+            "type": "string",
+            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('labelTablesVariableRowsContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('labelTablesVariableRowsSasProperties')).serviceSasToken)]"
         }
     }
 }

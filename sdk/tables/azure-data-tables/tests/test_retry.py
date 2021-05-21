@@ -3,32 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import pytest
 
 from devtools_testutils import AzureTestCase
-
 
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     AzureError,
-    ClientAuthenticationError
 )
 from azure.core.pipeline.policies import RetryMode
-from azure.core.pipeline.transport import(
-    RequestsTransport
-)
-
-from azure.data.tables import (
-    TableServiceClient,
-    LocationMode
-)
+from azure.core.pipeline.transport import RequestsTransport
+from azure.data.tables import TableServiceClient
 
 from _shared.testcase import (
     TableTestCase,
     ResponseCallback,
-    RetryCounter
 )
 
 from preparers import tables_decorator
@@ -64,6 +54,7 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
 
         self.query_tables = []
 
+    # TODO: Figure out why this is needed by the "test_retry_on_socket_timeout" test
     def _tear_down(self, **kwargs):
         if self.is_live:
             try:

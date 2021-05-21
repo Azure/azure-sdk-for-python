@@ -44,7 +44,7 @@ class SubscriptionsOperations:
     def list_locations(
         self,
         subscription_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LocationListResult"]:
         """Gets all available geo-locations.
 
@@ -116,7 +116,7 @@ class SubscriptionsOperations:
     async def get(
         self,
         subscription_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Subscription":
         """Gets details about a specified subscription.
 
@@ -168,7 +168,7 @@ class SubscriptionsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SubscriptionListResult"]:
         """Gets all subscriptions for a tenant.
 

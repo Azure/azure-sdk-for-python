@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -140,7 +140,7 @@ class Resource(msrest.serialization.Model):
     :param sku: Gets or sets the SKU of the resource.
     :type sku: ~azure.mgmt.botservice.models.Sku
     :param kind: Required. Gets or sets the Kind of the resource. Possible values include: "sdk",
-     "designer", "bot", "function".
+     "designer", "bot", "function", "azurebot".
     :type kind: str or ~azure.mgmt.botservice.models.Kind
     :param etag: Entity Tag.
     :type etag: str
@@ -202,7 +202,7 @@ class Bot(Resource):
     :param sku: Gets or sets the SKU of the resource.
     :type sku: ~azure.mgmt.botservice.models.Sku
     :param kind: Required. Gets or sets the Kind of the resource. Possible values include: "sdk",
-     "designer", "bot", "function".
+     "designer", "bot", "function", "azurebot".
     :type kind: str or ~azure.mgmt.botservice.models.Kind
     :param etag: Entity Tag.
     :type etag: str
@@ -261,7 +261,7 @@ class BotChannel(Resource):
     :param sku: Gets or sets the SKU of the resource.
     :type sku: ~azure.mgmt.botservice.models.Sku
     :param kind: Required. Gets or sets the Kind of the resource. Possible values include: "sdk",
-     "designer", "bot", "function".
+     "designer", "bot", "function", "azurebot".
     :type kind: str or ~azure.mgmt.botservice.models.Kind
     :param etag: Entity Tag.
     :type etag: str
@@ -335,6 +335,14 @@ class BotProperties(msrest.serialization.Model):
     :type luis_app_ids: list[str]
     :param luis_key: The LUIS Key.
     :type luis_key: str
+    :param is_cmek_enabled: Whether Cmek is enabled.
+    :type is_cmek_enabled: bool
+    :param cmek_key_vault_url: The CMK Url.
+    :type cmek_key_vault_url: str
+    :param is_isolated: Whether the bot is in an isolated network.
+    :type is_isolated: bool
+    :param schema_transformation_version: The channel schema transformation version for the bot.
+    :type schema_transformation_version: str
     """
 
     _validation = {
@@ -360,6 +368,10 @@ class BotProperties(msrest.serialization.Model):
         'developer_app_insights_application_id': {'key': 'developerAppInsightsApplicationId', 'type': 'str'},
         'luis_app_ids': {'key': 'luisAppIds', 'type': '[str]'},
         'luis_key': {'key': 'luisKey', 'type': 'str'},
+        'is_cmek_enabled': {'key': 'isCmekEnabled', 'type': 'bool'},
+        'cmek_key_vault_url': {'key': 'cmekKeyVaultUrl', 'type': 'str'},
+        'is_isolated': {'key': 'isIsolated', 'type': 'bool'},
+        'schema_transformation_version': {'key': 'schemaTransformationVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -375,6 +387,10 @@ class BotProperties(msrest.serialization.Model):
         developer_app_insights_application_id: Optional[str] = None,
         luis_app_ids: Optional[List[str]] = None,
         luis_key: Optional[str] = None,
+        is_cmek_enabled: Optional[bool] = None,
+        cmek_key_vault_url: Optional[str] = None,
+        is_isolated: Optional[bool] = None,
+        schema_transformation_version: Optional[str] = None,
         **kwargs
     ):
         super(BotProperties, self).__init__(**kwargs)
@@ -391,6 +407,10 @@ class BotProperties(msrest.serialization.Model):
         self.developer_app_insights_application_id = developer_app_insights_application_id
         self.luis_app_ids = luis_app_ids
         self.luis_key = luis_key
+        self.is_cmek_enabled = is_cmek_enabled
+        self.cmek_key_vault_url = cmek_key_vault_url
+        self.is_isolated = is_isolated
+        self.schema_transformation_version = schema_transformation_version
 
 
 class BotResponseList(msrest.serialization.Model):
@@ -551,7 +571,7 @@ class ConnectionSetting(Resource):
     :param sku: Gets or sets the SKU of the resource.
     :type sku: ~azure.mgmt.botservice.models.Sku
     :param kind: Required. Gets or sets the Kind of the resource. Possible values include: "sdk",
-     "designer", "bot", "function".
+     "designer", "bot", "function", "azurebot".
     :type kind: str or ~azure.mgmt.botservice.models.Kind
     :param etag: Entity Tag.
     :type etag: str
@@ -953,8 +973,8 @@ class EmailChannelProperties(msrest.serialization.Model):
 
     :param email_address: Required. The email address.
     :type email_address: str
-    :param password: Required. The password for the email address. Value only returned through POST
-     to the action Channel List API, otherwise empty.
+    :param password: The password for the email address. Value only returned through POST to the
+     action Channel List API, otherwise empty.
     :type password: str
     :param is_enabled: Required. Whether this channel is enabled for the bot.
     :type is_enabled: bool
@@ -962,7 +982,6 @@ class EmailChannelProperties(msrest.serialization.Model):
 
     _validation = {
         'email_address': {'required': True},
-        'password': {'required': True},
         'is_enabled': {'required': True},
     }
 
@@ -976,8 +995,8 @@ class EmailChannelProperties(msrest.serialization.Model):
         self,
         *,
         email_address: str,
-        password: str,
         is_enabled: bool,
+        password: Optional[str] = None,
         **kwargs
     ):
         super(EmailChannelProperties, self).__init__(**kwargs)
@@ -1085,8 +1104,8 @@ class FacebookChannelProperties(msrest.serialization.Model):
     :type pages: list[~azure.mgmt.botservice.models.FacebookPage]
     :param app_id: Required. Facebook application id.
     :type app_id: str
-    :param app_secret: Required. Facebook application secret. Value only returned through POST to
-     the action Channel List API, otherwise empty.
+    :param app_secret: Facebook application secret. Value only returned through POST to the action
+     Channel List API, otherwise empty.
     :type app_secret: str
     :ivar callback_url: Callback Url.
     :vartype callback_url: str
@@ -1097,7 +1116,6 @@ class FacebookChannelProperties(msrest.serialization.Model):
     _validation = {
         'verify_token': {'readonly': True},
         'app_id': {'required': True},
-        'app_secret': {'required': True},
         'callback_url': {'readonly': True},
         'is_enabled': {'required': True},
     }
@@ -1115,9 +1133,9 @@ class FacebookChannelProperties(msrest.serialization.Model):
         self,
         *,
         app_id: str,
-        app_secret: str,
         is_enabled: bool,
         pages: Optional[List["FacebookPage"]] = None,
+        app_secret: Optional[str] = None,
         **kwargs
     ):
         super(FacebookChannelProperties, self).__init__(**kwargs)
@@ -1136,14 +1154,13 @@ class FacebookPage(msrest.serialization.Model):
 
     :param id: Required. Page id.
     :type id: str
-    :param access_token: Required. Facebook application access token. Value only returned through
-     POST to the action Channel List API, otherwise empty.
+    :param access_token: Facebook application access token. Value only returned through POST to the
+     action Channel List API, otherwise empty.
     :type access_token: str
     """
 
     _validation = {
         'id': {'required': True},
-        'access_token': {'required': True},
     }
 
     _attribute_map = {
@@ -1155,12 +1172,70 @@ class FacebookPage(msrest.serialization.Model):
         self,
         *,
         id: str,
-        access_token: str,
+        access_token: Optional[str] = None,
         **kwargs
     ):
         super(FacebookPage, self).__init__(**kwargs)
         self.id = id
         self.access_token = access_token
+
+
+class HostSettingsResponse(msrest.serialization.Model):
+    """The response body returned for a request to Bot Service Management to check per subscription hostSettings.
+
+    :param o_auth_url: For in-conversation bot user authentication.
+    :type o_auth_url: str
+    :param to_bot_from_channel_open_id_metadata_url: For verifying incoming tokens from the
+     channels.
+    :type to_bot_from_channel_open_id_metadata_url: str
+    :param to_bot_from_channel_token_issuer: For verifying incoming tokens from the channels.
+    :type to_bot_from_channel_token_issuer: str
+    :param to_bot_from_emulator_open_id_metadata_url: For verifying incoming tokens from bot
+     emulator.
+    :type to_bot_from_emulator_open_id_metadata_url: str
+    :param to_channel_from_bot_login_url: For getting access token to channels from bot host.
+    :type to_channel_from_bot_login_url: str
+    :param to_channel_from_bot_o_auth_scope: For getting access token to channels from bot host.
+    :type to_channel_from_bot_o_auth_scope: str
+    :param validate_authority: Per cloud OAuth setting on whether authority is validated.
+    :type validate_authority: bool
+    :param bot_open_id_metadata: Same as ToBotFromChannelOpenIdMetadataUrl, used by SDK < v4.12.
+    :type bot_open_id_metadata: str
+    """
+
+    _attribute_map = {
+        'o_auth_url': {'key': 'OAuthUrl', 'type': 'str'},
+        'to_bot_from_channel_open_id_metadata_url': {'key': 'ToBotFromChannelOpenIdMetadataUrl', 'type': 'str'},
+        'to_bot_from_channel_token_issuer': {'key': 'ToBotFromChannelTokenIssuer', 'type': 'str'},
+        'to_bot_from_emulator_open_id_metadata_url': {'key': 'ToBotFromEmulatorOpenIdMetadataUrl', 'type': 'str'},
+        'to_channel_from_bot_login_url': {'key': 'ToChannelFromBotLoginUrl', 'type': 'str'},
+        'to_channel_from_bot_o_auth_scope': {'key': 'ToChannelFromBotOAuthScope', 'type': 'str'},
+        'validate_authority': {'key': 'ValidateAuthority', 'type': 'bool'},
+        'bot_open_id_metadata': {'key': 'BotOpenIdMetadata', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        o_auth_url: Optional[str] = None,
+        to_bot_from_channel_open_id_metadata_url: Optional[str] = None,
+        to_bot_from_channel_token_issuer: Optional[str] = None,
+        to_bot_from_emulator_open_id_metadata_url: Optional[str] = None,
+        to_channel_from_bot_login_url: Optional[str] = None,
+        to_channel_from_bot_o_auth_scope: Optional[str] = None,
+        validate_authority: Optional[bool] = None,
+        bot_open_id_metadata: Optional[str] = None,
+        **kwargs
+    ):
+        super(HostSettingsResponse, self).__init__(**kwargs)
+        self.o_auth_url = o_auth_url
+        self.to_bot_from_channel_open_id_metadata_url = to_bot_from_channel_open_id_metadata_url
+        self.to_bot_from_channel_token_issuer = to_bot_from_channel_token_issuer
+        self.to_bot_from_emulator_open_id_metadata_url = to_bot_from_emulator_open_id_metadata_url
+        self.to_channel_from_bot_login_url = to_channel_from_bot_login_url
+        self.to_channel_from_bot_o_auth_scope = to_channel_from_bot_o_auth_scope
+        self.validate_authority = validate_authority
+        self.bot_open_id_metadata = bot_open_id_metadata
 
 
 class KikChannel(Channel):
@@ -1201,8 +1276,8 @@ class KikChannelProperties(msrest.serialization.Model):
 
     :param user_name: Required. The Kik user name.
     :type user_name: str
-    :param api_key: Required. Kik API key. Value only returned through POST to the action Channel
-     List API, otherwise empty.
+    :param api_key: Kik API key. Value only returned through POST to the action Channel List API,
+     otherwise empty.
     :type api_key: str
     :param is_validated: Whether this channel is validated for the bot.
     :type is_validated: bool
@@ -1212,7 +1287,6 @@ class KikChannelProperties(msrest.serialization.Model):
 
     _validation = {
         'user_name': {'required': True},
-        'api_key': {'required': True},
         'is_enabled': {'required': True},
     }
 
@@ -1227,8 +1301,8 @@ class KikChannelProperties(msrest.serialization.Model):
         self,
         *,
         user_name: str,
-        api_key: str,
         is_enabled: bool,
+        api_key: Optional[str] = None,
         is_validated: Optional[bool] = None,
         **kwargs
     ):
@@ -1459,7 +1533,7 @@ class OperationEntity(msrest.serialization.Model):
     :param origin: The origin of the operation.
     :type origin: str
     :param properties: Additional properties.
-    :type properties: object
+    :type properties: any
     """
 
     _attribute_map = {
@@ -1475,7 +1549,7 @@ class OperationEntity(msrest.serialization.Model):
         name: Optional[str] = None,
         display: Optional["OperationDisplayInfo"] = None,
         origin: Optional[str] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
         super(OperationEntity, self).__init__(**kwargs)
@@ -1869,13 +1943,13 @@ class SlackChannelProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param client_id: Required. The Slack client id.
+    :param client_id: The Slack client id.
     :type client_id: str
-    :param client_secret: Required. The Slack client secret. Value only returned through POST to
-     the action Channel List API, otherwise empty.
+    :param client_secret: The Slack client secret. Value only returned through POST to the action
+     Channel List API, otherwise empty.
     :type client_secret: str
-    :param verification_token: Required. The Slack verification token. Value only returned through
-     POST to the action Channel List API, otherwise empty.
+    :param verification_token: The Slack verification token. Value only returned through POST to
+     the action Channel List API, otherwise empty.
     :type verification_token: str
     :param landing_page_url: The Slack landing page Url.
     :type landing_page_url: str
@@ -1895,9 +1969,6 @@ class SlackChannelProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'client_id': {'required': True},
-        'client_secret': {'required': True},
-        'verification_token': {'required': True},
         'redirect_action': {'readonly': True},
         'last_submission_id': {'readonly': True},
         'register_before_o_auth_flow': {'readonly': True},
@@ -1921,10 +1992,10 @@ class SlackChannelProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        client_id: str,
-        client_secret: str,
-        verification_token: str,
         is_enabled: bool,
+        client_id: Optional[str] = None,
+        client_secret: Optional[str] = None,
+        verification_token: Optional[str] = None,
         landing_page_url: Optional[str] = None,
         signing_secret: Optional[str] = None,
         **kwargs
@@ -1983,8 +2054,8 @@ class SmsChannelProperties(msrest.serialization.Model):
     :param account_sid: Required. The Sms account SID. Value only returned through POST to the
      action Channel List API, otherwise empty.
     :type account_sid: str
-    :param auth_token: Required. The Sms auth token. Value only returned through POST to the action
-     Channel List API, otherwise empty.
+    :param auth_token: The Sms auth token. Value only returned through POST to the action Channel
+     List API, otherwise empty.
     :type auth_token: str
     :param is_validated: Whether this channel is validated for the bot.
     :type is_validated: bool
@@ -1995,7 +2066,6 @@ class SmsChannelProperties(msrest.serialization.Model):
     _validation = {
         'phone': {'required': True},
         'account_sid': {'required': True},
-        'auth_token': {'required': True},
         'is_enabled': {'required': True},
     }
 
@@ -2012,8 +2082,8 @@ class SmsChannelProperties(msrest.serialization.Model):
         *,
         phone: str,
         account_sid: str,
-        auth_token: str,
         is_enabled: bool,
+        auth_token: Optional[str] = None,
         is_validated: Optional[bool] = None,
         **kwargs
     ):
@@ -2061,8 +2131,8 @@ class TelegramChannelProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param access_token: Required. The Telegram access token. Value only returned through POST to
-     the action Channel List API, otherwise empty.
+    :param access_token: The Telegram access token. Value only returned through POST to the action
+     Channel List API, otherwise empty.
     :type access_token: str
     :param is_validated: Whether this channel is validated for the bot.
     :type is_validated: bool
@@ -2071,7 +2141,6 @@ class TelegramChannelProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'access_token': {'required': True},
         'is_enabled': {'required': True},
     }
 
@@ -2084,8 +2153,8 @@ class TelegramChannelProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        access_token: str,
         is_enabled: bool,
+        access_token: Optional[str] = None,
         is_validated: Optional[bool] = None,
         **kwargs
     ):

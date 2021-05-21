@@ -7,7 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._microsoft_serial_console_client_operations import MicrosoftSerialConsoleClientOperationsMixin
+from ._serial_ports_operations import SerialPortsOperations
 
 __all__ = [
     'MicrosoftSerialConsoleClientOperationsMixin',
+    'SerialPortsOperations',
 ]

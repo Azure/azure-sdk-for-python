@@ -7,3 +7,5 @@ stages:
      ServiceDirectory: attestation
      Location: westus
      DeployArmTemplate: true
+     MatrixReplace:
+       - TestSamples=.*/true

@@ -44,15 +44,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         :type credential: :class:`~azure.core.credentials.TokenCredential`
         :returns: None
         :raises: None
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_create_client.py
-                :start-after: [START create_repository_client]
-                :end-before: [END create_repository_client]
-                :language: python
-                :dedent: 8
-                :caption: Instantiate an instance of `ContainerRepositoryClient`
         """
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
