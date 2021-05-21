@@ -27,7 +27,7 @@ class RecordedTests(RecordedTestCase):
             self.patch = mock.MagicMock()  # no need to patch anything when recording
         else:
             # in playback we need to set environment variables and clear any that would interfere
-            # (MSI_SECRET ends up in a header; vcr.py behavior doesn't match headers, so the value doesn't matter)
+            # (MSI_SECRET ends up in a header; vcr.py doesn't match headers, so the value doesn't matter)
             env = {EnvironmentVariables.MSI_ENDPOINT: PLAYBACK_URL, EnvironmentVariables.MSI_SECRET: "redacted"}
             self.patch = mock.patch.dict(os.environ, env, clear=True)
 

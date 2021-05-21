@@ -25,10 +25,11 @@ SECRET_FIELDS = frozenset(
     }
 )
 
+# managed identity headers are not dangerous to record but redacting them prevents anyone worrying whether they are
 SECRET_HEADERS = frozenset(
     {
-        "secret",  # managed identity headers are not dangerous to record but
-        "X-IDENTITY-SECRET",  # redacting them prevents anyone worrying whether they are
+        "secret",
+        "X-IDENTITY-SECRET",
     }
 )
 
@@ -74,6 +75,7 @@ class RecordingRedactor(RecordingProcessor):
             digest = hashlib.sha256(six.ensure_binary(real_value)).digest()
             redacted_value += six.ensure_str(binascii.hexlify(digest))[:6]
         return redacted_value
+
 
 class IdTokenProcessor(RecordingProcessor):
     def process_response(self, response):
