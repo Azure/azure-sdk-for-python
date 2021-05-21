@@ -13,21 +13,6 @@ from azure.core.pipeline.transport import AsyncioRequestsTransport
 
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
-
-@contextmanager
-def patch_requests_func_async(request_transform):
-    original_func = AsyncioRequestsTransport.send
-
-    async def combined_call(*args, **kwargs):
-        adjusted_args, adjusted_kwargs = request_transform(*args, **kwargs)
-        return await original_func(*adjusted_args, **adjusted_kwargs)
-
-    AsyncioRequestsTransport.send = combined_call
-    yield None
-
-    AsyncioRequestsTransport.send = original_func
-
-
 def RecordedByProxyAsync(func):
     async def record_wrap(*args, **kwargs):
         test_id = get_test_id()
@@ -49,13 +34,24 @@ def RecordedByProxyAsync(func):
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
 
-        # this ensures that within this scope, we've monkeypatched the send functionality
-        with patch_requests_func_async(transform_args):
-            # call the modified function.
-            try:
-                value = await func(*args, **trimmed_kwargs)
-            finally:
-                stop_record_or_playback(test_id, recording_id)
+        original_func = AsyncioRequestsTransport.send
+
+        async def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            req = adjusted_args[1]
+            print("HEADERS: ", req.headers)
+            print("BODY: ", req.body)
+            print("METHOD: ", req.method)
+            return await original_func(*adjusted_args, **adjusted_kwargs)
+
+        AsyncioRequestsTransport.send = combined_call
+
+        # call the modified function.
+        try:
+            value = await func(*args, **trimmed_kwargs)
+        finally:
+            AsyncioRequestsTransport.send = original_func
+            stop_record_or_playback(test_id, recording_id)
 
         return value
 
