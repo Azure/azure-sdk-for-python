@@ -20,36 +20,17 @@ from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
 
 
-def _get_match_headers(kwargs, match_param, etag_param):
-    if_match = None
-    if_none_match = None
-    match_condition = kwargs.pop(match_param, None)
+def _get_match_headers(etag, match_condition):
     if match_condition == MatchConditions.IfNotModified:
-        if_match = kwargs.pop(etag_param, None)
-        if not if_match:
-            raise ValueError(
-                "'{}' specified without '{}'.".format(match_param, etag_param)
-            )
-    elif match_condition == MatchConditions.IfPresent:
-        if_match = "*"
-    elif match_condition == MatchConditions.IfModified:
-        if_none_match = kwargs.pop(etag_param, None)
-        if not if_none_match:
-            raise ValueError(
-                "'{}' specified without '{}'.".format(match_param, etag_param)
-            )
-    elif match_condition == MatchConditions.IfMissing:
-        if_none_match = "*"
+        if not etag:
+            raise ValueError("IfNotModified must be specified with etag.")
+        return etag
     elif match_condition == MatchConditions.Unconditionally:
-        if_none_match = "*"
-    elif match_condition is None:
-        if kwargs.get(etag_param):
-            raise ValueError(
-                "'{}' specified without '{}'.".format(etag_param, match_param)
-            )
+        if etag:
+            raise ValueError("Etag is not supported for an Unconditional operation.")
+        return "*"
     else:
-        raise TypeError("Invalid match condition: {}".format(match_condition))
-    return if_match, if_none_match
+        raise ValueError("Unsupported match condition: {}".format(match_condition))
 
 
 def _parameter_filter_substitution(parameters, query_filter):

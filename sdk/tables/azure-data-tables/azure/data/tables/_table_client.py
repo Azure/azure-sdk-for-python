@@ -12,6 +12,7 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import unquote  # type: ignore
 
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -302,7 +303,9 @@ class TableClient(TablesBaseClient):
         :param entity: The entity to delete
         :type entity: Union[TableEntity, Mapping[str, str]]
         :keyword str etag: Etag of the entity
-        :keyword match_condition: MatchCondition
+        :keyword match_condition: The condition under which to perform the operation.
+         Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
+         The default value is Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
@@ -338,15 +341,9 @@ class TableClient(TablesBaseClient):
                 etag = entity.metadata.get("etag", None)
             except (AttributeError, TypeError):
                 pass
-
-        if_match, _ = _get_match_headers(
-            kwargs=dict(
-                kwargs,
-                etag=etag,
-                match_condition=match_condition,
-            ),
-            etag_param="etag",
-            match_param="match_condition",
+        if_match = _get_match_headers(
+            etag=etag,
+            match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
         try:
@@ -354,7 +351,7 @@ class TableClient(TablesBaseClient):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match or "*",
+                if_match=if_match,
                 **kwargs
             )
         except HttpResponseError as error:
@@ -419,8 +416,10 @@ class TableClient(TablesBaseClient):
         :param mode: Merge or Replace entity
         :type mode: :class:`~azure.data.tables.UpdateMode`
         :keyword str etag: Etag of the entity
-        :keyword match_condition: MatchCondition
-        :paramtype match_condition: ~azure.core.MatchCondition
+        :keyword match_condition: The condition under which to perform the operation.
+         Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
+         The default value is Unconditionally.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -441,15 +440,9 @@ class TableClient(TablesBaseClient):
                 etag = entity.metadata.get("etag", None)
             except (AttributeError, TypeError):
                 pass
-
-        if_match, _ = _get_match_headers(
-            kwargs=dict(
-                kwargs,
-                etag=etag,
-                match_condition=match_condition,
-            ),
-            etag_param="etag",
-            match_param="match_condition",
+        if_match = _get_match_headers(
+            etag=etag,
+            match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
         partition_key = entity["PartitionKey"]
@@ -463,7 +456,7 @@ class TableClient(TablesBaseClient):
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
-                    if_match=if_match or "*",
+                    if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
@@ -472,7 +465,7 @@ class TableClient(TablesBaseClient):
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    if_match=if_match or "*",
+                    if_match=if_match,
                     table_entity_properties=entity,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs

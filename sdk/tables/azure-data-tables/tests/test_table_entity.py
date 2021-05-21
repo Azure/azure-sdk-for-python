@@ -31,6 +31,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError,
+    ResourceModifiedError
 )
 
 from _shared.testcase import TableTestCase
@@ -697,7 +698,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             new_etag = e.metadata["etag"]
             e.metadata["etag"] = old_etag
 
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 self.table.delete_entity(e, match_condition=MatchConditions.IfNotModified)
 
             # Try delete with correct etag
@@ -878,7 +879,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
 
             sent_entity = self._create_updated_entity_dict(entity[u'PartitionKey'], entity[u'RowKey'])
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 self.table.update_entity(
                     mode=UpdateMode.REPLACE,
                     entity=sent_entity,
@@ -1031,7 +1032,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 self.table.update_entity(mode=UpdateMode.MERGE,
                                          entity=sent_entity,
                                          etag='W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
@@ -1094,7 +1095,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 self.table.delete_entity(
                     entity['PartitionKey'], entity['RowKey'],
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
