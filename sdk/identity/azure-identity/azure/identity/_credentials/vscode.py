@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
-import logging
 import os
 import sys
 from typing import cast, TYPE_CHECKING
@@ -23,7 +22,7 @@ else:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, Optional, Tuple, Type
+    from typing import Any, Dict, Optional
     from azure.core.credentials import AccessToken
     from .._internal.aad_client import AadClientBase
 
@@ -31,8 +30,6 @@ try:
     ABC = abc.ABC
 except AttributeError:  # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class _VSCodeCredentialBase(ABC):
