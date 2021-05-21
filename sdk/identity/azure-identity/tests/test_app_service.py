@@ -21,14 +21,14 @@ class RecordedTests(RecordedTestCase):
         if self.is_live:
             url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
             if not (url and EnvironmentVariables.MSI_SECRET in os.environ):
-                pytest.skip("Skipping recording because $MSI_ENDPOINT and $MSI_SECRET have no value")
+                pytest.skip("Recording requires values for $MSI_ENDPOINT and $MSI_SECRET")
             else:
                 self.scrubber.register_name_pair(url, PLAYBACK_URL)
-            self.patch = mock.MagicMock()  # don't want to patch anything when recording
+            self.patch = mock.MagicMock()  # no need to patch anything when recording
         else:
             # in playback we need to set environment variables and clear any that would interfere
-            # (MSI_SECRET ends up in a header; default vcr.py behavior is not to match headers)
-            env = {EnvironmentVariables.MSI_ENDPOINT: PLAYBACK_URL, EnvironmentVariables.MSI_SECRET: "secret"}
+            # (MSI_SECRET ends up in a header; vcr.py behavior doesn't match headers, so the value doesn't matter)
+            env = {EnvironmentVariables.MSI_ENDPOINT: PLAYBACK_URL, EnvironmentVariables.MSI_SECRET: "redacted"}
             self.patch = mock.patch.dict(os.environ, env, clear=True)
 
     def test_system_assigned(self):
