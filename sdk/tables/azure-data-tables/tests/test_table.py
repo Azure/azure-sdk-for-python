@@ -69,10 +69,11 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         table_name = self._get_table_reference()
 
         # Act
-        created = ts.create_table(table_name)
+        table = ts.get_table_client(table_name)
+        created = table.create_table()
 
         # Assert
-        assert created.table_name == table_name
+        assert created.name == table_name
         ts.delete_table(table_name)
 
     @tables_decorator

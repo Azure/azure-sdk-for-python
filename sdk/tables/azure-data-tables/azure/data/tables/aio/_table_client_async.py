@@ -21,7 +21,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
-from .._models import AccessPolicy
+from .._models import AccessPolicy, TableItem
 from .._serialize import serialize_iso, _parameter_filter_substitution
 from .._deserialize import _return_headers_and_deserialized
 from .._error import (
@@ -225,8 +225,8 @@ class TableClient(AsyncTablesBaseClient):
     async def create_table(self, **kwargs) -> None:
         """Creates a new table under the given account.
 
-        :return: Dictionary of operation metadata returned from service
-        :rtype: Dict[str,str]
+        :return: A TableItem representing the created table.
+        :rtype: :class:`~azure.data.tables.TableItem`
         :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
 
         .. admonition:: Example:
@@ -240,12 +240,8 @@ class TableClient(AsyncTablesBaseClient):
         """
         table_properties = TableProperties(table_name=self.table_name)
         try:
-            metadata, _ = await self._client.table.create(
-                table_properties,
-                cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                **kwargs
-            )
-            return _trim_service_metadata(metadata)
+            result = await self._client.table.create(table_properties, **kwargs)
+            return TableItem(name=result.table_name)
         except HttpResponseError as error:
             _process_table_error(error)
 

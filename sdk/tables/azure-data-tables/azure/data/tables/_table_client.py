@@ -39,7 +39,8 @@ from ._models import (
     TableEntityPropertiesPaged,
     UpdateMode,
     AccessPolicy,
-    TransactionOperation
+    TransactionOperation,
+    TableItem
 )
 
 EntityType = Union[TableEntity, Mapping[str, Any]]
@@ -230,8 +231,8 @@ class TableClient(TablesBaseClient):
         # type: (...) -> Dict[str,str]
         """Creates a new table under the current account.
 
-        :return: Dictionary of operation metadata returned from service
-        :rtype: Dict[str,str]
+        :return: A TableItem representing the created table.
+        :rtype: :class:`~azure.data.tables.TableItem`
         :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
 
         .. admonition:: Example:
@@ -245,12 +246,8 @@ class TableClient(TablesBaseClient):
         """
         table_properties = TableProperties(table_name=self.table_name)
         try:
-            metadata, _ = self._client.table.create(
-                table_properties,
-                cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                **kwargs
-            )
-            return _trim_service_metadata(metadata)
+            result = self._client.table.create(table_properties, **kwargs)
+            return TableItem(name=result.table_name)
         except HttpResponseError as error:
             _process_table_error(error)
 

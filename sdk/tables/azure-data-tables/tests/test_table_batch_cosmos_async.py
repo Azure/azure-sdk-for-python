@@ -29,6 +29,7 @@ from azure.data.tables import (
     TransactionOperation,
     TableSasPermissions,
     generate_table_sas,
+    TableErrorCode
 )
 from azure.data.tables.aio import TableServiceClient
 
@@ -223,8 +224,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
                 {'etag': u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"', 'match_condition':MatchConditions.IfNotModified}
             )]
 
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(TableTransactionError) as error:
                 await self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             # Assert
             received_entity = await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
@@ -546,8 +549,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
             batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]
 
-            with pytest.raises(TableTransactionError):
+            with pytest.raises(TableTransactionError) as error:
                 await self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             received.metadata["etag"] = good_etag
             batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]
