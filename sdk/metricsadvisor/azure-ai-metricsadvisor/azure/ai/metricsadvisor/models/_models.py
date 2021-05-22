@@ -1434,7 +1434,7 @@ class AzureLogAnalyticsDataFeedSource(object):
     :type query: str
     """
 
-    def __init__(self, tenant_id, client_id,
+    def __init__(self, tenant_id, client_id,        # pylint: disable=unused-argument
                  client_secret, workspace_id, query, **kwargs):  # pylint: disable=unused-argument
         # type: (str, str, str, str, str, **Any) -> None
         self.data_source_type = 'AzureLogAnalytics'  # type: str

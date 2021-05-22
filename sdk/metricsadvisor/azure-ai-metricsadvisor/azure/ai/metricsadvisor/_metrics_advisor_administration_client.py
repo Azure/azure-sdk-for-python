@@ -783,7 +783,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             data_feed_patch_type = DATA_FEED_PATCH[data_feed.source.data_source_type]
             data_feed_patch = data_feed._to_generated_patch(data_feed_patch_type, update)
 
-        return self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
+        return DataFeed._from_generated(self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs))
 
     @distributed_trace
     def update_alert_configuration(
@@ -844,10 +844,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 description=update.pop("description", None),
             )
 
-        return self._client.update_anomaly_alerting_configuration(
-            alert_configuration_id,
-            alert_configuration_patch,
-            **kwargs
+        return AnomalyAlertConfiguration._from_generated(
+            self._client.update_anomaly_alerting_configuration(
+                alert_configuration_id,
+                alert_configuration_patch,
+                **kwargs
+            )
         )
 
     @distributed_trace
@@ -913,10 +915,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 series_detection_conditions=update.pop("seriesOverrideConfigurations", None)
             )
 
-        return self._client.update_anomaly_detection_configuration(
-            detection_configuration_id,
-            detection_config_patch,
-            **kwargs
+        return AnomalyDetectionConfiguration._from_generated(
+            self._client.update_anomaly_detection_configuration(
+                detection_configuration_id,
+                detection_config_patch,
+                **kwargs
+            )
         )
 
     @distributed_trace
@@ -1005,11 +1009,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                     certificate_password=update.pop("certificatePassword", None)
                 )
 
-        return self._client.update_hook(
+        hook = self._client.update_hook(
             hook_id,
             hook_patch,
             **kwargs
         )
+
+        if hook.hook_type == "Email":
+            return EmailNotificationHook._from_generated(hook)
+        return WebNotificationHook._from_generated(hook)
 
     @distributed_trace
     def list_hooks(

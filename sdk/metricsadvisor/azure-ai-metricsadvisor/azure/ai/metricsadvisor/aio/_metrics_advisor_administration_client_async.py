@@ -696,7 +696,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             data_feed_patch_type = DATA_FEED_PATCH[data_feed.source.data_source_type]
             data_feed_patch = data_feed._to_generated_patch(data_feed_patch_type, update)
 
-        return await self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
+        data_feed_detail = await self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
+        return DataFeed._from_generated(data_feed_detail)
 
     @distributed_trace_async
     async def update_alert_configuration(
@@ -755,12 +756,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 cross_metrics_operator=update.pop("crossMetricsOperator", None),
                 description=update.pop("description", None),
             )
-
-        return await self._client.update_anomaly_alerting_configuration(
+        alerting_config = await self._client.update_anomaly_alerting_configuration(
             alert_configuration_id,
             alert_configuration_patch,
             **kwargs
         )
+
+        return AnomalyAlertConfiguration._from_generated(alerting_config)
 
     @distributed_trace_async
     async def update_detection_configuration(
@@ -824,12 +826,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 series_group_detection_conditions=update.pop("dimensionGroupOverrideConfigurations", None),
                 series_detection_conditions=update.pop("seriesOverrideConfigurations", None)
             )
-
-        return await self._client.update_anomaly_detection_configuration(
+        detection_config = await self._client.update_anomaly_detection_configuration(
             detection_configuration_id,
             detection_config_patch,
             **kwargs
         )
+
+        return AnomalyDetectionConfiguration._from_generated(detection_config)
 
     @distributed_trace_async
     async def update_hook(
@@ -916,11 +919,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                     certificate_password=update.pop("certificatePassword", None)
                 )
 
-        return await self._client.update_hook(
+        hook = await self._client.update_hook(
             hook_id,
             hook_patch,
             **kwargs
         )
+        if hook.hook_type == "Email":
+            return EmailNotificationHook._from_generated(hook)
+        return WebNotificationHook._from_generated(hook)
 
     @distributed_trace
     def list_hooks(
