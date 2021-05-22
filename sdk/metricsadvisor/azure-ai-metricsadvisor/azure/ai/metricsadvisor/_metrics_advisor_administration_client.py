@@ -1009,15 +1009,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                     certificate_password=update.pop("certificatePassword", None)
                 )
 
-        hook = self._client.update_hook(
+        updated_hook = self._client.update_hook(
             hook_id,
             hook_patch,
             **kwargs
         )
 
-        if hook.hook_type == "Email":
-            return EmailNotificationHook._from_generated(hook)
-        return WebNotificationHook._from_generated(hook)
+        if updated_hook.hook_type == "Email":
+            return EmailNotificationHook._from_generated(updated_hook)
+        return WebNotificationHook._from_generated(updated_hook)
 
     @distributed_trace
     def list_hooks(
