@@ -1155,7 +1155,7 @@ class AzureEventHubsDataFeedSource(object):
     :type consumer_group: str
     """
 
-    def __init__(self, connection_string, consumer_group, **kwargs):
+    def __init__(self, connection_string, consumer_group, **kwargs):    # pylint: disable=unused-argument
         # type: (str, str, **Any) -> None
         self.data_source_type = 'AzureEventHubs'  # type: str
         self.connection_string = connection_string

@@ -690,7 +690,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     def update_data_feed(
             self, data_feed,  # type: Union[str, DataFeed]
             **kwargs  # type: Any
-    ):  # type: (...) -> None
+    ):  # type: (...) -> DataFeed
         """Update a data feed. Either pass the entire DataFeed object with the chosen updates
         or the ID to your data feed with updates passed via keyword arguments. If you pass both
         the DataFeed object and keyword arguments, the keyword arguments will take precedence.
@@ -791,7 +791,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         alert_configuration,  # type: Union[str, AnomalyAlertConfiguration]
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> AnomalyAlertConfiguration
         """Update anomaly alerting configuration. Either pass the entire AnomalyAlertConfiguration object
         with the chosen updates or the ID to your alert configuration with updates passed via keyword arguments.
         If you pass both the AnomalyAlertConfiguration object and keyword arguments, the keyword arguments
@@ -856,7 +856,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         detection_configuration,  # type: Union[str, AnomalyDetectionConfiguration]
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> AnomalyDetectionConfiguration
         """Update anomaly metric detection configuration. Either pass the entire AnomalyDetectionConfiguration object
         with the chosen updates or the ID to your detection configuration with updates passed via keyword arguments.
         If you pass both the AnomalyDetectionConfiguration object and keyword arguments, the keyword arguments
@@ -925,7 +925,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         hook,  # type: Union[str, EmailNotificationHook, WebNotificationHook]
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
         """Update a hook. Either pass the entire EmailNotificationHook or WebNotificationHook object with the chosen
         updates, or the ID to your hook configuration with the updates passed via keyword arguments.
         If you pass both the hook object and keyword arguments, the keyword arguments will take precedence.
