@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
+from ._helpers import HttpVerbs
 try:
     from ._rest_py3 import (
         HttpRequest,
@@ -44,6 +45,7 @@ except (SyntaxError, ImportError):
     )
 
 __all__ = [
+    "HttpVerbs",
     "HttpRequest",
     "HttpResponse",
     "_StreamContextManager",

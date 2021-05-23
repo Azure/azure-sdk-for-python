@@ -6,6 +6,7 @@
 
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
+import io
 import pytest
 import sys
 from typing import Generator
@@ -181,57 +182,56 @@ def test_urlencoded_content():
         "Content-Type": "application/x-www-form-urlencoded",
     }
 
-# NOTE: commenting out multipart files content setting tests for now. We currently leave the content length / type setting for the pipeline
-# to do on the internal request.
+@pytest.mark.parametrize(("key"), (b"abc", 1, 2.3, None))
+def test_multipart_invalid_key(key):
 
-# def test_multipart_files_content():
-#     files = {"file": io.BytesIO(b"<file content>")}
-#     request = HttpRequest("POST", url="http://example.org", files=files)
+    data = {key: "abc"}
+    files = {"file": io.BytesIO(b"<file content>")}
+    with pytest.raises(TypeError) as e:
+        HttpRequest(
+            url="http://127.0.0.1:8000/",
+            method="POST",
+            data=data,
+            files=files,
+        )
+    assert "Invalid type for data key" in str(e.value)
+    assert repr(key) in str(e.value)
 
-#     assert request.headers == {
-#         "Content-Length": "138",
-#         "Content-Type": "multipart/form-data; boundary=+++",
-#     }
-#     assert request.content == b"".join(
-#         [
-#             b"--+++\r\n",
-#             b'Content-Disposition: form-data; name="file"; filename="upload"\r\n',
-#             b"Content-Type: application/octet-stream\r\n",
-#             b"\r\n",
-#             b"<file content>\r\n",
-#             b"--+++--\r\n",
-#         ]
-#     )
+@pytest.mark.parametrize(("value"), (1, 2.3, None, [None, "abc"], {None: "abc"}))
+def test_multipart_invalid_value(value):
 
-# def test_multipart_data_and_files_content():
-#     data = {"message": "Hello, world!"}
-#     files = {"file": io.BytesIO(b"<file content>")}
-#     request = HttpRequest("POST", url="http://example.org", data=data, files=files)
-
-#     assert request.headers == {
-#         "Content-Length": "210",
-#         "Content-Type": "multipart/form-data; boundary=+++",
-#     }
-#     assert request.content == b"".join(
-#         [
-#             b"--+++\r\n",
-#             b'Content-Disposition: form-data; name="message"\r\n',
-#             b"\r\n",
-#             b"Hello, world!\r\n",
-#             b"--+++\r\n",
-#             b'Content-Disposition: form-data; name="file"; filename="upload"\r\n',
-#             b"Content-Type: application/octet-stream\r\n",
-#             b"\r\n",
-#             b"<file content>\r\n",
-#             b"--+++--\r\n",
-#         ]
-#     )
+    data = {"text": value}
+    files = {"file": io.BytesIO(b"<file content>")}
+    with pytest.raises(TypeError) as e:
+        HttpRequest("POST", "http://127.0.0.1:8000/", data=data, files=files)
+    assert "Invalid type for data value" in str(e.value)
 
 def test_empty_request():
     request = HttpRequest("POST", url="http://example.org", data={}, files={})
 
     assert request.headers == {}
-    assert request.content == {} # in core, we don't convert urlencoded dict to bytes representation in content
+    assert not request.content # in core, we don't convert urlencoded dict to bytes representation in content
+
+def test_generator_with_transfer_encoding_header():
+    def content():
+        yield b'test 123'
+    request = HttpRequest(
+        "POST",
+        "http://localhost:3000/foo/bar",
+        content=content(),
+    )
+    assert request.headers["Transfer-Encoding"] == "chunked"
+
+def test_generator_with_content_length_header():
+    def content():
+        yield b"test 123"  # pragma: nocover
+
+    headers = {"Content-Length": "8"}
+    request = HttpRequest(
+        "POST", "http://localhost:3000/foo/bar", content=content(), headers=headers
+    )
+    assert not request.headers.get("Transfer-Encoding")
+    assert request.headers["Content-Length"] == "8"
 
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
 # def test_multipart_multiple_files_single_input_content():

@@ -24,28 +24,17 @@
 #
 # --------------------------------------------------------------------------
 import asyncio
-import codecs
 import cgi
-import collections
-
-import xml.etree.ElementTree as ET
-from enum import Enum
 from json import loads
 from typing import (
     Any,
     AsyncIterable,
     AsyncIterator,
-    IO,
     Iterable, Iterator,
     Optional,
     Union,
-    Mapping,
-    Sequence,
-    Tuple,
-    List,
     cast,
 )
-
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline, AsyncPipeline
 from azure.core.pipeline.transport import (
@@ -56,178 +45,16 @@ from azure.core.pipeline.transport._base import (
     _HttpResponseBase as _PipelineTransportHttpResponseBase
 )
 
-################################### TYPES SECTION #########################
-
-PrimitiveData = Optional[Union[str, int, float, bool]]
-
-
-ParamsType = Union[
-    Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]],
-    List[Tuple[str, PrimitiveData]]
-]
-
-HeadersType = Mapping[str, str]
+from ._helpers import (
+    ParamsType,
+    FilesType,
+    HeadersType,
+    _set_body,
+    _lookup_encoding,
+    _parse_lines_from_text,
+)
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
-
-FileContent = Union[str, bytes, IO[str], IO[bytes]]
-FileType = Union[
-    Tuple[Optional[str], FileContent],
-]
-
-FilesType = Union[
-    Mapping[str, FileType],
-    Sequence[Tuple[str, FileType]]
-]
-
-class HttpVerbs(str, Enum):
-    GET = "GET"
-    PUT = "PUT"
-    POST = "POST"
-    HEAD = "HEAD"
-    PATCH = "PATCH"
-    DELETE = "DELETE"
-    MERGE = "MERGE"
-
-########################### UTILS SECTION #################################
-
-def _is_stream_or_str_bytes(content: Any) -> bool:
-    return isinstance(content, (str, bytes)) or any(
-        hasattr(content, attr) for attr in ["read", "__iter__", "__aiter__"]
-    )
-
-def _lookup_encoding(encoding: str) -> bool:
-    # including check for whether encoding is known taken from httpx
-    try:
-        codecs.lookup(encoding)
-        return True
-    except LookupError:
-        return False
-
-def _set_content_length_header(
-    header_name: str, header_value: str, internal_request: _PipelineTransportHttpRequest
-) -> None:
-    valid_methods = ["put", "post", "patch"]
-    content_length_headers = ["Content-Length", "Transfer-Encoding"]
-    if (
-        internal_request.method.lower() in valid_methods and
-        not any([c for c in content_length_headers if c in internal_request.headers])
-    ):
-        internal_request.headers[header_name] = header_value
-
-def _set_content_type_header(header_value: str, internal_request: _PipelineTransportHttpRequest) -> None:
-    if not internal_request.headers.get("Content-Type"):
-        internal_request.headers["Content-Type"] = header_value
-
-def _set_content_body(content: ContentType, internal_request: _PipelineTransportHttpRequest) -> None:
-    headers = internal_request.headers
-    content_type = headers.get("Content-Type")
-    if _is_stream_or_str_bytes(content):
-        # stream will be bytes / str, or iterator of bytes / str
-        internal_request.set_streamed_data_body(content)
-        if isinstance(content, str) and content:
-            _set_content_length_header(
-                "Content-Length",
-                str(len(cast(str, internal_request.data))),
-                internal_request
-            )
-            _set_content_type_header("text/plain", internal_request)
-        elif isinstance(content, bytes) and content:
-            _set_content_length_header(
-                "Content-Length",
-                str(len(cast(bytes, internal_request.data))),
-                internal_request
-            )
-            _set_content_type_header("application/octet-stream", internal_request)
-        elif isinstance(content, (collections.Iterable, collections.AsyncIterable)):
-            _set_content_length_header("Transfer-Encoding", "chunked", internal_request)
-            _set_content_type_header("application/octet-stream", internal_request)
-    elif isinstance(content, ET.Element):
-        # XML body
-        internal_request.set_xml_body(content)
-        _set_content_type_header("application/xml", internal_request)
-        _set_content_length_header(
-            "Content-Length",
-            str(len(cast(ET.Element, internal_request.data))),
-            internal_request
-        )
-    elif content_type and content_type.startswith("text/"):
-        # Text body
-        internal_request.set_text_body(content)
-        _set_content_length_header(
-            "Content-Length",
-            str(len(cast(str, internal_request.data))),
-            internal_request
-        )
-    else:
-        # Other body
-        internal_request.data = content
-    internal_request.headers = headers
-
-def _set_body(
-    content: Optional[ContentType],
-    data: Optional[dict],
-    files: Any,
-    json: Any,
-    internal_request: _PipelineTransportHttpRequest
-) -> None:
-    if data is not None and not isinstance(data, dict):
-        content = data
-        data = None
-    if content is not None:
-        _set_content_body(content, internal_request)
-    elif json is not None:
-        internal_request.set_json_body(json)
-        _set_content_type_header("application/json", internal_request)
-    elif files or data:
-        if files:
-            internal_request.set_formdata_body(files)
-        if data:
-            _set_content_type_header("application/x-www-form-urlencoded", internal_request)
-            internal_request.set_formdata_body(data)
-            # need to set twice because Content-Type is being popped in set_formdata_body
-            # don't want to risk changing pipeline.transport, so doing twice here
-            _set_content_type_header("application/x-www-form-urlencoded", internal_request)
-        if files and data:
-            internal_request.files = {
-                f: internal_request._format_data(d)  # pylint: disable=protected-access
-                for f, d in files.items() if d is not None
-            }
-
-def _parse_lines_from_text(text):
-    # largely taken from httpx's LineDecoder code
-    lines = []
-    last_chunk_of_text = ""
-    while text:
-        text_length = len(text)
-        for idx in range(text_length):
-            curr_char = text[idx]
-            next_char = None if idx == len(text) - 1 else text[idx + 1]
-            if curr_char == "\n":
-                lines.append(text[: idx + 1])
-                text = text[idx + 1: ]
-                break
-            if curr_char == "\r" and next_char == "\n":
-                # if it ends with \r\n, we only do \n
-                lines.append(text[:idx] + "\n")
-                text = text[idx + 2:]
-                break
-            if curr_char == "\r" and next_char is not None:
-                # if it's \r then a normal character, we switch \r to \n
-                lines.append(text[:idx] + "\n")
-                text = text[idx + 1:]
-                break
-            if next_char is None:
-                text = ""
-                last_chunk_of_text += text
-                break
-    if last_chunk_of_text.endswith("\r"):
-        # if ends with \r, we switch \r to \n
-        lines.append(last_chunk_of_text[:-1] + "\n")
-    elif last_chunk_of_text:
-        lines.append(last_chunk_of_text)
-    return lines
-
 
 class _StreamContextManagerBase:
     def __init__(

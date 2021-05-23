@@ -56,9 +56,8 @@ class AsyncTestRestClient(object):
 
     async def send_request(self, http_request, **kwargs):
         request_copy = deepcopy(http_request)
-        request_copy.url = self._client.format_url(request_copy.url)
+        http_request.url = self._client.format_url(http_request.url)
         if kwargs.pop("stream_response", False):
-            raise ValueError('in dis b')
             return _AsyncStreamContextManager(
                 client=self._client,
                 request=request_copy,

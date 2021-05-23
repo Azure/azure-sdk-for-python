@@ -51,7 +51,7 @@ class TestRestClient(object):
     def __init__(self, **kwargs):
         self._config = TestRestClientConfiguration(**kwargs)
         self._client = PipelineClient(
-            base_url="http://localhost:3000",
+            base_url="http://127.0.0.1:5000/",
             config=self._config,
             **kwargs
         )
@@ -61,15 +61,17 @@ class TestRestClient(object):
         request_copy.url = self._client.format_url(request_copy.url)
         if kwargs.pop("stream_response", False):
             return _StreamContextManager(
-                client=self._client,
+                pipeline=self._client._pipeline,
                 request=request_copy,
             )
         pipeline_response = self._client._pipeline.run(request_copy._internal_request, **kwargs)
-        return HttpResponse(
+        response = HttpResponse(
             status_code=pipeline_response.http_response.status_code,
             request=request_copy,
             _internal_response=pipeline_response.http_response,
         )
+        response.read()
+        return response
 
 
 @pytest.fixture

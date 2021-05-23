@@ -8,20 +8,7 @@ import os
 from typing import Type
 import pytest
 from azure.core.rest import HttpResponse, HttpRequest, StreamConsumedError, ResponseClosedError
-from azure.core.pipeline.transport import RequestsTransport
-
-HTTPBIN_JPEG_FILE_NAME = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "httpbin.jpeg"))
-
-@pytest.fixture
-def send_request(client):
-    def _send_request(request):
-        return client.send_request(request, stream=True)
-    return _send_request
-
-def _read_jpeg_file():
-    with open(HTTPBIN_JPEG_FILE_NAME, "rb") as f:
-        file_bytes = f.read()
-    return file_bytes
+from azure.core.pipeline.transport import RequestsTransportResponse
 
 def _assert_stream_state(response, open):
     # if open is true, check the stream is open.
@@ -36,130 +23,139 @@ def _assert_stream_state(response, open):
     else:
         assert all(checks)
 
-def test_iter_raw(send_request):
-    response = send_request(
-        request=HttpRequest("GET", "http://localhost:3000/streams/jpeg"),
-    )
-    raw = b""
-    for chunk in response.iter_raw():
-        _assert_stream_state(response, open=True)
-        raw += chunk
-    _assert_stream_state(response, open=False)
-    assert raw == _read_jpeg_file()
+def test_iter_raw(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
+    with client.send_request(request, stream_response=True) as response:
+        raw = b""
+        for part in response.iter_raw():
+            raw += part
+        assert raw == b"Hello, world!"
 
-def _iter_raw_with_chunk_size_helper(chunk_size, send_request):
-    response = send_request(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
-    raw = b""
-    for chunk in response.iter_raw(chunk_size=chunk_size):
-        _assert_stream_state(response, open=True)
-        raw += chunk
-        assert len(chunk) <= chunk_size
-    _assert_stream_state(response, open=False)
-    assert raw == _read_jpeg_file()
+def test_iter_raw_on_iterable(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/iterable")
 
-def test_iter_raw_with_chunk_size():
-    _iter_raw_with_chunk_size_helper(chunk_size=5, send_request=send_request)
-    _iter_raw_with_chunk_size_helper(chunk_size=13, send_request=send_request)
-    _iter_raw_with_chunk_size_helper(chunk_size=20, send_request=send_request)
+    with client.send_request(request, stream_response=True) as response:
+        raw = b""
+        for part in response.iter_raw():
+            raw += part
+        assert raw == b"Hello, world!"
 
-def test_iter_raw_num_bytes_downloaded(send_request):
-    response = send_request(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
+def test_iter_raw_with_chunksize(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
 
-    num_downloaded = response.num_bytes_downloaded
-    for part in response.iter_raw():
-        assert len(part) == (response.num_bytes_downloaded - num_downloaded)
+    with client.send_request(request, stream_response=True) as response:
+        parts = [part for part in response.iter_raw(chunk_size=5)]
+        assert parts == [b"Hello", b", wor", b"ld!"]
+
+    with client.send_request(request, stream_response=True) as response:
+        parts = [part for part in response.iter_raw(chunk_size=13)]
+        assert parts == [b"Hello, world!"]
+
+    with client.send_request(request, stream_response=True) as response:
+        parts = [part for part in response.iter_raw(chunk_size=20)]
+        assert parts == [b"Hello, world!"]
+
+def test_iter_raw_num_bytes_downloaded(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
+
+    with client.send_request(request, stream_response=True) as response:
         num_downloaded = response.num_bytes_downloaded
+        for part in response.iter_raw():
+            assert len(part) == (response.num_bytes_downloaded - num_downloaded)
+            num_downloaded = response.num_bytes_downloaded
 
-def _iter_bytes_with_chunk_size_helper(chunk_size, send_request):
-    response = send_request(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
-    raw = b""
-    for chunk in response.iter_bytes(chunk_size=chunk_size):
-        _assert_stream_state(response, open=True)
-        raw += chunk
-        assert len(chunk) <= chunk_size
-    _assert_stream_state(response, open=False)
-    assert raw == _read_jpeg_file()
+def test_iter_bytes(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
 
-def test_iter_bytes(send_request):
-    response = send_request(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
-    raw = b""
-    for chunk in response.iter_bytes():
-        _assert_stream_state(response, open=True)
-        raw += chunk
-    _assert_stream_state(response, open=False)
-    assert raw == _read_jpeg_file()
+    with client.send_request(request, stream_response=True) as response:
+        raw = b""
+        for chunk in response.iter_bytes():
+            _assert_stream_state(response, open=True)
+            raw += chunk
+        _assert_stream_state(response, open=False)
+        assert raw == b"Hello, world!"
 
-def test_iter_bytes_with_chunk_size(send_request):
-    _iter_bytes_with_chunk_size_helper(chunk_size=5, send_request=send_request)
-    _iter_bytes_with_chunk_size_helper(chunk_size=13, send_request=send_request)
-    _iter_bytes_with_chunk_size_helper(chunk_size=20, send_request=send_request)
+def test_iter_bytes_with_chunk_size(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
 
-def test_iter_text(send_request):
-    response = send_request(HttpRequest("GET", "http://localhost:3000/streams/text"))
-    raw = ""
-    for chunk in response.iter_text():
-        _assert_stream_state(response, open=True)
-        raw += chunk
-    _assert_stream_state(response, open=False)
-    # just going to verify that we got 10 stream chunks from the url
-    assert len([r for r in raw.split("\n") if r]) == 10
+    with client.send_request(request, stream_response=True) as response:
+        parts = [part for part in response.iter_bytes(chunk_size=5)]
+        assert parts == [b"Hello", b", wor", b"ld!"]
 
-def _iter_text_with_chunk_size_helper(chunk_size, send_request):
-    response = send_request(HttpRequest("GET", "http://localhost:3000/streams/text"))
-    raw = ""
-    for chunk in response.iter_text(chunk_size=chunk_size):
-        _assert_stream_state(response, open=True)
-        raw += chunk
-        assert len(chunk) <= chunk_size
-    _assert_stream_state(response, open=False)
-    assert len([r for r in raw.split("\n") if r]) == 10
+    with client.send_request(request, stream_response=True) as response:
+        parts = [part for part in response.iter_bytes(chunk_size=13)]
+        assert parts == [b"Hello, world!"]
 
-def test_iter_text_with_chunk_size():
-    _iter_text_with_chunk_size_helper(chunk_size=5, send_request=send_request)
-    _iter_text_with_chunk_size_helper(chunk_size=13, send_request=send_request)
-    _iter_text_with_chunk_size_helper(chunk_size=20, send_request=send_request)
+    with client.send_request(request, stream_response=True) as response:
+        parts = [part for part in response.iter_bytes(chunk_size=20)]
+        assert parts == [b"Hello, world!"]
 
-def test_iter_lines(send_request):
-    response = send_request(HttpRequest("GET", "http://localhost:3000/streams/text"))
-    lines = []
-    for chunk in response.iter_lines():
-        _assert_stream_state(response, open=True)
-        lines.append(chunk)
-    _assert_stream_state(response, open=False)
-    assert len(lines) == 10
-    for line in lines:
-        assert line == "Hello, world!\n"
+def test_iter_text(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/basic/helloWorld/string")
 
-def test_sync_streaming_response(send_request):
-    response = send_request(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
+    with client.send_request(request, stream_response=True) as response:
+        content = ""
+        for part in response.iter_text():
+            content += part
+        assert content == "Hello, world!"
 
-    assert response.status_code == 200
-    assert not response.is_closed
 
-    content = response.read()
+def test_iter_text_with_chunk_size(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/basic/helloWorld/string")
 
-    with open(HTTPBIN_JPEG_FILE_NAME, "rb") as f:
-        file_bytes = f.read()
-    assert content == file_bytes
-    assert response.content == file_bytes
-    assert response.is_closed
+    with client.send_request(request, stream_response=True) as response:
+        parts = [part for part in response.iter_text(chunk_size=5)]
+        assert parts == ["Hello", ", wor", "ld!"]
 
-def test_cannot_read_after_stream_consumed(send_request):
-    response = send_request(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
+    with client.send_request(request, stream_response=True) as response:
+        parts = [part for part in response.iter_text(chunk_size=13)]
+        assert parts == ["Hello, world!"]
 
-    content = b""
-    for part in response.iter_bytes():
-        content += part
+    with client.send_request(request, stream_response=True) as response:
+        parts = [part for part in response.iter_text(chunk_size=20)]
+        assert parts == ["Hello, world!"]
 
-    with pytest.raises(ResponseClosedError) as ex:
-        response.read()
+
+def test_iter_lines(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/basic/helloWorld/lines")
+
+    with client.send_request(request, stream_response=True) as response:
+        content = []
+        for line in response.iter_lines():
+            content.append(line)
+        assert content == ["Hello,\n", "world!"]
+
+def test_sync_streaming_response(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
+
+    with client.send_request(request, stream_response=True) as response:
+        assert response.status_code == 200
+        assert not response.is_closed
+
+        content = response.read()
+
+        assert content == b"Hello, world!"
+        assert response.content == b"Hello, world!"
+        assert response.is_closed
+
+def test_cannot_read_after_stream_consumed(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
+
+    with client.send_request(request, stream_response=True) as response:
+        content = b""
+        for part in response.iter_bytes():
+            content += part
+
+        with pytest.raises(ResponseClosedError) as ex:
+            response.read()
 
     assert "You can not try to read or stream this response's content, since the response has been closed" in str(ex.value)
 
-def test_cannot_read_after_response_closed(send_request):
-    response = send_request(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
+def test_cannot_read_after_response_closed(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
 
-    response.close()
-    with pytest.raises(ResponseClosedError) as ex:
-        response.read()
+    with client.send_request(request, stream_response=True) as response:
+        response.close()
+        with pytest.raises(ResponseClosedError) as ex:
+            response.read()
     assert "You can not try to read or stream this response's content, since the response has been closed" in str(ex.value)
