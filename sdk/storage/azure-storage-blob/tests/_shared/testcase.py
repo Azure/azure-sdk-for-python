@@ -38,7 +38,7 @@ try:
 except ImportError:
     from io import StringIO
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.credentials import AccessToken
 from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
 from azure.mgmt.storage.models import StorageAccount, Endpoints
@@ -403,11 +403,11 @@ def storage_account():
         if i_need_to_create_rg:
             for i in range(retries):
                 try:
-                    time.sleep(i) if i == 0 else time.sleep(i + 3)
+                    time.sleep(i) if i == 0 else time.sleep(2 ** i)
                     rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
                     rg = rg_kwargs['resource_group']
                     break
-                except:
+                except HttpResponseError:
                     continue
         else:
             rg_name = existing_rg_name or "no_rg_needed"
@@ -481,7 +481,15 @@ def storage_account():
                     storage_key = storage_connection_string_parts["AccountKey"]
 
             else:
-                storage_name, storage_kwargs = storage_preparer._prepare_create_resource(test_case, **rg_kwargs)
+                for i in range(5):
+                    try:
+                        time.sleep(i) if i == 0 else time.sleep(2 ** i)
+                        storage_name, storage_kwargs = storage_preparer._prepare_create_resource(
+                            test_case, **rg_kwargs)
+                        break
+                        # Some tests may be running on the storage account and a conflict may occur. Backoff & Retry.
+                    except HttpResponseError:
+                        continue
                 storage_account = storage_kwargs['storage_account']
                 storage_key = storage_kwargs['storage_account_key']
                 storage_connection_string = storage_kwargs['storage_account_cs']
