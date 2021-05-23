@@ -399,16 +399,9 @@ def storage_account():
     got_storage_info_from_env = existing_storage_name or storage_connection_string
 
     try:
-        retries = 5
         if i_need_to_create_rg:
-            for i in range(retries):
-                try:
-                    time.sleep(i) if i == 0 else time.sleep(2 ** i)
-                    rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
-                    rg = rg_kwargs['resource_group']
-                    break
-                except HttpResponseError:
-                    continue
+            rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
+            rg = rg_kwargs['resource_group']
         else:
             rg_name = existing_rg_name or "no_rg_needed"
             rg = FakeResource(

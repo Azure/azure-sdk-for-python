@@ -387,8 +387,8 @@ def storage_account():
 
     try:
         if i_need_to_create_rg:
-                rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
-                rg = rg_kwargs['resource_group']
+            rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
+            rg = rg_kwargs['resource_group']
         else:
             rg_name = existing_rg_name or "no_rg_needed"
             rg = FakeResource(
