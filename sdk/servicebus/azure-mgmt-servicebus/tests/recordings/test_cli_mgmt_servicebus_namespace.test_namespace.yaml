@@ -14,76 +14,30 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork?api-version=2021-02-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myVirtualNetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork\"\
-        ,\r\n  \"etag\": \"W/\\\"eae0e35f-d5e8-460d-acc9-300d1f6c59d0\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
-        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"0031f84a-141e-43fe-887b-8236bd68fd80\",\r\n    \"\
-        addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
-        \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
-        : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
-        : false\r\n  }\r\n}"
+      string: "{\r\n  \"name\": \"myVirtualNetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork\",\r\n
+        \ \"etag\": \"W/\\\"e25f563e-4d9e-422c-85ec-968f1063f34c\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\",\r\n
+        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"resourceGuid\":
+        \"61c12be1-b4a4-4b95-9ce6-eb0ff8cc59d5\",\r\n    \"addressSpace\": {\r\n      \"addressPrefixes\":
+        [\r\n        \"10.0.0.0/16\"\r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n
+        \   \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\": false\r\n
+        \ }\r\n}"
     headers:
-      azure-asyncnotification:
-      - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e4ffb3b1-21bf-49b5-b116-613c344b21cf?api-version=2020-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/99781e6d-7ea2-4c6d-a437-8f158e9622c0?api-version=2021-02-01
       cache-control:
       - no-cache
       content-length:
-      - '719'
+      - '622'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:25:14 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 42691da0-d9cf-4328-8523-8b3048d8c8dc
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e4ffb3b1-21bf-49b5-b116-613c344b21cf?api-version=2020-06-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '29'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 23 Nov 2020 08:25:18 GMT
+      - Mon, 24 May 2021 17:03:43 GMT
       expires:
       - '-1'
       pragma:
@@ -100,7 +54,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 71e598c7-6064-4494-ab8d-0f794ae068ac
+      - 0144fa0b-4ff9-4b8c-bcd1-18d3736d1219
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
     status:
       code: 200
       message: OK
@@ -114,31 +70,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/99781e6d-7ea2-4c6d-a437-8f158e9622c0?api-version=2021-02-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myVirtualNetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork\"\
-        ,\r\n  \"etag\": \"W/\\\"a498d5ed-5c1e-4c2b-b90b-1d0c029d8f99\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
-        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"0031f84a-141e-43fe-887b-8236bd68fd80\",\r\n    \"\
-        addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
-        \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
-        : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
-        : false\r\n  }\r\n}"
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '720'
+      - '29'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:25:19 GMT
-      etag:
-      - W/"a498d5ed-5c1e-4c2b-b90b-1d0c029d8f99"
+      - Mon, 24 May 2021 17:03:46 GMT
       expires:
       - '-1'
       pragma:
@@ -155,7 +101,61 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - f1eac309-f1c1-44c1-a6de-987dd1b645ad
+      - bba29948-96b5-48aa-8ce2-02aa42e617bb
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork?api-version=2021-02-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"myVirtualNetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork\",\r\n
+        \ \"etag\": \"W/\\\"7000a2aa-f471-456f-adc4-f2fb815a492f\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\",\r\n
+        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\":
+        \"61c12be1-b4a4-4b95-9ce6-eb0ff8cc59d5\",\r\n    \"addressSpace\": {\r\n      \"addressPrefixes\":
+        [\r\n        \"10.0.0.0/16\"\r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n
+        \   \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\": false\r\n
+        \ }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '623'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 17:03:46 GMT
+      etag:
+      - W/"7000a2aa-f471-456f-adc4-f2fb815a492f"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 37479e4a-e9e7-4ac1-b587-9089949316ef
     status:
       code: 200
       message: OK
@@ -173,28 +173,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet?api-version=2021-02-01
   response:
     body:
-      string: "{\r\n  \"name\": \"mySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet\"\
-        ,\r\n  \"etag\": \"W/\\\"a22f90d3-8c73-4f11-9174-9d0a8c843489\\\"\",\r\n \
-        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
-        addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
-        : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
-        \n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
+      string: "{\r\n  \"name\": \"mySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet\",\r\n
+        \ \"etag\": \"W/\\\"a2712623-540b-4448-9ce3-9534759b5dcf\\\"\",\r\n  \"properties\":
+        {\r\n    \"provisioningState\": \"Updating\",\r\n    \"addressPrefix\": \"10.0.0.0/24\",\r\n
+        \   \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n
+        \   \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\n  },\r\n  \"type\":
+        \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e324e11f-d304-45d5-bdad-ec99f244b6d6?api-version=2020-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a3577649-bdd9-4cd6-b30e-dc73f7866bb5?api-version=2021-02-01
       cache-control:
       - no-cache
       content-length:
-      - '598'
+      - '535'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:25:19 GMT
+      - Mon, 24 May 2021 17:03:47 GMT
       expires:
       - '-1'
       pragma:
@@ -207,9 +207,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 3300a4d2-1f7e-485e-8c7b-fcca73c3b030
+      - e4745b28-a9ad-487a-9cfa-2324cff3f5eb
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1198'
     status:
       code: 201
       message: Created
@@ -223,9 +223,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e324e11f-d304-45d5-bdad-ec99f244b6d6?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a3577649-bdd9-4cd6-b30e-dc73f7866bb5?api-version=2021-02-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -237,7 +237,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:25:23 GMT
+      - Mon, 24 May 2021 17:03:50 GMT
       expires:
       - '-1'
       pragma:
@@ -254,7 +254,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 85e6b452-bcec-4f7a-b97d-5d0822dc8473
+      - 13c9d429-81d0-450d-9c73-d7998e070f3b
     status:
       code: 200
       message: OK
@@ -268,28 +268,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet?api-version=2021-02-01
   response:
     body:
-      string: "{\r\n  \"name\": \"mySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet\"\
-        ,\r\n  \"etag\": \"W/\\\"9336c3ca-0092-48b1-8331-2890b644a495\\\"\",\r\n \
-        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
-        addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
-        : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
-        \n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
+      string: "{\r\n  \"name\": \"mySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet\",\r\n
+        \ \"etag\": \"W/\\\"b96d822c-5c7b-4ae6-abd2-d729dcdfb912\\\"\",\r\n  \"properties\":
+        {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"addressPrefix\": \"10.0.0.0/24\",\r\n
+        \   \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n
+        \   \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\n  },\r\n  \"type\":
+        \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '599'
+      - '536'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:25:23 GMT
+      - Mon, 24 May 2021 17:03:50 GMT
       etag:
-      - W/"9336c3ca-0092-48b1-8331-2890b644a495"
+      - W/"b96d822c-5c7b-4ae6-abd2-d729dcdfb912"
       expires:
       - '-1'
       pragma:
@@ -306,7 +306,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - c42ec4e1-77a4-4c6c-8168-8b4855a793ab
+      - ea105d76-6fb6-4aa8-b603-fe7f05f8dd0f
     status:
       code: 200
       message: OK
@@ -325,31 +325,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx?api-version=2018-01-01-preview
   response:
     body:
       string: '{"sku":{"name":"Premium","tier":"Premium","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx","name":"myNamespacexxyyzzxyx","type":"Microsoft.ServiceBus/Namespaces","location":"East
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2020-11-23T08:25:33.627Z","updatedAt":"2020-11-23T08:25:33.627Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2021-05-24T17:03:53.3Z","updatedAt":"2021-05-24T17:03:53.3Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '720'
+      - '653'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:25:35 GMT
+      - Mon, 24 May 2021 17:03:53 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -359,7 +359,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -373,31 +373,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx?api-version=2018-01-01-preview
   response:
     body:
       string: '{"sku":{"name":"Premium","tier":"Premium","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx","name":"myNamespacexxyyzzxyx","type":"Microsoft.ServiceBus/Namespaces","location":"East
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2020-11-23T08:25:33.627Z","updatedAt":"2020-11-23T08:25:33.627Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2021-05-24T17:03:53.3Z","updatedAt":"2021-05-24T17:03:53.3Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '720'
+      - '653'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:26:06 GMT
+      - Mon, 24 May 2021 17:04:23 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -419,31 +419,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx?api-version=2018-01-01-preview
   response:
     body:
       string: '{"sku":{"name":"Premium","tier":"Premium","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx","name":"myNamespacexxyyzzxyx","type":"Microsoft.ServiceBus/Namespaces","location":"East
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2020-11-23T08:25:33.627Z","updatedAt":"2020-11-23T08:25:33.627Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2021-05-24T17:03:53.3Z","updatedAt":"2021-05-24T17:03:53.3Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '720'
+      - '653'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:26:37 GMT
+      - Mon, 24 May 2021 17:04:53 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -465,31 +465,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx?api-version=2018-01-01-preview
   response:
     body:
       string: '{"sku":{"name":"Premium","tier":"Premium","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx","name":"myNamespacexxyyzzxyx","type":"Microsoft.ServiceBus/Namespaces","location":"East
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2020-11-23T08:25:33.627Z","updatedAt":"2020-11-23T08:26:39.987Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Active"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2021-05-24T17:03:53.3Z","updatedAt":"2021-05-24T17:05:10.193Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '718'
+      - '653'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:27:07 GMT
+      - Mon, 24 May 2021 17:05:24 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -515,7 +515,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx/AuthorizationRules/myAuthorizationRule?api-version=2017-04-01
   response:
@@ -526,20 +526,20 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '405'
+      - '342'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:27:15 GMT
+      - Mon, 24 May 2021 17:05:36 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -549,7 +549,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -568,11 +568,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '575'
+      - '512'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx/networkrulesets/default?api-version=2018-01-01-preview
   response:
@@ -583,20 +583,20 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '878'
+      - '752'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:27:33 GMT
+      - Mon, 24 May 2021 17:05:49 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -606,7 +606,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -620,7 +620,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx/AuthorizationRules/myAuthorizationRule?api-version=2017-04-01
   response:
@@ -631,20 +631,20 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '405'
+      - '342'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:27:33 GMT
+      - Mon, 24 May 2021 17:05:49 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -666,7 +666,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx/networkrulesets/default?api-version=2018-01-01-preview
   response:
@@ -677,20 +677,20 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '878'
+      - '752'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:27:34 GMT
+      - Mon, 24 May 2021 17:05:50 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -712,31 +712,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx?api-version=2018-01-01-preview
   response:
     body:
       string: '{"sku":{"name":"Premium","tier":"Premium","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx","name":"myNamespacexxyyzzxyx","type":"Microsoft.ServiceBus/Namespaces","location":"East
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2020-11-23T08:25:33.627Z","updatedAt":"2020-11-23T08:26:39.987Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Active"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2021-05-24T17:03:53.3Z","updatedAt":"2021-05-24T17:05:10.193Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '718'
+      - '653'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:27:35 GMT
+      - Mon, 24 May 2021 17:05:50 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -762,12 +762,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx/AuthorizationRules/myAuthorizationRule/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://mynamespacexxyyzzxyx.servicebus.windows.net/;SharedAccessKeyName=myAuthorizationRule;SharedAccessKey=y7bnOc0bL9c5vCd9zPZUG8r5UJnTi1fhgIHM1gtKCAw=","secondaryConnectionString":"Endpoint=sb://mynamespacexxyyzzxyx.servicebus.windows.net/;SharedAccessKeyName=myAuthorizationRule;SharedAccessKey=qWzzMThcxjCUpecY5jlO08vpSAiFmVHjBORWyl7DwfM=","primaryKey":"y7bnOc0bL9c5vCd9zPZUG8r5UJnTi1fhgIHM1gtKCAw=","secondaryKey":"qWzzMThcxjCUpecY5jlO08vpSAiFmVHjBORWyl7DwfM=","keyName":"myAuthorizationRule"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://mynamespacexxyyzzxyx.servicebus.windows.net/;SharedAccessKeyName=myAuthorizationRule;SharedAccessKey=2UzafGNpDQoMKK/hOeNnIQxSfAZ5+9OdAvnJqq7wajA=","secondaryConnectionString":"Endpoint=sb://mynamespacexxyyzzxyx.servicebus.windows.net/;SharedAccessKeyName=myAuthorizationRule;SharedAccessKey=Utg8AuOMHB4X1qi3+EgbqcP3jrzxM3q9RGeAnTc4x5U=","primaryKey":"2UzafGNpDQoMKK/hOeNnIQxSfAZ5+9OdAvnJqq7wajA=","secondaryKey":"Utg8AuOMHB4X1qi3+EgbqcP3jrzxM3q9RGeAnTc4x5U=","keyName":"myAuthorizationRule"}'
     headers:
       cache-control:
       - no-cache
@@ -776,16 +776,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:27:41 GMT
+      - Mon, 24 May 2021 17:05:56 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -811,12 +811,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx/AuthorizationRules/myAuthorizationRule/listKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://mynamespacexxyyzzxyx.servicebus.windows.net/;SharedAccessKeyName=myAuthorizationRule;SharedAccessKey=y7bnOc0bL9c5vCd9zPZUG8r5UJnTi1fhgIHM1gtKCAw=","secondaryConnectionString":"Endpoint=sb://mynamespacexxyyzzxyx.servicebus.windows.net/;SharedAccessKeyName=myAuthorizationRule;SharedAccessKey=qWzzMThcxjCUpecY5jlO08vpSAiFmVHjBORWyl7DwfM=","primaryKey":"y7bnOc0bL9c5vCd9zPZUG8r5UJnTi1fhgIHM1gtKCAw=","secondaryKey":"qWzzMThcxjCUpecY5jlO08vpSAiFmVHjBORWyl7DwfM=","keyName":"myAuthorizationRule"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://mynamespacexxyyzzxyx.servicebus.windows.net/;SharedAccessKeyName=myAuthorizationRule;SharedAccessKey=2UzafGNpDQoMKK/hOeNnIQxSfAZ5+9OdAvnJqq7wajA=","secondaryConnectionString":"Endpoint=sb://mynamespacexxyyzzxyx.servicebus.windows.net/;SharedAccessKeyName=myAuthorizationRule;SharedAccessKey=Utg8AuOMHB4X1qi3+EgbqcP3jrzxM3q9RGeAnTc4x5U=","primaryKey":"2UzafGNpDQoMKK/hOeNnIQxSfAZ5+9OdAvnJqq7wajA=","secondaryKey":"Utg8AuOMHB4X1qi3+EgbqcP3jrzxM3q9RGeAnTc4x5U=","keyName":"myAuthorizationRule"}'
     headers:
       cache-control:
       - no-cache
@@ -825,16 +825,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:27:42 GMT
+      - Mon, 24 May 2021 17:05:57 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -862,31 +862,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx?api-version=2018-01-01-preview
   response:
     body:
       string: '{"sku":{"name":"Premium","tier":"Premium","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx","name":"myNamespacexxyyzzxyx","type":"Microsoft.ServiceBus/Namespaces","location":"East
-        US","tags":{"tag3":"value3","tag4":"value4"},"properties":{"zoneRedundant":false,"provisioningState":"Updating","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2020-11-23T08:25:33.627Z","updatedAt":"2020-11-23T08:27:44.387Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag3":"value3","tag4":"value4"},"properties":{"zoneRedundant":false,"provisioningState":"Updating","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2021-05-24T17:03:53.3Z","updatedAt":"2021-05-24T17:05:59.14Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '721'
+      - '655'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:27:47 GMT
+      - Mon, 24 May 2021 17:06:00 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -896,7 +896,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -914,7 +914,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ServiceBus/CheckNameAvailability?api-version=2017-04-01
   response:
@@ -928,16 +928,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:27:48 GMT
+      - Mon, 24 May 2021 17:06:00 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -963,7 +963,55 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx/AuthorizationRules/myAuthorizationRule?api-version=2017-04-01
+  response:
+    body:
+      string: '{"error":{"message":"Namespace provisioning in transition. For more
+        information visit https://aka.ms/eventhubsarmexceptions. CorrelationId: de6b9fe9-be6e-4266-a2fb-4f19dd3fb6d4","code":"429"}}'
+    headers:
+      cache-control:
+      - no-cache
+      connection:
+      - close
+      content-length:
+      - '192'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 17:06:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/SN1
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/SN1
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 429
+      message: ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx/AuthorizationRules/myAuthorizationRule?api-version=2017-04-01
   response:
@@ -975,7 +1023,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 23 Nov 2020 08:27:54 GMT
+      - Mon, 24 May 2021 17:09:19 GMT
       expires:
       - '-1'
       pragma:
@@ -990,7 +1038,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14999'
     status:
       code: 200
       message: OK
@@ -1006,7 +1054,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx?api-version=2018-01-01-preview
   response:
@@ -1018,7 +1066,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 23 Nov 2020 08:27:56 GMT
+      - Mon, 24 May 2021 17:09:20 GMT
       expires:
       - '-1'
       location:
@@ -1035,7 +1083,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
+      - '14998'
     status:
       code: 202
       message: Accepted
@@ -1049,22 +1097,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx/operationresults/myNamespacexxyyzzxyx?api-version=2018-01-01-preview
   response:
     body:
       string: '{"sku":{"name":"Premium","tier":"Premium","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx","name":"myNamespacexxyyzzxyx","type":"Microsoft.ServiceBus/Namespaces","location":"East
-        US","tags":{"tag3":"value3","tag4":"value4"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2020-11-23T08:25:33.627Z","updatedAt":"2020-11-23T08:27:56.457Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Removing"}}'
+        US","tags":{"tag3":"value3","tag4":"value4"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2021-05-24T17:03:53.3Z","updatedAt":"2021-05-24T17:09:20.613Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Removing"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '720'
+      - '655'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:28:26 GMT
+      - Mon, 24 May 2021 17:09:51 GMT
       expires:
       - '-1'
       location:
@@ -1093,22 +1141,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx/operationresults/myNamespacexxyyzzxyx?api-version=2018-01-01-preview
   response:
     body:
       string: '{"sku":{"name":"Premium","tier":"Premium","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx","name":"myNamespacexxyyzzxyx","type":"Microsoft.ServiceBus/Namespaces","location":"East
-        US","tags":{"tag3":"value3","tag4":"value4"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2020-11-23T08:25:33.627Z","updatedAt":"2020-11-23T08:27:56.457Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Removing"}}'
+        US","tags":{"tag3":"value3","tag4":"value4"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzxyx","createdAt":"2021-05-24T17:03:53.3Z","updatedAt":"2021-05-24T17:09:20.613Z","serviceBusEndpoint":"https://myNamespacexxyyzzxyx.servicebus.windows.net:443/","status":"Removing"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '720'
+      - '655'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:29:20 GMT
+      - Mon, 24 May 2021 17:10:47 GMT
       expires:
       - '-1'
       location:
@@ -1137,7 +1185,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-servicebus/6.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzzxyx/operationresults/myNamespacexxyyzzxyx?api-version=2018-01-01-preview
   response:
@@ -1149,11 +1197,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '299'
+      - '236'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 08:30:07 GMT
+      - Mon, 24 May 2021 17:11:25 GMT
       expires:
       - '-1'
       pragma:
