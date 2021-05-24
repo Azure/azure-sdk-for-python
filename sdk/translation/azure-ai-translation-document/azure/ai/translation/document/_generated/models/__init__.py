@@ -8,68 +8,68 @@
 
 try:
     from ._models_py3 import BatchRequest
-    from ._models_py3 import BatchStatusDetail
-    from ._models_py3 import BatchStatusResponse
-    from ._models_py3 import BatchSubmissionRequest
     from ._models_py3 import DocumentFilter
-    from ._models_py3 import DocumentStatusDetail
-    from ._models_py3 import DocumentStatusResponse
-    from ._models_py3 import ErrorResponseV2
-    from ._models_py3 import ErrorV2
+    from ._models_py3 import DocumentStatus
+    from ._models_py3 import DocumentsStatus
     from ._models_py3 import FileFormat
-    from ._models_py3 import FileFormatListResult
     from ._models_py3 import Glossary
-    from ._models_py3 import InnerErrorV2
+    from ._models_py3 import InnerTranslationError
     from ._models_py3 import SourceInput
+    from ._models_py3 import StartTranslationDetails
     from ._models_py3 import StatusSummary
-    from ._models_py3 import StorageSourceListResult
+    from ._models_py3 import SupportedFileFormats
+    from ._models_py3 import SupportedStorageSources
     from ._models_py3 import TargetInput
+    from ._models_py3 import TranslationError
+    from ._models_py3 import TranslationErrorResponse
+    from ._models_py3 import TranslationStatus
+    from ._models_py3 import TranslationsStatus
 except (SyntaxError, ImportError):
     from ._models import BatchRequest  # type: ignore
-    from ._models import BatchStatusDetail  # type: ignore
-    from ._models import BatchStatusResponse  # type: ignore
-    from ._models import BatchSubmissionRequest  # type: ignore
     from ._models import DocumentFilter  # type: ignore
-    from ._models import DocumentStatusDetail  # type: ignore
-    from ._models import DocumentStatusResponse  # type: ignore
-    from ._models import ErrorResponseV2  # type: ignore
-    from ._models import ErrorV2  # type: ignore
+    from ._models import DocumentStatus  # type: ignore
+    from ._models import DocumentsStatus  # type: ignore
     from ._models import FileFormat  # type: ignore
-    from ._models import FileFormatListResult  # type: ignore
     from ._models import Glossary  # type: ignore
-    from ._models import InnerErrorV2  # type: ignore
+    from ._models import InnerTranslationError  # type: ignore
     from ._models import SourceInput  # type: ignore
+    from ._models import StartTranslationDetails  # type: ignore
     from ._models import StatusSummary  # type: ignore
-    from ._models import StorageSourceListResult  # type: ignore
+    from ._models import SupportedFileFormats  # type: ignore
+    from ._models import SupportedStorageSources  # type: ignore
     from ._models import TargetInput  # type: ignore
+    from ._models import TranslationError  # type: ignore
+    from ._models import TranslationErrorResponse  # type: ignore
+    from ._models import TranslationStatus  # type: ignore
+    from ._models import TranslationsStatus  # type: ignore
 
 from ._batch_document_translation_client_enums import (
-    ErrorCodeV2,
     Status,
     StorageInputType,
     StorageSource,
+    TranslationErrorCode,
 )
 
 __all__ = [
     'BatchRequest',
-    'BatchStatusDetail',
-    'BatchStatusResponse',
-    'BatchSubmissionRequest',
     'DocumentFilter',
-    'DocumentStatusDetail',
-    'DocumentStatusResponse',
-    'ErrorResponseV2',
-    'ErrorV2',
+    'DocumentStatus',
+    'DocumentsStatus',
     'FileFormat',
-    'FileFormatListResult',
     'Glossary',
-    'InnerErrorV2',
+    'InnerTranslationError',
     'SourceInput',
+    'StartTranslationDetails',
     'StatusSummary',
-    'StorageSourceListResult',
+    'SupportedFileFormats',
+    'SupportedStorageSources',
     'TargetInput',
-    'ErrorCodeV2',
+    'TranslationError',
+    'TranslationErrorResponse',
+    'TranslationStatus',
+    'TranslationsStatus',
     'Status',
     'StorageInputType',
     'StorageSource',
+    'TranslationErrorCode',
 ]

@@ -137,7 +137,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         docs_per_job = 2
 
         # create some jobs
-        start = datetime.now()
+        start = datetime.utcnow()
         job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
