@@ -109,7 +109,7 @@ class ResourceLink(msrest.serialization.Model):
     :ivar name: The name of the resource link.
     :vartype name: str
     :ivar type: The resource link object.
-    :vartype type: str
+    :vartype type: any
     :param properties: Properties for resource link.
     :type properties: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties
     """
@@ -123,7 +123,7 @@ class ResourceLink(msrest.serialization.Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'object'},
         'properties': {'key': 'properties', 'type': 'ResourceLinkProperties'},
     }
 

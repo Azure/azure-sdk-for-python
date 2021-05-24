@@ -14,6 +14,7 @@ from azure.identity._internal.user_agent import USER_AGENT
 import pytest
 
 from helpers import mock, mock_response, Request, validating_transport
+from recorded_test_case import RecordedTestCase
 
 
 def test_no_scopes():
@@ -173,3 +174,19 @@ def test_identity_config():
     token = credential.get_token(scope)
 
     assert token == expected_token
+
+
+@pytest.mark.usefixtures("record_imds_test")
+class RecordedTests(RecordedTestCase):
+    def test_system_assigned(self):
+        credential = ImdsCredential()
+        token = credential.get_token(self.scope)
+        assert token.token
+        assert isinstance(token.expires_on, int)
+
+    @pytest.mark.usefixtures("user_assigned_identity_client_id")
+    def test_user_assigned(self):
+        credential = ImdsCredential(client_id=self.user_assigned_identity_client_id)
+        token = credential.get_token(self.scope)
+        assert token.token
+        assert isinstance(token.expires_on, int)

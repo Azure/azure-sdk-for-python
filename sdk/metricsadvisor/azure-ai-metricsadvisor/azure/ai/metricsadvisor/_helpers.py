@@ -108,15 +108,15 @@ def convert_to_generated_data_feed_type(
 
     :param generated_feed_type: generated model type of data feed
     :type generated_feed_type: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
+        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, AzureLogAnalyticsDataFeed,
         InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-        ElasticsearchDataFeed]
+        AzureEventHubsDataFeed]
     :param str name: Name for the data feed.
     :param source: The exposed model source of the data feed
     :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDBDataFeedSource,
         AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource, AzureTableDataFeedSource,
-        HttpRequestDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
-        SQLServerDataFeedSource, MongoDBDataFeedSource, ElasticsearchDataFeedSource]
+        AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
+        SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
     :param granularity: Granularity type and amount if using custom.
     :type granularity: ~azure.ai.metricsadvisor.models.DataFeedGranularity
     :param schema: Data feed schema
@@ -126,9 +126,9 @@ def convert_to_generated_data_feed_type(
     :param options: Data feed options.
     :type options: ~azure.ai.metricsadvisor.models.DataFeedOptions
     :rtype: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
+        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, AzureLogAnalyticsDataFeed,
         InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-        ElasticsearchDataFeed]
+        AzureEventHubsDataFeed]
     :return: The generated model for the data source type
     """
 

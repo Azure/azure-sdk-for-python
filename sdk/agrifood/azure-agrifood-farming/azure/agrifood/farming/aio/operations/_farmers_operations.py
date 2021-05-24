@@ -55,7 +55,7 @@ class FarmersOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FarmerListResponse"]:
         """Returns a paginated list of farmer resources.
 
@@ -169,7 +169,7 @@ class FarmersOperations:
     async def get(
         self,
         farmer_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Farmer":
         """Gets a specified farmer resource.
 
@@ -224,15 +224,15 @@ class FarmersOperations:
     async def create_or_update(
         self,
         farmer_id: str,
-        body: Optional["_models.Farmer"] = None,
-        **kwargs
+        farmer: Optional["_models.Farmer"] = None,
+        **kwargs: Any
     ) -> "_models.Farmer":
         """Creates or updates a farmer resource.
 
-        :param farmer_id: Id of the farmer resource.
+        :param farmer_id: ID of the farmer resource.
         :type farmer_id: str
-        :param body: Farmer resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.Farmer
+        :param farmer: Farmer resource payload to create or update.
+        :type farmer: ~azure.agrifood.farming.models.Farmer
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Farmer, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.Farmer
@@ -265,8 +265,8 @@ class FarmersOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Farmer')
+        if farmer is not None:
+            body_content = self._serialize.body(farmer, 'Farmer')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -294,11 +294,11 @@ class FarmersOperations:
     async def delete(
         self,
         farmer_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a specified farmer resource.
 
-        :param farmer_id: Id of farmer to be deleted.
+        :param farmer_id: ID of farmer to be deleted.
         :type farmer_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -346,11 +346,11 @@ class FarmersOperations:
     async def get_cascade_delete_job_details(
         self,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CascadeDeleteJob":
         """Get a cascade delete job for specified farmer.
 
-        :param job_id: Id of the job.
+        :param job_id: ID of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CascadeDeleteJob, or the result of cls(response)
@@ -402,7 +402,7 @@ class FarmersOperations:
         self,
         job_id: str,
         farmer_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CascadeDeleteJob":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJob"]
         error_map = {
@@ -450,7 +450,7 @@ class FarmersOperations:
         self,
         job_id: str,
         farmer_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CascadeDeleteJob"]:
         """Create a cascade delete job for specified farmer.
 

@@ -13,6 +13,8 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling.base_polling import LROBasePolling
 
 from .. import models as _models
 
@@ -63,7 +65,7 @@ class FarmsOperations(object):
         # type: (...) -> Iterable["_models.FarmListResponse"]
         """Returns a paginated list of farm resources under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
         :param ids: Ids of the resource.
         :type ids: list[str]
@@ -362,18 +364,18 @@ class FarmsOperations(object):
         self,
         farmer_id,  # type: str
         farm_id,  # type: str
-        body=None,  # type: Optional["_models.Farm"]
+        farm=None,  # type: Optional["_models.Farm"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Farm"
         """Creates or updates a farm resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer resource.
+        :param farmer_id: ID of the associated farmer resource.
         :type farmer_id: str
-        :param farm_id: Id of the farm resource.
+        :param farm_id: ID of the farm resource.
         :type farm_id: str
-        :param body: Farm resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.Farm
+        :param farm: Farm resource payload to create or update.
+        :type farm: ~azure.agrifood.farming.models.Farm
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Farm, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.Farm
@@ -407,8 +409,8 @@ class FarmsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Farm')
+        if farm is not None:
+            body_content = self._serialize.body(farm, 'Farm')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -442,9 +444,9 @@ class FarmsOperations(object):
         # type: (...) -> None
         """Deletes a specified farm resource under a particular farmer.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: ID of the farmer.
         :type farmer_id: str
-        :param farm_id: Id of the farm.
+        :param farm_id: ID of the farm.
         :type farm_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -498,7 +500,7 @@ class FarmsOperations(object):
         # type: (...) -> "_models.CascadeDeleteJob"
         """Get a cascade delete job for specified farm.
 
-        :param job_id: Id of the job.
+        :param job_id: ID of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CascadeDeleteJob, or the result of cls(response)
@@ -546,7 +548,7 @@ class FarmsOperations(object):
         return deserialized
     get_cascade_delete_job_details.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore
 
-    def create_cascade_delete_job(
+    def _create_cascade_delete_job_initial(
         self,
         job_id,  # type: str
         farmer_id,  # type: str
@@ -554,19 +556,6 @@ class FarmsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.CascadeDeleteJob"
-        """Create a cascade delete job for specified farm.
-
-        :param job_id: Job ID supplied by end user.
-        :type job_id: str
-        :param farmer_id: ID of the associated farmer.
-        :type farmer_id: str
-        :param farm_id: ID of the farm to be deleted.
-        :type farm_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CascadeDeleteJob, or the result of cls(response)
-        :rtype: ~azure.agrifood.farming.models.CascadeDeleteJob
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -576,7 +565,7 @@ class FarmsOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.create_cascade_delete_job.metadata['url']  # type: ignore
+        url = self._create_cascade_delete_job_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
@@ -608,4 +597,75 @@ class FarmsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_cascade_delete_job.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore
+    _create_cascade_delete_job_initial.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore
+
+    def begin_create_cascade_delete_job(
+        self,
+        job_id,  # type: str
+        farmer_id,  # type: str
+        farm_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["_models.CascadeDeleteJob"]
+        """Create a cascade delete job for specified farm.
+
+        :param job_id: Job ID supplied by end user.
+        :type job_id: str
+        :param farmer_id: ID of the associated farmer.
+        :type farmer_id: str
+        :param farm_id: ID of the farm to be deleted.
+        :type farm_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either CascadeDeleteJob or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.agrifood.farming.models.CascadeDeleteJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJob"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_cascade_delete_job_initial(
+                job_id=job_id,
+                farmer_id=farmer_id,
+                farm_id=farm_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_cascade_delete_job.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore

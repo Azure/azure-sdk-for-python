@@ -44,7 +44,7 @@ class ProviderResourceTypesOperations:
         self,
         resource_provider_namespace: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProviderResourceTypeListResult":
         """List the resource types for a specified resource provider.
 

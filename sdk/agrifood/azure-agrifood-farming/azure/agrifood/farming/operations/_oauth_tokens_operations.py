@@ -13,12 +13,14 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling.base_polling import LROBasePolling
 
 from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -163,73 +165,16 @@ class OAuthTokensOperations(object):
         )
     list.metadata = {'url': '/oauth/tokens'}  # type: ignore
 
-    def delete(
-        self,
-        farmer_id,  # type: str
-        oauth_provider_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Deletes OAuth Token for given oauth provider Id and farmer Id.
-
-        :param farmer_id: Id of the associated farmer.
-        :type farmer_id: str
-        :param oauth_provider_id: Id of the associated oauth provider.
-        :type oauth_provider_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-31-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['farmerId'] = self._serialize.query("farmer_id", farmer_id, 'str')
-        query_parameters['oauthProviderId'] = self._serialize.query("oauth_provider_id", oauth_provider_id, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {'url': '/oauth/tokens/:remove'}  # type: ignore
-
     def get_o_auth_connection_link(
         self,
-        body=None,  # type: Optional["_models.OAuthConnectRequest"]
+        connect_request=None,  # type: Optional["_models.OAuthConnectRequest"]
         **kwargs  # type: Any
     ):
         # type: (...) -> str
         """Returns Connection link needed in the OAuth flow.
 
-        :param body: OAuth Connect Request.
-        :type body: ~azure.agrifood.farming.models.OAuthConnectRequest
+        :param connect_request: OAuth Connect Request.
+        :type connect_request: ~azure.agrifood.farming.models.OAuthConnectRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: str, or the result of cls(response)
         :rtype: str
@@ -261,8 +206,8 @@ class OAuthTokensOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'OAuthConnectRequest')
+        if connect_request is not None:
+            body_content = self._serialize.body(connect_request, 'OAuthConnectRequest')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -282,3 +227,181 @@ class OAuthTokensOperations(object):
 
         return deserialized
     get_o_auth_connection_link.metadata = {'url': '/oauth/tokens/:connect'}  # type: ignore
+
+    def get_cascade_delete_job_details(
+        self,
+        job_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.CascadeDeleteJob"
+        """Get cascade delete job details for OAuth tokens for specified job ID.
+
+        :param job_id: ID of the job.
+        :type job_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CascadeDeleteJob, or the result of cls(response)
+        :rtype: ~azure.agrifood.farming.models.CascadeDeleteJob
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJob"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_cascade_delete_job_details.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_cascade_delete_job_details.metadata = {'url': '/oauth/tokens/remove/{jobId}'}  # type: ignore
+
+    def _create_cascade_delete_job_initial(
+        self,
+        job_id,  # type: str
+        farmer_id,  # type: str
+        oauth_provider_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.CascadeDeleteJob"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJob"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self._create_cascade_delete_job_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['farmerId'] = self._serialize.query("farmer_id", farmer_id, 'str')
+        query_parameters['oauthProviderId'] = self._serialize.query("oauth_provider_id", oauth_provider_id, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    _create_cascade_delete_job_initial.metadata = {'url': '/oauth/tokens/remove/{jobId}'}  # type: ignore
+
+    def begin_create_cascade_delete_job(
+        self,
+        job_id,  # type: str
+        farmer_id,  # type: str
+        oauth_provider_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["_models.CascadeDeleteJob"]
+        """Create a cascade delete job for OAuth tokens.
+
+        :param job_id: Job ID supplied by end user.
+        :type job_id: str
+        :param farmer_id: ID of the farmer.
+        :type farmer_id: str
+        :param oauth_provider_id: ID of the OAuthProvider.
+        :type oauth_provider_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either CascadeDeleteJob or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.agrifood.farming.models.CascadeDeleteJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJob"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_cascade_delete_job_initial(
+                job_id=job_id,
+                farmer_id=farmer_id,
+                oauth_provider_id=oauth_provider_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_cascade_delete_job.metadata = {'url': '/oauth/tokens/remove/{jobId}'}  # type: ignore

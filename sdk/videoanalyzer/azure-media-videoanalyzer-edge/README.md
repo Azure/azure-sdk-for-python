@@ -1,4 +1,4 @@
-# Azure Video Analyzer Edge for IoT Edge client library for Python
+# Azure Video Analyzer for IoT Edge - edge client library for Python
 
 Azure Video Analyzer on IoT Edge provides a platform to build intelligent video applications that span the edge and the cloud. The platform offers the capability to capture, record, and analyze live video along with publishing the results, video and video analytics, to Azure services in the cloud or the edge. It is designed to be an extensible platform, enabling you to connect different video analysis edge modules (such as Cognitive services containers, custom edge modules built by you with open-source machine learning models or custom models trained with your own data) to it and use them to analyze live video without worrying about the complexity of building and running a live video pipeline.
 
@@ -22,13 +22,13 @@ pip install azure-media-videoanalyzer-edge
 ### Prerequisites
 
 - Python 2.7, or 3.6 or later is required to use this package.
-- You need an active [Azure subscription][azure_sub], and a [IoT device connection string][iot_device_connection_string] to use this package.
+- You need an active [Azure subscription][azure_sub], and a IoT device connection string to use this package.
 - To interact with Azure IoT Hub you will need to run `pip install azure-iot-hub`
 - You will need to use the version of the SDK that corresponds to the version of the Video Analyzer Edge module you are using.
 
     | SDK  | Video Analyzer Edge Module  |
     |---|---|
-    | 1.0.0b1  | 2.0  |
+    | 1.0.0b1  | 1.0  |
 
 ### Creating a pipline topology and making requests
 
@@ -56,8 +56,8 @@ To create a pipeline topology you need to define parameters, sources, and sinks.
 
 ```python
 #Parameters
-user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
-password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="dummypassword")
+user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="testusername")
+password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="testpassword")
 url_param = ParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
 hub_param = ParameterDeclaration(name="hubSinkOutputName",type="String")
 
@@ -140,16 +140,12 @@ additional questions or comments.
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
 
-[package]: TODO://link-to-published-package
+[package]: https://aka.ms/ava/sdk/client/python
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/videoanalyzer
 [samples]: https://github.com/Azure-Samples/live-video-analytics-iot-edge-python
 
-[doc_direct_methods]: TODO://link
-[doc_pipelines]: TODO://link
-[doc_product]: TODO://link
 
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/
 [iot-hub-sdk]: https://pypi.org/project/azure-iot-hub/
-[iot_device_connection_string]: TODO://link
 
 [github-page-issues]: https://github.com/Azure/azure-sdk-for-python/issues

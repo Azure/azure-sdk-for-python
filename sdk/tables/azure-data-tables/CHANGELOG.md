@@ -1,5 +1,14 @@
 # Release History
 
+## 12.0.0 (unreleased)
+**Breaking**
+* EdmType.Binary data in entities will now be deserialized as `bytes` in Python 3 and `str` in Python 2, rather than an `EdmProperty` instance. Likewise on serialization, `bytes` in Python 3 and `str` in Python 2 will be interpreted as binary (this is unchanged for Python 3, but breaking for Python 2, where `str` was previously serialized as EdmType.String)
+
+**Fixes**
+* Fixed support for Cosmos emulator endpoint, via URL/credential or connection string.
+* Fixed table name from URL parsing in `TableClient.from_table_url` classmethod.
+* The `account_name` attribute on clients will now be pulled from an `AzureNamedKeyCredential` if used.
+
 ## 12.0.0b7 (2021-05-11)
 **Breaking**
 * The `account_url` parameter in the client constructors has been renamed to `endpoint`.

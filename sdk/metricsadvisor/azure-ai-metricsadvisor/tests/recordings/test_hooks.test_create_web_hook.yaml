@@ -15,7 +15,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks
   response:
@@ -23,21 +23,21 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 1c9089f8-872e-4e96-bbe0-ba969c2b3b9e
+      - 98aa57ba-0ad2-4bfb-8194-aaa5b04892e1
       content-length:
       - '0'
       date:
-      - Fri, 22 Jan 2021 00:59:30 GMT
+      - Fri, 21 May 2021 20:01:29 GMT
       location:
-      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/929aae66-a1aa-42bf-b26f-63e3cad62cf5
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/583ff6ea-09fb-4c55-b8ff-b7c4db251b79
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '689'
+      - '1078'
       x-request-id:
-      - 1c9089f8-872e-4e96-bbe0-ba969c2b3b9e
+      - 98aa57ba-0ad2-4bfb-8194-aaa5b04892e1
     status:
       code: 201
       message: Created
@@ -51,30 +51,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/929aae66-a1aa-42bf-b26f-63e3cad62cf5
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/583ff6ea-09fb-4c55-b8ff-b7c4db251b79
   response:
     body:
-      string: '{"hookId":"929aae66-a1aa-42bf-b26f-63e3cad62cf5","hookName":"testwebhookcbed0cb2","hookType":"Webhook","externalLink":"external
+      string: '{"hookId":"583ff6ea-09fb-4c55-b8ff-b7c4db251b79","hookName":"testwebhookcbed0cb2","hookType":"Webhook","externalLink":"external
         link","description":"my web hook","admins":["krpratic@microsoft.com"],"hookParameter":{"endpoint":"https://httpbin.org/post","username":"","password":"","headers":{},"certificateKey":"","certificatePassword":""}}'
     headers:
       apim-request-id:
-      - 316aa161-43ce-4232-8383-db34ebce7679
+      - a371a1e0-8d67-4349-8d4d-fad065b22ac7
       content-length:
       - '340'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 22 Jan 2021 00:59:30 GMT
+      - Fri, 21 May 2021 20:01:30 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '173'
+      - '1234'
       x-request-id:
-      - 316aa161-43ce-4232-8383-db34ebce7679
+      - a371a1e0-8d67-4349-8d4d-fad065b22ac7
     status:
       code: 200
       message: OK
@@ -90,27 +90,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/929aae66-a1aa-42bf-b26f-63e3cad62cf5
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/583ff6ea-09fb-4c55-b8ff-b7c4db251b79
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 334cf107-fab7-4eb0-998b-ff6503cf6204
+      - dcf166d9-5765-43f6-ae8e-2aaed61e2e71
       content-length:
       - '0'
       date:
-      - Fri, 22 Jan 2021 00:59:30 GMT
+      - Fri, 21 May 2021 20:01:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '211'
+      - '214'
       x-request-id:
-      - 334cf107-fab7-4eb0-998b-ff6503cf6204
+      - dcf166d9-5765-43f6-ae8e-2aaed61e2e71
     status:
       code: 204
       message: No Content
@@ -124,29 +124,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/929aae66-a1aa-42bf-b26f-63e3cad62cf5
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/583ff6ea-09fb-4c55-b8ff-b7c4db251b79
   response:
     body:
       string: '{"code":"ERROR_INVALID_PARAMETER","message":"hookId is invalid."}'
     headers:
       apim-request-id:
-      - 3ef59a68-e746-4ab6-8254-eb4619e452e7
+      - abf69ca6-4160-46bd-821e-6cb799434de2
       content-length:
       - '65'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 22 Jan 2021 00:59:30 GMT
+      - Fri, 21 May 2021 20:01:37 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '64'
+      - '5143'
       x-request-id:
-      - 3ef59a68-e746-4ab6-8254-eb4619e452e7
+      - abf69ca6-4160-46bd-821e-6cb799434de2
     status:
       code: 404
       message: Not Found
