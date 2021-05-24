@@ -633,7 +633,7 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp = entity.copy()
+        temp = entity.copy()  # type: ignore
 
         partition_key = temp["PartitionKey"]
         row_key = temp["RowKey"]

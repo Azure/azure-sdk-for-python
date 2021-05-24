@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union, List, Tuple, Dict, Mapping, Iterable, overload
+from typing import Optional, Any, TYPE_CHECKING, Union, List, Tuple, Dict, Mapping, Iterable, overload
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -39,6 +39,9 @@ from ._models import (
 EntityType = Union[TableEntity, Mapping[str, Any]]
 OperationType = Union[TransactionOperation, str]
 TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
+
+if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
 
 class TableClient(TablesBaseClient):
@@ -175,7 +178,7 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
+        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}  # type: ignore
 
     @distributed_trace
     def set_table_access_policy(

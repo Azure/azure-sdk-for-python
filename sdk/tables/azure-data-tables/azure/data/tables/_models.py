@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any, Dict, List
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
@@ -251,8 +251,8 @@ class CorsRule(GeneratedCorsRule):
 
     def __init__(  # pylint: disable=super-init-not-called
         self,
-        allowed_origins,  # type: list[str]
-        allowed_methods,  # type: list[str]
+        allowed_origins,  # type: List[str]
+        allowed_methods,  # type: List[str]
         **kwargs  # type: Any
     ):
         # type: (...)-> None
@@ -408,7 +408,7 @@ class TableSasPermissions(object):
         return TableSasPermissions(_str=str(self) + str(other))
 
     def __str__(self):
-        # type: () -> TableSasPermissions
+        # type: () -> str
         return (
             ("r" if self.read else "")
             + ("a" if self.add else "")
@@ -447,19 +447,13 @@ class TableSasPermissions(object):
         return parsed
 
 
-TableSasPermissions.READ = TableSasPermissions(**dict(read=True))
-TableSasPermissions.ADD = TableSasPermissions(**dict(add=True))
-TableSasPermissions.UPDATE = TableSasPermissions(**dict(update=True))
-TableSasPermissions.DELETE = TableSasPermissions(**dict(delete=True))
-
-
 def service_stats_deserialize(generated):
     # type: (GenTableServiceStats) -> Dict[str, Any]
     """Deserialize a ServiceStats objects into a dict."""
     return {
         "geo_replication": {
-            "status": generated.geo_replication.status,
-            "last_sync_time": generated.geo_replication.last_sync_time,
+            "status": generated.geo_replication.status,  # type: ignore
+            "last_sync_time": generated.geo_replication.last_sync_time,  # type: ignore
         }
     }
 
@@ -476,7 +470,8 @@ def service_properties_deserialize(generated):
             generated.minute_metrics
         ),
         "cors": [
-            CorsRule._from_generated(cors) for cors in generated.cors  # pylint: disable=protected-access
+            CorsRule._from_generated(cors)  # pylint: disable=protected-access
+            for cors in generated.cors  # type: ignore
         ],
     }
 
@@ -496,10 +491,11 @@ class TableItem(object):
         """
         self.name = name
 
+    # TODO: TableQueryResponse is not the correct type
     @classmethod
     def _from_generated(cls, generated, **kwargs):
         # type: (TableQueryResponse, Dict[str, Any]) -> TableItem
-        return cls(generated.table_name, **kwargs)
+        return cls(generated.table_name, **kwargs)  # type: ignore
 
 
 class TablePayloadFormat(object):
@@ -646,7 +642,7 @@ class AccountSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission, **kwargs):
-        # type: (str, Dict[str]) -> AccountSasPermissions
+        # type: (str, Dict[str, Any]) -> AccountSasPermissions
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to

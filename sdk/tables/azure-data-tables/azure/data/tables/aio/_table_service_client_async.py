@@ -163,7 +163,7 @@ class TableServiceClient(AsyncTablesBaseClient):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=[cors],
+            cors=[cors],  # type: ignore
         )
         try:
             await self._client.service.set_properties(props, **kwargs)  # type: ignore

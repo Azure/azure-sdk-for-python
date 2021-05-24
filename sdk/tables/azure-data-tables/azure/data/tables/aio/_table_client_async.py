@@ -173,7 +173,7 @@ class TableClient(AsyncTablesBaseClient):
         return {
             s.id: s.access_policy
             or AccessPolicy(start=None, expiry=None, permission=None)
-            for s in identifiers
+            for s in identifiers  # type: ignore
         }
 
     @distributed_trace_async
@@ -196,17 +196,17 @@ class TableClient(AsyncTablesBaseClient):
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
-        signed_identifiers = identifiers  # type: ignore
+        # signed_identifiers = identifiers  # type: ignore
         try:
             await self._client.table.set_access_policy(
-                table=self.table_name, table_acl=signed_identifiers or None, **kwargs
+                table=self.table_name, table_acl=identifiers or None, **kwargs  # type: ignore
             )
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
             except HttpResponseError as table_error:
-                if (table_error.error_code == 'InvalidXmlDocument'
-                and len(signed_identifiers) > 5):
+                if (table_error.error_code == 'InvalidXmlDocument'  # type: ignore
+                and len(identifiers) > 5):
                     raise ValueError(
                         'Too many access policies provided. The server does not support setting '
                         'more than 5 access policies on a single resource.'
@@ -232,7 +232,7 @@ class TableClient(AsyncTablesBaseClient):
         """
         table_properties = TableProperties(table_name=self.table_name)
         try:
-            metadata, _ = await self._client.table.create(
+            metadata, _ = await self._client.table.create(  # type: ignore
                 table_properties,
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
                 **kwargs
@@ -317,7 +317,7 @@ class TableClient(AsyncTablesBaseClient):
         etag = kwargs.pop("etag", None)
         if match_condition and entity and not etag:
             try:
-                etag = entity.metadata.get("etag", None)
+                etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
 
@@ -373,15 +373,15 @@ class TableClient(AsyncTablesBaseClient):
         else:
             raise ValueError("PartitionKey and RowKey were not provided in entity")
         try:
-            metadata, _ = await self._client.table.insert_entity(
+            metadata, _ = await self._client.table.insert_entity(  # type: ignore
                 table=self.table_name,
-                table_entity_properties=entity,
+                table_entity_properties=entity,  # type: ignore
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
                 **kwargs
             )
         except ResourceNotFoundError as error:
             _process_table_error(error)
-        return _trim_service_metadata(metadata)
+        return _trim_service_metadata(metadata)  # type: ignore
 
     @distributed_trace_async
     async def update_entity(
@@ -416,7 +416,7 @@ class TableClient(AsyncTablesBaseClient):
         etag = kwargs.pop("etag", None)
         if match_condition and entity and not etag:
             try:
-                etag = entity.metadata.get("etag", None)
+                etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
 
@@ -436,30 +436,30 @@ class TableClient(AsyncTablesBaseClient):
         try:
             metadata = None
             if mode is UpdateMode.REPLACE:
-                metadata, _ = await self._client.table.update_entity(
+                metadata, _ = await self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=entity,
+                    table_entity_properties=entity,  # type: ignore
                     if_match=if_match or "*",
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
             elif mode is UpdateMode.MERGE:
-                metadata, _ = await self._client.table.merge_entity(
+                metadata, _ = await self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     if_match=if_match or "*",
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                    table_entity_properties=entity,
+                    table_entity_properties=entity,  # type: ignore
                     **kwargs
                 )
             else:
                 raise ValueError("Mode type is not supported")
         except HttpResponseError as error:
             _process_table_error(error)
-        return _trim_service_metadata(metadata)
+        return _trim_service_metadata(metadata)  # type: ignore
 
     @distributed_trace
     def list_entities(self, **kwargs) -> AsyncItemPaged[TableEntity]:
@@ -619,20 +619,20 @@ class TableClient(AsyncTablesBaseClient):
         try:
             metadata = None
             if mode is UpdateMode.MERGE:
-                metadata, _ = await self._client.table.merge_entity(
+                metadata, _ = await self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=entity,
+                    table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
             elif mode is UpdateMode.REPLACE:
-                metadata, _ = await self._client.table.update_entity(
+                metadata, _ = await self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=entity,
+                    table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
@@ -645,7 +645,7 @@ class TableClient(AsyncTablesBaseClient):
                 )
         except HttpResponseError as error:
             _process_table_error(error)
-        return _trim_service_metadata(metadata)
+        return _trim_service_metadata(metadata)  # type: ignore
 
     @distributed_trace_async
     async def submit_transaction(
@@ -684,7 +684,7 @@ class TableClient(AsyncTablesBaseClient):
         )
         for operation in operations:
             try:
-                operation_kwargs = operation[2]
+                operation_kwargs = operation[2]  # type: ignore
             except IndexError:
                 operation_kwargs = {}
             try:

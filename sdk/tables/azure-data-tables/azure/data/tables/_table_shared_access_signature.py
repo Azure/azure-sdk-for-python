@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, Any
+from typing import Union, Any, TYPE_CHECKING
 
 from ._models import AccountSasPermissions
 from ._common_conversion import _sign_string
@@ -15,13 +15,18 @@ from ._shared_access_signature import (
     QueryStringConstants,
 )
 
+if TYPE_CHECKING:
+    from datetime import datetime
+    from azure.core.credentials import AzureNamedKeyCredential
+    from ._models import ResourceTypes
+
 
 def generate_account_sas(
     credential,  # type: AzureNamedKeyCredential
-    resource_types,  # type:ResourceTypes
-    permission,  # type:Union[str,AccountSasPermissions]
-    expiry,  # type:Union[datetime,str]
-    **kwargs  # type:Any
+    resource_types,  # type: ResourceTypes
+    permission,  # type: Union[str, AccountSasPermissions]
+    expiry,  # type: Union[datetime, str]
+    **kwargs  # type: Any
 ):
     # type: (...) -> str
     """

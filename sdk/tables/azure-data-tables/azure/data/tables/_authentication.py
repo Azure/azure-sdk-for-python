@@ -6,7 +6,7 @@
 
 import logging
 import sys
-from typing import Union
+from typing import Union, TYPE_CHECKING
 
 try:
     from urllib.parse import urlparse
@@ -19,7 +19,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 try:
     from azure.core.pipeline.transport import AsyncHttpTransport
 except ImportError:
-    AsyncHttpTransport = None
+    AsyncHttpTransport = None  # type: ignore
 
 try:
     from yarl import URL
@@ -33,6 +33,9 @@ from ._common_conversion import (
 from ._error import (
     _wrap_exception,
 )
+
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineRequest
 
 if sys.version_info > (3, 5):
     from typing import Awaitable  # pylint: disable=ungrouped-imports
@@ -112,7 +115,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             raise _wrap_exception(ex, AzureSigningError)
 
     def on_request(self, request):
-    # type: (PipelineRequest) -> Union[None, Awaitable[None]]
+    # type: (PipelineRequest) -> None
         self.sign_request(request)
 
     def sign_request(self, request):
