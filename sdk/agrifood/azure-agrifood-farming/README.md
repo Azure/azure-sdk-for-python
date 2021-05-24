@@ -13,8 +13,13 @@ Use FarmBeats client library for Python to do the following.
 
 ### Prerequisites
 
+To use this package, you must have:
+- Azure subscription - [Create a free account][azure_subscription]
+- AgriFood (FarmBeats) resource - [Install FarmBeats][install_farmbeats]
+- Python 2.7, 3.6 or later - [Install Python][python]
+
 - Python 2.7, or 3.6 or later is required to use this package.
-- You must have an [Azure subscription][azure_subscription] and an AgriFood resource to use this package.
+- You must have an [Azure subscription][azure_subscription] and an AgriFood (FarmBeats) resource to use this package.
 
 #### Create an AgriFood Resource
 
@@ -264,7 +269,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [coc_contact]: mailto:opencode@microsoft.com
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential\
+[install_farmbeats]: https://aka.ms/FarmBeatsInstallDocumentationPaaS
 [product_docs]: https://docs.microsoft.com/azure/azure-agrifood-farming/
 [pip]: https://pypi.org/project/pip/
 [pypi]: https://pypi.org/project/azure-agrifood-farming/
