@@ -59,7 +59,7 @@ class ConfigurationSetting(Model):
 
     @classmethod
     def _from_generated(cls, key_value):
-        # type: (KeyValue) -> Optional[ConfigurationSetting]
+        # type: (KeyValue) -> Union[ConfigurationSetting, FeatureFlagConfigurationSetting, SecretReferenceConfigurationSetting]
         if key_value is None:
             return key_value
         if key_value.content_type is not None:
@@ -215,7 +215,7 @@ class FeatureFlagConfigurationSetting(
 
     @classmethod
     def _from_generated(cls, key_value):
-        # type: (KeyValue) -> Optional[Union[FeatureFlagConfigurationSetting, ConfigurationSetting]]
+        # type: (KeyValue) -> Union[FeatureFlagConfigurationSetting, ConfigurationSetting]
         try:
             if key_value is None:
                 return key_value

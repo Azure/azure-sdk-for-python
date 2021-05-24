@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Optional, Any, Mapping
+from typing import Optional, Any, Mapping, Union
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.pipeline import Pipeline
@@ -226,7 +226,7 @@ class AzureAppConfigurationClient:
         etag="*",
         match_condition=MatchConditions.Unconditionally,
         **kwargs
-    ):  # type: (str, Optional[str], Optional[str], Optional[MatchConditions], **Any) -> Optional[ConfigurationSetting]
+    ):  # type: (str, Optional[str], Optional[str], Optional[MatchConditions], **Any) -> Union[None, ConfigurationSetting]
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
@@ -283,7 +283,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def add_configuration_setting(self, configuration_setting, **kwargs):
-        # type: (ConfigurationSetting, **Any) -> Optional[ConfigurationSetting]
+        # type: (ConfigurationSetting, **Any) -> ConfigurationSetting
 
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
@@ -332,7 +332,7 @@ class AzureAppConfigurationClient:
         configuration_setting,
         match_condition=MatchConditions.Unconditionally,
         **kwargs
-    ):  # type: (ConfigurationSetting, Optional[MatchConditions], **Any) -> Optional[ConfigurationSetting]
+    ):  # type: (ConfigurationSetting, Optional[MatchConditions], **Any) -> ConfigurationSetting
 
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
@@ -396,7 +396,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def delete_configuration_setting(self, key, label=None, **kwargs):
-        # type: (str, Optional[str], **Any) -> Optional[ConfigurationSetting]
+        # type: (str, Optional[str], **Any) -> ConfigurationSetting
 
         """Delete a ConfigurationSetting if it exists
 
@@ -512,7 +512,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def set_read_only(self, configuration_setting, read_only=True, **kwargs):
-        # type: (ConfigurationSetting, Optional[bool], **Any) -> Optional[ConfigurationSetting]
+        # type: (ConfigurationSetting, Optional[bool], **Any) -> ConfigurationSetting
 
         """Set a configuration setting read only
 
