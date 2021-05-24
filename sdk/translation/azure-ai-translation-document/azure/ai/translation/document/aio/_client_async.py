@@ -4,14 +4,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, List
+from typing import Any, List, Union
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.credentials_async import AsyncTokenCredential
 from .._generated.aio import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from .._user_agent import USER_AGENT
 from .._generated.models import (
@@ -23,15 +23,14 @@ from .._models import (
     FileFormat,
     DocumentStatusResult
 )
-from .._helpers import get_http_logging_policy, convert_datetime
+from .._helpers import get_http_logging_policy, convert_datetime, get_authentication_policy
 from .._polling import TranslationPolling
-COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
 
 class DocumentTranslationClient(object):
 
     def __init__(
-            self, endpoint: str, credential: "AzureKeyCredential", **kwargs: Any
+            self, endpoint: str, credential: Union["AzureKeyCredential", "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         """DocumentTranslationClient is your interface to the Document Translation service.
         Use the client to translate whole documents while preserving source document
@@ -39,9 +38,11 @@ class DocumentTranslationClient(object):
 
         :param str endpoint: Supported Document Translation endpoint (protocol and hostname, for example:
             https://<resource-name>.cognitiveservices.azure.com/).
-        :param credential: Credential needed for the client to connect to Azure.
-            Currently only API key authentication is supported.
-        :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
+        :param credential: Credentials needed for the client to connect to Azure.
+            This is an instance of AzureKeyCredential if using an API key or a token
+            credential from :mod:`azure.identity`.
+        :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
+            :class:`~azure.core.credentials.TokenCredential`
         :keyword api_version:
             The API version of the service to use for requests. It defaults to the latest service version.
             Setting to an older version may result in reduced feature compatibility.
@@ -60,11 +61,7 @@ class DocumentTranslationClient(object):
         self._credential = credential
         self._api_version = kwargs.pop('api_version', None)
 
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
-        authentication_policy = AzureKeyCredentialPolicy(
-            name=COGNITIVE_KEY_HEADER, credential=credential
-        )
+        authentication_policy = get_authentication_policy(credential)
         self._client = _BatchDocumentTranslationClient(
             endpoint=endpoint,
             credential=credential,  # type: ignore
