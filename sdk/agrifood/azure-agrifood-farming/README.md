@@ -7,7 +7,7 @@ Use FarmBeats client library for Python to do the following.
 - Ingest satellite and weather data for areas of interest.
 - Ingest farm operations data covering tilling, planting, harvesting and application of farm inputs.
 
-[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples][samples] | [Changelog][change_log]
+[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Changelog][change_log]
 
 ## Getting started
 
@@ -244,6 +244,9 @@ client.crops.get(crop_id="crop_id", logging_enable=True)
 ```
 
 ## Next steps
+
+### Additional documentation
+For more extensive documentation on the FarmBeats, see the [FarmBeats documentation][product_docs] on docs.microsoft.com.
 
 ## Contributing
 
