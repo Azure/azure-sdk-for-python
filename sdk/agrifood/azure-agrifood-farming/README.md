@@ -18,8 +18,6 @@ To use this package, you must have:
 - AgriFood (FarmBeats) resource - [Install FarmBeats][install_farmbeats]
 - Python 2.7, 3.6 or later - [Install Python][python]
 
-#### Create an AgriFood Resource
-
 ### Install the package
 
 Install the Azure AgriFood Farming client library for Python with [pip][pip]:
