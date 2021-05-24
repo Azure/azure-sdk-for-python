@@ -407,7 +407,7 @@ class KeyVaultCertificateIdentifier(object):
     """
 
     def __init__(self, id):
-        # type: (str) -> KeyVaultCertificateIdentifier
+        # type: (str) -> None
         self._resource_id = parse_key_vault_id(id)
 
     @property
