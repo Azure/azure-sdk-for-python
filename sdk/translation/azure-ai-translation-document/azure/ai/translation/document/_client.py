@@ -52,6 +52,13 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
                 :language: python
                 :dedent: 4
                 :caption: Creating the DocumentTranslationClient with an endpoint and API key.
+
+            .. literalinclude:: ../samples/sample_authentication.py
+                :start-after: [START create_dt_client_with_aad]
+                :end-before: [END create_dt_client_with_aad]
+                :language: python
+                :dedent: 4
+                :caption: Creating the DocumentTranslationClient with a token credential.
         """
         self._endpoint = endpoint
         self._credential = credential

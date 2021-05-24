@@ -56,6 +56,13 @@ class DocumentTranslationClient(object):
                 :language: python
                 :dedent: 4
                 :caption: Creating the DocumentTranslationClient with an endpoint and API key.
+
+            .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+                :start-after: [START create_dt_client_with_aad_async]
+                :end-before: [END create_dt_client_with_aad_async]
+                :language: python
+                :dedent: 4
+                :caption: Creating the DocumentTranslationClient with a token credential.
         """
         self._endpoint = endpoint
         self._credential = credential
