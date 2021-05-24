@@ -53,6 +53,20 @@ client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net
 ```
 
 ## Key concepts
+Basic understanding of below terms will help to get started with FarmBeats client library.
+
+* [Farm Hierarchy][farm_hierarchy]: Is a collection of below entities.
+    * Farmer - is the custodian of all the agronomic data.
+    * Farm - is a logical collection of fields and/or seasonal fields. They do not have any area associated with them.
+    * Field - is a multi-polygon area. This is expected to be stable across seasons.
+    * Seasonal field - is a multi-polygon area. To define a seasonal boundary we need details of area (boundary), time (season) and crop. New seasonal fields are expected to be created for every new season.
+    * Boundary - is the actual multi-polygon area expressed as a geometry (from geojson). It is normally associated with a field or a seasonal field. Satellite, weather and farm operations data is linked to a boundary.
+    * Cascade delete - Agronomic data is stored hierarchically with farmer as the root. The hierarchy includes Farmer -> Farms -> Fields -> Seasonal Fields -> Boundaries -> Associated data (satellite, weather, farm operations). Cascade delete refers to the process of deleting any node and its subtree. 
+    
+* Scenes [scenes]: refers to images ingested using satellite APIs.
+
+* Farm Operations [farm_operations_docs]: includes details pertaining to tilling, planting, application of pesticides & nutrients, and harvesting. This can either be manually pushed into FarmBeats using APIs or the same information can be pulled from farm equipment service providers like John Deere. 
+
 
 ## Examples
 
@@ -267,7 +281,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [coc_contact]: mailto:opencode@microsoft.com
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential\
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential/
+[farm_hierarchy]: https://aka.ms/FarmBeatsFarmHierarchyDocs
+[farm_operations_docs]: https://aka.ms/FarmBeatsFarmOperationsDocumentation
 [install_farmbeats]: https://aka.ms/FarmBeatsInstallDocumentationPaaS
 [product_docs]: https://docs.microsoft.com/azure/azure-agrifood-farming/
 [pip]: https://pypi.org/project/pip/
@@ -275,4 +291,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python]: https://www.python.org/downloads/
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/samples/
+[scenes]: https://aka.ms/FarmBeatsSatellitePaaSDocumentation
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/
