@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class DomainsOperations(object):
-    """DomainsOperations operations.
+class SystemTopicsOperations(object):
+    """SystemTopicsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -50,24 +50,24 @@ class DomainsOperations(object):
     def get(
         self,
         resource_group_name,  # type: str
-        domain_name,  # type: str
+        system_topic_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Domain"
-        """Get a domain.
+        # type: (...) -> "_models.SystemTopic"
+        """Get a system topic.
 
-        Get properties of a domain.
+        Get properties of a system topic.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain.
-        :type domain_name: str
+        :param system_topic_name: Name of the system topic.
+        :type system_topic_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Domain, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.Domain
+        :return: SystemTopic, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.SystemTopic
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopic"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -80,7 +80,7 @@ class DomainsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -100,23 +100,23 @@ class DomainsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Domain', pipeline_response)
+        deserialized = self._deserialize('SystemTopic', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain_info,  # type: "_models.Domain"
+        system_topic_name,  # type: str
+        system_topic_info,  # type: "_models.SystemTopic"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Domain"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
+        # type: (...) -> "_models.SystemTopic"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopic"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -130,7 +130,7 @@ class DomainsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -144,54 +144,58 @@ class DomainsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(domain_info, 'Domain')
+        body_content = self._serialize.body(system_topic_info, 'SystemTopic')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Domain', pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize('SystemTopic', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('SystemTopic', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
 
     def begin_create_or_update(
         self,
         resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain_info,  # type: "_models.Domain"
+        system_topic_name,  # type: str
+        system_topic_info,  # type: "_models.SystemTopic"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.Domain"]
-        """Create or update a domain.
+        # type: (...) -> LROPoller["_models.SystemTopic"]
+        """Create a system topic.
 
-        Asynchronously creates or updates a new domain with the specified parameters.
+        Asynchronously creates a new system topic with the specified parameters.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain.
-        :type domain_name: str
-        :param domain_info: Domain information.
-        :type domain_info: ~azure.mgmt.eventgrid.models.Domain
+        :param system_topic_name: Name of the system topic.
+        :type system_topic_name: str
+        :param system_topic_info: System Topic information.
+        :type system_topic_info: ~azure.mgmt.eventgrid.models.SystemTopic
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either Domain or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.Domain]
+        :return: An instance of LROPoller that returns either SystemTopic or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.SystemTopic]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopic"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -200,8 +204,8 @@ class DomainsOperations(object):
         if cont_token is None:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
-                domain_name=domain_name,
-                domain_info=domain_info,
+                system_topic_name=system_topic_name,
+                system_topic_info=system_topic_info,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -210,7 +214,7 @@ class DomainsOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('Domain', pipeline_response)
+            deserialized = self._deserialize('SystemTopic', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -219,7 +223,7 @@ class DomainsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -234,12 +238,12 @@ class DomainsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}'}  # type: ignore
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
 
     def _delete_initial(
         self,
         resource_group_name,  # type: str
-        domain_name,  # type: str
+        system_topic_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -255,7 +259,7 @@ class DomainsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -277,23 +281,23 @@ class DomainsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
 
     def begin_delete(
         self,
         resource_group_name,  # type: str
-        domain_name,  # type: str
+        system_topic_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Delete a domain.
+        """Delete a system topic.
 
-        Delete existing domain.
+        Delete existing system topic.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain.
-        :type domain_name: str
+        :param system_topic_name: Name of the system topic.
+        :type system_topic_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling.
@@ -314,7 +318,7 @@ class DomainsOperations(object):
         if cont_token is None:
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
-                domain_name=domain_name,
+                system_topic_name=system_topic_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -329,7 +333,7 @@ class DomainsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -344,17 +348,17 @@ class DomainsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
 
     def _update_initial(
         self,
         resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain_update_parameters,  # type: "_models.DomainUpdateParameters"
+        system_topic_name,  # type: str
+        system_topic_update_parameters,  # type: "_models.SystemTopicUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.Domain"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Domain"]]
+        # type: (...) -> "_models.SystemTopic"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopic"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -368,7 +372,7 @@ class DomainsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -382,7 +386,7 @@ class DomainsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(domain_update_parameters, 'DomainUpdateParameters')
+        body_content = self._serialize.body(system_topic_update_parameters, 'SystemTopicUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -392,46 +396,48 @@ class DomainsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('SystemTopic', pipeline_response)
+
         if response.status_code == 201:
-            deserialized = self._deserialize('Domain', pipeline_response)
+            deserialized = self._deserialize('SystemTopic', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
 
     def begin_update(
         self,
         resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain_update_parameters,  # type: "_models.DomainUpdateParameters"
+        system_topic_name,  # type: str
+        system_topic_update_parameters,  # type: "_models.SystemTopicUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.Domain"]
-        """Update a domain.
+        # type: (...) -> LROPoller["_models.SystemTopic"]
+        """Update a system topic.
 
-        Asynchronously updates a domain with the specified parameters.
+        Asynchronously updates a system topic with the specified parameters.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain.
-        :type domain_name: str
-        :param domain_update_parameters: Domain update information.
-        :type domain_update_parameters: ~azure.mgmt.eventgrid.models.DomainUpdateParameters
+        :param system_topic_name: Name of the system topic.
+        :type system_topic_name: str
+        :param system_topic_update_parameters: SystemTopic update information.
+        :type system_topic_update_parameters: ~azure.mgmt.eventgrid.models.SystemTopicUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either SystemTopic or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.SystemTopic]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopic"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -440,8 +446,8 @@ class DomainsOperations(object):
         if cont_token is None:
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
-                domain_name=domain_name,
-                domain_update_parameters=domain_update_parameters,
+                system_topic_name=system_topic_name,
+                system_topic_update_parameters=system_topic_update_parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -450,7 +456,7 @@ class DomainsOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('Domain', pipeline_response)
+            deserialized = self._deserialize('SystemTopic', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -459,7 +465,7 @@ class DomainsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -474,7 +480,7 @@ class DomainsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}'}  # type: ignore
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
 
     def list_by_subscription(
         self,
@@ -482,10 +488,10 @@ class DomainsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.DomainsListResult"]
-        """List domains under an Azure subscription.
+        # type: (...) -> Iterable["_models.SystemTopicsListResult"]
+        """List system topics under an Azure subscription.
 
-        List all the domains under an Azure subscription.
+        List all the system topics under an Azure subscription.
 
         :param filter: The query used to filter the search results using OData syntax. Filtering is
          permitted on the 'name' property only and with limited number of OData operations. These
@@ -499,11 +505,11 @@ class DomainsOperations(object):
          items per page.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DomainsListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.DomainsListResult]
+        :return: An iterator like instance of either SystemTopicsListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.SystemTopicsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopicsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -539,7 +545,7 @@ class DomainsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('DomainsListResult', pipeline_response)
+            deserialized = self._deserialize('SystemTopicsListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -560,7 +566,7 @@ class DomainsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/domains'}  # type: ignore
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/systemTopics'}  # type: ignore
 
     def list_by_resource_group(
         self,
@@ -569,10 +575,10 @@ class DomainsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.DomainsListResult"]
-        """List domains under a resource group.
+        # type: (...) -> Iterable["_models.SystemTopicsListResult"]
+        """List system topics under a resource group.
 
-        List all the domains under a resource group.
+        List all the system topics under a resource group.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
@@ -588,11 +594,11 @@ class DomainsOperations(object):
          items per page.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DomainsListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.DomainsListResult]
+        :return: An iterator like instance of either SystemTopicsListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.SystemTopicsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopicsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -629,7 +635,7 @@ class DomainsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('DomainsListResult', pipeline_response)
+            deserialized = self._deserialize('SystemTopicsListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -650,134 +656,4 @@ class DomainsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains'}  # type: ignore
-
-    def list_shared_access_keys(
-        self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DomainSharedAccessKeys"
-        """List keys for a domain.
-
-        List the two keys used to publish to a domain.
-
-        :param resource_group_name: The name of the resource group within the user's subscription.
-        :type resource_group_name: str
-        :param domain_name: Name of the domain.
-        :type domain_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DomainSharedAccessKeys, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.DomainSharedAccessKeys
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainSharedAccessKeys"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.list_shared_access_keys.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('DomainSharedAccessKeys', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    list_shared_access_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/listKeys'}  # type: ignore
-
-    def regenerate_key(
-        self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        regenerate_key_request,  # type: "_models.DomainRegenerateKeyRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DomainSharedAccessKeys"
-        """Regenerate key for a domain.
-
-        Regenerate a shared access key for a domain.
-
-        :param resource_group_name: The name of the resource group within the user's subscription.
-        :type resource_group_name: str
-        :param domain_name: Name of the domain.
-        :type domain_name: str
-        :param regenerate_key_request: Request body to regenerate key.
-        :type regenerate_key_request: ~azure.mgmt.eventgrid.models.DomainRegenerateKeyRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DomainSharedAccessKeys, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.DomainSharedAccessKeys
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainSharedAccessKeys"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-15-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.regenerate_key.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(regenerate_key_request, 'DomainRegenerateKeyRequest')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('DomainSharedAccessKeys', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    regenerate_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/regenerateKey'}  # type: ignore
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics'}  # type: ignore
