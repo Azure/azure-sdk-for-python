@@ -259,7 +259,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [azure_subscription]: https://azure.microsoft.com/free/
-[change_log]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/sagrifood/azure-agrifood-farming/CHANGELOG.md
+[change_log]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/CHANGELOG.md
 [cla]: https://cla.microsoft.com
 [coc_contact]: mailto:opencode@microsoft.com
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
@@ -269,5 +269,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [pip]: https://pypi.org/project/pip/
 [pypi]: https://pypi.org/project/azure-agrifood-farming/
 [python_logging]: https://docs.python.org/3.5/library/logging.html
-[samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/samples
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/samples/
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/
