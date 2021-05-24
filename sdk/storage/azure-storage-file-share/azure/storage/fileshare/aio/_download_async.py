@@ -10,6 +10,7 @@ from io import BytesIO
 from itertools import islice
 import warnings
 
+from typing import AsyncIterator
 from azure.core.exceptions import HttpResponseError
 from .._shared.encryption import decrypt_blob
 from .._shared.request_handlers import validate_and_format_range_headers
@@ -101,10 +102,11 @@ class _AsyncChunkDownloader(_ChunkDownloader):
 
 
 class _AsyncChunkIterator(object):
-    """Async iterator for chunks in file download stream."""
+    """Async iterator for chunks in blob download stream."""
 
-    def __init__(self, size, content, downloader):
+    def __init__(self, size, content, downloader, chunk_size):
         self.size = size
+        self._chunk_size = chunk_size
         self._current_content = content
         self._iter_downloader = downloader
         self._iter_chunks = None
@@ -124,21 +126,35 @@ class _AsyncChunkIterator(object):
         if self._complete:
             raise StopAsyncIteration("Download complete")
         if not self._iter_downloader:
-            # If no iterator was supplied, the download completed with
-            # the initial GET, so we just return that data
+            # cut the data obtained from initial GET into chunks
+            if len(self._current_content) > self._chunk_size:
+                return self._get_chunk_data()
             self._complete = True
             return self._current_content
 
         if not self._iter_chunks:
             self._iter_chunks = self._iter_downloader.get_chunk_offsets()
-        else:
-            try:
-                chunk = next(self._iter_chunks)
-            except StopIteration:
-                raise StopAsyncIteration("Download complete")
-            self._current_content = await self._iter_downloader.yield_chunk(chunk)
 
-        return self._current_content
+        # initial GET result still has more than _chunk_size bytes of data
+        if len(self._current_content) >= self._chunk_size:
+            return self._get_chunk_data()
+
+        try:
+            chunk = next(self._iter_chunks)
+            self._current_content += await self._iter_downloader.yield_chunk(chunk)
+        except StopIteration:
+            self._complete = True
+            # it's likely that there some data left in self._current_content
+            if self._current_content:
+                return self._current_content
+            raise StopAsyncIteration("Download complete")
+
+        return self._get_chunk_data()
+
+    def _get_chunk_data(self):
+        chunk_data = self._current_content[: self._chunk_size]
+        self._current_content = self._current_content[self._chunk_size:]
+        return chunk_data
 
 
 class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
@@ -304,9 +320,10 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return response
 
     def chunks(self):
+        # type: () -> AsyncIterator[bytes]
         """Iterate over chunks in the download stream.
 
-        :rtype: Iterable[bytes]
+        :rtype: AsyncIterator[bytes]
         """
         if self.size == 0 or self._download_complete:
             iter_downloader = None
@@ -331,7 +348,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return _AsyncChunkIterator(
             size=self.size,
             content=self._current_content,
-            downloader=iter_downloader)
+            downloader=iter_downloader,
+            chunk_size=self._config.max_chunk_get_size
+        )
 
     async def readall(self):
         """Download the contents of this file.

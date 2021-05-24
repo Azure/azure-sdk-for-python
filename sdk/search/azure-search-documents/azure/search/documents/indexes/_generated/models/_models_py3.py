@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -1168,90 +1168,6 @@ class CustomEntityLookupSkill(SearchIndexerSkill):
         self.global_default_fuzzy_edit_distance = global_default_fuzzy_edit_distance
 
 
-class LexicalNormalizer(msrest.serialization.Model):
-    """Base type for normalizers.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param odata_type: Required. Identifies the concrete type of the normalizer.
-    :type odata_type: str
-    :param name: Required. The name of the normalizer. It must only contain letters, digits,
-     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
-     limited to 128 characters. It cannot end in '.microsoft' nor '.lucene', nor be named
-     'asciifolding', 'standard', 'lowercase', 'uppercase', or 'elision'.
-    :type name: str
-    """
-
-    _validation = {
-        'odata_type': {'required': True},
-        'name': {'required': True},
-    }
-
-    _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        odata_type: str,
-        name: str,
-        **kwargs
-    ):
-        super(LexicalNormalizer, self).__init__(**kwargs)
-        self.odata_type = odata_type
-        self.name = name
-
-
-class CustomNormalizer(LexicalNormalizer):
-    """Allows you to configure normalization for filterable, sortable, and facetable fields, which by default operate with strict matching. This is a user-defined configuration consisting of at least one or more filters, which modify the token that is stored.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param odata_type: Required. Identifies the concrete type of the normalizer.
-    :type odata_type: str
-    :param name: Required. The name of the normalizer. It must only contain letters, digits,
-     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
-     limited to 128 characters. It cannot end in '.microsoft' nor '.lucene', nor be named
-     'asciifolding', 'standard', 'lowercase', 'uppercase', or 'elision'.
-    :type name: str
-    :param token_filters: A list of token filters used to filter out or modify the input token. For
-     example, you can specify a lowercase filter that converts all characters to lowercase. The
-     filters are run in the order in which they are listed.
-    :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
-    :param char_filters: A list of character filters used to prepare input text before it is
-     processed. For instance, they can replace certain characters or symbols. The filters are run in
-     the order in which they are listed.
-    :type char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
-    """
-
-    _validation = {
-        'odata_type': {'required': True},
-        'name': {'required': True},
-    }
-
-    _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'token_filters': {'key': 'tokenFilters', 'type': '[str]'},
-        'char_filters': {'key': 'charFilters', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        odata_type: str,
-        name: str,
-        token_filters: Optional[List[Union[str, "TokenFilterName"]]] = None,
-        char_filters: Optional[List[Union[str, "CharFilterName"]]] = None,
-        **kwargs
-    ):
-        super(CustomNormalizer, self).__init__(odata_type=odata_type, name=name, **kwargs)
-        self.token_filters = token_filters
-        self.char_filters = char_filters
-
-
 class DataChangeDetectionPolicy(msrest.serialization.Model):
     """Base type for data change detection policies.
 
@@ -1607,7 +1523,7 @@ class DocumentExtractionSkill(SearchIndexerSkill):
      'contentAndMetadata' if not defined.
     :type data_to_extract: str
     :param configuration: A dictionary of configurations for the skill.
-    :type configuration: dict[str, object]
+    :type configuration: dict[str, any]
     """
 
     _validation = {
@@ -1638,7 +1554,7 @@ class DocumentExtractionSkill(SearchIndexerSkill):
         context: Optional[str] = None,
         parsing_mode: Optional[str] = None,
         data_to_extract: Optional[str] = None,
-        configuration: Optional[Dict[str, object]] = None,
+        configuration: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(DocumentExtractionSkill, self).__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
@@ -1973,7 +1889,7 @@ class FieldMappingFunction(msrest.serialization.Model):
     :type name: str
     :param parameters: A dictionary of parameter name/value pairs to pass to the function. Each
      value must be of a primitive type.
-    :type parameters: dict[str, object]
+    :type parameters: dict[str, any]
     """
 
     _validation = {
@@ -1989,7 +1905,7 @@ class FieldMappingFunction(msrest.serialization.Model):
         self,
         *,
         name: str,
-        parameters: Optional[Dict[str, object]] = None,
+        parameters: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(FieldMappingFunction, self).__init__(**kwargs)
@@ -2333,7 +2249,7 @@ class IndexingParametersConfiguration(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param parsing_mode: Represents the parsing mode for indexing from an Azure blob data source.
      Possible values include: "default", "text", "delimitedText", "json", "jsonArray", "jsonLines".
      Default value: "default".
@@ -2422,7 +2338,7 @@ class IndexingParametersConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         parsing_mode: Optional[Union[str, "BlobIndexerParsingMode"]] = "default",
         excluded_file_name_extensions: Optional[str] = "",
         indexed_file_name_extensions: Optional[str] = "",
@@ -4386,11 +4302,6 @@ class SearchField(msrest.serialization.Model):
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
      "whitespace".
     :type index_analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :param normalizer: The name of the normalizer to use for the field. This option can be used
-     only with fields with filterable, sortable, or facetable enabled. Once the normalizer is
-     chosen, it cannot be changed for the field. Must be null for complex fields. Possible values
-     include: "asciifolding", "elision", "lowercase", "standard", "uppercase".
-    :type normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :param synonym_maps: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
      supported. Assigning a synonym map to a field ensures that query terms targeting that field are
@@ -4419,7 +4330,6 @@ class SearchField(msrest.serialization.Model):
         'analyzer': {'key': 'analyzer', 'type': 'str'},
         'search_analyzer': {'key': 'searchAnalyzer', 'type': 'str'},
         'index_analyzer': {'key': 'indexAnalyzer', 'type': 'str'},
-        'normalizer': {'key': 'normalizer', 'type': 'str'},
         'synonym_maps': {'key': 'synonymMaps', 'type': '[str]'},
         'fields': {'key': 'fields', 'type': '[SearchField]'},
     }
@@ -4438,7 +4348,6 @@ class SearchField(msrest.serialization.Model):
         analyzer: Optional[Union[str, "LexicalAnalyzerName"]] = None,
         search_analyzer: Optional[Union[str, "LexicalAnalyzerName"]] = None,
         index_analyzer: Optional[Union[str, "LexicalAnalyzerName"]] = None,
-        normalizer: Optional[Union[str, "LexicalNormalizerName"]] = None,
         synonym_maps: Optional[List[str]] = None,
         fields: Optional[List["SearchField"]] = None,
         **kwargs
@@ -4455,7 +4364,6 @@ class SearchField(msrest.serialization.Model):
         self.analyzer = analyzer
         self.search_analyzer = search_analyzer
         self.index_analyzer = index_analyzer
-        self.normalizer = normalizer
         self.synonym_maps = synonym_maps
         self.fields = fields
 
@@ -4487,8 +4395,6 @@ class SearchIndex(msrest.serialization.Model):
     :type token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
     :param char_filters: The character filters for the index.
     :type char_filters: list[~azure.search.documents.indexes.models.CharFilter]
-    :param normalizers: The normalizers for the index.
-    :type normalizers: list[~azure.search.documents.indexes.models.LexicalNormalizer]
     :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
@@ -4523,7 +4429,6 @@ class SearchIndex(msrest.serialization.Model):
         'tokenizers': {'key': 'tokenizers', 'type': '[LexicalTokenizer]'},
         'token_filters': {'key': 'tokenFilters', 'type': '[TokenFilter]'},
         'char_filters': {'key': 'charFilters', 'type': '[CharFilter]'},
-        'normalizers': {'key': 'normalizers', 'type': '[LexicalNormalizer]'},
         'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
         'similarity': {'key': 'similarity', 'type': 'Similarity'},
         'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
@@ -4542,7 +4447,6 @@ class SearchIndex(msrest.serialization.Model):
         tokenizers: Optional[List["LexicalTokenizer"]] = None,
         token_filters: Optional[List["TokenFilter"]] = None,
         char_filters: Optional[List["CharFilter"]] = None,
-        normalizers: Optional[List["LexicalNormalizer"]] = None,
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
         similarity: Optional["Similarity"] = None,
         e_tag: Optional[str] = None,
@@ -4559,7 +4463,6 @@ class SearchIndex(msrest.serialization.Model):
         self.tokenizers = tokenizers
         self.token_filters = token_filters
         self.char_filters = char_filters
-        self.normalizers = normalizers
         self.encryption_key = encryption_key
         self.similarity = similarity
         self.e_tag = e_tag
@@ -4834,6 +4737,302 @@ class SearchIndexerError(msrest.serialization.Model):
         self.documentation_link = None
 
 
+class SearchIndexerKnowledgeStore(msrest.serialization.Model):
+    """Definition of additional projections to azure blob, table, or files, of enriched data.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param storage_connection_string: Required. The connection string to the storage account
+     projections will be stored in.
+    :type storage_connection_string: str
+    :param projections: Required. A list of additional projections to perform during indexing.
+    :type projections:
+     list[~azure.search.documents.indexes.models.SearchIndexerKnowledgeStoreProjection]
+    """
+
+    _validation = {
+        'storage_connection_string': {'required': True},
+        'projections': {'required': True},
+    }
+
+    _attribute_map = {
+        'storage_connection_string': {'key': 'storageConnectionString', 'type': 'str'},
+        'projections': {'key': 'projections', 'type': '[SearchIndexerKnowledgeStoreProjection]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        storage_connection_string: str,
+        projections: List["SearchIndexerKnowledgeStoreProjection"],
+        **kwargs
+    ):
+        super(SearchIndexerKnowledgeStore, self).__init__(**kwargs)
+        self.storage_connection_string = storage_connection_string
+        self.projections = projections
+
+
+class SearchIndexerKnowledgeStoreProjectionSelector(msrest.serialization.Model):
+    """Abstract class to share properties between concrete selectors.
+
+    :param reference_key_name: Name of reference key to different projection.
+    :type reference_key_name: str
+    :param generated_key_name: Name of generated key to store projection under.
+    :type generated_key_name: str
+    :param source: Source data to project.
+    :type source: str
+    :param source_context: Source context for complex projections.
+    :type source_context: str
+    :param inputs: Nested inputs for complex projections.
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    """
+
+    _attribute_map = {
+        'reference_key_name': {'key': 'referenceKeyName', 'type': 'str'},
+        'generated_key_name': {'key': 'generatedKeyName', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'source_context': {'key': 'sourceContext', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        reference_key_name: Optional[str] = None,
+        generated_key_name: Optional[str] = None,
+        source: Optional[str] = None,
+        source_context: Optional[str] = None,
+        inputs: Optional[List["InputFieldMappingEntry"]] = None,
+        **kwargs
+    ):
+        super(SearchIndexerKnowledgeStoreProjectionSelector, self).__init__(**kwargs)
+        self.reference_key_name = reference_key_name
+        self.generated_key_name = generated_key_name
+        self.source = source
+        self.source_context = source_context
+        self.inputs = inputs
+
+
+class SearchIndexerKnowledgeStoreBlobProjectionSelector(SearchIndexerKnowledgeStoreProjectionSelector):
+    """Abstract class to share properties between concrete selectors.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param reference_key_name: Name of reference key to different projection.
+    :type reference_key_name: str
+    :param generated_key_name: Name of generated key to store projection under.
+    :type generated_key_name: str
+    :param source: Source data to project.
+    :type source: str
+    :param source_context: Source context for complex projections.
+    :type source_context: str
+    :param inputs: Nested inputs for complex projections.
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :param storage_container: Required. Blob container to store projections in.
+    :type storage_container: str
+    """
+
+    _validation = {
+        'storage_container': {'required': True},
+    }
+
+    _attribute_map = {
+        'reference_key_name': {'key': 'referenceKeyName', 'type': 'str'},
+        'generated_key_name': {'key': 'generatedKeyName', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'source_context': {'key': 'sourceContext', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'storage_container': {'key': 'storageContainer', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        storage_container: str,
+        reference_key_name: Optional[str] = None,
+        generated_key_name: Optional[str] = None,
+        source: Optional[str] = None,
+        source_context: Optional[str] = None,
+        inputs: Optional[List["InputFieldMappingEntry"]] = None,
+        **kwargs
+    ):
+        super(SearchIndexerKnowledgeStoreBlobProjectionSelector, self).__init__(reference_key_name=reference_key_name, generated_key_name=generated_key_name, source=source, source_context=source_context, inputs=inputs, **kwargs)
+        self.storage_container = storage_container
+
+
+class SearchIndexerKnowledgeStoreFileProjectionSelector(SearchIndexerKnowledgeStoreBlobProjectionSelector):
+    """Projection definition for what data to store in Azure Files.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param reference_key_name: Name of reference key to different projection.
+    :type reference_key_name: str
+    :param generated_key_name: Name of generated key to store projection under.
+    :type generated_key_name: str
+    :param source: Source data to project.
+    :type source: str
+    :param source_context: Source context for complex projections.
+    :type source_context: str
+    :param inputs: Nested inputs for complex projections.
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :param storage_container: Required. Blob container to store projections in.
+    :type storage_container: str
+    """
+
+    _validation = {
+        'storage_container': {'required': True},
+    }
+
+    _attribute_map = {
+        'reference_key_name': {'key': 'referenceKeyName', 'type': 'str'},
+        'generated_key_name': {'key': 'generatedKeyName', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'source_context': {'key': 'sourceContext', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'storage_container': {'key': 'storageContainer', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        storage_container: str,
+        reference_key_name: Optional[str] = None,
+        generated_key_name: Optional[str] = None,
+        source: Optional[str] = None,
+        source_context: Optional[str] = None,
+        inputs: Optional[List["InputFieldMappingEntry"]] = None,
+        **kwargs
+    ):
+        super(SearchIndexerKnowledgeStoreFileProjectionSelector, self).__init__(reference_key_name=reference_key_name, generated_key_name=generated_key_name, source=source, source_context=source_context, inputs=inputs, storage_container=storage_container, **kwargs)
+
+
+class SearchIndexerKnowledgeStoreObjectProjectionSelector(SearchIndexerKnowledgeStoreBlobProjectionSelector):
+    """Projection definition for what data to store in Azure Blob.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param reference_key_name: Name of reference key to different projection.
+    :type reference_key_name: str
+    :param generated_key_name: Name of generated key to store projection under.
+    :type generated_key_name: str
+    :param source: Source data to project.
+    :type source: str
+    :param source_context: Source context for complex projections.
+    :type source_context: str
+    :param inputs: Nested inputs for complex projections.
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :param storage_container: Required. Blob container to store projections in.
+    :type storage_container: str
+    """
+
+    _validation = {
+        'storage_container': {'required': True},
+    }
+
+    _attribute_map = {
+        'reference_key_name': {'key': 'referenceKeyName', 'type': 'str'},
+        'generated_key_name': {'key': 'generatedKeyName', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'source_context': {'key': 'sourceContext', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'storage_container': {'key': 'storageContainer', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        storage_container: str,
+        reference_key_name: Optional[str] = None,
+        generated_key_name: Optional[str] = None,
+        source: Optional[str] = None,
+        source_context: Optional[str] = None,
+        inputs: Optional[List["InputFieldMappingEntry"]] = None,
+        **kwargs
+    ):
+        super(SearchIndexerKnowledgeStoreObjectProjectionSelector, self).__init__(reference_key_name=reference_key_name, generated_key_name=generated_key_name, source=source, source_context=source_context, inputs=inputs, storage_container=storage_container, **kwargs)
+
+
+class SearchIndexerKnowledgeStoreProjection(msrest.serialization.Model):
+    """Container object for various projection selectors.
+
+    :param tables: Projections to Azure Table storage.
+    :type tables:
+     list[~azure.search.documents.indexes.models.SearchIndexerKnowledgeStoreTableProjectionSelector]
+    :param objects: Projections to Azure Blob storage.
+    :type objects:
+     list[~azure.search.documents.indexes.models.SearchIndexerKnowledgeStoreObjectProjectionSelector]
+    :param files: Projections to Azure File storage.
+    :type files:
+     list[~azure.search.documents.indexes.models.SearchIndexerKnowledgeStoreFileProjectionSelector]
+    """
+
+    _attribute_map = {
+        'tables': {'key': 'tables', 'type': '[SearchIndexerKnowledgeStoreTableProjectionSelector]'},
+        'objects': {'key': 'objects', 'type': '[SearchIndexerKnowledgeStoreObjectProjectionSelector]'},
+        'files': {'key': 'files', 'type': '[SearchIndexerKnowledgeStoreFileProjectionSelector]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tables: Optional[List["SearchIndexerKnowledgeStoreTableProjectionSelector"]] = None,
+        objects: Optional[List["SearchIndexerKnowledgeStoreObjectProjectionSelector"]] = None,
+        files: Optional[List["SearchIndexerKnowledgeStoreFileProjectionSelector"]] = None,
+        **kwargs
+    ):
+        super(SearchIndexerKnowledgeStoreProjection, self).__init__(**kwargs)
+        self.tables = tables
+        self.objects = objects
+        self.files = files
+
+
+class SearchIndexerKnowledgeStoreTableProjectionSelector(SearchIndexerKnowledgeStoreProjectionSelector):
+    """Description for what data to store in Azure Tables.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param reference_key_name: Name of reference key to different projection.
+    :type reference_key_name: str
+    :param generated_key_name: Name of generated key to store projection under.
+    :type generated_key_name: str
+    :param source: Source data to project.
+    :type source: str
+    :param source_context: Source context for complex projections.
+    :type source_context: str
+    :param inputs: Nested inputs for complex projections.
+    :type inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :param table_name: Required. Name of the Azure table to store projected data in.
+    :type table_name: str
+    """
+
+    _validation = {
+        'table_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'reference_key_name': {'key': 'referenceKeyName', 'type': 'str'},
+        'generated_key_name': {'key': 'generatedKeyName', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'source_context': {'key': 'sourceContext', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'table_name': {'key': 'tableName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        table_name: str,
+        reference_key_name: Optional[str] = None,
+        generated_key_name: Optional[str] = None,
+        source: Optional[str] = None,
+        source_context: Optional[str] = None,
+        inputs: Optional[List["InputFieldMappingEntry"]] = None,
+        **kwargs
+    ):
+        super(SearchIndexerKnowledgeStoreTableProjectionSelector, self).__init__(reference_key_name=reference_key_name, generated_key_name=generated_key_name, source=source, source_context=source_context, inputs=inputs, **kwargs)
+        self.table_name = table_name
+
+
 class SearchIndexerLimits(msrest.serialization.Model):
     """SearchIndexerLimits.
 
@@ -4887,6 +5086,9 @@ class SearchIndexerSkillset(msrest.serialization.Model):
      skills.
     :type cognitive_services_account:
      ~azure.search.documents.indexes.models.CognitiveServicesAccount
+    :param knowledge_store: Definition of additional projections to azure blob, table, or files, of
+     enriched data.
+    :type knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
     :param e_tag: The ETag of the skillset.
     :type e_tag: str
     :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -4911,6 +5113,7 @@ class SearchIndexerSkillset(msrest.serialization.Model):
         'description': {'key': 'description', 'type': 'str'},
         'skills': {'key': 'skills', 'type': '[SearchIndexerSkill]'},
         'cognitive_services_account': {'key': 'cognitiveServices', 'type': 'CognitiveServicesAccount'},
+        'knowledge_store': {'key': 'knowledgeStore', 'type': 'SearchIndexerKnowledgeStore'},
         'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
         'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
     }
@@ -4922,6 +5125,7 @@ class SearchIndexerSkillset(msrest.serialization.Model):
         skills: List["SearchIndexerSkill"],
         description: Optional[str] = None,
         cognitive_services_account: Optional["CognitiveServicesAccount"] = None,
+        knowledge_store: Optional["SearchIndexerKnowledgeStore"] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
         **kwargs
@@ -4931,6 +5135,7 @@ class SearchIndexerSkillset(msrest.serialization.Model):
         self.description = description
         self.skills = skills
         self.cognitive_services_account = cognitive_services_account
+        self.knowledge_store = knowledge_store
         self.e_tag = e_tag
         self.encryption_key = encryption_key
 
@@ -5160,7 +5365,7 @@ class ServiceCounters(msrest.serialization.Model):
     :type storage_size_counter: ~azure.search.documents.indexes.models.ResourceCounter
     :param synonym_map_counter: Required. Total number of synonym maps.
     :type synonym_map_counter: ~azure.search.documents.indexes.models.ResourceCounter
-    :param skillset_counter: Required. Total number of skillsets.
+    :param skillset_counter: Total number of skillsets.
     :type skillset_counter: ~azure.search.documents.indexes.models.ResourceCounter
     """
 
@@ -5171,7 +5376,6 @@ class ServiceCounters(msrest.serialization.Model):
         'data_source_counter': {'required': True},
         'storage_size_counter': {'required': True},
         'synonym_map_counter': {'required': True},
-        'skillset_counter': {'required': True},
     }
 
     _attribute_map = {
@@ -5193,7 +5397,7 @@ class ServiceCounters(msrest.serialization.Model):
         data_source_counter: "ResourceCounter",
         storage_size_counter: "ResourceCounter",
         synonym_map_counter: "ResourceCounter",
-        skillset_counter: "ResourceCounter",
+        skillset_counter: Optional["ResourceCounter"] = None,
         **kwargs
     ):
         super(ServiceCounters, self).__init__(**kwargs)

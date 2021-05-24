@@ -26,7 +26,6 @@ try:
     from ._models_py3 import CustomEntity
     from ._models_py3 import CustomEntityAlias
     from ._models_py3 import CustomEntityLookupSkill
-    from ._models_py3 import CustomNormalizer
     from ._models_py3 import DataChangeDetectionPolicy
     from ._models_py3 import DataDeletionDetectionPolicy
     from ._models_py3 import DataSourceCredentials
@@ -60,7 +59,6 @@ try:
     from ._models_py3 import LanguageDetectionSkill
     from ._models_py3 import LengthTokenFilter
     from ._models_py3 import LexicalAnalyzer
-    from ._models_py3 import LexicalNormalizer
     from ._models_py3 import LexicalTokenizer
     from ._models_py3 import LimitTokenFilter
     from ._models_py3 import ListDataSourcesResult
@@ -100,6 +98,13 @@ try:
     from ._models_py3 import SearchIndexerDataContainer
     from ._models_py3 import SearchIndexerDataSource
     from ._models_py3 import SearchIndexerError
+    from ._models_py3 import SearchIndexerKnowledgeStore
+    from ._models_py3 import SearchIndexerKnowledgeStoreBlobProjectionSelector
+    from ._models_py3 import SearchIndexerKnowledgeStoreFileProjectionSelector
+    from ._models_py3 import SearchIndexerKnowledgeStoreObjectProjectionSelector
+    from ._models_py3 import SearchIndexerKnowledgeStoreProjection
+    from ._models_py3 import SearchIndexerKnowledgeStoreProjectionSelector
+    from ._models_py3 import SearchIndexerKnowledgeStoreTableProjectionSelector
     from ._models_py3 import SearchIndexerLimits
     from ._models_py3 import SearchIndexerSkill
     from ._models_py3 import SearchIndexerSkillset
@@ -154,7 +159,6 @@ except (SyntaxError, ImportError):
     from ._models import CustomEntity  # type: ignore
     from ._models import CustomEntityAlias  # type: ignore
     from ._models import CustomEntityLookupSkill  # type: ignore
-    from ._models import CustomNormalizer  # type: ignore
     from ._models import DataChangeDetectionPolicy  # type: ignore
     from ._models import DataDeletionDetectionPolicy  # type: ignore
     from ._models import DataSourceCredentials  # type: ignore
@@ -188,7 +192,6 @@ except (SyntaxError, ImportError):
     from ._models import LanguageDetectionSkill  # type: ignore
     from ._models import LengthTokenFilter  # type: ignore
     from ._models import LexicalAnalyzer  # type: ignore
-    from ._models import LexicalNormalizer  # type: ignore
     from ._models import LexicalTokenizer  # type: ignore
     from ._models import LimitTokenFilter  # type: ignore
     from ._models import ListDataSourcesResult  # type: ignore
@@ -228,6 +231,13 @@ except (SyntaxError, ImportError):
     from ._models import SearchIndexerDataContainer  # type: ignore
     from ._models import SearchIndexerDataSource  # type: ignore
     from ._models import SearchIndexerError  # type: ignore
+    from ._models import SearchIndexerKnowledgeStore  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreBlobProjectionSelector  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreFileProjectionSelector  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreObjectProjectionSelector  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreProjection  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreProjectionSelector  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreTableProjectionSelector  # type: ignore
     from ._models import SearchIndexerLimits  # type: ignore
     from ._models import SearchIndexerSkill  # type: ignore
     from ._models import SearchIndexerSkillset  # type: ignore
@@ -281,7 +291,6 @@ from ._search_client_enums import (
     IndexerStatus,
     KeyPhraseExtractionSkillLanguage,
     LexicalAnalyzerName,
-    LexicalNormalizerName,
     LexicalTokenizerName,
     MicrosoftStemmingTokenizerLanguage,
     MicrosoftTokenizerLanguage,
@@ -324,7 +333,6 @@ __all__ = [
     'CustomEntity',
     'CustomEntityAlias',
     'CustomEntityLookupSkill',
-    'CustomNormalizer',
     'DataChangeDetectionPolicy',
     'DataDeletionDetectionPolicy',
     'DataSourceCredentials',
@@ -358,7 +366,6 @@ __all__ = [
     'LanguageDetectionSkill',
     'LengthTokenFilter',
     'LexicalAnalyzer',
-    'LexicalNormalizer',
     'LexicalTokenizer',
     'LimitTokenFilter',
     'ListDataSourcesResult',
@@ -398,6 +405,13 @@ __all__ = [
     'SearchIndexerDataContainer',
     'SearchIndexerDataSource',
     'SearchIndexerError',
+    'SearchIndexerKnowledgeStore',
+    'SearchIndexerKnowledgeStoreBlobProjectionSelector',
+    'SearchIndexerKnowledgeStoreFileProjectionSelector',
+    'SearchIndexerKnowledgeStoreObjectProjectionSelector',
+    'SearchIndexerKnowledgeStoreProjection',
+    'SearchIndexerKnowledgeStoreProjectionSelector',
+    'SearchIndexerKnowledgeStoreTableProjectionSelector',
     'SearchIndexerLimits',
     'SearchIndexerSkill',
     'SearchIndexerSkillset',
@@ -449,7 +463,6 @@ __all__ = [
     'IndexerStatus',
     'KeyPhraseExtractionSkillLanguage',
     'LexicalAnalyzerName',
-    'LexicalNormalizerName',
     'LexicalTokenizerName',
     'MicrosoftStemmingTokenizerLanguage',
     'MicrosoftTokenizerLanguage',

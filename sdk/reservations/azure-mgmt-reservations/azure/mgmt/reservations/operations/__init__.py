@@ -6,24 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._quota_operations import QuotaOperations
-from ._quota_request_status_operations import QuotaRequestStatusOperations
-from ._auto_quota_increase_operations import AutoQuotaIncreaseOperations
 from ._reservation_operations import ReservationOperations
 from ._azure_reservation_api_operations import AzureReservationAPIOperationsMixin
 from ._reservation_order_operations import ReservationOrderOperations
 from ._operation_operations import OperationOperations
 from ._calculate_exchange_operations import CalculateExchangeOperations
 from ._exchange_operations import ExchangeOperations
+from ._quota_operations import QuotaOperations
+from ._quota_request_status_operations import QuotaRequestStatusOperations
 
 __all__ = [
-    'QuotaOperations',
-    'QuotaRequestStatusOperations',
-    'AutoQuotaIncreaseOperations',
     'ReservationOperations',
     'AzureReservationAPIOperationsMixin',
     'ReservationOrderOperations',
     'OperationOperations',
     'CalculateExchangeOperations',
     'ExchangeOperations',
+    'QuotaOperations',
+    'QuotaRequestStatusOperations',
 ]

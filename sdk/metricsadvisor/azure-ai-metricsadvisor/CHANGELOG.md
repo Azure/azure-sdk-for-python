@@ -2,6 +2,29 @@
 
 ## 1.0.0b4 (Unreleased)
 
+**New Features**
+- Added AzureLogAnalyticsDataFeedSource and AzureEventHubsDataFeedSource
+- Update method now returns the updated object
+
+**Breaking Changes**
+
+- Deprecated:
+    - HttpRequestDataFeed
+    - ElasticsearchDataFeed
+
+- Renamed
+    - AzureApplicationInsightsDataFeed -> AzureApplicationInsightsDataFeedSource
+    - AzureBlobDataFeed -> AzureBlobDataFeedSource
+    - AzureCosmosDBDataFeed -> AzureCosmosDBDataFeedSource
+    - AzureDataExplorerDataFeed -> AzureDataExplorerDataFeedSource
+    - AzureTableDataFeed -> AzureTableDataFeedSource
+    - InfluxDBDataFeed -> InfluxDBDataFeedSource
+    - MySqlDataFeed -> MySqlDataFeedSource
+    - PostgreSqlDataFeed -> PostgreSqlDataFeedSource
+    - SQLServerDataFeed -> SQLServerDataFeedSource
+    - MongoDBDataFeed -> MongoDBDataFeedSource
+    - AzureDataLakeStorageGen2DataFeed -> AzureDataLakeStorageGen2DataFeedSource
+
 **Dependency Updates**
 
 - Bump `msrest` requirement from `0.6.12` to `0.6.21`

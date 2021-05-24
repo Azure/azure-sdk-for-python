@@ -4,11 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List
+from typing import Any, List, Mapping, Optional, Union
 from uuid import uuid4
 
-from azure.core.credentials import AzureSasCredential
-from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
@@ -20,7 +19,7 @@ from azure.core.pipeline.policies import (
     AzureSasCredentialPolicy,
     RequestIdPolicy,
     CustomHookPolicy,
-    NetworkTraceLoggingPolicy
+    NetworkTraceLoggingPolicy,
 )
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
@@ -28,10 +27,10 @@ from azure.core.pipeline.transport import (
 )
 
 from .._generated.aio import AzureTable
-from .._base_client import AccountHostsMixin, get_api_version
+from .._base_client import AccountHostsMixin, get_api_version, extract_batch_part_metadata
 from .._authentication import SharedKeyCredentialPolicy
 from .._constants import STORAGE_OAUTH_SCOPE
-from .._models import BatchErrorException, BatchTransactionResult
+from .._error import RequestTooLargeError, TableTransactionError, _decode_error
 from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
 from ._policies_async import AsyncTablesRetryPolicy
@@ -41,12 +40,11 @@ class AsyncTablesBaseClient(AccountHostsMixin):
 
     def __init__(
         self,
-        account_url,  # type: str
-        credential=None,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        super(AsyncTablesBaseClient, self).__init__(account_url, credential=credential, **kwargs)
+        endpoint: str,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
+        **kwargs: Any
+    ) -> None:
+        super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),
@@ -78,6 +76,8 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
             self._credential_policy = AzureSasCredentialPolicy(credential)
+        elif isinstance(credential, AzureNamedKeyCredential):
+            self._credential_policy = SharedKeyCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -98,15 +98,9 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             HttpLoggingPolicy(**kwargs),
         ]
 
-    async def _batch_send(
-        self,
-        entities,  # type: List[TableEntity]
-        *reqs: "HttpRequest",
-        **kwargs
-    ):
+    async def _batch_send(self, *reqs: "HttpRequest", **kwargs) -> List[Mapping[str, Any]]:
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
-        raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         policies = [StorageHeadersPolicy()]
 
         changeset = HttpRequest("POST", None)
@@ -119,6 +113,8 @@ class AsyncTablesBaseClient(AccountHostsMixin):
                 "x-ms-version": self.api_version,
                 "DataServiceVersion": "3.0",
                 "MaxDataServiceVersion": "3.0;NetFx",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
             },
         )
         request.set_multipart_mixed(
@@ -130,42 +126,31 @@ class AsyncTablesBaseClient(AccountHostsMixin):
 
         pipeline_response = await self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
-
-        if response.status_code == 403:
-            raise ClientAuthenticationError(
-                message="There was an error authenticating with the service",
-                response=response,
-            )
-        if response.status_code == 404:
-            raise ResourceNotFoundError(
-                message="The resource could not be found", response=response
-            )
+        # TODO: Check for proper error model deserialization
+        if response.status_code == 413:
+            raise _decode_error(
+                response,
+                error_message="The transaction request was too large",
+                error_type=RequestTooLargeError)
         if response.status_code != 202:
-            raise BatchErrorException(
-                message="There is a failure in the batch operation.",
-                response=response,
-                parts=None,
-            )
+            raise _decode_error(response)
 
         parts_iter = response.parts()
         parts = []
         async for p in parts_iter:
             parts.append(p)
-        transaction_result = BatchTransactionResult(reqs, parts, entities)
-        if raise_on_any_failure:
-            if any(p for p in parts if not 200 <= p.status_code < 300):
-
-                if any(p for p in parts if p.status_code == 404):
-                    raise ResourceNotFoundError(
-                        message="The resource could not be found", response=response
-                    )
-
-                raise BatchErrorException(
-                    message="There is a failure in the batch operation.",
-                    response=response,
-                    parts=parts,
-                )
-        return transaction_result
+        error_parts = [p for p in parts if not 200 <= p.status_code < 300]
+        if any(error_parts):
+            if error_parts[0].status_code == 413:
+                raise _decode_error(
+                    response,
+                    error_message="The transaction request was too large",
+                    error_type=RequestTooLargeError)
+            raise _decode_error(
+                response=error_parts[0],
+                error_type=TableTransactionError,
+            )
+        return [extract_batch_part_metadata(p) for p in parts]
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

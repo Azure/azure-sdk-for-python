@@ -13,9 +13,9 @@ DESCRIPTION:
 USAGE:
     python get_purchased_phone_number_sample.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The connection string including your endpoint and 
+    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - The connection string including your endpoint and 
         access key of your Azure Communication Service
-    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER - The phone number you want to get its information
+    2) AZURE_PHONE_NUMBER - The phone number you want to get its information
 """
 
 import os
@@ -23,8 +23,8 @@ from azure.communication.phonenumbers import (
     PhoneNumbersClient
 )
 
-connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER") # e.g. "+18001234567"
+connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
+phone_number = os.getenv("AZURE_PHONE_NUMBER") # e.g. "+18001234567"
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 def get_purchased_phone_number_information():

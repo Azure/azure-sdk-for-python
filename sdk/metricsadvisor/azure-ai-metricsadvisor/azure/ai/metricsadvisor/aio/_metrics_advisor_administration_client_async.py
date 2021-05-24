@@ -180,10 +180,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         :param str name: Name for the data feed.
         :param source: The source of the data feed
-        :type source: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-            AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
-            InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-            ElasticsearchDataFeed]
+        :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
+            AzureCosmosDBDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
         :param granularity: Granularity type. If using custom granularity, you must instantiate a DataFeedGranularity.
         :type granularity: Union[str, ~azure.ai.metricsadvisor.models.DataFeedGranularityType,
             ~azure.ai.metricsadvisor.models.DataFeedGranularity]
@@ -603,7 +603,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     async def update_data_feed(
             self, data_feed: Union[str, DataFeed],
             **kwargs: Any
-    ) -> None:
+    ) -> DataFeed:
         """Update a data feed. Either pass the entire DataFeed object with the chosen updates
         or the ID to your data feed with updates passed via keyword arguments. If you pass both
         the DataFeed object and keyword arguments, the keyword arguments will take precedence.
@@ -645,11 +645,11 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword status: Data feed status. Possible values include: "Active", "Paused".
         :paramtype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
         :keyword source: The source of the data feed for update
-        :paramtype source: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-            AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
-            InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-            ElasticsearchDataFeed]
-        :rtype: None
+        :paramtype source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
+            AzureCosmosDBDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
+        :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -696,14 +696,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             data_feed_patch_type = DATA_FEED_PATCH[data_feed.source.data_source_type]
             data_feed_patch = data_feed._to_generated_patch(data_feed_patch_type, update)
 
-        return await self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
+        data_feed_detail = await self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
+        return DataFeed._from_generated(data_feed_detail)
 
     @distributed_trace_async
     async def update_alert_configuration(
         self,
         alert_configuration: Union[str, AnomalyAlertConfiguration],
         **kwargs: Any
-    ) -> None:
+    ) -> AnomalyAlertConfiguration:
         """Update anomaly alerting configuration. Either pass the entire AnomalyAlertConfiguration object
         with the chosen updates or the ID to your alert configuration with updates passed via keyword arguments.
         If you pass both the AnomalyAlertConfiguration object and keyword arguments, the keyword arguments
@@ -720,7 +721,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :paramtype cross_metrics_operator: str or
             ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
         :keyword str description: Anomaly alert configuration description.
-        :rtype: None
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -755,19 +756,20 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 cross_metrics_operator=update.pop("crossMetricsOperator", None),
                 description=update.pop("description", None),
             )
-
-        return await self._client.update_anomaly_alerting_configuration(
+        alerting_config = await self._client.update_anomaly_alerting_configuration(
             alert_configuration_id,
             alert_configuration_patch,
             **kwargs
         )
+
+        return AnomalyAlertConfiguration._from_generated(alerting_config)
 
     @distributed_trace_async
     async def update_detection_configuration(
         self,
         detection_configuration: Union[str, AnomalyDetectionConfiguration],
         **kwargs: Any
-    ) -> None:
+    ) -> AnomalyDetectionConfiguration:
         """Update anomaly metric detection configuration. Either pass the entire AnomalyDetectionConfiguration object
         with the chosen updates or the ID to your detection configuration with updates passed via keyword arguments.
         If you pass both the AnomalyDetectionConfiguration object and keyword arguments, the keyword arguments
@@ -824,19 +826,20 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 series_group_detection_conditions=update.pop("dimensionGroupOverrideConfigurations", None),
                 series_detection_conditions=update.pop("seriesOverrideConfigurations", None)
             )
-
-        return await self._client.update_anomaly_detection_configuration(
+        detection_config = await self._client.update_anomaly_detection_configuration(
             detection_configuration_id,
             detection_config_patch,
             **kwargs
         )
+
+        return AnomalyDetectionConfiguration._from_generated(detection_config)
 
     @distributed_trace_async
     async def update_hook(
         self,
         hook: Union[str, EmailNotificationHook, WebNotificationHook],
         **kwargs: Any
-    ) -> None:
+    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         """Update a hook. Either pass the entire EmailNotificationHook or WebNotificationHook object with the
         chosen updates, or the ID to your hook configuration with the updates passed via keyword arguments.
         If you pass both the hook object and keyword arguments, the keyword arguments will take precedence.
@@ -857,7 +860,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword str certificate_key: client certificate. Only should be passed to update WebNotificationHook.
         :keyword str certificate_password: client certificate password. Only should be passed to update
             WebNotificationHook.
-        :rtype: None
+        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
+            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
+            ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -916,11 +921,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                     certificate_password=update.pop("certificatePassword", None)
                 )
 
-        return await self._client.update_hook(
+        updated_hook = await self._client.update_hook(
             hook_id,
             hook_patch,
             **kwargs
         )
+        if updated_hook.hook_type == "Email":
+            return EmailNotificationHook._from_generated(updated_hook)
+        return WebNotificationHook._from_generated(updated_hook)
 
     @distributed_trace
     def list_hooks(

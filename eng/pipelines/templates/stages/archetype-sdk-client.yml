@@ -57,9 +57,15 @@ parameters:
 - name: MatrixReplace
   type: object
   default: []
+- name: VerifyAutorest
+  type: boolean
+  default: false
 
 stages:
   - stage: Build
+    variables:
+      - name: BuildTargetingStringValue
+        value: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
     jobs:
     - template: /eng/pipelines/templates/jobs/ci.yml
       parameters:
@@ -70,7 +76,7 @@ stages:
           TestPipeline: true
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BuildTargetingString: $(BuildTargetingStringValue)
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
@@ -88,6 +94,7 @@ stages:
           - OsVmImage=macOS-10.15/MMSUbuntu18.04
           - ${{ each replacement in parameters.MatrixReplace }}:
             - ${{ replacement }}
+        VerifyAutorest: ${{ parameters.VerifyAutorest }}
 
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
@@ -115,4 +122,4 @@ stages:
         ArtifactName: conda
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
-        
+

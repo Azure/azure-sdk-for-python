@@ -29,7 +29,7 @@ class CertificatesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.iothub.models
+    :type models: ~azure.mgmt.iothub.v2018_01_22.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -61,7 +61,7 @@ class CertificatesOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateListDescription, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.CertificateListDescription
+        :rtype: ~azure.mgmt.iothub.v2018_01_22.models.CertificateListDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateListDescription"]
@@ -95,7 +95,7 @@ class CertificatesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CertificateListDescription', pipeline_response)
@@ -126,7 +126,7 @@ class CertificatesOperations(object):
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateDescription, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.CertificateDescription
+        :rtype: ~azure.mgmt.iothub.v2018_01_22.models.CertificateDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateDescription"]
@@ -161,7 +161,7 @@ class CertificatesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CertificateDescription', pipeline_response)
@@ -193,13 +193,13 @@ class CertificatesOperations(object):
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param certificate_description: The certificate body.
-        :type certificate_description: ~azure.mgmt.iothub.models.CertificateBodyDescription
+        :type certificate_description: ~azure.mgmt.iothub.v2018_01_22.models.CertificateBodyDescription
         :param if_match: ETag of the Certificate. Do not specify for creating a brand new certificate.
          Required to update an existing certificate.
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateDescription, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.CertificateDescription
+        :rtype: ~azure.mgmt.iothub.v2018_01_22.models.CertificateDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateDescription"]
@@ -241,7 +241,7 @@ class CertificatesOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -315,7 +315,7 @@ class CertificatesOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -347,7 +347,7 @@ class CertificatesOperations(object):
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateWithNonceDescription, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.CertificateWithNonceDescription
+        :rtype: ~azure.mgmt.iothub.v2018_01_22.models.CertificateWithNonceDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateWithNonceDescription"]
@@ -383,7 +383,7 @@ class CertificatesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CertificateWithNonceDescription', pipeline_response)
@@ -418,10 +418,10 @@ class CertificatesOperations(object):
         :param if_match: ETag of the Certificate.
         :type if_match: str
         :param certificate_verification_body: The name of the certificate.
-        :type certificate_verification_body: ~azure.mgmt.iothub.models.CertificateVerificationDescription
+        :type certificate_verification_body: ~azure.mgmt.iothub.v2018_01_22.models.CertificateVerificationDescription
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateDescription, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.models.CertificateDescription
+        :rtype: ~azure.mgmt.iothub.v2018_01_22.models.CertificateDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateDescription"]
@@ -462,7 +462,7 @@ class CertificatesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CertificateDescription', pipeline_response)

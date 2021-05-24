@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class FirewallRulesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -45,15 +45,79 @@ class FirewallRulesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
+    def get(
+        self,
+        resource_group_name,  # type: str
+        server_name,  # type: str
+        firewall_rule_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.FirewallRule"
+        """Gets a firewall rule.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param firewall_rule_name: The name of the firewall rule.
+        :type firewall_rule_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: FirewallRule, or the result of cls(response)
+        :rtype: ~azure.mgmt.sql.models.FirewallRule
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRule"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-11-01-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'firewallRuleName': self._serialize.url("firewall_rule_name", firewall_rule_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('FirewallRule', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
+
     def create_or_update(
         self,
         resource_group_name,  # type: str
         server_name,  # type: str
         firewall_rule_name,  # type: str
-        parameters,  # type: "models.FirewallRule"
+        parameters,  # type: "_models.FirewallRule"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FirewallRule"
+        # type: (...) -> "_models.FirewallRule"
         """Creates or updates a firewall rule.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -70,22 +134,22 @@ class FirewallRulesOperations(object):
         :rtype: ~azure.mgmt.sql.models.FirewallRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2014-04-01"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'firewallRuleName': self._serialize.url("firewall_rule_name", firewall_rule_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -148,15 +212,15 @@ class FirewallRulesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2014-04-01"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'firewallRuleName': self._serialize.url("firewall_rule_name", firewall_rule_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -180,78 +244,14 @@ class FirewallRulesOperations(object):
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
 
-    def get(
-        self,
-        resource_group_name,  # type: str
-        server_name,  # type: str
-        firewall_rule_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.FirewallRule"
-        """Gets a firewall rule.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param firewall_rule_name: The name of the firewall rule.
-        :type firewall_rule_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: FirewallRule, or the result of cls(response)
-        :rtype: ~azure.mgmt.sql.models.FirewallRule
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallRule"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2014-04-01"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'firewallRuleName': self._serialize.url("firewall_rule_name", firewall_rule_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('FirewallRule', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
-
     def list_by_server(
         self,
         resource_group_name,  # type: str
         server_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.FirewallRuleListResult"]
-        """Returns a list of firewall rules.
+        # type: (...) -> Iterable["_models.FirewallRuleListResult"]
+        """Gets a list of firewall rules.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
@@ -263,12 +263,12 @@ class FirewallRulesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.FirewallRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2014-04-01"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -280,9 +280,9 @@ class FirewallRulesOperations(object):
                 # Construct URL
                 url = self.list_by_server.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -301,7 +301,7 @@ class FirewallRulesOperations(object):
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -319,3 +319,73 @@ class FirewallRulesOperations(object):
             get_next, extract_data
         )
     list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/firewallRules'}  # type: ignore
+
+    def replace(
+        self,
+        resource_group_name,  # type: str
+        server_name,  # type: str
+        parameters,  # type: "_models.FirewallRuleList"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Optional["_models.FirewallRule"]
+        """Replaces all firewall rules on the server.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param parameters:
+        :type parameters: ~azure.mgmt.sql.models.FirewallRuleList
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: FirewallRule, or the result of cls(response)
+        :rtype: ~azure.mgmt.sql.models.FirewallRule or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FirewallRule"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-11-01-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.replace.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'FirewallRuleList')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('FirewallRule', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    replace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/firewallRules'}  # type: ignore

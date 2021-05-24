@@ -200,7 +200,7 @@ class DeploymentExportResult(msrest.serialization.Model):
     """The deployment export result.
 
     :param template: The template content.
-    :type template: object
+    :type template: any
     """
 
     _attribute_map = {
@@ -358,7 +358,7 @@ class DeploymentOperationProperties(msrest.serialization.Model):
     :ivar status_code: Operation status code.
     :vartype status_code: str
     :ivar status_message: Operation status message.
-    :vartype status_message: object
+    :vartype status_message: any
     :ivar target_resource: The target resource.
     :vartype target_resource: ~azure.mgmt.resource.resources.v2019_05_01.models.TargetResource
     :ivar request: The HTTP request message.
@@ -445,7 +445,7 @@ class DeploymentProperties(msrest.serialization.Model):
      syntax directly in the request rather than link to an existing template. It can be a JObject or
      well-formed JSON string. Use either the templateLink property or the template property, but not
      both.
-    :type template: object
+    :type template: any
     :param template_link: The URI of the template. Use either the templateLink property or the
      template property, but not both.
     :type template_link: ~azure.mgmt.resource.resources.v2019_05_01.models.TemplateLink
@@ -453,7 +453,7 @@ class DeploymentProperties(msrest.serialization.Model):
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
-    :type parameters: object
+    :type parameters: any
     :param parameters_link: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
@@ -513,18 +513,18 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :ivar duration: The duration of the template deployment.
     :vartype duration: str
     :param outputs: Key/value pairs that represent deployment output.
-    :type outputs: object
+    :type outputs: any
     :param providers: The list of resource providers needed for the deployment.
     :type providers: list[~azure.mgmt.resource.resources.v2019_05_01.models.Provider]
     :param dependencies: The list of deployment dependencies.
     :type dependencies: list[~azure.mgmt.resource.resources.v2019_05_01.models.Dependency]
     :param template: The template content. Use only one of Template or TemplateLink.
-    :type template: object
+    :type template: any
     :param template_link: The URI referencing the template. Use only one of Template or
      TemplateLink.
     :type template_link: ~azure.mgmt.resource.resources.v2019_05_01.models.TemplateLink
     :param parameters: Deployment parameters. Use only one of Parameters or ParametersLink.
-    :type parameters: object
+    :type parameters: any
     :param parameters_link: The URI referencing the parameters. Use only one of Parameters or
      ParametersLink.
     :type parameters_link: ~azure.mgmt.resource.resources.v2019_05_01.models.ParametersLink
@@ -616,7 +616,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -771,7 +771,7 @@ class GenericResource(Resource):
     :param plan: The plan of the resource.
     :type plan: ~azure.mgmt.resource.resources.v2019_05_01.models.Plan
     :param properties: The resource properties.
-    :type properties: object
+    :type properties: any
     :param kind: The kind of the resource.
     :type kind: str
     :param managed_by: ID of the resource that manages this resource.
@@ -834,7 +834,7 @@ class GenericResourceExpanded(GenericResource):
     :param plan: The plan of the resource.
     :type plan: ~azure.mgmt.resource.resources.v2019_05_01.models.Plan
     :param properties: The resource properties.
-    :type properties: object
+    :type properties: any
     :param kind: The kind of the resource.
     :type kind: str
     :param managed_by: ID of the resource that manages this resource.
@@ -922,7 +922,7 @@ class HttpMessage(msrest.serialization.Model):
     """HTTP message.
 
     :param content: HTTP message content.
-    :type content: object
+    :type content: any
     """
 
     _attribute_map = {
@@ -1263,6 +1263,8 @@ class ProviderResourceType(msrest.serialization.Model):
     :type aliases: list[~azure.mgmt.resource.resources.v2019_05_01.models.AliasType]
     :param api_versions: The API version.
     :type api_versions: list[str]
+    :param zone_mappings:
+    :type zone_mappings: list[~azure.mgmt.resource.resources.v2019_05_01.models.ZoneMapping]
     :param capabilities: The additional capabilities offered by this resource type.
     :type capabilities: str
     :param properties: The properties.
@@ -1274,6 +1276,7 @@ class ProviderResourceType(msrest.serialization.Model):
         'locations': {'key': 'locations', 'type': '[str]'},
         'aliases': {'key': 'aliases', 'type': '[AliasType]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
+        'zone_mappings': {'key': 'zoneMappings', 'type': '[ZoneMapping]'},
         'capabilities': {'key': 'capabilities', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},
     }
@@ -1287,6 +1290,7 @@ class ProviderResourceType(msrest.serialization.Model):
         self.locations = kwargs.get('locations', None)
         self.aliases = kwargs.get('aliases', None)
         self.api_versions = kwargs.get('api_versions', None)
+        self.zone_mappings = kwargs.get('zone_mappings', None)
         self.capabilities = kwargs.get('capabilities', None)
         self.properties = kwargs.get('properties', None)
 
@@ -1350,7 +1354,7 @@ class ResourceGroupExportResult(msrest.serialization.Model):
     """Resource group export result.
 
     :param template: The template content.
-    :type template: object
+    :type template: any
     :param error: The error.
     :type error:
      ~azure.mgmt.resource.resources.v2019_05_01.models.ResourceManagementErrorWithDetails
@@ -1864,3 +1868,26 @@ class TemplateLink(msrest.serialization.Model):
         super(TemplateLink, self).__init__(**kwargs)
         self.uri = kwargs['uri']
         self.content_version = kwargs.get('content_version', None)
+
+
+class ZoneMapping(msrest.serialization.Model):
+    """ZoneMapping.
+
+    :param location: The location of the zone mapping.
+    :type location: str
+    :param zones:
+    :type zones: list[str]
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ZoneMapping, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.zones = kwargs.get('zones', None)

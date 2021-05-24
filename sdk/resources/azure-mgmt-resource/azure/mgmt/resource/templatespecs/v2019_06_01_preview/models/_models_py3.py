@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -64,7 +64,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -360,7 +360,7 @@ class TemplateSpecTemplateArtifact(TemplateSpecArtifact):
     :type kind: str or
      ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecArtifactKind
     :param template: Required. The Azure Resource Manager template.
-    :type template: object
+    :type template: any
     """
 
     _validation = {
@@ -379,7 +379,7 @@ class TemplateSpecTemplateArtifact(TemplateSpecArtifact):
         self,
         *,
         path: str,
-        template: object,
+        template: Any,
         **kwargs
     ):
         super(TemplateSpecTemplateArtifact, self).__init__(path=path, **kwargs)
@@ -457,7 +457,7 @@ class TemplateSpecVersion(AzureResourceBase):
     :param description: Template Spec version description.
     :type description: str
     :param template: The Azure Resource Manager template content.
-    :type template: object
+    :type template: any
     """
 
     _validation = {
@@ -488,7 +488,7 @@ class TemplateSpecVersion(AzureResourceBase):
         tags: Optional[Dict[str, str]] = None,
         artifacts: Optional[List["TemplateSpecArtifact"]] = None,
         description: Optional[str] = None,
-        template: Optional[object] = None,
+        template: Optional[Any] = None,
         **kwargs
     ):
         super(TemplateSpecVersion, self).__init__(**kwargs)

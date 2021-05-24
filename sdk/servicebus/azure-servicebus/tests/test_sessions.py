@@ -731,6 +731,27 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             renewer.close()
             assert len(messages) == 2
 
+        # test voluntary halt of auto lock renewer when session is closed
+        session_id = str(uuid.uuid4())
+        with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+            messages = [ServiceBusMessage("{}".format(i), session_id=session_id) for i in range(10)]
+            sender.send_messages(messages)
+
+        renewer = AutoLockRenewer(max_lock_renewal_duration=100)
+        receiver = sb_client.get_queue_receiver(servicebus_queue.name,
+                                            session_id=session_id,
+                                            max_wait_time=5,
+                                            prefetch_count=10,
+                                            auto_lock_renewer=renewer)
+
+        with receiver:
+            received_msgs = receiver.receive_messages(max_wait_time=5)
+            for msg in received_msgs:
+                receiver.complete_message(msg)
+
+        receiver.close()
+        assert not renewer._renewable(receiver._session)
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

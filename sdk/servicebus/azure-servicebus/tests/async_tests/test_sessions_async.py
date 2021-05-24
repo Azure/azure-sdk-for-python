@@ -613,6 +613,26 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             await renewer.close()
             assert len(messages) == 2
 
+        session_id = str(uuid.uuid4())
+        async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+            messages = [ServiceBusMessage("{}".format(i), session_id=session_id) for i in range(10)]
+            await sender.send_messages(messages)
+
+        renewer = AutoLockRenewer(max_lock_renewal_duration=100)
+        receiver = sb_client.get_queue_receiver(servicebus_queue.name,
+                                            session_id=session_id,
+                                            max_wait_time=5,
+                                            prefetch_count=10,
+                                            auto_lock_renewer=renewer)
+
+        async with receiver:
+            received_msgs = await receiver.receive_messages(max_wait_time=5)
+            for msg in received_msgs:
+                await receiver.complete_message(msg)
+
+        await receiver.close()
+        assert not renewer._renewable(receiver._session)
+
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

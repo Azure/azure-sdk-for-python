@@ -46,7 +46,7 @@ class DeploymentOperationsOperations:
         resource_group_name: str,
         deployment_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentOperation":
         """Get a list of deployments operations.
 
@@ -108,7 +108,7 @@ class DeploymentOperationsOperations:
         resource_group_name: str,
         deployment_name: str,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentOperationsListResult"]:
         """Gets a list of deployments operations.
 

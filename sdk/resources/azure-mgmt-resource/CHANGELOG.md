@@ -1,5 +1,39 @@
 # Release History
 
+## 18.0.0 (2021-05-19)
+
+**Breaking changes**
+
+  - Operation ResourceGroupsOperations.begin_delete has a new signature
+
+## 17.0.0 (2021-05-13)
+
+**Features**
+
+  - Model Provider has a new parameter provider_authorization_consent_state
+  - Model TemplateSpec has a new parameter metadata
+  - Model GenericResourceExpanded has a new parameter extended_location
+  - Model Resource has a new parameter extended_location
+  - Model TemplateSpecVersion has a new parameter ui_form_definition
+  - Model TemplateSpecVersion has a new parameter metadata
+  - Model TemplateSpecVersion has a new parameter linked_templates
+  - Model TemplateSpecVersion has a new parameter main_template
+  - Model WhatIfChange has a new parameter unsupported_reason
+  - Model GenericResource has a new parameter extended_location
+  - Added operation ProvidersOperations.provider_permissions
+
+**Breaking changes**
+
+  - Operation ProvidersOperations.register has a new signature
+  - Model TemplateSpecVersion no longer has parameter template
+  - Model TemplateSpecVersion no longer has parameter artifacts
+
+## 16.1.0 (2021-04-16)
+
+**Features**
+
+  - Model ManagedServiceIdentity has a new parameter tenant_id
+
 ## 16.0.0 (2021-02-26)
 
 **Features**

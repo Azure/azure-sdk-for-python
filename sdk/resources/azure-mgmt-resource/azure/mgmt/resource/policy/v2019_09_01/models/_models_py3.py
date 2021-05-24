@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import msrest.serialization
 
@@ -21,7 +21,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -133,9 +133,9 @@ class ParameterDefinitionsValue(msrest.serialization.Model):
      "Object", "Boolean", "Integer", "Float", "DateTime".
     :type type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.ParameterType
     :param allowed_values: The allowed values for the parameter.
-    :type allowed_values: list[object]
+    :type allowed_values: list[any]
     :param default_value: The default value for the parameter if no value is provided.
-    :type default_value: object
+    :type default_value: any
     :param metadata: General metadata for the parameter.
     :type metadata:
      ~azure.mgmt.resource.policy.v2019_09_01.models.ParameterDefinitionsValueMetadata
@@ -152,8 +152,8 @@ class ParameterDefinitionsValue(msrest.serialization.Model):
         self,
         *,
         type: Optional[Union[str, "ParameterType"]] = None,
-        allowed_values: Optional[List[object]] = None,
-        default_value: Optional[object] = None,
+        allowed_values: Optional[List[Any]] = None,
+        default_value: Optional[Any] = None,
         metadata: Optional["ParameterDefinitionsValueMetadata"] = None,
         **kwargs
     ):
@@ -169,7 +169,7 @@ class ParameterDefinitionsValueMetadata(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param display_name: The display name for the parameter.
     :type display_name: str
     :param description: The description of the parameter.
@@ -185,7 +185,7 @@ class ParameterDefinitionsValueMetadata(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, object]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
@@ -200,7 +200,7 @@ class ParameterValuesValue(msrest.serialization.Model):
     """The value of a parameter.
 
     :param value: The value of the parameter.
-    :type value: object
+    :type value: any
     """
 
     _attribute_map = {
@@ -210,7 +210,7 @@ class ParameterValuesValue(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[object] = None,
+        value: Optional[Any] = None,
         **kwargs
     ):
         super(ParameterValuesValue, self).__init__(**kwargs)
@@ -252,7 +252,7 @@ class PolicyAssignment(msrest.serialization.Model):
     :type description: str
     :param metadata: The policy assignment metadata. Metadata is an open ended object and is
      typically a collection of key value pairs.
-    :type metadata: object
+    :type metadata: any
     :param enforcement_mode: The policy assignment enforcement mode. Possible values are Default
      and DoNotEnforce. Possible values include: "Default", "DoNotEnforce".
     :type enforcement_mode: str or ~azure.mgmt.resource.policy.v2019_09_01.models.EnforcementMode
@@ -293,7 +293,7 @@ class PolicyAssignment(msrest.serialization.Model):
         not_scopes: Optional[List[str]] = None,
         parameters: Optional[Dict[str, "ParameterValuesValue"]] = None,
         description: Optional[str] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         enforcement_mode: Optional[Union[str, "EnforcementMode"]] = None,
         **kwargs
     ):
@@ -362,10 +362,10 @@ class PolicyDefinition(msrest.serialization.Model):
     :param description: The policy definition description.
     :type description: str
     :param policy_rule: The policy rule.
-    :type policy_rule: object
+    :type policy_rule: any
     :param metadata: The policy definition metadata.  Metadata is an open ended object and is
      typically a collection of key value pairs.
-    :type metadata: object
+    :type metadata: any
     :param parameters: The parameter definitions for parameters used in the policy rule. The keys
      are the parameter names.
     :type parameters: dict[str,
@@ -398,8 +398,8 @@ class PolicyDefinition(msrest.serialization.Model):
         mode: Optional[str] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        policy_rule: Optional[object] = None,
-        metadata: Optional[object] = None,
+        policy_rule: Optional[Any] = None,
+        metadata: Optional[Any] = None,
         parameters: Optional[Dict[str, "ParameterDefinitionsValue"]] = None,
         **kwargs
     ):
@@ -556,7 +556,7 @@ class PolicySetDefinition(msrest.serialization.Model):
     :type description: str
     :param metadata: The policy set definition metadata.  Metadata is an open ended object and is
      typically a collection of key value pairs.
-    :type metadata: object
+    :type metadata: any
     :param parameters: The policy set definition parameters that can be used in policy definition
      references.
     :type parameters: dict[str,
@@ -595,7 +595,7 @@ class PolicySetDefinition(msrest.serialization.Model):
         policy_type: Optional[Union[str, "PolicyType"]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         parameters: Optional[Dict[str, "ParameterDefinitionsValue"]] = None,
         policy_definitions: Optional[List["PolicyDefinitionReference"]] = None,
         policy_definition_groups: Optional[List["PolicyDefinitionGroup"]] = None,
