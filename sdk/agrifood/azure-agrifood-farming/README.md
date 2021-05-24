@@ -1,5 +1,13 @@
 # Azure AgriFood Farming client library for Python
-Test info 2
+FarmBeats is a B2B PaaS offering from Microsoft that makes it easy for AgriFood companies to build intelligent digital agriculture solutions on Azure. FarmBeats allows users to acquire, aggregate, and process agricultural data from various sources (farm equipment, weather, satellite) without the need to invest in deep data engineering resources.  Customers can build SaaS solutions on top of FarmBeats and leverage first class support for model building to generate insights at scale.
+
+Use FarmBeats client library for Python to do teh following. 
+
+- Create & update farmers, farms, fields, seasonal fields and boundaries.
+- Ingest satellite and weather data for areas of interest.
+- Ingest farm operations data covering tilling, planting, harvesting and application of farm inputs.
+
+[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples][samples] | [Changelog][change_log]
 
 ## Getting started
 
@@ -246,15 +254,20 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information see the [Code of Conduct FAQ][coc_faq] or contact [opencode@microsoft.com][coc_contact] with any additional questions or comments.
 
 <!-- LINKS -->
-
-[azure_subscription]: https://azure.microsoft.com/free/
-[pip]: https://pypi.org/project/pip/
+[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-agrifood-farming/latest/index.html
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
-[python_logging]: https://docs.python.org/3.5/library/logging.html
+[azure_subscription]: https://azure.microsoft.com/free/
+[change_log]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/sagrifood/azure-agrifood-farming/CHANGELOG.md
 [cla]: https://cla.microsoft.com
-[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
+[coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
+[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
+[product_docs]: https://docs.microsoft.com/azure/azure-agrifood-farming/
+[pip]: https://pypi.org/project/pip/
+[pypi]: https://pypi.org/project/azure-agrifood-farming/
+[python_logging]: https://docs.python.org/3.5/library/logging.html
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/samples
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/
