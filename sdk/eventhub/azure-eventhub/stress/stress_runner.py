@@ -300,7 +300,3 @@ if __name__ == '__main__':
             Popen(command, shell=(platform != "win32"))
 
         print("#### All the process has been started!")
-
-    while True:
-        print("{}: Docker is running.".format(datetime.now()))
-        time.sleep(10)
