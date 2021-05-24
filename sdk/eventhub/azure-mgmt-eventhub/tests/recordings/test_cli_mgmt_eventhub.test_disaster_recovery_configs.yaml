@@ -14,31 +14,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee?api-version=2017-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee","name":"namesp2test4eb615ee","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namesp2test4eb615ee","createdAt":"2020-09-16T07:11:21.83Z","updatedAt":"2020-09-16T07:11:21.83Z","serviceBusEndpoint":"https://namesp2test4eb615ee.servicebus.windows.net:443/","status":"Activating"}}'
+      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee","name":"namesp2test4eb615ee","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Updating","metricId":"00000000-0000-0000-0000-000000000000:namesp2test4eb615ee","createdAt":"2021-03-31T22:28:12.337Z","updatedAt":"2021-05-24T18:07:41.933Z","serviceBusEndpoint":"https://namesp2test4eb615ee.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '761'
+      - '715'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:11:23 GMT
+      - Mon, 24 May 2021 18:07:42 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -62,77 +62,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee?api-version=2017-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee","name":"namesp2test4eb615ee","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namesp2test4eb615ee","createdAt":"2020-09-16T07:11:21.83Z","updatedAt":"2020-09-16T07:11:21.83Z","serviceBusEndpoint":"https://namesp2test4eb615ee.servicebus.windows.net:443/","status":"Activating"}}'
+      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee","name":"namesp2test4eb615ee","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namesp2test4eb615ee","createdAt":"2021-03-31T22:28:12.337Z","updatedAt":"2021-05-24T18:07:42.807Z","serviceBusEndpoint":"https://namesp2test4eb615ee.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '761'
+      - '712'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:11:53 GMT
+      - Mon, 24 May 2021 18:08:12 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee?api-version=2017-04-01
-  response:
-    body:
-      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee","name":"namesp2test4eb615ee","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namesp2test4eb615ee","createdAt":"2020-09-16T07:11:21.83Z","updatedAt":"2020-09-16T07:12:03.62Z","serviceBusEndpoint":"https://namesp2test4eb615ee.servicebus.windows.net:443/","status":"Active"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '759'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 16 Sep 2020 07:12:23 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Service-Bus-Resource-Provider/SN1
-      - Microsoft-HTTPAPI/2.0
-      server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -159,31 +113,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee?api-version=2017-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","name":"namesptest4eb615ee","type":"Microsoft.EventHub/Namespaces","location":"North
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namesptest4eb615ee","createdAt":"2020-09-16T07:12:43.457Z","updatedAt":"2020-09-16T07:12:43.457Z","serviceBusEndpoint":"https://namesptest4eb615ee.servicebus.windows.net:443/","status":"Activating"}}'
+      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","name":"namesptest4eb615ee","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Updating","metricId":"00000000-0000-0000-0000-000000000000:namesptest4eb615ee","createdAt":"2021-05-24T17:51:02.39Z","updatedAt":"2021-05-24T18:08:19.087Z","serviceBusEndpoint":"https://namesptest4eb615ee.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '759'
+      - '710'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:12:44 GMT
+      - Mon, 24 May 2021 18:08:19 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -207,77 +161,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee?api-version=2017-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","name":"namesptest4eb615ee","type":"Microsoft.EventHub/Namespaces","location":"North
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namesptest4eb615ee","createdAt":"2020-09-16T07:12:43.457Z","updatedAt":"2020-09-16T07:12:43.457Z","serviceBusEndpoint":"https://namesptest4eb615ee.servicebus.windows.net:443/","status":"Activating"}}'
+      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","name":"namesptest4eb615ee","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namesptest4eb615ee","createdAt":"2021-05-24T17:51:02.39Z","updatedAt":"2021-05-24T18:08:20.427Z","serviceBusEndpoint":"https://namesptest4eb615ee.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '759'
+      - '707'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:13:14 GMT
+      - Mon, 24 May 2021 18:08:49 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee?api-version=2017-04-01
-  response:
-    body:
-      string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","name":"namesptest4eb615ee","type":"Microsoft.EventHub/Namespaces","location":"North
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namesptest4eb615ee","createdAt":"2020-09-16T07:12:43.457Z","updatedAt":"2020-09-16T07:13:31.007Z","serviceBusEndpoint":"https://namesptest4eb615ee.servicebus.windows.net:443/","status":"Active"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '757'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 16 Sep 2020 07:13:45 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Service-Bus-Resource-Provider/SN1
-      - Microsoft-HTTPAPI/2.0
-      server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -303,31 +211,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/authorizationRules/authorizationrule4eb615ee?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/authorizationRules/authorizationrule4eb615ee?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/authorizationRules/authorizationrule4eb615ee","name":"authorizationrule4eb615ee","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/authorizationRules/authorizationrule4eb615ee","name":"authorizationrule4eb615ee","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
         Central US","properties":{"rights":["Send"]}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '398'
+      - '349'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:14:07 GMT
+      - Mon, 24 May 2021 18:08:55 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -355,9 +263,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/checkNameAvailability?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/checkNameAvailability?api-version=2017-04-01
   response:
     body:
       string: '{"nameAvailable":true,"reason":"None"}'
@@ -369,16 +277,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:14:07 GMT
+      - Mon, 24 May 2021 18:08:55 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -393,7 +301,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''{"properties": {"partnerNamespace": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee"}}\'''''
+    body: '{"properties": {"partnerNamespace": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee"}}'
     headers:
       Accept:
       - application/json
@@ -402,34 +310,34 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '227'
+      - '178'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee","name":"disasterdecoveryconfig4eb615ee","type":"Microsoft.EventHub/Namespaces/disasterrecoveryconfigs","properties":{"provisioningState":"Accepted","partnerNamespace":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","role":"Primary","type":"MetadataReplication"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee","name":"disasterdecoveryconfig4eb615ee","type":"Microsoft.EventHub/Namespaces/disasterrecoveryconfigs","properties":{"provisioningState":"Accepted","partnerNamespace":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","role":"Primary","type":"MetadataReplication"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '656'
+      - '558'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:14:15 GMT
+      - Mon, 24 May 2021 18:09:03 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -453,111 +361,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee","name":"disasterdecoveryconfig4eb615ee","type":"Microsoft.EventHub/Namespaces/disasterrecoveryconfigs","properties":{"provisioningState":"Accepted","partnerNamespace":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","role":"Primary","type":"MetadataReplication"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee","name":"disasterdecoveryconfig4eb615ee","type":"Microsoft.EventHub/Namespaces/disasterrecoveryconfigs","properties":{"provisioningState":"Accepted","partnerNamespace":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","role":"Primary","type":"MetadataReplication"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '656'
+      - '558'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:14:15 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Service-Bus-Resource-Provider/SN1
-      - Microsoft-HTTPAPI/2.0
-      server-sb:
-      - Service-Bus-Resource-Provider/SN1
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee","name":"disasterdecoveryconfig4eb615ee","type":"Microsoft.EventHub/Namespaces/disasterrecoveryconfigs","properties":{"provisioningState":"Accepted","partnerNamespace":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","role":"Primary","type":"MetadataReplication"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '656'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 16 Sep 2020 07:14:15 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Service-Bus-Resource-Provider/SN1
-      - Microsoft-HTTPAPI/2.0
-      server-sb:
-      - Service-Bus-Resource-Provider/SN1
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee","name":"disasterdecoveryconfig4eb615ee","type":"Microsoft.EventHub/Namespaces/disasterrecoveryconfigs","properties":{"provisioningState":"Accepted","partnerNamespace":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","role":"Primary","type":"MetadataReplication"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '656'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 16 Sep 2020 07:14:47 GMT
+      - Mon, 24 May 2021 18:09:03 GMT
       expires:
       - '-1'
       pragma:
@@ -588,21 +406,156 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee","name":"disasterdecoveryconfig4eb615ee","type":"Microsoft.EventHub/Namespaces/disasterrecoveryconfigs","properties":{"provisioningState":"Accepted","partnerNamespace":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","role":"Primary","type":"MetadataReplication"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee","name":"disasterdecoveryconfig4eb615ee","type":"Microsoft.EventHub/Namespaces/disasterrecoveryconfigs","properties":{"provisioningState":"Accepted","partnerNamespace":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","role":"Primary","type":"MetadataReplication"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '656'
+      - '558'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:15:17 GMT
+      - Mon, 24 May 2021 18:09:03 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/CH3
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/CH3
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee","name":"disasterdecoveryconfig4eb615ee","type":"Microsoft.EventHub/Namespaces/disasterrecoveryconfigs","properties":{"provisioningState":"Accepted","partnerNamespace":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","role":"Primary","type":"MetadataReplication"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '558'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 18:09:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/CH3
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/CH3
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee","name":"disasterdecoveryconfig4eb615ee","type":"Microsoft.EventHub/Namespaces/disasterrecoveryconfigs","properties":{"provisioningState":"Accepted","partnerNamespace":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","role":"Primary","type":"MetadataReplication"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '558'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 18:10:04 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/CH3
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/CH3
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee","name":"disasterdecoveryconfig4eb615ee","type":"Microsoft.EventHub/Namespaces/disasterrecoveryconfigs","properties":{"provisioningState":"Succeeded","partnerNamespace":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","role":"Primary","type":"MetadataReplication","pendingReplicationOperationsCount":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '597'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 18:10:35 GMT
       expires:
       - '-1'
       pragma:
@@ -633,30 +586,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/messagingplan?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee","name":"disasterdecoveryconfig4eb615ee","type":"Microsoft.EventHub/Namespaces/disasterrecoveryconfigs","properties":{"provisioningState":"Succeeded","partnerNamespace":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee","role":"Primary","type":"MetadataReplication","pendingReplicationOperationsCount":0}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/messagingplan","name":"2","type":"Microsoft.EventHub/MessagingSKUPlan","location":null,"tags":null,"properties":{"sku":2,"selectedEventHubUnit":1,"updatedAt":"2021-05-24T18:07:36.2120033Z","revision":4,"eventHubProcessingUnits":0}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '695'
+      - '378'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:15:52 GMT
+      - Mon, 24 May 2021 18:11:05 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -678,76 +631,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/messagingplan?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee/authorizationRules/authorizationrule4eb615ee?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/messagingplan","name":"2","type":"Microsoft.EventHub/MessagingSKUPlan","location":null,"tags":null,"properties":{"sku":2,"selectedEventHubUnit":1,"updatedAt":"2020-09-16T07:11:22.6816823Z","revision":3}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '399'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 16 Sep 2020 07:16:22 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Service-Bus-Resource-Provider/CH3
-      - Microsoft-HTTPAPI/2.0
-      server-sb:
-      - Service-Bus-Resource-Provider/CH3
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee/authorizationRules/authorizationrule4eb615ee?api-version=2017-04-01
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee/authorizationRules/authorizationrule4eb615ee","name":"authorizationrule4eb615ee","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee/authorizationRules/authorizationrule4eb615ee","name":"authorizationrule4eb615ee","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"South
         Central US","properties":{"rights":["Send"]}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '453'
+      - '404'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:16:23 GMT
+      - Mon, 24 May 2021 18:11:06 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -771,12 +679,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee/authorizationRules/authorizationrule4eb615ee/listKeys?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee/authorizationRules/authorizationrule4eb615ee/listKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"aliasPrimaryConnectionString":"Endpoint=sb://disasterdecoveryconfig4eb615ee.servicebus.windows.net/;SharedAccessKeyName=authorizationrule4eb615ee;SharedAccessKey=l7V9r5Gjbmqlb0Koehg1U4YD4+m8+78aXR//8LFUykI=","aliasSecondaryConnectionString":"Endpoint=sb://disasterdecoveryconfig4eb615ee.servicebus.windows.net/;SharedAccessKeyName=authorizationrule4eb615ee;SharedAccessKey=KL0F9Nriwd6+Uq+HBlUllsVOMj6qXWzOxBNdBfmAjCg=","primaryKey":"l7V9r5Gjbmqlb0Koehg1U4YD4+m8+78aXR//8LFUykI=","secondaryKey":"KL0F9Nriwd6+Uq+HBlUllsVOMj6qXWzOxBNdBfmAjCg=","keyName":"authorizationrule4eb615ee"}'
+      string: '{"aliasPrimaryConnectionString":"Endpoint=sb://disasterdecoveryconfig4eb615ee.servicebus.windows.net/;SharedAccessKeyName=authorizationrule4eb615ee;SharedAccessKey=kKBsq8W3JVJvo6mhWjeX0745mRTsxq04KxNt67TW2h8=","aliasSecondaryConnectionString":"Endpoint=sb://disasterdecoveryconfig4eb615ee.servicebus.windows.net/;SharedAccessKeyName=authorizationrule4eb615ee;SharedAccessKey=mVIbfk5VI1EyhAhaAjzvDQY0Qa+NihD2Sr6QbSlwsaM=","primaryKey":"kKBsq8W3JVJvo6mhWjeX0745mRTsxq04KxNt67TW2h8=","secondaryKey":"mVIbfk5VI1EyhAhaAjzvDQY0Qa+NihD2Sr6QbSlwsaM=","keyName":"authorizationrule4eb615ee"}'
     headers:
       cache-control:
       - no-cache
@@ -785,16 +693,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:16:24 GMT
+      - Mon, 24 May 2021 18:11:07 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -820,9 +728,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee/breakPairing?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesp2test4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee/breakPairing?api-version=2017-04-01
   response:
     body:
       string: ''
@@ -832,16 +740,16 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Sep 2020 07:16:25 GMT
+      - Mon, 24 May 2021 18:11:07 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -863,9 +771,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee/failover?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee/failover?api-version=2017-04-01
   response:
     body:
       string: ''
@@ -875,16 +783,16 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Sep 2020 07:16:25 GMT
+      - Mon, 24 May 2021 18:11:07 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -906,13 +814,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
   response:
     body:
       string: '{"error":{"message":"Delete operation is only allowed when primary
-        namespace does not have secondary namespace. CorrelationId: 78c57f58-748c-498c-b96f-b3699c19573d","code":"BadRequest"}}'
+        namespace does not have secondary namespace. CorrelationId: 8f2c0b97-1c6f-48da-8bd9-3e0ceb649c1d","code":"BadRequest"}}'
     headers:
       cache-control:
       - no-cache
@@ -921,16 +829,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:16:26 GMT
+      - Mon, 24 May 2021 18:11:08 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -952,13 +860,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
   response:
     body:
       string: '{"error":{"message":"Delete operation is only allowed when primary
-        namespace does not have secondary namespace. CorrelationId: 2ebda4fc-0c2d-4958-b974-43a0f03c1116","code":"BadRequest"}}'
+        namespace does not have secondary namespace. CorrelationId: 9e018762-bb6c-4fba-bf03-772c0a350cc2","code":"BadRequest"}}'
     headers:
       cache-control:
       - no-cache
@@ -967,16 +875,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:16:56 GMT
+      - Mon, 24 May 2021 18:11:38 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -998,13 +906,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
   response:
     body:
       string: '{"error":{"message":"Delete operation is only allowed when primary
-        namespace does not have secondary namespace. CorrelationId: a5fc17d3-d2c8-46e4-a6af-be620d1adfeb","code":"BadRequest"}}'
+        namespace does not have secondary namespace. CorrelationId: 7997ea35-86d0-45bc-a835-cb81bfa7ac6a","code":"BadRequest"}}'
     headers:
       cache-control:
       - no-cache
@@ -1013,16 +921,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 07:17:26 GMT
+      - Mon, 24 May 2021 18:12:08 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -1044,9 +952,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_eventhub_test_disaster_recovery_configs4eb615ee/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/swathip-test/providers/Microsoft.EventHub/namespaces/namesptest4eb615ee/disasterRecoveryConfigs/disasterdecoveryconfig4eb615ee?api-version=2017-04-01
   response:
     body:
       string: ''
@@ -1056,16 +964,16 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Sep 2020 07:17:58 GMT
+      - Mon, 24 May 2021 18:12:39 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:

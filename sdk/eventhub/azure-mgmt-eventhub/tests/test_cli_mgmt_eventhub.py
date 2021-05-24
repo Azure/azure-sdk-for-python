@@ -64,7 +64,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
             kind=azure.mgmt.storage.models.Kind.storage,
             location=location
         )
-        result_create = self.storage_client.storage_accounts.create(
+        result_create = self.storage_client.storage_accounts.begin_create(
             group_name,
             storage_name,
             params_create,
@@ -89,7 +89,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
                 ),
             ],
         )
-        azure_operation_poller = self.network_client.virtual_networks.create_or_update(
+        azure_operation_poller = self.network_client.virtual_networks.begin_create_or_update(
             group_name,
             network_name,
             params_create,
