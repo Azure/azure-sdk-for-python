@@ -217,7 +217,7 @@ class CryptographyClient(KeyVaultClientBase):
         :param algorithm: encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
         :param bytes plaintext: bytes to encrypt
-        :keyword bytes iv: optional initialization vector. Required for AES-CBC(PAD) encryption.
+        :keyword bytes iv: initialization vector. Required for only AES-CBC(PAD) encryption.
         :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
             with AES-GCM encryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
@@ -276,7 +276,7 @@ class CryptographyClient(KeyVaultClientBase):
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
         :param bytes ciphertext: encrypted bytes to decrypt
         :keyword bytes iv: the initialization vector used during encryption. Required for AES decryption.
-        :keyword bytes authentication_tag: the authentication tag generated during encryption. Required for AES-GCM
+        :keyword bytes authentication_tag: the authentication tag generated during encryption. Required for only AES-GCM
             decryption.
         :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
             with AES-GCM decryption.

@@ -340,7 +340,7 @@ class KeyVaultKeyIdentifier(object):
     """
 
     def __init__(self, id):
-        # type: (str) -> KeyVaultKeyIdentifier
+        # type: (str) -> None
         self._resource_id = parse_key_vault_id(id)
 
     @property
