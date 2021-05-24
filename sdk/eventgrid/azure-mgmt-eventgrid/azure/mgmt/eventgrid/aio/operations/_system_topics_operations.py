@@ -21,8 +21,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class PrivateEndpointConnectionsOperations:
-    """PrivateEndpointConnectionsOperations async operations.
+class SystemTopicsOperations:
+    """SystemTopicsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -46,32 +46,23 @@ class PrivateEndpointConnectionsOperations:
     async def get(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum25"],
-        parent_name: str,
-        private_endpoint_connection_name: str,
+        system_topic_name: str,
         **kwargs: Any
-    ) -> "_models.PrivateEndpointConnection":
-        """Get a specific private endpoint connection.
+    ) -> "_models.SystemTopic":
+        """Get a system topic.
 
-        Get a specific private endpoint connection under a topic or domain.
+        Get properties of a system topic.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum25
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
-        :type parent_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection
-         connection.
-        :type private_endpoint_connection_name: str
+        :param system_topic_name: Name of the system topic.
+        :type system_topic_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateEndpointConnection, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.PrivateEndpointConnection
+        :return: SystemTopic, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.SystemTopic
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopic"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -84,9 +75,7 @@ class PrivateEndpointConnectionsOperations:
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'parentType': self._serialize.url("parent_type", parent_type, 'str'),
-            'parentName': self._serialize.url("parent_name", parent_name, 'str'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -106,24 +95,22 @@ class PrivateEndpointConnectionsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+        deserialized = self._deserialize('SystemTopic', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
 
-    async def _update_initial(
+    async def _create_or_update_initial(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum26"],
-        parent_name: str,
-        private_endpoint_connection_name: str,
-        private_endpoint_connection: "_models.PrivateEndpointConnection",
+        system_topic_name: str,
+        system_topic_info: "_models.SystemTopic",
         **kwargs: Any
-    ) -> "_models.PrivateEndpointConnection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+    ) -> "_models.SystemTopic":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopic"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -133,13 +120,11 @@ class PrivateEndpointConnectionsOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self._update_initial.metadata['url']  # type: ignore
+        url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'parentType': self._serialize.url("parent_type", parent_type, 'str'),
-            'parentName': self._serialize.url("parent_name", parent_name, 'str'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -153,7 +138,7 @@ class PrivateEndpointConnectionsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(private_endpoint_connection, 'PrivateEndpointConnection')
+        body_content = self._serialize.body(system_topic_info, 'SystemTopic')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -164,67 +149,56 @@ class PrivateEndpointConnectionsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+            deserialized = self._deserialize('SystemTopic', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+            deserialized = self._deserialize('SystemTopic', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
 
-    async def begin_update(
+    async def begin_create_or_update(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum26"],
-        parent_name: str,
-        private_endpoint_connection_name: str,
-        private_endpoint_connection: "_models.PrivateEndpointConnection",
+        system_topic_name: str,
+        system_topic_info: "_models.SystemTopic",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.PrivateEndpointConnection"]:
-        """Update a specific private endpoint connection.
+    ) -> AsyncLROPoller["_models.SystemTopic"]:
+        """Create a system topic.
 
-        Update a specific private endpoint connection under a topic or domain.
+        Asynchronously creates a new system topic with the specified parameters.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum26
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
-        :type parent_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection
-         connection.
-        :type private_endpoint_connection_name: str
-        :param private_endpoint_connection: The private endpoint connection object to update.
-        :type private_endpoint_connection: ~azure.mgmt.eventgrid.models.PrivateEndpointConnection
+        :param system_topic_name: Name of the system topic.
+        :type system_topic_name: str
+        :param system_topic_info: System Topic information.
+        :type system_topic_info: ~azure.mgmt.eventgrid.models.SystemTopic
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
+        :return: An instance of AsyncLROPoller that returns either SystemTopic or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.SystemTopic]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopic"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._update_initial(
+            raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
-                parent_type=parent_type,
-                parent_name=parent_name,
-                private_endpoint_connection_name=private_endpoint_connection_name,
-                private_endpoint_connection=private_endpoint_connection,
+                system_topic_name=system_topic_name,
+                system_topic_info=system_topic_info,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -233,7 +207,7 @@ class PrivateEndpointConnectionsOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+            deserialized = self._deserialize('SystemTopic', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -242,9 +216,7 @@ class PrivateEndpointConnectionsOperations:
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'parentType': self._serialize.url("parent_type", parent_type, 'str'),
-            'parentName': self._serialize.url("parent_name", parent_name, 'str'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
         }
 
         if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -259,14 +231,12 @@ class PrivateEndpointConnectionsOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
 
     async def _delete_initial(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum27"],
-        parent_name: str,
-        private_endpoint_connection_name: str,
+        system_topic_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -281,9 +251,7 @@ class PrivateEndpointConnectionsOperations:
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'parentType': self._serialize.url("parent_type", parent_type, 'str'),
-            'parentName': self._serialize.url("parent_name", parent_name, 'str'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -298,38 +266,29 @@ class PrivateEndpointConnectionsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
 
     async def begin_delete(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum27"],
-        parent_name: str,
-        private_endpoint_connection_name: str,
+        system_topic_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Delete a specific private endpoint connection.
+        """Delete a system topic.
 
-        Delete a specific private endpoint connection under a topic or domain.
+        Delete existing system topic.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum27
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
-        :type parent_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection
-         connection.
-        :type private_endpoint_connection_name: str
+        :param system_topic_name: Name of the system topic.
+        :type system_topic_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling.
@@ -350,9 +309,7 @@ class PrivateEndpointConnectionsOperations:
         if cont_token is None:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
-                parent_type=parent_type,
-                parent_name=parent_name,
-                private_endpoint_connection_name=private_endpoint_connection_name,
+                system_topic_name=system_topic_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -367,9 +324,7 @@ class PrivateEndpointConnectionsOperations:
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'parentType': self._serialize.url("parent_type", parent_type, 'str'),
-            'parentName': self._serialize.url("parent_name", parent_name, 'str'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
         }
 
         if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -384,29 +339,148 @@ class PrivateEndpointConnectionsOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
 
-    def list_by_resource(
+    async def _update_initial(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum28"],
-        parent_name: str,
-        filter: Optional[str] = None,
-        top: Optional[int] = None,
+        system_topic_name: str,
+        system_topic_update_parameters: "_models.SystemTopicUpdateParameters",
         **kwargs: Any
-    ) -> AsyncIterable["_models.PrivateEndpointConnectionListResult"]:
-        """Lists all private endpoint connections under a resource.
+    ) -> "_models.SystemTopic":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopic"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-10-15-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
-        Get all private endpoint connections under a topic or domain.
+        # Construct URL
+        url = self._update_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(system_topic_update_parameters, 'SystemTopicUpdateParameters')
+        body_content_kwargs['content'] = body_content
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SystemTopic', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('SystemTopic', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
+
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        system_topic_name: str,
+        system_topic_update_parameters: "_models.SystemTopicUpdateParameters",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.SystemTopic"]:
+        """Update a system topic.
+
+        Asynchronously updates a system topic with the specified parameters.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum28
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
-        :type parent_name: str
+        :param system_topic_name: Name of the system topic.
+        :type system_topic_name: str
+        :param system_topic_update_parameters: SystemTopic update information.
+        :type system_topic_update_parameters: ~azure.mgmt.eventgrid.models.SystemTopicUpdateParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either SystemTopic or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.SystemTopic]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopic"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                system_topic_name=system_topic_name,
+                system_topic_update_parameters=system_topic_update_parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('SystemTopic', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'systemTopicName': self._serialize.url("system_topic_name", system_topic_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}'}  # type: ignore
+
+    def list_by_subscription(
+        self,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SystemTopicsListResult"]:
+        """List system topics under an Azure subscription.
+
+        List all the system topics under an Azure subscription.
+
         :param filter: The query used to filter the search results using OData syntax. Filtering is
          permitted on the 'name' property only and with limited number of OData operations. These
          operations are: the 'contains' function as well as the following logical operations: not, and,
@@ -419,11 +493,11 @@ class PrivateEndpointConnectionsOperations:
          items per page.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PrivateEndpointConnectionListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.PrivateEndpointConnectionListResult]
+        :return: An iterator like instance of either SystemTopicsListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.SystemTopicsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopicsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -438,12 +512,9 @@ class PrivateEndpointConnectionsOperations:
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_resource.metadata['url']  # type: ignore
+                url = self.list_by_subscription.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'parentType': self._serialize.url("parent_type", parent_type, 'str'),
-                    'parentName': self._serialize.url("parent_name", parent_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -462,7 +533,7 @@ class PrivateEndpointConnectionsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('PrivateEndpointConnectionListResult', pipeline_response)
+            deserialized = self._deserialize('SystemTopicsListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -483,4 +554,93 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections'}  # type: ignore
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/systemTopics'}  # type: ignore
+
+    def list_by_resource_group(
+        self,
+        resource_group_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SystemTopicsListResult"]:
+        """List system topics under a resource group.
+
+        List all the system topics under a resource group.
+
+        :param resource_group_name: The name of the resource group within the user's subscription.
+        :type resource_group_name: str
+        :param filter: The query used to filter the search results using OData syntax. Filtering is
+         permitted on the 'name' property only and with limited number of OData operations. These
+         operations are: the 'contains' function as well as the following logical operations: not, and,
+         or, eq (for equal), and ne (for not equal). No arithmetic operations are supported. The
+         following is a valid filter example: $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'.
+         The following is not a valid filter example: $filter=location eq 'westus'.
+        :type filter: str
+        :param top: The number of results to return per page for the list operation. Valid range for
+         top parameter is 1 to 100. If not specified, the default number of results to be returned is 20
+         items per page.
+        :type top: int
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either SystemTopicsListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.SystemTopicsListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopicsListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-10-15-preview"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list_by_resource_group.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize('SystemTopicsListResult', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics'}  # type: ignore
