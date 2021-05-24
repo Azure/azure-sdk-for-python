@@ -59,7 +59,7 @@ Basic understanding of below terms will help to get started with FarmBeats clien
     * Farmer - is the custodian of all the agronomic data.
     * Farm - is a logical collection of fields and/or seasonal fields. They do not have any area associated with them.
     * Field - is a multi-polygon area. This is expected to be stable across seasons.
-    * Seasonal field - is a multi-polygon area. To define a seasonal boundary we need details of area (boundary), time (season) and crop. New seasonal fields are expected to be created for every new season.
+    * Seasonal field - is a multi-polygon area. To define a seasonal boundary we need the details of area (boundary), time (season) and crop. New seasonal fields are expected to be created for every growing season.
     * Boundary - is the actual multi-polygon area expressed as a geometry (from geojson). It is normally associated with a field or a seasonal field. Satellite, weather and farm operations data is linked to a boundary.
     * Cascade delete - Agronomic data is stored hierarchically with farmer as the root. The hierarchy includes Farmer -> Farms -> Fields -> Seasonal Fields -> Boundaries -> Associated data (satellite, weather, farm operations). Cascade delete refers to the process of deleting any node and its subtree. 
     
