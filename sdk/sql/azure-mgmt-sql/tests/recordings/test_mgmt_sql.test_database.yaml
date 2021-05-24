@@ -15,17 +15,17 @@ interactions:
       User-Agent:
       - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
-        azure-mgmt-sql/0.27.0 Azure-SDK-For-Python
+        azure-mgmt-sql/0.28.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06/databases/pyarmdb9c310b06?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"operation":"CreateLogicalDatabase","startTime":"2021-05-13T06:29:32.837Z"}'
+      string: '{"operation":"CreateLogicalDatabase","startTime":"2021-05-24T06:56:02.383Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseAzureAsyncOperation/8513d73f-edcf-48ac-9933-8a2f5eea01d3?api-version=2021-02-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseAzureAsyncOperation/ff45d658-5b17-44a1-b4eb-b9ae664f966c?api-version=2021-02-01-preview
       cache-control:
       - no-cache
       content-length:
@@ -33,11 +33,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 06:29:31 GMT
+      - Mon, 24 May 2021 06:56:02 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseOperationResults/8513d73f-edcf-48ac-9933-8a2f5eea01d3?api-version=2021-02-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseOperationResults/ff45d658-5b17-44a1-b4eb-b9ae664f966c?api-version=2021-02-01-preview
       pragma:
       - no-cache
       server:
@@ -63,12 +63,12 @@ interactions:
       User-Agent:
       - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
-        azure-mgmt-sql/0.27.0 Azure-SDK-For-Python
+        azure-mgmt-sql/0.28.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseAzureAsyncOperation/8513d73f-edcf-48ac-9933-8a2f5eea01d3?api-version=2021-02-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseAzureAsyncOperation/ff45d658-5b17-44a1-b4eb-b9ae664f966c?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"name":"8513d73f-edcf-48ac-9933-8a2f5eea01d3","status":"InProgress","startTime":"2021-05-13T06:29:32.837Z"}'
+      string: '{"name":"ff45d658-5b17-44a1-b4eb-b9ae664f966c","status":"InProgress","startTime":"2021-05-24T06:56:02.383Z"}'
     headers:
       cache-control:
       - no-cache
@@ -77,7 +77,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 06:29:48 GMT
+      - Mon, 24 May 2021 06:56:17 GMT
       expires:
       - '-1'
       pragma:
@@ -107,12 +107,12 @@ interactions:
       User-Agent:
       - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
-        azure-mgmt-sql/0.27.0 Azure-SDK-For-Python
+        azure-mgmt-sql/0.28.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseAzureAsyncOperation/8513d73f-edcf-48ac-9933-8a2f5eea01d3?api-version=2021-02-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseAzureAsyncOperation/ff45d658-5b17-44a1-b4eb-b9ae664f966c?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"name":"8513d73f-edcf-48ac-9933-8a2f5eea01d3","status":"InProgress","startTime":"2021-05-13T06:29:32.837Z"}'
+      string: '{"name":"ff45d658-5b17-44a1-b4eb-b9ae664f966c","status":"InProgress","startTime":"2021-05-24T06:56:02.383Z"}'
     headers:
       cache-control:
       - no-cache
@@ -121,7 +121,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 06:30:02 GMT
+      - Mon, 24 May 2021 06:56:32 GMT
       expires:
       - '-1'
       pragma:
@@ -151,56 +151,12 @@ interactions:
       User-Agent:
       - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
-        azure-mgmt-sql/0.27.0 Azure-SDK-For-Python
+        azure-mgmt-sql/0.28.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseAzureAsyncOperation/8513d73f-edcf-48ac-9933-8a2f5eea01d3?api-version=2021-02-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseAzureAsyncOperation/ff45d658-5b17-44a1-b4eb-b9ae664f966c?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"name":"8513d73f-edcf-48ac-9933-8a2f5eea01d3","status":"InProgress","startTime":"2021-05-13T06:29:32.837Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 06:30:17 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
-        azure-mgmt-sql/0.27.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseAzureAsyncOperation/8513d73f-edcf-48ac-9933-8a2f5eea01d3?api-version=2021-02-01-preview
-  response:
-    body:
-      string: '{"name":"8513d73f-edcf-48ac-9933-8a2f5eea01d3","status":"Succeeded","startTime":"2021-05-13T06:29:32.837Z"}'
+      string: '{"name":"ff45d658-5b17-44a1-b4eb-b9ae664f966c","status":"Succeeded","startTime":"2021-05-24T06:56:02.383Z"}'
     headers:
       cache-control:
       - no-cache
@@ -209,7 +165,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 06:30:33 GMT
+      - Mon, 24 May 2021 06:56:48 GMT
       expires:
       - '-1'
       pragma:
@@ -239,21 +195,21 @@ interactions:
       User-Agent:
       - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
-        azure-mgmt-sql/0.27.0 Azure-SDK-For-Python
+        azure-mgmt-sql/0.28.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06/databases/pyarmdb9c310b06?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"sku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"kind":"v12.0,user,vcore","properties":{"collation":"SQL_Latin1_General_CP1_CI_AS","maxSizeBytes":34359738368,"status":"Online","databaseId":"d73890ee-25a6-43bc-9e85-ac08e9f1e1e0","creationDate":"2021-05-13T06:30:20.383Z","currentServiceObjectiveName":"GP_Gen5_2","requestedServiceObjectiveName":"GP_Gen5_2","defaultSecondaryLocation":"westcentralus","catalogCollation":"SQL_Latin1_General_CP1_CI_AS","zoneRedundant":false,"licenseType":"LicenseIncluded","maxLogSizeBytes":68719476736,"readScale":"Disabled","currentSku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"currentBackupStorageRedundancy":"Geo","requestedBackupStorageRedundancy":"Geo","maintenanceConfigurationId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default"},"location":"westus2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06/databases/pyarmdb9c310b06","name":"pyarmdb9c310b06","type":"Microsoft.Sql/servers/databases"}'
+      string: '{"sku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"kind":"v12.0,user,vcore","properties":{"collation":"SQL_Latin1_General_CP1_CI_AS","maxSizeBytes":34359738368,"status":"Online","databaseId":"e2f63ffa-503c-4f7e-a887-72abaeece08e","creationDate":"2021-05-24T06:56:44.93Z","currentServiceObjectiveName":"GP_Gen5_2","requestedServiceObjectiveName":"GP_Gen5_2","defaultSecondaryLocation":"westcentralus","catalogCollation":"SQL_Latin1_General_CP1_CI_AS","zoneRedundant":false,"licenseType":"LicenseIncluded","maxLogSizeBytes":68719476736,"readScale":"Disabled","currentSku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"currentBackupStorageRedundancy":"Geo","requestedBackupStorageRedundancy":"Geo","maintenanceConfigurationId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default","isLedgerOn":false,"isInfraEncryptionEnabled":false},"location":"westus2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06/databases/pyarmdb9c310b06","name":"pyarmdb9c310b06","type":"Microsoft.Sql/servers/databases"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1195'
+      - '1246'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 06:30:33 GMT
+      - Mon, 24 May 2021 06:56:48 GMT
       expires:
       - '-1'
       pragma:
@@ -283,23 +239,23 @@ interactions:
       User-Agent:
       - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
-        azure-mgmt-sql/0.27.0 Azure-SDK-For-Python
+        azure-mgmt-sql/0.28.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06/databases/pyarmdb9c310b06?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"sku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"kind":"v12.0,user,vcore","properties":{"collation":"SQL_Latin1_General_CP1_CI_AS","maxSizeBytes":34359738368,"status":"Online","databaseId":"d73890ee-25a6-43bc-9e85-ac08e9f1e1e0","creationDate":"2021-05-13T06:30:20.383Z","currentServiceObjectiveName":"GP_Gen5_2","requestedServiceObjectiveName":"GP_Gen5_2","defaultSecondaryLocation":"westcentralus","catalogCollation":"SQL_Latin1_General_CP1_CI_AS","zoneRedundant":false,"licenseType":"LicenseIncluded","maxLogSizeBytes":68719476736,"readScale":"Disabled","currentSku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"currentBackupStorageRedundancy":"Geo","requestedBackupStorageRedundancy":"Geo","maintenanceConfigurationId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default"},"location":"westus2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06/databases/pyarmdb9c310b06","name":"pyarmdb9c310b06","type":"Microsoft.Sql/servers/databases"}'
+      string: '{"sku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"kind":"v12.0,user,vcore","properties":{"collation":"SQL_Latin1_General_CP1_CI_AS","maxSizeBytes":34359738368,"status":"Online","databaseId":"e2f63ffa-503c-4f7e-a887-72abaeece08e","creationDate":"2021-05-24T06:56:44.93Z","currentServiceObjectiveName":"GP_Gen5_2","requestedServiceObjectiveName":"GP_Gen5_2","defaultSecondaryLocation":"westcentralus","catalogCollation":"SQL_Latin1_General_CP1_CI_AS","zoneRedundant":false,"licenseType":"LicenseIncluded","maxLogSizeBytes":68719476736,"readScale":"Disabled","currentSku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"currentBackupStorageRedundancy":"Geo","requestedBackupStorageRedundancy":"Geo","maintenanceConfigurationId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default","isLedgerOn":false,"isInfraEncryptionEnabled":false},"location":"westus2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06/databases/pyarmdb9c310b06","name":"pyarmdb9c310b06","type":"Microsoft.Sql/servers/databases"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1195'
+      - '1246'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 06:30:33 GMT
+      - Mon, 24 May 2021 06:56:47 GMT
       expires:
       - '-1'
       pragma:
@@ -329,23 +285,23 @@ interactions:
       User-Agent:
       - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
-        azure-mgmt-sql/0.27.0 Azure-SDK-For-Python
+        azure-mgmt-sql/0.28.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06/databases?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"value":[{"sku":{"name":"System","tier":"System","capacity":0},"kind":"v12.0,system","managedBy":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06","properties":{"collation":"SQL_Latin1_General_CP1_CI_AS","maxSizeBytes":32212254720,"status":"Online","databaseId":"dc03af5b-8321-436a-8c80-dbc27173fe8f","creationDate":"2021-05-13T06:29:19.773Z","currentServiceObjectiveName":"System2","requestedServiceObjectiveName":"System2","defaultSecondaryLocation":"westcentralus","catalogCollation":"SQL_Latin1_General_CP1_CI_AS","zoneRedundant":false,"readScale":"Disabled","currentSku":{"name":"System","tier":"System","capacity":0},"currentBackupStorageRedundancy":"Local","requestedBackupStorageRedundancy":"Local","maintenanceConfigurationId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default"},"location":"westus2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06/databases/master","name":"master","type":"Microsoft.Sql/servers/databases"},{"sku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"kind":"v12.0,user,vcore","properties":{"collation":"SQL_Latin1_General_CP1_CI_AS","maxSizeBytes":34359738368,"status":"Online","databaseId":"d73890ee-25a6-43bc-9e85-ac08e9f1e1e0","creationDate":"2021-05-13T06:30:20.383Z","currentServiceObjectiveName":"GP_Gen5_2","requestedServiceObjectiveName":"GP_Gen5_2","defaultSecondaryLocation":"westcentralus","catalogCollation":"SQL_Latin1_General_CP1_CI_AS","zoneRedundant":false,"licenseType":"LicenseIncluded","maxLogSizeBytes":68719476736,"readScale":"Disabled","currentSku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"currentBackupStorageRedundancy":"Geo","requestedBackupStorageRedundancy":"Geo","maintenanceConfigurationId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default"},"location":"westus2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06/databases/pyarmdb9c310b06","name":"pyarmdb9c310b06","type":"Microsoft.Sql/servers/databases"}]}'
+      string: '{"value":[{"sku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"kind":"v12.0,user,vcore","properties":{"collation":"SQL_Latin1_General_CP1_CI_AS","maxSizeBytes":34359738368,"status":"Online","databaseId":"e2f63ffa-503c-4f7e-a887-72abaeece08e","creationDate":"2021-05-24T06:56:44.93Z","currentServiceObjectiveName":"GP_Gen5_2","requestedServiceObjectiveName":"GP_Gen5_2","defaultSecondaryLocation":"westcentralus","catalogCollation":"SQL_Latin1_General_CP1_CI_AS","zoneRedundant":false,"licenseType":"LicenseIncluded","maxLogSizeBytes":68719476736,"readScale":"Disabled","currentSku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"currentBackupStorageRedundancy":"Geo","requestedBackupStorageRedundancy":"Geo","maintenanceConfigurationId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default","isLedgerOn":false,"isInfraEncryptionEnabled":false},"location":"westus2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06/databases/pyarmdb9c310b06","name":"pyarmdb9c310b06","type":"Microsoft.Sql/servers/databases"},{"sku":{"name":"System","tier":"System","capacity":0},"kind":"v12.0,system","managedBy":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06","properties":{"collation":"SQL_Latin1_General_CP1_CI_AS","maxSizeBytes":53687091200,"status":"Online","databaseId":"1d180544-ffbe-43e6-855f-d8362d900f63","creationDate":"2021-05-24T06:55:40.18Z","currentServiceObjectiveName":"System2","requestedServiceObjectiveName":"System2","defaultSecondaryLocation":"westcentralus","catalogCollation":"SQL_Latin1_General_CP1_CI_AS","zoneRedundant":false,"readScale":"Disabled","currentSku":{"name":"System","tier":"System","capacity":0},"currentBackupStorageRedundancy":"Local","requestedBackupStorageRedundancy":"Local","maintenanceConfigurationId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default","isLedgerOn":false,"isInfraEncryptionEnabled":false},"location":"westus2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06/databases/master","name":"master","type":"Microsoft.Sql/servers/databases"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2446'
+      - '2548'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 06:30:33 GMT
+      - Mon, 24 May 2021 06:56:47 GMT
       expires:
       - '-1'
       pragma:
@@ -375,7 +331,7 @@ interactions:
       User-Agent:
       - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
-        azure-mgmt-sql/0.27.0 Azure-SDK-For-Python
+        azure-mgmt-sql/0.28.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -392,7 +348,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 06:30:33 GMT
+      - Mon, 24 May 2021 06:56:47 GMT
       expires:
       - '-1'
       pragma:
@@ -424,29 +380,29 @@ interactions:
       User-Agent:
       - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
-        azure-mgmt-sql/0.27.0 Azure-SDK-For-Python
+        azure-mgmt-sql/0.28.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/servers/mypysqlserverx9c310b06/databases/pyarmdb9c310b06?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"operation":"DropLogicalDatabase","startTime":"2021-05-13T06:30:34.863Z"}'
+      string: '{"operation":"DropLogicalDatabase","startTime":"2021-05-24T06:56:48.93Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseAzureAsyncOperation/a8d0484a-403c-4673-bbb1-06451ef063fa?api-version=2021-02-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseAzureAsyncOperation/ed56dc42-f346-4840-be1b-25c79a2ff8f1?api-version=2021-02-01-preview
       cache-control:
       - no-cache
       content-length:
-      - '74'
+      - '73'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 06:30:33 GMT
+      - Mon, 24 May 2021 06:56:48 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseOperationResults/a8d0484a-403c-4673-bbb1-06451ef063fa?api-version=2021-02-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseOperationResults/ed56dc42-f346-4840-be1b-25c79a2ff8f1?api-version=2021-02-01-preview
       pragma:
       - no-cache
       server:
@@ -472,21 +428,21 @@ interactions:
       User-Agent:
       - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
-        azure-mgmt-sql/0.27.0 Azure-SDK-For-Python
+        azure-mgmt-sql/0.28.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseAzureAsyncOperation/a8d0484a-403c-4673-bbb1-06451ef063fa?api-version=2021-02-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_database9c310b06/providers/Microsoft.Sql/locations/westus2/databaseAzureAsyncOperation/ed56dc42-f346-4840-be1b-25c79a2ff8f1?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"name":"a8d0484a-403c-4673-bbb1-06451ef063fa","status":"Succeeded","startTime":"2021-05-13T06:30:34.863Z"}'
+      string: '{"name":"ed56dc42-f346-4840-be1b-25c79a2ff8f1","status":"Succeeded","startTime":"2021-05-24T06:56:48.93Z"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '107'
+      - '106'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 06:30:49 GMT
+      - Mon, 24 May 2021 06:57:04 GMT
       expires:
       - '-1'
       pragma:
