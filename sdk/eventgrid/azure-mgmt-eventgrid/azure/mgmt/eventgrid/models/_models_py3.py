@@ -426,8 +426,8 @@ class Domain(TrackedResource):
     :type location: str
     :param tags: Tags of the resource.
     :type tags: dict[str, str]
-    :param private_endpoint_connections: List of private endpoint connections.
-    :type private_endpoint_connections:
+    :ivar private_endpoint_connections: List of private endpoint connections.
+    :vartype private_endpoint_connections:
      list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
     :ivar provisioning_state: Provisioning state of the domain. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
@@ -472,6 +472,7 @@ class Domain(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'private_endpoint_connections': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'endpoint': {'readonly': True},
         'metric_resource_id': {'readonly': True},
@@ -497,9 +498,9 @@ class Domain(TrackedResource):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, *, location: str, tags=None, private_endpoint_connections=None, input_schema="EventGridSchema", input_schema_mapping=None, public_network_access="Enabled", inbound_ip_rules=None, sku=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, input_schema="EventGridSchema", input_schema_mapping=None, public_network_access="Enabled", inbound_ip_rules=None, sku=None, identity=None, **kwargs) -> None:
         super(Domain, self).__init__(location=location, tags=tags, **kwargs)
-        self.private_endpoint_connections = private_endpoint_connections
+        self.private_endpoint_connections = None
         self.provisioning_state = None
         self.endpoint = None
         self.input_schema = input_schema
@@ -566,10 +567,10 @@ class DomainTopic(Resource):
     :vartype name: str
     :ivar type: Type of the resource.
     :vartype type: str
-    :param provisioning_state: Provisioning state of the domain topic.
-     Possible values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
+    :ivar provisioning_state: Provisioning state of the domain topic. Possible
+     values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
      'Canceled', 'Failed'
-    :type provisioning_state: str or
+    :vartype provisioning_state: str or
      ~azure.mgmt.eventgrid.models.DomainTopicProvisioningState
     :ivar system_data: The system metadata relating to Domain Topic resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
@@ -579,6 +580,7 @@ class DomainTopic(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
         'system_data': {'readonly': True},
     }
 
@@ -590,9 +592,9 @@ class DomainTopic(Resource):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, *, provisioning_state=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(DomainTopic, self).__init__(**kwargs)
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.system_data = None
 
 
@@ -2412,7 +2414,8 @@ class ResourceSku(Model):
     """Describes an EventGrid Resource Sku.
 
     :param name: The Sku name of the resource. The possible values are: Basic
-     or Premium. Possible values include: 'Basic', 'Premium'
+     or Premium. Possible values include: 'Basic', 'Premium'. Default value:
+     "Basic" .
     :type name: str or ~azure.mgmt.eventgrid.models.Sku
     """
 
@@ -2420,7 +2423,7 @@ class ResourceSku(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, name=None, **kwargs) -> None:
+    def __init__(self, *, name="Basic", **kwargs) -> None:
         super(ResourceSku, self).__init__(**kwargs)
         self.name = name
 
@@ -2926,7 +2929,7 @@ class SystemTopic(TrackedResource):
     :vartype metric_resource_id: str
     :param identity: Identity information for the resource.
     :type identity: ~azure.mgmt.eventgrid.models.IdentityInfo
-    :ivar system_data: The system metadata relating to this resource.
+    :ivar system_data: The system metadata relating to System Topic resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
     """
 
@@ -3002,8 +3005,8 @@ class Topic(TrackedResource):
     :type location: str
     :param tags: Tags of the resource.
     :type tags: dict[str, str]
-    :param private_endpoint_connections:
-    :type private_endpoint_connections:
+    :ivar private_endpoint_connections:
+    :vartype private_endpoint_connections:
      list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
     :ivar provisioning_state: Provisioning state of the topic. Possible values
      include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Canceled',
@@ -3055,6 +3058,7 @@ class Topic(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'private_endpoint_connections': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'endpoint': {'readonly': True},
         'metric_resource_id': {'readonly': True},
@@ -3082,9 +3086,9 @@ class Topic(TrackedResource):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, *, location: str, tags=None, private_endpoint_connections=None, input_schema="EventGridSchema", input_schema_mapping=None, public_network_access="Enabled", inbound_ip_rules=None, sku=None, identity=None, kind=None, extended_location=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, input_schema="EventGridSchema", input_schema_mapping=None, public_network_access="Enabled", inbound_ip_rules=None, sku=None, identity=None, kind=None, extended_location=None, **kwargs) -> None:
         super(Topic, self).__init__(location=location, tags=tags, **kwargs)
-        self.private_endpoint_connections = private_endpoint_connections
+        self.private_endpoint_connections = None
         self.provisioning_state = None
         self.endpoint = None
         self.input_schema = input_schema
