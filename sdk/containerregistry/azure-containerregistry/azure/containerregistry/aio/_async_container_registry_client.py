@@ -83,8 +83,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
-        :return: ItemPaged[str]
-        :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
+        :returns: An iterable of strings
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -206,8 +206,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype order_by: :class:`~azure.containerregistry.ManifestOrder` or str
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
-        :return: ItemPaged[:class:`~azure.containerregistry.ArtifactManifestProperties`]
-        :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
+        :returns: An iterable of :class:`~azure.containerregistry.ArtifactManifestProperties`
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.containerregistry.ArtifactManifestProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         name = repository
@@ -429,8 +429,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype order_by: :class:`~azure.containerregistry.TagOrder` or str
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
-        :return: ItemPaged[:class:`~azure.containerregistry.ArtifactTagProperties`]
-        :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
+        :returns: An iterable of :class:`~azure.containerregistry.ArtifactTagProperties`
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.containerregistry.ArtifactTagProperties]
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
         Example
@@ -565,6 +565,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     ) -> RepositoryProperties:
         """Set the properties of a repository
 
+        :param args:
+        :type args: Union[str, ~azure.containerregistry.RepositoryProperties]
         :param str repository:
         :param properties: Properties to set for the repository
         :type properties: :class:`~azure.containerregistry.RepositoryProperties`
@@ -609,6 +611,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     ) -> ArtifactManifestProperties:
         """Set the properties for a manifest
 
+        :param args:
+        :type args: Union[str, ~azure.containerregistry.ArtifactManifestProperties]
         :param str repository:
         :param str tag_or_digest:
         :param properties: The property's values to be set
@@ -676,6 +680,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     ) -> ArtifactTagProperties:
         """Set the properties for a tag
 
+        :param args:
+        :type args: Union[str, ~azure.containerregistry.ArtifactTagProperties]
         :param str repository: Repository the tag belongs to
         :param str tag: Tag to set properties for
         :param properties: The property's values to be set
