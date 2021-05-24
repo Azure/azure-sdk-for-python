@@ -65,7 +65,7 @@ Basic understanding of below terms will help to get started with FarmBeats clien
     
 * [Scenes][scenes]: refers to images ingested using satellite APIs.
 
-* Farm Operations [farm_operations_docs]: includes details pertaining to tilling, planting, application of pesticides & nutrients, and harvesting. This can either be manually pushed into FarmBeats using APIs or the same information can be pulled from farm equipment service providers like John Deere. 
+* [Farm Operations][farm_operations_docs]: includes details pertaining to tilling, planting, application of pesticides & nutrients, and harvesting. This can either be manually pushed into FarmBeats using APIs or the same information can be pulled from farm equipment service providers like John Deere. 
 
 
 ## Examples
