@@ -4,14 +4,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, List, Union
+from typing import Any, List, Union, TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.credentials import AzureKeyCredential
-from azure.core.credentials_async import AsyncTokenCredential
 from .._generated.aio import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from .._user_agent import USER_AGENT
 from .._generated.models import (
@@ -25,6 +23,9 @@ from .._models import (
 )
 from .._helpers import get_http_logging_policy, convert_datetime, get_authentication_policy
 from .._polling import TranslationPolling
+if TYPE_CHECKING:
+    from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class DocumentTranslationClient(object):
