@@ -63,7 +63,7 @@ Basic understanding of below terms will help to get started with FarmBeats clien
     * Boundary - is the actual multi-polygon area expressed as a geometry (in geojson). It is normally associated with a field or a seasonal field. Satellite, weather and farm operations data is linked to a boundary.
     * Cascade delete - Agronomic data is stored hierarchically with farmer as the root. The hierarchy includes Farmer -> Farms -> Fields -> Seasonal Fields -> Boundaries -> Associated data (satellite, weather, farm operations). Cascade delete refers to the process of deleting any node and its subtree. 
     
-* Scenes [scenes]: refers to images ingested using satellite APIs.
+* Scenes[scenes]: refers to images ingested using satellite APIs.
 
 * Farm Operations [farm_operations_docs]: includes details pertaining to tilling, planting, application of pesticides & nutrients, and harvesting. This can either be manually pushed into FarmBeats using APIs or the same information can be pulled from farm equipment service providers like John Deere. 
 
