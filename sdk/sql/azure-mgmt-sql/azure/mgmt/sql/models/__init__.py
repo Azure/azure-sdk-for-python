@@ -176,6 +176,7 @@ try:
     from ._models_py3 import RecoverableManagedDatabase
     from ._models_py3 import ReplicationLink
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceIdentity
     from ._models_py3 import ResourceIdentityWithUserAssignedIdentities
     from ._models_py3 import ResourceMoveDefinition
     from ._models_py3 import ResourceWithWritableName
@@ -418,6 +419,7 @@ except (SyntaxError, ImportError):
     from ._models import RecoverableManagedDatabase
     from ._models import ReplicationLink
     from ._models import Resource
+    from ._models import ResourceIdentity
     from ._models import ResourceIdentityWithUserAssignedIdentities
     from ._models import ResourceMoveDefinition
     from ._models import ResourceWithWritableName
@@ -870,6 +872,7 @@ __all__ = [
     'RecoverableManagedDatabase',
     'ReplicationLink',
     'Resource',
+    'ResourceIdentity',
     'ResourceIdentityWithUserAssignedIdentities',
     'ResourceMoveDefinition',
     'ResourceWithWritableName',
