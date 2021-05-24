@@ -18,9 +18,6 @@ To use this package, you must have:
 - AgriFood (FarmBeats) resource - [Install FarmBeats][install_farmbeats]
 - Python 2.7, 3.6 or later - [Install Python][python]
 
-- Python 2.7, or 3.6 or later is required to use this package.
-- You must have an [Azure subscription][azure_subscription] and an AgriFood (FarmBeats) resource to use this package.
-
 #### Create an AgriFood Resource
 
 ### Install the package
@@ -274,6 +271,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [product_docs]: https://docs.microsoft.com/azure/azure-agrifood-farming/
 [pip]: https://pypi.org/project/pip/
 [pypi]: https://pypi.org/project/azure-agrifood-farming/
+[python]: https://www.python.org/downloads/
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/samples/
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/
