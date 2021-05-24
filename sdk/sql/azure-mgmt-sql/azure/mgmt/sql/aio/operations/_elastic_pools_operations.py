@@ -49,7 +49,7 @@ class ElasticPoolsOperations:
         server_name: str,
         elastic_pool_name: str,
         filter: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MetricListResult"]:
         """Returns elastic pool  metrics.
 
@@ -131,7 +131,7 @@ class ElasticPoolsOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MetricDefinitionListResult"]:
         """Returns elastic pool metric definitions.
 
@@ -210,7 +210,7 @@ class ElasticPoolsOperations:
         resource_group_name: str,
         server_name: str,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ElasticPoolListResult"]:
         """Gets all elastic pools in a server.
 
@@ -290,7 +290,7 @@ class ElasticPoolsOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ElasticPool":
         """Gets an elastic pool.
 
@@ -354,7 +354,7 @@ class ElasticPoolsOperations:
         server_name: str,
         elastic_pool_name: str,
         parameters: "_models.ElasticPool",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ElasticPool"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ElasticPool"]]
         error_map = {
@@ -414,7 +414,7 @@ class ElasticPoolsOperations:
         server_name: str,
         elastic_pool_name: str,
         parameters: "_models.ElasticPool",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ElasticPool"]:
         """Creates or updates an elastic pool.
 
@@ -429,8 +429,8 @@ class ElasticPoolsOperations:
         :type parameters: ~azure.mgmt.sql.models.ElasticPool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ElasticPool or the result of cls(response)
@@ -490,7 +490,7 @@ class ElasticPoolsOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -534,7 +534,7 @@ class ElasticPoolsOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an elastic pool.
 
@@ -547,8 +547,8 @@ class ElasticPoolsOperations:
         :type elastic_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -605,7 +605,7 @@ class ElasticPoolsOperations:
         server_name: str,
         elastic_pool_name: str,
         parameters: "_models.ElasticPoolUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ElasticPool"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ElasticPool"]]
         error_map = {
@@ -662,7 +662,7 @@ class ElasticPoolsOperations:
         server_name: str,
         elastic_pool_name: str,
         parameters: "_models.ElasticPoolUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ElasticPool"]:
         """Updates an elastic pool.
 
@@ -677,8 +677,8 @@ class ElasticPoolsOperations:
         :type parameters: ~azure.mgmt.sql.models.ElasticPoolUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ElasticPool or the result of cls(response)
@@ -738,7 +738,7 @@ class ElasticPoolsOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -782,7 +782,7 @@ class ElasticPoolsOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Failovers an elastic pool.
 
@@ -795,8 +795,8 @@ class ElasticPoolsOperations:
         :type elastic_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

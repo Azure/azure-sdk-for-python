@@ -45,7 +45,7 @@ class ManagedInstancePrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstancePrivateLinkListResult"]:
         """Gets the private link resources for SQL server.
 
@@ -121,7 +121,7 @@ class ManagedInstancePrivateLinkResourcesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedInstancePrivateLink":
         """Gets a private link resource for SQL server.
 

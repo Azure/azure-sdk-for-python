@@ -47,7 +47,7 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:
         managed_instance_name: str,
         database_name: str,
         security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedDatabaseSecurityAlertPolicy":
         """Gets a managed database's security alert policy.
 
@@ -116,7 +116,7 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:
         database_name: str,
         security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
         parameters: "_models.ManagedDatabaseSecurityAlertPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedDatabaseSecurityAlertPolicy":
         """Creates or updates a database's security alert policy.
 
@@ -194,7 +194,7 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedDatabaseSecurityAlertPolicyListResult"]:
         """Gets a list of managed database's security alert policies.
 
