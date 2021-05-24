@@ -4,6 +4,7 @@
 
 **New Features**
 - Added AzureLogAnalyticsDataFeedSource and AzureEventHubsDataFeedSource
+- Update method now returns the updated object
 
 **Breaking Changes**
 

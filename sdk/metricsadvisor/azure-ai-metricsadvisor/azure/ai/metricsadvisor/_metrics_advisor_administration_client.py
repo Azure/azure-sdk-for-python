@@ -736,7 +736,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             AzureCosmosDBDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
             AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
             PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
-        :rtype: None
+        :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -808,7 +808,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :paramtype cross_metrics_operator: str or
             ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
         :keyword str description: Anomaly alert configuration description.
-        :rtype: None
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -879,7 +879,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword series_detection_conditions: detection configuration for specific series.
         :paramtype series_detection_conditions:
             list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
-        :rtype: None
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -950,7 +950,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword str certificate_key: client certificate. Only should be passed to update WebNotificationHook.
         :keyword str certificate_password: client certificate password. Only should be passed to update
             WebNotificationHook.
-        :rtype: None
+        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
+            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
+            ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:

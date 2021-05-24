@@ -49,6 +49,9 @@ from .._generated.models import (
     WebhookHookParameterPatch as _WebhookHookParameterPatch,
     AzureBlobParameterPatch as _AzureBlobParameterPatch,
     SQLSourceParameterPatch as _SqlSourceParameterPatch,
+    AzureDataExplorerDataFeedPatch as _AzureDataExplorerDataFeedPatch,
+    MySqlDataFeedPatch as _MySqlDataFeedPatch,
+    PostgreSqlDataFeedPatch as _PostgreSqlDataFeedPatch,
     AzureApplicationInsightsParameterPatch as _AzureApplicationInsightsParameterPatch,
     AzureCosmosDBParameterPatch as _AzureCosmosDBParameterPatch,
     AzureTableParameterPatch as _AzureTableParameterPatch,
@@ -1098,7 +1101,7 @@ class AzureDataExplorerDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _SqlSourceParameterPatch(
+        return _AzureDataExplorerDataFeedPatch(
             connection_string=self.connection_string,
             query=self.query,
         )
@@ -1274,7 +1277,7 @@ class MySqlDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _SqlSourceParameterPatch(
+        return _MySqlDataFeedPatch(
             connection_string=self.connection_string,
             query=self.query
         )
@@ -1310,7 +1313,7 @@ class PostgreSqlDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _SqlSourceParameterPatch(
+        return _PostgreSqlDataFeedPatch(
             connection_string=self.connection_string,
             query=self.query
         )
