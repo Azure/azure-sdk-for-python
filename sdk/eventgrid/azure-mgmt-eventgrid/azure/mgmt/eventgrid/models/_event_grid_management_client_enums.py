@@ -42,12 +42,35 @@ class AdvancedFilterOperatorType(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     STRING_BEGINS_WITH = "StringBeginsWith"
     STRING_ENDS_WITH = "StringEndsWith"
     STRING_CONTAINS = "StringContains"
+    NUMBER_IN_RANGE = "NumberInRange"
+    NUMBER_NOT_IN_RANGE = "NumberNotInRange"
+    STRING_NOT_BEGINS_WITH = "StringNotBeginsWith"
+    STRING_NOT_ENDS_WITH = "StringNotEndsWith"
+    STRING_NOT_CONTAINS = "StringNotContains"
+    IS_NULL_OR_UNDEFINED = "IsNullOrUndefined"
+    IS_NOT_NULL = "IsNotNull"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 class DeadLetterEndPointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the endpoint for the dead letter destination
     """
 
     STORAGE_BLOB = "StorageBlob"
+
+class DeliveryAttributeMappingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of the delivery attribute or header name.
+    """
+
+    STATIC = "Static"
+    DYNAMIC = "Dynamic"
 
 class DomainProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the domain.
@@ -83,25 +106,36 @@ class EndpointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_BUS_TOPIC = "ServiceBusTopic"
     AZURE_FUNCTION = "AzureFunction"
 
-class Enum14(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum25(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     TOPICS = "topics"
     DOMAINS = "domains"
 
-class Enum15(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum26(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     TOPICS = "topics"
     DOMAINS = "domains"
 
-class Enum16(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum27(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     TOPICS = "topics"
     DOMAINS = "domains"
 
-class Enum17(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum28(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     TOPICS = "topics"
     DOMAINS = "domains"
+
+class EventChannelProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provisioning state of the event channel.
+    """
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
 
 class EventDeliverySchema(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The event delivery schema for the event subscription.
@@ -110,6 +144,15 @@ class EventDeliverySchema(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     EVENT_GRID_SCHEMA = "EventGridSchema"
     CUSTOM_INPUT_SCHEMA = "CustomInputSchema"
     CLOUD_EVENT_SCHEMA_V1_0 = "CloudEventSchemaV1_0"
+
+class EventSubscriptionIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes both an
+    implicitly created identity and a set of user-assigned identities. The type 'None' will remove
+    any identity.
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
 
 class EventSubscriptionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the event subscription.
@@ -122,6 +165,17 @@ class EventSubscriptionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta
     CANCELED = "Canceled"
     FAILED = "Failed"
     AWAITING_MANUAL_ACTION = "AwaitingManualAction"
+
+class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes both an
+    implicitly created identity and a set of user-assigned identities. The type 'None' will remove
+    any identity.
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
 
 class InputSchema(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """This determines the format that Event Grid should expect for incoming events published to the
@@ -144,6 +198,73 @@ class IpActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     ALLOW = "Allow"
 
+class PartnerNamespaceProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provisioning state of the partner namespace.
+    """
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+class PartnerRegistrationProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provisioning state of the partner registration.
+    """
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+class PartnerRegistrationVisibilityState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Visibility state of the partner registration.
+    """
+
+    HIDDEN = "Hidden"
+    PUBLIC_PREVIEW = "PublicPreview"
+    GENERALLY_AVAILABLE = "GenerallyAvailable"
+
+class PartnerTopicActivationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Activation state of the partner topic.
+    """
+
+    NEVER_ACTIVATED = "NeverActivated"
+    ACTIVATED = "Activated"
+    DEACTIVATED = "Deactivated"
+
+class PartnerTopicProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provisioning state of the partner topic.
+    """
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+class PartnerTopicReadinessState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The readiness state of the corresponding partner topic.
+    """
+
+    NOT_ACTIVATED_BY_USER_YET = "NotActivatedByUserYet"
+    ACTIVATED_BY_USER = "ActivatedByUser"
+    DEACTIVATED_BY_USER = "DeactivatedByUser"
+    DELETED_BY_USER = "DeletedByUser"
+
+class PartnerTopicTypeAuthorizationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Status of whether the customer has authorized a partner to create partner topics
+    in the customer's subscription.
+    """
+
+    NOT_APPLICABLE = "NotApplicable"
+    NOT_AUTHORIZED = "NotAuthorized"
+    AUTHORIZED = "Authorized"
+
 class PersistedConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the connection.
     """
@@ -163,6 +284,13 @@ class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+class ResourceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Kind of the resource.
+    """
+
+    AZURE = "Azure"
+    AZURE_ARC = "AzureArc"
+
 class ResourceProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the Private Endpoint Connection.
     """
@@ -181,6 +309,13 @@ class ResourceRegionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REGIONAL_RESOURCE = "RegionalResource"
     GLOBAL_RESOURCE = "GlobalResource"
 
+class Sku(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The Sku name of the resource. The possible values are: Basic or Premium.
+    """
+
+    BASIC = "Basic"
+    PREMIUM = "Premium"
+
 class TopicProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the topic.
     """
@@ -191,6 +326,12 @@ class TopicProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     SUCCEEDED = "Succeeded"
     CANCELED = "Canceled"
     FAILED = "Failed"
+
+class TopicTypePropertiesSupportedScopesForSourceItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    RESOURCE = "Resource"
+    RESOURCE_GROUP = "ResourceGroup"
+    AZURE_SUBSCRIPTION = "AzureSubscription"
 
 class TopicTypeProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the topic type
