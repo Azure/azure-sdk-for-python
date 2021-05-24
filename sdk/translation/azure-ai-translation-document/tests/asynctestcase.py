@@ -17,9 +17,9 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
         if self.is_live:
             from azure.identity.aio import ClientSecretCredential
             return ClientSecretCredential(
-                os.getenv("TRANSLATION_DOCUMENT_TENANT_ID"),
-                os.getenv("TRANSLATION_DOCUMENT_CLIENT_ID"),
-                os.getenv("TRANSLATION_DOCUMENT_CLIENT_SECRET"),
+                os.getenv("TRANSLATION_TENANT_ID"),
+                os.getenv("TRANSLATION_CLIENT_ID"),
+                os.getenv("TRANSLATION_CLIENT_SECRET"),
             )
 
     async def _submit_and_validate_translation_job_async(self, async_client, translation_inputs, total_docs_count=None):

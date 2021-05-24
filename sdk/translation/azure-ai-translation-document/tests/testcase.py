@@ -88,9 +88,9 @@ class DocumentTranslationTest(AzureTestCase):
         if self.is_live:
             from azure.identity import ClientSecretCredential
             return ClientSecretCredential(
-                os.getenv("TRANSLATION_DOCUMENT_TENANT_ID"),
-                os.getenv("TRANSLATION_DOCUMENT_CLIENT_ID"),
-                os.getenv("TRANSLATION_DOCUMENT_CLIENT_SECRET"),
+                os.getenv("TRANSLATION_TENANT_ID"),
+                os.getenv("TRANSLATION_CLIENT_ID"),
+                os.getenv("TRANSLATION_CLIENT_SECRET"),
             )
 
     def upload_documents(self, data, container_client):
