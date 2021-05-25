@@ -29,7 +29,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: servicebus
-    BuildTargetingString: azure-servicebus*
     MatrixFilters:
       - PythonVersion=^(?!pypy3).*
     Artifacts:
