@@ -287,7 +287,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [install_farmbeats]: https://aka.ms/FarmBeatsInstallDocumentationPaaS
 [product_docs]: https://docs.microsoft.com/en-us/azure/industry/agriculture/overview-azure-farmbeats
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-agrifood-farming/
+[pypi]: https://pypi.org/
 [python]: https://www.python.org/downloads/
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/samples/
