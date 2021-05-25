@@ -15,7 +15,7 @@ from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from .._generated.aio import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from .._user_agent import USER_AGENT
 from .._generated.models import (
-    BatchStatusDetail as _BatchStatusDetail,
+    TranslationStatus as _TranslationStatus,
 )
 from .._models import (
     JobStatusResult,
@@ -114,7 +114,7 @@ class DocumentTranslationClient(object):
         """
 
         # submit translation job
-        response_headers = await self._client.document_translation._submit_batch_request_initial(  # pylint: disable=protected-access
+        response_headers = await self._client.document_translation._start_translation_initial(  # pylint: disable=protected-access
             # pylint: disable=protected-access
             inputs=DocumentTranslationInput._to_generated_list(inputs),
             cls=lambda pipeline_response, _, response_headers: response_headers,
@@ -147,7 +147,7 @@ class DocumentTranslationClient(object):
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
-        job_status = await self._client.document_translation.get_operation_status(job_id, **kwargs)
+        job_status = await self._client.document_translation.get_translation_status(job_id, **kwargs)
         # pylint: disable=protected-access
         return JobStatusResult._from_generated(job_status)
 
@@ -166,7 +166,7 @@ class DocumentTranslationClient(object):
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
-        await self._client.document_translation.cancel_operation(job_id, **kwargs)
+        await self._client.document_translation.cancel_translation(job_id, **kwargs)
 
     @distributed_trace_async
     async def wait_until_done(self, job_id, **kwargs):
@@ -191,13 +191,13 @@ class DocumentTranslationClient(object):
                 :dedent: 4
                 :caption: Create a translation job and wait until it is done.
         """
-        pipeline_response = await self._client.document_translation.get_operation_status(
+        pipeline_response = await self._client.document_translation.get_translation_status(
             job_id,
             cls=lambda pipeline_response, _, response_headers: pipeline_response
         )
 
         def callback(raw_response):
-            detail = self._client._deserialize(_BatchStatusDetail, raw_response)  # pylint: disable=protected-access
+            detail = self._client._deserialize(_TranslationStatus, raw_response)  # pylint: disable=protected-access
             return JobStatusResult._from_generated(detail)  # pylint: disable=protected-access
 
         poller = AsyncLROPoller(
@@ -258,7 +258,7 @@ class DocumentTranslationClient(object):
             lambda job_statuses: [_convert_from_generated_model(job_status) for job_status in job_statuses]
         )
 
-        return self._client.document_translation.get_operations(
+        return self._client.document_translation.get_translations_status(
             cls=model_conversion_function,
             maxpagesize=results_per_page,
             created_date_time_utc_start=created_after,
@@ -313,7 +313,7 @@ class DocumentTranslationClient(object):
             lambda doc_statuses: [_convert_from_generated_model(doc_status) for doc_status in doc_statuses]
         )
 
-        return self._client.document_translation.get_operation_documents_status(
+        return self._client.document_translation.get_documents_status(
             id=job_id,
             cls=model_conversion_function,
             maxpagesize=results_per_page,
@@ -348,7 +348,7 @@ class DocumentTranslationClient(object):
         :rtype: List[FileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        glossary_formats = await self._client.document_translation.get_glossary_formats(**kwargs)
+        glossary_formats = await self._client.document_translation.get_supported_glossary_formats(**kwargs)
         # pylint: disable=protected-access
         return FileFormat._from_generated_list(glossary_formats.value)
 
@@ -361,6 +361,6 @@ class DocumentTranslationClient(object):
         :rtype: List[FileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        document_formats = await self._client.document_translation.get_document_formats(**kwargs)
+        document_formats = await self._client.document_translation.get_supported_document_formats(**kwargs)
         # pylint: disable=protected-access
         return FileFormat._from_generated_list(document_formats.value)

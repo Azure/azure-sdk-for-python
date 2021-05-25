@@ -401,7 +401,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise e
 
     @distributed_trace
-    def begin_recognize_identity_documents_from_url(self, identity_document_url, **kwargs):
+    def begin_recognize_identity_documents_from_url(
+        self, identity_document_url, **kwargs
+    ):
         # type: (str, Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given identity document.
         The input document must be the location (URL) of the identity document to be analyzed.
