@@ -87,37 +87,52 @@ Currently the features below are **not supported**.
 
 **Data Plane Limitations:**
 
-* Group By queries (in roadmap for 2021)
-* Language Native async i/o (in roadmap for 2021)
-* Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
-* Bulk/Transactional batch processing
-* Direct TCP Mode access
-* Continuation token for cross partitions queries
-* Change Feed: Processor
-* Change Feed: Read multiple partitions key values
-* Change Feed: Read specific time 
-* Change Feed: Read from the beggining
-* Change Feed: Pull model
-* Cross-partition ORDER BY for mixed types
+* Group By queries (in roadmap for 2021).
+* Language Native async i/o (in roadmap for 2021).
+* Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C).
+* Bulk/Transactional batch processing.
+* Direct TCP Mode access.
+* Continuation token for cross partitions queries.
+* Change Feed: Processor.
+* Change Feed: Read multiple partitions key values.
+* Change Feed: Read specific time.
+* Change Feed: Read from the beggining.
+* Change Feed: Pull model.
+* Cross-partition ORDER BY for mixed types.
+* Integrated Cache using the default consistency level, that is "Session". To take advantage of the new [Cosmos DB Integrated Cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache), it is required to explicitly set CosmosClient consistency level to "Eventual": `consistency_level= Eventual`.
 
 **Control Plane Limitations:**
 
-* Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
-* Create Geospatial Index
-* Provision Autoscale DBs or containers
-* Update Autoscale throughput
-* Update analytical store ttl (time to live)
-* Get the connection string
-* Get the minimum RU/s of a container. 
+* Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics.
+* Create Geospatial Index.
+* Provision Autoscale DBs or containers.
+* Update Autoscale throughput.
+* Update analytical store ttl (time to live).
+* Get the connection string.
+* Get the minimum RU/s of a container.
 
-## Bulk processing Limitation Workaround
+**Security Limitations:**
+
+* AAD support. 
+
+## Workarounds
+
+### Bulk processing Limitation Workaround
 
 If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alternative is to use [stored procedures](https://docs.microsoft.com/azure/cosmos-db/how-to-write-stored-procedures-triggers-udfs) to write multiple items with the same partition key.
 
-## Control Plane Limitations Workaround
+### Control Plane Limitations Workaround
 
 Typically you can use [Azure Portal](https://portal.azure.com/), [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
+### AAD Support
+
+A possible workaround is to use managed identities to [programmatically](https://docs.microsoft.com/azure/cosmos-db/managed-identity-based-authentication) grab the keys.
+
+
+## Consistency Level
+
+Please be aware that this SDK has "Session" as the default consistency level, and it **overrides** your Cosmos DB database account default option. Click [here](https://docs.microsoft.com/azure/cosmos-db/consistency-levels#eventual-consistency) to learn more about Cosmos DB consistency levels.
 
 ## Boolean Data Type
 
