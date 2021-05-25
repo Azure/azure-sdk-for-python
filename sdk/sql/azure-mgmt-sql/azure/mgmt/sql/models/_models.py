@@ -5996,8 +5996,7 @@ class ManagedInstance(TrackedResource):
     :type tags: dict[str, str]
     :param identity: The Azure Active Directory identity of the managed
      instance.
-    :type identity:
-     ~azure.mgmt.sql.models.ResourceIdentityWithUserAssignedIdentities
+    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
     :param sku: Managed instance SKU. Allowed values for sku.name: GP_Gen4,
      GP_Gen5, BC_Gen4, BC_Gen5
     :type sku: ~azure.mgmt.sql.models.Sku
@@ -6121,7 +6120,7 @@ class ManagedInstance(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentityWithUserAssignedIdentities'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
@@ -7164,8 +7163,7 @@ class ManagedInstanceUpdate(Model):
     :param sku: Managed instance sku
     :type sku: ~azure.mgmt.sql.models.Sku
     :param identity: Managed instance identity
-    :type identity:
-     ~azure.mgmt.sql.models.ResourceIdentityWithUserAssignedIdentities
+    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
     :ivar provisioning_state: Possible values include: 'Creating', 'Deleting',
      'Updating', 'Unknown', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or ~azure.mgmt.sql.models.enum
@@ -7280,7 +7278,7 @@ class ManagedInstanceUpdate(Model):
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentityWithUserAssignedIdentities'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
@@ -9428,6 +9426,47 @@ class ReplicationLink(ProxyResource):
         self.link_type = None
 
 
+class ResourceIdentity(Model):
+    """Azure Active Directory identity configuration for a resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param user_assigned_identities: The resource ids of the user assigned
+     identities to use
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.sql.models.UserIdentity]
+    :ivar principal_id: The Azure Active Directory principal id.
+    :vartype principal_id: str
+    :param type: The identity type. Set this to 'SystemAssigned' in order to
+     automatically create and assign an Azure Active Directory principal for
+     the resource. Possible values include: 'None', 'SystemAssigned',
+     'UserAssigned'
+    :type type: str or ~azure.mgmt.sql.models.IdentityType
+    :ivar tenant_id: The Azure Active Directory tenant id.
+    :vartype tenant_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentity}'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceIdentity, self).__init__(**kwargs)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+        self.principal_id = None
+        self.type = kwargs.get('type', None)
+        self.tenant_id = None
+
+
 class ResourceIdentityWithUserAssignedIdentities(Model):
     """Azure Active Directory identity configuration for a resource.
 
@@ -10014,8 +10053,7 @@ class Server(TrackedResource):
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param identity: The Azure Active Directory identity of the server.
-    :type identity:
-     ~azure.mgmt.sql.models.ResourceIdentityWithUserAssignedIdentities
+    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
     :ivar kind: Kind of sql server. This is metadata used for the Azure portal
      experience.
     :vartype kind: str
@@ -10076,7 +10114,7 @@ class Server(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentityWithUserAssignedIdentities'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'kind': {'key': 'kind', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
@@ -11077,8 +11115,7 @@ class ServerUpdate(Model):
     sending a request.
 
     :param identity: Server identity
-    :type identity:
-     ~azure.mgmt.sql.models.ResourceIdentityWithUserAssignedIdentities
+    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
     :param administrator_login: Administrator username for the server. Once
      created it cannot be changed.
     :type administrator_login: str
@@ -11128,7 +11165,7 @@ class ServerUpdate(Model):
     }
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'ResourceIdentityWithUserAssignedIdentities'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
