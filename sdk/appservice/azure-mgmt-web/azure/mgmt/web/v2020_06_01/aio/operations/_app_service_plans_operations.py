@@ -46,7 +46,7 @@ class AppServicePlansOperations:
     def list(
         self,
         detailed: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AppServicePlanCollection"]:
         """Get all App Service plans for a subscription.
 
@@ -108,7 +108,7 @@ class AppServicePlansOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -122,7 +122,7 @@ class AppServicePlansOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AppServicePlanCollection"]:
         """Get all App Service plans in a resource group.
 
@@ -181,7 +181,7 @@ class AppServicePlansOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -196,7 +196,7 @@ class AppServicePlansOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.AppServicePlan"]:
         """Get an App Service plan.
 
@@ -242,7 +242,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -260,7 +260,7 @@ class AppServicePlansOperations:
         resource_group_name: str,
         name: str,
         app_service_plan: "_models.AppServicePlan",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AppServicePlan":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServicePlan"]
         error_map = {
@@ -298,7 +298,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -318,7 +318,7 @@ class AppServicePlansOperations:
         resource_group_name: str,
         name: str,
         app_service_plan: "_models.AppServicePlan",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AppServicePlan"]:
         """Creates or updates an App Service Plan.
 
@@ -332,8 +332,8 @@ class AppServicePlansOperations:
         :type app_service_plan: ~azure.mgmt.web.v2020_06_01.models.AppServicePlan
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AppServicePlan or the result of cls(response)
@@ -390,7 +390,7 @@ class AppServicePlansOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete an App Service plan.
 
@@ -436,7 +436,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -449,7 +449,7 @@ class AppServicePlansOperations:
         resource_group_name: str,
         name: str,
         app_service_plan: "_models.AppServicePlanPatchResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AppServicePlan":
         """Creates or updates an App Service Plan.
 
@@ -502,7 +502,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -521,7 +521,7 @@ class AppServicePlansOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.Capability"]:
         """List all capabilities of an App Service plan.
 
@@ -567,7 +567,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[Capability]', pipeline_response)
@@ -584,7 +584,7 @@ class AppServicePlansOperations:
         name: str,
         namespace_name: str,
         relay_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridConnection":
         """Retrieve a Hybrid Connection in use in an App Service plan.
 
@@ -636,7 +636,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -653,7 +653,7 @@ class AppServicePlansOperations:
         name: str,
         namespace_name: str,
         relay_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a Hybrid Connection in use in an App Service plan.
 
@@ -705,7 +705,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -719,7 +719,7 @@ class AppServicePlansOperations:
         name: str,
         namespace_name: str,
         relay_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridConnectionKey":
         """Get the send key name and value of a Hybrid Connection.
 
@@ -771,7 +771,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnectionKey', pipeline_response)
@@ -788,7 +788,7 @@ class AppServicePlansOperations:
         name: str,
         namespace_name: str,
         relay_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceCollection"]:
         """Get all apps that use a Hybrid Connection in an App Service Plan.
 
@@ -856,7 +856,7 @@ class AppServicePlansOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -871,7 +871,7 @@ class AppServicePlansOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridConnectionLimits":
         """Get the maximum number of Hybrid Connections allowed in an App Service plan.
 
@@ -917,7 +917,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnectionLimits', pipeline_response)
@@ -932,7 +932,7 @@ class AppServicePlansOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.HybridConnectionCollection"]:
         """Retrieve all Hybrid Connections in use in an App Service plan.
 
@@ -994,7 +994,7 @@ class AppServicePlansOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1010,7 +1010,7 @@ class AppServicePlansOperations:
         resource_group_name: str,
         name: str,
         soft_restart: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Restart all apps in an App Service plan.
 
@@ -1062,7 +1062,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1077,7 +1077,7 @@ class AppServicePlansOperations:
         skip_token: Optional[str] = None,
         filter: Optional[str] = None,
         top: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebAppCollection"]:
         """Get all apps associated with an App Service plan.
 
@@ -1154,7 +1154,7 @@ class AppServicePlansOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1169,8 +1169,8 @@ class AppServicePlansOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
-    ) -> object:
+        **kwargs: Any
+    ) -> Any:
         """Gets all selectable SKUs for a given App Service Plan.
 
         Description for Gets all selectable SKUs for a given App Service Plan.
@@ -1180,11 +1180,11 @@ class AppServicePlansOperations:
         :param name: Name of App Service Plan.
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: object, or the result of cls(response)
-        :rtype: object
+        :return: any, or the result of cls(response)
+        :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1215,7 +1215,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('object', pipeline_response)
@@ -1231,7 +1231,7 @@ class AppServicePlansOperations:
         resource_group_name: str,
         name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CsmUsageQuotaCollection"]:
         """Gets server farm usage information.
 
@@ -1298,7 +1298,7 @@ class AppServicePlansOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1313,7 +1313,7 @@ class AppServicePlansOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VnetInfo"]:
         """Get all Virtual Networks associated with an App Service plan.
 
@@ -1359,7 +1359,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[VnetInfo]', pipeline_response)
@@ -1375,7 +1375,7 @@ class AppServicePlansOperations:
         resource_group_name: str,
         name: str,
         vnet_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.VnetInfo"]:
         """Get a Virtual Network associated with an App Service plan.
 
@@ -1424,7 +1424,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1443,7 +1443,7 @@ class AppServicePlansOperations:
         name: str,
         vnet_name: str,
         gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VnetGateway":
         """Get a Virtual Network gateway.
 
@@ -1495,7 +1495,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
@@ -1513,7 +1513,7 @@ class AppServicePlansOperations:
         vnet_name: str,
         gateway_name: str,
         connection_envelope: "_models.VnetGateway",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VnetGateway":
         """Update a Virtual Network gateway.
 
@@ -1572,7 +1572,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
@@ -1588,7 +1588,7 @@ class AppServicePlansOperations:
         resource_group_name: str,
         name: str,
         vnet_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VnetRoute"]:
         """Get all routes that are associated with a Virtual Network in an App Service plan.
 
@@ -1638,7 +1638,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[VnetRoute]', pipeline_response)
@@ -1655,7 +1655,7 @@ class AppServicePlansOperations:
         name: str,
         vnet_name: str,
         route_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional[List["_models.VnetRoute"]]:
         """Get a Virtual Network route in an App Service plan.
 
@@ -1707,7 +1707,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1727,7 +1727,7 @@ class AppServicePlansOperations:
         vnet_name: str,
         route_name: str,
         route: "_models.VnetRoute",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.VnetRoute"]:
         """Create or update a Virtual Network route in an App Service plan.
 
@@ -1786,7 +1786,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 400, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1805,7 +1805,7 @@ class AppServicePlansOperations:
         name: str,
         vnet_name: str,
         route_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a Virtual Network route in an App Service plan.
 
@@ -1857,7 +1857,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1872,7 +1872,7 @@ class AppServicePlansOperations:
         vnet_name: str,
         route_name: str,
         route: "_models.VnetRoute",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.VnetRoute"]:
         """Create or update a Virtual Network route in an App Service plan.
 
@@ -1931,7 +1931,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 400, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1949,7 +1949,7 @@ class AppServicePlansOperations:
         resource_group_name: str,
         name: str,
         worker_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Reboot a worker machine in an App Service plan.
 
@@ -1998,7 +1998,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

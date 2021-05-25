@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ServerAzureADOnlyAuthenticationsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,9 +47,9 @@ class ServerAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        authentication_name: Union[str, "models.AuthenticationName"],
-        **kwargs
-    ) -> "models.ServerAzureADOnlyAuthentication":
+        authentication_name: Union[str, "_models.AuthenticationName"],
+        **kwargs: Any
+    ) -> "_models.ServerAzureADOnlyAuthentication":
         """Gets a specific Azure Active Directory only authentication property.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -64,21 +64,21 @@ class ServerAzureADOnlyAuthenticationsOperations:
         :rtype: ~azure.mgmt.sql.models.ServerAzureADOnlyAuthentication
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerAzureADOnlyAuthentication"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerAzureADOnlyAuthentication"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'authenticationName': self._serialize.url("authentication_name", authentication_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -110,26 +110,26 @@ class ServerAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        authentication_name: Union[str, "models.AuthenticationName"],
-        parameters: "models.ServerAzureADOnlyAuthentication",
-        **kwargs
-    ) -> Optional["models.ServerAzureADOnlyAuthentication"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ServerAzureADOnlyAuthentication"]]
+        authentication_name: Union[str, "_models.AuthenticationName"],
+        parameters: "_models.ServerAzureADOnlyAuthentication",
+        **kwargs: Any
+    ) -> Optional["_models.ServerAzureADOnlyAuthentication"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ServerAzureADOnlyAuthentication"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'authenticationName': self._serialize.url("authentication_name", authentication_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -170,10 +170,10 @@ class ServerAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        authentication_name: Union[str, "models.AuthenticationName"],
-        parameters: "models.ServerAzureADOnlyAuthentication",
-        **kwargs
-    ) -> AsyncLROPoller["models.ServerAzureADOnlyAuthentication"]:
+        authentication_name: Union[str, "_models.AuthenticationName"],
+        parameters: "_models.ServerAzureADOnlyAuthentication",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ServerAzureADOnlyAuthentication"]:
         """Sets Server Active Directory only authentication property or updates an existing server Active
         Directory only authentication property.
 
@@ -189,8 +189,8 @@ class ServerAzureADOnlyAuthenticationsOperations:
         :type parameters: ~azure.mgmt.sql.models.ServerAzureADOnlyAuthentication
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServerAzureADOnlyAuthentication or the result of cls(response)
@@ -198,7 +198,7 @@ class ServerAzureADOnlyAuthenticationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerAzureADOnlyAuthentication"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerAzureADOnlyAuthentication"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -224,7 +224,14 @@ class ServerAzureADOnlyAuthenticationsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'authenticationName': self._serialize.url("authentication_name", authentication_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -242,23 +249,23 @@ class ServerAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        authentication_name: Union[str, "models.AuthenticationName"],
-        **kwargs
+        authentication_name: Union[str, "_models.AuthenticationName"],
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'authenticationName': self._serialize.url("authentication_name", authentication_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -286,8 +293,8 @@ class ServerAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        authentication_name: Union[str, "models.AuthenticationName"],
-        **kwargs
+        authentication_name: Union[str, "_models.AuthenticationName"],
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing server Active Directory only authentication property.
 
@@ -300,8 +307,8 @@ class ServerAzureADOnlyAuthenticationsOperations:
         :type authentication_name: str or ~azure.mgmt.sql.models.AuthenticationName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -331,7 +338,14 @@ class ServerAzureADOnlyAuthenticationsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'authenticationName': self._serialize.url("authentication_name", authentication_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -349,8 +363,8 @@ class ServerAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.AzureADOnlyAuthListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.AzureADOnlyAuthListResult"]:
         """Gets a list of server Azure Active Directory only authentications.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -363,12 +377,12 @@ class ServerAzureADOnlyAuthenticationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.AzureADOnlyAuthListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureADOnlyAuthListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureADOnlyAuthListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -380,9 +394,9 @@ class ServerAzureADOnlyAuthenticationsOperations:
                 # Construct URL
                 url = self.list_by_server.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters

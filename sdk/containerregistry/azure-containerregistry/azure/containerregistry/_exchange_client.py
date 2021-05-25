@@ -3,7 +3,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import re
 import time
 from typing import TYPE_CHECKING
 
@@ -39,9 +38,6 @@ class ACRExchangeClient(object):
     :param credential: Credential which provides tokens to authenticate requests
     :type credential: :class:`~azure.core.credentials.TokenCredential`
     """
-
-    BEARER = "Bearer"
-    AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None

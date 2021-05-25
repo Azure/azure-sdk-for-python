@@ -38,6 +38,7 @@ try:
 except ImportError:
     from io import StringIO
 
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.credentials import AccessToken
 from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
 from azure.mgmt.storage.models import StorageAccount, Endpoints
@@ -123,6 +124,7 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
             'storage_account_key': StorageTestCase._STORAGE_KEY,
             'storage_account_cs': StorageTestCase._STORAGE_CONNECTION_STRING,
         }
+
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):
@@ -472,7 +474,15 @@ def storage_account():
                     storage_key = storage_connection_string_parts["AccountKey"]
 
             else:
-                storage_name, storage_kwargs = storage_preparer._prepare_create_resource(test_case, **rg_kwargs)
+                for i in range(5):
+                    try:
+                        time.sleep(i) if i == 0 else time.sleep(2 ** i)
+                        storage_name, storage_kwargs = storage_preparer._prepare_create_resource(
+                            test_case, **rg_kwargs)
+                        break
+                        # Some tests may be running on the storage account and a conflict may occur. Backoff & Retry.
+                    except HttpResponseError:
+                        continue
                 storage_account = storage_kwargs['storage_account']
                 storage_key = storage_kwargs['storage_account_key']
                 storage_connection_string = storage_kwargs['storage_account_cs']
@@ -489,5 +499,9 @@ def storage_account():
                 )
     finally:
         if i_need_to_create_rg:
-            rg_preparer.remove_resource(rg_name)
+            try:
+                rg_preparer.remove_resource(rg_name)
+            # This covers the case where another test had already removed the resource group
+            except ResourceNotFoundError:
+                pass
         StorageTestCase._RESOURCE_GROUP = None

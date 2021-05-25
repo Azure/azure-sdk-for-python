@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class TransparentDataEncryptionActivitiesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,9 +46,9 @@ class TransparentDataEncryptionActivitiesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        transparent_data_encryption_name: Union[str, "models.TransparentDataEncryptionName"],
-        **kwargs
-    ) -> AsyncIterable["models.TransparentDataEncryptionActivityListResult"]:
+        transparent_data_encryption_name: Union[str, "_models.TransparentDataEncryptionName"],
+        **kwargs: Any
+    ) -> AsyncIterable["_models.TransparentDataEncryptionActivityListResult"]:
         """Returns a database's transparent data encryption operation result.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -67,7 +67,7 @@ class TransparentDataEncryptionActivitiesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.TransparentDataEncryptionActivityListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TransparentDataEncryptionActivityListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TransparentDataEncryptionActivityListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

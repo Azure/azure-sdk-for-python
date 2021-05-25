@@ -147,6 +147,7 @@ class FormRecognizerTest(AzureTestCase):
         self.identity_document_url_jpg_passport = self.get_blob_url(testing_container_sas_url, "testingdata", "passport_1.jpg")
         self.invoice_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.pdf")
         self.invoice_url_tiff = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.tiff")
+        self.invoice_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "sample_invoice.jpg")
         self.multipage_vendor_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multi1.pdf")
         self.form_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "Form_1.jpg")
         self.multipage_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipage_invoice1.pdf")
@@ -166,6 +167,7 @@ class FormRecognizerTest(AzureTestCase):
         self.identity_document_passport_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/passport_1.jpg"))
         self.invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
         self.invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
+        self.invoice_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/sample_invoice.jpg"))
         self.form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
         self.blank_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/blank.pdf"))
         self.multipage_invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipage_invoice1.pdf"))
@@ -296,8 +298,8 @@ class FormRecognizerTest(AzureTestCase):
         self.assertEqual(line.text, expected.text)
         self.assertBoundingBoxTransformCorrect(line.bounding_box, expected.bounding_box)
         if expected.appearance:
-            self.assertEqual(line.appearance.style.name, expected.appearance.style.name)
-            self.assertEqual(line.appearance.style.confidence, expected.appearance.style.confidence)
+            self.assertEqual(line.appearance.style_name, expected.appearance.style.name)
+            self.assertEqual(line.appearance.style_confidence, expected.appearance.style.confidence)
         for word, expected_word in zip(line.words, expected.words):
             self.assertFormWordTransformCorrect(word, expected_word)
 
@@ -335,6 +337,10 @@ class FormRecognizerTest(AzureTestCase):
             self.assertEqual(form_field.value, expected.value_phone_number)
         if field_type == "time":
             self.assertEqual(form_field.value, expected.value_time)
+        if field_type == "selectionMark":
+            self.assertEqual(form_field.value, expected.value_selection_mark)
+        if field_type == "countryRegion":
+            self.assertEqual(form_field.value, expected.value_country_region)
         if field_type == "array":
             for i in range(len(expected.value_array)):
                 self.assertFormFieldValueTransformCorrect(form_field.value[i], expected.value_array[i], read_results)
@@ -558,8 +564,8 @@ class FormRecognizerTest(AzureTestCase):
         self.assertIsNotNone(line.text)
         self.assertBoundingBoxHasPoints(line.bounding_box)
         if line.appearance:
-            self.assertIsNotNone(line.appearance.style.name)
-            self.assertIsNotNone(line.appearance.style.confidence)
+            self.assertIsNotNone(line.appearance.style_name)
+            self.assertIsNotNone(line.appearance.style_confidence)
         self.assertEqual(line.page_number, page_number)
         for word in line.words:
             self.assertFormWordHasValues(word, page_number)
