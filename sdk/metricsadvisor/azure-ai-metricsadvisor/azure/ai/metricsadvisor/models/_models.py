@@ -3021,8 +3021,7 @@ class SQLConnectionStringCredentialEntity(object):
     :vartype id: str
     :param name: Required. Name of data source credential.
     :type name: str
-    :param description: Description of data source credential.
-    :type description: str
+    :keyword str description: Description of data source credential.
     :param connection_string: Required. The connection string to access the Azure SQL.
     :type connection_string: str
     """
