@@ -20,33 +20,32 @@ QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
 
-while True:
-    with servicebus_client:
-        sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
-        messages = [ServiceBusMessage("Message to be deferred") for _ in range(10)]
-        with sender:
-            sender.send_messages(messages)
+with servicebus_client:
+    sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
+    messages = [ServiceBusMessage("Message to be deferred") for _ in range(10)]
+    with sender:
+        sender.send_messages(messages)
 
-        receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
-        with receiver:
-            received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
-            deferred_sequenced_numbers = []
-            for msg in received_msgs:
-                print("Deferring msg: {}".format(str(msg)))
-                deferred_sequenced_numbers.append(msg.sequence_number)
-                receiver.defer_message(msg)
+    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
+    with receiver:
+        received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+        deferred_sequenced_numbers = []
+        for msg in received_msgs:
+            print("Deferring msg: {}".format(str(msg)))
+            deferred_sequenced_numbers.append(msg.sequence_number)
+            receiver.defer_message(msg)
 
-            if deferred_sequenced_numbers:
-                received_deferred_msg = receiver.receive_deferred_messages(
-                    sequence_numbers=deferred_sequenced_numbers
-                )
+        if deferred_sequenced_numbers:
+            received_deferred_msg = receiver.receive_deferred_messages(
+                sequence_numbers=deferred_sequenced_numbers
+            )
 
-                time.sleep(1)   # wait for delay in deferral before receiving
+            time.sleep(1)   # wait for delay in deferral before receiving
 
-                for msg in received_deferred_msg:
-                    print("Completing deferred msg: {}".format(str(msg)))
-                    receiver.complete_message(msg)
-            else:
-                print("No messages received.")
+            for msg in received_deferred_msg:
+                print("Completing deferred msg: {}".format(str(msg)))
+                receiver.complete_message(msg)
+        else:
+            print("No messages received.")
 
     print("Receive is done.")
