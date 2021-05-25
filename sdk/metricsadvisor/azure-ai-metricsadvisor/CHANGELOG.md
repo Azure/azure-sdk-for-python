@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0 (2021-06-07)
 
 **New Features**
 - Added AzureLogAnalyticsDataFeedSource and AzureEventHubsDataFeedSource

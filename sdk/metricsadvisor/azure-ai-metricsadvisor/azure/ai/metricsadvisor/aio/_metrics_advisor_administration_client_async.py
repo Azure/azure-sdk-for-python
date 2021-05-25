@@ -1214,8 +1214,6 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         :param skip: for paging, skipped number.
         :type skip: int
-        :param maxpagesize: the maximum number of items in one page.
-        :type maxpagesize: int
         :return: Pageable containing credential entities
         :rtype: ~azure.core.paging.AsyncItemPaged[Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
             ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,

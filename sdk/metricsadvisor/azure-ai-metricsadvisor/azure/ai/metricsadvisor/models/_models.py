@@ -3012,7 +3012,7 @@ class SQLConnectionStringCredentialEntity(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of data source credential.Constant filled by
+    :ivar type: Required. Type of data source credential.Constant filled by
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type type: str or
@@ -3083,7 +3083,7 @@ class DataLakeGen2SharedKeyCredentialEntity(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of data source credential.Constant filled by
+    :ivar type: Required. Type of data source credential.Constant filled by
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type type: str or
@@ -3153,7 +3153,7 @@ class ServicePrincipalCredentialEntity(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of data source credential.Constant filled by
+    :ivar type: Required. Type of data source credential.Constant filled by
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type type: str or
@@ -3244,7 +3244,7 @@ class ServicePrincipalInKVCredentialEntity(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of data source credential.Constant filled by
+    :ivar type: Required. Type of data source credential.Constant filled by
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type type: str or
