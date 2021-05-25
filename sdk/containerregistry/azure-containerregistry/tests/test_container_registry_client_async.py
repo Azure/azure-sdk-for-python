@@ -465,3 +465,22 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         digest = digest[:-10] + u"a" * 10
 
         await client.delete_manifest(repo, digest)
+
+    @acr_preparer()
+    async def test_expiration_time_parsing(self, containerregistry_endpoint):
+        from azure.containerregistry.aio._async_authentication_policy import ContainerRegistryChallengePolicy
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        async for repo in client.list_repository_names():
+            pass
+
+        for policy in client._client._client._pipeline._impl_policies:
+            if isinstance(policy, ContainerRegistryChallengePolicy):
+                policy._exchange_client._expiration_time = 0
+                break
+
+        count = 0
+        async for repo in client.list_repository_names():
+            count += 1
+
+        assert count >= 1

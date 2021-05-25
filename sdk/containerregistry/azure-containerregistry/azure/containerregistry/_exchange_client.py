@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from ._generated import ContainerRegistry
-from ._helpers import _parse_challenge
+from ._helpers import _parse_challenge, _parse_exp_time
 from ._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -55,7 +55,7 @@ class ACRExchangeClient(object):
         )
         self._credential = credential
         self._refresh_token = None
-        self._last_refresh_time = 0
+        self._expiration_time = 0
 
     def get_acr_access_token(self, challenge, **kwargs):
         # type: (str, Dict[str, Any]) -> str
@@ -67,9 +67,9 @@ class ACRExchangeClient(object):
 
     def get_refresh_token(self, service, **kwargs):
         # type: (str, Dict[str, Any]) -> str
-        if not self._refresh_token or time.time() - self._last_refresh_time > 300:
+        if not self._refresh_token or self._expiration_time - time.time() > 300:
             self._refresh_token = self.exchange_aad_token_for_refresh_token(service, **kwargs)
-            self._last_refresh_time = time.time()
+            self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
     def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):

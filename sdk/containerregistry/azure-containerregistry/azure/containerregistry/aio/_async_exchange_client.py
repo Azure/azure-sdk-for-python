@@ -10,7 +10,7 @@ from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from .._generated.aio import ContainerRegistry
-from .._helpers import _parse_challenge
+from .._helpers import _parse_challenge, _parse_exp_time
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -51,7 +51,7 @@ class ACRExchangeClient(object):
         )
         self._credential = credential
         self._refresh_token = None
-        self._last_refresh_time = None
+        self._expiration_time = 0
 
     async def get_acr_access_token(self, challenge: str, **kwargs: Dict[str, Any]) -> str:
         parsed_challenge = _parse_challenge(challenge)
@@ -61,7 +61,7 @@ class ACRExchangeClient(object):
         )
 
     async def get_refresh_token(self, service: str, **kwargs: Dict[str, Any]) -> str:
-        if not self._refresh_token or time.time() - self._last_refresh_time > 300:
+        if not self._refresh_token or self._expiration_time - time.time() > 300:
             self._refresh_token = await self.exchange_aad_token_for_refresh_token(service, **kwargs)
             self._last_refresh_time = time.time()
         return self._refresh_token
