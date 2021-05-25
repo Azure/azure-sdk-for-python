@@ -55,7 +55,8 @@ client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net
 ## Key concepts
 Basic understanding of below terms will help to get started with FarmBeats client library.
 
-* [Farm Hierarchy][farm_hierarchy]: Is a collection of below entities.
+### [Farm Hierarchy][farm_hierarchy]
+Farm hierarchy is a collection of below entities.
     * Farmer - is the custodian of all the agronomic data.
     * Farm - is a logical collection of fields and/or seasonal fields. They do not have any area associated with them.
     * Field - is a multi-polygon area. This is expected to be stable across seasons.
@@ -63,9 +64,11 @@ Basic understanding of below terms will help to get started with FarmBeats clien
     * Boundary - is the actual multi-polygon area expressed as a geometry (in geojson). It is normally associated with a field or a seasonal field. Satellite, weather and farm operations data is linked to a boundary.
     * Cascade delete - Agronomic data is stored hierarchically with farmer as the root. The hierarchy includes Farmer -> Farms -> Fields -> Seasonal Fields -> Boundaries -> Associated data (satellite, weather, farm operations). Cascade delete refers to the process of deleting any node and its subtree. 
     
-* [Scenes][scenes]: refers to images ingested using satellite APIs.
+### [Scenes][scenes]
+Scenes refers to images ingested using satellite APIs.
 
-* [Farm Operations][farm_operations_docs]: includes details pertaining to tilling, planting, application of pesticides & nutrients, and harvesting. This can either be manually pushed into FarmBeats using APIs or the same information can be pulled from farm equipment service providers like John Deere. 
+### [Farm Operations][farm_operations_docs]
+Fam operations includes details pertaining to tilling, planting, application of pesticides & nutrients, and harvesting. This can either be manually pushed into FarmBeats using APIs or the same information can be pulled from farm equipment service providers like John Deere. 
 
 
 ## Examples
@@ -285,7 +288,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [farm_hierarchy]: https://aka.ms/FarmBeatsFarmHierarchyDocs
 [farm_operations_docs]: https://aka.ms/FarmBeatsFarmOperationsDocumentation
 [install_farmbeats]: https://aka.ms/FarmBeatsInstallDocumentationPaaS
-[product_docs]: https://docs.microsoft.com/azure/industry/agriculture/overview-azure-farmbeats
+[product_docs]: https://aka.ms/FarmBeatsProductDocumentationPaaS
 [pip]: https://pypi.org/project/pip/
 [pypi]: https://pypi.org/
 [python]: https://www.python.org/downloads/
