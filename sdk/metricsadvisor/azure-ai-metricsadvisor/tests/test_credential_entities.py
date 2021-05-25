@@ -30,7 +30,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             )
             self.assertIsNotNone(credential_entity.id)
             self.assertEqual(credential_entity.name, credential_entity_name)
-            self.assertEqual(credential_entity.type, 'AzureSQLConnectionString')
+            self.assertEqual(credential_entity.credential_entity_type, 'AzureSQLConnectionString')
         finally:
             self.admin_client.delete_credential_entity(credential_entity.id)
 
@@ -46,7 +46,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             )
             self.assertIsNotNone(credential_entity.id)
             self.assertEqual(credential_entity.name, credential_entity_name)
-            self.assertEqual(credential_entity.type, 'DataLakeGen2SharedKey')
+            self.assertEqual(credential_entity.credential_entity_type, 'DataLakeGen2SharedKey')
         finally:
             self.admin_client.delete_credential_entity(credential_entity.id)
 
@@ -64,7 +64,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             )
             self.assertIsNotNone(credential_entity.id)
             self.assertEqual(credential_entity.name, credential_entity_name)
-            self.assertEqual(credential_entity.type, 'ServicePrincipal')
+            self.assertEqual(credential_entity.credential_entity_type, 'ServicePrincipal')
         finally:
             self.admin_client.delete_credential_entity(credential_entity.id)
 
@@ -85,7 +85,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             )
             self.assertIsNotNone(credential_entity.id)
             self.assertEqual(credential_entity.name, credential_entity_name)
-            self.assertEqual(credential_entity.type, 'ServicePrincipalInKV')
+            self.assertEqual(credential_entity.credential_entity_type, 'ServicePrincipalInKV')
         finally:
             self.admin_client.delete_credential_entity(credential_entity.id)
 
