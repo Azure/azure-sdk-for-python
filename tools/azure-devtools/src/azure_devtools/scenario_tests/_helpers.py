@@ -7,6 +7,7 @@ def _decompress_body(body, enc):
 
 
 def _compress_body(body, enc):
-    zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
-    compressor = zlib.compressobj(wbits=zlib_mode)
-    return compressor.compress(body)
+    # zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
+    # compressor = zlib.compressobj(wbits=zlib_mode)
+    # return compressor.compress(body)
+    return zlib.compress(body)

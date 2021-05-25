@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from copy import deepcopy
+from zlib import decompress
 import six
 
 from ._helpers import _decompress_body, _compress_body
@@ -255,11 +256,11 @@ class GeneralNameReplacer(RecordingProcessor):
         return response
 
     def _scrub_compressed_body(self, response):
-        if "Content-Encoding" in response["headers"]:
-            enc = response['headers']['Content-Encoding'].lower()
-            if enc in ["gzip", "deflate"]:
-                decompressed = _decompress_body(response['body'], enc)
-
+        if "content-encoding" in response["headers"]:
+            enc = response['headers']['content-encoding'].lower()
+            if enc in ["gzip", "deflate"] and isinstance(response["body"]["string"], six.binary_type):
+                decompressed = _decompress_body(response['body']["string"], enc)
+                decompressed = decompressed.decode("utf-8")
                 for old, new in self.names_name:
                     try:
                         decompressed = decompressed.replace(old, new)
@@ -267,8 +268,8 @@ class GeneralNameReplacer(RecordingProcessor):
                         decompressed.decode('utf8', 'backslashreplace').replace(old, new).encode('utf8', 'backslashreplace')
                     except TypeError:
                         pass
-
-                response['body'] = _compress_body(decompressed, enc)
+                decompressed = decompressed.encode("utf-8")
+                response['body']["string"] = _compress_body(decompressed, enc)
 
 
 class RequestUrlNormalizer(RecordingProcessor):
