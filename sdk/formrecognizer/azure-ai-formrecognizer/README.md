@@ -34,7 +34,7 @@ This table shows the relationship between SDK versions and supported API version
 |SDK version|Supported API version of service
 |-|-
 |3.1.0 - Latest GA release| 2.0, 2.1 (default)
-
+|3.0.0| 2.0
 
 #### Create a Form Recognizer resource
 Form Recognizer supports both [multi-service and single-service access][multi_and_single_service].
@@ -147,7 +147,7 @@ Sample code snippets are provided to illustrate using a FormRecognizerClient [he
 `FormTrainingClient` provides operations for:
 
 - Training custom models without labels to recognize all fields and values found in your custom forms. A `CustomFormModel` is returned indicating the form types the model will recognize, and the fields it will extract for each form type. See the [service documentation][fr-train-without-labels] for a more detailed explanation.
-- Training custom models with labels to recognize specific fields, selection marks, and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
+- Training custom models with labels to recognize specific fields, selection marks, tables, and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
 - Managing models created in your account.
 - Copying a custom model from one Form Recognizer resource to another.
 - Creating a composed model from a collection of existing trained models with labels.
