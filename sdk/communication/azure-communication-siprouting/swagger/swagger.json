@@ -1,0 +1,235 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "SipRouting Service",
+    "description": "SipRouting Service",
+    "contact": {
+      "email": "acsdevexdisc@microsoft.com"
+    },
+    "version": "2021-05-01-preview"
+  },
+  "paths": {
+    "/sip": {
+      "get": {
+        "tags": [
+          "SipRouting"
+        ],
+        "summary": "Get SIP configuration for resource.",
+        "operationId": "GetSipConfiguration",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "schema": {
+              "$ref": "#/definitions/SipConfiguration"
+            }
+          },
+          "default": {
+            "description": "Failure.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get SIP configuration for resource": {
+            "$ref": "./examples/GetSipConfiguration.json"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "SipRouting"
+        ],
+        "summary": "Patch SIP configuration for resource.",
+        "operationId": "PatchSipConfiguration",
+        "consumes": [
+          "application/merge-patch+json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Configuration patch.",
+            "schema": {
+              "$ref": "#/definitions/SipConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Patched configuration is returned.",
+            "schema": {
+              "$ref": "#/definitions/SipConfiguration"
+            }
+          },
+          "415": {
+            "description": "Unsupported media type of the patch."
+          },
+          "422": {
+            "description": "If the request is empty, unprocessable or inconsistent with the stored data.\n{ \"code\":\"EmptyPatch\",\"message\":\"Request failed: 'Patch with no data provided'.\" }\n{ \"code\":\"InvalidRegex\",\"message\":\"Request failed: 'Not supported regex format provided'.\" }\n{ \"code\":\"InvalidTrunkFqdn\",\"message\":\"Request failed: 'Trunk with an invalid fqdn'.\" }\n{ \"code\":\"InvalidTrunkSipPort\",\"message\":\"Request failed: 'Trunk with an invalid sip signaling port'.\"}\n{ \"code\":\"DuplicatedTrunk\",\"message\":\"Request failed: 'There is a duplicated trunk'.\" }\n{ \"code\":\"TooManyTrunks\",\"message\":\"Request failed: 'Too many trunks provided'.\" }\n{ \"code\":\"InvalidRouteName\",\"message\":\"Request failed: 'Route with an invalid name'.\" }\n{ \"code\":\"InvalidRouteNumberPattern\",\"message\":\"Request failed: 'Route with an invalid number pattern'.\" }\n{ \"code\":\"InvalidRouteDescription\",\"message\":\"Request failed: 'Route with an invalid description'.\" }\n{ \"code\":\"MissingTrunk\",\"message\":\"Request failed: 'Route targeting a missing trunk'.\" }\n{ \"code\":\"DuplicatedRoute\",\"message\":\"Request failed: 'There is a duplicated route'.\" }\n{ \"code\":\"TooManyRoutes\",\"message\":\"Request failed: 'Too many routes provided'.\" }\n{ \"code\":\"RouteWithDuplicatedTrunk\",\"message\":\"Request failed: 'There is a duplicated trunk in a route'.\" }\n{ \"code\":\"RouteWithTooManyTrunks\",\"message\":\"Request failed: 'Route with too many trunks'.\" }"
+          },
+          "500": {
+            "description": "All other api errors."
+          },
+          "default": {
+            "description": "Failure.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Patch SIP configuration for resource": {
+            "$ref": "./examples/PatchSipConfiguration.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Trunk": {
+      "description": "Represents a SIP trunk for routing calls. See RFC 4904.",
+      "required": [
+        "sipSignalingPort"
+      ],
+      "type": "object",
+      "properties": {
+        "sipSignalingPort": {
+          "format": "int32",
+          "description": "Gets or sets SIP signaling port of the trunk.",
+          "type": "integer"
+        }
+      }
+    },
+    "TrunkRoute": {
+      "description": "Represents a trunk route for routing calls.",
+      "required": [
+        "name",
+        "numberPattern"
+      ],
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Gets or sets description of the route.",
+          "maxLength": 1024,
+          "type": "string"
+        },
+        "name": {
+          "description": "Gets or sets name of the route.",
+          "maxLength": 256,
+          "type": "string"
+        },
+        "numberPattern": {
+          "description": "Gets or sets regex number pattern for routing calls. .NET regex format is supported.\r\nThe regex should match only digits with an optional '+' prefix without spaces.\r\nI.e. \"^\\\\+[1-9][0-9]{3,23}$\".",
+          "maxLength": 1024,
+          "type": "string"
+        },
+        "trunks": {
+          "description": "Gets or sets list of SIP trunks for routing calls. Trunks are represented as fqdn.",
+          "maxLength": 250,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "SipConfiguration": {
+      "description": "Represents a SIP configuration.",
+      "type": "object",
+      "properties": {
+        "trunks": {
+          "description": "SIP trunks for routing calls. Map key is trunk's fqdn (1-255 characters)",
+          "maxLength": 250,
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Trunk"
+          }
+        },
+        "routes": {
+          "description": "Trunk routes for routing calls. Route's name is used as the key.",
+          "maxLength": 250,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TrunkRoute"
+          }
+        }
+      }
+    },
+    "ErrorBody": {
+      "description": "Represents a service error response body.",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "The error code in the error response.",
+          "type": "string"
+        },
+        "message": {
+          "description": "The error message in the error response.",
+          "type": "string"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "description": "Represents a service error response.",
+      "type": "object",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/ErrorBody"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "ApiVersionParameter": {
+      "in": "query",
+      "name": "api-version",
+      "description": "Version of API to invoke",
+      "required": true,
+      "type": "string"
+    },
+    "Endpoint": {
+      "in": "path",
+      "name": "endpoint",
+      "description": "The communication resource, for example https://resourcename.communication.azure.com",
+      "required": true,
+      "type": "string",
+      "x-ms-skip-url-encoding": true,
+      "x-ms-parameter-location": "client"
+    }
+  },
+  "securityDefinitions": {
+    "azure_auth": {
+      "type": "oauth2",
+      "flow": "implicit",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "scopes": {
+        "user_impersonation": "impersonate your user account"
+      },
+      "description": "Azure Active Directory OAuth2 Flow"
+    }
+  },
+  "x-ms-parameterized-host": {
+    "hostTemplate": "{endpoint}",
+    "useSchemePrefix": false,
+    "parameters": [
+      {
+        "$ref": "#/parameters/Endpoint"
+      }
+    ]
+  }
+}
