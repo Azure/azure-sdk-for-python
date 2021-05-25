@@ -41,9 +41,9 @@ def sample_create_credential_entity():
 
     credential_entity = client.create_credential_entity(
         credential_entity=SQLConnectionStringCredentialEntity(
-            data_source_credential_name="sql credential entity",
+            name="sql credential entity",
             connection_string=connection_string,
-            data_source_credential_description="my credential entity",
+            description="my credential entity",
         )
     )
 
@@ -64,9 +64,9 @@ def sample_get_credential_entity(credential_entity_id):
 
     credential_entity = client.get_credential_entity(credential_entity_id)
 
-    print("Credential entity type: {}".format(credential_entity.data_source_credential_type))
-    print("Credential entity name: {}".format(credential_entity.data_source_credential_name))
-    print("Description: {}".format(credential_entity.data_source_credential_description))
+    print("Type: {}".format(credential_entity.type))
+    print("Name: {}".format(credential_entity.name))
+    print("Description: {}".format(credential_entity.description))
 
     # [END get_credential_entity]
 
@@ -84,9 +84,9 @@ def sample_list_credential_entities():
 
     credential_entities = client.list_credential_entities()
     for credential_entity in credential_entities:
-        print("Credential entity type: {}".format(credential_entity.data_source_credential_type))
-        print("Credential entity name: {}".format(credential_entity.data_source_credential_name))
-        print("Description: {}\n".format(credential_entity.data_source_credential_description))
+        print("Type: {}".format(credential_entity.type))
+        print("Name: {}".format(credential_entity.name))
+        print("Description: {}\n".format(credential_entity.description))
 
     # [END list_credential_entities]
 
@@ -104,11 +104,10 @@ def sample_update_credential_entity(credential_entity):
 
     credential_entity.description = "updated description"
 
-    client.update_credential_entity(credential_entity)
-    updated = client.get_credential_entity(credential_entity.data_source_credential_id)
-    print("Credential entity type: {}".format(updated.data_source_credential_type))
-    print("Credential entity name: {}".format(updated.data_source_credential_name))
-    print("Description: {}\n".format(updated.data_source_credential_description))
+    updated = client.update_credential_entity(credential_entity)
+    print("Type: {}".format(updated.type))
+    print("Name: {}".format(updated.name))
+    print("Description: {}\n".format(updated.description))
     # [END update_credential_entity]
 
 
@@ -138,10 +137,10 @@ if __name__ == '__main__':
     credential_entity = sample_create_credential_entity()
     print("Credential_entity successfully created...")
     print("\n---Get a credential entity...")
-    sample_get_credential_entity(credential_entity.data_source_credential_id)
+    sample_get_credential_entity(credential_entity.id)
     print("\n---List credential entities...")
     sample_list_credential_entities()
     print("\n---Update a credential entity...")
     sample_update_credential_entity(credential_entity)
     print("\n---Delete a credential entity...")
-    sample_delete_credential_entity(credential_entity.data_source_credential_id)
+    sample_delete_credential_entity(credential_entity.id)

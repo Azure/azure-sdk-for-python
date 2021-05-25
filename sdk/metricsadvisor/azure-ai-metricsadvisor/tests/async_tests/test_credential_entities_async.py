@@ -26,16 +26,16 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
                     credential_entity=SQLConnectionStringCredentialEntity(
-                        data_source_credential_name=credential_entity_name,
+                        name=credential_entity_name,
                         connection_string=self.sql_server_connection_string,
-                        data_source_credential_description="my credential entity",
+                        description="my credential entity",
                     )
                 )
-                self.assertIsNotNone(credential_entity.data_source_credential_id)
-                self.assertEqual(credential_entity.data_source_credential_name, credential_entity_name)
-                self.assertEqual(credential_entity.data_source_credential_type, 'AzureSQLConnectionString')
+                self.assertIsNotNone(credential_entity.id)
+                self.assertEqual(credential_entity.name, credential_entity_name)
+                self.assertEqual(credential_entity.type, 'AzureSQLConnectionString')
             finally:
-                await self.admin_client.delete_credential_entity(credential_entity.data_source_credential_id)
+                await self.admin_client.delete_credential_entity(credential_entity.id)
 
     @AzureTestCase.await_prepared_test
     async def test_datalake_gen2_shared_key_credential_entity(self):
@@ -44,16 +44,16 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
                     credential_entity=DataLakeGen2SharedKeyCredentialEntity(
-                        data_source_credential_name=credential_entity_name,
+                        name=credential_entity_name,
                         account_key=self.azure_datalake_account_key,
-                        data_source_credential_description="my credential entity",
+                        description="my credential entity",
                     )
                 )
-                self.assertIsNotNone(credential_entity.data_source_credential_id)
-                self.assertEqual(credential_entity.data_source_credential_name, credential_entity_name)
-                self.assertEqual(credential_entity.data_source_credential_type, 'DataLakeGen2SharedKey')
+                self.assertIsNotNone(credential_entity.id)
+                self.assertEqual(credential_entity.name, credential_entity_name)
+                self.assertEqual(credential_entity.type, 'DataLakeGen2SharedKey')
             finally:
-                await self.admin_client.delete_credential_entity(credential_entity.data_source_credential_id)
+                await self.admin_client.delete_credential_entity(credential_entity.id)
 
     @AzureTestCase.await_prepared_test
     async def test_service_principal_credential_entity(self):
@@ -62,18 +62,18 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
                     credential_entity=ServicePrincipalCredentialEntity(
-                        data_source_credential_name=credential_entity_name,
+                        name=credential_entity_name,
                         client_id="client_id",
                         client_secret="client_secret",
                         tenant_id="tenant_id",
-                        data_source_credential_description="my credential entity",
+                        description="my credential entity",
                     )
                 )
-                self.assertIsNotNone(credential_entity.data_source_credential_id)
-                self.assertEqual(credential_entity.data_source_credential_name, credential_entity_name)
-                self.assertEqual(credential_entity.data_source_credential_type, 'ServicePrincipal')
+                self.assertIsNotNone(credential_entity.id)
+                self.assertEqual(credential_entity.name, credential_entity_name)
+                self.assertEqual(credential_entity.type, 'ServicePrincipal')
             finally:
-                await self.admin_client.delete_credential_entity(credential_entity.data_source_credential_id)
+                await self.admin_client.delete_credential_entity(credential_entity.id)
 
     @AzureTestCase.await_prepared_test
     async def test_service_principal_in_kv_credential_entity(self):
@@ -82,21 +82,21 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
                     credential_entity=ServicePrincipalInKVCredentialEntity(
-                        data_source_credential_name=credential_entity_name,
+                        name=credential_entity_name,
                         key_vault_endpoint="key_vault_endpoint",
                         key_vault_client_id="key_vault_client_id",
                         key_vault_client_secret="key_vault_client_secret",
                         service_principal_id_name_in_kv="service_principal_id_name_in_kv",
                         service_principal_secret_name_in_kv="service_principal_secret_name_in_kv",
                         tenant_id="tenant_id",
-                        data_source_credential_description="my credential entity",
+                        description="my credential entity",
                     )
                 )
-                self.assertIsNotNone(credential_entity.data_source_credential_id)
-                self.assertEqual(credential_entity.data_source_credential_name, credential_entity_name)
-                self.assertEqual(credential_entity.data_source_credential_type, 'ServicePrincipalInKV')
+                self.assertIsNotNone(credential_entity.id)
+                self.assertEqual(credential_entity.name, credential_entity_name)
+                self.assertEqual(credential_entity.type, 'ServicePrincipalInKV')
             finally:
-                await self.admin_client.delete_credential_entity(credential_entity.data_source_credential_id)
+                await self.admin_client.delete_credential_entity(credential_entity.id)
 
     @AzureTestCase.await_prepared_test
     async def test_list_credential_entities(self):
@@ -105,9 +105,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
                     credential_entity=SQLConnectionStringCredentialEntity(
-                        data_source_credential_name=credential_entity_name,
+                        name=credential_entity_name,
                         connection_string=self.sql_server_connection_string,
-                        data_source_credential_description="my credential entity",
+                        description="my credential entity",
                     )
                 )
                 credential_entities = self.admin_client.list_credential_entities()
@@ -116,7 +116,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     credential_entities_list.append(credential_entity)
                 assert len(credential_entities_list) > 0
             finally:
-                await self.admin_client.delete_credential_entity(credential_entity.data_source_credential_id)
+                await self.admin_client.delete_credential_entity(credential_entity.id)
 
     @AzureTestCase.await_prepared_test
     async def test_update_sql_connection_string_credential_entity(self):
@@ -125,17 +125,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
                     credential_entity=SQLConnectionStringCredentialEntity(
-                        data_source_credential_name=credential_entity_name,
+                        name=credential_entity_name,
                         connection_string=self.sql_server_connection_string,
-                        data_source_credential_description="my credential entity",
+                        description="my credential entity",
                     )
                 )
                 credential_entity.connection_string = "update"
-                credential_entity.data_source_credential_description = "update"
+                credential_entity.description = "update"
                 credential_entity_updated = await self.admin_client.update_credential_entity(credential_entity)
-                self.assertEqual(credential_entity_updated.data_source_credential_description, "update")
+                self.assertEqual(credential_entity_updated.description, "update")
             finally:
-                await self.admin_client.delete_credential_entity(credential_entity.data_source_credential_id)
+                await self.admin_client.delete_credential_entity(credential_entity.id)
 
     @AzureTestCase.await_prepared_test
     async def test_update_datalake_gen2_shared_key_credential_entity(self):
@@ -144,17 +144,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
                     credential_entity=DataLakeGen2SharedKeyCredentialEntity(
-                        data_source_credential_name=credential_entity_name,
+                        name=credential_entity_name,
                         account_key=self.azure_datalake_account_key,
-                        data_source_credential_description="my credential entity",
+                        description="my credential entity",
                     )
                 )
                 credential_entity.account_key = "update"
-                credential_entity.data_source_credential_description = "update"
+                credential_entity.description = "update"
                 credential_entity_updated = await self.admin_client.update_credential_entity(credential_entity)
-                self.assertEqual(credential_entity_updated.data_source_credential_description, "update")
+                self.assertEqual(credential_entity_updated.description, "update")
             finally:
-                await self.admin_client.delete_credential_entity(credential_entity.data_source_credential_id)
+                await self.admin_client.delete_credential_entity(credential_entity.id)
 
     @AzureTestCase.await_prepared_test
     async def test_update_service_principal_credential_entity(self):
@@ -163,21 +163,21 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
                     credential_entity=ServicePrincipalCredentialEntity(
-                        data_source_credential_name=credential_entity_name,
+                        name=credential_entity_name,
                         client_id="client_id",
                         client_secret="client_secret",
                         tenant_id="tenant_id",
-                        data_source_credential_description="my credential entity",
+                        description="my credential entity",
                     )
                 )
                 credential_entity.client_id = "update"
                 credential_entity.client_secret = "update"
                 credential_entity.tenant_id = "update"
-                credential_entity.data_source_credential_description = "update"
+                credential_entity.description = "update"
                 credential_entity_updated = await self.admin_client.update_credential_entity(credential_entity)
-                self.assertEqual(credential_entity_updated.data_source_credential_description, "update")
+                self.assertEqual(credential_entity_updated.description, "update")
             finally:
-                await self.admin_client.delete_credential_entity(credential_entity.data_source_credential_id)
+                await self.admin_client.delete_credential_entity(credential_entity.id)
 
     @AzureTestCase.await_prepared_test
     async def test_update_service_principal_in_kv_credential_entity(self):
@@ -186,14 +186,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
                     credential_entity=ServicePrincipalInKVCredentialEntity(
-                        data_source_credential_name=credential_entity_name,
+                        name=credential_entity_name,
                         key_vault_endpoint="key_vault_endpoint",
                         key_vault_client_id="key_vault_client_id",
                         key_vault_client_secret="key_vault_client_secret",
                         service_principal_id_name_in_kv="service_principal_id_name_in_kv",
                         service_principal_secret_name_in_kv="service_principal_secret_name_in_kv",
                         tenant_id="tenant_id",
-                        data_source_credential_description="my credential entity",
+                        description="my credential entity",
                     )
                 )
                 credential_entity.key_vault_endpoint = "update"
@@ -202,8 +202,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 credential_entity.service_principal_id_name_in_kv = "update"
                 credential_entity.service_principal_secret_name_in_kv = "update"
                 credential_entity.tenant_id = "update"
-                credential_entity.data_source_credential_description = "update"
+                credential_entity.description = "update"
                 credential_entity_updated = await self.admin_client.update_credential_entity(credential_entity)
-                self.assertEqual(credential_entity_updated.data_source_credential_description, "update")
+                self.assertEqual(credential_entity_updated.description, "update")
             finally:
-                await self.admin_client.delete_credential_entity(credential_entity.data_source_credential_id)
+                await self.admin_client.delete_credential_entity(credential_entity.id)

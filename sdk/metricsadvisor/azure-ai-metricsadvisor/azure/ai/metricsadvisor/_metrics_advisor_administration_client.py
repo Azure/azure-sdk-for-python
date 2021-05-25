@@ -118,6 +118,13 @@ DataFeedSourceUnion = Union[
     AzureEventHubsDataFeedSource,
 ]
 
+CredentialEntityUnion = Union[
+    SQLConnectionStringCredentialEntity,
+    DataLakeGen2SharedKeyCredentialEntity,
+    ServicePrincipalCredentialEntity,
+    ServicePrincipalInKVCredentialEntity,
+]
+
 DATA_FEED = {
     "SqlServer": _SQLServerDataFeed,
     "AzureApplicationInsights": _AzureApplicationInsightsDataFeed,
@@ -1226,13 +1233,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     @distributed_trace
     def get_credential_entity(
         self,
-        data_source_credential_id,  # type: str
+        id,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> CredentialEntityUnion
         """Get a data source credential entity
 
-        :param credential_id: Data source credential entity unique ID.
-        :type credential_id: str
+        :param id: Data source credential entity unique ID.
+        :type id: str
         :return: The credential entity
         :rtype: Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
             ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
@@ -1250,14 +1258,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Get a credential entity by its ID
         """
 
-        credential_entity = self._client.get_credential(data_source_credential_id, **kwargs)
+        credential_entity = self._client.get_credential(id, **kwargs)
         return convert_to_credential_entity(credential_entity)
 
     @distributed_trace
     def create_credential_entity(
-            self, credential_entity,
+            self, credential_entity,    # type: CredentialEntityUnion
             **kwargs  # type: Any
     ):
+        # type: (...) -> CredentialEntityUnion
         """Create a new data source credential entity.
 
         :param credential_entity: The data source credential entity to create
@@ -1283,7 +1292,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
 
         credential_entity_request = None
-        if credential_entity.data_source_credential_type in ["AzureSQLConnectionString",
+        if credential_entity.type in ["AzureSQLConnectionString",
             "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
             credential_entity_request = credential_entity._to_generated()
 
@@ -1300,6 +1309,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         self,
         **kwargs  # type: Any
     ):
+        # type: (...) -> ItemPaged[CredentialEntityUnion]
         """List all credential entities.
 
         :param skip: for paging, skipped number.
@@ -1331,9 +1341,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     @distributed_trace
     def update_credential_entity(
         self,
-        credential_entity,
+        credential_entity,  # type: CredentialEntityUnion
         **kwargs  # type: Any
     ):
+        # type: (...) -> CredentialEntityUnion
         """Update a credential entity.
 
         :param credential_entity: The new credential entity object
@@ -1357,12 +1368,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Update an existing credential entity
         """
 
-        if credential_entity.data_source_credential_type in ["AzureSQLConnectionString",
+        if credential_entity.type in ["AzureSQLConnectionString",
             "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
             credential_entity_request = credential_entity._to_generated_patch()
 
         updated_credential_entity = self._client.update_credential(
-            credential_entity.data_source_credential_id,
+            credential_entity.id,
             credential_entity_request,
             **kwargs
         )
@@ -1370,12 +1381,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return convert_to_credential_entity(updated_credential_entity)
 
     @distributed_trace
-    def delete_credential_entity(self, credential_entity_id, **kwargs):
+    def delete_credential_entity(self, id, **kwargs):
         # type: (str, Any) -> None
         """Delete a credential entity by its ID.
 
-        ::param credential_entity_id: Credential entity unique ID.
-        :type credential_entity_id: str
+        ::param id: Credential entity unique ID.
+        :type id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1390,4 +1401,4 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Delete a credential entity by its ID
         """
 
-        self._client.delete_credential(credential_id=credential_entity_id, **kwargs)
+        self._client.delete_credential(credential_id=id, **kwargs)

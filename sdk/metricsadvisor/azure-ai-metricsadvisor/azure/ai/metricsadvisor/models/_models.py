@@ -3012,70 +3012,69 @@ class SQLConnectionStringCredentialEntity(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+    :param type: Required. Type of data source credential.Constant filled by
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
-    :type data_source_credential_type: str or
+    :type type: str or
      ~azure.ai.metricsadvisor.models.DataSourceCredentialType
-    :ivar data_source_credential_id: Unique id of data source credential.
-    :vartype data_source_credential_id: str
-    :param data_source_credential_name: Required. Name of data source credential.
-    :type data_source_credential_name: str
-    :param data_source_credential_description: Description of data source credential.
-    :type data_source_credential_description: str
+    :ivar id: Unique id of data source credential.
+    :vartype id: str
+    :param name: Required. Name of data source credential.
+    :type name: str
+    :param description: Description of data source credential.
+    :type description: str
     :param connection_string: Required. The connection string to access the Azure SQL.
     :type connection_string: str
     """
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
         'connection_string': {'key': 'connectionString', 'type': 'str'},
     }
 
-    def __init__(self, data_source_credential_name, connection_string, **kwargs):
+    def __init__(self, name, connection_string, **kwargs):
         # type: (str, str, Any) -> None
-        self.data_source_credential_type = 'AzureSQLConnectionString'
-        self.data_source_credential_name = data_source_credential_name
+        self.type = 'AzureSQLConnectionString'
+        self.name = name
         self.connection_string = connection_string
-        self.data_source_credential_id = kwargs.get('data_source_credential_id', None)
-        self.data_source_credential_description = kwargs.get('data_source_credential_description', None)
+        self.id = kwargs.get('id', None)
+        self.description = kwargs.get('description', None)
 
     def __repr__(self):
-        return "SQLConnectionStringCredentialEntity(data_source_credential_type={}, data_source_credential_name={}, " \
-               "connection_string={}, data_source_credential_description={})".format(
-            self.data_source_credential_type,
-            self.data_source_credential_name,
+        return "SQLConnectionStringCredentialEntity(type={}, name={}, connection_string={}, description={})".format(
+            self.type,
+            self.name,
             self.connection_string,
-            self.data_source_credential_description
+            self.description
         )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
         return cls(
-            data_source_credential_name=source.data_source_credential_name,
+            name=source.data_source_credential_name,
             connection_string=source.parameters.connection_string,
-            data_source_credential_id=source.data_source_credential_id,
-            data_source_credential_description=source.data_source_credential_description,
+            id=source.data_source_credential_id,
+            description=source.data_source_credential_description,
         )
 
     def _to_generated(self):
         param = _AzureSQLConnectionStringParam(connection_string=self.connection_string)
         return _AzureSQLConnectionStringCredential(
-            data_source_credential_type=self.data_source_credential_type,
-            data_source_credential_name=self.data_source_credential_name,
-            data_source_credential_description=self.data_source_credential_description,
+            data_source_credential_type=self.type,
+            data_source_credential_name=self.name,
+            data_source_credential_description=self.description,
             parameters=param,
         )
 
     def _to_generated_patch(self):
         param_patch = _AzureSQLConnectionStringParamPatch(connection_string=self.connection_string)
         return _AzureSQLConnectionStringCredentialPatch(
-            data_source_credential_type=self.data_source_credential_type,
-            data_source_credential_name=self.data_source_credential_name,
-            data_source_credential_description=self.data_source_credential_description,
+            data_source_credential_type=self.type,
+            data_source_credential_name=self.name,
+            data_source_credential_description=self.description,
             parameters=param_patch,
         )
 
@@ -3084,70 +3083,68 @@ class DataLakeGen2SharedKeyCredentialEntity(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+    :param type: Required. Type of data source credential.Constant filled by
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
-    :type data_source_credential_type: str or
+    :type type: str or
      ~azure.ai.metricsadvisor.models.DataSourceCredentialType
-    :ivar data_source_credential_id: Unique id of data source credential.
-    :vartype data_source_credential_id: str
-    :param data_source_credential_name: Required. Name of data source credential.
-    :type data_source_credential_name: str
-    :keyword str data_source_credential_description: Description of data source credential.
+    :ivar id: Unique id of data source credential.
+    :vartype id: str
+    :param name: Required. Name of data source credential.
+    :type name: str
+    :keyword str description: Description of data source credential.
     :param account_key: Required. The account key to access the Azure Data Lake Storage Gen2.
     :type account_key: str
     """
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
         'account_key': {'key': 'accountKey', 'type': 'str'},
     }
 
-    def __init__(self, data_source_credential_name, account_key, **kwargs):
+    def __init__(self, name, account_key, **kwargs):
         # type: (str, str, Any) -> None
-        self.data_source_credential_type = 'DataLakeGen2SharedKey'
-        self.data_source_credential_name = data_source_credential_name
+        self.type = 'DataLakeGen2SharedKey'
+        self.name = name
         self.account_key = account_key
-        self.data_source_credential_id = kwargs.get('data_source_credential_id', None)
-        self.data_source_credential_description = kwargs.get('data_source_credential_description', None)
+        self.id = kwargs.get('id', None)
+        self.description = kwargs.get('description', None)
 
     def __repr__(self):
-        return "DataLakeGen2SharedKeyCredentialEntity(data_source_credential_type={}, " \
-               "data_source_credential_name={}, " \
-               "account_key={}, data_source_credential_description={})".format(
-            self.data_source_credential_type,
-            self.data_source_credential_name,
+        return "DataLakeGen2SharedKeyCredentialEntity(type={}, name={}, account_key={}, description={})".format(
+            self.type,
+            self.name,
             self.account_key,
-            self.data_source_credential_description
+            self.description
         )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
         return cls(
-            data_source_credential_name=source.data_source_credential_name,
+            name=source.data_source_credential_name,
             account_key=source.parameters.account_key,
-            data_source_credential_id=source.data_source_credential_id,
-            data_source_credential_description=source.data_source_credential_description,
+            id=source.data_source_credential_id,
+            description=source.data_source_credential_description,
         )
 
     def _to_generated(self):
         param = _DataLakeGen2SharedKeyParam(account_key=self.account_key)
         return _DataLakeGen2SharedKeyCredential(
-            data_source_credential_type=self.data_source_credential_type,
-            data_source_credential_name=self.data_source_credential_name,
-            data_source_credential_description=self.data_source_credential_description,
+            data_source_credential_type=self.type,
+            data_source_credential_name=self.name,
+            data_source_credential_description=self.description,
             parameters=param,
         )
 
     def _to_generated_patch(self):
         param_patch = _DataLakeGen2SharedKeyParamPatch(account_key=self.account_key)
         return _DataLakeGen2SharedKeyCredentialPatch(
-            data_source_credential_type=self.data_source_credential_type,
-            data_source_credential_name=self.data_source_credential_name,
-            data_source_credential_description=self.data_source_credential_description,
+            data_source_credential_type=self.type,
+            data_source_credential_name=self.name,
+            data_source_credential_description=self.description,
             parameters=param_patch,
         )
 
@@ -3156,16 +3153,16 @@ class ServicePrincipalCredentialEntity(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+    :param type: Required. Type of data source credential.Constant filled by
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
-    :type data_source_credential_type: str or
+    :type type: str or
      ~azure.ai.metricsadvisor.models.DataSourceCredentialType
-    :ivar data_source_credential_id: Unique id of data source credential.
-    :vartype data_source_credential_id: str
-    :param data_source_credential_name: Required. Name of data source credential.
-    :type data_source_credential_name: str
-    :keyword str data_source_credential_description: Description of data source credential.
+    :ivar id: Unique id of data source credential.
+    :vartype id: str
+    :param name: Required. Name of data source credential.
+    :type name: str
+    :keyword str description: Description of data source credential.
     :param client_id: Required. The client id of the service principal.
     :type client_id: str
     :param client_secret: Required. The client secret of the service principal.
@@ -3175,45 +3172,45 @@ class ServicePrincipalCredentialEntity(object):
     """
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
         'client_id': {'key': 'clientId', 'type': 'str'},
         'client_secret': {'key': 'clientSecret', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, data_source_credential_name, client_id, client_secret, tenant_id, **kwargs):
+    def __init__(self, name, client_id, client_secret, tenant_id, **kwargs):
         # type: (str, str, str, str, Any) -> None
-        self.data_source_credential_type = 'ServicePrincipal'
-        self.data_source_credential_name = data_source_credential_name
+        self.type = 'ServicePrincipal'
+        self.name = name
         self.client_id = client_id
         self.client_secret = client_secret
         self.tenant_id = tenant_id
-        self.data_source_credential_id = kwargs.get('data_source_credential_id', None)
-        self.data_source_credential_description = kwargs.get('data_source_credential_description', None)
+        self.id = kwargs.get('id', None)
+        self.description = kwargs.get('description', None)
 
     def __repr__(self):
-        return "ServicePrincipalCredentialEntity(data_source_credential_type={}, data_source_credential_name={}, " \
-               "client_id={}, client_secret={}, tenant_id={}, data_source_credential_description={})".format(
-            self.data_source_credential_type,
-            self.data_source_credential_name,
+        return "ServicePrincipalCredentialEntity(type={}, name={}, " \
+               "client_id={}, client_secret={}, tenant_id={}, description={})".format(
+            self.type,
+            self.name,
             self.client_id,
             self.client_secret,
             self.tenant_id,
-            self.data_source_credential_description
+            self.description
         )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
         return cls(
-            data_source_credential_name=source.data_source_credential_name,
+            name=source.data_source_credential_name,
             client_id=source.parameters.client_id,
             client_secret=source.parameters.client_secret,
             tenant_id=source.parameters.tenant_id,
-            data_source_credential_id=source.data_source_credential_id,
-            data_source_credential_description=source.data_source_credential_description,
+            id=source.data_source_credential_id,
+            description=source.data_source_credential_description,
         )
 
     def _to_generated(self):
@@ -3223,9 +3220,9 @@ class ServicePrincipalCredentialEntity(object):
             tenant_id=self.tenant_id
         )
         return _ServicePrincipalCredential(
-            data_source_credential_type=self.data_source_credential_type,
-            data_source_credential_name=self.data_source_credential_name,
-            data_source_credential_description=self.data_source_credential_description,
+            data_source_credential_type=self.type,
+            data_source_credential_name=self.name,
+            data_source_credential_description=self.description,
             parameters=param,
         )
 
@@ -3236,9 +3233,9 @@ class ServicePrincipalCredentialEntity(object):
             tenant_id=self.tenant_id
         )
         return _ServicePrincipalCredentialPatch(
-            data_source_credential_type=self.data_source_credential_type,
-            data_source_credential_name=self.data_source_credential_name,
-            data_source_credential_description=self.data_source_credential_description,
+            data_source_credential_type=self.type,
+            data_source_credential_name=self.name,
+            data_source_credential_description=self.description,
             parameters=param_patch,
         )
 
@@ -3247,16 +3244,16 @@ class ServicePrincipalInKVCredentialEntity(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+    :param type: Required. Type of data source credential.Constant filled by
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
-    :type data_source_credential_type: str or
+    :type type: str or
      ~azure.ai.metricsadvisor.models.DataSourceCredentialType
-    :ivar data_source_credential_id: Unique id of data source credential.
-    :vartype data_source_credential_id: str
-    :param data_source_credential_name: Required. Name of data source credential.
-    :type data_source_credential_name: str
-    :keyword str data_source_credential_description: Description of data source credential.
+    :ivar id: Unique id of data source credential.
+    :vartype id: str
+    :param name: Required. Name of data source credential.
+    :type name: str
+    :keyword str description: Description of data source credential.
     :keyword str key_vault_endpoint: Required. The Key Vault endpoint that storing the service principal.
     :keyword str key_vault_client_id: Required. The Client Id to access the Key Vault.
     :keyword str key_vault_client_secret: Required. The Client Secret to access the Key Vault.
@@ -3268,10 +3265,10 @@ class ServicePrincipalInKVCredentialEntity(object):
     """
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
         'key_vault_endpoint': {'key': 'keyVaultEndpoint', 'type': 'str'},
         'key_vault_client_id': {'key': 'keyVaultClientId', 'type': 'str'},
         'key_vault_client_secret': {'key': 'keyVaultClientSecret', 'type': 'str'},
@@ -3280,47 +3277,47 @@ class ServicePrincipalInKVCredentialEntity(object):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, data_source_credential_name, **kwargs):
-        # type: (str, str, Any) -> None
-        self.data_source_credential_type = 'ServicePrincipalInKV'
-        self.data_source_credential_name = data_source_credential_name
+    def __init__(self, name, **kwargs):
+        # type: (str, Any) -> None
+        self.type = 'ServicePrincipalInKV'
+        self.name = name
         self.key_vault_endpoint = kwargs['key_vault_endpoint']
         self.key_vault_client_id = kwargs['key_vault_client_id']
         self.key_vault_client_secret = kwargs['key_vault_client_secret']
         self.service_principal_id_name_in_kv = kwargs['service_principal_id_name_in_kv']
         self.service_principal_secret_name_in_kv = kwargs['service_principal_secret_name_in_kv']
         self.tenant_id = kwargs['tenant_id']
-        self.data_source_credential_id = kwargs.get('data_source_credential_id', None)
-        self.data_source_credential_description = kwargs.get('data_source_credential_description', None)
+        self.id = kwargs.get('id', None)
+        self.description = kwargs.get('description', None)
 
     def __repr__(self):
-        return "ServicePrincipalInKVCredentialEntity(data_source_credential_type={}, data_source_credential_name={}, " \
+        return "ServicePrincipalInKVCredentialEntity(type={}, name={}, " \
                "key_vault_endpoint={}, key_vault_client_id={}, key_vault_client_secret={}, " \
                "service_principal_id_name_in_kv={}, service_principal_secret_name_in_kv={}, tenant_id={}, " \
-               "data_source_credential_description={})".format(
-            self.data_source_credential_type,
-            self.data_source_credential_name,
+               "description={})".format(
+            self.type,
+            self.name,
             self.key_vault_endpoint,
             self.key_vault_client_id,
             self.key_vault_client_secret,
             self.service_principal_id_name_in_kv,
             self.service_principal_secret_name_in_kv,
             self.tenant_id,
-            self.data_source_credential_description
+            self.description
         )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
         return cls(
-            data_source_credential_name=source.data_source_credential_name,
+            name=source.data_source_credential_name,
             key_vault_endpoint=source.parameters.key_vault_endpoint,
             key_vault_client_id=source.parameters.key_vault_client_id,
             key_vault_client_secret=source.parameters.key_vault_client_secret,
             service_principal_id_name_in_kv=source.parameters.service_principal_id_name_in_kv,
             service_principal_secret_name_in_kv=source.parameters.service_principal_secret_name_in_kv,
             tenant_id=source.parameters.tenant_id,
-            data_source_credential_id=source.data_source_credential_id,
-            data_source_credential_description=source.data_source_credential_description,
+            id=source.data_source_credential_id,
+            description=source.data_source_credential_description,
         )
 
     def _to_generated(self):
@@ -3333,9 +3330,9 @@ class ServicePrincipalInKVCredentialEntity(object):
             tenant_id=self.tenant_id
         )
         return _ServicePrincipalInKVCredential(
-            data_source_credential_type=self.data_source_credential_type,
-            data_source_credential_name=self.data_source_credential_name,
-            data_source_credential_description=self.data_source_credential_description,
+            data_source_credential_type=self.type,
+            data_source_credential_name=self.name,
+            data_source_credential_description=self.description,
             parameters=param,
         )
 
@@ -3349,8 +3346,8 @@ class ServicePrincipalInKVCredentialEntity(object):
             tenant_id=self.tenant_id
         )
         return _ServicePrincipalInKVCredentialPatch(
-            data_source_credential_type=self.data_source_credential_type,
-            data_source_credential_name=self.data_source_credential_name,
-            data_source_credential_description=self.data_source_credential_description,
+            data_source_credential_type=self.type,
+            data_source_credential_name=self.name,
+            data_source_credential_description=self.description,
             parameters=param_patch,
         )

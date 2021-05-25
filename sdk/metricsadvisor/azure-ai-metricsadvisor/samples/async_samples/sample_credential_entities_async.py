@@ -40,11 +40,11 @@ async def sample_create_credential_entity_async():
     client = MetricsAdvisorAdministrationClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
-    credential_entity = client.create_credential_entity(
+    credential_entity = await client.create_credential_entity(
         credential_entity=SQLConnectionStringCredentialEntity(
-            data_source_credential_name="sql credential entity",
+            name="sql credential entity",
             connection_string=connection_string,
-            data_source_credential_description="my credential entity",
+            description="my credential entity",
         )
     )
 
@@ -63,11 +63,11 @@ async def sample_get_credential_entity_async(credential_entity_id):
     client = MetricsAdvisorAdministrationClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
-    credential_entity = client.get_credential_entity(credential_entity_id)
+    credential_entity = await client.get_credential_entity(credential_entity_id)
 
-    print("Credential entity type: {}".format(credential_entity.data_source_credential_type))
-    print("Credential entity name: {}".format(credential_entity.data_source_credential_name))
-    print("Description: {}".format(credential_entity.data_source_credential_description))
+    print("Credential entity type: {}".format(credential_entity.type))
+    print("Credential entity name: {}".format(credential_entity.name))
+    print("Description: {}".format(credential_entity.description))
 
     # [END get_credential_entity_async]
 
@@ -84,10 +84,10 @@ async def sample_list_credential_entities_async():
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     credential_entities = client.list_credential_entities()
-    for credential_entity in credential_entities:
-        print("Credential entity type: {}".format(credential_entity.data_source_credential_type))
-        print("Credential entity name: {}".format(credential_entity.data_source_credential_name))
-        print("Description: {}\n".format(credential_entity.data_source_credential_description))
+    async for credential_entity in credential_entities:
+        print("Credential entity type: {}".format(credential_entity.type))
+        print("Credential entity name: {}".format(credential_entity.name))
+        print("Description: {}\n".format(credential_entity.description))
 
     # [END list_credential_entities_async]
 
@@ -105,11 +105,10 @@ async def sample_update_credential_entity_async(credential_entity):
 
     credential_entity.description = "updated description"
 
-    client.update_credential_entity(credential_entity)
-    updated = client.get_credential_entity(credential_entity.data_source_credential_id)
-    print("Credential entity type: {}".format(updated.data_source_credential_type))
-    print("Credential entity name: {}".format(updated.data_source_credential_name))
-    print("Description: {}\n".format(updated.data_source_credential_description))
+    updated = await client.update_credential_entity(credential_entity)
+    print("Credential entity type: {}".format(updated.type))
+    print("Credential entity name: {}".format(updated.name))
+    print("Description: {}\n".format(updated.description))
     # [END update_credential_entity_async]
 
 
@@ -125,10 +124,10 @@ async def sample_delete_credential_entity_async(credential_entity_id):
     client = MetricsAdvisorAdministrationClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
-    client.delete_credential_entity(credential_entity_id)
+    await client.delete_credential_entity(credential_entity_id)
 
     try:
-        client.get_credential_entity(credential_entity_id)
+        await client.get_credential_entity(credential_entity_id)
     except ResourceNotFoundError:
         print("Credential entity successfully deleted.")
     # [END delete_credential_entity_async]
@@ -139,13 +138,13 @@ async def main():
     credential_entity = await sample_create_credential_entity_async()
     print("Credential_entity successfully created...")
     print("\n---Get a credential entity...")
-    await sample_get_credential_entity_async(credential_entity.data_source_credential_id)
+    await sample_get_credential_entity_async(credential_entity.id)
     print("\n---List credential entities...")
     await sample_list_credential_entities_async()
     print("\n---Update a credential entity...")
     await sample_update_credential_entity_async(credential_entity)
     print("\n---Delete a credential entity...")
-    await sample_delete_credential_entity_async(credential_entity.data_source_credential_id)
+    await sample_delete_credential_entity_async(credential_entity.id)
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
