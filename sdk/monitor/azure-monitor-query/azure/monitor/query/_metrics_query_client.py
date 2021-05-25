@@ -16,11 +16,10 @@ from ._generated._monitor_query_client import (
 from ._helpers import get_authentication_policy
 
 if TYPE_CHECKING:
-    from azure.identity import DefaultAzureCredential
     from azure.core.credentials import TokenCredential
     from azure.core.paging import ItemPaged
-    from ._models import MetricsResponse
-    from ._generated.models import MetricNamespaceCollection
+    from ._models import MetricsResponse, MetricNamespace, MetricDefinition
+
 
 class MetricsClient(object):
     """MetricsClient
@@ -86,7 +85,7 @@ class MetricsClient(object):
         return self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
 
     def list_metric_namespaces(self, resource_uri, **kwargs):
-        # type: (str, Any) -> ItemPaged[MetricNamespaceCollection]
+        # type: (str, Any) -> ItemPaged[MetricNamespace]
         """Lists the metric namespaces for the resource.
 
         :param resource_uri: The identifier of the resource.
@@ -95,13 +94,13 @@ class MetricsClient(object):
          namespaces.
         :paramtype start_time: str
         :return: An iterator like instance of either MetricNamespaceCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespaceCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._namespace_op.list(resource_uri)
 
     def list_metric_definitions(self, resource_uri, **kwargs):
-        # type: (str, Any) -> ItemPaged[MetricDefinitionCollection]
+        # type: (str, Any) -> ItemPaged[MetricDefinition]
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
@@ -109,7 +108,7 @@ class MetricsClient(object):
         :keyword metricnamespace: Metric namespace to query metric definitions for.
         :paramtype metricnamespace: str
         :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinitionCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._namespace_op.list(resource_uri)

@@ -5,11 +5,9 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Union, Sequence
+from typing import TYPE_CHECKING, Any, Union, Sequence, Dict
 
-from ._generated._monitor_query_client import (
-    MonitorQueryClient
-)
+from ._generated._monitor_query_client import MonitorQueryClient
 
 from ._generated.models import BatchRequest, QueryBody
 from ._helpers import get_authentication_policy
@@ -17,7 +15,8 @@ from ._models import LogsQueryResults, LogsQueryRequest, LogsQueryBody
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from ._generated.models import BatchResponse
+    from ._models import LogsBatchResponse
+
 
 class LogsClient(object):
     """LogsClient
@@ -50,7 +49,7 @@ class LogsClient(object):
         :keyword ~datetime.timedelta timespan: Optional. The timespan over which to query data. This is an ISO8601 time
          period value.  This timespan is applied in addition to any that are specified in the query
          expression.
-        :keyword int timeout: the server timeout. The default timeout is 3 minutes,
+        :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
         :keyword bool include_render: In the query language, it is possible to specify different render options.
@@ -63,8 +62,8 @@ class LogsClient(object):
         timespan = kwargs.pop("timespan", None)
         include_statistics = kwargs.pop("include_statistics", False)
         include_render = kwargs.pop("include_render", False)
-        timeout = kwargs.pop("timeout", None)
-        
+        timeout = kwargs.pop("server_timeout", None)
+
         prefer = ""
         if timeout:
             prefer += "wait=" + str(timeout)
@@ -72,20 +71,20 @@ class LogsClient(object):
             prefer += " include-statistics=true"
         if include_render:
             prefer += " include-render=true"
-        
+
         if prefer:
             kwargs.setdefault("prefer", prefer)
             return self._query_op.execute(
                 workspace_id,
                 LogsQueryBody(query, workspace_ids=[workspace_id]),
                 **kwargs
-                )
+            )
 
         kwargs.setdefault("timespan", timespan)
         return self._query_op.get(workspace_id, query, **kwargs)
 
     def batch_query(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogsQueryRequest], Any) -> LogsBatchResponse
+        # type: (Union[Sequence[Dict], Sequence[LogsQueryRequest]], Any) -> LogsBatchResponse
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
