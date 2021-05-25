@@ -60,6 +60,7 @@ from ._helpers import (
     construct_data_feed_dict,
     convert_datetime,
     get_authentication_policy,
+    convert_to_credential_entity,
 )
 from .models._models import (
     DataFeed,
@@ -81,6 +82,10 @@ from .models._models import (
     MongoDBDataFeedSource,
     AzureDataLakeStorageGen2DataFeedSource,
     AzureEventHubsDataFeedSource,
+    SQLConnectionStringCredentialEntity,
+    DataLakeGen2SharedKeyCredentialEntity,
+    ServicePrincipalCredentialEntity,
+    ServicePrincipalInKVCredentialEntity
 )
 
 if TYPE_CHECKING:
@@ -1217,3 +1222,173 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             skip=skip,
             **kwargs
         )
+
+
+    @distributed_trace
+    def get_credential_entity(
+        self,
+        data_source_credential_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        """Get a data source credential entity
+
+        :param credential_id: Data source credential entity unique ID.
+        :type credential_id: str
+        :return: The credential entity
+        :rtype: Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKVCredentialEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_credential_entities.py
+                :start-after: [START get_credential_entity]
+                :end-before: [END get_credential_entity]
+                :language: python
+                :dedent: 4
+                :caption: Get a credential entity by its ID
+        """
+
+        credential_entity = self._client.get_credential(data_source_credential_id, **kwargs)
+        return convert_to_credential_entity(credential_entity)
+
+    @distributed_trace
+    def create_credential_entity(
+            self, credential_entity,
+            **kwargs  # type: Any
+    ):
+        """Create a new data source credential entity.
+
+        :param credential_entity: The data source credential entity to create
+        :type credential_entity: Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKVCredentialEntity]
+        :return: The created data source credential entity
+        :rtype: Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKVCredentialEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_credential_entities.py
+                :start-after: [START create_credential_entity]
+                :end-before: [END create_credential_entity]
+                :language: python
+                :dedent: 4
+                :caption: Create a credential entity
+        """
+
+        credential_entity_request = None
+        if credential_entity.data_source_credential_type in ["AzureSQLConnectionString",
+            "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
+            credential_entity_request = credential_entity._to_generated()
+
+        response_headers = self._client.create_credential(  # type: ignore
+            credential_entity_request,  # type: ignore
+            cls=lambda pipeline_response, _, response_headers: response_headers,
+            **kwargs
+        )
+        credential_entity_id = response_headers["Location"].split("credentials/")[1]
+        return self.get_credential_entity(credential_entity_id)
+
+    @distributed_trace
+    def list_credential_entities(
+        self,
+        **kwargs  # type: Any
+    ):
+        """List all credential entities.
+
+        :param skip: for paging, skipped number.
+        :type skip: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
+        :return: Pageable containing credential entities
+        :rtype: ~azure.core.paging.ItemPaged[Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKVCredentialEntity]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_credential_entities.py
+                :start-after: [START list_credential_entities]
+                :end-before: [END list_credential_entities]
+                :language: python
+                :dedent: 4
+                :caption: List all of the credential entities under the account
+        """
+        return self._client.list_credentials(  # type: ignore
+            cls=kwargs.pop("cls",
+                           lambda credentials: [convert_to_credential_entity(credential) for credential in credentials]),
+            **kwargs
+        )
+
+    @distributed_trace
+    def update_credential_entity(
+        self,
+        credential_entity,
+        **kwargs  # type: Any
+    ):
+        """Update a credential entity.
+
+        :param credential_entity: The new credential entity object
+        :type credential_entity: Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKVCredentialEntity]
+        :rtype: Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKVCredentialEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_credential_entities.py
+                :start-after: [START update_credential_entity]
+                :end-before: [END update_credential_entity]
+                :language: python
+                :dedent: 4
+                :caption: Update an existing credential entity
+        """
+
+        if credential_entity.data_source_credential_type in ["AzureSQLConnectionString",
+            "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
+            credential_entity_request = credential_entity._to_generated_patch()
+
+        updated_credential_entity = self._client.update_credential(
+            credential_entity.data_source_credential_id,
+            credential_entity_request,
+            **kwargs
+        )
+
+        return convert_to_credential_entity(updated_credential_entity)
+
+    @distributed_trace
+    def delete_credential_entity(self, credential_entity_id, **kwargs):
+        # type: (str, Any) -> None
+        """Delete a credential entity by its ID.
+
+        ::param credential_entity_id: Credential entity unique ID.
+        :type credential_entity_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_credential_entities.py
+                :start-after: [START delete_credential_entity]
+                :end-before: [END delete_credential_entity]
+                :language: python
+                :dedent: 4
+                :caption: Delete a credential entity by its ID
+        """
+
+        self._client.delete_credential(credential_id=credential_entity_id, **kwargs)

@@ -24,7 +24,10 @@ from .models import (
     ChangePointFeedback,
     CommentFeedback,
     PeriodFeedback,
-    DataFeedRollupType
+    DataFeedRollupType,
+    SQLConnectionStringCredentialEntity,
+    DataLakeGen2SharedKeyCredentialEntity,
+    ServicePrincipalCredentialEntity,ServicePrincipalInKVCredentialEntity
 )
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
@@ -217,3 +220,12 @@ def get_authentication_policy(credential):
         )
 
     return authentication_policy
+
+def convert_to_credential_entity(credential_entity):
+    if credential_entity.data_source_credential_type == "AzureSQLConnectionString":
+        return SQLConnectionStringCredentialEntity._from_generated(credential_entity)
+    if credential_entity.data_source_credential_type == "DataLakeGen2SharedKey":
+        return DataLakeGen2SharedKeyCredentialEntity._from_generated(credential_entity)
+    if credential_entity.data_source_credential_type == "ServicePrincipal":
+        return ServicePrincipalCredentialEntity._from_generated(credential_entity)
+    return ServicePrincipalInKVCredentialEntity._from_generated(credential_entity)

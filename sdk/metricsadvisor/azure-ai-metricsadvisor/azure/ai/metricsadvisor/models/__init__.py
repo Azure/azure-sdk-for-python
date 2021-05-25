@@ -111,7 +111,11 @@ from ._models import (
     MetricAnomalyAlertScopeType,
     DataFeedRollupType,
     IncidentRootCause,
-    MetricEnrichedSeriesData
+    MetricEnrichedSeriesData,
+    SQLConnectionStringCredentialEntity,
+    DataLakeGen2SharedKeyCredentialEntity,
+    ServicePrincipalCredentialEntity,
+    ServicePrincipalInKVCredentialEntity,
 )
 
 
@@ -196,5 +200,9 @@ __all__ = (
     "AlertQueryTimeMode",
     "IncidentRootCause",
     "SeverityFilterCondition",
-    "MetricEnrichedSeriesData"
+    "MetricEnrichedSeriesData",
+    "SQLConnectionStringCredentialEntity",
+    "DataLakeGen2SharedKeyCredentialEntity",
+    "ServicePrincipalCredentialEntity",
+    "ServicePrincipalInKVCredentialEntity",
 )
