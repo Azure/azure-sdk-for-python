@@ -285,7 +285,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [farm_hierarchy]: https://aka.ms/FarmBeatsFarmHierarchyDocs
 [farm_operations_docs]: https://aka.ms/FarmBeatsFarmOperationsDocumentation
 [install_farmbeats]: https://aka.ms/FarmBeatsInstallDocumentationPaaS
-[product_docs]: https://docs.microsoft.com/en-us/azure/industry/agriculture/overview-azure-farmbeats
+[product_docs]: https://docs.microsoft.com/azure/industry/agriculture/overview-azure-farmbeats
 [pip]: https://pypi.org/project/pip/
 [pypi]: https://pypi.org/
 [python]: https://www.python.org/downloads/
