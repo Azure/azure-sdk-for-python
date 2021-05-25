@@ -45,7 +45,7 @@ class ManagedInstanceOperationsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceOperationListResult"]:
         """Gets a list of operations performed on the managed instance.
 
@@ -121,7 +121,7 @@ class ManagedInstanceOperationsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedInstanceOperation":
         """Gets a management operation on a managed instance.
 
@@ -184,7 +184,7 @@ class ManagedInstanceOperationsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels the asynchronous operation on the managed instance.
 
