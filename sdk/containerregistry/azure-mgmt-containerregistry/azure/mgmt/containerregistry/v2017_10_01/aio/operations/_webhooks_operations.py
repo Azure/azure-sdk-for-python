@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class WebhooksOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,8 +48,8 @@ class WebhooksOperations:
         resource_group_name: str,
         registry_name: str,
         webhook_name: str,
-        **kwargs
-    ) -> "models.Webhook":
+        **kwargs: Any
+    ) -> "_models.Webhook":
         """Gets the properties of the specified webhook.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -64,7 +64,7 @@ class WebhooksOperations:
         :rtype: ~azure.mgmt.containerregistry.v2017_10_01.models.Webhook
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Webhook"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Webhook"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,10 +111,10 @@ class WebhooksOperations:
         resource_group_name: str,
         registry_name: str,
         webhook_name: str,
-        webhook_create_parameters: "models.WebhookCreateParameters",
-        **kwargs
-    ) -> "models.Webhook":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Webhook"]
+        webhook_create_parameters: "_models.WebhookCreateParameters",
+        **kwargs: Any
+    ) -> "_models.Webhook":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Webhook"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -170,9 +170,9 @@ class WebhooksOperations:
         resource_group_name: str,
         registry_name: str,
         webhook_name: str,
-        webhook_create_parameters: "models.WebhookCreateParameters",
-        **kwargs
-    ) -> AsyncLROPoller["models.Webhook"]:
+        webhook_create_parameters: "_models.WebhookCreateParameters",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Webhook"]:
         """Creates a webhook for a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -186,8 +186,8 @@ class WebhooksOperations:
         :type webhook_create_parameters: ~azure.mgmt.containerregistry.v2017_10_01.models.WebhookCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Webhook or the result of cls(response)
@@ -195,7 +195,7 @@ class WebhooksOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Webhook"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Webhook"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -221,7 +221,14 @@ class WebhooksOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -240,7 +247,7 @@ class WebhooksOperations:
         resource_group_name: str,
         registry_name: str,
         webhook_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -284,7 +291,7 @@ class WebhooksOperations:
         resource_group_name: str,
         registry_name: str,
         webhook_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a webhook from a container registry.
 
@@ -297,8 +304,8 @@ class WebhooksOperations:
         :type webhook_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -328,7 +335,14 @@ class WebhooksOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -347,10 +361,10 @@ class WebhooksOperations:
         resource_group_name: str,
         registry_name: str,
         webhook_name: str,
-        webhook_update_parameters: "models.WebhookUpdateParameters",
-        **kwargs
-    ) -> "models.Webhook":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Webhook"]
+        webhook_update_parameters: "_models.WebhookUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.Webhook":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Webhook"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -406,9 +420,9 @@ class WebhooksOperations:
         resource_group_name: str,
         registry_name: str,
         webhook_name: str,
-        webhook_update_parameters: "models.WebhookUpdateParameters",
-        **kwargs
-    ) -> AsyncLROPoller["models.Webhook"]:
+        webhook_update_parameters: "_models.WebhookUpdateParameters",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Webhook"]:
         """Updates a webhook with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -422,8 +436,8 @@ class WebhooksOperations:
         :type webhook_update_parameters: ~azure.mgmt.containerregistry.v2017_10_01.models.WebhookUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Webhook or the result of cls(response)
@@ -431,7 +445,7 @@ class WebhooksOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Webhook"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Webhook"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -457,7 +471,14 @@ class WebhooksOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -475,8 +496,8 @@ class WebhooksOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.WebhookListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.WebhookListResult"]:
         """Lists all the webhooks for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -489,7 +510,7 @@ class WebhooksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerregistry.v2017_10_01.models.WebhookListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebhookListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebhookListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -551,8 +572,8 @@ class WebhooksOperations:
         resource_group_name: str,
         registry_name: str,
         webhook_name: str,
-        **kwargs
-    ) -> "models.EventInfo":
+        **kwargs: Any
+    ) -> "_models.EventInfo":
         """Triggers a ping event to be sent to the webhook.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -567,7 +588,7 @@ class WebhooksOperations:
         :rtype: ~azure.mgmt.containerregistry.v2017_10_01.models.EventInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -614,8 +635,8 @@ class WebhooksOperations:
         resource_group_name: str,
         registry_name: str,
         webhook_name: str,
-        **kwargs
-    ) -> "models.CallbackConfig":
+        **kwargs: Any
+    ) -> "_models.CallbackConfig":
         """Gets the configuration of service URI and custom headers for the webhook.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -630,7 +651,7 @@ class WebhooksOperations:
         :rtype: ~azure.mgmt.containerregistry.v2017_10_01.models.CallbackConfig
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CallbackConfig"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CallbackConfig"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -677,8 +698,8 @@ class WebhooksOperations:
         resource_group_name: str,
         registry_name: str,
         webhook_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.EventListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EventListResult"]:
         """Lists recent events for the specified webhook.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -693,7 +714,7 @@ class WebhooksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerregistry.v2017_10_01.models.EventListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
