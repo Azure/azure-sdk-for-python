@@ -13,6 +13,7 @@ Example to show receiving deferred message from a Service Bus Queue asynchronous
 
 import os
 import asyncio
+import time
 from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio import ServiceBusClient
 
@@ -43,6 +44,8 @@ async def main():
                 received_deferred_msg = await receiver.receive_deferred_messages(
                     sequence_numbers=deferred_sequenced_numbers
                 )
+
+                time.sleep(1)   # wait for delay in deferral before receiving
 
                 for msg in received_deferred_msg:
                     print("Completing deferred msg: {}".format(str(msg)))
