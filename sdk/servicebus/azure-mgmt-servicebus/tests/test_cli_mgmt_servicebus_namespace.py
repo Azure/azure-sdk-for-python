@@ -257,11 +257,11 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
     def test_migration_configs(self, resource_group):
 
         RESOURCE_GROUP = resource_group.name
-        NAMESPACE_NAME = "myNamespacexxyyzzxyymak"
-        NAMESPACE_NAME_PRIMARY = "myNamespacexxyyzzykksecondmk"
+        NAMESPACE_NAME = "myNamespacexxyyzzxyyma"
+        NAMESPACE_NAME_PRIMARY = "myNamespacexxyyzzykksecondm"
         AUTHORIZATION_RULE_NAME = "myAuthorizationRule"
         CONFIG_NAME = "$default"
-        POST_MIGRATION_NAME = "postmigrationxxxkyk"
+        POST_MIGRATION_NAME = "postmigrationxxxky"
 
 #--------------------------------------------------------------------------
         # /Namespaces/put/NameSpaceCreate[put] Standard
