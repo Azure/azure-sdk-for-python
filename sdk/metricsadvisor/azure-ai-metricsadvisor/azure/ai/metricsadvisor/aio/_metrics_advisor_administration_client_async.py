@@ -1192,7 +1192,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
 
         credential_entity_request = None
-        if credential_entity.type in ["AzureSQLConnectionString",
+        if credential_entity.credential_entity_type in ["AzureSQLConnectionString",
             "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
             credential_entity_request = credential_entity._to_generated()
 
@@ -1268,7 +1268,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Update an existing credential entity
         """
 
-        if credential_entity.type in ["AzureSQLConnectionString",
+        if credential_entity.credential_entity_type in ["AzureSQLConnectionString",
             "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
             credential_entity_request = credential_entity._to_generated_patch()
 

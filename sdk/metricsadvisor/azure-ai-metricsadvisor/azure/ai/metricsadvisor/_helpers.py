@@ -223,10 +223,10 @@ def get_authentication_policy(credential):
     return authentication_policy
 
 def convert_to_credential_entity(credential_entity):
-    if credential_entity.data_source_credential_type == "AzureSQLConnectionString":
+    if credential_entity.credential_entity_type == "AzureSQLConnectionString":
         return SQLConnectionStringCredentialEntity._from_generated(credential_entity)
-    if credential_entity.data_source_credential_type == "DataLakeGen2SharedKey":
+    if credential_entity.credential_entity_type == "DataLakeGen2SharedKey":
         return DataLakeGen2SharedKeyCredentialEntity._from_generated(credential_entity)
-    if credential_entity.data_source_credential_type == "ServicePrincipal":
+    if credential_entity.credential_entity_type == "ServicePrincipal":
         return ServicePrincipalCredentialEntity._from_generated(credential_entity)
     return ServicePrincipalInKVCredentialEntity._from_generated(credential_entity)
