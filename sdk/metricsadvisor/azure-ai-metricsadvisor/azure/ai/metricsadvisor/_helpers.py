@@ -27,7 +27,8 @@ from .models import (
     DataFeedRollupType,
     SQLConnectionStringCredentialEntity,
     DataLakeGen2SharedKeyCredentialEntity,
-    ServicePrincipalCredentialEntity,ServicePrincipalInKVCredentialEntity
+    ServicePrincipalCredentialEntity,
+    ServicePrincipalInKVCredentialEntity
 )
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
