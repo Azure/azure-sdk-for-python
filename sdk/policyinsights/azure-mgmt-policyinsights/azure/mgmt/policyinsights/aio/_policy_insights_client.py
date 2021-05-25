@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -23,6 +24,7 @@ from .operations import PolicyStatesOperations
 from .operations import Operations
 from .operations import PolicyMetadataOperations
 from .operations import PolicyRestrictionsOperations
+from .operations import AttestationsOperations
 from .. import models
 
 
@@ -43,6 +45,8 @@ class PolicyInsightsClient(object):
     :vartype policy_metadata: azure.mgmt.policyinsights.aio.operations.PolicyMetadataOperations
     :ivar policy_restrictions: PolicyRestrictionsOperations operations
     :vartype policy_restrictions: azure.mgmt.policyinsights.aio.operations.PolicyRestrictionsOperations
+    :ivar attestations: AttestationsOperations operations
+    :vartype attestations: azure.mgmt.policyinsights.aio.operations.AttestationsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Microsoft Azure subscription ID.
@@ -82,6 +86,25 @@ class PolicyInsightsClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.policy_restrictions = PolicyRestrictionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.attestations = AttestationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()
