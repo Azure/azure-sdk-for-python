@@ -1114,7 +1114,7 @@ class AzureDataExplorerDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _SQLSourceParameterPatch(
+        return _SqlSourceParameterPatch(
             connection_string=self.connection_string,
             query=self.query,
         )
@@ -1290,7 +1290,7 @@ class MySqlDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _SQLSourceParameterPatch(
+        return _SqlSourceParameterPatch(
             connection_string=self.connection_string,
             query=self.query
         )
@@ -1326,7 +1326,7 @@ class PostgreSqlDataFeedSource(object):
         )
 
     def _to_generated_patch(self):
-        return _SQLSourceParameterPatch(
+        return _SqlSourceParameterPatch(
             connection_string=self.connection_string,
             query=self.query
         )
