@@ -26,7 +26,7 @@ class NamespacesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2018-01-01-preview".
+    :ivar api_version: Client API Version. Constant value: "2021-01-01-preview".
     """
 
     models = models
@@ -36,272 +36,9 @@ class NamespacesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01-preview"
+        self.api_version = "2021-01-01-preview"
 
         self.config = config
-
-    def list_ip_filter_rules(
-            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of IP Filter rules for a Namespace.
-
-        :param resource_group_name: Name of the resource group within the
-         azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The Namespace name
-        :type namespace_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of IpFilterRule
-        :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.IpFilterRulePaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.IpFilterRule]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_ip_filter_rules.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.IpFilterRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_ip_filter_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/ipfilterrules'}
-
-    def create_or_update_ip_filter_rule(
-            self, resource_group_name, namespace_name, ip_filter_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an IpFilterRule for a Namespace.
-
-        :param resource_group_name: Name of the resource group within the
-         azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The Namespace name
-        :type namespace_name: str
-        :param ip_filter_rule_name: The IP Filter Rule name.
-        :type ip_filter_rule_name: str
-        :param parameters: The Namespace IpFilterRule.
-        :type parameters:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.IpFilterRule
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: IpFilterRule or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.IpFilterRule
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.create_or_update_ip_filter_rule.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'ipFilterRuleName': self._serialize.url("ip_filter_rule_name", ip_filter_rule_name, 'str', min_length=1),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'IpFilterRule')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('IpFilterRule', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    create_or_update_ip_filter_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/ipfilterrules/{ipFilterRuleName}'}
-
-    def delete_ip_filter_rule(
-            self, resource_group_name, namespace_name, ip_filter_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an IpFilterRule for a Namespace.
-
-        :param resource_group_name: Name of the resource group within the
-         azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The Namespace name
-        :type namespace_name: str
-        :param ip_filter_rule_name: The IP Filter Rule name.
-        :type ip_filter_rule_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.delete_ip_filter_rule.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'ipFilterRuleName': self._serialize.url("ip_filter_rule_name", ip_filter_rule_name, 'str', min_length=1),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 204]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_ip_filter_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/ipfilterrules/{ipFilterRuleName}'}
-
-    def get_ip_filter_rule(
-            self, resource_group_name, namespace_name, ip_filter_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an IpFilterRule for a Namespace by rule name.
-
-        :param resource_group_name: Name of the resource group within the
-         azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The Namespace name
-        :type namespace_name: str
-        :param ip_filter_rule_name: The IP Filter Rule name.
-        :type ip_filter_rule_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: IpFilterRule or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.IpFilterRule
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.get_ip_filter_rule.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'ipFilterRuleName': self._serialize.url("ip_filter_rule_name", ip_filter_rule_name, 'str', min_length=1),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('IpFilterRule', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_ip_filter_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/ipfilterrules/{ipFilterRuleName}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -315,9 +52,9 @@ class NamespacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of EHNamespace
         :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespacePaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespace]
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespacePaged[~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespace]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -383,9 +120,9 @@ class NamespacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of EHNamespace
         :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespacePaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespace]
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespacePaged[~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespace]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -500,7 +237,7 @@ class NamespacesOperations(object):
         :type namespace_name: str
         :param parameters: Parameters for creating a namespace resource.
         :type parameters:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespace
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespace
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -509,11 +246,11 @@ class NamespacesOperations(object):
         :return: An instance of LROPoller that returns EHNamespace or
          ClientRawResponse<EHNamespace> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespace]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespace]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespace]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespace]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -598,7 +335,7 @@ class NamespacesOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -637,10 +374,10 @@ class NamespacesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: EHNamespace or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespace or
+        :rtype: ~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -669,13 +406,11 @@ class NamespacesOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('EHNamespace', response)
-        if response.status_code == 201:
             deserialized = self._deserialize('EHNamespace', response)
 
         if raw:
@@ -697,17 +432,17 @@ class NamespacesOperations(object):
         :type namespace_name: str
         :param parameters: Parameters for updating a namespace resource.
         :type parameters:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespace
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespace
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: EHNamespace or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespace or
+        :rtype: ~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -756,272 +491,6 @@ class NamespacesOperations(object):
         return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}'}
 
-    def list_virtual_network_rules(
-            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of VirtualNetwork rules for a Namespace.
-
-        :param resource_group_name: Name of the resource group within the
-         azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The Namespace name
-        :type namespace_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of VirtualNetworkRule
-        :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.VirtualNetworkRulePaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.VirtualNetworkRule]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_virtual_network_rules.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.VirtualNetworkRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_virtual_network_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/virtualnetworkrules'}
-
-    def create_or_update_virtual_network_rule(
-            self, resource_group_name, namespace_name, virtual_network_rule_name, virtual_network_subnet_id=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an VirtualNetworkRule for a Namespace.
-
-        :param resource_group_name: Name of the resource group within the
-         azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The Namespace name
-        :type namespace_name: str
-        :param virtual_network_rule_name: The Virtual Network Rule name.
-        :type virtual_network_rule_name: str
-        :param virtual_network_subnet_id: ARM ID of Virtual Network Subnet
-        :type virtual_network_subnet_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: VirtualNetworkRule or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.VirtualNetworkRule or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
-        """
-        parameters = models.VirtualNetworkRule(virtual_network_subnet_id=virtual_network_subnet_id)
-
-        # Construct URL
-        url = self.create_or_update_virtual_network_rule.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'virtualNetworkRuleName': self._serialize.url("virtual_network_rule_name", virtual_network_rule_name, 'str', min_length=1),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'VirtualNetworkRule')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('VirtualNetworkRule', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    create_or_update_virtual_network_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/virtualnetworkrules/{virtualNetworkRuleName}'}
-
-    def delete_virtual_network_rule(
-            self, resource_group_name, namespace_name, virtual_network_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an VirtualNetworkRule for a Namespace.
-
-        :param resource_group_name: Name of the resource group within the
-         azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The Namespace name
-        :type namespace_name: str
-        :param virtual_network_rule_name: The Virtual Network Rule name.
-        :type virtual_network_rule_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.delete_virtual_network_rule.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'virtualNetworkRuleName': self._serialize.url("virtual_network_rule_name", virtual_network_rule_name, 'str', min_length=1),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 204]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_virtual_network_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/virtualnetworkrules/{virtualNetworkRuleName}'}
-
-    def get_virtual_network_rule(
-            self, resource_group_name, namespace_name, virtual_network_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an VirtualNetworkRule for a Namespace by rule name.
-
-        :param resource_group_name: Name of the resource group within the
-         azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The Namespace name
-        :type namespace_name: str
-        :param virtual_network_rule_name: The Virtual Network Rule name.
-        :type virtual_network_rule_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: VirtualNetworkRule or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.VirtualNetworkRule or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.get_virtual_network_rule.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'virtualNetworkRuleName': self._serialize.url("virtual_network_rule_name", virtual_network_rule_name, 'str', min_length=1),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('VirtualNetworkRule', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_virtual_network_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/virtualnetworkrules/{virtualNetworkRuleName}'}
-
     def create_or_update_network_rule_set(
             self, resource_group_name, namespace_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create or update NetworkRuleSet for a Namespace.
@@ -1033,17 +502,17 @@ class NamespacesOperations(object):
         :type namespace_name: str
         :param parameters: The Namespace IpFilterRule.
         :type parameters:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.NetworkRuleSet
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.NetworkRuleSet
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: NetworkRuleSet or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.NetworkRuleSet
+        :rtype: ~azure.mgmt.eventhub.v2021_01_01_preview.models.NetworkRuleSet
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_network_rule_set.metadata['url']
@@ -1105,10 +574,10 @@ class NamespacesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: NetworkRuleSet or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.NetworkRuleSet
+        :rtype: ~azure.mgmt.eventhub.v2021_01_01_preview.models.NetworkRuleSet
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_network_rule_set.metadata['url']
@@ -1167,9 +636,9 @@ class NamespacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AuthorizationRule
         :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRulePaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule]
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.AuthorizationRulePaged[~azure.mgmt.eventhub.v2021_01_01_preview.models.AuthorizationRule]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1236,7 +705,7 @@ class NamespacesOperations(object):
         :type authorization_rule_name: str
         :param rights: The rights associated with the rule.
         :type rights: list[str or
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.AccessRights]
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.AccessRights]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1244,10 +713,10 @@ class NamespacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: AuthorizationRule or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule or
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.AuthorizationRule or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         parameters = models.AuthorizationRule(rights=rights)
 
@@ -1316,7 +785,7 @@ class NamespacesOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete_authorization_rule.metadata['url']
@@ -1371,10 +840,10 @@ class NamespacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: AuthorizationRule or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule or
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.AuthorizationRule or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_authorization_rule.metadata['url']
@@ -1435,10 +904,10 @@ class NamespacesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: AccessKeys or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AccessKeys or
+        :rtype: ~azure.mgmt.eventhub.v2021_01_01_preview.models.AccessKeys or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.list_keys.metadata['url']
@@ -1497,7 +966,7 @@ class NamespacesOperations(object):
         :param key_type: The access key to regenerate. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
         :type key_type: str or
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.KeyType
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.KeyType
         :param key: Optional, if the key value provided, is set for KeyType or
          autogenerated Key value set for keyType
         :type key: str
@@ -1507,10 +976,10 @@ class NamespacesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: AccessKeys or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AccessKeys or
+        :rtype: ~azure.mgmt.eventhub.v2021_01_01_preview.models.AccessKeys or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         parameters = models.RegenerateAccessKeyParameters(key_type=key_type, key=key)
 
@@ -1573,10 +1042,10 @@ class NamespacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: CheckNameAvailabilityResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.CheckNameAvailabilityResult
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.CheckNameAvailabilityResult
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         parameters = models.CheckNameAvailabilityParameter(name=name)
 
