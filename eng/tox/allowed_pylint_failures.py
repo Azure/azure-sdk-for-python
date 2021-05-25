@@ -51,4 +51,5 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-ai-anomalydetector",
     "azure-security-attestation",
     "azure-iot-deviceupdate",
+    "azure-eventhub"
 ]
