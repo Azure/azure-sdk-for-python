@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class RunsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -55,7 +55,7 @@ class RunsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RunListResult"]
+        # type: (...) -> Iterable["_models.RunListResult"]
         """Gets all the runs for a registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -75,7 +75,7 @@ class RunsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RunListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RunListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -126,7 +126,7 @@ class RunsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -144,7 +144,7 @@ class RunsOperations(object):
         run_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Run"
+        # type: (...) -> "_models.Run"
         """Gets the detailed information for a given run.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -159,7 +159,7 @@ class RunsOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Run
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Run"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -191,7 +191,7 @@ class RunsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Run', pipeline_response)
@@ -207,11 +207,11 @@ class RunsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         run_id,  # type: str
-        run_update_parameters,  # type: "models.RunUpdateParameters"
+        run_update_parameters,  # type: "_models.RunUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Run"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Run"]
+        # type: (...) -> "_models.Run"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -248,7 +248,7 @@ class RunsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -268,10 +268,10 @@ class RunsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         run_id,  # type: str
-        run_update_parameters,  # type: "models.RunUpdateParameters"
+        run_update_parameters,  # type: "_models.RunUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Run"]
+        # type: (...) -> LROPoller["_models.Run"]
         """Patch the run properties.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -285,8 +285,8 @@ class RunsOperations(object):
         :type run_update_parameters: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Run or the result of cls(response)
@@ -294,7 +294,7 @@ class RunsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Run"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Run"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -320,7 +320,14 @@ class RunsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'runId': self._serialize.url("run_id", run_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -341,7 +348,7 @@ class RunsOperations(object):
         run_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RunGetLogResult"
+        # type: (...) -> "_models.RunGetLogResult"
         """Gets a link to download the run logs.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -356,7 +363,7 @@ class RunsOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunGetLogResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RunGetLogResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RunGetLogResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -388,7 +395,7 @@ class RunsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RunGetLogResult', pipeline_response)
@@ -439,7 +446,7 @@ class RunsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -466,8 +473,8 @@ class RunsOperations(object):
         :type run_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -497,7 +504,14 @@ class RunsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'runId': self._serialize.url("run_id", run_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
