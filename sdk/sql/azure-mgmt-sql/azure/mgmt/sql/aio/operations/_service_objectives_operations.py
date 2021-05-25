@@ -46,7 +46,7 @@ class ServiceObjectivesOperations:
         resource_group_name: str,
         server_name: str,
         service_objective_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServiceObjective":
         """Gets a database service objective.
 
@@ -108,7 +108,7 @@ class ServiceObjectivesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServiceObjectiveListResult"]:
         """Returns database service objectives.
 
