@@ -52,11 +52,16 @@ Once you have authenticated and created the client object as shown in the [Authe
 section, you can create a farmer within the FarmBeats resource like this:
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
 from azure.agrifood.farming.models import Farmer
+
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
 
 farmer = client.farmers.create_or_update(
     farmer_id="farmer-1",
-    body=Farmer(
+    farmer=Farmer(
         name="Contoso Farmer",
         description="Your custom farmer description here",
         status="Active",
@@ -71,12 +76,19 @@ farmer = client.farmers.create_or_update(
 
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
 from azure.agrifood.farming.models import Farm
 
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
+
+farmer_id = "farmer-1" # Using farmer from previous example
+
 farm = client.farms.create_or_update(
-    farmer_id=farmer.id,
+    farmer_id=farmer_id,
     farm_id="farm-1",
-    body=Farm(
+    farm=Farm(
         name="Contoso Westlake Farm",
         properties={
             "location": "Westlake",
@@ -88,14 +100,22 @@ farm = client.farms.create_or_update(
 
 ### Create a Season
 
+Creating a Season object, spanning from April to August of 2021.
+
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
 from azure.agrifood.farming.models import Season
+
 from isodate.tzinfo import Utc
 from datetime import datetime
 
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
+
 season = client.seasons.create_or_update(
     season_id="season-summer-2021",
-    body=Season(
+    season=Season(
         start_date_time=datetime(2021, 4, 1, tzinfo=Utc()),
         end_date_time=datetime(2021, 8, 31, tzinfo=Utc()),
         name="Summer of 2021",
@@ -106,29 +126,51 @@ season = client.seasons.create_or_update(
 
 ### Create a Seasonal Field
 
+In this example, we create a Seasonal Field, using the Season and Field objects
+created in the preceding examples.
+
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
 from azure.agrifood.farming.models import SeasonalField
 
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
+
+farmer_id = "farmer-1"
+farm_id = "farm-1"
+season_id = "season-summer-2021"
+
 seasonal_field = client.seasonal_fields.create_or_update(
-    farmer_id=farmer.id,
+    farmer_id=farmer_id,
     seasonal_field_id="westlake-summer-2021",
-    body=SeasonalField(
-        farm_id=farm.id,
-        season_id=season.id
+    seasonal_field=SeasonalField(
+        farm_id=farm_id,
+        season_id=season_id
     )
 )
 ```
 
 ### Create a Boundary
 
+Creating a Boundary for the Seasonal Field created in the preceding example.
+
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
 from azure.agrifood.farming.models import Boundary, Polygon
 
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
+
+farmer_id = "farmer-1"
+seasonal_field_id = "westlake-summer-2021"
+
 boundary = client.boundaries.create_or_update(
-    farmer_id=farmer.id,
+    farmer_id=farmer_id,
     boundary_id="westlake-boundary-1",
-    body=Boundary(
-        parent_id=seasonal_field.id,
+    boundary=Boundary(
+        parent_id=seasonal_field_id,
         geometry=Polygon(
             coordinates=[
                 [
@@ -148,18 +190,32 @@ boundary = client.boundaries.create_or_update(
 
 ### Ingest Satellite Imagery
 
+Triggering a Satellite Data Ingestion job for the boundary created above,
+to ingest Leaf Area Index data for the month of January 2020.
+This is a Long Running Operation (also called a 'Job'), and returns
+a Poller object. Calling the `.result()` method on the poller object
+waits for the operation to terminate, and returns the final status.
+
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
+from azure.agrifood.farming.models import SatelliteDataIngestionJob, SatelliteData
+
 from isodate.tzinfo import Utc
 from datetime import datetime
 
-from azure.agrifood.farming.models import SatelliteData, 
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
+
+farmer_id = "farmer-1"
+boundary_id = "westlake-boundary-1"
 
 # Queue the job
 satellite_job_poller = client.scenes.begin_create_satellite_data_ingestion_job(
     job_id="westlake-boundary-1-lai-jan2020",
-    body=SatelliteDataIngestionJob(
-        farmer_id=farmer.id,
-        boundary_id=boundary.id,
+    job=SatelliteDataIngestionJob(
+        farmer_id=farmer_id,
+        boundary_id=boundary_id,
         start_date_time=datetime(2020, 1, 1, tzinfo=Utc()),
         end_date_time=datetime(2020, 1, 31, tzinfo=Utc()),
         data=SatelliteData(
@@ -176,10 +232,23 @@ satellite_job = satellite_job_poller.result()
 
 ### Get Ingested Satellite Scenes
 
+Querying for the scenes created by the job in the previous example.
+
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
+
+from datetime import datetime
+
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
+
+farmer_id = "farmer-1"
+boundary_id = "westlake-boundary-1"
+
 scenes = client.scenes.list(
-    farmer_id=farmer.id,
-    boundary_id=boundary.id,
+    farmer_id=farmer_id,
+    boundary_id=boundary_id,
     start_date_time=datetime(2020, 1, 1, tzinfo=Utc()),
     end_date_time=datetime(2020, 1, 31, tzinfo=Utc()),
 )
