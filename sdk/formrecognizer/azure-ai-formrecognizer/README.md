@@ -11,7 +11,7 @@ from form documents. It includes the following main functionalities:
     * Invoice model - Recognize data from invoices using a prebuilt model.
     * Identity document model - Recognize data from identity documents using a prebuilt model.
 
-[Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs]| [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
+[Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
 ## Getting started
 
