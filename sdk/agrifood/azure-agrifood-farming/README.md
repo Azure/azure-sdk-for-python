@@ -65,7 +65,7 @@ Farm hierarchy is a collection of below entities.
 - Cascade delete - Agronomic data is stored hierarchically with farmer as the root. The hierarchy includes Farmer -> Farms -> Fields -> Seasonal Fields -> Boundaries -> Associated data (satellite, weather, farm operations). Cascade delete refers to the process of deleting any node and its subtree. 
     
 ### [Scenes][scenes]
-Scenes refers to images ingested using satellite APIs.
+Scenes refers to images normally ingested using satellite APIs. This includes raw bands and derived bands (Ex: NDVI). Scenes may also include spatial outputs of a model (Ex: LAI).
 
 ### [Farm Operations][farm_operations_docs]
 Fam operations includes details pertaining to tilling, planting, application of pesticides & nutrients, and harvesting. This can either be manually pushed into FarmBeats using APIs or the same information can be pulled from farm equipment service providers like John Deere. 
