@@ -5,6 +5,7 @@
 from copy import deepcopy
 import six
 
+from ._helpers import _decompress_body, _compress_body
 from .utilities import is_text_payload, is_json_payload, is_batch_payload
 
 
@@ -238,6 +239,8 @@ class GeneralNameReplacer(RecordingProcessor):
             self.replace_header(response, 'azure-asyncoperation', old, new)
             self.replace_header(response, "www-authenticate", old, new)
 
+        self._scrub_compressed_body(response)
+
         try:
             for old, new in self.names_name:
                 response["url"].replace(old, new)
@@ -250,6 +253,22 @@ class GeneralNameReplacer(RecordingProcessor):
                 pass
 
         return response
+
+    def _scrub_compressed_body(self, response):
+        if "Content-Encoding" in response["headers"]:
+            enc = response['headers']['Content-Encoding'].lower()
+            if enc in ["gzip", "deflate"]:
+                decompressed = _decompress_body(response['body'], enc)
+
+                for old, new in self.names_name:
+                    try:
+                        decompressed = decompressed.replace(old, new)
+                    except UnicodeDecodeError:
+                        decompressed.decode('utf8', 'backslashreplace').replace(old, new).encode('utf8', 'backslashreplace')
+                    except TypeError:
+                        pass
+
+                response['body'] = _compress_body(decompressed, enc)
 
 
 class RequestUrlNormalizer(RecordingProcessor):
