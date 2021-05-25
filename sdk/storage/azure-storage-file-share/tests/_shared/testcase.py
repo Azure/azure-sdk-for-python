@@ -17,7 +17,6 @@ except ImportError:
 import zlib
 import math
 import sys
-import string
 import random
 import re
 import logging
@@ -36,7 +35,7 @@ except ImportError:
 
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.credentials import AccessToken
-from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
+from azure.storage.fileshare import generate_account_sas, AccountSasPermissions, ResourceTypes
 from azure.mgmt.storage.models import StorageAccount, Endpoints
 try:
     # Running locally - use configuration in settings_real.py
