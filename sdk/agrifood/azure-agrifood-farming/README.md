@@ -271,7 +271,7 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information see the [Code of Conduct FAQ][coc_faq] or contact [opencode@microsoft.com][coc_contact] with any additional questions or comments.
 
 <!-- LINKS -->
-[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-agrifood-farming/latest/index.html
+[api_docs]: https://docs.microsoft.com/en-us/azure/industry/agriculture/overview-azure-farmbeats
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
@@ -285,7 +285,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [farm_hierarchy]: https://aka.ms/FarmBeatsFarmHierarchyDocs
 [farm_operations_docs]: https://aka.ms/FarmBeatsFarmOperationsDocumentation
 [install_farmbeats]: https://aka.ms/FarmBeatsInstallDocumentationPaaS
-[product_docs]: https://docs.microsoft.com/azure/azure-agrifood-farming/
+[product_docs]: https://docs.microsoft.com/en-us/azure/industry/agriculture/overview-azure-farmbeats
 [pip]: https://pypi.org/project/pip/
 [pypi]: https://pypi.org/project/azure-agrifood-farming/
 [python]: https://www.python.org/downloads/
