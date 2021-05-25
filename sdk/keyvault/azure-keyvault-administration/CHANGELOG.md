@@ -13,6 +13,9 @@
 - Renamed `RestoreOperation` to `KeyVaultRestoreOperation`
 - Renamed `SelectiveKeyRestoreOperation` to 
   `KeyVaultSelectiveKeyRestoreOperation`
+- Renamed `KeyVaultBackupClient.begin_selective_restore` to `begin_selective_key_restore`
+  - Changed parameter order from `folder_url, sas_token, key_name` to
+    `key_name, folder_url, sas_token`
 - `KeyVaultRoleAssignment`'s `principal_id`, `role_definition_id`, and `scope`
   are now properties of a `properties` property
 

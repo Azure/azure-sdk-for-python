@@ -35,7 +35,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :keyword str continuation_token: a continuation token to restart polling from a saved state
         :returns: An instance of an LROPoller. Call `result()` on the poller object to get a
             :class:`KeyVaultBackupOperation`.
-        :rtype: ~azure.core.polling.LROPoller[KeyVaultBackupOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultBackupOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
         sas_parameter = self._models.SASTokenParameter(storage_resource_uri=blob_storage_url, token=sas_token)
@@ -56,7 +56,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             :class:`KeyVaultBackupOperation` returned by :func:`begin_backup` or :func:`get_backup_status`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
-        :rtype: ~azure.core.polling.LROPoller[KeyVaultRestoreOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultRestoreOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
         container_url, folder_name = parse_folder_url(folder_url)
@@ -73,7 +73,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             **kwargs
         )
 
-    def begin_selective_restore(self, key_name, folder_url, sas_token, **kwargs):
+    def begin_selective_key_restore(self, key_name, folder_url, sas_token, **kwargs):
         # type: (str, str, str, **Any) -> LROPoller[KeyVaultSelectiveKeyRestoreOperation]
         """Restore a single key from a full Key Vault backup.
 
@@ -83,7 +83,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             :func:`begin_backup` or :func:`get_backup_status`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
-        :rtype: ~azure.core.polling.LROPoller[KeyVaultRestoreOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultSelectiveKeyRestoreOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
         container_url, folder_name = parse_folder_url(folder_url)
@@ -108,7 +108,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :param job_id: The job ID returned as part of the backup request
         :type job_id: str
         :return: The full backup operation status as a :class:`KeyVaultBackupOperation`
-        :rtype: KeyVaultBackupOperation
+        :rtype: ~azure.keyvault.administration.KeyVaultBackupOperation
         """
         return self._client.full_backup_status(
             vault_base_url=self._vault_url, job_id=job_id, cls=KeyVaultBackupOperation._wrap_generated, **kwargs
@@ -121,7 +121,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :param job_id: The job ID returned as part of the restore request
         :type job_id: str
         :return: The restore operation status as a :class:`KeyVaultRestoreOperation`
-        :rtype: KeyVaultRestoreOperation
+        :rtype: ~azure.keyvault.administration.KeyVaultRestoreOperation
         """
         return self._client.restore_status(
             vault_base_url=self.vault_url, job_id=job_id, cls=KeyVaultRestoreOperation._wrap_generated, **kwargs
