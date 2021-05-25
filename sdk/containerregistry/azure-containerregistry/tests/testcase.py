@@ -171,10 +171,6 @@ class ContainerRegistryTestClass(AzureTestCase):
         properties.can_read = value
         properties.can_write = value
         properties.can_list = value
-        # try:
-        #     properties.teleport_enabled = value
-        # except AttributeError:
-        #     pass
         return properties
 
     def assert_all_properties(self, properties, value):
@@ -182,10 +178,6 @@ class ContainerRegistryTestClass(AzureTestCase):
         assert properties.can_read == value
         assert properties.can_write == value
         assert properties.can_list == value
-        # try:
-        #     assert properties.teleport_enabled == value
-        # except AttributeError:
-        #     pass
 
 
 # Moving this out of testcase so the fixture and individual tests can use it

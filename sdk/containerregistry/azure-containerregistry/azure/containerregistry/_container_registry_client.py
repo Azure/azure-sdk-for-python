@@ -194,7 +194,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, **Any) -> RepositoryProperties
         """Get the properties of a repository
 
-        :param str repository:
+        :param str repository: Name of the repository
         :returns: :class:`~azure.containerregistry.RepositoryProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
@@ -207,7 +207,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, **Any) -> ItemPaged[ArtifactManifestProperties]
         """List the artifacts for a repository
 
-        :param str repository:
+        :param str repository: Name of the repository
         :keyword order_by: Query parameter for ordering by time ascending or descending
         :paramtype order_by: :class:`~azure.containerregistry.ManifestOrder` or str
         :keyword results_per_page: Number of repositories to return per page
@@ -326,8 +326,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, str, **Any) -> None
         """Delete a manifest
 
-        :param str repository:
-        :param str tag_or_digest:
+        :param str repository: Name of the repository the manifest belongs to
+        :param str tag_or_digest: Tag or digest of the manifest to be deleted
         :returns: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
@@ -354,7 +354,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, str, **Any) -> None
         """Delete a tag from a repository
 
-        :param str repository:
+        :param str repository: Name of the repository the tag belongs to
         :param str tag: The tag to be deleted
         :returns: None
         :rtype: None
@@ -380,8 +380,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, str, **Any) -> ArtifactManifestProperties
         """Get the properties of a registry artifact
 
-        :param str repository:
-        :param str tag_or_digest:
+        :param str repository: Name of the repository
+        :param str tag_or_digest: Tag or digest of the manifest
         :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
@@ -408,8 +408,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, str, **Any) -> ArtifactTagProperties
         """Get the properties for a tag
 
-        :param str repository:
-        :param str tag: The tag to get properties for
+        :param str repository: Name of the repository
+        :param str tag: The tag to get tag properties for
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
@@ -433,7 +433,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, **Any) -> ItemPaged[ArtifactTagProperties]
         """List the tags for a repository
 
-        :param str repository:
+        :param str repository: Name of the repository
         :keyword order_by: Query parameter for ordering by time ascending or descending
         :paramtype order_by: :class:`~azure.containerregistry.TagOrder` or str
         :keyword results_per_page: Number of repositories to return per page
@@ -706,7 +706,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param args:
         :type args: Union[str, ~azure.containerregistry.RepositoryProperties]
-        :param str repository:
+        :param str repository: Name of the repository
         :param properties: Properties to set for the repository
         :type properties: :class:`~azure.containerregistry.RepositoryProperties`
         :returns: :class:`~azure.containerregistry.RepositoryProperties`
