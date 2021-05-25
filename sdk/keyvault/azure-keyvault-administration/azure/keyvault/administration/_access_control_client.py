@@ -137,10 +137,10 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         """
         permissions = [
             self._client.role_definitions.models.Permission(
-                actions=p.allowed_actions,
-                not_actions=p.denied_actions,
-                data_actions=p.allowed_data_actions,
-                not_data_actions=p.denied_data_actions,
+                actions=p.actions,
+                not_actions=p.not_actions,
+                data_actions=p.data_actions,
+                not_data_actions=p.not_data_actions,
             )
             for p in kwargs.pop("permissions", None) or []
         ]

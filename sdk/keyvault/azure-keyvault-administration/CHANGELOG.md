@@ -18,7 +18,11 @@
     `key_name, folder_url, sas_token`
 - `KeyVaultRoleAssignment`'s `principal_id`, `role_definition_id`, and `scope`
   are now properties of a `properties` property
-
+- Renamed `KeyVaultPermission` properties:
+  - `allowed_actions` -> `actions`
+  - `denied_actions` -> `not_actions`
+  - `allowed_data_actions` -> `data_actions`
+  - `denied_data_actions` -> `denied_data_actions`
 
 ## 4.0.0b3 (2021-02-09)
 ### Added
