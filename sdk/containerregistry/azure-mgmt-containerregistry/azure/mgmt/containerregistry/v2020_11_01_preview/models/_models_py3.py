@@ -3261,7 +3261,7 @@ class Registry(Resource):
     :type zone_redundancy: str or
      ~azure.mgmt.containerregistry.v2020_11_01_preview.models.ZoneRedundancy
     :param anonymous_pull_enabled: Enables registry-wide pull from
-     unauthenticated clients.
+     unauthenticated clients. Default value: False .
     :type anonymous_pull_enabled: bool
     """
 
@@ -3306,7 +3306,7 @@ class Registry(Resource):
         'anonymous_pull_enabled': {'key': 'properties.anonymousPullEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, location: str, sku, tags=None, identity=None, admin_user_enabled: bool=False, network_rule_set=None, policies=None, encryption=None, data_endpoint_enabled: bool=None, public_network_access="Enabled", network_rule_bypass_options="AzureServices", zone_redundancy="Disabled", anonymous_pull_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, location: str, sku, tags=None, identity=None, admin_user_enabled: bool=False, network_rule_set=None, policies=None, encryption=None, data_endpoint_enabled: bool=None, public_network_access="Enabled", network_rule_bypass_options="AzureServices", zone_redundancy="Disabled", anonymous_pull_enabled: bool=False, **kwargs) -> None:
         super(Registry, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.identity = identity
