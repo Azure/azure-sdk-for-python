@@ -200,20 +200,18 @@ class ArtifactManifestProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar registry_login_server: Registry login server name.  This is likely to be similar to
      {registry-name}.azurecr.io.
     :vartype registry_login_server: str
     :ivar repository_name: Repository name.
     :vartype repository_name: str
-    :ivar digest: Required. Manifest.
+    :ivar digest: Manifest.
     :vartype digest: str
     :ivar size: Image size.
     :vartype size: long
-    :ivar created_on: Required. Created time.
+    :ivar created_on: Created time.
     :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: Required. Last update time.
+    :ivar last_updated_on: Last update time.
     :vartype last_updated_on: ~datetime.datetime
     :ivar architecture: CPU architecture. Possible values include: "386", "amd64", "arm", "arm64",
      "mips", "mipsle", "mips64", "mips64le", "ppc64", "ppc64le", "riscv64", "s390x", "wasm". Default
@@ -245,10 +243,10 @@ class ArtifactManifestProperties(msrest.serialization.Model):
     _validation = {
         'registry_login_server': {'readonly': True},
         'repository_name': {'readonly': True},
-        'digest': {'required': True, 'readonly': True},
+        'digest': {'readonly': True},
         'size': {'readonly': True},
-        'created_on': {'required': True, 'readonly': True},
-        'last_updated_on': {'required': True, 'readonly': True},
+        'created_on': {'readonly': True},
+        'last_updated_on': {'readonly': True},
         'architecture': {'readonly': True},
         'operating_system': {'readonly': True},
         'manifest_references': {'readonly': True},
@@ -302,24 +300,22 @@ class ArtifactManifestReference(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar digest: Required. Manifest digest.
+    :ivar digest: Manifest digest.
     :vartype digest: str
-    :ivar architecture: Required. CPU architecture. Possible values include: "386", "amd64", "arm",
-     "arm64", "mips", "mipsle", "mips64", "mips64le", "ppc64", "ppc64le", "riscv64", "s390x",
-     "wasm". Default value: "none".
+    :ivar architecture: CPU architecture. Possible values include: "386", "amd64", "arm", "arm64",
+     "mips", "mipsle", "mips64", "mips64le", "ppc64", "ppc64le", "riscv64", "s390x", "wasm". Default
+     value: "none".
     :vartype architecture: str or ~container_registry.models.ArtifactArchitecture
-    :ivar operating_system: Required. Operating system. Possible values include: "aix", "android",
-     "darwin", "dragonfly", "freebsd", "illumos", "ios", "js", "linux", "netbsd", "openbsd",
-     "plan9", "solaris", "windows".
+    :ivar operating_system: Operating system. Possible values include: "aix", "android", "darwin",
+     "dragonfly", "freebsd", "illumos", "ios", "js", "linux", "netbsd", "openbsd", "plan9",
+     "solaris", "windows".
     :vartype operating_system: str or ~container_registry.models.ArtifactOperatingSystem
     """
 
     _validation = {
-        'digest': {'required': True, 'readonly': True},
-        'architecture': {'required': True, 'readonly': True},
-        'operating_system': {'required': True, 'readonly': True},
+        'digest': {'readonly': True},
+        'architecture': {'readonly': True},
+        'operating_system': {'readonly': True},
     }
 
     _attribute_map = {
@@ -343,20 +339,18 @@ class ArtifactTagProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar registry_login_server: Required. Registry login server name.  This is likely to be
-     similar to {registry-name}.azurecr.io.
+    :ivar registry_login_server: Registry login server name.  This is likely to be similar to
+     {registry-name}.azurecr.io.
     :vartype registry_login_server: str
-    :ivar repository_name: Required. Image name.
+    :ivar repository_name: Image name.
     :vartype repository_name: str
-    :ivar name: Required. Tag name.
+    :ivar name: Tag name.
     :vartype name: str
-    :ivar digest: Required. Tag digest.
+    :ivar digest: Tag digest.
     :vartype digest: str
-    :ivar created_on: Required. Tag created time.
+    :ivar created_on: Tag created time.
     :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: Required. Tag last update time.
+    :ivar last_updated_on: Tag last update time.
     :vartype last_updated_on: ~datetime.datetime
     :param can_delete: Delete enabled.
     :type can_delete: bool
@@ -369,12 +363,12 @@ class ArtifactTagProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'registry_login_server': {'required': True, 'readonly': True},
-        'repository_name': {'required': True, 'readonly': True},
-        'name': {'required': True, 'readonly': True},
-        'digest': {'required': True, 'readonly': True},
-        'created_on': {'required': True, 'readonly': True},
-        'last_updated_on': {'required': True, 'readonly': True},
+        'registry_login_server': {'readonly': True},
+        'repository_name': {'readonly': True},
+        'name': {'readonly': True},
+        'digest': {'readonly': True},
+        'created_on': {'readonly': True},
+        'last_updated_on': {'readonly': True},
     }
 
     _attribute_map = {
@@ -619,15 +613,13 @@ class ManifestAttributesBase(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar digest: Required. Manifest.
+    :ivar digest: Manifest.
     :vartype digest: str
     :ivar size: Image size.
     :vartype size: long
-    :ivar created_on: Required. Created time.
+    :ivar created_on: Created time.
     :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: Required. Last update time.
+    :ivar last_updated_on: Last update time.
     :vartype last_updated_on: ~datetime.datetime
     :ivar architecture: CPU architecture. Possible values include: "386", "amd64", "arm", "arm64",
      "mips", "mipsle", "mips64", "mips64le", "ppc64", "ppc64le", "riscv64", "s390x", "wasm". Default
@@ -657,10 +649,10 @@ class ManifestAttributesBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'digest': {'required': True, 'readonly': True},
+        'digest': {'readonly': True},
         'size': {'readonly': True},
-        'created_on': {'required': True, 'readonly': True},
-        'last_updated_on': {'required': True, 'readonly': True},
+        'created_on': {'readonly': True},
+        'last_updated_on': {'readonly': True},
         'architecture': {'readonly': True},
         'operating_system': {'readonly': True},
         'manifest_references': {'readonly': True},
@@ -1099,20 +1091,18 @@ class RepositoryProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar registry_login_server: Required. Registry login server name.  This is likely to be
-     similar to {registry-name}.azurecr.io.
+    :ivar registry_login_server: Registry login server name.  This is likely to be similar to
+     {registry-name}.azurecr.io.
     :vartype registry_login_server: str
-    :ivar name: Required. Image name.
+    :ivar name: Image name.
     :vartype name: str
-    :ivar created_on: Required. Image created time.
+    :ivar created_on: Image created time.
     :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: Required. Image last update time.
+    :ivar last_updated_on: Image last update time.
     :vartype last_updated_on: ~datetime.datetime
-    :ivar manifest_count: Required. Number of the manifests.
+    :ivar manifest_count: Number of the manifests.
     :vartype manifest_count: int
-    :ivar tag_count: Required. Number of the tags.
+    :ivar tag_count: Number of the tags.
     :vartype tag_count: int
     :param can_delete: Delete enabled.
     :type can_delete: bool
@@ -1128,12 +1118,12 @@ class RepositoryProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'registry_login_server': {'required': True, 'readonly': True},
-        'name': {'required': True, 'readonly': True},
-        'created_on': {'required': True, 'readonly': True},
-        'last_updated_on': {'required': True, 'readonly': True},
-        'manifest_count': {'required': True, 'readonly': True},
-        'tag_count': {'required': True, 'readonly': True},
+        'registry_login_server': {'readonly': True},
+        'name': {'readonly': True},
+        'created_on': {'readonly': True},
+        'last_updated_on': {'readonly': True},
+        'manifest_count': {'readonly': True},
+        'tag_count': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1232,15 +1222,13 @@ class TagAttributesBase(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar name: Required. Tag name.
+    :ivar name: Tag name.
     :vartype name: str
-    :ivar digest: Required. Tag digest.
+    :ivar digest: Tag digest.
     :vartype digest: str
-    :ivar created_on: Required. Tag created time.
+    :ivar created_on: Tag created time.
     :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: Required. Tag last update time.
+    :ivar last_updated_on: Tag last update time.
     :vartype last_updated_on: ~datetime.datetime
     :param can_delete: Delete enabled.
     :type can_delete: bool
@@ -1253,10 +1241,10 @@ class TagAttributesBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True, 'readonly': True},
-        'digest': {'required': True, 'readonly': True},
-        'created_on': {'required': True, 'readonly': True},
-        'last_updated_on': {'required': True, 'readonly': True},
+        'name': {'readonly': True},
+        'digest': {'readonly': True},
+        'created_on': {'readonly': True},
+        'last_updated_on': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1307,24 +1295,16 @@ class TagAttributesTag(msrest.serialization.Model):
 class TagList(msrest.serialization.Model):
     """List of tag details.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param registry_login_server: Required. Registry login server name.  This is likely to be
-     similar to {registry-name}.azurecr.io.
+    :param registry_login_server: Registry login server name.  This is likely to be similar to
+     {registry-name}.azurecr.io.
     :type registry_login_server: str
-    :param repository: Required. Image name.
+    :param repository: Image name.
     :type repository: str
-    :param tag_attribute_bases: Required. List of tag attribute details.
+    :param tag_attribute_bases: List of tag attribute details.
     :type tag_attribute_bases: list[~container_registry.models.TagAttributesBase]
     :param link:
     :type link: str
     """
-
-    _validation = {
-        'registry_login_server': {'required': True},
-        'repository': {'required': True},
-        'tag_attribute_bases': {'required': True},
-    }
 
     _attribute_map = {
         'registry_login_server': {'key': 'registry', 'type': 'str'},
@@ -1338,9 +1318,9 @@ class TagList(msrest.serialization.Model):
         **kwargs
     ):
         super(TagList, self).__init__(**kwargs)
-        self.registry_login_server = kwargs['registry_login_server']
-        self.repository = kwargs['repository']
-        self.tag_attribute_bases = kwargs['tag_attribute_bases']
+        self.registry_login_server = kwargs.get('registry_login_server', None)
+        self.repository = kwargs.get('repository', None)
+        self.tag_attribute_bases = kwargs.get('tag_attribute_bases', None)
         self.link = kwargs.get('link', None)
 
 
