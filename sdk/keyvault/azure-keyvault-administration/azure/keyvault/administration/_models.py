@@ -54,25 +54,25 @@ class KeyVaultRoleAssignment(object):
     @property
     def role_assignment_id(self):
         # type: () -> str
-        """unique identifier for this assignment"""
+        """Unique identifier for this assignment"""
         return self._role_assignment_id
 
     @property
     def name(self):
         # type: () -> str
-        """name of the assignment"""
+        """Name of the assignment"""
         return self._name
 
     @property
     def properties(self):
         # type: () -> KeyVaultRoleAssignmentProperties
-        """properties of the assignment"""
+        """Properties of the assignment"""
         return self._properties
 
     @property
     def type(self):
         # type: () -> str
-        """the type of this assignment"""
+        """The type of this assignment"""
         return self._type
 
     @classmethod
@@ -112,7 +112,7 @@ class KeyVaultRoleAssignmentProperties(object):
     @property
     def scope(self):
         # type: () -> str
-        """scope of the assignment"""
+        """Scope of the assignment"""
         return self._scope
 
     def __repr__(self):
@@ -153,49 +153,49 @@ class KeyVaultRoleDefinition(object):
     @property
     def id(self):
         # type: () -> str
-        """unique identifier for this role definition"""
+        """Unique identifier for this role definition"""
         return self._id
 
     @property
     def name(self):
         # type: () -> str
-        """name of the role definition"""
+        """Name of the role definition"""
         return self._name
 
     @property
     def role_name(self):
         # type: () -> str
-        """name of the role"""
+        """Name of the role"""
         return self._role_name
 
     @property
     def description(self):
         # type: () -> str
-        """description of the role definition"""
+        """Description of the role definition"""
         return self._description
 
     @property
     def role_type(self):
         # type: () -> str
-        """type of the role"""
+        """Type of the role"""
         return self._role_type
 
     @property
     def type(self):
         # type: () -> str
-        """type of the role definition"""
+        """Type of the role definition"""
         return self._type
 
     @property
     def permissions(self):
         # type: () -> list[KeyVaultPermission]
-        """permissions defined for the role"""
+        """Permissions defined for the role"""
         return self._permissions
 
     @property
     def assignable_scopes(self):
         # type: () -> list[str]
-        """scopes that can be assigned to the role"""
+        """Scopes that can be assigned to the role"""
         return self._assignable_scopes
 
     @classmethod

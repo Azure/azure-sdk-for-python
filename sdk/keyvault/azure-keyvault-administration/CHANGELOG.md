@@ -4,7 +4,6 @@
 ### Added
 - `KeyVaultAccessControlClient.set_role_definition` accepts an optional 
   `assignable_scopes` keyword-only argument
-- Added `KeyVaultRoleAssignmentProperties` class
 
 ### Breaking Changes
 - Changed parameter order in `KeyVaultAccessControlClient.set_role_definition`.
