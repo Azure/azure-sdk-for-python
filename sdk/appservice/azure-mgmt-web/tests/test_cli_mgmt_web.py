@@ -30,7 +30,8 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.web.WebSiteManagementClient
         )
-    
+
+    @unittest.skip('skip temporarily')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_web(self, resource_group):
 
