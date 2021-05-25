@@ -54,34 +54,35 @@ class ComposedModelSampleAsync(object):
         po_cleaning_supplies = os.environ['PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL']
 
         form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-        supplies_poller = await form_training_client.begin_training(
-            po_supplies, use_training_labels=True, model_name="Purchase order - Office supplies"
-        )
-        equipment_poller = await form_training_client.begin_training(
-            po_equipment, use_training_labels=True, model_name="Purchase order - Office Equipment"
-        )
-        furniture_poller = await form_training_client.begin_training(
-            po_furniture, use_training_labels=True, model_name="Purchase order - Furniture"
-        )
-        cleaning_supplies_poller = await form_training_client.begin_training(
-            po_cleaning_supplies, use_training_labels=True, model_name="Purchase order - Cleaning Supplies"
-        )
-        supplies_model = await supplies_poller.result()
-        equipment_model = await equipment_poller.result()
-        furniture_model = await furniture_poller.result()
-        cleaning_supplies_model = await cleaning_supplies_poller.result()
+        async with form_training_client:
+            supplies_poller = await form_training_client.begin_training(
+                po_supplies, use_training_labels=True, model_name="Purchase order - Office supplies"
+            )
+            equipment_poller = await form_training_client.begin_training(
+                po_equipment, use_training_labels=True, model_name="Purchase order - Office Equipment"
+            )
+            furniture_poller = await form_training_client.begin_training(
+                po_furniture, use_training_labels=True, model_name="Purchase order - Furniture"
+            )
+            cleaning_supplies_poller = await form_training_client.begin_training(
+                po_cleaning_supplies, use_training_labels=True, model_name="Purchase order - Cleaning Supplies"
+            )
+            supplies_model = await supplies_poller.result()
+            equipment_model = await equipment_poller.result()
+            furniture_model = await furniture_poller.result()
+            cleaning_supplies_model = await cleaning_supplies_poller.result()
 
-        models_trained_with_labels = [
-            supplies_model.model_id,
-            equipment_model.model_id,
-            furniture_model.model_id,
-            cleaning_supplies_model.model_id
-        ]
+            models_trained_with_labels = [
+                supplies_model.model_id,
+                equipment_model.model_id,
+                furniture_model.model_id,
+                cleaning_supplies_model.model_id
+            ]
 
-        poller = await form_training_client.begin_create_composed_model(
-            models_trained_with_labels, model_name="Office Supplies Composed Model"
-        )
-        model = await poller.result()
+            poller = await form_training_client.begin_create_composed_model(
+                models_trained_with_labels, model_name="Office Supplies Composed Model"
+            )
+            model = await poller.result()
 
         print("Office Supplies Composed Model Info:")
         print("Model ID: {}".format(model.model_id))
