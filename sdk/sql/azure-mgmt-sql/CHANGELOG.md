@@ -1,8 +1,8 @@
 # Release History
 
-## 0.0.0 (2021-05-24)
+## 2.1.0 (2021-05-24)
 
-
+ - Add resource identity
 
 ## 2.0.0 (2021-05-13)
 
