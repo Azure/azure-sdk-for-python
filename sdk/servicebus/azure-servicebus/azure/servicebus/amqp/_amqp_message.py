@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import copy
 from typing import Optional, Any
 
 import uamqp
@@ -203,7 +202,7 @@ class AMQPAnnotatedMessage(object):
             message_repr += ", annotations=<read-error>"
         return "AMQPAnnotatedMessage({})".format(message_repr)[:1024]
 
-    def _get_outing_amqp_message(self):
+    def _to_outing_amqp_message(self):
         message_header = None
         if self.header:
             message_header = uamqp.message.MessageHeader()
@@ -226,8 +225,7 @@ class AMQPAnnotatedMessage(object):
     @property
     def body(self):
         # type: () -> Any
-        """The body of the Message. The format may vary depending
-        on the body type:
+        """The body of the Message. The format may vary depending on the body type:
         For ~azure.servicebus.AMQPMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
         For ~azure.servicebus.AMQPMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
         For ~azure.servicebus.AMQPMessageBodyType.VALUE, the body could be any type.
@@ -238,10 +236,10 @@ class AMQPAnnotatedMessage(object):
 
     @property
     def body_type(self):
-        # type: () -> Optional[AMQPMessageBodyType]
+        # type: () -> AMQPMessageBodyType
         """The body type of the underlying AMQP message.
 
-        rtype: Optional[~azure.servicebus.amqp.AMQPMessageBodyType]
+        rtype: ~azure.servicebus.amqp.AMQPMessageBodyType
         """
         return AMQP_MESSAGE_BODY_TYPE_MAP.get(
             self._message._body.type  # pylint: disable=protected-access
@@ -275,7 +273,7 @@ class AMQPAnnotatedMessage(object):
     @application_properties.setter
     def application_properties(self, value):
         # type: (dict) -> None
-       self._application_properties = value
+        self._application_properties = value
 
     @property
     def annotations(self):
@@ -290,7 +288,7 @@ class AMQPAnnotatedMessage(object):
     @annotations.setter
     def annotations(self, value):
         # type: (dict) -> None
-       self._annotations = value
+        self._annotations = value
 
     @property
     def delivery_annotations(self):
@@ -306,7 +304,7 @@ class AMQPAnnotatedMessage(object):
     @delivery_annotations.setter
     def delivery_annotations(self, value):
         # type: (dict) -> None
-       self._delivery_annotations = value
+        self._delivery_annotations = value
 
     @property
     def header(self):

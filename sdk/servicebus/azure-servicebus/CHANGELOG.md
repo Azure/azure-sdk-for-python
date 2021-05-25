@@ -11,7 +11,6 @@
 **Breaking Changes from 7.2.0b1**
   - Moved `azure.servicebus.AMQPAnnotatedMessage` to `azure.servicebus.amqp.AMQPAnnotatedMessage`.
   - Moved `azure.servicebus.AMQPMessageBodyType` to `azure.servicebus.amqp.AMQPMessageBodyType`.
-  - Removed property `body_type` on `azure.servicebus.ServiceBusMessage`.
   - `AMQPAnnotatedMessage.header` returns `azure.servicebus.amqp.AMQPMessageHeader` instead of `uamqp.message.MessageHeader`.
   - `AMQPAnnotatedMessage.properties` returns `azure.servicebus.amqp.AMQPMessageProperties` instead of `uamqp.message.MessageProperties`.
 

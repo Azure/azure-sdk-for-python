@@ -38,6 +38,7 @@ from .constants import (
     MAX_DURATION_VALUE,
 )
 from ..amqp import AMQPAnnotatedMessage, AMQPMessageBodyType
+from ..amqp._constants import AMQP_MESSAGE_BODY_TYPE_MAP
 from ..exceptions import MessageSizeExceededError
 from .utils import (
     utc_from_timestamp,
@@ -129,9 +130,7 @@ class ServiceBusMessage(
         )  # type: AMQPAnnotatedMessage
 
     def __str__(self):
-        if self.raw_amqp_message.body_type == AMQPMessageBodyType.DATA:
-            return str(self.message)
-        return str(None)
+        return str(self.message)
 
     def __repr__(self):
         # type: () -> str
@@ -385,24 +384,26 @@ class ServiceBusMessage(
 
     @property
     def body(self):
-        # type: () -> Optional[Union[bytes, Iterable[bytes]]]
-        """The body of the Message.
+        # type: () -> Any
+        """The body of the Message. The format may vary depending on the body type:
+        For ~azure.servicebus.AMQPMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
+        For ~azure.servicebus.AMQPMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
+        For ~azure.servicebus.AMQPMessageBodyType.VALUE, the body could be any type.
 
-        **Note: `ServiceBusMessage.body` only inspects the data body section of
-        the underlying amqp message. If the underlying amqp message is composed of sequence body or value body,
-        `body` will just return `None` and in this case please refer to the instance variable
-        `ServiceBusMessage.raw_amqp_message` to access the sequence body or value body.**
-
-        :rtype: bytes or Iterable[bytes]
+        :rtype: Any
         """
-        # pylint: disable=protected-access
-        if not self.message._message or not self.message._body:
-            return None
-
-        if self.message._body.type != uamqp.MessageBodyType.Data:
-            return None
-
         return self.message.get_data()
+
+    @property
+    def body_type(self):
+        # type: () -> AMQPMessageBodyType
+        """The body type of the underlying AMQP message.
+
+        rtype: ~azure.servicebus.amqp.AMQPMessageBodyType
+        """
+        return AMQP_MESSAGE_BODY_TYPE_MAP.get(
+            self.message._body.type  # pylint: disable=protected-access
+        )
 
     @property
     def content_type(self):
