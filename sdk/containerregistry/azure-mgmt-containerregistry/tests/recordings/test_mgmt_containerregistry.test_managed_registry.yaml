@@ -13,8 +13,9 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerregistry/4.0.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-containerregistry/3.0.0rc18 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -30,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 24 Feb 2021 08:36:26 GMT
+      - Tue, 25 May 2021 08:35:17 GMT
       expires:
       - '-1'
       pragma:
@@ -63,24 +64,25 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerregistry/4.0.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-containerregistry/3.0.0rc18 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462?api-version=2019-05-01
   response:
     body:
-      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462","name":"pyacrfe331462","location":"westcentralus","tags":{},"properties":{"loginServer":"pyacrfe331462.azurecr.io","creationDate":"2021-02-24T08:36:32.4827683Z","provisioningState":"Succeeded","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]},"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2021-02-24T08:36:42.6537807+00:00","status":"disabled"}}}}'
+      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462","name":"pyacrfe331462","location":"westcentralus","tags":{},"properties":{"loginServer":"pyacrfe331462.azurecr.io","creationDate":"2021-05-25T08:35:19.8064994Z","provisioningState":"Succeeded","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]},"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2021-05-25T08:35:23.6799232+00:00","status":"disabled"}}}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '795'
+      - '800'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 24 Feb 2021 08:36:43 GMT
+      - Tue, 25 May 2021 08:35:23 GMT
       expires:
       - '-1'
       pragma:
@@ -110,24 +112,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerregistry/4.0.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-containerregistry/3.0.0rc18 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries?api-version=2019-05-01
   response:
     body:
-      string: '{"value":[{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462","name":"pyacrfe331462","location":"westcentralus","tags":{},"properties":{"loginServer":"pyacrfe331462.azurecr.io","creationDate":"2021-02-24T08:36:32.4827683Z","provisioningState":"Succeeded","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]},"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2021-02-24T08:36:42.6537807+00:00","status":"disabled"}}}}]}'
+      string: '{"value":[{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462","name":"pyacrfe331462","location":"westcentralus","tags":{},"properties":{"loginServer":"pyacrfe331462.azurecr.io","creationDate":"2021-05-25T08:35:19.8064994Z","provisioningState":"Succeeded","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]},"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2021-05-25T08:35:23.6799232+00:00","status":"disabled"}}}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '807'
+      - '812'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 24 Feb 2021 08:36:44 GMT
+      - Tue, 25 May 2021 08:35:23 GMT
       expires:
       - '-1'
       pragma:
@@ -159,24 +162,25 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerregistry/4.0.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-containerregistry/3.0.0rc18 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462?api-version=2019-05-01
   response:
     body:
-      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462","name":"pyacrfe331462","location":"westcentralus","tags":{"key":"value"},"properties":{"loginServer":"pyacrfe331462.azurecr.io","creationDate":"2021-02-24T08:36:32.4827683Z","provisioningState":"Succeeded","adminUserEnabled":true,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]},"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2021-02-24T08:36:42.6537807+00:00","status":"disabled"}}}}'
+      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462","name":"pyacrfe331462","location":"westcentralus","tags":{"key":"value"},"properties":{"loginServer":"pyacrfe331462.azurecr.io","creationDate":"2021-05-25T08:35:19.8064994Z","provisioningState":"Succeeded","adminUserEnabled":true,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]},"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2021-05-25T08:35:23.6799232+00:00","status":"disabled"}}}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '807'
+      - '812'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 24 Feb 2021 08:36:49 GMT
+      - Tue, 25 May 2021 08:35:24 GMT
       expires:
       - '-1'
       pragma:
@@ -206,24 +210,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerregistry/4.0.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-containerregistry/3.0.0rc18 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462?api-version=2019-05-01
   response:
     body:
-      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462","name":"pyacrfe331462","location":"westcentralus","tags":{"key":"value"},"properties":{"loginServer":"pyacrfe331462.azurecr.io","creationDate":"2021-02-24T08:36:32.4827683Z","provisioningState":"Succeeded","adminUserEnabled":true,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]},"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2021-02-24T08:36:42.6537807+00:00","status":"disabled"}}}}'
+      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462","name":"pyacrfe331462","location":"westcentralus","tags":{"key":"value"},"properties":{"loginServer":"pyacrfe331462.azurecr.io","creationDate":"2021-05-25T08:35:19.8064994Z","provisioningState":"Succeeded","adminUserEnabled":true,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]},"policies":{"quarantinePolicy":{"status":"disabled"},"trustPolicy":{"type":"Notary","status":"disabled"},"retentionPolicy":{"days":7,"lastUpdatedTime":"2021-05-25T08:35:23.6799232+00:00","status":"disabled"}}}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '807'
+      - '812'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 24 Feb 2021 08:36:49 GMT
+      - Tue, 25 May 2021 08:35:25 GMT
       expires:
       - '-1'
       pragma:
@@ -253,15 +258,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerregistry/4.0.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-containerregistry/3.0.0rc18 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462/listCredentials?api-version=2019-05-01
   response:
     body:
-      string: '{"username":"pyacrfe331462","passwords":[{"name":"password","value":"SJ6X5YJRtUPrlY887nfKjVwE4VhWyik/"},{"name":"password2","value":"lVBWLgq5gwLNTzu8iQN2XTvByr+se0Fe"}]}'
+      string: '{"username":"pyacrfe331462","passwords":[{"name":"password","value":"=Zy15n2cMVpch3TaDxc1K19g8ZwQ26gQ"},{"name":"password2","value":"vP0tDz10xjc=SbDyTtsGqGyFLywXgJYT"}]}'
     headers:
       cache-control:
       - no-cache
@@ -270,7 +276,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 24 Feb 2021 08:36:50 GMT
+      - Tue, 25 May 2021 08:35:25 GMT
       expires:
       - '-1'
       pragma:
@@ -304,15 +310,16 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerregistry/4.0.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-containerregistry/3.0.0rc18 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462/regenerateCredential?api-version=2019-05-01
   response:
     body:
-      string: '{"username":"pyacrfe331462","passwords":[{"name":"password","value":"ESD8IOVyrdW5EGdESGgtIFwfYm0co+X3"},{"name":"password2","value":"lVBWLgq5gwLNTzu8iQN2XTvByr+se0Fe"}]}'
+      string: '{"username":"pyacrfe331462","passwords":[{"name":"password","value":"tjJ1G1nP8rCOmDTrONvuX+DkyjU+kjcZ"},{"name":"password2","value":"vP0tDz10xjc=SbDyTtsGqGyFLywXgJYT"}]}'
     headers:
       cache-control:
       - no-cache
@@ -321,7 +328,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 24 Feb 2021 08:36:50 GMT
+      - Tue, 25 May 2021 08:35:25 GMT
       expires:
       - '-1'
       pragma:
@@ -351,8 +358,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerregistry/4.0.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-containerregistry/3.0.0rc18 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -368,7 +376,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 24 Feb 2021 08:36:50 GMT
+      - Tue, 25 May 2021 08:35:25 GMT
       expires:
       - '-1'
       pragma:
@@ -398,8 +406,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerregistry/4.0.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-containerregistry/3.0.0rc18 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -413,7 +422,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 24 Feb 2021 08:37:03 GMT
+      - Tue, 25 May 2021 08:35:30 GMT
       expires:
       - '-1'
       pragma:
@@ -425,7 +434,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14999'
     status:
       code: 200
       message: OK
