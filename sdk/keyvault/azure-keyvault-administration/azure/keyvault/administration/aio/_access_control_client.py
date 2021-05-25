@@ -42,7 +42,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :param str principal_id: Azure Active Directory object ID of the principal which will be assigned the role. The
             principal can be a user, service principal, or security group.
         :keyword role_assignment_name: a name for the role assignment. Must be a UUID.
-        :type role_assignment_name: str or uuid.UUID
+        :paramtype role_assignment_name: str or uuid.UUID
         :rtype: KeyVaultRoleAssignment
         """
         role_assignment_name = kwargs.pop("role_assignment_name", None) or uuid4()
@@ -138,9 +138,9 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
             definition, the description will be set to an empty string.
         :keyword permissions: the role definition's permissions. If unspecified when creating or updating a role
             definition, the role definition will have no action permissions.
-        :type permissions: Iterable[KeyVaultPermission]
+        :paramtype permissions: Iterable[KeyVaultPermission]
         :keyword assignable_scopes: the scopes for which the role definition can be assigned.
-        :type assignable_scopes: Iterable[str] or Iterable[KeyVaultRoleScope]
+        :paramtype assignable_scopes: Iterable[str] or Iterable[KeyVaultRoleScope]
         :returns: The created or updated role definition
         :rtype: KeyVaultRoleDefinition
         """
