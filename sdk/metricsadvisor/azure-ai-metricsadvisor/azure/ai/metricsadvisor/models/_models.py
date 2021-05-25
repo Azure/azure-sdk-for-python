@@ -3043,7 +3043,9 @@ class SQLConnectionStringCredentialEntity(object):
         self.description = kwargs.get('description', None)
 
     def __repr__(self):
-        return "SQLConnectionStringCredentialEntity(type={}, name={}, connection_string={}, description={})".format(
+        return "SQLConnectionStringCredentialEntity(id={}, type={}, name={}, " \
+               "connection_string={}, description={})".format(
+            self.id,
             self.type,
             self.name,
             self.connection_string,
@@ -3113,7 +3115,8 @@ class DataLakeGen2SharedKeyCredentialEntity(object):
         self.description = kwargs.get('description', None)
 
     def __repr__(self):
-        return "DataLakeGen2SharedKeyCredentialEntity(type={}, name={}, account_key={}, description={})".format(
+        return "DataLakeGen2SharedKeyCredentialEntity(id={}, type={}, name={}, account_key={}, description={})".format(
+            self.id,
             self.type,
             self.name,
             self.account_key,
@@ -3191,8 +3194,9 @@ class ServicePrincipalCredentialEntity(object):
         self.description = kwargs.get('description', None)
 
     def __repr__(self):
-        return "ServicePrincipalCredentialEntity(type={}, name={}, " \
+        return "ServicePrincipalCredentialEntity(id={}, type={}, name={}, " \
                "client_id={}, client_secret={}, tenant_id={}, description={})".format(
+            self.id,
             self.type,
             self.name,
             self.client_id,
@@ -3290,10 +3294,11 @@ class ServicePrincipalInKVCredentialEntity(object):
         self.description = kwargs.get('description', None)
 
     def __repr__(self):
-        return "ServicePrincipalInKVCredentialEntity(type={}, name={}, " \
+        return "ServicePrincipalInKVCredentialEntity(id={}, type={}, name={}, " \
                "key_vault_endpoint={}, key_vault_client_id={}, key_vault_client_secret={}, " \
                "service_principal_id_name_in_kv={}, service_principal_secret_name_in_kv={}, tenant_id={}, " \
                "description={})".format(
+            self.id,
             self.type,
             self.name,
             self.key_vault_endpoint,
