@@ -170,6 +170,8 @@ query_filter = "PartitionKey eq 'pk001' or RowKey eq 'rk001' or Value gt '5'"
 for entity in table_client.query_entities(query_filter):
     print(entity)
 
+# Query parameters can be provided as a dictionary with each key matching up to
+# in the query filter with an '@' symbol prefix
 query_filter = "age eq @age_param and married eq @married_param"
 parameters = {
     "age_param": 25,
@@ -191,6 +193,8 @@ In `azure-data-tables`:
 ```python
 table_client = TableClient(...)
 
+# operations is a list of tuples formatted as:
+# ("operation", entity, optional keyword args for the operation)
 operations = [
     ("upsert", entity1),
     ("delete", entity2),
@@ -198,6 +202,9 @@ operations = [
     ("create", entity4),
     ("update", entity5, {"mode": "replace"}),
 ]
+
+table_client.submit_transaction(operations)
+
 ```
 
 ## Additional samples
