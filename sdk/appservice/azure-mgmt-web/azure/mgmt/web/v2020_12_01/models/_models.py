@@ -22,9 +22,9 @@ class AbnormalTimePeriod(Model):
     :type end_time: datetime
     :param events: List of Possible Cause of downtime
     :type events:
-     list[~azure.mgmt.web.v2020_09_01.models.DetectorAbnormalTimePeriod]
+     list[~azure.mgmt.web.v2020_12_01.models.DetectorAbnormalTimePeriod]
     :param solutions: List of proposed solutions
-    :type solutions: list[~azure.mgmt.web.v2020_09_01.models.Solution]
+    :type solutions: list[~azure.mgmt.web.v2020_12_01.models.Solution]
     """
 
     _attribute_map = {
@@ -34,12 +34,12 @@ class AbnormalTimePeriod(Model):
         'solutions': {'key': 'solutions', 'type': '[Solution]'},
     }
 
-    def __init__(self, *, start_time=None, end_time=None, events=None, solutions=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AbnormalTimePeriod, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.events = events
-        self.solutions = solutions
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.events = kwargs.get('events', None)
+        self.solutions = kwargs.get('solutions', None)
 
 
 class Address(Model):
@@ -78,14 +78,14 @@ class Address(Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, *, address1: str, city: str, country: str, postal_code: str, state: str, address2: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Address, self).__init__(**kwargs)
-        self.address1 = address1
-        self.address2 = address2
-        self.city = city
-        self.country = country
-        self.postal_code = postal_code
-        self.state = state
+        self.address1 = kwargs.get('address1', None)
+        self.address2 = kwargs.get('address2', None)
+        self.city = kwargs.get('city', None)
+        self.country = kwargs.get('country', None)
+        self.postal_code = kwargs.get('postal_code', None)
+        self.state = kwargs.get('state', None)
 
 
 class ProxyOnlyResource(Model):
@@ -103,8 +103,6 @@ class ProxyOnlyResource(Model):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     """
 
     _validation = {
@@ -118,16 +116,14 @@ class ProxyOnlyResource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ProxyOnlyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
-        self.kind = kind
+        self.kind = kwargs.get('kind', None)
         self.type = None
-        self.system_data = system_data
 
 
 class AddressResponse(ProxyOnlyResource):
@@ -144,8 +140,6 @@ class AddressResponse(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param service_ip_address: Main public virtual IP.
     :type service_ip_address: str
     :param internal_ip_address: Virtual Network internal IP address of the App
@@ -156,7 +150,7 @@ class AddressResponse(ProxyOnlyResource):
     :type outbound_ip_addresses: list[str]
     :param vip_mappings: Additional virtual IPs.
     :type vip_mappings:
-     list[~azure.mgmt.web.v2020_09_01.models.VirtualIPMapping]
+     list[~azure.mgmt.web.v2020_12_01.models.VirtualIPMapping]
     """
 
     _validation = {
@@ -170,19 +164,18 @@ class AddressResponse(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'service_ip_address': {'key': 'properties.serviceIpAddress', 'type': 'str'},
         'internal_ip_address': {'key': 'properties.internalIpAddress', 'type': 'str'},
         'outbound_ip_addresses': {'key': 'properties.outboundIpAddresses', 'type': '[str]'},
         'vip_mappings': {'key': 'properties.vipMappings', 'type': '[VirtualIPMapping]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, service_ip_address: str=None, internal_ip_address: str=None, outbound_ip_addresses=None, vip_mappings=None, **kwargs) -> None:
-        super(AddressResponse, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.service_ip_address = service_ip_address
-        self.internal_ip_address = internal_ip_address
-        self.outbound_ip_addresses = outbound_ip_addresses
-        self.vip_mappings = vip_mappings
+    def __init__(self, **kwargs):
+        super(AddressResponse, self).__init__(**kwargs)
+        self.service_ip_address = kwargs.get('service_ip_address', None)
+        self.internal_ip_address = kwargs.get('internal_ip_address', None)
+        self.outbound_ip_addresses = kwargs.get('outbound_ip_addresses', None)
+        self.vip_mappings = kwargs.get('vip_mappings', None)
 
 
 class AllowedAudiencesValidation(ProxyOnlyResource):
@@ -199,8 +192,6 @@ class AllowedAudiencesValidation(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param allowed_audiences:
     :type allowed_audiences: list[str]
     """
@@ -216,13 +207,12 @@ class AllowedAudiencesValidation(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'allowed_audiences': {'key': 'properties.allowedAudiences', 'type': '[str]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, allowed_audiences=None, **kwargs) -> None:
-        super(AllowedAudiencesValidation, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.allowed_audiences = allowed_audiences
+    def __init__(self, **kwargs):
+        super(AllowedAudiencesValidation, self).__init__(**kwargs)
+        self.allowed_audiences = kwargs.get('allowed_audiences', None)
 
 
 class AnalysisData(Model):
@@ -232,15 +222,15 @@ class AnalysisData(Model):
     :type source: str
     :param detector_definition: Detector Definition
     :type detector_definition:
-     ~azure.mgmt.web.v2020_09_01.models.DetectorDefinition
+     ~azure.mgmt.web.v2020_12_01.models.DetectorDefinition
     :param metrics: Source Metrics
     :type metrics:
-     list[~azure.mgmt.web.v2020_09_01.models.DiagnosticMetricSet]
+     list[~azure.mgmt.web.v2020_12_01.models.DiagnosticMetricSet]
     :param data: Additional Source Data
-    :type data: list[list[~azure.mgmt.web.v2020_09_01.models.NameValuePair]]
+    :type data: list[list[~azure.mgmt.web.v2020_12_01.models.NameValuePair]]
     :param detector_meta_data: Detector Meta Data
     :type detector_meta_data:
-     ~azure.mgmt.web.v2020_09_01.models.ResponseMetaData
+     ~azure.mgmt.web.v2020_12_01.models.ResponseMetaData
     """
 
     _attribute_map = {
@@ -251,13 +241,13 @@ class AnalysisData(Model):
         'detector_meta_data': {'key': 'detectorMetaData', 'type': 'ResponseMetaData'},
     }
 
-    def __init__(self, *, source: str=None, detector_definition=None, metrics=None, data=None, detector_meta_data=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AnalysisData, self).__init__(**kwargs)
-        self.source = source
-        self.detector_definition = detector_definition
-        self.metrics = metrics
-        self.data = data
-        self.detector_meta_data = detector_meta_data
+        self.source = kwargs.get('source', None)
+        self.detector_definition = kwargs.get('detector_definition', None)
+        self.metrics = kwargs.get('metrics', None)
+        self.data = kwargs.get('data', None)
+        self.detector_meta_data = kwargs.get('detector_meta_data', None)
 
 
 class AnalysisDefinition(ProxyOnlyResource):
@@ -274,8 +264,6 @@ class AnalysisDefinition(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar description: Description of the Analysis
     :vartype description: str
     """
@@ -292,12 +280,11 @@ class AnalysisDefinition(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(AnalysisDefinition, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(AnalysisDefinition, self).__init__(**kwargs)
         self.description = None
 
 
@@ -312,9 +299,83 @@ class ApiDefinitionInfo(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, *, url: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ApiDefinitionInfo, self).__init__(**kwargs)
-        self.url = url
+        self.url = kwargs.get('url', None)
+
+
+class ApiKVReference(ProxyOnlyResource):
+    """Description of site key vault references.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param reference:
+    :type reference: str
+    :param status: Possible values include: 'Initialized', 'Resolved',
+     'InvalidSyntax', 'MSINotEnabled', 'VaultNotFound', 'SecretNotFound',
+     'SecretVersionNotFound', 'AccessToKeyVaultDenied', 'OtherReasons',
+     'FetchTimedOut', 'UnauthorizedClient'
+    :type status: str or ~azure.mgmt.web.v2020_12_01.models.ResolveStatus
+    :param vault_name:
+    :type vault_name: str
+    :param secret_name:
+    :type secret_name: str
+    :param secret_version:
+    :type secret_version: str
+    :param identity_type:
+    :type identity_type:
+     ~azure.mgmt.web.v2020_12_01.models.ManagedServiceIdentity
+    :param details:
+    :type details: str
+    :param source: Possible values include: 'KeyVault'
+    :type source: str or
+     ~azure.mgmt.web.v2020_12_01.models.ConfigReferenceSource
+    :param active_version:
+    :type active_version: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'reference': {'key': 'properties.reference', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'ResolveStatus'},
+        'vault_name': {'key': 'properties.vaultName', 'type': 'str'},
+        'secret_name': {'key': 'properties.secretName', 'type': 'str'},
+        'secret_version': {'key': 'properties.secretVersion', 'type': 'str'},
+        'identity_type': {'key': 'properties.identityType', 'type': 'ManagedServiceIdentity'},
+        'details': {'key': 'properties.details', 'type': 'str'},
+        'source': {'key': 'properties.source', 'type': 'ConfigReferenceSource'},
+        'active_version': {'key': 'properties.activeVersion', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiKVReference, self).__init__(**kwargs)
+        self.reference = kwargs.get('reference', None)
+        self.status = kwargs.get('status', None)
+        self.vault_name = kwargs.get('vault_name', None)
+        self.secret_name = kwargs.get('secret_name', None)
+        self.secret_version = kwargs.get('secret_version', None)
+        self.identity_type = kwargs.get('identity_type', None)
+        self.details = kwargs.get('details', None)
+        self.source = kwargs.get('source', None)
+        self.active_version = kwargs.get('active_version', None)
 
 
 class ApiManagementConfig(Model):
@@ -328,9 +389,127 @@ class ApiManagementConfig(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ApiManagementConfig, self).__init__(**kwargs)
-        self.id = id
+        self.id = kwargs.get('id', None)
+
+
+class AppInsightsWebAppStackSettings(Model):
+    """App Insights Web App stack settings.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar is_supported: <code>true</code> if remote Application Insights is
+     supported for the stack; otherwise, <code>false</code>.
+    :vartype is_supported: bool
+    :ivar is_default_off: <code>true</code> if Application Insights is
+     disabled by default for the stack; otherwise, <code>false</code>.
+    :vartype is_default_off: bool
+    """
+
+    _validation = {
+        'is_supported': {'readonly': True},
+        'is_default_off': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'is_supported': {'key': 'isSupported', 'type': 'bool'},
+        'is_default_off': {'key': 'isDefaultOff', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AppInsightsWebAppStackSettings, self).__init__(**kwargs)
+        self.is_supported = None
+        self.is_default_off = None
+
+
+class Apple(ProxyOnlyResource):
+    """The configuration settings of the Apple provider.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param enabled: <code>false</code> if the Apple provider should not be
+     enabled despite the set registration; otherwise, <code>true</code>.
+    :type enabled: bool
+    :param registration: The configuration settings of the Apple registration.
+    :type registration: ~azure.mgmt.web.v2020_12_01.models.AppleRegistration
+    :param login: The configuration settings of the login flow.
+    :type login: ~azure.mgmt.web.v2020_12_01.models.LoginScopes
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'registration': {'key': 'properties.registration', 'type': 'AppleRegistration'},
+        'login': {'key': 'properties.login', 'type': 'LoginScopes'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Apple, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.registration = kwargs.get('registration', None)
+        self.login = kwargs.get('login', None)
+
+
+class AppleRegistration(ProxyOnlyResource):
+    """The configuration settings of the registration for the Apple provider.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param client_id: The Client ID of the app used for login.
+    :type client_id: str
+    :param client_secret_setting_name: The app setting name that contains the
+     client secret.
+    :type client_secret_setting_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'client_id': {'key': 'properties.clientId', 'type': 'str'},
+        'client_secret_setting_name': {'key': 'properties.clientSecretSettingName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AppleRegistration, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret_setting_name = kwargs.get('client_secret_setting_name', None)
 
 
 class ApplicationLogsConfig(Model):
@@ -338,14 +517,14 @@ class ApplicationLogsConfig(Model):
 
     :param file_system: Application logs to file system configuration.
     :type file_system:
-     ~azure.mgmt.web.v2020_09_01.models.FileSystemApplicationLogsConfig
+     ~azure.mgmt.web.v2020_12_01.models.FileSystemApplicationLogsConfig
     :param azure_table_storage: Application logs to azure table storage
      configuration.
     :type azure_table_storage:
-     ~azure.mgmt.web.v2020_09_01.models.AzureTableStorageApplicationLogsConfig
+     ~azure.mgmt.web.v2020_12_01.models.AzureTableStorageApplicationLogsConfig
     :param azure_blob_storage: Application logs to blob storage configuration.
     :type azure_blob_storage:
-     ~azure.mgmt.web.v2020_09_01.models.AzureBlobStorageApplicationLogsConfig
+     ~azure.mgmt.web.v2020_12_01.models.AzureBlobStorageApplicationLogsConfig
     """
 
     _attribute_map = {
@@ -354,11 +533,11 @@ class ApplicationLogsConfig(Model):
         'azure_blob_storage': {'key': 'azureBlobStorage', 'type': 'AzureBlobStorageApplicationLogsConfig'},
     }
 
-    def __init__(self, *, file_system=None, azure_table_storage=None, azure_blob_storage=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ApplicationLogsConfig, self).__init__(**kwargs)
-        self.file_system = file_system
-        self.azure_table_storage = azure_table_storage
-        self.azure_blob_storage = azure_blob_storage
+        self.file_system = kwargs.get('file_system', None)
+        self.azure_table_storage = kwargs.get('azure_table_storage', None)
+        self.azure_blob_storage = kwargs.get('azure_blob_storage', None)
 
 
 class ApplicationStack(Model):
@@ -372,10 +551,14 @@ class ApplicationStack(Model):
     :type dependency: str
     :param major_versions: List of major versions available.
     :type major_versions:
-     list[~azure.mgmt.web.v2020_09_01.models.StackMajorVersion]
+     list[~azure.mgmt.web.v2020_12_01.models.StackMajorVersion]
     :param frameworks: List of frameworks associated with application stack.
     :type frameworks:
-     list[~azure.mgmt.web.v2020_09_01.models.ApplicationStack]
+     list[~azure.mgmt.web.v2020_12_01.models.ApplicationStack]
+    :param is_deprecated: <code>true</code> if this is the stack is
+     deprecated; otherwise, <code>false</code>.
+    :type is_deprecated:
+     list[~azure.mgmt.web.v2020_12_01.models.ApplicationStack]
     """
 
     _attribute_map = {
@@ -384,15 +567,17 @@ class ApplicationStack(Model):
         'dependency': {'key': 'dependency', 'type': 'str'},
         'major_versions': {'key': 'majorVersions', 'type': '[StackMajorVersion]'},
         'frameworks': {'key': 'frameworks', 'type': '[ApplicationStack]'},
+        'is_deprecated': {'key': 'isDeprecated', 'type': '[ApplicationStack]'},
     }
 
-    def __init__(self, *, name: str=None, display: str=None, dependency: str=None, major_versions=None, frameworks=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ApplicationStack, self).__init__(**kwargs)
-        self.name = name
-        self.display = display
-        self.dependency = dependency
-        self.major_versions = major_versions
-        self.frameworks = frameworks
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.dependency = kwargs.get('dependency', None)
+        self.major_versions = kwargs.get('major_versions', None)
+        self.frameworks = kwargs.get('frameworks', None)
+        self.is_deprecated = kwargs.get('is_deprecated', None)
 
 
 class ApplicationStackResource(ProxyOnlyResource):
@@ -409,8 +594,6 @@ class ApplicationStackResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param application_stack_resource_name: Application stack name.
     :type application_stack_resource_name: str
     :param display: Application stack display name.
@@ -419,10 +602,14 @@ class ApplicationStackResource(ProxyOnlyResource):
     :type dependency: str
     :param major_versions: List of major versions available.
     :type major_versions:
-     list[~azure.mgmt.web.v2020_09_01.models.StackMajorVersion]
+     list[~azure.mgmt.web.v2020_12_01.models.StackMajorVersion]
     :param frameworks: List of frameworks associated with application stack.
     :type frameworks:
-     list[~azure.mgmt.web.v2020_09_01.models.ApplicationStack]
+     list[~azure.mgmt.web.v2020_12_01.models.ApplicationStack]
+    :param is_deprecated: <code>true</code> if this is the stack is
+     deprecated; otherwise, <code>false</code>.
+    :type is_deprecated:
+     list[~azure.mgmt.web.v2020_12_01.models.ApplicationStack]
     """
 
     _validation = {
@@ -436,25 +623,27 @@ class ApplicationStackResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'application_stack_resource_name': {'key': 'properties.name', 'type': 'str'},
         'display': {'key': 'properties.display', 'type': 'str'},
         'dependency': {'key': 'properties.dependency', 'type': 'str'},
         'major_versions': {'key': 'properties.majorVersions', 'type': '[StackMajorVersion]'},
         'frameworks': {'key': 'properties.frameworks', 'type': '[ApplicationStack]'},
+        'is_deprecated': {'key': 'properties.isDeprecated', 'type': '[ApplicationStack]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, application_stack_resource_name: str=None, display: str=None, dependency: str=None, major_versions=None, frameworks=None, **kwargs) -> None:
-        super(ApplicationStackResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.application_stack_resource_name = application_stack_resource_name
-        self.display = display
-        self.dependency = dependency
-        self.major_versions = major_versions
-        self.frameworks = frameworks
+    def __init__(self, **kwargs):
+        super(ApplicationStackResource, self).__init__(**kwargs)
+        self.application_stack_resource_name = kwargs.get('application_stack_resource_name', None)
+        self.display = kwargs.get('display', None)
+        self.dependency = kwargs.get('dependency', None)
+        self.major_versions = kwargs.get('major_versions', None)
+        self.frameworks = kwargs.get('frameworks', None)
+        self.is_deprecated = kwargs.get('is_deprecated', None)
 
 
 class AppRegistration(ProxyOnlyResource):
-    """AppRegistration.
+    """The configuration settings of the app registration for providers that have
+    app ids and app secrets.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -467,11 +656,10 @@ class AppRegistration(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param app_id:
+    :param app_id: The App ID of the app used for login.
     :type app_id: str
-    :param app_secret_setting_name:
+    :param app_secret_setting_name: The app setting name that contains the app
+     secret.
     :type app_secret_setting_name: str
     """
 
@@ -486,15 +674,14 @@ class AppRegistration(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'app_id': {'key': 'properties.appId', 'type': 'str'},
         'app_secret_setting_name': {'key': 'properties.appSecretSettingName', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, app_id: str=None, app_secret_setting_name: str=None, **kwargs) -> None:
-        super(AppRegistration, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.app_id = app_id
-        self.app_secret_setting_name = app_secret_setting_name
+    def __init__(self, **kwargs):
+        super(AppRegistration, self).__init__(**kwargs)
+        self.app_id = kwargs.get('app_id', None)
+        self.app_secret_setting_name = kwargs.get('app_secret_setting_name', None)
 
 
 class AppServiceCertificate(Model):
@@ -514,7 +701,7 @@ class AppServiceCertificate(Model):
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.KeyVaultSecretStatus
+     ~azure.mgmt.web.v2020_12_01.models.KeyVaultSecretStatus
     """
 
     _validation = {
@@ -527,10 +714,10 @@ class AppServiceCertificate(Model):
         'provisioning_state': {'key': 'provisioningState', 'type': 'KeyVaultSecretStatus'},
     }
 
-    def __init__(self, *, key_vault_id: str=None, key_vault_secret_name: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AppServiceCertificate, self).__init__(**kwargs)
-        self.key_vault_id = key_vault_id
-        self.key_vault_secret_name = key_vault_secret_name
+        self.key_vault_id = kwargs.get('key_vault_id', None)
+        self.key_vault_secret_name = kwargs.get('key_vault_secret_name', None)
         self.provisioning_state = None
 
 
@@ -554,8 +741,6 @@ class Resource(Model):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     """
 
     _validation = {
@@ -572,18 +757,16 @@ class Resource(Model):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, *, location: str, kind: str=None, tags=None, system_data=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
-        self.kind = kind
-        self.location = location
+        self.kind = kwargs.get('kind', None)
+        self.location = kwargs.get('location', None)
         self.type = None
-        self.tags = tags
-        self.system_data = system_data
+        self.tags = kwargs.get('tags', None)
 
 
 class AppServiceCertificateOrder(Resource):
@@ -606,17 +789,15 @@ class AppServiceCertificateOrder(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param certificates: State of the Key Vault secret.
     :type certificates: dict[str,
-     ~azure.mgmt.web.v2020_09_01.models.AppServiceCertificate]
+     ~azure.mgmt.web.v2020_12_01.models.AppServiceCertificate]
     :param distinguished_name: Certificate distinguished name.
     :type distinguished_name: str
     :ivar domain_verification_token: Domain verification token.
     :vartype domain_verification_token: str
-    :param validity_in_years: Duration in years (must be between 1 and 3).
-     Default value: 1 .
+    :param validity_in_years: Duration in years (must be 1). Default value: 1
+     .
     :type validity_in_years: int
     :param key_size: Certificate key size. Default value: 2048 .
     :type key_size: int
@@ -624,7 +805,7 @@ class AppServiceCertificateOrder(Resource):
      include: 'StandardDomainValidatedSsl',
      'StandardDomainValidatedWildCardSsl'
     :type product_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.CertificateProductType
+     ~azure.mgmt.web.v2020_12_01.models.CertificateProductType
     :param auto_renew: <code>true</code> if the certificate should be
      automatically renewed when it expires; otherwise, <code>false</code>.
      Default value: True .
@@ -632,22 +813,22 @@ class AppServiceCertificateOrder(Resource):
     :ivar provisioning_state: Status of certificate order. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.ProvisioningState
+     ~azure.mgmt.web.v2020_12_01.models.ProvisioningState
     :ivar status: Current order status. Possible values include:
      'Pendingissuance', 'Issued', 'Revoked', 'Canceled', 'Denied',
      'Pendingrevocation', 'PendingRekey', 'Unused', 'Expired', 'NotSubmitted'
     :vartype status: str or
-     ~azure.mgmt.web.v2020_09_01.models.CertificateOrderStatus
+     ~azure.mgmt.web.v2020_12_01.models.CertificateOrderStatus
     :ivar signed_certificate: Signed certificate.
     :vartype signed_certificate:
-     ~azure.mgmt.web.v2020_09_01.models.CertificateDetails
+     ~azure.mgmt.web.v2020_12_01.models.CertificateDetails
     :param csr: Last CSR that was created for this order.
     :type csr: str
     :ivar intermediate: Intermediate certificate.
     :vartype intermediate:
-     ~azure.mgmt.web.v2020_09_01.models.CertificateDetails
+     ~azure.mgmt.web.v2020_12_01.models.CertificateDetails
     :ivar root: Root certificate.
-    :vartype root: ~azure.mgmt.web.v2020_09_01.models.CertificateDetails
+    :vartype root: ~azure.mgmt.web.v2020_12_01.models.CertificateDetails
     :ivar serial_number: Current serial number of the certificate.
     :vartype serial_number: str
     :ivar last_certificate_issuance_time: Certificate last issuance time.
@@ -663,6 +844,9 @@ class AppServiceCertificateOrder(Resource):
     :ivar next_auto_renewal_time_stamp: Time stamp when the certificate would
      be auto renewed next
     :vartype next_auto_renewal_time_stamp: datetime
+    :ivar contact: Contact info
+    :vartype contact:
+     ~azure.mgmt.web.v2020_12_01.models.CertificateOrderContact
     """
 
     _validation = {
@@ -671,7 +855,6 @@ class AppServiceCertificateOrder(Resource):
         'location': {'required': True},
         'type': {'readonly': True},
         'domain_verification_token': {'readonly': True},
-        'validity_in_years': {'maximum': 3, 'minimum': 1},
         'product_type': {'required': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
@@ -684,6 +867,7 @@ class AppServiceCertificateOrder(Resource):
         'is_private_key_external': {'readonly': True},
         'app_service_certificate_not_renewable_reasons': {'readonly': True},
         'next_auto_renewal_time_stamp': {'readonly': True},
+        'contact': {'readonly': True},
     }
 
     _attribute_map = {
@@ -693,7 +877,6 @@ class AppServiceCertificateOrder(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'certificates': {'key': 'properties.certificates', 'type': '{AppServiceCertificate}'},
         'distinguished_name': {'key': 'properties.distinguishedName', 'type': 'str'},
         'domain_verification_token': {'key': 'properties.domainVerificationToken', 'type': 'str'},
@@ -713,21 +896,22 @@ class AppServiceCertificateOrder(Resource):
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
         'app_service_certificate_not_renewable_reasons': {'key': 'properties.appServiceCertificateNotRenewableReasons', 'type': '[str]'},
         'next_auto_renewal_time_stamp': {'key': 'properties.nextAutoRenewalTimeStamp', 'type': 'iso-8601'},
+        'contact': {'key': 'properties.contact', 'type': 'CertificateOrderContact'},
     }
 
-    def __init__(self, *, location: str, product_type, kind: str=None, tags=None, system_data=None, certificates=None, distinguished_name: str=None, validity_in_years: int=1, key_size: int=2048, auto_renew: bool=True, csr: str=None, **kwargs) -> None:
-        super(AppServiceCertificateOrder, self).__init__(kind=kind, location=location, tags=tags, system_data=system_data, **kwargs)
-        self.certificates = certificates
-        self.distinguished_name = distinguished_name
+    def __init__(self, **kwargs):
+        super(AppServiceCertificateOrder, self).__init__(**kwargs)
+        self.certificates = kwargs.get('certificates', None)
+        self.distinguished_name = kwargs.get('distinguished_name', None)
         self.domain_verification_token = None
-        self.validity_in_years = validity_in_years
-        self.key_size = key_size
-        self.product_type = product_type
-        self.auto_renew = auto_renew
+        self.validity_in_years = kwargs.get('validity_in_years', 1)
+        self.key_size = kwargs.get('key_size', 2048)
+        self.product_type = kwargs.get('product_type', None)
+        self.auto_renew = kwargs.get('auto_renew', True)
         self.provisioning_state = None
         self.status = None
         self.signed_certificate = None
-        self.csr = csr
+        self.csr = kwargs.get('csr', None)
         self.intermediate = None
         self.root = None
         self.serial_number = None
@@ -736,6 +920,7 @@ class AppServiceCertificateOrder(Resource):
         self.is_private_key_external = None
         self.app_service_certificate_not_renewable_reasons = None
         self.next_auto_renewal_time_stamp = None
+        self.contact = None
 
 
 class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
@@ -754,17 +939,15 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param certificates: State of the Key Vault secret.
     :type certificates: dict[str,
-     ~azure.mgmt.web.v2020_09_01.models.AppServiceCertificate]
+     ~azure.mgmt.web.v2020_12_01.models.AppServiceCertificate]
     :param distinguished_name: Certificate distinguished name.
     :type distinguished_name: str
     :ivar domain_verification_token: Domain verification token.
     :vartype domain_verification_token: str
-    :param validity_in_years: Duration in years (must be between 1 and 3).
-     Default value: 1 .
+    :param validity_in_years: Duration in years (must be 1). Default value: 1
+     .
     :type validity_in_years: int
     :param key_size: Certificate key size. Default value: 2048 .
     :type key_size: int
@@ -772,7 +955,7 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
      include: 'StandardDomainValidatedSsl',
      'StandardDomainValidatedWildCardSsl'
     :type product_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.CertificateProductType
+     ~azure.mgmt.web.v2020_12_01.models.CertificateProductType
     :param auto_renew: <code>true</code> if the certificate should be
      automatically renewed when it expires; otherwise, <code>false</code>.
      Default value: True .
@@ -780,22 +963,22 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
     :ivar provisioning_state: Status of certificate order. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.ProvisioningState
+     ~azure.mgmt.web.v2020_12_01.models.ProvisioningState
     :ivar status: Current order status. Possible values include:
      'Pendingissuance', 'Issued', 'Revoked', 'Canceled', 'Denied',
      'Pendingrevocation', 'PendingRekey', 'Unused', 'Expired', 'NotSubmitted'
     :vartype status: str or
-     ~azure.mgmt.web.v2020_09_01.models.CertificateOrderStatus
+     ~azure.mgmt.web.v2020_12_01.models.CertificateOrderStatus
     :ivar signed_certificate: Signed certificate.
     :vartype signed_certificate:
-     ~azure.mgmt.web.v2020_09_01.models.CertificateDetails
+     ~azure.mgmt.web.v2020_12_01.models.CertificateDetails
     :param csr: Last CSR that was created for this order.
     :type csr: str
     :ivar intermediate: Intermediate certificate.
     :vartype intermediate:
-     ~azure.mgmt.web.v2020_09_01.models.CertificateDetails
+     ~azure.mgmt.web.v2020_12_01.models.CertificateDetails
     :ivar root: Root certificate.
-    :vartype root: ~azure.mgmt.web.v2020_09_01.models.CertificateDetails
+    :vartype root: ~azure.mgmt.web.v2020_12_01.models.CertificateDetails
     :ivar serial_number: Current serial number of the certificate.
     :vartype serial_number: str
     :ivar last_certificate_issuance_time: Certificate last issuance time.
@@ -811,6 +994,9 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
     :ivar next_auto_renewal_time_stamp: Time stamp when the certificate would
      be auto renewed next
     :vartype next_auto_renewal_time_stamp: datetime
+    :ivar contact: Contact info
+    :vartype contact:
+     ~azure.mgmt.web.v2020_12_01.models.CertificateOrderContact
     """
 
     _validation = {
@@ -818,7 +1004,6 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'domain_verification_token': {'readonly': True},
-        'validity_in_years': {'maximum': 3, 'minimum': 1},
         'product_type': {'required': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
@@ -831,6 +1016,7 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         'is_private_key_external': {'readonly': True},
         'app_service_certificate_not_renewable_reasons': {'readonly': True},
         'next_auto_renewal_time_stamp': {'readonly': True},
+        'contact': {'readonly': True},
     }
 
     _attribute_map = {
@@ -838,7 +1024,6 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'certificates': {'key': 'properties.certificates', 'type': '{AppServiceCertificate}'},
         'distinguished_name': {'key': 'properties.distinguishedName', 'type': 'str'},
         'domain_verification_token': {'key': 'properties.domainVerificationToken', 'type': 'str'},
@@ -858,21 +1043,22 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
         'app_service_certificate_not_renewable_reasons': {'key': 'properties.appServiceCertificateNotRenewableReasons', 'type': '[str]'},
         'next_auto_renewal_time_stamp': {'key': 'properties.nextAutoRenewalTimeStamp', 'type': 'iso-8601'},
+        'contact': {'key': 'properties.contact', 'type': 'CertificateOrderContact'},
     }
 
-    def __init__(self, *, product_type, kind: str=None, system_data=None, certificates=None, distinguished_name: str=None, validity_in_years: int=1, key_size: int=2048, auto_renew: bool=True, csr: str=None, **kwargs) -> None:
-        super(AppServiceCertificateOrderPatchResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.certificates = certificates
-        self.distinguished_name = distinguished_name
+    def __init__(self, **kwargs):
+        super(AppServiceCertificateOrderPatchResource, self).__init__(**kwargs)
+        self.certificates = kwargs.get('certificates', None)
+        self.distinguished_name = kwargs.get('distinguished_name', None)
         self.domain_verification_token = None
-        self.validity_in_years = validity_in_years
-        self.key_size = key_size
-        self.product_type = product_type
-        self.auto_renew = auto_renew
+        self.validity_in_years = kwargs.get('validity_in_years', 1)
+        self.key_size = kwargs.get('key_size', 2048)
+        self.product_type = kwargs.get('product_type', None)
+        self.auto_renew = kwargs.get('auto_renew', True)
         self.provisioning_state = None
         self.status = None
         self.signed_certificate = None
-        self.csr = csr
+        self.csr = kwargs.get('csr', None)
         self.intermediate = None
         self.root = None
         self.serial_number = None
@@ -881,6 +1067,7 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         self.is_private_key_external = None
         self.app_service_certificate_not_renewable_reasons = None
         self.next_auto_renewal_time_stamp = None
+        self.contact = None
 
 
 class AppServiceCertificatePatchResource(ProxyOnlyResource):
@@ -898,8 +1085,6 @@ class AppServiceCertificatePatchResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param key_vault_id: Key Vault resource Id.
     :type key_vault_id: str
     :param key_vault_secret_name: Key Vault secret name.
@@ -911,7 +1096,7 @@ class AppServiceCertificatePatchResource(ProxyOnlyResource):
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.KeyVaultSecretStatus
+     ~azure.mgmt.web.v2020_12_01.models.KeyVaultSecretStatus
     """
 
     _validation = {
@@ -926,16 +1111,15 @@ class AppServiceCertificatePatchResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'key_vault_id': {'key': 'properties.keyVaultId', 'type': 'str'},
         'key_vault_secret_name': {'key': 'properties.keyVaultSecretName', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'KeyVaultSecretStatus'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, key_vault_id: str=None, key_vault_secret_name: str=None, **kwargs) -> None:
-        super(AppServiceCertificatePatchResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.key_vault_id = key_vault_id
-        self.key_vault_secret_name = key_vault_secret_name
+    def __init__(self, **kwargs):
+        super(AppServiceCertificatePatchResource, self).__init__(**kwargs)
+        self.key_vault_id = kwargs.get('key_vault_id', None)
+        self.key_vault_secret_name = kwargs.get('key_vault_secret_name', None)
         self.provisioning_state = None
 
 
@@ -960,8 +1144,6 @@ class AppServiceCertificateResource(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param key_vault_id: Key Vault resource Id.
     :type key_vault_id: str
     :param key_vault_secret_name: Key Vault secret name.
@@ -973,7 +1155,7 @@ class AppServiceCertificateResource(Resource):
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.KeyVaultSecretStatus
+     ~azure.mgmt.web.v2020_12_01.models.KeyVaultSecretStatus
     """
 
     _validation = {
@@ -991,16 +1173,15 @@ class AppServiceCertificateResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'key_vault_id': {'key': 'properties.keyVaultId', 'type': 'str'},
         'key_vault_secret_name': {'key': 'properties.keyVaultSecretName', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'KeyVaultSecretStatus'},
     }
 
-    def __init__(self, *, location: str, kind: str=None, tags=None, system_data=None, key_vault_id: str=None, key_vault_secret_name: str=None, **kwargs) -> None:
-        super(AppServiceCertificateResource, self).__init__(kind=kind, location=location, tags=tags, system_data=system_data, **kwargs)
-        self.key_vault_id = key_vault_id
-        self.key_vault_secret_name = key_vault_secret_name
+    def __init__(self, **kwargs):
+        super(AppServiceCertificateResource, self).__init__(**kwargs)
+        self.key_vault_id = kwargs.get('key_vault_id', None)
+        self.key_vault_secret_name = kwargs.get('key_vault_secret_name', None)
         self.provisioning_state = None
 
 
@@ -1012,234 +1193,102 @@ class AppServiceEnvironment(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the App Service Environment.
-    :type name: str
-    :param location: Required. Location of the App Service Environment, e.g.
-     "West US".
-    :type location: str
     :ivar provisioning_state: Provisioning state of the App Service
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
      'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.ProvisioningState
+     ~azure.mgmt.web.v2020_12_01.models.ProvisioningState
     :ivar status: Current status of the App Service Environment. Possible
      values include: 'Preparing', 'Ready', 'Scaling', 'Deleting'
     :vartype status: str or
-     ~azure.mgmt.web.v2020_09_01.models.HostingEnvironmentStatus
-    :param vnet_name: Name of the Virtual Network for the App Service
-     Environment.
-    :type vnet_name: str
-    :param vnet_resource_group_name: Resource group of the Virtual Network.
-    :type vnet_resource_group_name: str
-    :param vnet_subnet_name: Subnet of the Virtual Network.
-    :type vnet_subnet_name: str
+     ~azure.mgmt.web.v2020_12_01.models.HostingEnvironmentStatus
     :param virtual_network: Required. Description of the Virtual Network.
     :type virtual_network:
-     ~azure.mgmt.web.v2020_09_01.models.VirtualNetworkProfile
+     ~azure.mgmt.web.v2020_12_01.models.VirtualNetworkProfile
     :param internal_load_balancing_mode: Specifies which endpoints to serve
      internally in the Virtual Network for the App Service Environment.
-     Possible values include: 'None', 'Web', 'Publishing', 'Web,Publishing'
+     Possible values include: 'None', 'Web', 'Publishing', 'Web, Publishing'
     :type internal_load_balancing_mode: str or
-     ~azure.mgmt.web.v2020_09_01.models.LoadBalancingMode
+     ~azure.mgmt.web.v2020_12_01.models.LoadBalancingMode
     :param multi_size: Front-end VM size, e.g. "Medium", "Large".
     :type multi_size: str
-    :param multi_role_count: Number of front-end instances.
-    :type multi_role_count: int
-    :param worker_pools: Required. Description of worker pools with worker
-     size IDs, VM sizes, and number of workers in each pool.
-    :type worker_pools: list[~azure.mgmt.web.v2020_09_01.models.WorkerPool]
+    :ivar multi_role_count: Number of front-end instances.
+    :vartype multi_role_count: int
     :param ipssl_address_count: Number of IP SSL addresses reserved for the
      App Service Environment.
     :type ipssl_address_count: int
-    :ivar database_edition: Edition of the metadata database for the App
-     Service Environment, e.g. "Standard".
-    :vartype database_edition: str
-    :ivar database_service_objective: Service objective of the metadata
-     database for the App Service Environment, e.g. "S0".
-    :vartype database_service_objective: str
-    :ivar upgrade_domains: Number of upgrade domains of the App Service
-     Environment.
-    :vartype upgrade_domains: int
-    :ivar subscription_id: Subscription of the App Service Environment.
-    :vartype subscription_id: str
     :param dns_suffix: DNS suffix of the App Service Environment.
     :type dns_suffix: str
-    :ivar last_action: Last deployment action on the App Service Environment.
-    :vartype last_action: str
-    :ivar last_action_result: Result of the last deployment action on the App
-     Service Environment.
-    :vartype last_action_result: str
-    :ivar allowed_multi_sizes: List of comma separated strings describing
-     which VM sizes are allowed for front-ends.
-    :vartype allowed_multi_sizes: str
-    :ivar allowed_worker_sizes: List of comma separated strings describing
-     which VM sizes are allowed for workers.
-    :vartype allowed_worker_sizes: str
     :ivar maximum_number_of_machines: Maximum number of VMs in the App Service
      Environment.
     :vartype maximum_number_of_machines: int
-    :ivar vip_mappings: Description of IP SSL mapping for the App Service
-     Environment.
-    :vartype vip_mappings:
-     list[~azure.mgmt.web.v2020_09_01.models.VirtualIPMapping]
-    :ivar environment_capacities: Current total, used, and available worker
-     capacities.
-    :vartype environment_capacities:
-     list[~azure.mgmt.web.v2020_09_01.models.StampCapacity]
-    :param network_access_control_list: Access control list for controlling
-     traffic to the App Service Environment.
-    :type network_access_control_list:
-     list[~azure.mgmt.web.v2020_09_01.models.NetworkAccessControlEntry]
-    :ivar environment_is_healthy: True/false indicating whether the App
-     Service Environment is healthy.
-    :vartype environment_is_healthy: bool
-    :ivar environment_status: Detailed message about with results of the last
-     check of the App Service Environment.
-    :vartype environment_status: str
-    :ivar resource_group: Resource group of the App Service Environment.
-    :vartype resource_group: str
     :param front_end_scale_factor: Scale factor for front-ends.
     :type front_end_scale_factor: int
-    :ivar default_front_end_scale_factor: Default Scale Factor for FrontEnds.
-    :vartype default_front_end_scale_factor: int
-    :param api_management_account_id: API Management Account associated with
-     the App Service Environment.
-    :type api_management_account_id: str
-    :param suspended: <code>true</code> if the App Service Environment is
+    :ivar suspended: <code>true</code> if the App Service Environment is
      suspended; otherwise, <code>false</code>. The environment can be
      suspended, e.g. when the management endpoint is no longer available
      (most likely because NSG blocked the incoming traffic).
-    :type suspended: bool
-    :param dynamic_cache_enabled: True/false indicating whether the App
-     Service Environment is suspended. The environment can be suspended e.g.
-     when the management endpoint is no longer available
-     (most likely because NSG blocked the incoming traffic).
-    :type dynamic_cache_enabled: bool
+    :vartype suspended: bool
     :param cluster_settings: Custom settings for changing the behavior of the
      App Service Environment.
     :type cluster_settings:
-     list[~azure.mgmt.web.v2020_09_01.models.NameValuePair]
+     list[~azure.mgmt.web.v2020_12_01.models.NameValuePair]
     :param user_whitelisted_ip_ranges: User added ip ranges to whitelist on
      ASE db
     :type user_whitelisted_ip_ranges: list[str]
-    :param has_linux_workers: Flag that displays whether an ASE has linux
+    :ivar has_linux_workers: Flag that displays whether an ASE has linux
      workers or not
-    :type has_linux_workers: bool
-    :param ssl_cert_key_vault_id: Key Vault ID for ILB App Service Environment
-     default SSL certificate
-    :type ssl_cert_key_vault_id: str
-    :param ssl_cert_key_vault_secret_name: Key Vault Secret Name for ILB App
-     Service Environment default SSL certificate
-    :type ssl_cert_key_vault_secret_name: str
+    :vartype has_linux_workers: bool
+    :ivar dedicated_host_count: Dedicated Host Count
+    :vartype dedicated_host_count: int
     """
 
     _validation = {
-        'name': {'required': True},
-        'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
         'virtual_network': {'required': True},
-        'worker_pools': {'required': True},
-        'database_edition': {'readonly': True},
-        'database_service_objective': {'readonly': True},
-        'upgrade_domains': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'last_action': {'readonly': True},
-        'last_action_result': {'readonly': True},
-        'allowed_multi_sizes': {'readonly': True},
-        'allowed_worker_sizes': {'readonly': True},
+        'multi_role_count': {'readonly': True},
         'maximum_number_of_machines': {'readonly': True},
-        'vip_mappings': {'readonly': True},
-        'environment_capacities': {'readonly': True},
-        'environment_is_healthy': {'readonly': True},
-        'environment_status': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'default_front_end_scale_factor': {'readonly': True},
+        'suspended': {'readonly': True},
+        'has_linux_workers': {'readonly': True},
+        'dedicated_host_count': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'ProvisioningState'},
         'status': {'key': 'status', 'type': 'HostingEnvironmentStatus'},
-        'vnet_name': {'key': 'vnetName', 'type': 'str'},
-        'vnet_resource_group_name': {'key': 'vnetResourceGroupName', 'type': 'str'},
-        'vnet_subnet_name': {'key': 'vnetSubnetName', 'type': 'str'},
         'virtual_network': {'key': 'virtualNetwork', 'type': 'VirtualNetworkProfile'},
         'internal_load_balancing_mode': {'key': 'internalLoadBalancingMode', 'type': 'str'},
         'multi_size': {'key': 'multiSize', 'type': 'str'},
         'multi_role_count': {'key': 'multiRoleCount', 'type': 'int'},
-        'worker_pools': {'key': 'workerPools', 'type': '[WorkerPool]'},
         'ipssl_address_count': {'key': 'ipsslAddressCount', 'type': 'int'},
-        'database_edition': {'key': 'databaseEdition', 'type': 'str'},
-        'database_service_objective': {'key': 'databaseServiceObjective', 'type': 'str'},
-        'upgrade_domains': {'key': 'upgradeDomains', 'type': 'int'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
         'dns_suffix': {'key': 'dnsSuffix', 'type': 'str'},
-        'last_action': {'key': 'lastAction', 'type': 'str'},
-        'last_action_result': {'key': 'lastActionResult', 'type': 'str'},
-        'allowed_multi_sizes': {'key': 'allowedMultiSizes', 'type': 'str'},
-        'allowed_worker_sizes': {'key': 'allowedWorkerSizes', 'type': 'str'},
         'maximum_number_of_machines': {'key': 'maximumNumberOfMachines', 'type': 'int'},
-        'vip_mappings': {'key': 'vipMappings', 'type': '[VirtualIPMapping]'},
-        'environment_capacities': {'key': 'environmentCapacities', 'type': '[StampCapacity]'},
-        'network_access_control_list': {'key': 'networkAccessControlList', 'type': '[NetworkAccessControlEntry]'},
-        'environment_is_healthy': {'key': 'environmentIsHealthy', 'type': 'bool'},
-        'environment_status': {'key': 'environmentStatus', 'type': 'str'},
-        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
         'front_end_scale_factor': {'key': 'frontEndScaleFactor', 'type': 'int'},
-        'default_front_end_scale_factor': {'key': 'defaultFrontEndScaleFactor', 'type': 'int'},
-        'api_management_account_id': {'key': 'apiManagementAccountId', 'type': 'str'},
         'suspended': {'key': 'suspended', 'type': 'bool'},
-        'dynamic_cache_enabled': {'key': 'dynamicCacheEnabled', 'type': 'bool'},
         'cluster_settings': {'key': 'clusterSettings', 'type': '[NameValuePair]'},
         'user_whitelisted_ip_ranges': {'key': 'userWhitelistedIpRanges', 'type': '[str]'},
         'has_linux_workers': {'key': 'hasLinuxWorkers', 'type': 'bool'},
-        'ssl_cert_key_vault_id': {'key': 'sslCertKeyVaultId', 'type': 'str'},
-        'ssl_cert_key_vault_secret_name': {'key': 'sslCertKeyVaultSecretName', 'type': 'str'},
+        'dedicated_host_count': {'key': 'dedicatedHostCount', 'type': 'int'},
     }
 
-    def __init__(self, *, name: str, location: str, virtual_network, worker_pools, vnet_name: str=None, vnet_resource_group_name: str=None, vnet_subnet_name: str=None, internal_load_balancing_mode=None, multi_size: str=None, multi_role_count: int=None, ipssl_address_count: int=None, dns_suffix: str=None, network_access_control_list=None, front_end_scale_factor: int=None, api_management_account_id: str=None, suspended: bool=None, dynamic_cache_enabled: bool=None, cluster_settings=None, user_whitelisted_ip_ranges=None, has_linux_workers: bool=None, ssl_cert_key_vault_id: str=None, ssl_cert_key_vault_secret_name: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AppServiceEnvironment, self).__init__(**kwargs)
-        self.name = name
-        self.location = location
         self.provisioning_state = None
         self.status = None
-        self.vnet_name = vnet_name
-        self.vnet_resource_group_name = vnet_resource_group_name
-        self.vnet_subnet_name = vnet_subnet_name
-        self.virtual_network = virtual_network
-        self.internal_load_balancing_mode = internal_load_balancing_mode
-        self.multi_size = multi_size
-        self.multi_role_count = multi_role_count
-        self.worker_pools = worker_pools
-        self.ipssl_address_count = ipssl_address_count
-        self.database_edition = None
-        self.database_service_objective = None
-        self.upgrade_domains = None
-        self.subscription_id = None
-        self.dns_suffix = dns_suffix
-        self.last_action = None
-        self.last_action_result = None
-        self.allowed_multi_sizes = None
-        self.allowed_worker_sizes = None
+        self.virtual_network = kwargs.get('virtual_network', None)
+        self.internal_load_balancing_mode = kwargs.get('internal_load_balancing_mode', None)
+        self.multi_size = kwargs.get('multi_size', None)
+        self.multi_role_count = None
+        self.ipssl_address_count = kwargs.get('ipssl_address_count', None)
+        self.dns_suffix = kwargs.get('dns_suffix', None)
         self.maximum_number_of_machines = None
-        self.vip_mappings = None
-        self.environment_capacities = None
-        self.network_access_control_list = network_access_control_list
-        self.environment_is_healthy = None
-        self.environment_status = None
-        self.resource_group = None
-        self.front_end_scale_factor = front_end_scale_factor
-        self.default_front_end_scale_factor = None
-        self.api_management_account_id = api_management_account_id
-        self.suspended = suspended
-        self.dynamic_cache_enabled = dynamic_cache_enabled
-        self.cluster_settings = cluster_settings
-        self.user_whitelisted_ip_ranges = user_whitelisted_ip_ranges
-        self.has_linux_workers = has_linux_workers
-        self.ssl_cert_key_vault_id = ssl_cert_key_vault_id
-        self.ssl_cert_key_vault_secret_name = ssl_cert_key_vault_secret_name
+        self.front_end_scale_factor = kwargs.get('front_end_scale_factor', None)
+        self.suspended = None
+        self.cluster_settings = kwargs.get('cluster_settings', None)
+        self.user_whitelisted_ip_ranges = kwargs.get('user_whitelisted_ip_ranges', None)
+        self.has_linux_workers = None
+        self.dedicated_host_count = None
 
 
 class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
@@ -1258,155 +1307,68 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param app_service_environment_patch_resource_name: Required. Name of the
-     App Service Environment.
-    :type app_service_environment_patch_resource_name: str
-    :param location: Required. Location of the App Service Environment, e.g.
-     "West US".
-    :type location: str
     :ivar provisioning_state: Provisioning state of the App Service
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
      'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.ProvisioningState
+     ~azure.mgmt.web.v2020_12_01.models.ProvisioningState
     :ivar status: Current status of the App Service Environment. Possible
      values include: 'Preparing', 'Ready', 'Scaling', 'Deleting'
     :vartype status: str or
-     ~azure.mgmt.web.v2020_09_01.models.HostingEnvironmentStatus
-    :param vnet_name: Name of the Virtual Network for the App Service
-     Environment.
-    :type vnet_name: str
-    :param vnet_resource_group_name: Resource group of the Virtual Network.
-    :type vnet_resource_group_name: str
-    :param vnet_subnet_name: Subnet of the Virtual Network.
-    :type vnet_subnet_name: str
+     ~azure.mgmt.web.v2020_12_01.models.HostingEnvironmentStatus
     :param virtual_network: Required. Description of the Virtual Network.
     :type virtual_network:
-     ~azure.mgmt.web.v2020_09_01.models.VirtualNetworkProfile
+     ~azure.mgmt.web.v2020_12_01.models.VirtualNetworkProfile
     :param internal_load_balancing_mode: Specifies which endpoints to serve
      internally in the Virtual Network for the App Service Environment.
-     Possible values include: 'None', 'Web', 'Publishing', 'Web,Publishing'
+     Possible values include: 'None', 'Web', 'Publishing', 'Web, Publishing'
     :type internal_load_balancing_mode: str or
-     ~azure.mgmt.web.v2020_09_01.models.LoadBalancingMode
+     ~azure.mgmt.web.v2020_12_01.models.LoadBalancingMode
     :param multi_size: Front-end VM size, e.g. "Medium", "Large".
     :type multi_size: str
-    :param multi_role_count: Number of front-end instances.
-    :type multi_role_count: int
-    :param worker_pools: Required. Description of worker pools with worker
-     size IDs, VM sizes, and number of workers in each pool.
-    :type worker_pools: list[~azure.mgmt.web.v2020_09_01.models.WorkerPool]
+    :ivar multi_role_count: Number of front-end instances.
+    :vartype multi_role_count: int
     :param ipssl_address_count: Number of IP SSL addresses reserved for the
      App Service Environment.
     :type ipssl_address_count: int
-    :ivar database_edition: Edition of the metadata database for the App
-     Service Environment, e.g. "Standard".
-    :vartype database_edition: str
-    :ivar database_service_objective: Service objective of the metadata
-     database for the App Service Environment, e.g. "S0".
-    :vartype database_service_objective: str
-    :ivar upgrade_domains: Number of upgrade domains of the App Service
-     Environment.
-    :vartype upgrade_domains: int
-    :ivar subscription_id: Subscription of the App Service Environment.
-    :vartype subscription_id: str
     :param dns_suffix: DNS suffix of the App Service Environment.
     :type dns_suffix: str
-    :ivar last_action: Last deployment action on the App Service Environment.
-    :vartype last_action: str
-    :ivar last_action_result: Result of the last deployment action on the App
-     Service Environment.
-    :vartype last_action_result: str
-    :ivar allowed_multi_sizes: List of comma separated strings describing
-     which VM sizes are allowed for front-ends.
-    :vartype allowed_multi_sizes: str
-    :ivar allowed_worker_sizes: List of comma separated strings describing
-     which VM sizes are allowed for workers.
-    :vartype allowed_worker_sizes: str
     :ivar maximum_number_of_machines: Maximum number of VMs in the App Service
      Environment.
     :vartype maximum_number_of_machines: int
-    :ivar vip_mappings: Description of IP SSL mapping for the App Service
-     Environment.
-    :vartype vip_mappings:
-     list[~azure.mgmt.web.v2020_09_01.models.VirtualIPMapping]
-    :ivar environment_capacities: Current total, used, and available worker
-     capacities.
-    :vartype environment_capacities:
-     list[~azure.mgmt.web.v2020_09_01.models.StampCapacity]
-    :param network_access_control_list: Access control list for controlling
-     traffic to the App Service Environment.
-    :type network_access_control_list:
-     list[~azure.mgmt.web.v2020_09_01.models.NetworkAccessControlEntry]
-    :ivar environment_is_healthy: True/false indicating whether the App
-     Service Environment is healthy.
-    :vartype environment_is_healthy: bool
-    :ivar environment_status: Detailed message about with results of the last
-     check of the App Service Environment.
-    :vartype environment_status: str
-    :ivar resource_group: Resource group of the App Service Environment.
-    :vartype resource_group: str
     :param front_end_scale_factor: Scale factor for front-ends.
     :type front_end_scale_factor: int
-    :ivar default_front_end_scale_factor: Default Scale Factor for FrontEnds.
-    :vartype default_front_end_scale_factor: int
-    :param api_management_account_id: API Management Account associated with
-     the App Service Environment.
-    :type api_management_account_id: str
-    :param suspended: <code>true</code> if the App Service Environment is
+    :ivar suspended: <code>true</code> if the App Service Environment is
      suspended; otherwise, <code>false</code>. The environment can be
      suspended, e.g. when the management endpoint is no longer available
      (most likely because NSG blocked the incoming traffic).
-    :type suspended: bool
-    :param dynamic_cache_enabled: True/false indicating whether the App
-     Service Environment is suspended. The environment can be suspended e.g.
-     when the management endpoint is no longer available
-     (most likely because NSG blocked the incoming traffic).
-    :type dynamic_cache_enabled: bool
+    :vartype suspended: bool
     :param cluster_settings: Custom settings for changing the behavior of the
      App Service Environment.
     :type cluster_settings:
-     list[~azure.mgmt.web.v2020_09_01.models.NameValuePair]
+     list[~azure.mgmt.web.v2020_12_01.models.NameValuePair]
     :param user_whitelisted_ip_ranges: User added ip ranges to whitelist on
      ASE db
     :type user_whitelisted_ip_ranges: list[str]
-    :param has_linux_workers: Flag that displays whether an ASE has linux
+    :ivar has_linux_workers: Flag that displays whether an ASE has linux
      workers or not
-    :type has_linux_workers: bool
-    :param ssl_cert_key_vault_id: Key Vault ID for ILB App Service Environment
-     default SSL certificate
-    :type ssl_cert_key_vault_id: str
-    :param ssl_cert_key_vault_secret_name: Key Vault Secret Name for ILB App
-     Service Environment default SSL certificate
-    :type ssl_cert_key_vault_secret_name: str
+    :vartype has_linux_workers: bool
+    :ivar dedicated_host_count: Dedicated Host Count
+    :vartype dedicated_host_count: int
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'app_service_environment_patch_resource_name': {'required': True},
-        'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
         'virtual_network': {'required': True},
-        'worker_pools': {'required': True},
-        'database_edition': {'readonly': True},
-        'database_service_objective': {'readonly': True},
-        'upgrade_domains': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'last_action': {'readonly': True},
-        'last_action_result': {'readonly': True},
-        'allowed_multi_sizes': {'readonly': True},
-        'allowed_worker_sizes': {'readonly': True},
+        'multi_role_count': {'readonly': True},
         'maximum_number_of_machines': {'readonly': True},
-        'vip_mappings': {'readonly': True},
-        'environment_capacities': {'readonly': True},
-        'environment_is_healthy': {'readonly': True},
-        'environment_status': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'default_front_end_scale_factor': {'readonly': True},
+        'suspended': {'readonly': True},
+        'has_linux_workers': {'readonly': True},
+        'dedicated_host_count': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1414,89 +1376,40 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'app_service_environment_patch_resource_name': {'key': 'properties.name', 'type': 'str'},
-        'location': {'key': 'properties.location', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
         'status': {'key': 'properties.status', 'type': 'HostingEnvironmentStatus'},
-        'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
-        'vnet_resource_group_name': {'key': 'properties.vnetResourceGroupName', 'type': 'str'},
-        'vnet_subnet_name': {'key': 'properties.vnetSubnetName', 'type': 'str'},
         'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'VirtualNetworkProfile'},
         'internal_load_balancing_mode': {'key': 'properties.internalLoadBalancingMode', 'type': 'str'},
         'multi_size': {'key': 'properties.multiSize', 'type': 'str'},
         'multi_role_count': {'key': 'properties.multiRoleCount', 'type': 'int'},
-        'worker_pools': {'key': 'properties.workerPools', 'type': '[WorkerPool]'},
         'ipssl_address_count': {'key': 'properties.ipsslAddressCount', 'type': 'int'},
-        'database_edition': {'key': 'properties.databaseEdition', 'type': 'str'},
-        'database_service_objective': {'key': 'properties.databaseServiceObjective', 'type': 'str'},
-        'upgrade_domains': {'key': 'properties.upgradeDomains', 'type': 'int'},
-        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
         'dns_suffix': {'key': 'properties.dnsSuffix', 'type': 'str'},
-        'last_action': {'key': 'properties.lastAction', 'type': 'str'},
-        'last_action_result': {'key': 'properties.lastActionResult', 'type': 'str'},
-        'allowed_multi_sizes': {'key': 'properties.allowedMultiSizes', 'type': 'str'},
-        'allowed_worker_sizes': {'key': 'properties.allowedWorkerSizes', 'type': 'str'},
         'maximum_number_of_machines': {'key': 'properties.maximumNumberOfMachines', 'type': 'int'},
-        'vip_mappings': {'key': 'properties.vipMappings', 'type': '[VirtualIPMapping]'},
-        'environment_capacities': {'key': 'properties.environmentCapacities', 'type': '[StampCapacity]'},
-        'network_access_control_list': {'key': 'properties.networkAccessControlList', 'type': '[NetworkAccessControlEntry]'},
-        'environment_is_healthy': {'key': 'properties.environmentIsHealthy', 'type': 'bool'},
-        'environment_status': {'key': 'properties.environmentStatus', 'type': 'str'},
-        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'front_end_scale_factor': {'key': 'properties.frontEndScaleFactor', 'type': 'int'},
-        'default_front_end_scale_factor': {'key': 'properties.defaultFrontEndScaleFactor', 'type': 'int'},
-        'api_management_account_id': {'key': 'properties.apiManagementAccountId', 'type': 'str'},
         'suspended': {'key': 'properties.suspended', 'type': 'bool'},
-        'dynamic_cache_enabled': {'key': 'properties.dynamicCacheEnabled', 'type': 'bool'},
         'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
         'user_whitelisted_ip_ranges': {'key': 'properties.userWhitelistedIpRanges', 'type': '[str]'},
         'has_linux_workers': {'key': 'properties.hasLinuxWorkers', 'type': 'bool'},
-        'ssl_cert_key_vault_id': {'key': 'properties.sslCertKeyVaultId', 'type': 'str'},
-        'ssl_cert_key_vault_secret_name': {'key': 'properties.sslCertKeyVaultSecretName', 'type': 'str'},
+        'dedicated_host_count': {'key': 'properties.dedicatedHostCount', 'type': 'int'},
     }
 
-    def __init__(self, *, app_service_environment_patch_resource_name: str, location: str, virtual_network, worker_pools, kind: str=None, system_data=None, vnet_name: str=None, vnet_resource_group_name: str=None, vnet_subnet_name: str=None, internal_load_balancing_mode=None, multi_size: str=None, multi_role_count: int=None, ipssl_address_count: int=None, dns_suffix: str=None, network_access_control_list=None, front_end_scale_factor: int=None, api_management_account_id: str=None, suspended: bool=None, dynamic_cache_enabled: bool=None, cluster_settings=None, user_whitelisted_ip_ranges=None, has_linux_workers: bool=None, ssl_cert_key_vault_id: str=None, ssl_cert_key_vault_secret_name: str=None, **kwargs) -> None:
-        super(AppServiceEnvironmentPatchResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.app_service_environment_patch_resource_name = app_service_environment_patch_resource_name
-        self.location = location
+    def __init__(self, **kwargs):
+        super(AppServiceEnvironmentPatchResource, self).__init__(**kwargs)
         self.provisioning_state = None
         self.status = None
-        self.vnet_name = vnet_name
-        self.vnet_resource_group_name = vnet_resource_group_name
-        self.vnet_subnet_name = vnet_subnet_name
-        self.virtual_network = virtual_network
-        self.internal_load_balancing_mode = internal_load_balancing_mode
-        self.multi_size = multi_size
-        self.multi_role_count = multi_role_count
-        self.worker_pools = worker_pools
-        self.ipssl_address_count = ipssl_address_count
-        self.database_edition = None
-        self.database_service_objective = None
-        self.upgrade_domains = None
-        self.subscription_id = None
-        self.dns_suffix = dns_suffix
-        self.last_action = None
-        self.last_action_result = None
-        self.allowed_multi_sizes = None
-        self.allowed_worker_sizes = None
+        self.virtual_network = kwargs.get('virtual_network', None)
+        self.internal_load_balancing_mode = kwargs.get('internal_load_balancing_mode', None)
+        self.multi_size = kwargs.get('multi_size', None)
+        self.multi_role_count = None
+        self.ipssl_address_count = kwargs.get('ipssl_address_count', None)
+        self.dns_suffix = kwargs.get('dns_suffix', None)
         self.maximum_number_of_machines = None
-        self.vip_mappings = None
-        self.environment_capacities = None
-        self.network_access_control_list = network_access_control_list
-        self.environment_is_healthy = None
-        self.environment_status = None
-        self.resource_group = None
-        self.front_end_scale_factor = front_end_scale_factor
-        self.default_front_end_scale_factor = None
-        self.api_management_account_id = api_management_account_id
-        self.suspended = suspended
-        self.dynamic_cache_enabled = dynamic_cache_enabled
-        self.cluster_settings = cluster_settings
-        self.user_whitelisted_ip_ranges = user_whitelisted_ip_ranges
-        self.has_linux_workers = has_linux_workers
-        self.ssl_cert_key_vault_id = ssl_cert_key_vault_id
-        self.ssl_cert_key_vault_secret_name = ssl_cert_key_vault_secret_name
+        self.front_end_scale_factor = kwargs.get('front_end_scale_factor', None)
+        self.suspended = None
+        self.cluster_settings = kwargs.get('cluster_settings', None)
+        self.user_whitelisted_ip_ranges = kwargs.get('user_whitelisted_ip_ranges', None)
+        self.has_linux_workers = None
+        self.dedicated_host_count = None
 
 
 class AppServiceEnvironmentResource(Resource):
@@ -1519,128 +1432,54 @@ class AppServiceEnvironmentResource(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param app_service_environment_resource_name: Required. Name of the App
-     Service Environment.
-    :type app_service_environment_resource_name: str
-    :param app_service_environment_resource_location: Required. Location of
-     the App Service Environment, e.g. "West US".
-    :type app_service_environment_resource_location: str
     :ivar provisioning_state: Provisioning state of the App Service
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
      'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.ProvisioningState
+     ~azure.mgmt.web.v2020_12_01.models.ProvisioningState
     :ivar status: Current status of the App Service Environment. Possible
      values include: 'Preparing', 'Ready', 'Scaling', 'Deleting'
     :vartype status: str or
-     ~azure.mgmt.web.v2020_09_01.models.HostingEnvironmentStatus
-    :param vnet_name: Name of the Virtual Network for the App Service
-     Environment.
-    :type vnet_name: str
-    :param vnet_resource_group_name: Resource group of the Virtual Network.
-    :type vnet_resource_group_name: str
-    :param vnet_subnet_name: Subnet of the Virtual Network.
-    :type vnet_subnet_name: str
+     ~azure.mgmt.web.v2020_12_01.models.HostingEnvironmentStatus
     :param virtual_network: Required. Description of the Virtual Network.
     :type virtual_network:
-     ~azure.mgmt.web.v2020_09_01.models.VirtualNetworkProfile
+     ~azure.mgmt.web.v2020_12_01.models.VirtualNetworkProfile
     :param internal_load_balancing_mode: Specifies which endpoints to serve
      internally in the Virtual Network for the App Service Environment.
-     Possible values include: 'None', 'Web', 'Publishing', 'Web,Publishing'
+     Possible values include: 'None', 'Web', 'Publishing', 'Web, Publishing'
     :type internal_load_balancing_mode: str or
-     ~azure.mgmt.web.v2020_09_01.models.LoadBalancingMode
+     ~azure.mgmt.web.v2020_12_01.models.LoadBalancingMode
     :param multi_size: Front-end VM size, e.g. "Medium", "Large".
     :type multi_size: str
-    :param multi_role_count: Number of front-end instances.
-    :type multi_role_count: int
-    :param worker_pools: Required. Description of worker pools with worker
-     size IDs, VM sizes, and number of workers in each pool.
-    :type worker_pools: list[~azure.mgmt.web.v2020_09_01.models.WorkerPool]
+    :ivar multi_role_count: Number of front-end instances.
+    :vartype multi_role_count: int
     :param ipssl_address_count: Number of IP SSL addresses reserved for the
      App Service Environment.
     :type ipssl_address_count: int
-    :ivar database_edition: Edition of the metadata database for the App
-     Service Environment, e.g. "Standard".
-    :vartype database_edition: str
-    :ivar database_service_objective: Service objective of the metadata
-     database for the App Service Environment, e.g. "S0".
-    :vartype database_service_objective: str
-    :ivar upgrade_domains: Number of upgrade domains of the App Service
-     Environment.
-    :vartype upgrade_domains: int
-    :ivar subscription_id: Subscription of the App Service Environment.
-    :vartype subscription_id: str
     :param dns_suffix: DNS suffix of the App Service Environment.
     :type dns_suffix: str
-    :ivar last_action: Last deployment action on the App Service Environment.
-    :vartype last_action: str
-    :ivar last_action_result: Result of the last deployment action on the App
-     Service Environment.
-    :vartype last_action_result: str
-    :ivar allowed_multi_sizes: List of comma separated strings describing
-     which VM sizes are allowed for front-ends.
-    :vartype allowed_multi_sizes: str
-    :ivar allowed_worker_sizes: List of comma separated strings describing
-     which VM sizes are allowed for workers.
-    :vartype allowed_worker_sizes: str
     :ivar maximum_number_of_machines: Maximum number of VMs in the App Service
      Environment.
     :vartype maximum_number_of_machines: int
-    :ivar vip_mappings: Description of IP SSL mapping for the App Service
-     Environment.
-    :vartype vip_mappings:
-     list[~azure.mgmt.web.v2020_09_01.models.VirtualIPMapping]
-    :ivar environment_capacities: Current total, used, and available worker
-     capacities.
-    :vartype environment_capacities:
-     list[~azure.mgmt.web.v2020_09_01.models.StampCapacity]
-    :param network_access_control_list: Access control list for controlling
-     traffic to the App Service Environment.
-    :type network_access_control_list:
-     list[~azure.mgmt.web.v2020_09_01.models.NetworkAccessControlEntry]
-    :ivar environment_is_healthy: True/false indicating whether the App
-     Service Environment is healthy.
-    :vartype environment_is_healthy: bool
-    :ivar environment_status: Detailed message about with results of the last
-     check of the App Service Environment.
-    :vartype environment_status: str
-    :ivar resource_group: Resource group of the App Service Environment.
-    :vartype resource_group: str
     :param front_end_scale_factor: Scale factor for front-ends.
     :type front_end_scale_factor: int
-    :ivar default_front_end_scale_factor: Default Scale Factor for FrontEnds.
-    :vartype default_front_end_scale_factor: int
-    :param api_management_account_id: API Management Account associated with
-     the App Service Environment.
-    :type api_management_account_id: str
-    :param suspended: <code>true</code> if the App Service Environment is
+    :ivar suspended: <code>true</code> if the App Service Environment is
      suspended; otherwise, <code>false</code>. The environment can be
      suspended, e.g. when the management endpoint is no longer available
      (most likely because NSG blocked the incoming traffic).
-    :type suspended: bool
-    :param dynamic_cache_enabled: True/false indicating whether the App
-     Service Environment is suspended. The environment can be suspended e.g.
-     when the management endpoint is no longer available
-     (most likely because NSG blocked the incoming traffic).
-    :type dynamic_cache_enabled: bool
+    :vartype suspended: bool
     :param cluster_settings: Custom settings for changing the behavior of the
      App Service Environment.
     :type cluster_settings:
-     list[~azure.mgmt.web.v2020_09_01.models.NameValuePair]
+     list[~azure.mgmt.web.v2020_12_01.models.NameValuePair]
     :param user_whitelisted_ip_ranges: User added ip ranges to whitelist on
      ASE db
     :type user_whitelisted_ip_ranges: list[str]
-    :param has_linux_workers: Flag that displays whether an ASE has linux
+    :ivar has_linux_workers: Flag that displays whether an ASE has linux
      workers or not
-    :type has_linux_workers: bool
-    :param ssl_cert_key_vault_id: Key Vault ID for ILB App Service Environment
-     default SSL certificate
-    :type ssl_cert_key_vault_id: str
-    :param ssl_cert_key_vault_secret_name: Key Vault Secret Name for ILB App
-     Service Environment default SSL certificate
-    :type ssl_cert_key_vault_secret_name: str
+    :vartype has_linux_workers: bool
+    :ivar dedicated_host_count: Dedicated Host Count
+    :vartype dedicated_host_count: int
     """
 
     _validation = {
@@ -1648,27 +1487,14 @@ class AppServiceEnvironmentResource(Resource):
         'name': {'readonly': True},
         'location': {'required': True},
         'type': {'readonly': True},
-        'app_service_environment_resource_name': {'required': True},
-        'app_service_environment_resource_location': {'required': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
         'virtual_network': {'required': True},
-        'worker_pools': {'required': True},
-        'database_edition': {'readonly': True},
-        'database_service_objective': {'readonly': True},
-        'upgrade_domains': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'last_action': {'readonly': True},
-        'last_action_result': {'readonly': True},
-        'allowed_multi_sizes': {'readonly': True},
-        'allowed_worker_sizes': {'readonly': True},
+        'multi_role_count': {'readonly': True},
         'maximum_number_of_machines': {'readonly': True},
-        'vip_mappings': {'readonly': True},
-        'environment_capacities': {'readonly': True},
-        'environment_is_healthy': {'readonly': True},
-        'environment_status': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'default_front_end_scale_factor': {'readonly': True},
+        'suspended': {'readonly': True},
+        'has_linux_workers': {'readonly': True},
+        'dedicated_host_count': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1678,89 +1504,40 @@ class AppServiceEnvironmentResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'app_service_environment_resource_name': {'key': 'properties.name', 'type': 'str'},
-        'app_service_environment_resource_location': {'key': 'properties.location', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
         'status': {'key': 'properties.status', 'type': 'HostingEnvironmentStatus'},
-        'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
-        'vnet_resource_group_name': {'key': 'properties.vnetResourceGroupName', 'type': 'str'},
-        'vnet_subnet_name': {'key': 'properties.vnetSubnetName', 'type': 'str'},
         'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'VirtualNetworkProfile'},
         'internal_load_balancing_mode': {'key': 'properties.internalLoadBalancingMode', 'type': 'str'},
         'multi_size': {'key': 'properties.multiSize', 'type': 'str'},
         'multi_role_count': {'key': 'properties.multiRoleCount', 'type': 'int'},
-        'worker_pools': {'key': 'properties.workerPools', 'type': '[WorkerPool]'},
         'ipssl_address_count': {'key': 'properties.ipsslAddressCount', 'type': 'int'},
-        'database_edition': {'key': 'properties.databaseEdition', 'type': 'str'},
-        'database_service_objective': {'key': 'properties.databaseServiceObjective', 'type': 'str'},
-        'upgrade_domains': {'key': 'properties.upgradeDomains', 'type': 'int'},
-        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
         'dns_suffix': {'key': 'properties.dnsSuffix', 'type': 'str'},
-        'last_action': {'key': 'properties.lastAction', 'type': 'str'},
-        'last_action_result': {'key': 'properties.lastActionResult', 'type': 'str'},
-        'allowed_multi_sizes': {'key': 'properties.allowedMultiSizes', 'type': 'str'},
-        'allowed_worker_sizes': {'key': 'properties.allowedWorkerSizes', 'type': 'str'},
         'maximum_number_of_machines': {'key': 'properties.maximumNumberOfMachines', 'type': 'int'},
-        'vip_mappings': {'key': 'properties.vipMappings', 'type': '[VirtualIPMapping]'},
-        'environment_capacities': {'key': 'properties.environmentCapacities', 'type': '[StampCapacity]'},
-        'network_access_control_list': {'key': 'properties.networkAccessControlList', 'type': '[NetworkAccessControlEntry]'},
-        'environment_is_healthy': {'key': 'properties.environmentIsHealthy', 'type': 'bool'},
-        'environment_status': {'key': 'properties.environmentStatus', 'type': 'str'},
-        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'front_end_scale_factor': {'key': 'properties.frontEndScaleFactor', 'type': 'int'},
-        'default_front_end_scale_factor': {'key': 'properties.defaultFrontEndScaleFactor', 'type': 'int'},
-        'api_management_account_id': {'key': 'properties.apiManagementAccountId', 'type': 'str'},
         'suspended': {'key': 'properties.suspended', 'type': 'bool'},
-        'dynamic_cache_enabled': {'key': 'properties.dynamicCacheEnabled', 'type': 'bool'},
         'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
         'user_whitelisted_ip_ranges': {'key': 'properties.userWhitelistedIpRanges', 'type': '[str]'},
         'has_linux_workers': {'key': 'properties.hasLinuxWorkers', 'type': 'bool'},
-        'ssl_cert_key_vault_id': {'key': 'properties.sslCertKeyVaultId', 'type': 'str'},
-        'ssl_cert_key_vault_secret_name': {'key': 'properties.sslCertKeyVaultSecretName', 'type': 'str'},
+        'dedicated_host_count': {'key': 'properties.dedicatedHostCount', 'type': 'int'},
     }
 
-    def __init__(self, *, location: str, app_service_environment_resource_name: str, app_service_environment_resource_location: str, virtual_network, worker_pools, kind: str=None, tags=None, system_data=None, vnet_name: str=None, vnet_resource_group_name: str=None, vnet_subnet_name: str=None, internal_load_balancing_mode=None, multi_size: str=None, multi_role_count: int=None, ipssl_address_count: int=None, dns_suffix: str=None, network_access_control_list=None, front_end_scale_factor: int=None, api_management_account_id: str=None, suspended: bool=None, dynamic_cache_enabled: bool=None, cluster_settings=None, user_whitelisted_ip_ranges=None, has_linux_workers: bool=None, ssl_cert_key_vault_id: str=None, ssl_cert_key_vault_secret_name: str=None, **kwargs) -> None:
-        super(AppServiceEnvironmentResource, self).__init__(kind=kind, location=location, tags=tags, system_data=system_data, **kwargs)
-        self.app_service_environment_resource_name = app_service_environment_resource_name
-        self.app_service_environment_resource_location = app_service_environment_resource_location
+    def __init__(self, **kwargs):
+        super(AppServiceEnvironmentResource, self).__init__(**kwargs)
         self.provisioning_state = None
         self.status = None
-        self.vnet_name = vnet_name
-        self.vnet_resource_group_name = vnet_resource_group_name
-        self.vnet_subnet_name = vnet_subnet_name
-        self.virtual_network = virtual_network
-        self.internal_load_balancing_mode = internal_load_balancing_mode
-        self.multi_size = multi_size
-        self.multi_role_count = multi_role_count
-        self.worker_pools = worker_pools
-        self.ipssl_address_count = ipssl_address_count
-        self.database_edition = None
-        self.database_service_objective = None
-        self.upgrade_domains = None
-        self.subscription_id = None
-        self.dns_suffix = dns_suffix
-        self.last_action = None
-        self.last_action_result = None
-        self.allowed_multi_sizes = None
-        self.allowed_worker_sizes = None
+        self.virtual_network = kwargs.get('virtual_network', None)
+        self.internal_load_balancing_mode = kwargs.get('internal_load_balancing_mode', None)
+        self.multi_size = kwargs.get('multi_size', None)
+        self.multi_role_count = None
+        self.ipssl_address_count = kwargs.get('ipssl_address_count', None)
+        self.dns_suffix = kwargs.get('dns_suffix', None)
         self.maximum_number_of_machines = None
-        self.vip_mappings = None
-        self.environment_capacities = None
-        self.network_access_control_list = network_access_control_list
-        self.environment_is_healthy = None
-        self.environment_status = None
-        self.resource_group = None
-        self.front_end_scale_factor = front_end_scale_factor
-        self.default_front_end_scale_factor = None
-        self.api_management_account_id = api_management_account_id
-        self.suspended = suspended
-        self.dynamic_cache_enabled = dynamic_cache_enabled
-        self.cluster_settings = cluster_settings
-        self.user_whitelisted_ip_ranges = user_whitelisted_ip_ranges
-        self.has_linux_workers = has_linux_workers
-        self.ssl_cert_key_vault_id = ssl_cert_key_vault_id
-        self.ssl_cert_key_vault_secret_name = ssl_cert_key_vault_secret_name
+        self.front_end_scale_factor = kwargs.get('front_end_scale_factor', None)
+        self.suspended = None
+        self.cluster_settings = kwargs.get('cluster_settings', None)
+        self.user_whitelisted_ip_ranges = kwargs.get('user_whitelisted_ip_ranges', None)
+        self.has_linux_workers = None
+        self.dedicated_host_count = None
 
 
 class AppserviceGithubToken(Model):
@@ -1787,13 +1564,13 @@ class AppserviceGithubToken(Model):
         'error_message': {'key': 'errorMessage', 'type': 'str'},
     }
 
-    def __init__(self, *, access_token: str=None, scope: str=None, token_type: str=None, got_token: bool=None, error_message: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AppserviceGithubToken, self).__init__(**kwargs)
-        self.access_token = access_token
-        self.scope = scope
-        self.token_type = token_type
-        self.got_token = got_token
-        self.error_message = error_message
+        self.access_token = kwargs.get('access_token', None)
+        self.scope = kwargs.get('scope', None)
+        self.token_type = kwargs.get('token_type', None)
+        self.got_token = kwargs.get('got_token', None)
+        self.error_message = kwargs.get('error_message', None)
 
 
 class AppserviceGithubTokenRequest(Model):
@@ -1817,10 +1594,10 @@ class AppserviceGithubTokenRequest(Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, *, code: str, state: str, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AppserviceGithubTokenRequest, self).__init__(**kwargs)
-        self.code = code
-        self.state = state
+        self.code = kwargs.get('code', None)
+        self.state = kwargs.get('state', None)
 
 
 class AppServicePlan(Resource):
@@ -1843,20 +1620,18 @@ class AppServicePlan(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param worker_tier_name: Target worker tier assigned to the App Service
      plan.
     :type worker_tier_name: str
     :ivar status: App Service plan status. Possible values include: 'Ready',
      'Pending', 'Creating'
-    :vartype status: str or ~azure.mgmt.web.v2020_09_01.models.StatusOptions
+    :vartype status: str or ~azure.mgmt.web.v2020_12_01.models.StatusOptions
     :ivar subscription: App Service plan subscription.
     :vartype subscription: str
     :param hosting_environment_profile: Specification for the App Service
      Environment to use for the App Service plan.
     :type hosting_environment_profile:
-     ~azure.mgmt.web.v2020_09_01.models.HostingEnvironmentProfile
+     ~azure.mgmt.web.v2020_12_01.models.HostingEnvironmentProfile
     :ivar maximum_number_of_workers: Maximum number of instances that can be
      assigned to this App Service plan.
     :vartype maximum_number_of_workers: int
@@ -1896,13 +1671,17 @@ class AppServicePlan(Resource):
     :type target_worker_count: int
     :param target_worker_size_id: Scaling worker size ID.
     :type target_worker_size_id: int
-    :ivar provisioning_state: Provisioning state of the App Service
-     Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
-     'InProgress', 'Deleting'
+    :ivar provisioning_state: Provisioning state of the App Service Plan.
+     Possible values include: 'Succeeded', 'Failed', 'Canceled', 'InProgress',
+     'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.ProvisioningState
+     ~azure.mgmt.web.v2020_12_01.models.ProvisioningState
+    :param kube_environment_profile: Specification for the Kubernetes
+     Environment to use for the App Service plan.
+    :type kube_environment_profile:
+     ~azure.mgmt.web.v2020_12_01.models.KubeEnvironmentProfile
     :param sku:
-    :type sku: ~azure.mgmt.web.v2020_09_01.models.SkuDescription
+    :type sku: ~azure.mgmt.web.v2020_12_01.models.SkuDescription
     """
 
     _validation = {
@@ -1926,7 +1705,6 @@ class AppServicePlan(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'StatusOptions'},
         'subscription': {'key': 'properties.subscription', 'type': 'str'},
@@ -1946,31 +1724,33 @@ class AppServicePlan(Resource):
         'target_worker_count': {'key': 'properties.targetWorkerCount', 'type': 'int'},
         'target_worker_size_id': {'key': 'properties.targetWorkerSizeId', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'kube_environment_profile': {'key': 'properties.kubeEnvironmentProfile', 'type': 'KubeEnvironmentProfile'},
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, *, location: str, kind: str=None, tags=None, system_data=None, worker_tier_name: str=None, hosting_environment_profile=None, per_site_scaling: bool=False, maximum_elastic_worker_count: int=None, is_spot: bool=None, spot_expiration_time=None, free_offer_expiration_time=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, target_worker_count: int=None, target_worker_size_id: int=None, sku=None, **kwargs) -> None:
-        super(AppServicePlan, self).__init__(kind=kind, location=location, tags=tags, system_data=system_data, **kwargs)
-        self.worker_tier_name = worker_tier_name
+    def __init__(self, **kwargs):
+        super(AppServicePlan, self).__init__(**kwargs)
+        self.worker_tier_name = kwargs.get('worker_tier_name', None)
         self.status = None
         self.subscription = None
-        self.hosting_environment_profile = hosting_environment_profile
+        self.hosting_environment_profile = kwargs.get('hosting_environment_profile', None)
         self.maximum_number_of_workers = None
         self.geo_region = None
-        self.per_site_scaling = per_site_scaling
-        self.maximum_elastic_worker_count = maximum_elastic_worker_count
+        self.per_site_scaling = kwargs.get('per_site_scaling', False)
+        self.maximum_elastic_worker_count = kwargs.get('maximum_elastic_worker_count', None)
         self.number_of_sites = None
-        self.is_spot = is_spot
-        self.spot_expiration_time = spot_expiration_time
-        self.free_offer_expiration_time = free_offer_expiration_time
+        self.is_spot = kwargs.get('is_spot', None)
+        self.spot_expiration_time = kwargs.get('spot_expiration_time', None)
+        self.free_offer_expiration_time = kwargs.get('free_offer_expiration_time', None)
         self.resource_group = None
-        self.reserved = reserved
-        self.is_xenon = is_xenon
-        self.hyper_v = hyper_v
-        self.target_worker_count = target_worker_count
-        self.target_worker_size_id = target_worker_size_id
+        self.reserved = kwargs.get('reserved', False)
+        self.is_xenon = kwargs.get('is_xenon', False)
+        self.hyper_v = kwargs.get('hyper_v', False)
+        self.target_worker_count = kwargs.get('target_worker_count', None)
+        self.target_worker_size_id = kwargs.get('target_worker_size_id', None)
         self.provisioning_state = None
-        self.sku = sku
+        self.kube_environment_profile = kwargs.get('kube_environment_profile', None)
+        self.sku = kwargs.get('sku', None)
 
 
 class AppServicePlanPatchResource(ProxyOnlyResource):
@@ -1987,20 +1767,18 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param worker_tier_name: Target worker tier assigned to the App Service
      plan.
     :type worker_tier_name: str
     :ivar status: App Service plan status. Possible values include: 'Ready',
      'Pending', 'Creating'
-    :vartype status: str or ~azure.mgmt.web.v2020_09_01.models.StatusOptions
+    :vartype status: str or ~azure.mgmt.web.v2020_12_01.models.StatusOptions
     :ivar subscription: App Service plan subscription.
     :vartype subscription: str
     :param hosting_environment_profile: Specification for the App Service
      Environment to use for the App Service plan.
     :type hosting_environment_profile:
-     ~azure.mgmt.web.v2020_09_01.models.HostingEnvironmentProfile
+     ~azure.mgmt.web.v2020_12_01.models.HostingEnvironmentProfile
     :ivar maximum_number_of_workers: Maximum number of instances that can be
      assigned to this App Service plan.
     :vartype maximum_number_of_workers: int
@@ -2027,10 +1805,8 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :type free_offer_expiration_time: datetime
     :ivar resource_group: Resource group of the App Service plan.
     :vartype resource_group: str
-    :param reserved: This needs to set to <code>true</code> when creating a
-     Linux App Service Plan, along with <code>kind</code> set to
-     <code>Linux</code>. It should be <code>false</code> otherwise. Default
-     value: False .
+    :param reserved: If Linux app service plan <code>true</code>,
+     <code>false</code> otherwise. Default value: False .
     :type reserved: bool
     :param is_xenon: Obsolete: If Hyper-V container app service plan
      <code>true</code>, <code>false</code> otherwise. Default value: False .
@@ -2042,11 +1818,15 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :type target_worker_count: int
     :param target_worker_size_id: Scaling worker size ID.
     :type target_worker_size_id: int
-    :ivar provisioning_state: Provisioning state of the App Service
-     Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
-     'InProgress', 'Deleting'
+    :ivar provisioning_state: Provisioning state of the App Service Plan.
+     Possible values include: 'Succeeded', 'Failed', 'Canceled', 'InProgress',
+     'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.ProvisioningState
+     ~azure.mgmt.web.v2020_12_01.models.ProvisioningState
+    :param kube_environment_profile: Specification for the Kubernetes
+     Environment to use for the App Service plan.
+    :type kube_environment_profile:
+     ~azure.mgmt.web.v2020_12_01.models.KubeEnvironmentProfile
     """
 
     _validation = {
@@ -2067,7 +1847,6 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'StatusOptions'},
         'subscription': {'key': 'properties.subscription', 'type': 'str'},
@@ -2087,29 +1866,31 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         'target_worker_count': {'key': 'properties.targetWorkerCount', 'type': 'int'},
         'target_worker_size_id': {'key': 'properties.targetWorkerSizeId', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'kube_environment_profile': {'key': 'properties.kubeEnvironmentProfile', 'type': 'KubeEnvironmentProfile'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, worker_tier_name: str=None, hosting_environment_profile=None, per_site_scaling: bool=False, maximum_elastic_worker_count: int=None, is_spot: bool=None, spot_expiration_time=None, free_offer_expiration_time=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, target_worker_count: int=None, target_worker_size_id: int=None, **kwargs) -> None:
-        super(AppServicePlanPatchResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.worker_tier_name = worker_tier_name
+    def __init__(self, **kwargs):
+        super(AppServicePlanPatchResource, self).__init__(**kwargs)
+        self.worker_tier_name = kwargs.get('worker_tier_name', None)
         self.status = None
         self.subscription = None
-        self.hosting_environment_profile = hosting_environment_profile
+        self.hosting_environment_profile = kwargs.get('hosting_environment_profile', None)
         self.maximum_number_of_workers = None
         self.geo_region = None
-        self.per_site_scaling = per_site_scaling
-        self.maximum_elastic_worker_count = maximum_elastic_worker_count
+        self.per_site_scaling = kwargs.get('per_site_scaling', False)
+        self.maximum_elastic_worker_count = kwargs.get('maximum_elastic_worker_count', None)
         self.number_of_sites = None
-        self.is_spot = is_spot
-        self.spot_expiration_time = spot_expiration_time
-        self.free_offer_expiration_time = free_offer_expiration_time
+        self.is_spot = kwargs.get('is_spot', None)
+        self.spot_expiration_time = kwargs.get('spot_expiration_time', None)
+        self.free_offer_expiration_time = kwargs.get('free_offer_expiration_time', None)
         self.resource_group = None
-        self.reserved = reserved
-        self.is_xenon = is_xenon
-        self.hyper_v = hyper_v
-        self.target_worker_count = target_worker_count
-        self.target_worker_size_id = target_worker_size_id
+        self.reserved = kwargs.get('reserved', False)
+        self.is_xenon = kwargs.get('is_xenon', False)
+        self.hyper_v = kwargs.get('hyper_v', False)
+        self.target_worker_count = kwargs.get('target_worker_count', None)
+        self.target_worker_size_id = kwargs.get('target_worker_size_id', None)
         self.provisioning_state = None
+        self.kube_environment_profile = kwargs.get('kube_environment_profile', None)
 
 
 class ArmIdWrapper(Model):
@@ -2130,13 +1911,45 @@ class ArmIdWrapper(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ArmIdWrapper, self).__init__(**kwargs)
         self.id = None
 
 
-class AuthPlatform(ProxyOnlyResource):
-    """AuthPlatform.
+class ArmPlan(Model):
+    """The plan object in Azure Resource Manager, represents a marketplace plan.
+
+    :param name: The name.
+    :type name: str
+    :param publisher: The publisher.
+    :type publisher: str
+    :param product: The product.
+    :type product: str
+    :param promotion_code: The promotion code.
+    :type promotion_code: str
+    :param version: Version of product.
+    :type version: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'publisher': {'key': 'publisher', 'type': 'str'},
+        'product': {'key': 'product', 'type': 'str'},
+        'promotion_code': {'key': 'promotionCode', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ArmPlan, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.publisher = kwargs.get('publisher', None)
+        self.product = kwargs.get('product', None)
+        self.promotion_code = kwargs.get('promotion_code', None)
+        self.version = kwargs.get('version', None)
+
+
+class AseV3NetworkingConfiguration(ProxyOnlyResource):
+    """Full view of networking configuration for an ASE.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2149,13 +1962,66 @@ class AuthPlatform(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param enabled:
+    :ivar windows_outbound_ip_addresses:
+    :vartype windows_outbound_ip_addresses: list[str]
+    :ivar linux_outbound_ip_addresses:
+    :vartype linux_outbound_ip_addresses: list[str]
+    :param allow_new_private_endpoint_connections: Property to enable and
+     disable new private endpoint connection creation on ASE
+    :type allow_new_private_endpoint_connections: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'windows_outbound_ip_addresses': {'readonly': True},
+        'linux_outbound_ip_addresses': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'windows_outbound_ip_addresses': {'key': 'properties.windowsOutboundIpAddresses', 'type': '[str]'},
+        'linux_outbound_ip_addresses': {'key': 'properties.linuxOutboundIpAddresses', 'type': '[str]'},
+        'allow_new_private_endpoint_connections': {'key': 'properties.allowNewPrivateEndpointConnections', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AseV3NetworkingConfiguration, self).__init__(**kwargs)
+        self.windows_outbound_ip_addresses = None
+        self.linux_outbound_ip_addresses = None
+        self.allow_new_private_endpoint_connections = kwargs.get('allow_new_private_endpoint_connections', None)
+
+
+class AuthPlatform(ProxyOnlyResource):
+    """The configuration settings of the platform of App Service
+    Authentication/Authorization.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param enabled: <code>true</code> if the Authentication / Authorization
+     feature is enabled for the current app; otherwise, <code>false</code>.
     :type enabled: bool
-    :param runtime_version:
+    :param runtime_version: The RuntimeVersion of the Authentication /
+     Authorization feature in use for the current app.
+     The setting in this value can control the behavior of certain features in
+     the Authentication / Authorization module.
     :type runtime_version: str
-    :param config_file_path:
+    :param config_file_path: The path of the config file containing auth
+     settings if they come from a file.
+     If the path is relative, base will the site's root directory.
     :type config_file_path: str
     """
 
@@ -2170,17 +2036,16 @@ class AuthPlatform(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'runtime_version': {'key': 'properties.runtimeVersion', 'type': 'str'},
         'config_file_path': {'key': 'properties.configFilePath', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, enabled: bool=None, runtime_version: str=None, config_file_path: str=None, **kwargs) -> None:
-        super(AuthPlatform, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.enabled = enabled
-        self.runtime_version = runtime_version
-        self.config_file_path = config_file_path
+    def __init__(self, **kwargs):
+        super(AuthPlatform, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.runtime_version = kwargs.get('runtime_version', None)
+        self.config_file_path = kwargs.get('config_file_path', None)
 
 
 class AutoHealActions(Model):
@@ -2189,10 +2054,10 @@ class AutoHealActions(Model):
     :param action_type: Predefined action to be taken. Possible values
      include: 'Recycle', 'LogEvent', 'CustomAction'
     :type action_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.AutoHealActionType
+     ~azure.mgmt.web.v2020_12_01.models.AutoHealActionType
     :param custom_action: Custom action to be taken.
     :type custom_action:
-     ~azure.mgmt.web.v2020_09_01.models.AutoHealCustomAction
+     ~azure.mgmt.web.v2020_12_01.models.AutoHealCustomAction
     :param min_process_execution_time: Minimum time the process must execute
      before taking the action
     :type min_process_execution_time: str
@@ -2204,11 +2069,11 @@ class AutoHealActions(Model):
         'min_process_execution_time': {'key': 'minProcessExecutionTime', 'type': 'str'},
     }
 
-    def __init__(self, *, action_type=None, custom_action=None, min_process_execution_time: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AutoHealActions, self).__init__(**kwargs)
-        self.action_type = action_type
-        self.custom_action = custom_action
-        self.min_process_execution_time = min_process_execution_time
+        self.action_type = kwargs.get('action_type', None)
+        self.custom_action = kwargs.get('custom_action', None)
+        self.min_process_execution_time = kwargs.get('min_process_execution_time', None)
 
 
 class AutoHealCustomAction(Model):
@@ -2226,10 +2091,10 @@ class AutoHealCustomAction(Model):
         'parameters': {'key': 'parameters', 'type': 'str'},
     }
 
-    def __init__(self, *, exe: str=None, parameters: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AutoHealCustomAction, self).__init__(**kwargs)
-        self.exe = exe
-        self.parameters = parameters
+        self.exe = kwargs.get('exe', None)
+        self.parameters = kwargs.get('parameters', None)
 
 
 class AutoHealRules(Model):
@@ -2237,9 +2102,9 @@ class AutoHealRules(Model):
 
     :param triggers: Conditions that describe when to execute the auto-heal
      actions.
-    :type triggers: ~azure.mgmt.web.v2020_09_01.models.AutoHealTriggers
+    :type triggers: ~azure.mgmt.web.v2020_12_01.models.AutoHealTriggers
     :param actions: Actions to be executed when a rule is triggered.
-    :type actions: ~azure.mgmt.web.v2020_09_01.models.AutoHealActions
+    :type actions: ~azure.mgmt.web.v2020_12_01.models.AutoHealActions
     """
 
     _attribute_map = {
@@ -2247,25 +2112,32 @@ class AutoHealRules(Model):
         'actions': {'key': 'actions', 'type': 'AutoHealActions'},
     }
 
-    def __init__(self, *, triggers=None, actions=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AutoHealRules, self).__init__(**kwargs)
-        self.triggers = triggers
-        self.actions = actions
+        self.triggers = kwargs.get('triggers', None)
+        self.actions = kwargs.get('actions', None)
 
 
 class AutoHealTriggers(Model):
     """Triggers for auto-heal.
 
     :param requests: A rule based on total requests.
-    :type requests: ~azure.mgmt.web.v2020_09_01.models.RequestsBasedTrigger
+    :type requests: ~azure.mgmt.web.v2020_12_01.models.RequestsBasedTrigger
     :param private_bytes_in_kb: A rule based on private bytes.
     :type private_bytes_in_kb: int
     :param status_codes: A rule based on status codes.
     :type status_codes:
-     list[~azure.mgmt.web.v2020_09_01.models.StatusCodesBasedTrigger]
+     list[~azure.mgmt.web.v2020_12_01.models.StatusCodesBasedTrigger]
     :param slow_requests: A rule based on request execution time.
     :type slow_requests:
-     ~azure.mgmt.web.v2020_09_01.models.SlowRequestsBasedTrigger
+     ~azure.mgmt.web.v2020_12_01.models.SlowRequestsBasedTrigger
+    :param slow_requests_with_path: A rule based on multiple Slow Requests
+     Rule with path
+    :type slow_requests_with_path:
+     list[~azure.mgmt.web.v2020_12_01.models.SlowRequestsBasedTrigger]
+    :param status_codes_range: A rule based on status codes ranges.
+    :type status_codes_range:
+     list[~azure.mgmt.web.v2020_12_01.models.StatusCodesRangeBasedTrigger]
     """
 
     _attribute_map = {
@@ -2273,18 +2145,22 @@ class AutoHealTriggers(Model):
         'private_bytes_in_kb': {'key': 'privateBytesInKB', 'type': 'int'},
         'status_codes': {'key': 'statusCodes', 'type': '[StatusCodesBasedTrigger]'},
         'slow_requests': {'key': 'slowRequests', 'type': 'SlowRequestsBasedTrigger'},
+        'slow_requests_with_path': {'key': 'slowRequestsWithPath', 'type': '[SlowRequestsBasedTrigger]'},
+        'status_codes_range': {'key': 'statusCodesRange', 'type': '[StatusCodesRangeBasedTrigger]'},
     }
 
-    def __init__(self, *, requests=None, private_bytes_in_kb: int=None, status_codes=None, slow_requests=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AutoHealTriggers, self).__init__(**kwargs)
-        self.requests = requests
-        self.private_bytes_in_kb = private_bytes_in_kb
-        self.status_codes = status_codes
-        self.slow_requests = slow_requests
+        self.requests = kwargs.get('requests', None)
+        self.private_bytes_in_kb = kwargs.get('private_bytes_in_kb', None)
+        self.status_codes = kwargs.get('status_codes', None)
+        self.slow_requests = kwargs.get('slow_requests', None)
+        self.slow_requests_with_path = kwargs.get('slow_requests_with_path', None)
+        self.status_codes_range = kwargs.get('status_codes_range', None)
 
 
 class AzureActiveDirectory(ProxyOnlyResource):
-    """AzureActiveDirectory.
+    """The configuration settings of the Azure Active directory provider.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2297,19 +2173,26 @@ class AzureActiveDirectory(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param enabled:
+    :param enabled: <code>false</code> if the Azure Active Directory provider
+     should not be enabled despite the set registration; otherwise,
+     <code>true</code>.
     :type enabled: bool
-    :param registration:
+    :param registration: The configuration settings of the Azure Active
+     Directory app registration.
     :type registration:
-     ~azure.mgmt.web.v2020_09_01.models.AzureActiveDirectoryRegistration
-    :param login:
-    :type login: ~azure.mgmt.web.v2020_09_01.models.AzureActiveDirectoryLogin
-    :param validation:
+     ~azure.mgmt.web.v2020_12_01.models.AzureActiveDirectoryRegistration
+    :param login: The configuration settings of the Azure Active Directory
+     login flow.
+    :type login: ~azure.mgmt.web.v2020_12_01.models.AzureActiveDirectoryLogin
+    :param validation: The configuration settings of the Azure Active
+     Directory token validation flow.
     :type validation:
-     ~azure.mgmt.web.v2020_09_01.models.AzureActiveDirectoryValidation
-    :param is_auto_provisioned:
+     ~azure.mgmt.web.v2020_12_01.models.AzureActiveDirectoryValidation
+    :param is_auto_provisioned: Gets a value indicating whether the Azure AD
+     configuration was auto-provisioned using 1st party tooling.
+     This is an internal flag primarily intended to support the Azure
+     Management Portal. Users should not
+     read or write to this property.
     :type is_auto_provisioned: bool
     """
 
@@ -2324,7 +2207,6 @@ class AzureActiveDirectory(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'registration': {'key': 'properties.registration', 'type': 'AzureActiveDirectoryRegistration'},
         'login': {'key': 'properties.login', 'type': 'AzureActiveDirectoryLogin'},
@@ -2332,17 +2214,17 @@ class AzureActiveDirectory(ProxyOnlyResource):
         'is_auto_provisioned': {'key': 'properties.isAutoProvisioned', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, enabled: bool=None, registration=None, login=None, validation=None, is_auto_provisioned: bool=None, **kwargs) -> None:
-        super(AzureActiveDirectory, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.enabled = enabled
-        self.registration = registration
-        self.login = login
-        self.validation = validation
-        self.is_auto_provisioned = is_auto_provisioned
+    def __init__(self, **kwargs):
+        super(AzureActiveDirectory, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.registration = kwargs.get('registration', None)
+        self.login = kwargs.get('login', None)
+        self.validation = kwargs.get('validation', None)
+        self.is_auto_provisioned = kwargs.get('is_auto_provisioned', None)
 
 
 class AzureActiveDirectoryLogin(ProxyOnlyResource):
-    """AzureActiveDirectoryLogin.
+    """The configuration settings of the Azure Active Directory login flow.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2355,11 +2237,11 @@ class AzureActiveDirectoryLogin(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param disable_www_authenticate:
     :type disable_www_authenticate: bool
-    :param login_parameters:
+    :param login_parameters: Login parameters to send to the OpenID Connect
+     authorization endpoint when
+     a user logs in. Each parameter must be in the form "key=value".
     :type login_parameters: list[str]
     """
 
@@ -2374,19 +2256,18 @@ class AzureActiveDirectoryLogin(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'disable_www_authenticate': {'key': 'properties.disableWWWAuthenticate', 'type': 'bool'},
         'login_parameters': {'key': 'properties.loginParameters', 'type': '[str]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, disable_www_authenticate: bool=None, login_parameters=None, **kwargs) -> None:
-        super(AzureActiveDirectoryLogin, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.disable_www_authenticate = disable_www_authenticate
-        self.login_parameters = login_parameters
+    def __init__(self, **kwargs):
+        super(AzureActiveDirectoryLogin, self).__init__(**kwargs)
+        self.disable_www_authenticate = kwargs.get('disable_www_authenticate', None)
+        self.login_parameters = kwargs.get('login_parameters', None)
 
 
 class AzureActiveDirectoryRegistration(ProxyOnlyResource):
-    """AzureActiveDirectoryRegistration.
+    """The configuration settings of the Azure Active Directory app registration.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2399,15 +2280,29 @@ class AzureActiveDirectoryRegistration(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param open_id_issuer:
+    :param open_id_issuer: The OpenID Connect Issuer URI that represents the
+     entity which issues access tokens for this application.
+     When using Azure Active Directory, this value is the URI of the directory
+     tenant, e.g. https://login.microsoftonline.com/v2.0/{tenant-guid}/.
+     This URI is a case-sensitive identifier for the token issuer.
+     More information on OpenID Connect Discovery:
+     http://openid.net/specs/openid-connect-discovery-1_0.html
     :type open_id_issuer: str
-    :param client_id:
+    :param client_id: The Client ID of this relying party application, known
+     as the client_id.
+     This setting is required for enabling OpenID Connection authentication
+     with Azure Active Directory or
+     other 3rd party OpenID Connect providers.
+     More information on OpenID Connect:
+     http://openid.net/specs/openid-connect-core-1_0.html
     :type client_id: str
-    :param client_secret_setting_name:
+    :param client_secret_setting_name: The app setting name that contains the
+     client secret of the relying party application.
     :type client_secret_setting_name: str
-    :param client_secret_certificate_thumbprint:
+    :param client_secret_certificate_thumbprint: An alternative to the client
+     secret, that is the thumbprint of a certificate used for signing purposes.
+     This property acts as
+     a replacement for the Client Secret. It is also optional.
     :type client_secret_certificate_thumbprint: str
     """
 
@@ -2422,23 +2317,23 @@ class AzureActiveDirectoryRegistration(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'open_id_issuer': {'key': 'properties.openIdIssuer', 'type': 'str'},
         'client_id': {'key': 'properties.clientId', 'type': 'str'},
         'client_secret_setting_name': {'key': 'properties.clientSecretSettingName', 'type': 'str'},
         'client_secret_certificate_thumbprint': {'key': 'properties.clientSecretCertificateThumbprint', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, open_id_issuer: str=None, client_id: str=None, client_secret_setting_name: str=None, client_secret_certificate_thumbprint: str=None, **kwargs) -> None:
-        super(AzureActiveDirectoryRegistration, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.open_id_issuer = open_id_issuer
-        self.client_id = client_id
-        self.client_secret_setting_name = client_secret_setting_name
-        self.client_secret_certificate_thumbprint = client_secret_certificate_thumbprint
+    def __init__(self, **kwargs):
+        super(AzureActiveDirectoryRegistration, self).__init__(**kwargs)
+        self.open_id_issuer = kwargs.get('open_id_issuer', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret_setting_name = kwargs.get('client_secret_setting_name', None)
+        self.client_secret_certificate_thumbprint = kwargs.get('client_secret_certificate_thumbprint', None)
 
 
 class AzureActiveDirectoryValidation(ProxyOnlyResource):
-    """AzureActiveDirectoryValidation.
+    """The configuration settings of the Azure Active Directory token validation
+    flow.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2451,11 +2346,11 @@ class AzureActiveDirectoryValidation(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param jwt_claim_checks:
-    :type jwt_claim_checks: ~azure.mgmt.web.v2020_09_01.models.JwtClaimChecks
-    :param allowed_audiences:
+    :param jwt_claim_checks: The configuration settings of the checks that
+     should be made while validating the JWT Claims.
+    :type jwt_claim_checks: ~azure.mgmt.web.v2020_12_01.models.JwtClaimChecks
+    :param allowed_audiences: The list of audiences that can make successful
+     authentication/authorization requests.
     :type allowed_audiences: list[str]
     """
 
@@ -2470,15 +2365,14 @@ class AzureActiveDirectoryValidation(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'jwt_claim_checks': {'key': 'properties.jwtClaimChecks', 'type': 'JwtClaimChecks'},
         'allowed_audiences': {'key': 'properties.allowedAudiences', 'type': '[str]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, jwt_claim_checks=None, allowed_audiences=None, **kwargs) -> None:
-        super(AzureActiveDirectoryValidation, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.jwt_claim_checks = jwt_claim_checks
-        self.allowed_audiences = allowed_audiences
+    def __init__(self, **kwargs):
+        super(AzureActiveDirectoryValidation, self).__init__(**kwargs)
+        self.jwt_claim_checks = kwargs.get('jwt_claim_checks', None)
+        self.allowed_audiences = kwargs.get('allowed_audiences', None)
 
 
 class AzureBlobStorageApplicationLogsConfig(Model):
@@ -2486,7 +2380,7 @@ class AzureBlobStorageApplicationLogsConfig(Model):
 
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'
-    :type level: str or ~azure.mgmt.web.v2020_09_01.models.LogLevel
+    :type level: str or ~azure.mgmt.web.v2020_12_01.models.LogLevel
     :param sas_url: SAS url to a azure blob container with
      read/write/list/delete permissions.
     :type sas_url: str
@@ -2502,11 +2396,11 @@ class AzureBlobStorageApplicationLogsConfig(Model):
         'retention_in_days': {'key': 'retentionInDays', 'type': 'int'},
     }
 
-    def __init__(self, *, level=None, sas_url: str=None, retention_in_days: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AzureBlobStorageApplicationLogsConfig, self).__init__(**kwargs)
-        self.level = level
-        self.sas_url = sas_url
-        self.retention_in_days = retention_in_days
+        self.level = kwargs.get('level', None)
+        self.sas_url = kwargs.get('sas_url', None)
+        self.retention_in_days = kwargs.get('retention_in_days', None)
 
 
 class AzureBlobStorageHttpLogsConfig(Model):
@@ -2530,11 +2424,94 @@ class AzureBlobStorageHttpLogsConfig(Model):
         'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, sas_url: str=None, retention_in_days: int=None, enabled: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AzureBlobStorageHttpLogsConfig, self).__init__(**kwargs)
-        self.sas_url = sas_url
-        self.retention_in_days = retention_in_days
-        self.enabled = enabled
+        self.sas_url = kwargs.get('sas_url', None)
+        self.retention_in_days = kwargs.get('retention_in_days', None)
+        self.enabled = kwargs.get('enabled', None)
+
+
+class AzureStaticWebApps(ProxyOnlyResource):
+    """The configuration settings of the Azure Static Web Apps provider.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param enabled: <code>false</code> if the Azure Static Web Apps provider
+     should not be enabled despite the set registration; otherwise,
+     <code>true</code>.
+    :type enabled: bool
+    :param registration: The configuration settings of the Azure Static Web
+     Apps registration.
+    :type registration:
+     ~azure.mgmt.web.v2020_12_01.models.AzureStaticWebAppsRegistration
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'registration': {'key': 'properties.registration', 'type': 'AzureStaticWebAppsRegistration'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureStaticWebApps, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.registration = kwargs.get('registration', None)
+
+
+class AzureStaticWebAppsRegistration(ProxyOnlyResource):
+    """The configuration settings of the registration for the Azure Static Web
+    Apps provider.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param client_id: The Client ID of the app used for login.
+    :type client_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'client_id': {'key': 'properties.clientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureStaticWebAppsRegistration, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
 
 
 class AzureStorageInfoValue(Model):
@@ -2546,7 +2523,7 @@ class AzureStorageInfoValue(Model):
 
     :param type: Type of storage. Possible values include: 'AzureFiles',
      'AzureBlob'
-    :type type: str or ~azure.mgmt.web.v2020_09_01.models.AzureStorageType
+    :type type: str or ~azure.mgmt.web.v2020_12_01.models.AzureStorageType
     :param account_name: Name of the storage account.
     :type account_name: str
     :param share_name: Name of the file share (container name, for Blob
@@ -2558,9 +2535,9 @@ class AzureStorageInfoValue(Model):
      environment.
     :type mount_path: str
     :ivar state: State of the storage account. Possible values include: 'Ok',
-     'InvalidCredentials', 'InvalidShare'
+     'InvalidCredentials', 'InvalidShare', 'NotValidated'
     :vartype state: str or
-     ~azure.mgmt.web.v2020_09_01.models.AzureStorageState
+     ~azure.mgmt.web.v2020_12_01.models.AzureStorageState
     """
 
     _validation = {
@@ -2576,13 +2553,13 @@ class AzureStorageInfoValue(Model):
         'state': {'key': 'state', 'type': 'AzureStorageState'},
     }
 
-    def __init__(self, *, type=None, account_name: str=None, share_name: str=None, access_key: str=None, mount_path: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AzureStorageInfoValue, self).__init__(**kwargs)
-        self.type = type
-        self.account_name = account_name
-        self.share_name = share_name
-        self.access_key = access_key
-        self.mount_path = mount_path
+        self.type = kwargs.get('type', None)
+        self.account_name = kwargs.get('account_name', None)
+        self.share_name = kwargs.get('share_name', None)
+        self.access_key = kwargs.get('access_key', None)
+        self.mount_path = kwargs.get('mount_path', None)
         self.state = None
 
 
@@ -2600,11 +2577,9 @@ class AzureStoragePropertyDictionaryResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param properties: Azure storage accounts.
     :type properties: dict[str,
-     ~azure.mgmt.web.v2020_09_01.models.AzureStorageInfoValue]
+     ~azure.mgmt.web.v2020_12_01.models.AzureStorageInfoValue]
     """
 
     _validation = {
@@ -2618,13 +2593,12 @@ class AzureStoragePropertyDictionaryResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'properties': {'key': 'properties', 'type': '{AzureStorageInfoValue}'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, properties=None, **kwargs) -> None:
-        super(AzureStoragePropertyDictionaryResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(AzureStoragePropertyDictionaryResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
 
 
 class AzureTableStorageApplicationLogsConfig(Model):
@@ -2634,7 +2608,7 @@ class AzureTableStorageApplicationLogsConfig(Model):
 
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'
-    :type level: str or ~azure.mgmt.web.v2020_09_01.models.LogLevel
+    :type level: str or ~azure.mgmt.web.v2020_12_01.models.LogLevel
     :param sas_url: Required. SAS URL to an Azure table with add/query/delete
      permissions.
     :type sas_url: str
@@ -2649,10 +2623,10 @@ class AzureTableStorageApplicationLogsConfig(Model):
         'sas_url': {'key': 'sasUrl', 'type': 'str'},
     }
 
-    def __init__(self, *, sas_url: str, level=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(AzureTableStorageApplicationLogsConfig, self).__init__(**kwargs)
-        self.level = level
-        self.sas_url = sas_url
+        self.level = kwargs.get('level', None)
+        self.sas_url = kwargs.get('sas_url', None)
 
 
 class BackupItem(ProxyOnlyResource):
@@ -2669,8 +2643,6 @@ class BackupItem(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar backup_id: Id of the backup.
     :vartype backup_id: int
     :ivar storage_account_url: SAS URL for the storage account container which
@@ -2684,7 +2656,7 @@ class BackupItem(ProxyOnlyResource):
      'Failed', 'Succeeded', 'TimedOut', 'Created', 'Skipped',
      'PartiallySucceeded', 'DeleteInProgress', 'DeleteFailed', 'Deleted'
     :vartype status: str or
-     ~azure.mgmt.web.v2020_09_01.models.BackupItemStatus
+     ~azure.mgmt.web.v2020_12_01.models.BackupItemStatus
     :ivar size_in_bytes: Size of the backup in bytes.
     :vartype size_in_bytes: long
     :ivar created: Timestamp of the backup creation.
@@ -2693,7 +2665,7 @@ class BackupItem(ProxyOnlyResource):
     :vartype log: str
     :ivar databases: List of databases included in the backup.
     :vartype databases:
-     list[~azure.mgmt.web.v2020_09_01.models.DatabaseBackupSetting]
+     list[~azure.mgmt.web.v2020_12_01.models.DatabaseBackupSetting]
     :ivar scheduled: True if this backup has been created due to a schedule
      being triggered.
     :vartype scheduled: bool
@@ -2735,7 +2707,6 @@ class BackupItem(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'backup_id': {'key': 'properties.id', 'type': 'int'},
         'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
         'blob_name': {'key': 'properties.blobName', 'type': 'str'},
@@ -2752,8 +2723,8 @@ class BackupItem(ProxyOnlyResource):
         'website_size_in_bytes': {'key': 'properties.websiteSizeInBytes', 'type': 'long'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(BackupItem, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(BackupItem, self).__init__(**kwargs)
         self.backup_id = None
         self.storage_account_url = None
         self.blob_name = None
@@ -2786,8 +2757,6 @@ class BackupRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param backup_name: Name of the backup.
     :type backup_name: str
     :param enabled: True if the backup schedule is enabled (must be included
@@ -2797,10 +2766,10 @@ class BackupRequest(ProxyOnlyResource):
     :type storage_account_url: str
     :param backup_schedule: Schedule for the backup if it is executed
      periodically.
-    :type backup_schedule: ~azure.mgmt.web.v2020_09_01.models.BackupSchedule
+    :type backup_schedule: ~azure.mgmt.web.v2020_12_01.models.BackupSchedule
     :param databases: Databases included in the backup.
     :type databases:
-     list[~azure.mgmt.web.v2020_09_01.models.DatabaseBackupSetting]
+     list[~azure.mgmt.web.v2020_12_01.models.DatabaseBackupSetting]
     """
 
     _validation = {
@@ -2815,7 +2784,6 @@ class BackupRequest(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'backup_name': {'key': 'properties.backupName', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
@@ -2823,13 +2791,13 @@ class BackupRequest(ProxyOnlyResource):
         'databases': {'key': 'properties.databases', 'type': '[DatabaseBackupSetting]'},
     }
 
-    def __init__(self, *, storage_account_url: str, kind: str=None, system_data=None, backup_name: str=None, enabled: bool=None, backup_schedule=None, databases=None, **kwargs) -> None:
-        super(BackupRequest, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.backup_name = backup_name
-        self.enabled = enabled
-        self.storage_account_url = storage_account_url
-        self.backup_schedule = backup_schedule
-        self.databases = databases
+    def __init__(self, **kwargs):
+        super(BackupRequest, self).__init__(**kwargs)
+        self.backup_name = kwargs.get('backup_name', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.storage_account_url = kwargs.get('storage_account_url', None)
+        self.backup_schedule = kwargs.get('backup_schedule', None)
+        self.databases = kwargs.get('databases', None)
 
 
 class BackupSchedule(Model):
@@ -2850,7 +2818,7 @@ class BackupSchedule(Model):
      FrequencyInterval should be set to 7). Possible values include: 'Day',
      'Hour'. Default value: "Day" .
     :type frequency_unit: str or
-     ~azure.mgmt.web.v2020_09_01.models.FrequencyUnit
+     ~azure.mgmt.web.v2020_12_01.models.FrequencyUnit
     :param keep_at_least_one_backup: Required. True if the retention policy
      should always keep at least one backup in the storage account, regardless
      how old it is; false otherwise. Default value: True .
@@ -2881,13 +2849,13 @@ class BackupSchedule(Model):
         'last_execution_time': {'key': 'lastExecutionTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, frequency_interval: int=7, frequency_unit="Day", keep_at_least_one_backup: bool=True, retention_period_in_days: int=30, start_time=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(BackupSchedule, self).__init__(**kwargs)
-        self.frequency_interval = frequency_interval
-        self.frequency_unit = frequency_unit
-        self.keep_at_least_one_backup = keep_at_least_one_backup
-        self.retention_period_in_days = retention_period_in_days
-        self.start_time = start_time
+        self.frequency_interval = kwargs.get('frequency_interval', 7)
+        self.frequency_unit = kwargs.get('frequency_unit', "Day")
+        self.keep_at_least_one_backup = kwargs.get('keep_at_least_one_backup', True)
+        self.retention_period_in_days = kwargs.get('retention_period_in_days', 30)
+        self.start_time = kwargs.get('start_time', None)
         self.last_execution_time = None
 
 
@@ -2906,8 +2874,6 @@ class BillingMeter(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param meter_id: Meter GUID onboarded in Commerce
     :type meter_id: str
     :param billing_location: Azure Location of billable resource
@@ -2920,6 +2886,8 @@ class BillingMeter(ProxyOnlyResource):
     :type resource_type: str
     :param os_type: App Service OS type meter used for
     :type os_type: str
+    :param multiplier: Meter Multiplier
+    :type multiplier: float
     """
 
     _validation = {
@@ -2933,27 +2901,29 @@ class BillingMeter(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'meter_id': {'key': 'properties.meterId', 'type': 'str'},
         'billing_location': {'key': 'properties.billingLocation', 'type': 'str'},
         'short_name': {'key': 'properties.shortName', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
         'os_type': {'key': 'properties.osType', 'type': 'str'},
+        'multiplier': {'key': 'properties.multiplier', 'type': 'float'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, meter_id: str=None, billing_location: str=None, short_name: str=None, friendly_name: str=None, resource_type: str=None, os_type: str=None, **kwargs) -> None:
-        super(BillingMeter, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.meter_id = meter_id
-        self.billing_location = billing_location
-        self.short_name = short_name
-        self.friendly_name = friendly_name
-        self.resource_type = resource_type
-        self.os_type = os_type
+    def __init__(self, **kwargs):
+        super(BillingMeter, self).__init__(**kwargs)
+        self.meter_id = kwargs.get('meter_id', None)
+        self.billing_location = kwargs.get('billing_location', None)
+        self.short_name = kwargs.get('short_name', None)
+        self.friendly_name = kwargs.get('friendly_name', None)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.multiplier = kwargs.get('multiplier', None)
 
 
 class BlobStorageTokenStore(ProxyOnlyResource):
-    """BlobStorageTokenStore.
+    """The configuration settings of the storage of the tokens if blob storage is
+    used.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2966,9 +2936,8 @@ class BlobStorageTokenStore(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param sas_url_setting_name:
+    :param sas_url_setting_name: The name of the app setting containing the
+     SAS URL of the blob storage containing the tokens.
     :type sas_url_setting_name: str
     """
 
@@ -2983,13 +2952,12 @@ class BlobStorageTokenStore(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'sas_url_setting_name': {'key': 'properties.sasUrlSettingName', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, sas_url_setting_name: str=None, **kwargs) -> None:
-        super(BlobStorageTokenStore, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.sas_url_setting_name = sas_url_setting_name
+    def __init__(self, **kwargs):
+        super(BlobStorageTokenStore, self).__init__(**kwargs)
+        self.sas_url_setting_name = kwargs.get('sas_url_setting_name', None)
 
 
 class Capability(Model):
@@ -3009,11 +2977,11 @@ class Capability(Model):
         'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, value: str=None, reason: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Capability, self).__init__(**kwargs)
-        self.name = name
-        self.value = value
-        self.reason = reason
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+        self.reason = kwargs.get('reason', None)
 
 
 class Certificate(Resource):
@@ -3036,8 +3004,8 @@ class Certificate(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
+    :param password: Certificate password.
+    :type password: str
     :ivar friendly_name: Friendly name of the certificate.
     :vartype friendly_name: str
     :ivar subject_name: Subject name of the certificate.
@@ -3056,8 +3024,6 @@ class Certificate(Resource):
     :vartype issue_date: datetime
     :ivar expiration_date: Certificate expiration date.
     :vartype expiration_date: datetime
-    :param password: Required. Certificate password.
-    :type password: str
     :ivar thumbprint: Certificate thumbprint.
     :vartype thumbprint: str
     :ivar valid: Is the certificate valid?.
@@ -3069,7 +3035,7 @@ class Certificate(Resource):
     :ivar hosting_environment_profile: Specification for the App Service
      Environment to use for the certificate.
     :vartype hosting_environment_profile:
-     ~azure.mgmt.web.v2020_09_01.models.HostingEnvironmentProfile
+     ~azure.mgmt.web.v2020_12_01.models.HostingEnvironmentProfile
     :param key_vault_id: Key Vault Csm resource Id.
     :type key_vault_id: str
     :param key_vault_secret_name: Key Vault secret name.
@@ -3081,7 +3047,7 @@ class Certificate(Resource):
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
     :vartype key_vault_secret_status: str or
-     ~azure.mgmt.web.v2020_09_01.models.KeyVaultSecretStatus
+     ~azure.mgmt.web.v2020_12_01.models.KeyVaultSecretStatus
     :param server_farm_id: Resource ID of the associated App Service plan,
      formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
@@ -3089,6 +3055,8 @@ class Certificate(Resource):
     :param canonical_name: CNAME of the certificate to be issued via free
      certificate
     :type canonical_name: str
+    :param domain_validation_method: Method of domain validation for free cert
+    :type domain_validation_method: str
     """
 
     _validation = {
@@ -3103,7 +3071,6 @@ class Certificate(Resource):
         'issuer': {'readonly': True},
         'issue_date': {'readonly': True},
         'expiration_date': {'readonly': True},
-        'password': {'required': True},
         'thumbprint': {'readonly': True},
         'valid': {'readonly': True},
         'cer_blob': {'readonly': True},
@@ -3119,7 +3086,7 @@ class Certificate(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'password': {'key': 'properties.password', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'subject_name': {'key': 'properties.subjectName', 'type': 'str'},
         'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
@@ -3129,7 +3096,6 @@ class Certificate(Resource):
         'issuer': {'key': 'properties.issuer', 'type': 'str'},
         'issue_date': {'key': 'properties.issueDate', 'type': 'iso-8601'},
         'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'password': {'key': 'properties.password', 'type': 'str'},
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
         'valid': {'key': 'properties.valid', 'type': 'bool'},
         'cer_blob': {'key': 'properties.cerBlob', 'type': 'bytearray'},
@@ -3140,30 +3106,32 @@ class Certificate(Resource):
         'key_vault_secret_status': {'key': 'properties.keyVaultSecretStatus', 'type': 'KeyVaultSecretStatus'},
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
         'canonical_name': {'key': 'properties.canonicalName', 'type': 'str'},
+        'domain_validation_method': {'key': 'properties.domainValidationMethod', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, password: str, kind: str=None, tags=None, system_data=None, host_names=None, pfx_blob: bytearray=None, key_vault_id: str=None, key_vault_secret_name: str=None, server_farm_id: str=None, canonical_name: str=None, **kwargs) -> None:
-        super(Certificate, self).__init__(kind=kind, location=location, tags=tags, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(Certificate, self).__init__(**kwargs)
+        self.password = kwargs.get('password', None)
         self.friendly_name = None
         self.subject_name = None
-        self.host_names = host_names
-        self.pfx_blob = pfx_blob
+        self.host_names = kwargs.get('host_names', None)
+        self.pfx_blob = kwargs.get('pfx_blob', None)
         self.site_name = None
         self.self_link = None
         self.issuer = None
         self.issue_date = None
         self.expiration_date = None
-        self.password = password
         self.thumbprint = None
         self.valid = None
         self.cer_blob = None
         self.public_key_hash = None
         self.hosting_environment_profile = None
-        self.key_vault_id = key_vault_id
-        self.key_vault_secret_name = key_vault_secret_name
+        self.key_vault_id = kwargs.get('key_vault_id', None)
+        self.key_vault_secret_name = kwargs.get('key_vault_secret_name', None)
         self.key_vault_secret_status = None
-        self.server_farm_id = server_farm_id
-        self.canonical_name = canonical_name
+        self.server_farm_id = kwargs.get('server_farm_id', None)
+        self.canonical_name = kwargs.get('canonical_name', None)
+        self.domain_validation_method = kwargs.get('domain_validation_method', None)
 
 
 class CertificateDetails(Model):
@@ -3216,7 +3184,7 @@ class CertificateDetails(Model):
         'raw_data': {'key': 'rawData', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CertificateDetails, self).__init__(**kwargs)
         self.version = None
         self.serial_number = None
@@ -3243,8 +3211,6 @@ class CertificateEmail(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param email_id: Email id.
     :type email_id: str
     :param time_stamp: Time stamp.
@@ -3262,15 +3228,14 @@ class CertificateEmail(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'email_id': {'key': 'properties.emailId', 'type': 'str'},
         'time_stamp': {'key': 'properties.timeStamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, email_id: str=None, time_stamp=None, **kwargs) -> None:
-        super(CertificateEmail, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.email_id = email_id
-        self.time_stamp = time_stamp
+    def __init__(self, **kwargs):
+        super(CertificateEmail, self).__init__(**kwargs)
+        self.email_id = kwargs.get('email_id', None)
+        self.time_stamp = kwargs.get('time_stamp', None)
 
 
 class CertificateOrderAction(ProxyOnlyResource):
@@ -3287,8 +3252,6 @@ class CertificateOrderAction(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar action_type: Action type. Possible values include:
      'CertificateIssued', 'CertificateOrderCanceled',
      'CertificateOrderCreated', 'CertificateRevoked',
@@ -3296,7 +3259,7 @@ class CertificateOrderAction(ProxyOnlyResource):
      'OrgValidationComplete', 'SanDrop', 'FraudCleared', 'CertificateExpired',
      'CertificateExpirationWarning', 'FraudDocumentationRequired', 'Unknown'
     :vartype action_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.CertificateOrderActionType
+     ~azure.mgmt.web.v2020_12_01.models.CertificateOrderActionType
     :ivar created_at: Time at which the certificate action was performed.
     :vartype created_at: datetime
     """
@@ -3314,15 +3277,42 @@ class CertificateOrderAction(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'action_type': {'key': 'properties.actionType', 'type': 'CertificateOrderActionType'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(CertificateOrderAction, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(CertificateOrderAction, self).__init__(**kwargs)
         self.action_type = None
         self.created_at = None
+
+
+class CertificateOrderContact(Model):
+    """CertificateOrderContact.
+
+    :param email:
+    :type email: str
+    :param name_first:
+    :type name_first: str
+    :param name_last:
+    :type name_last: str
+    :param phone:
+    :type phone: str
+    """
+
+    _attribute_map = {
+        'email': {'key': 'email', 'type': 'str'},
+        'name_first': {'key': 'nameFirst', 'type': 'str'},
+        'name_last': {'key': 'nameLast', 'type': 'str'},
+        'phone': {'key': 'phone', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CertificateOrderContact, self).__init__(**kwargs)
+        self.email = kwargs.get('email', None)
+        self.name_first = kwargs.get('name_first', None)
+        self.name_last = kwargs.get('name_last', None)
+        self.phone = kwargs.get('phone', None)
 
 
 class CertificatePatchResource(ProxyOnlyResource):
@@ -3330,8 +3320,6 @@ class CertificatePatchResource(ProxyOnlyResource):
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -3341,8 +3329,8 @@ class CertificatePatchResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
+    :param password: Certificate password.
+    :type password: str
     :ivar friendly_name: Friendly name of the certificate.
     :vartype friendly_name: str
     :ivar subject_name: Subject name of the certificate.
@@ -3361,8 +3349,6 @@ class CertificatePatchResource(ProxyOnlyResource):
     :vartype issue_date: datetime
     :ivar expiration_date: Certificate expiration date.
     :vartype expiration_date: datetime
-    :param password: Required. Certificate password.
-    :type password: str
     :ivar thumbprint: Certificate thumbprint.
     :vartype thumbprint: str
     :ivar valid: Is the certificate valid?.
@@ -3374,7 +3360,7 @@ class CertificatePatchResource(ProxyOnlyResource):
     :ivar hosting_environment_profile: Specification for the App Service
      Environment to use for the certificate.
     :vartype hosting_environment_profile:
-     ~azure.mgmt.web.v2020_09_01.models.HostingEnvironmentProfile
+     ~azure.mgmt.web.v2020_12_01.models.HostingEnvironmentProfile
     :param key_vault_id: Key Vault Csm resource Id.
     :type key_vault_id: str
     :param key_vault_secret_name: Key Vault secret name.
@@ -3386,7 +3372,7 @@ class CertificatePatchResource(ProxyOnlyResource):
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
     :vartype key_vault_secret_status: str or
-     ~azure.mgmt.web.v2020_09_01.models.KeyVaultSecretStatus
+     ~azure.mgmt.web.v2020_12_01.models.KeyVaultSecretStatus
     :param server_farm_id: Resource ID of the associated App Service plan,
      formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
@@ -3394,6 +3380,8 @@ class CertificatePatchResource(ProxyOnlyResource):
     :param canonical_name: CNAME of the certificate to be issued via free
      certificate
     :type canonical_name: str
+    :param domain_validation_method: Method of domain validation for free cert
+    :type domain_validation_method: str
     """
 
     _validation = {
@@ -3407,7 +3395,6 @@ class CertificatePatchResource(ProxyOnlyResource):
         'issuer': {'readonly': True},
         'issue_date': {'readonly': True},
         'expiration_date': {'readonly': True},
-        'password': {'required': True},
         'thumbprint': {'readonly': True},
         'valid': {'readonly': True},
         'cer_blob': {'readonly': True},
@@ -3421,7 +3408,7 @@ class CertificatePatchResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'password': {'key': 'properties.password', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'subject_name': {'key': 'properties.subjectName', 'type': 'str'},
         'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
@@ -3431,7 +3418,6 @@ class CertificatePatchResource(ProxyOnlyResource):
         'issuer': {'key': 'properties.issuer', 'type': 'str'},
         'issue_date': {'key': 'properties.issueDate', 'type': 'iso-8601'},
         'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'password': {'key': 'properties.password', 'type': 'str'},
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
         'valid': {'key': 'properties.valid', 'type': 'bool'},
         'cer_blob': {'key': 'properties.cerBlob', 'type': 'bytearray'},
@@ -3442,34 +3428,37 @@ class CertificatePatchResource(ProxyOnlyResource):
         'key_vault_secret_status': {'key': 'properties.keyVaultSecretStatus', 'type': 'KeyVaultSecretStatus'},
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
         'canonical_name': {'key': 'properties.canonicalName', 'type': 'str'},
+        'domain_validation_method': {'key': 'properties.domainValidationMethod', 'type': 'str'},
     }
 
-    def __init__(self, *, password: str, kind: str=None, system_data=None, host_names=None, pfx_blob: bytearray=None, key_vault_id: str=None, key_vault_secret_name: str=None, server_farm_id: str=None, canonical_name: str=None, **kwargs) -> None:
-        super(CertificatePatchResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(CertificatePatchResource, self).__init__(**kwargs)
+        self.password = kwargs.get('password', None)
         self.friendly_name = None
         self.subject_name = None
-        self.host_names = host_names
-        self.pfx_blob = pfx_blob
+        self.host_names = kwargs.get('host_names', None)
+        self.pfx_blob = kwargs.get('pfx_blob', None)
         self.site_name = None
         self.self_link = None
         self.issuer = None
         self.issue_date = None
         self.expiration_date = None
-        self.password = password
         self.thumbprint = None
         self.valid = None
         self.cer_blob = None
         self.public_key_hash = None
         self.hosting_environment_profile = None
-        self.key_vault_id = key_vault_id
-        self.key_vault_secret_name = key_vault_secret_name
+        self.key_vault_id = kwargs.get('key_vault_id', None)
+        self.key_vault_secret_name = kwargs.get('key_vault_secret_name', None)
         self.key_vault_secret_status = None
-        self.server_farm_id = server_farm_id
-        self.canonical_name = canonical_name
+        self.server_farm_id = kwargs.get('server_farm_id', None)
+        self.canonical_name = kwargs.get('canonical_name', None)
+        self.domain_validation_method = kwargs.get('domain_validation_method', None)
 
 
 class ClientRegistration(ProxyOnlyResource):
-    """ClientRegistration.
+    """The configuration settings of the app registration for providers that have
+    client ids and client secrets.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -3482,11 +3471,10 @@ class ClientRegistration(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param client_id:
+    :param client_id: The Client ID of the app used for login.
     :type client_id: str
-    :param client_secret_setting_name:
+    :param client_secret_setting_name: The app setting name that contains the
+     client secret.
     :type client_secret_setting_name: str
     """
 
@@ -3501,15 +3489,14 @@ class ClientRegistration(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'client_id': {'key': 'properties.clientId', 'type': 'str'},
         'client_secret_setting_name': {'key': 'properties.clientSecretSettingName', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, client_id: str=None, client_secret_setting_name: str=None, **kwargs) -> None:
-        super(ClientRegistration, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.client_id = client_id
-        self.client_secret_setting_name = client_secret_setting_name
+    def __init__(self, **kwargs):
+        super(ClientRegistration, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret_setting_name = kwargs.get('client_secret_setting_name', None)
 
 
 class CloningInfo(Model):
@@ -3578,19 +3565,19 @@ class CloningInfo(Model):
         'traffic_manager_profile_name': {'key': 'trafficManagerProfileName', 'type': 'str'},
     }
 
-    def __init__(self, *, source_web_app_id: str, correlation_id: str=None, overwrite: bool=None, clone_custom_host_names: bool=None, clone_source_control: bool=None, source_web_app_location: str=None, hosting_environment: str=None, app_settings_overrides=None, configure_load_balancing: bool=None, traffic_manager_profile_id: str=None, traffic_manager_profile_name: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CloningInfo, self).__init__(**kwargs)
-        self.correlation_id = correlation_id
-        self.overwrite = overwrite
-        self.clone_custom_host_names = clone_custom_host_names
-        self.clone_source_control = clone_source_control
-        self.source_web_app_id = source_web_app_id
-        self.source_web_app_location = source_web_app_location
-        self.hosting_environment = hosting_environment
-        self.app_settings_overrides = app_settings_overrides
-        self.configure_load_balancing = configure_load_balancing
-        self.traffic_manager_profile_id = traffic_manager_profile_id
-        self.traffic_manager_profile_name = traffic_manager_profile_name
+        self.correlation_id = kwargs.get('correlation_id', None)
+        self.overwrite = kwargs.get('overwrite', None)
+        self.clone_custom_host_names = kwargs.get('clone_custom_host_names', None)
+        self.clone_source_control = kwargs.get('clone_source_control', None)
+        self.source_web_app_id = kwargs.get('source_web_app_id', None)
+        self.source_web_app_location = kwargs.get('source_web_app_location', None)
+        self.hosting_environment = kwargs.get('hosting_environment', None)
+        self.app_settings_overrides = kwargs.get('app_settings_overrides', None)
+        self.configure_load_balancing = kwargs.get('configure_load_balancing', None)
+        self.traffic_manager_profile_id = kwargs.get('traffic_manager_profile_id', None)
+        self.traffic_manager_profile_name = kwargs.get('traffic_manager_profile_name', None)
 
 
 class CloudError(Model):
@@ -3615,11 +3602,9 @@ class ConnectionStringDictionary(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param properties: Connection strings.
     :type properties: dict[str,
-     ~azure.mgmt.web.v2020_09_01.models.ConnStringValueTypePair]
+     ~azure.mgmt.web.v2020_12_01.models.ConnStringValueTypePair]
     """
 
     _validation = {
@@ -3633,13 +3618,12 @@ class ConnectionStringDictionary(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'properties': {'key': 'properties', 'type': '{ConnStringValueTypePair}'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, properties=None, **kwargs) -> None:
-        super(ConnectionStringDictionary, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(ConnectionStringDictionary, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
 
 
 class ConnStringInfo(Model):
@@ -3652,7 +3636,7 @@ class ConnStringInfo(Model):
     :param type: Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom', 'NotificationHub', 'ServiceBus',
      'EventHub', 'ApiHub', 'DocDb', 'RedisCache', 'PostgreSQL'
-    :type type: str or ~azure.mgmt.web.v2020_09_01.models.ConnectionStringType
+    :type type: str or ~azure.mgmt.web.v2020_12_01.models.ConnectionStringType
     """
 
     _attribute_map = {
@@ -3661,11 +3645,11 @@ class ConnStringInfo(Model):
         'type': {'key': 'type', 'type': 'ConnectionStringType'},
     }
 
-    def __init__(self, *, name: str=None, connection_string: str=None, type=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ConnStringInfo, self).__init__(**kwargs)
-        self.name = name
-        self.connection_string = connection_string
-        self.type = type
+        self.name = kwargs.get('name', None)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.type = kwargs.get('type', None)
 
 
 class ConnStringValueTypePair(Model):
@@ -3678,7 +3662,7 @@ class ConnStringValueTypePair(Model):
     :param type: Required. Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom', 'NotificationHub', 'ServiceBus',
      'EventHub', 'ApiHub', 'DocDb', 'RedisCache', 'PostgreSQL'
-    :type type: str or ~azure.mgmt.web.v2020_09_01.models.ConnectionStringType
+    :type type: str or ~azure.mgmt.web.v2020_12_01.models.ConnectionStringType
     """
 
     _validation = {
@@ -3691,10 +3675,10 @@ class ConnStringValueTypePair(Model):
         'type': {'key': 'type', 'type': 'ConnectionStringType'},
     }
 
-    def __init__(self, *, value: str, type, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ConnStringValueTypePair, self).__init__(**kwargs)
-        self.value = value
-        self.type = type
+        self.value = kwargs.get('value', None)
+        self.type = kwargs.get('type', None)
 
 
 class Contact(Model):
@@ -3706,7 +3690,7 @@ class Contact(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param address_mailing: Mailing address.
-    :type address_mailing: ~azure.mgmt.web.v2020_09_01.models.Address
+    :type address_mailing: ~azure.mgmt.web.v2020_12_01.models.Address
     :param email: Required. Email address.
     :type email: str
     :param fax: Fax number.
@@ -3744,31 +3728,31 @@ class Contact(Model):
         'phone': {'key': 'phone', 'type': 'str'},
     }
 
-    def __init__(self, *, email: str, name_first: str, name_last: str, phone: str, address_mailing=None, fax: str=None, job_title: str=None, name_middle: str=None, organization: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Contact, self).__init__(**kwargs)
-        self.address_mailing = address_mailing
-        self.email = email
-        self.fax = fax
-        self.job_title = job_title
-        self.name_first = name_first
-        self.name_last = name_last
-        self.name_middle = name_middle
-        self.organization = organization
-        self.phone = phone
+        self.address_mailing = kwargs.get('address_mailing', None)
+        self.email = kwargs.get('email', None)
+        self.fax = kwargs.get('fax', None)
+        self.job_title = kwargs.get('job_title', None)
+        self.name_first = kwargs.get('name_first', None)
+        self.name_last = kwargs.get('name_last', None)
+        self.name_middle = kwargs.get('name_middle', None)
+        self.organization = kwargs.get('organization', None)
+        self.phone = kwargs.get('phone', None)
 
 
 class ContainerCpuStatistics(Model):
     """ContainerCpuStatistics.
 
     :param cpu_usage:
-    :type cpu_usage: ~azure.mgmt.web.v2020_09_01.models.ContainerCpuUsage
+    :type cpu_usage: ~azure.mgmt.web.v2020_12_01.models.ContainerCpuUsage
     :param system_cpu_usage:
     :type system_cpu_usage: long
     :param online_cpu_count:
     :type online_cpu_count: int
     :param throttling_data:
     :type throttling_data:
-     ~azure.mgmt.web.v2020_09_01.models.ContainerThrottlingData
+     ~azure.mgmt.web.v2020_12_01.models.ContainerThrottlingData
     """
 
     _attribute_map = {
@@ -3778,12 +3762,12 @@ class ContainerCpuStatistics(Model):
         'throttling_data': {'key': 'throttlingData', 'type': 'ContainerThrottlingData'},
     }
 
-    def __init__(self, *, cpu_usage=None, system_cpu_usage: int=None, online_cpu_count: int=None, throttling_data=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ContainerCpuStatistics, self).__init__(**kwargs)
-        self.cpu_usage = cpu_usage
-        self.system_cpu_usage = system_cpu_usage
-        self.online_cpu_count = online_cpu_count
-        self.throttling_data = throttling_data
+        self.cpu_usage = kwargs.get('cpu_usage', None)
+        self.system_cpu_usage = kwargs.get('system_cpu_usage', None)
+        self.online_cpu_count = kwargs.get('online_cpu_count', None)
+        self.throttling_data = kwargs.get('throttling_data', None)
 
 
 class ContainerCpuUsage(Model):
@@ -3806,12 +3790,12 @@ class ContainerCpuUsage(Model):
         'user_mode_usage': {'key': 'userModeUsage', 'type': 'long'},
     }
 
-    def __init__(self, *, total_usage: int=None, per_cpu_usage=None, kernel_mode_usage: int=None, user_mode_usage: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ContainerCpuUsage, self).__init__(**kwargs)
-        self.total_usage = total_usage
-        self.per_cpu_usage = per_cpu_usage
-        self.kernel_mode_usage = kernel_mode_usage
-        self.user_mode_usage = user_mode_usage
+        self.total_usage = kwargs.get('total_usage', None)
+        self.per_cpu_usage = kwargs.get('per_cpu_usage', None)
+        self.kernel_mode_usage = kwargs.get('kernel_mode_usage', None)
+        self.user_mode_usage = kwargs.get('user_mode_usage', None)
 
 
 class ContainerInfo(Model):
@@ -3823,20 +3807,20 @@ class ContainerInfo(Model):
     :type previous_time_stamp: datetime
     :param current_cpu_stats:
     :type current_cpu_stats:
-     ~azure.mgmt.web.v2020_09_01.models.ContainerCpuStatistics
+     ~azure.mgmt.web.v2020_12_01.models.ContainerCpuStatistics
     :param previous_cpu_stats:
     :type previous_cpu_stats:
-     ~azure.mgmt.web.v2020_09_01.models.ContainerCpuStatistics
+     ~azure.mgmt.web.v2020_12_01.models.ContainerCpuStatistics
     :param memory_stats:
     :type memory_stats:
-     ~azure.mgmt.web.v2020_09_01.models.ContainerMemoryStatistics
+     ~azure.mgmt.web.v2020_12_01.models.ContainerMemoryStatistics
     :param name:
     :type name: str
     :param id:
     :type id: str
     :param eth0:
     :type eth0:
-     ~azure.mgmt.web.v2020_09_01.models.ContainerNetworkInterfaceStatistics
+     ~azure.mgmt.web.v2020_12_01.models.ContainerNetworkInterfaceStatistics
     """
 
     _attribute_map = {
@@ -3850,16 +3834,16 @@ class ContainerInfo(Model):
         'eth0': {'key': 'eth0', 'type': 'ContainerNetworkInterfaceStatistics'},
     }
 
-    def __init__(self, *, current_time_stamp=None, previous_time_stamp=None, current_cpu_stats=None, previous_cpu_stats=None, memory_stats=None, name: str=None, id: str=None, eth0=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ContainerInfo, self).__init__(**kwargs)
-        self.current_time_stamp = current_time_stamp
-        self.previous_time_stamp = previous_time_stamp
-        self.current_cpu_stats = current_cpu_stats
-        self.previous_cpu_stats = previous_cpu_stats
-        self.memory_stats = memory_stats
-        self.name = name
-        self.id = id
-        self.eth0 = eth0
+        self.current_time_stamp = kwargs.get('current_time_stamp', None)
+        self.previous_time_stamp = kwargs.get('previous_time_stamp', None)
+        self.current_cpu_stats = kwargs.get('current_cpu_stats', None)
+        self.previous_cpu_stats = kwargs.get('previous_cpu_stats', None)
+        self.memory_stats = kwargs.get('memory_stats', None)
+        self.name = kwargs.get('name', None)
+        self.id = kwargs.get('id', None)
+        self.eth0 = kwargs.get('eth0', None)
 
 
 class ContainerMemoryStatistics(Model):
@@ -3879,11 +3863,11 @@ class ContainerMemoryStatistics(Model):
         'limit': {'key': 'limit', 'type': 'long'},
     }
 
-    def __init__(self, *, usage: int=None, max_usage: int=None, limit: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ContainerMemoryStatistics, self).__init__(**kwargs)
-        self.usage = usage
-        self.max_usage = max_usage
-        self.limit = limit
+        self.usage = kwargs.get('usage', None)
+        self.max_usage = kwargs.get('max_usage', None)
+        self.limit = kwargs.get('limit', None)
 
 
 class ContainerNetworkInterfaceStatistics(Model):
@@ -3918,16 +3902,16 @@ class ContainerNetworkInterfaceStatistics(Model):
         'tx_dropped': {'key': 'txDropped', 'type': 'long'},
     }
 
-    def __init__(self, *, rx_bytes: int=None, rx_packets: int=None, rx_errors: int=None, rx_dropped: int=None, tx_bytes: int=None, tx_packets: int=None, tx_errors: int=None, tx_dropped: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ContainerNetworkInterfaceStatistics, self).__init__(**kwargs)
-        self.rx_bytes = rx_bytes
-        self.rx_packets = rx_packets
-        self.rx_errors = rx_errors
-        self.rx_dropped = rx_dropped
-        self.tx_bytes = tx_bytes
-        self.tx_packets = tx_packets
-        self.tx_errors = tx_errors
-        self.tx_dropped = tx_dropped
+        self.rx_bytes = kwargs.get('rx_bytes', None)
+        self.rx_packets = kwargs.get('rx_packets', None)
+        self.rx_errors = kwargs.get('rx_errors', None)
+        self.rx_dropped = kwargs.get('rx_dropped', None)
+        self.tx_bytes = kwargs.get('tx_bytes', None)
+        self.tx_packets = kwargs.get('tx_packets', None)
+        self.tx_errors = kwargs.get('tx_errors', None)
+        self.tx_dropped = kwargs.get('tx_dropped', None)
 
 
 class ContainerThrottlingData(Model):
@@ -3947,11 +3931,11 @@ class ContainerThrottlingData(Model):
         'throttled_time': {'key': 'throttledTime', 'type': 'int'},
     }
 
-    def __init__(self, *, periods: int=None, throttled_periods: int=None, throttled_time: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ContainerThrottlingData, self).__init__(**kwargs)
-        self.periods = periods
-        self.throttled_periods = throttled_periods
-        self.throttled_time = throttled_time
+        self.periods = kwargs.get('periods', None)
+        self.throttled_periods = kwargs.get('throttled_periods', None)
+        self.throttled_time = kwargs.get('throttled_time', None)
 
 
 class ContinuousWebJob(ProxyOnlyResource):
@@ -3968,12 +3952,10 @@ class ContinuousWebJob(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param status: Job status. Possible values include: 'Initializing',
      'Starting', 'Running', 'PendingRestart', 'Stopped'
     :type status: str or
-     ~azure.mgmt.web.v2020_09_01.models.ContinuousWebJobStatus
+     ~azure.mgmt.web.v2020_12_01.models.ContinuousWebJobStatus
     :param detailed_status: Detailed status.
     :type detailed_status: str
     :param log_url: Log URL.
@@ -3986,7 +3968,7 @@ class ContinuousWebJob(ProxyOnlyResource):
     :type extra_info_url: str
     :param web_job_type: Job type. Possible values include: 'Continuous',
      'Triggered'
-    :type web_job_type: str or ~azure.mgmt.web.v2020_09_01.models.WebJobType
+    :type web_job_type: str or ~azure.mgmt.web.v2020_12_01.models.WebJobType
     :param error: Error information.
     :type error: str
     :param using_sdk: Using SDK?
@@ -4006,7 +3988,6 @@ class ContinuousWebJob(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'status': {'key': 'properties.status', 'type': 'ContinuousWebJobStatus'},
         'detailed_status': {'key': 'properties.detailed_status', 'type': 'str'},
         'log_url': {'key': 'properties.log_url', 'type': 'str'},
@@ -4019,22 +4000,22 @@ class ContinuousWebJob(ProxyOnlyResource):
         'settings': {'key': 'properties.settings', 'type': '{object}'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, status=None, detailed_status: str=None, log_url: str=None, run_command: str=None, url: str=None, extra_info_url: str=None, web_job_type=None, error: str=None, using_sdk: bool=None, settings=None, **kwargs) -> None:
-        super(ContinuousWebJob, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.status = status
-        self.detailed_status = detailed_status
-        self.log_url = log_url
-        self.run_command = run_command
-        self.url = url
-        self.extra_info_url = extra_info_url
-        self.web_job_type = web_job_type
-        self.error = error
-        self.using_sdk = using_sdk
-        self.settings = settings
+    def __init__(self, **kwargs):
+        super(ContinuousWebJob, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.detailed_status = kwargs.get('detailed_status', None)
+        self.log_url = kwargs.get('log_url', None)
+        self.run_command = kwargs.get('run_command', None)
+        self.url = kwargs.get('url', None)
+        self.extra_info_url = kwargs.get('extra_info_url', None)
+        self.web_job_type = kwargs.get('web_job_type', None)
+        self.error = kwargs.get('error', None)
+        self.using_sdk = kwargs.get('using_sdk', None)
+        self.settings = kwargs.get('settings', None)
 
 
 class CookieExpiration(ProxyOnlyResource):
-    """CookieExpiration.
+    """The configuration settings of the session cookie's expiration.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -4047,13 +4028,13 @@ class CookieExpiration(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param convention: Possible values include: 'FixedTime',
+    :param convention: The convention used when determining the session
+     cookie's expiration. Possible values include: 'FixedTime',
      'IdentityProviderDerived'
     :type convention: str or
-     ~azure.mgmt.web.v2020_09_01.models.CookieExpirationConvention
-    :param time_to_expiration:
+     ~azure.mgmt.web.v2020_12_01.models.CookieExpirationConvention
+    :param time_to_expiration: The time after the request is made when the
+     session cookie should expire.
     :type time_to_expiration: str
     """
 
@@ -4068,15 +4049,14 @@ class CookieExpiration(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'convention': {'key': 'properties.convention', 'type': 'CookieExpirationConvention'},
         'time_to_expiration': {'key': 'properties.timeToExpiration', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, convention=None, time_to_expiration: str=None, **kwargs) -> None:
-        super(CookieExpiration, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.convention = convention
-        self.time_to_expiration = time_to_expiration
+    def __init__(self, **kwargs):
+        super(CookieExpiration, self).__init__(**kwargs)
+        self.convention = kwargs.get('convention', None)
+        self.time_to_expiration = kwargs.get('time_to_expiration', None)
 
 
 class CorsSettings(Model):
@@ -4098,43 +4078,10 @@ class CorsSettings(Model):
         'support_credentials': {'key': 'supportCredentials', 'type': 'bool'},
     }
 
-    def __init__(self, *, allowed_origins=None, support_credentials: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CorsSettings, self).__init__(**kwargs)
-        self.allowed_origins = allowed_origins
-        self.support_credentials = support_credentials
-
-
-class CsmCopySlotEntity(Model):
-    """Copy deployment slot parameters.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param target_slot: Required. Destination deployment slot during copy
-     operation.
-    :type target_slot: str
-    :param site_config: Required. The site object which will be merged with
-     the source slot site
-     to produce new destination slot site object.
-     <code>null</code> to just copy source slot content. Otherwise a
-     <code>Site</code>
-     object with properties to override source slot site.
-    :type site_config: ~azure.mgmt.web.v2020_09_01.models.SiteConfig
-    """
-
-    _validation = {
-        'target_slot': {'required': True},
-        'site_config': {'required': True},
-    }
-
-    _attribute_map = {
-        'target_slot': {'key': 'targetSlot', 'type': 'str'},
-        'site_config': {'key': 'siteConfig', 'type': 'SiteConfig'},
-    }
-
-    def __init__(self, *, target_slot: str, site_config, **kwargs) -> None:
-        super(CsmCopySlotEntity, self).__init__(**kwargs)
-        self.target_slot = target_slot
-        self.site_config = site_config
+        self.allowed_origins = kwargs.get('allowed_origins', None)
+        self.support_credentials = kwargs.get('support_credentials', None)
 
 
 class CsmMoveResourceEnvelope(Model):
@@ -4156,10 +4103,10 @@ class CsmMoveResourceEnvelope(Model):
         'resources': {'key': 'resources', 'type': '[str]'},
     }
 
-    def __init__(self, *, target_resource_group: str=None, resources=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CsmMoveResourceEnvelope, self).__init__(**kwargs)
-        self.target_resource_group = target_resource_group
-        self.resources = resources
+        self.target_resource_group = kwargs.get('target_resource_group', None)
+        self.resources = kwargs.get('resources', None)
 
 
 class CsmOperationDescription(Model):
@@ -4168,12 +4115,12 @@ class CsmOperationDescription(Model):
     :param name:
     :type name: str
     :param display:
-    :type display: ~azure.mgmt.web.v2020_09_01.models.CsmOperationDisplay
+    :type display: ~azure.mgmt.web.v2020_12_01.models.CsmOperationDisplay
     :param origin:
     :type origin: str
     :param properties:
     :type properties:
-     ~azure.mgmt.web.v2020_09_01.models.CsmOperationDescriptionProperties
+     ~azure.mgmt.web.v2020_12_01.models.CsmOperationDescriptionProperties
     """
 
     _attribute_map = {
@@ -4183,12 +4130,12 @@ class CsmOperationDescription(Model):
         'properties': {'key': 'properties', 'type': 'CsmOperationDescriptionProperties'},
     }
 
-    def __init__(self, *, name: str=None, display=None, origin: str=None, properties=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CsmOperationDescription, self).__init__(**kwargs)
-        self.name = name
-        self.display = display
-        self.origin = origin
-        self.properties = properties
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)
+        self.properties = kwargs.get('properties', None)
 
 
 class CsmOperationDescriptionProperties(Model):
@@ -4196,16 +4143,16 @@ class CsmOperationDescriptionProperties(Model):
 
     :param service_specification:
     :type service_specification:
-     ~azure.mgmt.web.v2020_09_01.models.ServiceSpecification
+     ~azure.mgmt.web.v2020_12_01.models.ServiceSpecification
     """
 
     _attribute_map = {
         'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
     }
 
-    def __init__(self, *, service_specification=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CsmOperationDescriptionProperties, self).__init__(**kwargs)
-        self.service_specification = service_specification
+        self.service_specification = kwargs.get('service_specification', None)
 
 
 class CsmOperationDisplay(Model):
@@ -4228,12 +4175,12 @@ class CsmOperationDisplay(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, provider: str=None, resource: str=None, operation: str=None, description: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CsmOperationDisplay, self).__init__(**kwargs)
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+        self.provider = kwargs.get('provider', None)
+        self.resource = kwargs.get('resource', None)
+        self.operation = kwargs.get('operation', None)
+        self.description = kwargs.get('description', None)
 
 
 class CsmPublishingCredentialsPoliciesCollection(ProxyOnlyResource):
@@ -4252,14 +4199,12 @@ class CsmPublishingCredentialsPoliciesCollection(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param ftp: Required. Whether FTP is allowed.
     :type ftp:
-     ~azure.mgmt.web.v2020_09_01.models.CsmPublishingCredentialsPoliciesEntity
+     ~azure.mgmt.web.v2020_12_01.models.CsmPublishingCredentialsPoliciesEntity
     :param scm: Required. Whether Scm Basic Auth is allowed.
     :type scm:
-     ~azure.mgmt.web.v2020_09_01.models.CsmPublishingCredentialsPoliciesEntity
+     ~azure.mgmt.web.v2020_12_01.models.CsmPublishingCredentialsPoliciesEntity
     """
 
     _validation = {
@@ -4275,15 +4220,14 @@ class CsmPublishingCredentialsPoliciesCollection(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'ftp': {'key': 'properties.ftp', 'type': 'CsmPublishingCredentialsPoliciesEntity'},
         'scm': {'key': 'properties.scm', 'type': 'CsmPublishingCredentialsPoliciesEntity'},
     }
 
-    def __init__(self, *, ftp, scm, kind: str=None, system_data=None, **kwargs) -> None:
-        super(CsmPublishingCredentialsPoliciesCollection, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.ftp = ftp
-        self.scm = scm
+    def __init__(self, **kwargs):
+        super(CsmPublishingCredentialsPoliciesCollection, self).__init__(**kwargs)
+        self.ftp = kwargs.get('ftp', None)
+        self.scm = kwargs.get('scm', None)
 
 
 class CsmPublishingCredentialsPoliciesEntity(ProxyOnlyResource):
@@ -4302,8 +4246,6 @@ class CsmPublishingCredentialsPoliciesEntity(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param allow: Required. <code>true</code> to allow access to a publishing
      method; otherwise, <code>false</code>.
     :type allow: bool
@@ -4321,13 +4263,12 @@ class CsmPublishingCredentialsPoliciesEntity(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'allow': {'key': 'properties.allow', 'type': 'bool'},
     }
 
-    def __init__(self, *, allow: bool, kind: str=None, system_data=None, **kwargs) -> None:
-        super(CsmPublishingCredentialsPoliciesEntity, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.allow = allow
+    def __init__(self, **kwargs):
+        super(CsmPublishingCredentialsPoliciesEntity, self).__init__(**kwargs)
+        self.allow = kwargs.get('allow', None)
 
 
 class CsmPublishingProfileOptions(Model):
@@ -4338,7 +4279,7 @@ class CsmPublishingProfileOptions(Model):
      WebDeploy -- default
      Ftp. Possible values include: 'FileZilla3', 'WebDeploy', 'Ftp'
     :type format: str or
-     ~azure.mgmt.web.v2020_09_01.models.PublishingProfileFormat
+     ~azure.mgmt.web.v2020_12_01.models.PublishingProfileFormat
     :param include_disaster_recovery_endpoints: Include the DisasterRecover
      endpoint if true
     :type include_disaster_recovery_endpoints: bool
@@ -4349,10 +4290,10 @@ class CsmPublishingProfileOptions(Model):
         'include_disaster_recovery_endpoints': {'key': 'includeDisasterRecoveryEndpoints', 'type': 'bool'},
     }
 
-    def __init__(self, *, format=None, include_disaster_recovery_endpoints: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CsmPublishingProfileOptions, self).__init__(**kwargs)
-        self.format = format
-        self.include_disaster_recovery_endpoints = include_disaster_recovery_endpoints
+        self.format = kwargs.get('format', None)
+        self.include_disaster_recovery_endpoints = kwargs.get('include_disaster_recovery_endpoints', None)
 
 
 class CsmSlotEntity(Model):
@@ -4378,10 +4319,10 @@ class CsmSlotEntity(Model):
         'preserve_vnet': {'key': 'preserveVnet', 'type': 'bool'},
     }
 
-    def __init__(self, *, target_slot: str, preserve_vnet: bool, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CsmSlotEntity, self).__init__(**kwargs)
-        self.target_slot = target_slot
-        self.preserve_vnet = preserve_vnet
+        self.target_slot = kwargs.get('target_slot', None)
+        self.preserve_vnet = kwargs.get('preserve_vnet', None)
 
 
 class CsmUsageQuota(Model):
@@ -4396,7 +4337,7 @@ class CsmUsageQuota(Model):
     :param limit: The resource limit.
     :type limit: long
     :param name: Quota name.
-    :type name: ~azure.mgmt.web.v2020_09_01.models.LocalizableString
+    :type name: ~azure.mgmt.web.v2020_12_01.models.LocalizableString
     """
 
     _attribute_map = {
@@ -4407,13 +4348,13 @@ class CsmUsageQuota(Model):
         'name': {'key': 'name', 'type': 'LocalizableString'},
     }
 
-    def __init__(self, *, unit: str=None, next_reset_time=None, current_value: int=None, limit: int=None, name=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CsmUsageQuota, self).__init__(**kwargs)
-        self.unit = unit
-        self.next_reset_time = next_reset_time
-        self.current_value = current_value
-        self.limit = limit
-        self.name = name
+        self.unit = kwargs.get('unit', None)
+        self.next_reset_time = kwargs.get('next_reset_time', None)
+        self.current_value = kwargs.get('current_value', None)
+        self.limit = kwargs.get('limit', None)
+        self.name = kwargs.get('name', None)
 
 
 class CustomHostnameAnalysisResult(ProxyOnlyResource):
@@ -4430,19 +4371,17 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar is_hostname_already_verified: <code>true</code> if hostname is
      already verified; otherwise, <code>false</code>.
     :vartype is_hostname_already_verified: bool
     :ivar custom_domain_verification_test: DNS verification test result.
      Possible values include: 'Passed', 'Failed', 'Skipped'
     :vartype custom_domain_verification_test: str or
-     ~azure.mgmt.web.v2020_09_01.models.DnsVerificationTestResult
+     ~azure.mgmt.web.v2020_12_01.models.DnsVerificationTestResult
     :ivar custom_domain_verification_failure_info: Raw failure information if
      DNS verification fails.
     :vartype custom_domain_verification_failure_info:
-     ~azure.mgmt.web.v2020_09_01.models.ErrorEntity
+     ~azure.mgmt.web.v2020_12_01.models.ErrorEntity
     :ivar has_conflict_on_scale_unit: <code>true</code> if there is a conflict
      on a scale unit; otherwise, <code>false</code>.
     :vartype has_conflict_on_scale_unit: bool
@@ -4483,7 +4422,6 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'is_hostname_already_verified': {'key': 'properties.isHostnameAlreadyVerified', 'type': 'bool'},
         'custom_domain_verification_test': {'key': 'properties.customDomainVerificationTest', 'type': 'DnsVerificationTestResult'},
         'custom_domain_verification_failure_info': {'key': 'properties.customDomainVerificationFailureInfo', 'type': 'ErrorEntity'},
@@ -4497,23 +4435,23 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
         'alternate_txt_records': {'key': 'properties.alternateTxtRecords', 'type': '[str]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, c_name_records=None, txt_records=None, a_records=None, alternate_cname_records=None, alternate_txt_records=None, **kwargs) -> None:
-        super(CustomHostnameAnalysisResult, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(CustomHostnameAnalysisResult, self).__init__(**kwargs)
         self.is_hostname_already_verified = None
         self.custom_domain_verification_test = None
         self.custom_domain_verification_failure_info = None
         self.has_conflict_on_scale_unit = None
         self.has_conflict_across_subscription = None
         self.conflicting_app_resource_id = None
-        self.c_name_records = c_name_records
-        self.txt_records = txt_records
-        self.a_records = a_records
-        self.alternate_cname_records = alternate_cname_records
-        self.alternate_txt_records = alternate_txt_records
+        self.c_name_records = kwargs.get('c_name_records', None)
+        self.txt_records = kwargs.get('txt_records', None)
+        self.a_records = kwargs.get('a_records', None)
+        self.alternate_cname_records = kwargs.get('alternate_cname_records', None)
+        self.alternate_txt_records = kwargs.get('alternate_txt_records', None)
 
 
 class CustomOpenIdConnectProvider(ProxyOnlyResource):
-    """CustomOpenIdConnectProvider.
+    """The configuration settings of the custom Open ID Connect provider.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -4526,15 +4464,16 @@ class CustomOpenIdConnectProvider(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param enabled:
+    :param enabled: <code>false</code> if the custom Open ID provider provider
+     should not be enabled; otherwise, <code>true</code>.
     :type enabled: bool
-    :param registration:
+    :param registration: The configuration settings of the app registration
+     for the custom Open ID Connect provider.
     :type registration:
-     ~azure.mgmt.web.v2020_09_01.models.OpenIdConnectRegistration
-    :param login:
-    :type login: ~azure.mgmt.web.v2020_09_01.models.OpenIdConnectLogin
+     ~azure.mgmt.web.v2020_12_01.models.OpenIdConnectRegistration
+    :param login: The configuration settings of the login flow of the custom
+     Open ID Connect provider.
+    :type login: ~azure.mgmt.web.v2020_12_01.models.OpenIdConnectLogin
     """
 
     _validation = {
@@ -4548,17 +4487,16 @@ class CustomOpenIdConnectProvider(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'registration': {'key': 'properties.registration', 'type': 'OpenIdConnectRegistration'},
         'login': {'key': 'properties.login', 'type': 'OpenIdConnectLogin'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, enabled: bool=None, registration=None, login=None, **kwargs) -> None:
-        super(CustomOpenIdConnectProvider, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.enabled = enabled
-        self.registration = registration
-        self.login = login
+    def __init__(self, **kwargs):
+        super(CustomOpenIdConnectProvider, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.registration = kwargs.get('registration', None)
+        self.login = kwargs.get('login', None)
 
 
 class DatabaseBackupSetting(Model):
@@ -4569,7 +4507,7 @@ class DatabaseBackupSetting(Model):
     :param database_type: Required. Database type (e.g. SqlAzure / MySql).
      Possible values include: 'SqlAzure', 'MySql', 'LocalMySql', 'PostgreSql'
     :type database_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.DatabaseType
+     ~azure.mgmt.web.v2020_12_01.models.DatabaseType
     :param name:
     :type name: str
     :param connection_string_name: Contains a connection string name that is
@@ -4593,12 +4531,40 @@ class DatabaseBackupSetting(Model):
         'connection_string': {'key': 'connectionString', 'type': 'str'},
     }
 
-    def __init__(self, *, database_type, name: str=None, connection_string_name: str=None, connection_string: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DatabaseBackupSetting, self).__init__(**kwargs)
-        self.database_type = database_type
-        self.name = name
-        self.connection_string_name = connection_string_name
-        self.connection_string = connection_string
+        self.database_type = kwargs.get('database_type', None)
+        self.name = kwargs.get('name', None)
+        self.connection_string_name = kwargs.get('connection_string_name', None)
+        self.connection_string = kwargs.get('connection_string', None)
+
+
+class DataProviderMetadata(Model):
+    """Additional configuration for a data providers.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param provider_name:
+    :type provider_name: str
+    :ivar property_bag: Settings for the data provider
+    :vartype property_bag:
+     list[~azure.mgmt.web.v2020_12_01.models.KeyValuePairStringObject]
+    """
+
+    _validation = {
+        'property_bag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provider_name': {'key': 'providerName', 'type': 'str'},
+        'property_bag': {'key': 'propertyBag', 'type': '[KeyValuePairStringObject]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataProviderMetadata, self).__init__(**kwargs)
+        self.provider_name = kwargs.get('provider_name', None)
+        self.property_bag = None
 
 
 class DataSource(Model):
@@ -4608,7 +4574,7 @@ class DataSource(Model):
     :type instructions: list[str]
     :param data_source_uri: Datasource Uri Links
     :type data_source_uri:
-     list[~azure.mgmt.web.v2020_09_01.models.NameValuePair]
+     list[~azure.mgmt.web.v2020_12_01.models.NameValuePair]
     """
 
     _attribute_map = {
@@ -4616,10 +4582,10 @@ class DataSource(Model):
         'data_source_uri': {'key': 'dataSourceUri', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, *, instructions=None, data_source_uri=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DataSource, self).__init__(**kwargs)
-        self.instructions = instructions
-        self.data_source_uri = data_source_uri
+        self.instructions = kwargs.get('instructions', None)
+        self.data_source_uri = kwargs.get('data_source_uri', None)
 
 
 class DataTableResponseColumn(Model):
@@ -4639,11 +4605,11 @@ class DataTableResponseColumn(Model):
         'column_type': {'key': 'columnType', 'type': 'str'},
     }
 
-    def __init__(self, *, column_name: str=None, data_type: str=None, column_type: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DataTableResponseColumn, self).__init__(**kwargs)
-        self.column_name = column_name
-        self.data_type = data_type
-        self.column_type = column_type
+        self.column_name = kwargs.get('column_name', None)
+        self.data_type = kwargs.get('data_type', None)
+        self.column_type = kwargs.get('column_type', None)
 
 
 class DataTableResponseObject(Model):
@@ -4653,7 +4619,7 @@ class DataTableResponseObject(Model):
     :type table_name: str
     :param columns: List of columns with data types
     :type columns:
-     list[~azure.mgmt.web.v2020_09_01.models.DataTableResponseColumn]
+     list[~azure.mgmt.web.v2020_12_01.models.DataTableResponseColumn]
     :param rows: Raw row values
     :type rows: list[list[str]]
     """
@@ -4664,11 +4630,11 @@ class DataTableResponseObject(Model):
         'rows': {'key': 'rows', 'type': '[[str]]'},
     }
 
-    def __init__(self, *, table_name: str=None, columns=None, rows=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DataTableResponseObject, self).__init__(**kwargs)
-        self.table_name = table_name
-        self.columns = columns
-        self.rows = rows
+        self.table_name = kwargs.get('table_name', None)
+        self.columns = kwargs.get('columns', None)
+        self.rows = kwargs.get('rows', None)
 
 
 class DefaultErrorResponse(Model):
@@ -4679,7 +4645,7 @@ class DefaultErrorResponse(Model):
 
     :ivar error: Error model.
     :vartype error:
-     ~azure.mgmt.web.v2020_09_01.models.DefaultErrorResponseError
+     ~azure.mgmt.web.v2020_12_01.models.DefaultErrorResponseError
     """
 
     _validation = {
@@ -4690,7 +4656,7 @@ class DefaultErrorResponse(Model):
         'error': {'key': 'error', 'type': 'DefaultErrorResponseError'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DefaultErrorResponse, self).__init__(**kwargs)
         self.error = None
 
@@ -4721,7 +4687,7 @@ class DefaultErrorResponseError(Model):
     :vartype target: str
     :param details:
     :type details:
-     list[~azure.mgmt.web.v2020_09_01.models.DefaultErrorResponseErrorDetailsItem]
+     list[~azure.mgmt.web.v2020_12_01.models.DefaultErrorResponseErrorDetailsItem]
     :ivar innererror: More information to debug error.
     :vartype innererror: str
     """
@@ -4741,12 +4707,12 @@ class DefaultErrorResponseError(Model):
         'innererror': {'key': 'innererror', 'type': 'str'},
     }
 
-    def __init__(self, *, details=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DefaultErrorResponseError, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
-        self.details = details
+        self.details = kwargs.get('details', None)
         self.innererror = None
 
 
@@ -4776,7 +4742,7 @@ class DefaultErrorResponseErrorDetailsItem(Model):
         'target': {'key': 'target', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DefaultErrorResponseErrorDetailsItem, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -4797,8 +4763,6 @@ class DeletedAppRestoreRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param deleted_site_id: ARM resource ID of the deleted app. Example:
      /subscriptions/{subId}/providers/Microsoft.Web/deletedSites/{deletedSiteId}
     :type deleted_site_id: str
@@ -4825,19 +4789,18 @@ class DeletedAppRestoreRequest(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'deleted_site_id': {'key': 'properties.deletedSiteId', 'type': 'str'},
         'recover_configuration': {'key': 'properties.recoverConfiguration', 'type': 'bool'},
         'snapshot_time': {'key': 'properties.snapshotTime', 'type': 'str'},
         'use_dr_secondary': {'key': 'properties.useDRSecondary', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, deleted_site_id: str=None, recover_configuration: bool=None, snapshot_time: str=None, use_dr_secondary: bool=None, **kwargs) -> None:
-        super(DeletedAppRestoreRequest, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.deleted_site_id = deleted_site_id
-        self.recover_configuration = recover_configuration
-        self.snapshot_time = snapshot_time
-        self.use_dr_secondary = use_dr_secondary
+    def __init__(self, **kwargs):
+        super(DeletedAppRestoreRequest, self).__init__(**kwargs)
+        self.deleted_site_id = kwargs.get('deleted_site_id', None)
+        self.recover_configuration = kwargs.get('recover_configuration', None)
+        self.snapshot_time = kwargs.get('snapshot_time', None)
+        self.use_dr_secondary = kwargs.get('use_dr_secondary', None)
 
 
 class DeletedSite(ProxyOnlyResource):
@@ -4854,8 +4817,6 @@ class DeletedSite(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar deleted_site_id: Numeric id for the deleted site
     :vartype deleted_site_id: int
     :ivar deleted_timestamp: Time in UTC when the app was deleted.
@@ -4893,7 +4854,6 @@ class DeletedSite(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'deleted_site_id': {'key': 'properties.deletedSiteId', 'type': 'int'},
         'deleted_timestamp': {'key': 'properties.deletedTimestamp', 'type': 'str'},
         'subscription': {'key': 'properties.subscription', 'type': 'str'},
@@ -4904,8 +4864,8 @@ class DeletedSite(ProxyOnlyResource):
         'geo_region_name': {'key': 'properties.geoRegionName', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(DeletedSite, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(DeletedSite, self).__init__(**kwargs)
         self.deleted_site_id = None
         self.deleted_timestamp = None
         self.subscription = None
@@ -4930,8 +4890,6 @@ class Deployment(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param status: Deployment status.
     :type status: int
     :param message: Details about deployment status.
@@ -4964,7 +4922,6 @@ class Deployment(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'status': {'key': 'properties.status', 'type': 'int'},
         'message': {'key': 'properties.message', 'type': 'str'},
         'author': {'key': 'properties.author', 'type': 'str'},
@@ -4976,17 +4933,17 @@ class Deployment(ProxyOnlyResource):
         'details': {'key': 'properties.details', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, status: int=None, message: str=None, author: str=None, deployer: str=None, author_email: str=None, start_time=None, end_time=None, active: bool=None, details: str=None, **kwargs) -> None:
-        super(Deployment, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.status = status
-        self.message = message
-        self.author = author
-        self.deployer = deployer
-        self.author_email = author_email
-        self.start_time = start_time
-        self.end_time = end_time
-        self.active = active
-        self.details = details
+    def __init__(self, **kwargs):
+        super(Deployment, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.message = kwargs.get('message', None)
+        self.author = kwargs.get('author', None)
+        self.deployer = kwargs.get('deployer', None)
+        self.author_email = kwargs.get('author_email', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.active = kwargs.get('active', None)
+        self.details = kwargs.get('details', None)
 
 
 class DeploymentLocations(Model):
@@ -4994,15 +4951,15 @@ class DeploymentLocations(Model):
     deployment of App Service resources.
 
     :param locations: Available regions.
-    :type locations: list[~azure.mgmt.web.v2020_09_01.models.GeoRegion]
+    :type locations: list[~azure.mgmt.web.v2020_12_01.models.GeoRegion]
     :param hosting_environments: Available App Service Environments with full
      descriptions of the environments.
     :type hosting_environments:
-     list[~azure.mgmt.web.v2020_09_01.models.AppServiceEnvironment]
+     list[~azure.mgmt.web.v2020_12_01.models.AppServiceEnvironment]
     :param hosting_environment_deployment_infos: Available App Service
      Environments with basic information.
     :type hosting_environment_deployment_infos:
-     list[~azure.mgmt.web.v2020_09_01.models.HostingEnvironmentDeploymentInfo]
+     list[~azure.mgmt.web.v2020_12_01.models.HostingEnvironmentDeploymentInfo]
     """
 
     _attribute_map = {
@@ -5011,11 +4968,11 @@ class DeploymentLocations(Model):
         'hosting_environment_deployment_infos': {'key': 'hostingEnvironmentDeploymentInfos', 'type': '[HostingEnvironmentDeploymentInfo]'},
     }
 
-    def __init__(self, *, locations=None, hosting_environments=None, hosting_environment_deployment_infos=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DeploymentLocations, self).__init__(**kwargs)
-        self.locations = locations
-        self.hosting_environments = hosting_environments
-        self.hosting_environment_deployment_infos = hosting_environment_deployment_infos
+        self.locations = kwargs.get('locations', None)
+        self.hosting_environments = kwargs.get('hosting_environments', None)
+        self.hosting_environment_deployment_infos = kwargs.get('hosting_environment_deployment_infos', None)
 
 
 class DetectorAbnormalTimePeriod(Model):
@@ -5033,13 +4990,13 @@ class DetectorAbnormalTimePeriod(Model):
     :type priority: float
     :param meta_data: Downtime metadata
     :type meta_data:
-     list[list[~azure.mgmt.web.v2020_09_01.models.NameValuePair]]
+     list[list[~azure.mgmt.web.v2020_12_01.models.NameValuePair]]
     :param type: Represents the type of the Detector. Possible values include:
      'ServiceIncident', 'AppDeployment', 'AppCrash', 'RuntimeIssueDetected',
      'AseDeployment', 'UserIssue', 'PlatformIssue', 'Other'
-    :type type: str or ~azure.mgmt.web.v2020_09_01.models.IssueType
+    :type type: str or ~azure.mgmt.web.v2020_12_01.models.IssueType
     :param solutions: List of proposed solutions
-    :type solutions: list[~azure.mgmt.web.v2020_09_01.models.Solution]
+    :type solutions: list[~azure.mgmt.web.v2020_12_01.models.Solution]
     """
 
     _attribute_map = {
@@ -5053,16 +5010,16 @@ class DetectorAbnormalTimePeriod(Model):
         'solutions': {'key': 'solutions', 'type': '[Solution]'},
     }
 
-    def __init__(self, *, start_time=None, end_time=None, message: str=None, source: str=None, priority: float=None, meta_data=None, type=None, solutions=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DetectorAbnormalTimePeriod, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.message = message
-        self.source = source
-        self.priority = priority
-        self.meta_data = meta_data
-        self.type = type
-        self.solutions = solutions
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.message = kwargs.get('message', None)
+        self.source = kwargs.get('source', None)
+        self.priority = kwargs.get('priority', None)
+        self.meta_data = kwargs.get('meta_data', None)
+        self.type = kwargs.get('type', None)
+        self.solutions = kwargs.get('solutions', None)
 
 
 class DetectorDefinition(ProxyOnlyResource):
@@ -5079,8 +5036,6 @@ class DetectorDefinition(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar display_name: Display name of the detector
     :vartype display_name: str
     :ivar description: Description of the detector
@@ -5106,15 +5061,14 @@ class DetectorDefinition(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'rank': {'key': 'properties.rank', 'type': 'float'},
         'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(DetectorDefinition, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(DetectorDefinition, self).__init__(**kwargs)
         self.display_name = None
         self.description = None
         self.rank = None
@@ -5127,36 +5081,66 @@ class DetectorInfo(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar description: Short description of the detector and its purpose
+    :ivar id: Id of detector
+    :vartype id: str
+    :ivar name: Name of detector
+    :vartype name: str
+    :ivar description: Short description of the detector and its purpose.
     :vartype description: str
-    :ivar category: Support Category
+    :ivar author: Author of the detector.
+    :vartype author: str
+    :ivar category: Problem category. This serves for organizing group for
+     detectors.
     :vartype category: str
-    :ivar sub_category: Support Sub Category
-    :vartype sub_category: str
-    :ivar support_topic_id: Support Topic Id
-    :vartype support_topic_id: str
+    :ivar support_topic_list: List of Support Topics for which this detector
+     is enabled.
+    :vartype support_topic_list:
+     list[~azure.mgmt.web.v2020_12_01.models.SupportTopic]
+    :ivar analysis_type: Analysis Types for which this detector should apply
+     to.
+    :vartype analysis_type: list[str]
+    :ivar type: Whether this detector is an Analysis Detector or not. Possible
+     values include: 'Detector', 'Analysis', 'CategoryOverview'
+    :vartype type: str or ~azure.mgmt.web.v2020_12_01.models.DetectorType
+    :ivar score: Defines score of a detector to power ML based matching.
+    :vartype score: float
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
         'description': {'readonly': True},
+        'author': {'readonly': True},
         'category': {'readonly': True},
-        'sub_category': {'readonly': True},
-        'support_topic_id': {'readonly': True},
+        'support_topic_list': {'readonly': True},
+        'analysis_type': {'readonly': True},
+        'type': {'readonly': True},
+        'score': {'readonly': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
+        'author': {'key': 'author', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
-        'sub_category': {'key': 'subCategory', 'type': 'str'},
-        'support_topic_id': {'key': 'supportTopicId', 'type': 'str'},
+        'support_topic_list': {'key': 'supportTopicList', 'type': '[SupportTopic]'},
+        'analysis_type': {'key': 'analysisType', 'type': '[str]'},
+        'type': {'key': 'type', 'type': 'DetectorType'},
+        'score': {'key': 'score', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DetectorInfo, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
         self.description = None
+        self.author = None
         self.category = None
-        self.sub_category = None
-        self.support_topic_id = None
+        self.support_topic_list = None
+        self.analysis_type = None
+        self.type = None
+        self.score = None
 
 
 class DetectorResponse(ProxyOnlyResource):
@@ -5173,12 +5157,20 @@ class DetectorResponse(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param metadata: metadata for the detector
-    :type metadata: ~azure.mgmt.web.v2020_09_01.models.DetectorInfo
+    :type metadata: ~azure.mgmt.web.v2020_12_01.models.DetectorInfo
     :param dataset: Data Set
-    :type dataset: list[~azure.mgmt.web.v2020_09_01.models.DiagnosticData]
+    :type dataset: list[~azure.mgmt.web.v2020_12_01.models.DiagnosticData]
+    :param status: Indicates status of the most severe insight.
+    :type status: ~azure.mgmt.web.v2020_12_01.models.Status
+    :param data_providers_metadata: Additional configuration for different
+     data providers to be used by the UI
+    :type data_providers_metadata:
+     list[~azure.mgmt.web.v2020_12_01.models.DataProviderMetadata]
+    :param suggested_utterances: Suggested utterances where the detector can
+     be applicable.
+    :type suggested_utterances:
+     ~azure.mgmt.web.v2020_12_01.models.QueryUtterancesResults
     """
 
     _validation = {
@@ -5192,15 +5184,20 @@ class DetectorResponse(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'metadata': {'key': 'properties.metadata', 'type': 'DetectorInfo'},
         'dataset': {'key': 'properties.dataset', 'type': '[DiagnosticData]'},
+        'status': {'key': 'properties.status', 'type': 'Status'},
+        'data_providers_metadata': {'key': 'properties.dataProvidersMetadata', 'type': '[DataProviderMetadata]'},
+        'suggested_utterances': {'key': 'properties.suggestedUtterances', 'type': 'QueryUtterancesResults'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, metadata=None, dataset=None, **kwargs) -> None:
-        super(DetectorResponse, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.metadata = metadata
-        self.dataset = dataset
+    def __init__(self, **kwargs):
+        super(DetectorResponse, self).__init__(**kwargs)
+        self.metadata = kwargs.get('metadata', None)
+        self.dataset = kwargs.get('dataset', None)
+        self.status = kwargs.get('status', None)
+        self.data_providers_metadata = kwargs.get('data_providers_metadata', None)
+        self.suggested_utterances = kwargs.get('suggested_utterances', None)
 
 
 class DiagnosticAnalysis(ProxyOnlyResource):
@@ -5217,21 +5214,19 @@ class DiagnosticAnalysis(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param start_time: Start time of the period
     :type start_time: datetime
     :param end_time: End time of the period
     :type end_time: datetime
     :param abnormal_time_periods: List of time periods.
     :type abnormal_time_periods:
-     list[~azure.mgmt.web.v2020_09_01.models.AbnormalTimePeriod]
+     list[~azure.mgmt.web.v2020_12_01.models.AbnormalTimePeriod]
     :param payload: Data by each detector
-    :type payload: list[~azure.mgmt.web.v2020_09_01.models.AnalysisData]
+    :type payload: list[~azure.mgmt.web.v2020_12_01.models.AnalysisData]
     :param non_correlated_detectors: Data by each detector for detectors that
      did not corelate
     :type non_correlated_detectors:
-     list[~azure.mgmt.web.v2020_09_01.models.DetectorDefinition]
+     list[~azure.mgmt.web.v2020_12_01.models.DetectorDefinition]
     """
 
     _validation = {
@@ -5245,7 +5240,6 @@ class DiagnosticAnalysis(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
         'abnormal_time_periods': {'key': 'properties.abnormalTimePeriods', 'type': '[AbnormalTimePeriod]'},
@@ -5253,13 +5247,13 @@ class DiagnosticAnalysis(ProxyOnlyResource):
         'non_correlated_detectors': {'key': 'properties.nonCorrelatedDetectors', 'type': '[DetectorDefinition]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, start_time=None, end_time=None, abnormal_time_periods=None, payload=None, non_correlated_detectors=None, **kwargs) -> None:
-        super(DiagnosticAnalysis, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.abnormal_time_periods = abnormal_time_periods
-        self.payload = payload
-        self.non_correlated_detectors = non_correlated_detectors
+    def __init__(self, **kwargs):
+        super(DiagnosticAnalysis, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.abnormal_time_periods = kwargs.get('abnormal_time_periods', None)
+        self.payload = kwargs.get('payload', None)
+        self.non_correlated_detectors = kwargs.get('non_correlated_detectors', None)
 
 
 class DiagnosticCategory(ProxyOnlyResource):
@@ -5276,8 +5270,6 @@ class DiagnosticCategory(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar description: Description of the diagnostic category
     :vartype description: str
     """
@@ -5294,12 +5286,11 @@ class DiagnosticCategory(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(DiagnosticCategory, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(DiagnosticCategory, self).__init__(**kwargs)
         self.description = None
 
 
@@ -5307,10 +5298,10 @@ class DiagnosticData(Model):
     """Set of data with rendering instructions.
 
     :param table: Data in table form
-    :type table: ~azure.mgmt.web.v2020_09_01.models.DataTableResponseObject
+    :type table: ~azure.mgmt.web.v2020_12_01.models.DataTableResponseObject
     :param rendering_properties: Properties that describe how the table should
      be rendered
-    :type rendering_properties: ~azure.mgmt.web.v2020_09_01.models.Rendering
+    :type rendering_properties: ~azure.mgmt.web.v2020_12_01.models.Rendering
     """
 
     _attribute_map = {
@@ -5318,10 +5309,10 @@ class DiagnosticData(Model):
         'rendering_properties': {'key': 'renderingProperties', 'type': 'Rendering'},
     }
 
-    def __init__(self, *, table=None, rendering_properties=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DiagnosticData, self).__init__(**kwargs)
-        self.table = table
-        self.rendering_properties = rendering_properties
+        self.table = kwargs.get('table', None)
+        self.rendering_properties = kwargs.get('rendering_properties', None)
 
 
 class DiagnosticDetectorResponse(ProxyOnlyResource):
@@ -5338,8 +5329,6 @@ class DiagnosticDetectorResponse(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param start_time: Start time of the period
     :type start_time: datetime
     :param end_time: End time of the period
@@ -5348,19 +5337,19 @@ class DiagnosticDetectorResponse(ProxyOnlyResource):
     :type issue_detected: bool
     :param detector_definition: Detector's definition
     :type detector_definition:
-     ~azure.mgmt.web.v2020_09_01.models.DetectorDefinition
+     ~azure.mgmt.web.v2020_12_01.models.DetectorDefinition
     :param metrics: Metrics provided by the detector
     :type metrics:
-     list[~azure.mgmt.web.v2020_09_01.models.DiagnosticMetricSet]
+     list[~azure.mgmt.web.v2020_12_01.models.DiagnosticMetricSet]
     :param abnormal_time_periods: List of Correlated events found by the
      detector
     :type abnormal_time_periods:
-     list[~azure.mgmt.web.v2020_09_01.models.DetectorAbnormalTimePeriod]
+     list[~azure.mgmt.web.v2020_12_01.models.DetectorAbnormalTimePeriod]
     :param data: Additional Data that detector wants to send.
-    :type data: list[list[~azure.mgmt.web.v2020_09_01.models.NameValuePair]]
+    :type data: list[list[~azure.mgmt.web.v2020_12_01.models.NameValuePair]]
     :param response_meta_data: Meta Data
     :type response_meta_data:
-     ~azure.mgmt.web.v2020_09_01.models.ResponseMetaData
+     ~azure.mgmt.web.v2020_12_01.models.ResponseMetaData
     """
 
     _validation = {
@@ -5374,7 +5363,6 @@ class DiagnosticDetectorResponse(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
         'issue_detected': {'key': 'properties.issueDetected', 'type': 'bool'},
@@ -5385,16 +5373,16 @@ class DiagnosticDetectorResponse(ProxyOnlyResource):
         'response_meta_data': {'key': 'properties.responseMetaData', 'type': 'ResponseMetaData'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, start_time=None, end_time=None, issue_detected: bool=None, detector_definition=None, metrics=None, abnormal_time_periods=None, data=None, response_meta_data=None, **kwargs) -> None:
-        super(DiagnosticDetectorResponse, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.issue_detected = issue_detected
-        self.detector_definition = detector_definition
-        self.metrics = metrics
-        self.abnormal_time_periods = abnormal_time_periods
-        self.data = data
-        self.response_meta_data = response_meta_data
+    def __init__(self, **kwargs):
+        super(DiagnosticDetectorResponse, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.issue_detected = kwargs.get('issue_detected', None)
+        self.detector_definition = kwargs.get('detector_definition', None)
+        self.metrics = kwargs.get('metrics', None)
+        self.abnormal_time_periods = kwargs.get('abnormal_time_periods', None)
+        self.data = kwargs.get('data', None)
+        self.response_meta_data = kwargs.get('response_meta_data', None)
 
 
 class DiagnosticMetricSample(Model):
@@ -5431,14 +5419,14 @@ class DiagnosticMetricSample(Model):
         'is_aggregated': {'key': 'isAggregated', 'type': 'bool'},
     }
 
-    def __init__(self, *, timestamp=None, role_instance: str=None, total: float=None, maximum: float=None, minimum: float=None, is_aggregated: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DiagnosticMetricSample, self).__init__(**kwargs)
-        self.timestamp = timestamp
-        self.role_instance = role_instance
-        self.total = total
-        self.maximum = maximum
-        self.minimum = minimum
-        self.is_aggregated = is_aggregated
+        self.timestamp = kwargs.get('timestamp', None)
+        self.role_instance = kwargs.get('role_instance', None)
+        self.total = kwargs.get('total', None)
+        self.maximum = kwargs.get('maximum', None)
+        self.minimum = kwargs.get('minimum', None)
+        self.is_aggregated = kwargs.get('is_aggregated', None)
 
 
 class DiagnosticMetricSet(Model):
@@ -5459,7 +5447,7 @@ class DiagnosticMetricSet(Model):
      on the
      {Microsoft.Web.Hosting.Administration.DiagnosticMetricSet.TimeGrain}
     :type values:
-     list[~azure.mgmt.web.v2020_09_01.models.DiagnosticMetricSample]
+     list[~azure.mgmt.web.v2020_12_01.models.DiagnosticMetricSample]
     """
 
     _attribute_map = {
@@ -5471,14 +5459,14 @@ class DiagnosticMetricSet(Model):
         'values': {'key': 'values', 'type': '[DiagnosticMetricSample]'},
     }
 
-    def __init__(self, *, name: str=None, unit: str=None, start_time=None, end_time=None, time_grain: str=None, values=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DiagnosticMetricSet, self).__init__(**kwargs)
-        self.name = name
-        self.unit = unit
-        self.start_time = start_time
-        self.end_time = end_time
-        self.time_grain = time_grain
-        self.values = values
+        self.name = kwargs.get('name', None)
+        self.unit = kwargs.get('unit', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.time_grain = kwargs.get('time_grain', None)
+        self.values = kwargs.get('values', None)
 
 
 class Dimension(Model):
@@ -5503,12 +5491,12 @@ class Dimension(Model):
         'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str=None, display_name: str=None, internal_name: str=None, to_be_exported_for_shoebox: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Dimension, self).__init__(**kwargs)
-        self.name = name
-        self.display_name = display_name
-        self.internal_name = internal_name
-        self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.internal_name = kwargs.get('internal_name', None)
+        self.to_be_exported_for_shoebox = kwargs.get('to_be_exported_for_shoebox', None)
 
 
 class Domain(Resource):
@@ -5531,27 +5519,25 @@ class Domain(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param contact_admin: Required. Administrative contact.
-    :type contact_admin: ~azure.mgmt.web.v2020_09_01.models.Contact
+    :type contact_admin: ~azure.mgmt.web.v2020_12_01.models.Contact
     :param contact_billing: Required. Billing contact.
-    :type contact_billing: ~azure.mgmt.web.v2020_09_01.models.Contact
+    :type contact_billing: ~azure.mgmt.web.v2020_12_01.models.Contact
     :param contact_registrant: Required. Registrant contact.
-    :type contact_registrant: ~azure.mgmt.web.v2020_09_01.models.Contact
+    :type contact_registrant: ~azure.mgmt.web.v2020_12_01.models.Contact
     :param contact_tech: Required. Technical contact.
-    :type contact_tech: ~azure.mgmt.web.v2020_09_01.models.Contact
+    :type contact_tech: ~azure.mgmt.web.v2020_12_01.models.Contact
     :ivar registration_status: Domain registration status. Possible values
      include: 'Active', 'Awaiting', 'Cancelled', 'Confiscated', 'Disabled',
      'Excluded', 'Expired', 'Failed', 'Held', 'Locked', 'Parked', 'Pending',
      'Reserved', 'Reverted', 'Suspended', 'Transferred', 'Unknown', 'Unlocked',
      'Unparked', 'Updated', 'JsonConverterFailed'
     :vartype registration_status: str or
-     ~azure.mgmt.web.v2020_09_01.models.DomainStatus
+     ~azure.mgmt.web.v2020_12_01.models.DomainStatus
     :ivar provisioning_state: Domain provisioning state. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.ProvisioningState
+     ~azure.mgmt.web.v2020_12_01.models.ProvisioningState
     :ivar name_servers: Name servers.
     :vartype name_servers: list[str]
     :param privacy: <code>true</code> if domain privacy is enabled for this
@@ -5575,19 +5561,19 @@ class Domain(Resource):
     :ivar managed_host_names: All hostnames derived from the domain and
      assigned to Azure resources.
     :vartype managed_host_names:
-     list[~azure.mgmt.web.v2020_09_01.models.HostName]
+     list[~azure.mgmt.web.v2020_12_01.models.HostName]
     :param consent: Required. Legal agreement consent.
-    :type consent: ~azure.mgmt.web.v2020_09_01.models.DomainPurchaseConsent
+    :type consent: ~azure.mgmt.web.v2020_12_01.models.DomainPurchaseConsent
     :ivar domain_not_renewable_reasons: Reasons why domain is not renewable.
     :vartype domain_not_renewable_reasons: list[str]
     :param dns_type: Current DNS type. Possible values include: 'AzureDns',
      'DefaultDomainRegistrarDns'
-    :type dns_type: str or ~azure.mgmt.web.v2020_09_01.models.DnsType
+    :type dns_type: str or ~azure.mgmt.web.v2020_12_01.models.DnsType
     :param dns_zone_id: Azure DNS Zone to use
     :type dns_zone_id: str
     :param target_dns_type: Target DNS type (would be used for migration).
      Possible values include: 'AzureDns', 'DefaultDomainRegistrarDns'
-    :type target_dns_type: str or ~azure.mgmt.web.v2020_09_01.models.DnsType
+    :type target_dns_type: str or ~azure.mgmt.web.v2020_12_01.models.DnsType
     :param auth_code:
     :type auth_code: str
     """
@@ -5620,7 +5606,6 @@ class Domain(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'contact_admin': {'key': 'properties.contactAdmin', 'type': 'Contact'},
         'contact_billing': {'key': 'properties.contactBilling', 'type': 'Contact'},
         'contact_registrant': {'key': 'properties.contactRegistrant', 'type': 'Contact'},
@@ -5643,28 +5628,28 @@ class Domain(Resource):
         'auth_code': {'key': 'properties.authCode', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, contact_admin, contact_billing, contact_registrant, contact_tech, consent, kind: str=None, tags=None, system_data=None, privacy: bool=None, auto_renew: bool=True, dns_type=None, dns_zone_id: str=None, target_dns_type=None, auth_code: str=None, **kwargs) -> None:
-        super(Domain, self).__init__(kind=kind, location=location, tags=tags, system_data=system_data, **kwargs)
-        self.contact_admin = contact_admin
-        self.contact_billing = contact_billing
-        self.contact_registrant = contact_registrant
-        self.contact_tech = contact_tech
+    def __init__(self, **kwargs):
+        super(Domain, self).__init__(**kwargs)
+        self.contact_admin = kwargs.get('contact_admin', None)
+        self.contact_billing = kwargs.get('contact_billing', None)
+        self.contact_registrant = kwargs.get('contact_registrant', None)
+        self.contact_tech = kwargs.get('contact_tech', None)
         self.registration_status = None
         self.provisioning_state = None
         self.name_servers = None
-        self.privacy = privacy
+        self.privacy = kwargs.get('privacy', None)
         self.created_time = None
         self.expiration_time = None
         self.last_renewed_time = None
-        self.auto_renew = auto_renew
+        self.auto_renew = kwargs.get('auto_renew', True)
         self.ready_for_dns_record_management = None
         self.managed_host_names = None
-        self.consent = consent
+        self.consent = kwargs.get('consent', None)
         self.domain_not_renewable_reasons = None
-        self.dns_type = dns_type
-        self.dns_zone_id = dns_zone_id
-        self.target_dns_type = target_dns_type
-        self.auth_code = auth_code
+        self.dns_type = kwargs.get('dns_type', None)
+        self.dns_zone_id = kwargs.get('dns_zone_id', None)
+        self.target_dns_type = kwargs.get('target_dns_type', None)
+        self.auth_code = kwargs.get('auth_code', None)
 
 
 class DomainAvailabilityCheckResult(Model):
@@ -5679,7 +5664,7 @@ class DomainAvailabilityCheckResult(Model):
      full price of domain registration, SoftDeleted: Purchasing this domain
      will simply restore it and this operation will not cost anything. Possible
      values include: 'Regular', 'SoftDeleted'
-    :type domain_type: str or ~azure.mgmt.web.v2020_09_01.models.DomainType
+    :type domain_type: str or ~azure.mgmt.web.v2020_12_01.models.DomainType
     """
 
     _attribute_map = {
@@ -5688,11 +5673,11 @@ class DomainAvailabilityCheckResult(Model):
         'domain_type': {'key': 'domainType', 'type': 'DomainType'},
     }
 
-    def __init__(self, *, name: str=None, available: bool=None, domain_type=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DomainAvailabilityCheckResult, self).__init__(**kwargs)
-        self.name = name
-        self.available = available
-        self.domain_type = domain_type
+        self.name = kwargs.get('name', None)
+        self.available = kwargs.get('available', None)
+        self.domain_type = kwargs.get('domain_type', None)
 
 
 class DomainControlCenterSsoRequest(Model):
@@ -5722,7 +5707,7 @@ class DomainControlCenterSsoRequest(Model):
         'post_parameter_value': {'key': 'postParameterValue', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DomainControlCenterSsoRequest, self).__init__(**kwargs)
         self.url = None
         self.post_parameter_key = None
@@ -5743,8 +5728,6 @@ class DomainOwnershipIdentifier(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param ownership_id: Ownership Id.
     :type ownership_id: str
     """
@@ -5760,13 +5743,12 @@ class DomainOwnershipIdentifier(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'ownership_id': {'key': 'properties.ownershipId', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, ownership_id: str=None, **kwargs) -> None:
-        super(DomainOwnershipIdentifier, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.ownership_id = ownership_id
+    def __init__(self, **kwargs):
+        super(DomainOwnershipIdentifier, self).__init__(**kwargs)
+        self.ownership_id = kwargs.get('ownership_id', None)
 
 
 class DomainPatchResource(ProxyOnlyResource):
@@ -5785,27 +5767,25 @@ class DomainPatchResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param contact_admin: Required. Administrative contact.
-    :type contact_admin: ~azure.mgmt.web.v2020_09_01.models.Contact
+    :type contact_admin: ~azure.mgmt.web.v2020_12_01.models.Contact
     :param contact_billing: Required. Billing contact.
-    :type contact_billing: ~azure.mgmt.web.v2020_09_01.models.Contact
+    :type contact_billing: ~azure.mgmt.web.v2020_12_01.models.Contact
     :param contact_registrant: Required. Registrant contact.
-    :type contact_registrant: ~azure.mgmt.web.v2020_09_01.models.Contact
+    :type contact_registrant: ~azure.mgmt.web.v2020_12_01.models.Contact
     :param contact_tech: Required. Technical contact.
-    :type contact_tech: ~azure.mgmt.web.v2020_09_01.models.Contact
+    :type contact_tech: ~azure.mgmt.web.v2020_12_01.models.Contact
     :ivar registration_status: Domain registration status. Possible values
      include: 'Active', 'Awaiting', 'Cancelled', 'Confiscated', 'Disabled',
      'Excluded', 'Expired', 'Failed', 'Held', 'Locked', 'Parked', 'Pending',
      'Reserved', 'Reverted', 'Suspended', 'Transferred', 'Unknown', 'Unlocked',
      'Unparked', 'Updated', 'JsonConverterFailed'
     :vartype registration_status: str or
-     ~azure.mgmt.web.v2020_09_01.models.DomainStatus
+     ~azure.mgmt.web.v2020_12_01.models.DomainStatus
     :ivar provisioning_state: Domain provisioning state. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.ProvisioningState
+     ~azure.mgmt.web.v2020_12_01.models.ProvisioningState
     :ivar name_servers: Name servers.
     :vartype name_servers: list[str]
     :param privacy: <code>true</code> if domain privacy is enabled for this
@@ -5829,19 +5809,19 @@ class DomainPatchResource(ProxyOnlyResource):
     :ivar managed_host_names: All hostnames derived from the domain and
      assigned to Azure resources.
     :vartype managed_host_names:
-     list[~azure.mgmt.web.v2020_09_01.models.HostName]
+     list[~azure.mgmt.web.v2020_12_01.models.HostName]
     :param consent: Required. Legal agreement consent.
-    :type consent: ~azure.mgmt.web.v2020_09_01.models.DomainPurchaseConsent
+    :type consent: ~azure.mgmt.web.v2020_12_01.models.DomainPurchaseConsent
     :ivar domain_not_renewable_reasons: Reasons why domain is not renewable.
     :vartype domain_not_renewable_reasons: list[str]
     :param dns_type: Current DNS type. Possible values include: 'AzureDns',
      'DefaultDomainRegistrarDns'
-    :type dns_type: str or ~azure.mgmt.web.v2020_09_01.models.DnsType
+    :type dns_type: str or ~azure.mgmt.web.v2020_12_01.models.DnsType
     :param dns_zone_id: Azure DNS Zone to use
     :type dns_zone_id: str
     :param target_dns_type: Target DNS type (would be used for migration).
      Possible values include: 'AzureDns', 'DefaultDomainRegistrarDns'
-    :type target_dns_type: str or ~azure.mgmt.web.v2020_09_01.models.DnsType
+    :type target_dns_type: str or ~azure.mgmt.web.v2020_12_01.models.DnsType
     :param auth_code:
     :type auth_code: str
     """
@@ -5871,7 +5851,6 @@ class DomainPatchResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'contact_admin': {'key': 'properties.contactAdmin', 'type': 'Contact'},
         'contact_billing': {'key': 'properties.contactBilling', 'type': 'Contact'},
         'contact_registrant': {'key': 'properties.contactRegistrant', 'type': 'Contact'},
@@ -5894,28 +5873,28 @@ class DomainPatchResource(ProxyOnlyResource):
         'auth_code': {'key': 'properties.authCode', 'type': 'str'},
     }
 
-    def __init__(self, *, contact_admin, contact_billing, contact_registrant, contact_tech, consent, kind: str=None, system_data=None, privacy: bool=None, auto_renew: bool=True, dns_type=None, dns_zone_id: str=None, target_dns_type=None, auth_code: str=None, **kwargs) -> None:
-        super(DomainPatchResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.contact_admin = contact_admin
-        self.contact_billing = contact_billing
-        self.contact_registrant = contact_registrant
-        self.contact_tech = contact_tech
+    def __init__(self, **kwargs):
+        super(DomainPatchResource, self).__init__(**kwargs)
+        self.contact_admin = kwargs.get('contact_admin', None)
+        self.contact_billing = kwargs.get('contact_billing', None)
+        self.contact_registrant = kwargs.get('contact_registrant', None)
+        self.contact_tech = kwargs.get('contact_tech', None)
         self.registration_status = None
         self.provisioning_state = None
         self.name_servers = None
-        self.privacy = privacy
+        self.privacy = kwargs.get('privacy', None)
         self.created_time = None
         self.expiration_time = None
         self.last_renewed_time = None
-        self.auto_renew = auto_renew
+        self.auto_renew = kwargs.get('auto_renew', True)
         self.ready_for_dns_record_management = None
         self.managed_host_names = None
-        self.consent = consent
+        self.consent = kwargs.get('consent', None)
         self.domain_not_renewable_reasons = None
-        self.dns_type = dns_type
-        self.dns_zone_id = dns_zone_id
-        self.target_dns_type = target_dns_type
-        self.auth_code = auth_code
+        self.dns_type = kwargs.get('dns_type', None)
+        self.dns_zone_id = kwargs.get('dns_zone_id', None)
+        self.target_dns_type = kwargs.get('target_dns_type', None)
+        self.auth_code = kwargs.get('auth_code', None)
 
 
 class DomainPurchaseConsent(Model):
@@ -5938,11 +5917,11 @@ class DomainPurchaseConsent(Model):
         'agreed_at': {'key': 'agreedAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, agreement_keys=None, agreed_by: str=None, agreed_at=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DomainPurchaseConsent, self).__init__(**kwargs)
-        self.agreement_keys = agreement_keys
-        self.agreed_by = agreed_by
-        self.agreed_at = agreed_at
+        self.agreement_keys = kwargs.get('agreement_keys', None)
+        self.agreed_by = kwargs.get('agreed_by', None)
+        self.agreed_at = kwargs.get('agreed_at', None)
 
 
 class DomainRecommendationSearchParameters(Model):
@@ -5960,10 +5939,10 @@ class DomainRecommendationSearchParameters(Model):
         'max_domain_recommendations': {'key': 'maxDomainRecommendations', 'type': 'int'},
     }
 
-    def __init__(self, *, keywords: str=None, max_domain_recommendations: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DomainRecommendationSearchParameters, self).__init__(**kwargs)
-        self.keywords = keywords
-        self.max_domain_recommendations = max_domain_recommendations
+        self.keywords = kwargs.get('keywords', None)
+        self.max_domain_recommendations = kwargs.get('max_domain_recommendations', None)
 
 
 class EnabledConfig(Model):
@@ -5978,9 +5957,9 @@ class EnabledConfig(Model):
         'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, enabled: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(EnabledConfig, self).__init__(**kwargs)
-        self.enabled = enabled
+        self.enabled = kwargs.get('enabled', None)
 
 
 class EndpointDependency(Model):
@@ -5992,7 +5971,7 @@ class EndpointDependency(Model):
     :param endpoint_details: The IP Addresses and Ports used when connecting
      to DomainName.
     :type endpoint_details:
-     list[~azure.mgmt.web.v2020_09_01.models.EndpointDetail]
+     list[~azure.mgmt.web.v2020_12_01.models.EndpointDetail]
     """
 
     _attribute_map = {
@@ -6000,10 +5979,10 @@ class EndpointDependency(Model):
         'endpoint_details': {'key': 'endpointDetails', 'type': '[EndpointDetail]'},
     }
 
-    def __init__(self, *, domain_name: str=None, endpoint_details=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(EndpointDependency, self).__init__(**kwargs)
-        self.domain_name = domain_name
-        self.endpoint_details = endpoint_details
+        self.domain_name = kwargs.get('domain_name', None)
+        self.endpoint_details = kwargs.get('endpoint_details', None)
 
 
 class EndpointDetail(Model):
@@ -6030,12 +6009,12 @@ class EndpointDetail(Model):
         'is_accessible': {'key': 'isAccessible', 'type': 'bool'},
     }
 
-    def __init__(self, *, ip_address: str=None, port: int=None, latency: float=None, is_accessible: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(EndpointDetail, self).__init__(**kwargs)
-        self.ip_address = ip_address
-        self.port = port
-        self.latency = latency
-        self.is_accessible = is_accessible
+        self.ip_address = kwargs.get('ip_address', None)
+        self.port = kwargs.get('port', None)
+        self.latency = kwargs.get('latency', None)
+        self.is_accessible = kwargs.get('is_accessible', None)
 
 
 class ErrorEntity(Model):
@@ -6048,7 +6027,7 @@ class ErrorEntity(Model):
     :param parameters: Parameters for the template.
     :type parameters: list[str]
     :param inner_errors: Inner errors.
-    :type inner_errors: list[~azure.mgmt.web.v2020_09_01.models.ErrorEntity]
+    :type inner_errors: list[~azure.mgmt.web.v2020_12_01.models.ErrorEntity]
     :param code: Basic error code.
     :type code: str
     :param message: Any details of the error.
@@ -6064,34 +6043,34 @@ class ErrorEntity(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, *, extended_code: str=None, message_template: str=None, parameters=None, inner_errors=None, code: str=None, message: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ErrorEntity, self).__init__(**kwargs)
-        self.extended_code = extended_code
-        self.message_template = message_template
-        self.parameters = parameters
-        self.inner_errors = inner_errors
-        self.code = code
-        self.message = message
+        self.extended_code = kwargs.get('extended_code', None)
+        self.message_template = kwargs.get('message_template', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.inner_errors = kwargs.get('inner_errors', None)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
 
 
 class Experiments(Model):
     """Routing rules in production experiments.
 
     :param ramp_up_rules: List of ramp-up rules.
-    :type ramp_up_rules: list[~azure.mgmt.web.v2020_09_01.models.RampUpRule]
+    :type ramp_up_rules: list[~azure.mgmt.web.v2020_12_01.models.RampUpRule]
     """
 
     _attribute_map = {
         'ramp_up_rules': {'key': 'rampUpRules', 'type': '[RampUpRule]'},
     }
 
-    def __init__(self, *, ramp_up_rules=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Experiments, self).__init__(**kwargs)
-        self.ramp_up_rules = ramp_up_rules
+        self.ramp_up_rules = kwargs.get('ramp_up_rules', None)
 
 
 class Facebook(ProxyOnlyResource):
-    """Facebook.
+    """The configuration settings of the Facebook provider.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -6104,16 +6083,17 @@ class Facebook(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param enabled:
+    :param enabled: <code>false</code> if the Facebook provider should not be
+     enabled despite the set registration; otherwise, <code>true</code>.
     :type enabled: bool
-    :param registration:
-    :type registration: ~azure.mgmt.web.v2020_09_01.models.AppRegistration
-    :param graph_api_version:
+    :param registration: The configuration settings of the app registration
+     for the Facebook provider.
+    :type registration: ~azure.mgmt.web.v2020_12_01.models.AppRegistration
+    :param graph_api_version: The version of the Facebook api to be used while
+     logging in.
     :type graph_api_version: str
-    :param login:
-    :type login: ~azure.mgmt.web.v2020_09_01.models.LoginScopes
+    :param login: The configuration settings of the login flow.
+    :type login: ~azure.mgmt.web.v2020_12_01.models.LoginScopes
     """
 
     _validation = {
@@ -6127,19 +6107,18 @@ class Facebook(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'registration': {'key': 'properties.registration', 'type': 'AppRegistration'},
         'graph_api_version': {'key': 'properties.graphApiVersion', 'type': 'str'},
         'login': {'key': 'properties.login', 'type': 'LoginScopes'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, enabled: bool=None, registration=None, graph_api_version: str=None, login=None, **kwargs) -> None:
-        super(Facebook, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.enabled = enabled
-        self.registration = registration
-        self.graph_api_version = graph_api_version
-        self.login = login
+    def __init__(self, **kwargs):
+        super(Facebook, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.registration = kwargs.get('registration', None)
+        self.graph_api_version = kwargs.get('graph_api_version', None)
+        self.login = kwargs.get('login', None)
 
 
 class FileSystemApplicationLogsConfig(Model):
@@ -6147,16 +6126,16 @@ class FileSystemApplicationLogsConfig(Model):
 
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'. Default value: "Off" .
-    :type level: str or ~azure.mgmt.web.v2020_09_01.models.LogLevel
+    :type level: str or ~azure.mgmt.web.v2020_12_01.models.LogLevel
     """
 
     _attribute_map = {
         'level': {'key': 'level', 'type': 'LogLevel'},
     }
 
-    def __init__(self, *, level="Off", **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(FileSystemApplicationLogsConfig, self).__init__(**kwargs)
-        self.level = level
+        self.level = kwargs.get('level', "Off")
 
 
 class FileSystemHttpLogsConfig(Model):
@@ -6186,15 +6165,16 @@ class FileSystemHttpLogsConfig(Model):
         'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, retention_in_mb: int=None, retention_in_days: int=None, enabled: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(FileSystemHttpLogsConfig, self).__init__(**kwargs)
-        self.retention_in_mb = retention_in_mb
-        self.retention_in_days = retention_in_days
-        self.enabled = enabled
+        self.retention_in_mb = kwargs.get('retention_in_mb', None)
+        self.retention_in_days = kwargs.get('retention_in_days', None)
+        self.enabled = kwargs.get('enabled', None)
 
 
 class FileSystemTokenStore(ProxyOnlyResource):
-    """FileSystemTokenStore.
+    """The configuration settings of the storage of the tokens if a file system is
+    used.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -6207,9 +6187,7 @@ class FileSystemTokenStore(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param directory:
+    :param directory: The directory in which the tokens will be stored.
     :type directory: str
     """
 
@@ -6224,17 +6202,16 @@ class FileSystemTokenStore(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'directory': {'key': 'properties.directory', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, directory: str=None, **kwargs) -> None:
-        super(FileSystemTokenStore, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.directory = directory
+    def __init__(self, **kwargs):
+        super(FileSystemTokenStore, self).__init__(**kwargs)
+        self.directory = kwargs.get('directory', None)
 
 
 class ForwardProxy(ProxyOnlyResource):
-    """ForwardProxy.
+    """The configuration settings of a forward proxy used to make the requests.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -6247,15 +6224,15 @@ class ForwardProxy(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param convention: Possible values include: 'NoProxy', 'Standard',
-     'Custom'
+    :param convention: The convention used to determine the url of the request
+     made. Possible values include: 'NoProxy', 'Standard', 'Custom'
     :type convention: str or
-     ~azure.mgmt.web.v2020_09_01.models.ForwardProxyConvention
-    :param custom_host_header_name:
+     ~azure.mgmt.web.v2020_12_01.models.ForwardProxyConvention
+    :param custom_host_header_name: The name of the header containing the host
+     of the request.
     :type custom_host_header_name: str
-    :param custom_proto_header_name:
+    :param custom_proto_header_name: The name of the header containing the
+     scheme of the request.
     :type custom_proto_header_name: str
     """
 
@@ -6270,17 +6247,280 @@ class ForwardProxy(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'convention': {'key': 'properties.convention', 'type': 'ForwardProxyConvention'},
         'custom_host_header_name': {'key': 'properties.customHostHeaderName', 'type': 'str'},
         'custom_proto_header_name': {'key': 'properties.customProtoHeaderName', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, convention=None, custom_host_header_name: str=None, custom_proto_header_name: str=None, **kwargs) -> None:
-        super(ForwardProxy, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.convention = convention
-        self.custom_host_header_name = custom_host_header_name
-        self.custom_proto_header_name = custom_proto_header_name
+    def __init__(self, **kwargs):
+        super(ForwardProxy, self).__init__(**kwargs)
+        self.convention = kwargs.get('convention', None)
+        self.custom_host_header_name = kwargs.get('custom_host_header_name', None)
+        self.custom_proto_header_name = kwargs.get('custom_proto_header_name', None)
+
+
+class FunctionAppMajorVersion(Model):
+    """Function App stack major version.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar display_text: Function App stack major version (display only).
+    :vartype display_text: str
+    :ivar value: Function App stack major version name.
+    :vartype value: str
+    :ivar minor_versions: Minor versions associated with the major version.
+    :vartype minor_versions:
+     list[~azure.mgmt.web.v2020_12_01.models.FunctionAppMinorVersion]
+    """
+
+    _validation = {
+        'display_text': {'readonly': True},
+        'value': {'readonly': True},
+        'minor_versions': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'display_text': {'key': 'displayText', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+        'minor_versions': {'key': 'minorVersions', 'type': '[FunctionAppMinorVersion]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FunctionAppMajorVersion, self).__init__(**kwargs)
+        self.display_text = None
+        self.value = None
+        self.minor_versions = None
+
+
+class FunctionAppMinorVersion(Model):
+    """Function App stack minor version.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar display_text: Function App stack (display only).
+    :vartype display_text: str
+    :ivar value: Function App stack name.
+    :vartype value: str
+    :ivar stack_settings: Settings associated with the minor version.
+    :vartype stack_settings:
+     ~azure.mgmt.web.v2020_12_01.models.FunctionAppRuntimes
+    """
+
+    _validation = {
+        'display_text': {'readonly': True},
+        'value': {'readonly': True},
+        'stack_settings': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'display_text': {'key': 'displayText', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+        'stack_settings': {'key': 'stackSettings', 'type': 'FunctionAppRuntimes'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FunctionAppMinorVersion, self).__init__(**kwargs)
+        self.display_text = None
+        self.value = None
+        self.stack_settings = None
+
+
+class FunctionAppRuntimes(Model):
+    """Function App stack runtimes.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar linux_runtime_settings: Linux-specific settings associated with the
+     minor version.
+    :vartype linux_runtime_settings:
+     ~azure.mgmt.web.v2020_12_01.models.FunctionAppRuntimeSettings
+    :ivar windows_runtime_settings: Windows-specific settings associated with
+     the minor version.
+    :vartype windows_runtime_settings:
+     ~azure.mgmt.web.v2020_12_01.models.FunctionAppRuntimeSettings
+    """
+
+    _validation = {
+        'linux_runtime_settings': {'readonly': True},
+        'windows_runtime_settings': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'linux_runtime_settings': {'key': 'linuxRuntimeSettings', 'type': 'FunctionAppRuntimeSettings'},
+        'windows_runtime_settings': {'key': 'windowsRuntimeSettings', 'type': 'FunctionAppRuntimeSettings'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FunctionAppRuntimes, self).__init__(**kwargs)
+        self.linux_runtime_settings = None
+        self.windows_runtime_settings = None
+
+
+class FunctionAppRuntimeSettings(Model):
+    """Function App runtime settings.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar runtime_version: Function App stack minor version (runtime only).
+    :vartype runtime_version: str
+    :ivar remote_debugging_supported: <code>true</code> if remote debugging is
+     supported for the stack; otherwise, <code>false</code>.
+    :vartype remote_debugging_supported: bool
+    :ivar app_insights_settings: Application Insights settings associated with
+     the minor version.
+    :vartype app_insights_settings:
+     ~azure.mgmt.web.v2020_12_01.models.AppInsightsWebAppStackSettings
+    :ivar git_hub_action_settings: GitHub Actions settings associated with the
+     minor version.
+    :vartype git_hub_action_settings:
+     ~azure.mgmt.web.v2020_12_01.models.GitHubActionWebAppStackSettings
+    :ivar app_settings_dictionary: Application settings associated with the
+     minor version.
+    :vartype app_settings_dictionary: dict[str, str]
+    :ivar site_config_properties_dictionary: Configuration settings associated
+     with the minor version.
+    :vartype site_config_properties_dictionary:
+     ~azure.mgmt.web.v2020_12_01.models.SiteConfigPropertiesDictionary
+    :ivar supported_functions_extension_versions: List of supported Functions
+     extension versions.
+    :vartype supported_functions_extension_versions: list[str]
+    :ivar is_preview: <code>true</code> if the stack is in preview; otherwise,
+     <code>false</code>.
+    :vartype is_preview: bool
+    :ivar is_deprecated: <code>true</code> if the stack is deprecated;
+     otherwise, <code>false</code>.
+    :vartype is_deprecated: bool
+    :ivar is_hidden: <code>true</code> if the stack should be hidden;
+     otherwise, <code>false</code>.
+    :vartype is_hidden: bool
+    :ivar end_of_life_date: End-of-life date for the minor version.
+    :vartype end_of_life_date: datetime
+    :ivar is_auto_update: <code>true</code> if the stack version is
+     auto-updated; otherwise, <code>false</code>.
+    :vartype is_auto_update: bool
+    :ivar is_early_access: <code>true</code> if the minor version is
+     early-access; otherwise, <code>false</code>.
+    :vartype is_early_access: bool
+    :ivar is_default: <code>true</code> if the minor version the default;
+     otherwise, <code>false</code>.
+    :vartype is_default: bool
+    """
+
+    _validation = {
+        'runtime_version': {'readonly': True},
+        'remote_debugging_supported': {'readonly': True},
+        'app_insights_settings': {'readonly': True},
+        'git_hub_action_settings': {'readonly': True},
+        'app_settings_dictionary': {'readonly': True},
+        'site_config_properties_dictionary': {'readonly': True},
+        'supported_functions_extension_versions': {'readonly': True},
+        'is_preview': {'readonly': True},
+        'is_deprecated': {'readonly': True},
+        'is_hidden': {'readonly': True},
+        'end_of_life_date': {'readonly': True},
+        'is_auto_update': {'readonly': True},
+        'is_early_access': {'readonly': True},
+        'is_default': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
+        'remote_debugging_supported': {'key': 'remoteDebuggingSupported', 'type': 'bool'},
+        'app_insights_settings': {'key': 'appInsightsSettings', 'type': 'AppInsightsWebAppStackSettings'},
+        'git_hub_action_settings': {'key': 'gitHubActionSettings', 'type': 'GitHubActionWebAppStackSettings'},
+        'app_settings_dictionary': {'key': 'appSettingsDictionary', 'type': '{str}'},
+        'site_config_properties_dictionary': {'key': 'siteConfigPropertiesDictionary', 'type': 'SiteConfigPropertiesDictionary'},
+        'supported_functions_extension_versions': {'key': 'supportedFunctionsExtensionVersions', 'type': '[str]'},
+        'is_preview': {'key': 'isPreview', 'type': 'bool'},
+        'is_deprecated': {'key': 'isDeprecated', 'type': 'bool'},
+        'is_hidden': {'key': 'isHidden', 'type': 'bool'},
+        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
+        'is_auto_update': {'key': 'isAutoUpdate', 'type': 'bool'},
+        'is_early_access': {'key': 'isEarlyAccess', 'type': 'bool'},
+        'is_default': {'key': 'isDefault', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FunctionAppRuntimeSettings, self).__init__(**kwargs)
+        self.runtime_version = None
+        self.remote_debugging_supported = None
+        self.app_insights_settings = None
+        self.git_hub_action_settings = None
+        self.app_settings_dictionary = None
+        self.site_config_properties_dictionary = None
+        self.supported_functions_extension_versions = None
+        self.is_preview = None
+        self.is_deprecated = None
+        self.is_hidden = None
+        self.end_of_life_date = None
+        self.is_auto_update = None
+        self.is_early_access = None
+        self.is_default = None
+
+
+class FunctionAppStack(ProxyOnlyResource):
+    """Function App Stack.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar location: Function App stack location.
+    :vartype location: str
+    :ivar display_text: Function App stack (display only).
+    :vartype display_text: str
+    :ivar value: Function App stack name.
+    :vartype value: str
+    :ivar major_versions: List of major versions available.
+    :vartype major_versions:
+     list[~azure.mgmt.web.v2020_12_01.models.FunctionAppMajorVersion]
+    :ivar preferred_os: Function App stack preferred OS. Possible values
+     include: 'Windows', 'Linux'
+    :vartype preferred_os: str or
+     ~azure.mgmt.web.v2020_12_01.models.StackPreferredOs
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+        'display_text': {'readonly': True},
+        'value': {'readonly': True},
+        'major_versions': {'readonly': True},
+        'preferred_os': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'display_text': {'key': 'properties.displayText', 'type': 'str'},
+        'value': {'key': 'properties.value', 'type': 'str'},
+        'major_versions': {'key': 'properties.majorVersions', 'type': '[FunctionAppMajorVersion]'},
+        'preferred_os': {'key': 'properties.preferredOs', 'type': 'StackPreferredOs'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FunctionAppStack, self).__init__(**kwargs)
+        self.location = None
+        self.display_text = None
+        self.value = None
+        self.major_versions = None
+        self.preferred_os = None
 
 
 class FunctionEnvelope(ProxyOnlyResource):
@@ -6297,8 +6537,6 @@ class FunctionEnvelope(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param function_app_id: Function App ID.
     :type function_app_id: str
     :param script_root_path_href: Script root path URI.
@@ -6339,7 +6577,6 @@ class FunctionEnvelope(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'function_app_id': {'key': 'properties.function_app_id', 'type': 'str'},
         'script_root_path_href': {'key': 'properties.script_root_path_href', 'type': 'str'},
         'script_href': {'key': 'properties.script_href', 'type': 'str'},
@@ -6355,21 +6592,21 @@ class FunctionEnvelope(ProxyOnlyResource):
         'is_disabled': {'key': 'properties.isDisabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, function_app_id: str=None, script_root_path_href: str=None, script_href: str=None, config_href: str=None, test_data_href: str=None, secrets_file_href: str=None, href: str=None, config=None, files=None, test_data: str=None, invoke_url_template: str=None, language: str=None, is_disabled: bool=None, **kwargs) -> None:
-        super(FunctionEnvelope, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.function_app_id = function_app_id
-        self.script_root_path_href = script_root_path_href
-        self.script_href = script_href
-        self.config_href = config_href
-        self.test_data_href = test_data_href
-        self.secrets_file_href = secrets_file_href
-        self.href = href
-        self.config = config
-        self.files = files
-        self.test_data = test_data
-        self.invoke_url_template = invoke_url_template
-        self.language = language
-        self.is_disabled = is_disabled
+    def __init__(self, **kwargs):
+        super(FunctionEnvelope, self).__init__(**kwargs)
+        self.function_app_id = kwargs.get('function_app_id', None)
+        self.script_root_path_href = kwargs.get('script_root_path_href', None)
+        self.script_href = kwargs.get('script_href', None)
+        self.config_href = kwargs.get('config_href', None)
+        self.test_data_href = kwargs.get('test_data_href', None)
+        self.secrets_file_href = kwargs.get('secrets_file_href', None)
+        self.href = kwargs.get('href', None)
+        self.config = kwargs.get('config', None)
+        self.files = kwargs.get('files', None)
+        self.test_data = kwargs.get('test_data', None)
+        self.invoke_url_template = kwargs.get('invoke_url_template', None)
+        self.language = kwargs.get('language', None)
+        self.is_disabled = kwargs.get('is_disabled', None)
 
 
 class FunctionSecrets(Model):
@@ -6386,10 +6623,10 @@ class FunctionSecrets(Model):
         'trigger_url': {'key': 'trigger_url', 'type': 'str'},
     }
 
-    def __init__(self, *, key: str=None, trigger_url: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(FunctionSecrets, self).__init__(**kwargs)
-        self.key = key
-        self.trigger_url = trigger_url
+        self.key = kwargs.get('key', None)
+        self.trigger_url = kwargs.get('trigger_url', None)
 
 
 class GeoRegion(ProxyOnlyResource):
@@ -6406,8 +6643,6 @@ class GeoRegion(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar description: Region description.
     :vartype description: str
     :ivar display_name: Display name for region.
@@ -6430,21 +6665,20 @@ class GeoRegion(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'org_domain': {'key': 'properties.orgDomain', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(GeoRegion, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(GeoRegion, self).__init__(**kwargs)
         self.description = None
         self.display_name = None
         self.org_domain = None
 
 
 class GitHub(ProxyOnlyResource):
-    """GitHub.
+    """The configuration settings of the GitHub provider.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -6457,14 +6691,14 @@ class GitHub(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param enabled:
+    :param enabled: <code>false</code> if the GitHub provider should not be
+     enabled despite the set registration; otherwise, <code>true</code>.
     :type enabled: bool
-    :param registration:
-    :type registration: ~azure.mgmt.web.v2020_09_01.models.ClientRegistration
-    :param login:
-    :type login: ~azure.mgmt.web.v2020_09_01.models.LoginScopes
+    :param registration: The configuration settings of the app registration
+     for the GitHub provider.
+    :type registration: ~azure.mgmt.web.v2020_12_01.models.ClientRegistration
+    :param login: The configuration settings of the login flow.
+    :type login: ~azure.mgmt.web.v2020_12_01.models.LoginScopes
     """
 
     _validation = {
@@ -6478,17 +6712,131 @@ class GitHub(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'registration': {'key': 'properties.registration', 'type': 'ClientRegistration'},
         'login': {'key': 'properties.login', 'type': 'LoginScopes'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, enabled: bool=None, registration=None, login=None, **kwargs) -> None:
-        super(GitHub, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.enabled = enabled
-        self.registration = registration
-        self.login = login
+    def __init__(self, **kwargs):
+        super(GitHub, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.registration = kwargs.get('registration', None)
+        self.login = kwargs.get('login', None)
+
+
+class GitHubActionCodeConfiguration(Model):
+    """The GitHub action code configuration.
+
+    :param runtime_stack: Runtime stack is used to determine the workflow file
+     content for code base apps.
+    :type runtime_stack: str
+    :param runtime_version: Runtime version is used to determine what build
+     version to set in the workflow file.
+    :type runtime_version: str
+    """
+
+    _attribute_map = {
+        'runtime_stack': {'key': 'runtimeStack', 'type': 'str'},
+        'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GitHubActionCodeConfiguration, self).__init__(**kwargs)
+        self.runtime_stack = kwargs.get('runtime_stack', None)
+        self.runtime_version = kwargs.get('runtime_version', None)
+
+
+class GitHubActionConfiguration(Model):
+    """The GitHub action configuration.
+
+    :param code_configuration: GitHub Action code configuration.
+    :type code_configuration:
+     ~azure.mgmt.web.v2020_12_01.models.GitHubActionCodeConfiguration
+    :param container_configuration: GitHub Action container configuration.
+    :type container_configuration:
+     ~azure.mgmt.web.v2020_12_01.models.GitHubActionContainerConfiguration
+    :param is_linux: This will help determine the workflow configuration to
+     select.
+    :type is_linux: bool
+    :param generate_workflow_file: Workflow option to determine whether the
+     workflow file should be generated and written to the repository.
+    :type generate_workflow_file: bool
+    """
+
+    _attribute_map = {
+        'code_configuration': {'key': 'codeConfiguration', 'type': 'GitHubActionCodeConfiguration'},
+        'container_configuration': {'key': 'containerConfiguration', 'type': 'GitHubActionContainerConfiguration'},
+        'is_linux': {'key': 'isLinux', 'type': 'bool'},
+        'generate_workflow_file': {'key': 'generateWorkflowFile', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GitHubActionConfiguration, self).__init__(**kwargs)
+        self.code_configuration = kwargs.get('code_configuration', None)
+        self.container_configuration = kwargs.get('container_configuration', None)
+        self.is_linux = kwargs.get('is_linux', None)
+        self.generate_workflow_file = kwargs.get('generate_workflow_file', None)
+
+
+class GitHubActionContainerConfiguration(Model):
+    """The GitHub action container configuration.
+
+    :param server_url: The server URL for the container registry where the
+     build will be hosted.
+    :type server_url: str
+    :param image_name: The image name for the build.
+    :type image_name: str
+    :param username: The username used to upload the image to the container
+     registry.
+    :type username: str
+    :param password: The password used to upload the image to the container
+     registry.
+    :type password: str
+    """
+
+    _attribute_map = {
+        'server_url': {'key': 'serverUrl', 'type': 'str'},
+        'image_name': {'key': 'imageName', 'type': 'str'},
+        'username': {'key': 'username', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GitHubActionContainerConfiguration, self).__init__(**kwargs)
+        self.server_url = kwargs.get('server_url', None)
+        self.image_name = kwargs.get('image_name', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+
+
+class GitHubActionWebAppStackSettings(Model):
+    """GitHub Actions Web App stack settings.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar is_supported: <code>true</code> if GitHub Actions is supported for
+     the stack; otherwise, <code>false</code>.
+    :vartype is_supported: bool
+    :ivar supported_version: The minor version that is supported for GitHub
+     Actions.
+    :vartype supported_version: str
+    """
+
+    _validation = {
+        'is_supported': {'readonly': True},
+        'supported_version': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'is_supported': {'key': 'isSupported', 'type': 'bool'},
+        'supported_version': {'key': 'supportedVersion', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GitHubActionWebAppStackSettings, self).__init__(**kwargs)
+        self.is_supported = None
+        self.supported_version = None
 
 
 class GlobalCsmSkuDescription(Model):
@@ -6503,12 +6851,12 @@ class GlobalCsmSkuDescription(Model):
     :param family: Family code of the resource SKU.
     :type family: str
     :param capacity: Min, max, and default scale values of the SKU.
-    :type capacity: ~azure.mgmt.web.v2020_09_01.models.SkuCapacity
+    :type capacity: ~azure.mgmt.web.v2020_12_01.models.SkuCapacity
     :param locations: Locations of the SKU.
     :type locations: list[str]
     :param capabilities: Capabilities of the SKU, e.g., is traffic manager
      enabled?
-    :type capabilities: list[~azure.mgmt.web.v2020_09_01.models.Capability]
+    :type capabilities: list[~azure.mgmt.web.v2020_12_01.models.Capability]
     """
 
     _attribute_map = {
@@ -6521,19 +6869,20 @@ class GlobalCsmSkuDescription(Model):
         'capabilities': {'key': 'capabilities', 'type': '[Capability]'},
     }
 
-    def __init__(self, *, name: str=None, tier: str=None, size: str=None, family: str=None, capacity=None, locations=None, capabilities=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(GlobalCsmSkuDescription, self).__init__(**kwargs)
-        self.name = name
-        self.tier = tier
-        self.size = size
-        self.family = family
-        self.capacity = capacity
-        self.locations = locations
-        self.capabilities = capabilities
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.size = kwargs.get('size', None)
+        self.family = kwargs.get('family', None)
+        self.capacity = kwargs.get('capacity', None)
+        self.locations = kwargs.get('locations', None)
+        self.capabilities = kwargs.get('capabilities', None)
 
 
 class GlobalValidation(ProxyOnlyResource):
-    """GlobalValidation.
+    """The configuration settings that determines the validation flow of users
+    using App Service Authentication/Authorization.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -6546,17 +6895,22 @@ class GlobalValidation(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param require_authentication:
+    :param require_authentication: <code>true</code> if the authentication
+     flow is required any request is made; otherwise, <code>false</code>.
     :type require_authentication: bool
-    :param unauthenticated_client_action: Possible values include:
-     'RedirectToLoginPage', 'AllowAnonymous', 'Return401', 'Return403'
+    :param unauthenticated_client_action: The action to take when an
+     unauthenticated client attempts to access the app. Possible values
+     include: 'RedirectToLoginPage', 'AllowAnonymous', 'Return401', 'Return403'
     :type unauthenticated_client_action: str or
-     ~azure.mgmt.web.v2020_09_01.models.UnauthenticatedClientActionV2
-    :param redirect_to_provider:
+     ~azure.mgmt.web.v2020_12_01.models.UnauthenticatedClientActionV2
+    :param redirect_to_provider: The default authentication provider to use
+     when multiple providers are configured.
+     This setting is only needed if multiple providers are configured and the
+     unauthenticated client
+     action is set to "RedirectToLoginPage".
     :type redirect_to_provider: str
-    :param excluded_paths:
+    :param excluded_paths: The paths for which unauthenticated flow would not
+     be redirected to the login page.
     :type excluded_paths: list[str]
     """
 
@@ -6571,23 +6925,22 @@ class GlobalValidation(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'require_authentication': {'key': 'properties.requireAuthentication', 'type': 'bool'},
         'unauthenticated_client_action': {'key': 'properties.unauthenticatedClientAction', 'type': 'UnauthenticatedClientActionV2'},
         'redirect_to_provider': {'key': 'properties.redirectToProvider', 'type': 'str'},
         'excluded_paths': {'key': 'properties.excludedPaths', 'type': '[str]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, require_authentication: bool=None, unauthenticated_client_action=None, redirect_to_provider: str=None, excluded_paths=None, **kwargs) -> None:
-        super(GlobalValidation, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.require_authentication = require_authentication
-        self.unauthenticated_client_action = unauthenticated_client_action
-        self.redirect_to_provider = redirect_to_provider
-        self.excluded_paths = excluded_paths
+    def __init__(self, **kwargs):
+        super(GlobalValidation, self).__init__(**kwargs)
+        self.require_authentication = kwargs.get('require_authentication', None)
+        self.unauthenticated_client_action = kwargs.get('unauthenticated_client_action', None)
+        self.redirect_to_provider = kwargs.get('redirect_to_provider', None)
+        self.excluded_paths = kwargs.get('excluded_paths', None)
 
 
 class Google(ProxyOnlyResource):
-    """Google.
+    """The configuration settings of the Google provider.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -6600,17 +6953,18 @@ class Google(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param enabled:
+    :param enabled: <code>false</code> if the Google provider should not be
+     enabled despite the set registration; otherwise, <code>true</code>.
     :type enabled: bool
-    :param registration:
-    :type registration: ~azure.mgmt.web.v2020_09_01.models.ClientRegistration
-    :param login:
-    :type login: ~azure.mgmt.web.v2020_09_01.models.LoginScopes
-    :param validation:
+    :param registration: The configuration settings of the app registration
+     for the Google provider.
+    :type registration: ~azure.mgmt.web.v2020_12_01.models.ClientRegistration
+    :param login: The configuration settings of the login flow.
+    :type login: ~azure.mgmt.web.v2020_12_01.models.LoginScopes
+    :param validation: The configuration settings of the Azure Active
+     Directory token validation flow.
     :type validation:
-     ~azure.mgmt.web.v2020_09_01.models.AllowedAudiencesValidation
+     ~azure.mgmt.web.v2020_12_01.models.AllowedAudiencesValidation
     """
 
     _validation = {
@@ -6624,19 +6978,18 @@ class Google(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'registration': {'key': 'properties.registration', 'type': 'ClientRegistration'},
         'login': {'key': 'properties.login', 'type': 'LoginScopes'},
         'validation': {'key': 'properties.validation', 'type': 'AllowedAudiencesValidation'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, enabled: bool=None, registration=None, login=None, validation=None, **kwargs) -> None:
-        super(Google, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.enabled = enabled
-        self.registration = registration
-        self.login = login
-        self.validation = validation
+    def __init__(self, **kwargs):
+        super(Google, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.registration = kwargs.get('registration', None)
+        self.login = kwargs.get('login', None)
+        self.validation = kwargs.get('validation', None)
 
 
 class HandlerMapping(Model):
@@ -6661,11 +7014,11 @@ class HandlerMapping(Model):
         'arguments': {'key': 'arguments', 'type': 'str'},
     }
 
-    def __init__(self, *, extension: str=None, script_processor: str=None, arguments: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(HandlerMapping, self).__init__(**kwargs)
-        self.extension = extension
-        self.script_processor = script_processor
-        self.arguments = arguments
+        self.extension = kwargs.get('extension', None)
+        self.script_processor = kwargs.get('script_processor', None)
+        self.arguments = kwargs.get('arguments', None)
 
 
 class HostingEnvironmentDeploymentInfo(Model):
@@ -6682,10 +7035,10 @@ class HostingEnvironmentDeploymentInfo(Model):
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, location: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(HostingEnvironmentDeploymentInfo, self).__init__(**kwargs)
-        self.name = name
-        self.location = location
+        self.name = kwargs.get('name', None)
+        self.location = kwargs.get('location', None)
 
 
 class HostingEnvironmentDiagnostics(Model):
@@ -6702,10 +7055,10 @@ class HostingEnvironmentDiagnostics(Model):
         'diagnostics_output': {'key': 'diagnosticsOutput', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, diagnostics_output: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(HostingEnvironmentDiagnostics, self).__init__(**kwargs)
-        self.name = name
-        self.diagnostics_output = diagnostics_output
+        self.name = kwargs.get('name', None)
+        self.diagnostics_output = kwargs.get('diagnostics_output', None)
 
 
 class HostingEnvironmentProfile(Model):
@@ -6733,9 +7086,9 @@ class HostingEnvironmentProfile(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(HostingEnvironmentProfile, self).__init__(**kwargs)
-        self.id = id
+        self.id = kwargs.get('id', None)
         self.name = None
         self.type = None
 
@@ -6757,11 +7110,11 @@ class HostKeys(Model):
         'system_keys': {'key': 'systemKeys', 'type': '{str}'},
     }
 
-    def __init__(self, *, master_key: str=None, function_keys=None, system_keys=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(HostKeys, self).__init__(**kwargs)
-        self.master_key = master_key
-        self.function_keys = function_keys
-        self.system_keys = system_keys
+        self.master_key = kwargs.get('master_key', None)
+        self.function_keys = kwargs.get('function_keys', None)
+        self.system_keys = kwargs.get('system_keys', None)
 
 
 class HostName(Model):
@@ -6780,15 +7133,15 @@ class HostName(Model):
     :param azure_resource_type: Type of the Azure resource the hostname is
      assigned to. Possible values include: 'Website', 'TrafficManager'
     :type azure_resource_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.AzureResourceType
+     ~azure.mgmt.web.v2020_12_01.models.AzureResourceType
     :param custom_host_name_dns_record_type: Type of the DNS record. Possible
      values include: 'CName', 'A'
     :type custom_host_name_dns_record_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.CustomHostNameDnsRecordType
+     ~azure.mgmt.web.v2020_12_01.models.CustomHostNameDnsRecordType
     :param host_name_type: Type of the hostname. Possible values include:
      'Verified', 'Managed'
     :type host_name_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.HostNameType
+     ~azure.mgmt.web.v2020_12_01.models.HostNameType
     """
 
     _attribute_map = {
@@ -6800,14 +7153,14 @@ class HostName(Model):
         'host_name_type': {'key': 'hostNameType', 'type': 'HostNameType'},
     }
 
-    def __init__(self, *, name: str=None, site_names=None, azure_resource_name: str=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(HostName, self).__init__(**kwargs)
-        self.name = name
-        self.site_names = site_names
-        self.azure_resource_name = azure_resource_name
-        self.azure_resource_type = azure_resource_type
-        self.custom_host_name_dns_record_type = custom_host_name_dns_record_type
-        self.host_name_type = host_name_type
+        self.name = kwargs.get('name', None)
+        self.site_names = kwargs.get('site_names', None)
+        self.azure_resource_name = kwargs.get('azure_resource_name', None)
+        self.azure_resource_type = kwargs.get('azure_resource_type', None)
+        self.custom_host_name_dns_record_type = kwargs.get('custom_host_name_dns_record_type', None)
+        self.host_name_type = kwargs.get('host_name_type', None)
 
 
 class HostNameBinding(ProxyOnlyResource):
@@ -6824,8 +7177,6 @@ class HostNameBinding(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param site_name: App Service app name.
     :type site_name: str
     :param domain_id: Fully qualified ARM domain resource URI.
@@ -6835,18 +7186,18 @@ class HostNameBinding(ProxyOnlyResource):
     :param azure_resource_type: Azure resource type. Possible values include:
      'Website', 'TrafficManager'
     :type azure_resource_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.AzureResourceType
+     ~azure.mgmt.web.v2020_12_01.models.AzureResourceType
     :param custom_host_name_dns_record_type: Custom DNS record type. Possible
      values include: 'CName', 'A'
     :type custom_host_name_dns_record_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.CustomHostNameDnsRecordType
+     ~azure.mgmt.web.v2020_12_01.models.CustomHostNameDnsRecordType
     :param host_name_type: Hostname type. Possible values include: 'Verified',
      'Managed'
     :type host_name_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.HostNameType
+     ~azure.mgmt.web.v2020_12_01.models.HostNameType
     :param ssl_state: SSL type. Possible values include: 'Disabled',
      'SniEnabled', 'IpBasedEnabled'
-    :type ssl_state: str or ~azure.mgmt.web.v2020_09_01.models.SslState
+    :type ssl_state: str or ~azure.mgmt.web.v2020_12_01.models.SslState
     :param thumbprint: SSL certificate thumbprint
     :type thumbprint: str
     :ivar virtual_ip: Virtual IP address assigned to the hostname if IP based
@@ -6866,7 +7217,6 @@ class HostNameBinding(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'site_name': {'key': 'properties.siteName', 'type': 'str'},
         'domain_id': {'key': 'properties.domainId', 'type': 'str'},
         'azure_resource_name': {'key': 'properties.azureResourceName', 'type': 'str'},
@@ -6878,16 +7228,16 @@ class HostNameBinding(ProxyOnlyResource):
         'virtual_ip': {'key': 'properties.virtualIP', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, site_name: str=None, domain_id: str=None, azure_resource_name: str=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None, ssl_state=None, thumbprint: str=None, **kwargs) -> None:
-        super(HostNameBinding, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.site_name = site_name
-        self.domain_id = domain_id
-        self.azure_resource_name = azure_resource_name
-        self.azure_resource_type = azure_resource_type
-        self.custom_host_name_dns_record_type = custom_host_name_dns_record_type
-        self.host_name_type = host_name_type
-        self.ssl_state = ssl_state
-        self.thumbprint = thumbprint
+    def __init__(self, **kwargs):
+        super(HostNameBinding, self).__init__(**kwargs)
+        self.site_name = kwargs.get('site_name', None)
+        self.domain_id = kwargs.get('domain_id', None)
+        self.azure_resource_name = kwargs.get('azure_resource_name', None)
+        self.azure_resource_type = kwargs.get('azure_resource_type', None)
+        self.custom_host_name_dns_record_type = kwargs.get('custom_host_name_dns_record_type', None)
+        self.host_name_type = kwargs.get('host_name_type', None)
+        self.ssl_state = kwargs.get('ssl_state', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
         self.virtual_ip = None
 
 
@@ -6898,7 +7248,7 @@ class HostNameSslState(Model):
     :type name: str
     :param ssl_state: SSL type. Possible values include: 'Disabled',
      'SniEnabled', 'IpBasedEnabled'
-    :type ssl_state: str or ~azure.mgmt.web.v2020_09_01.models.SslState
+    :type ssl_state: str or ~azure.mgmt.web.v2020_12_01.models.SslState
     :param virtual_ip: Virtual IP address assigned to the hostname if IP based
      SSL is enabled.
     :type virtual_ip: str
@@ -6908,7 +7258,7 @@ class HostNameSslState(Model):
     :type to_update: bool
     :param host_type: Indicates whether the hostname is a standard or
      repository hostname. Possible values include: 'Standard', 'Repository'
-    :type host_type: str or ~azure.mgmt.web.v2020_09_01.models.HostType
+    :type host_type: str or ~azure.mgmt.web.v2020_12_01.models.HostType
     """
 
     _attribute_map = {
@@ -6920,14 +7270,14 @@ class HostNameSslState(Model):
         'host_type': {'key': 'hostType', 'type': 'HostType'},
     }
 
-    def __init__(self, *, name: str=None, ssl_state=None, virtual_ip: str=None, thumbprint: str=None, to_update: bool=None, host_type=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(HostNameSslState, self).__init__(**kwargs)
-        self.name = name
-        self.ssl_state = ssl_state
-        self.virtual_ip = virtual_ip
-        self.thumbprint = thumbprint
-        self.to_update = to_update
-        self.host_type = host_type
+        self.name = kwargs.get('name', None)
+        self.ssl_state = kwargs.get('ssl_state', None)
+        self.virtual_ip = kwargs.get('virtual_ip', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.to_update = kwargs.get('to_update', None)
+        self.host_type = kwargs.get('host_type', None)
 
 
 class HttpLogsConfig(Model):
@@ -6935,10 +7285,10 @@ class HttpLogsConfig(Model):
 
     :param file_system: Http logs to file system configuration.
     :type file_system:
-     ~azure.mgmt.web.v2020_09_01.models.FileSystemHttpLogsConfig
+     ~azure.mgmt.web.v2020_12_01.models.FileSystemHttpLogsConfig
     :param azure_blob_storage: Http logs to azure blob storage configuration.
     :type azure_blob_storage:
-     ~azure.mgmt.web.v2020_09_01.models.AzureBlobStorageHttpLogsConfig
+     ~azure.mgmt.web.v2020_12_01.models.AzureBlobStorageHttpLogsConfig
     """
 
     _attribute_map = {
@@ -6946,14 +7296,16 @@ class HttpLogsConfig(Model):
         'azure_blob_storage': {'key': 'azureBlobStorage', 'type': 'AzureBlobStorageHttpLogsConfig'},
     }
 
-    def __init__(self, *, file_system=None, azure_blob_storage=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(HttpLogsConfig, self).__init__(**kwargs)
-        self.file_system = file_system
-        self.azure_blob_storage = azure_blob_storage
+        self.file_system = kwargs.get('file_system', None)
+        self.azure_blob_storage = kwargs.get('azure_blob_storage', None)
 
 
 class HttpSettings(ProxyOnlyResource):
-    """HttpSettings.
+    """The configuration settings of the HTTP requests for authentication and
+    authorization requests made against App Service
+    Authentication/Authorization.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -6966,14 +7318,15 @@ class HttpSettings(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param require_https:
+    :param require_https: <code>false</code> if the
+     authentication/authorization responses not having the HTTPS scheme are
+     permissible; otherwise, <code>true</code>.
     :type require_https: bool
-    :param routes:
-    :type routes: ~azure.mgmt.web.v2020_09_01.models.HttpSettingsRoutes
-    :param forward_proxy:
-    :type forward_proxy: ~azure.mgmt.web.v2020_09_01.models.ForwardProxy
+    :param routes: The configuration settings of the paths HTTP requests.
+    :type routes: ~azure.mgmt.web.v2020_12_01.models.HttpSettingsRoutes
+    :param forward_proxy: The configuration settings of a forward proxy used
+     to make the requests.
+    :type forward_proxy: ~azure.mgmt.web.v2020_12_01.models.ForwardProxy
     """
 
     _validation = {
@@ -6987,21 +7340,20 @@ class HttpSettings(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'require_https': {'key': 'properties.requireHttps', 'type': 'bool'},
         'routes': {'key': 'properties.routes', 'type': 'HttpSettingsRoutes'},
         'forward_proxy': {'key': 'properties.forwardProxy', 'type': 'ForwardProxy'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, require_https: bool=None, routes=None, forward_proxy=None, **kwargs) -> None:
-        super(HttpSettings, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.require_https = require_https
-        self.routes = routes
-        self.forward_proxy = forward_proxy
+    def __init__(self, **kwargs):
+        super(HttpSettings, self).__init__(**kwargs)
+        self.require_https = kwargs.get('require_https', None)
+        self.routes = kwargs.get('routes', None)
+        self.forward_proxy = kwargs.get('forward_proxy', None)
 
 
 class HttpSettingsRoutes(ProxyOnlyResource):
-    """HttpSettingsRoutes.
+    """The configuration settings of the paths HTTP requests.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -7014,9 +7366,8 @@ class HttpSettingsRoutes(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param api_prefix:
+    :param api_prefix: The prefix that should precede all the
+     authentication/authorization paths.
     :type api_prefix: str
     """
 
@@ -7031,13 +7382,12 @@ class HttpSettingsRoutes(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'api_prefix': {'key': 'properties.apiPrefix', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, api_prefix: str=None, **kwargs) -> None:
-        super(HttpSettingsRoutes, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.api_prefix = api_prefix
+    def __init__(self, **kwargs):
+        super(HttpSettingsRoutes, self).__init__(**kwargs)
+        self.api_prefix = kwargs.get('api_prefix', None)
 
 
 class HybridConnection(ProxyOnlyResource):
@@ -7054,8 +7404,6 @@ class HybridConnection(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param service_bus_namespace: The name of the Service Bus namespace.
     :type service_bus_namespace: str
     :param relay_name: The name of the Service Bus relay.
@@ -7089,7 +7437,6 @@ class HybridConnection(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'service_bus_namespace': {'key': 'properties.serviceBusNamespace', 'type': 'str'},
         'relay_name': {'key': 'properties.relayName', 'type': 'str'},
         'relay_arm_uri': {'key': 'properties.relayArmUri', 'type': 'str'},
@@ -7100,16 +7447,16 @@ class HybridConnection(ProxyOnlyResource):
         'service_bus_suffix': {'key': 'properties.serviceBusSuffix', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, service_bus_namespace: str=None, relay_name: str=None, relay_arm_uri: str=None, hostname: str=None, port: int=None, send_key_name: str=None, send_key_value: str=None, service_bus_suffix: str=None, **kwargs) -> None:
-        super(HybridConnection, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.service_bus_namespace = service_bus_namespace
-        self.relay_name = relay_name
-        self.relay_arm_uri = relay_arm_uri
-        self.hostname = hostname
-        self.port = port
-        self.send_key_name = send_key_name
-        self.send_key_value = send_key_value
-        self.service_bus_suffix = service_bus_suffix
+    def __init__(self, **kwargs):
+        super(HybridConnection, self).__init__(**kwargs)
+        self.service_bus_namespace = kwargs.get('service_bus_namespace', None)
+        self.relay_name = kwargs.get('relay_name', None)
+        self.relay_arm_uri = kwargs.get('relay_arm_uri', None)
+        self.hostname = kwargs.get('hostname', None)
+        self.port = kwargs.get('port', None)
+        self.send_key_name = kwargs.get('send_key_name', None)
+        self.send_key_value = kwargs.get('send_key_value', None)
+        self.service_bus_suffix = kwargs.get('service_bus_suffix', None)
 
 
 class HybridConnectionKey(ProxyOnlyResource):
@@ -7127,8 +7474,6 @@ class HybridConnectionKey(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar send_key_name: The name of the send key.
     :vartype send_key_name: str
     :ivar send_key_value: The value of the send key.
@@ -7148,13 +7493,12 @@ class HybridConnectionKey(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'send_key_name': {'key': 'properties.sendKeyName', 'type': 'str'},
         'send_key_value': {'key': 'properties.sendKeyValue', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(HybridConnectionKey, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(HybridConnectionKey, self).__init__(**kwargs)
         self.send_key_name = None
         self.send_key_value = None
 
@@ -7174,8 +7518,6 @@ class HybridConnectionLimits(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar current: The current number of Hybrid Connections.
     :vartype current: int
     :ivar maximum: The maximum number of Hybrid Connections allowed.
@@ -7195,13 +7537,12 @@ class HybridConnectionLimits(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'current': {'key': 'properties.current', 'type': 'int'},
         'maximum': {'key': 'properties.maximum', 'type': 'int'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(HybridConnectionLimits, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(HybridConnectionLimits, self).__init__(**kwargs)
         self.current = None
         self.maximum = None
 
@@ -7220,8 +7561,6 @@ class Identifier(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param value: String representation of the identity.
     :type value: str
     """
@@ -7237,17 +7576,17 @@ class Identifier(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'value': {'key': 'properties.id', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, value: str=None, **kwargs) -> None:
-        super(Identifier, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.value = value
+    def __init__(self, **kwargs):
+        super(Identifier, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class IdentityProviders(ProxyOnlyResource):
-    """IdentityProviders.
+    """The configuration settings of each of the identity providers used to
+    configure App Service Authentication/Authorization.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -7260,22 +7599,33 @@ class IdentityProviders(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param azure_active_directory:
+    :param azure_active_directory: The configuration settings of the Azure
+     Active directory provider.
     :type azure_active_directory:
-     ~azure.mgmt.web.v2020_09_01.models.AzureActiveDirectory
-    :param facebook:
-    :type facebook: ~azure.mgmt.web.v2020_09_01.models.Facebook
-    :param git_hub:
-    :type git_hub: ~azure.mgmt.web.v2020_09_01.models.GitHub
-    :param google:
-    :type google: ~azure.mgmt.web.v2020_09_01.models.Google
-    :param twitter:
-    :type twitter: ~azure.mgmt.web.v2020_09_01.models.Twitter
-    :param custom_open_id_connect_providers:
+     ~azure.mgmt.web.v2020_12_01.models.AzureActiveDirectory
+    :param facebook: The configuration settings of the Facebook provider.
+    :type facebook: ~azure.mgmt.web.v2020_12_01.models.Facebook
+    :param git_hub: The configuration settings of the GitHub provider.
+    :type git_hub: ~azure.mgmt.web.v2020_12_01.models.GitHub
+    :param google: The configuration settings of the Google provider.
+    :type google: ~azure.mgmt.web.v2020_12_01.models.Google
+    :param twitter: The configuration settings of the Twitter provider.
+    :type twitter: ~azure.mgmt.web.v2020_12_01.models.Twitter
+    :param custom_open_id_connect_providers: The map of the name of the alias
+     of each custom Open ID Connect provider to the
+     configuration settings of the custom Open ID Connect provider.
     :type custom_open_id_connect_providers: dict[str,
-     ~azure.mgmt.web.v2020_09_01.models.CustomOpenIdConnectProvider]
+     ~azure.mgmt.web.v2020_12_01.models.CustomOpenIdConnectProvider]
+    :param legacy_microsoft_account: The configuration settings of the legacy
+     Microsoft Account provider.
+    :type legacy_microsoft_account:
+     ~azure.mgmt.web.v2020_12_01.models.LegacyMicrosoftAccount
+    :param apple: The configuration settings of the Apple provider.
+    :type apple: ~azure.mgmt.web.v2020_12_01.models.Apple
+    :param azure_static_web_apps: The configuration settings of the Azure
+     Static Web Apps provider.
+    :type azure_static_web_apps:
+     ~azure.mgmt.web.v2020_12_01.models.AzureStaticWebApps
     """
 
     _validation = {
@@ -7289,23 +7639,28 @@ class IdentityProviders(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'azure_active_directory': {'key': 'properties.azureActiveDirectory', 'type': 'AzureActiveDirectory'},
         'facebook': {'key': 'properties.facebook', 'type': 'Facebook'},
         'git_hub': {'key': 'properties.gitHub', 'type': 'GitHub'},
         'google': {'key': 'properties.google', 'type': 'Google'},
         'twitter': {'key': 'properties.twitter', 'type': 'Twitter'},
         'custom_open_id_connect_providers': {'key': 'properties.customOpenIdConnectProviders', 'type': '{CustomOpenIdConnectProvider}'},
+        'legacy_microsoft_account': {'key': 'properties.legacyMicrosoftAccount', 'type': 'LegacyMicrosoftAccount'},
+        'apple': {'key': 'properties.apple', 'type': 'Apple'},
+        'azure_static_web_apps': {'key': 'properties.azureStaticWebApps', 'type': 'AzureStaticWebApps'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, azure_active_directory=None, facebook=None, git_hub=None, google=None, twitter=None, custom_open_id_connect_providers=None, **kwargs) -> None:
-        super(IdentityProviders, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.azure_active_directory = azure_active_directory
-        self.facebook = facebook
-        self.git_hub = git_hub
-        self.google = google
-        self.twitter = twitter
-        self.custom_open_id_connect_providers = custom_open_id_connect_providers
+    def __init__(self, **kwargs):
+        super(IdentityProviders, self).__init__(**kwargs)
+        self.azure_active_directory = kwargs.get('azure_active_directory', None)
+        self.facebook = kwargs.get('facebook', None)
+        self.git_hub = kwargs.get('git_hub', None)
+        self.google = kwargs.get('google', None)
+        self.twitter = kwargs.get('twitter', None)
+        self.custom_open_id_connect_providers = kwargs.get('custom_open_id_connect_providers', None)
+        self.legacy_microsoft_account = kwargs.get('legacy_microsoft_account', None)
+        self.apple = kwargs.get('apple', None)
+        self.azure_static_web_apps = kwargs.get('azure_static_web_apps', None)
 
 
 class InboundEnvironmentEndpoint(Model):
@@ -7329,11 +7684,11 @@ class InboundEnvironmentEndpoint(Model):
         'ports': {'key': 'ports', 'type': '[str]'},
     }
 
-    def __init__(self, *, description: str=None, endpoints=None, ports=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(InboundEnvironmentEndpoint, self).__init__(**kwargs)
-        self.description = description
-        self.endpoints = endpoints
-        self.ports = ports
+        self.description = kwargs.get('description', None)
+        self.endpoints = kwargs.get('endpoints', None)
+        self.ports = kwargs.get('ports', None)
 
 
 class IpSecurityRestriction(Model):
@@ -7358,7 +7713,7 @@ class IpSecurityRestriction(Model):
     :param tag: Defines what this IP filter will be used for. This is to
      support IP filtering on proxies. Possible values include: 'Default',
      'XffProxy', 'ServiceTag'
-    :type tag: str or ~azure.mgmt.web.v2020_09_01.models.IpFilterTag
+    :type tag: str or ~azure.mgmt.web.v2020_12_01.models.IpFilterTag
     :param priority: Priority of IP restriction rule.
     :type priority: int
     :param name: IP restriction rule name.
@@ -7403,23 +7758,24 @@ class IpSecurityRestriction(Model):
         'headers': {'key': 'headers', 'type': '{[str]}'},
     }
 
-    def __init__(self, *, ip_address: str=None, subnet_mask: str=None, vnet_subnet_resource_id: str=None, vnet_traffic_tag: int=None, subnet_traffic_tag: int=None, action: str=None, tag=None, priority: int=None, name: str=None, description: str=None, headers=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(IpSecurityRestriction, self).__init__(**kwargs)
-        self.ip_address = ip_address
-        self.subnet_mask = subnet_mask
-        self.vnet_subnet_resource_id = vnet_subnet_resource_id
-        self.vnet_traffic_tag = vnet_traffic_tag
-        self.subnet_traffic_tag = subnet_traffic_tag
-        self.action = action
-        self.tag = tag
-        self.priority = priority
-        self.name = name
-        self.description = description
-        self.headers = headers
+        self.ip_address = kwargs.get('ip_address', None)
+        self.subnet_mask = kwargs.get('subnet_mask', None)
+        self.vnet_subnet_resource_id = kwargs.get('vnet_subnet_resource_id', None)
+        self.vnet_traffic_tag = kwargs.get('vnet_traffic_tag', None)
+        self.subnet_traffic_tag = kwargs.get('subnet_traffic_tag', None)
+        self.action = kwargs.get('action', None)
+        self.tag = kwargs.get('tag', None)
+        self.priority = kwargs.get('priority', None)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.headers = kwargs.get('headers', None)
 
 
 class JwtClaimChecks(ProxyOnlyResource):
-    """JwtClaimChecks.
+    """The configuration settings of the checks that should be made while
+    validating the JWT Claims.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -7432,11 +7788,10 @@ class JwtClaimChecks(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param allowed_groups:
+    :param allowed_groups: The list of the allowed groups.
     :type allowed_groups: list[str]
-    :param allowed_client_applications:
+    :param allowed_client_applications: The list of the allowed client
+     applications.
     :type allowed_client_applications: list[str]
     """
 
@@ -7451,15 +7806,14 @@ class JwtClaimChecks(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'allowed_groups': {'key': 'properties.allowedGroups', 'type': '[str]'},
         'allowed_client_applications': {'key': 'properties.allowedClientApplications', 'type': '[str]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, allowed_groups=None, allowed_client_applications=None, **kwargs) -> None:
-        super(JwtClaimChecks, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.allowed_groups = allowed_groups
-        self.allowed_client_applications = allowed_client_applications
+    def __init__(self, **kwargs):
+        super(JwtClaimChecks, self).__init__(**kwargs)
+        self.allowed_groups = kwargs.get('allowed_groups', None)
+        self.allowed_client_applications = kwargs.get('allowed_client_applications', None)
 
 
 class KeyInfo(Model):
@@ -7476,10 +7830,187 @@ class KeyInfo(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, value: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(KeyInfo, self).__init__(**kwargs)
-        self.name = name
-        self.value = value
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+
+
+class KeyValuePairStringObject(Model):
+    """KeyValuePairStringObject.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar key:
+    :vartype key: str
+    :ivar value:
+    :vartype value: object
+    """
+
+    _validation = {
+        'key': {'readonly': True},
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'key': {'key': 'key', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyValuePairStringObject, self).__init__(**kwargs)
+        self.key = None
+        self.value = None
+
+
+class KubeEnvironmentProfile(Model):
+    """Specification for a Kubernetes Environment to use for this resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param id: Resource ID of the Kubernetes Environment.
+    :type id: str
+    :ivar name: Name of the Kubernetes Environment.
+    :vartype name: str
+    :ivar type: Resource type of the Kubernetes Environment.
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KubeEnvironmentProfile, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = None
+        self.type = None
+
+
+class LegacyMicrosoftAccount(ProxyOnlyResource):
+    """The configuration settings of the legacy Microsoft Account provider.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param enabled: <code>false</code> if the legacy Microsoft Account
+     provider should not be enabled despite the set registration; otherwise,
+     <code>true</code>.
+    :type enabled: bool
+    :param registration: The configuration settings of the app registration
+     for the legacy Microsoft Account provider.
+    :type registration: ~azure.mgmt.web.v2020_12_01.models.ClientRegistration
+    :param login: The configuration settings of the login flow.
+    :type login: ~azure.mgmt.web.v2020_12_01.models.LoginScopes
+    :param validation: The configuration settings of the legacy Microsoft
+     Account provider token validation flow.
+    :type validation:
+     ~azure.mgmt.web.v2020_12_01.models.AllowedAudiencesValidation
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'registration': {'key': 'properties.registration', 'type': 'ClientRegistration'},
+        'login': {'key': 'properties.login', 'type': 'LoginScopes'},
+        'validation': {'key': 'properties.validation', 'type': 'AllowedAudiencesValidation'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LegacyMicrosoftAccount, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.registration = kwargs.get('registration', None)
+        self.login = kwargs.get('login', None)
+        self.validation = kwargs.get('validation', None)
+
+
+class LinuxJavaContainerSettings(Model):
+    """Linux Java Container settings.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar java11_runtime: Java 11 version (runtime only).
+    :vartype java11_runtime: str
+    :ivar java8_runtime: Java 8 version (runtime only).
+    :vartype java8_runtime: str
+    :ivar is_preview: <code>true</code> if the stack is in preview; otherwise,
+     <code>false</code>.
+    :vartype is_preview: bool
+    :ivar is_deprecated: <code>true</code> if the stack is deprecated;
+     otherwise, <code>false</code>.
+    :vartype is_deprecated: bool
+    :ivar is_hidden: <code>true</code> if the stack should be hidden;
+     otherwise, <code>false</code>.
+    :vartype is_hidden: bool
+    :ivar end_of_life_date: End-of-life date for the minor version.
+    :vartype end_of_life_date: datetime
+    :ivar is_auto_update: <code>true</code> if the stack version is
+     auto-updated; otherwise, <code>false</code>.
+    :vartype is_auto_update: bool
+    :ivar is_early_access: <code>true</code> if the minor version is
+     early-access; otherwise, <code>false</code>.
+    :vartype is_early_access: bool
+    """
+
+    _validation = {
+        'java11_runtime': {'readonly': True},
+        'java8_runtime': {'readonly': True},
+        'is_preview': {'readonly': True},
+        'is_deprecated': {'readonly': True},
+        'is_hidden': {'readonly': True},
+        'end_of_life_date': {'readonly': True},
+        'is_auto_update': {'readonly': True},
+        'is_early_access': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'java11_runtime': {'key': 'java11Runtime', 'type': 'str'},
+        'java8_runtime': {'key': 'java8Runtime', 'type': 'str'},
+        'is_preview': {'key': 'isPreview', 'type': 'bool'},
+        'is_deprecated': {'key': 'isDeprecated', 'type': 'bool'},
+        'is_hidden': {'key': 'isHidden', 'type': 'bool'},
+        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
+        'is_auto_update': {'key': 'isAutoUpdate', 'type': 'bool'},
+        'is_early_access': {'key': 'isEarlyAccess', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LinuxJavaContainerSettings, self).__init__(**kwargs)
+        self.java11_runtime = None
+        self.java8_runtime = None
+        self.is_preview = None
+        self.is_deprecated = None
+        self.is_hidden = None
+        self.end_of_life_date = None
+        self.is_auto_update = None
+        self.is_early_access = None
 
 
 class LocalizableString(Model):
@@ -7496,14 +8027,15 @@ class LocalizableString(Model):
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, *, value: str=None, localized_value: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(LocalizableString, self).__init__(**kwargs)
-        self.value = value
-        self.localized_value = localized_value
+        self.value = kwargs.get('value', None)
+        self.localized_value = kwargs.get('localized_value', None)
 
 
 class Login(ProxyOnlyResource):
-    """Login.
+    """The configuration settings of the login flow of users using App Service
+    Authentication/Authorization.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -7516,21 +8048,29 @@ class Login(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param routes:
-    :type routes: ~azure.mgmt.web.v2020_09_01.models.LoginRoutes
-    :param token_store:
-    :type token_store: ~azure.mgmt.web.v2020_09_01.models.TokenStore
-    :param preserve_url_fragments_for_logins:
+    :param routes: The routes that specify the endpoints used for login and
+     logout requests.
+    :type routes: ~azure.mgmt.web.v2020_12_01.models.LoginRoutes
+    :param token_store: The configuration settings of the token store.
+    :type token_store: ~azure.mgmt.web.v2020_12_01.models.TokenStore
+    :param preserve_url_fragments_for_logins: <code>true</code> if the
+     fragments from the request are preserved after the login request is made;
+     otherwise, <code>false</code>.
     :type preserve_url_fragments_for_logins: bool
-    :param allowed_external_redirect_urls:
+    :param allowed_external_redirect_urls: External URLs that can be
+     redirected to as part of logging in or logging out of the app. Note that
+     the query string part of the URL is ignored.
+     This is an advanced setting typically only needed by Windows Store
+     application backends.
+     Note that URLs within the current domain are always implicitly allowed.
     :type allowed_external_redirect_urls: list[str]
-    :param cookie_expiration:
+    :param cookie_expiration: The configuration settings of the session
+     cookie's expiration.
     :type cookie_expiration:
-     ~azure.mgmt.web.v2020_09_01.models.CookieExpiration
-    :param nonce:
-    :type nonce: ~azure.mgmt.web.v2020_09_01.models.Nonce
+     ~azure.mgmt.web.v2020_12_01.models.CookieExpiration
+    :param nonce: The configuration settings of the nonce used in the login
+     flow.
+    :type nonce: ~azure.mgmt.web.v2020_12_01.models.Nonce
     """
 
     _validation = {
@@ -7544,7 +8084,6 @@ class Login(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'routes': {'key': 'properties.routes', 'type': 'LoginRoutes'},
         'token_store': {'key': 'properties.tokenStore', 'type': 'TokenStore'},
         'preserve_url_fragments_for_logins': {'key': 'properties.preserveUrlFragmentsForLogins', 'type': 'bool'},
@@ -7553,18 +8092,18 @@ class Login(ProxyOnlyResource):
         'nonce': {'key': 'properties.nonce', 'type': 'Nonce'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, routes=None, token_store=None, preserve_url_fragments_for_logins: bool=None, allowed_external_redirect_urls=None, cookie_expiration=None, nonce=None, **kwargs) -> None:
-        super(Login, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.routes = routes
-        self.token_store = token_store
-        self.preserve_url_fragments_for_logins = preserve_url_fragments_for_logins
-        self.allowed_external_redirect_urls = allowed_external_redirect_urls
-        self.cookie_expiration = cookie_expiration
-        self.nonce = nonce
+    def __init__(self, **kwargs):
+        super(Login, self).__init__(**kwargs)
+        self.routes = kwargs.get('routes', None)
+        self.token_store = kwargs.get('token_store', None)
+        self.preserve_url_fragments_for_logins = kwargs.get('preserve_url_fragments_for_logins', None)
+        self.allowed_external_redirect_urls = kwargs.get('allowed_external_redirect_urls', None)
+        self.cookie_expiration = kwargs.get('cookie_expiration', None)
+        self.nonce = kwargs.get('nonce', None)
 
 
 class LoginRoutes(ProxyOnlyResource):
-    """LoginRoutes.
+    """The routes that specify the endpoints used for login and logout requests.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -7577,9 +8116,8 @@ class LoginRoutes(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param logout_endpoint:
+    :param logout_endpoint: The endpoint at which a logout request should be
+     made.
     :type logout_endpoint: str
     """
 
@@ -7594,17 +8132,17 @@ class LoginRoutes(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'logout_endpoint': {'key': 'properties.logoutEndpoint', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, logout_endpoint: str=None, **kwargs) -> None:
-        super(LoginRoutes, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.logout_endpoint = logout_endpoint
+    def __init__(self, **kwargs):
+        super(LoginRoutes, self).__init__(**kwargs)
+        self.logout_endpoint = kwargs.get('logout_endpoint', None)
 
 
 class LoginScopes(ProxyOnlyResource):
-    """LoginScopes.
+    """The configuration settings of the login flow, including the scopes that
+    should be requested.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -7617,9 +8155,8 @@ class LoginScopes(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param scopes:
+    :param scopes: A list of the scopes that should be requested while
+     authenticating.
     :type scopes: list[str]
     """
 
@@ -7634,13 +8171,12 @@ class LoginScopes(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'scopes': {'key': 'properties.scopes', 'type': '[str]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, scopes=None, **kwargs) -> None:
-        super(LoginScopes, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.scopes = scopes
+    def __init__(self, **kwargs):
+        super(LoginScopes, self).__init__(**kwargs)
+        self.scopes = kwargs.get('scopes', None)
 
 
 class LogSpecification(Model):
@@ -7663,12 +8199,12 @@ class LogSpecification(Model):
         'log_filter_pattern': {'key': 'logFilterPattern', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, display_name: str=None, blob_duration: str=None, log_filter_pattern: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(LogSpecification, self).__init__(**kwargs)
-        self.name = name
-        self.display_name = display_name
-        self.blob_duration = blob_duration
-        self.log_filter_pattern = log_filter_pattern
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.blob_duration = kwargs.get('blob_duration', None)
+        self.log_filter_pattern = kwargs.get('log_filter_pattern', None)
 
 
 class ManagedServiceIdentity(Model):
@@ -7680,7 +8216,7 @@ class ManagedServiceIdentity(Model):
     :param type: Type of managed service identity. Possible values include:
      'SystemAssigned', 'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
     :type type: str or
-     ~azure.mgmt.web.v2020_09_01.models.ManagedServiceIdentityType
+     ~azure.mgmt.web.v2020_12_01.models.ManagedServiceIdentityType
     :ivar tenant_id: Tenant of managed service identity.
     :vartype tenant_id: str
     :ivar principal_id: Principal Id of managed service identity.
@@ -7690,7 +8226,7 @@ class ManagedServiceIdentity(Model):
      will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.web.v2020_09_01.models.ManagedServiceIdentityUserAssignedIdentitiesValue]
+     ~azure.mgmt.web.v2020_12_01.models.ManagedServiceIdentityUserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -7705,12 +8241,12 @@ class ManagedServiceIdentity(Model):
         'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{ManagedServiceIdentityUserAssignedIdentitiesValue}'},
     }
 
-    def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ManagedServiceIdentity, self).__init__(**kwargs)
-        self.type = type
+        self.type = kwargs.get('type', None)
         self.tenant_id = None
         self.principal_id = None
-        self.user_assigned_identities = user_assigned_identities
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
 class ManagedServiceIdentityUserAssignedIdentitiesValue(Model):
@@ -7735,7 +8271,7 @@ class ManagedServiceIdentityUserAssignedIdentitiesValue(Model):
         'client_id': {'key': 'clientId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ManagedServiceIdentityUserAssignedIdentitiesValue, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -7755,10 +8291,10 @@ class MetricAvailability(Model):
         'blob_duration': {'key': 'blobDuration', 'type': 'str'},
     }
 
-    def __init__(self, *, time_grain: str=None, blob_duration: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(MetricAvailability, self).__init__(**kwargs)
-        self.time_grain = time_grain
-        self.blob_duration = blob_duration
+        self.time_grain = kwargs.get('time_grain', None)
+        self.blob_duration = kwargs.get('blob_duration', None)
 
 
 class MetricSpecification(Model):
@@ -7789,12 +8325,12 @@ class MetricSpecification(Model):
     :param is_internal:
     :type is_internal: bool
     :param dimensions:
-    :type dimensions: list[~azure.mgmt.web.v2020_09_01.models.Dimension]
+    :type dimensions: list[~azure.mgmt.web.v2020_12_01.models.Dimension]
     :param category:
     :type category: str
     :param availabilities:
     :type availabilities:
-     list[~azure.mgmt.web.v2020_09_01.models.MetricAvailability]
+     list[~azure.mgmt.web.v2020_12_01.models.MetricAvailability]
     :param supported_time_grain_types:
     :type supported_time_grain_types: list[str]
     :param supported_aggregation_types:
@@ -7821,25 +8357,25 @@ class MetricSpecification(Model):
         'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
     }
 
-    def __init__(self, *, name: str=None, display_name: str=None, display_description: str=None, unit: str=None, aggregation_type: str=None, supports_instance_level_aggregation: bool=None, enable_regional_mdm_account: bool=None, source_mdm_account: str=None, source_mdm_namespace: str=None, metric_filter_pattern: str=None, fill_gap_with_zero: bool=None, is_internal: bool=None, dimensions=None, category: str=None, availabilities=None, supported_time_grain_types=None, supported_aggregation_types=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(MetricSpecification, self).__init__(**kwargs)
-        self.name = name
-        self.display_name = display_name
-        self.display_description = display_description
-        self.unit = unit
-        self.aggregation_type = aggregation_type
-        self.supports_instance_level_aggregation = supports_instance_level_aggregation
-        self.enable_regional_mdm_account = enable_regional_mdm_account
-        self.source_mdm_account = source_mdm_account
-        self.source_mdm_namespace = source_mdm_namespace
-        self.metric_filter_pattern = metric_filter_pattern
-        self.fill_gap_with_zero = fill_gap_with_zero
-        self.is_internal = is_internal
-        self.dimensions = dimensions
-        self.category = category
-        self.availabilities = availabilities
-        self.supported_time_grain_types = supported_time_grain_types
-        self.supported_aggregation_types = supported_aggregation_types
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.display_description = kwargs.get('display_description', None)
+        self.unit = kwargs.get('unit', None)
+        self.aggregation_type = kwargs.get('aggregation_type', None)
+        self.supports_instance_level_aggregation = kwargs.get('supports_instance_level_aggregation', None)
+        self.enable_regional_mdm_account = kwargs.get('enable_regional_mdm_account', None)
+        self.source_mdm_account = kwargs.get('source_mdm_account', None)
+        self.source_mdm_namespace = kwargs.get('source_mdm_namespace', None)
+        self.metric_filter_pattern = kwargs.get('metric_filter_pattern', None)
+        self.fill_gap_with_zero = kwargs.get('fill_gap_with_zero', None)
+        self.is_internal = kwargs.get('is_internal', None)
+        self.dimensions = kwargs.get('dimensions', None)
+        self.category = kwargs.get('category', None)
+        self.availabilities = kwargs.get('availabilities', None)
+        self.supported_time_grain_types = kwargs.get('supported_time_grain_types', None)
+        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
 
 
 class MigrateMySqlRequest(ProxyOnlyResource):
@@ -7858,15 +8394,13 @@ class MigrateMySqlRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param connection_string: Required. Connection string to the remote MySQL
      database.
     :type connection_string: str
     :param migration_type: Required. The type of migration operation to be
      done. Possible values include: 'LocalToRemote', 'RemoteToLocal'
     :type migration_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.MySqlMigrationType
+     ~azure.mgmt.web.v2020_12_01.models.MySqlMigrationType
     """
 
     _validation = {
@@ -7882,15 +8416,14 @@ class MigrateMySqlRequest(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'connection_string': {'key': 'properties.connectionString', 'type': 'str'},
         'migration_type': {'key': 'properties.migrationType', 'type': 'MySqlMigrationType'},
     }
 
-    def __init__(self, *, connection_string: str, migration_type, kind: str=None, system_data=None, **kwargs) -> None:
-        super(MigrateMySqlRequest, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.connection_string = connection_string
-        self.migration_type = migration_type
+    def __init__(self, **kwargs):
+        super(MigrateMySqlRequest, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.migration_type = kwargs.get('migration_type', None)
 
 
 class MigrateMySqlStatus(ProxyOnlyResource):
@@ -7907,12 +8440,10 @@ class MigrateMySqlStatus(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar migration_operation_status: Status of the migration task. Possible
      values include: 'InProgress', 'Failed', 'Succeeded', 'TimedOut', 'Created'
     :vartype migration_operation_status: str or
-     ~azure.mgmt.web.v2020_09_01.models.OperationStatus
+     ~azure.mgmt.web.v2020_12_01.models.OperationStatus
     :ivar operation_id: Operation ID for the migration task.
     :vartype operation_id: str
     :ivar local_my_sql_enabled: True if the web app has in app MySql enabled
@@ -7933,14 +8464,13 @@ class MigrateMySqlStatus(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'migration_operation_status': {'key': 'properties.migrationOperationStatus', 'type': 'OperationStatus'},
         'operation_id': {'key': 'properties.operationId', 'type': 'str'},
         'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(MigrateMySqlStatus, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(MigrateMySqlStatus, self).__init__(**kwargs)
         self.migration_operation_status = None
         self.operation_id = None
         self.local_my_sql_enabled = None
@@ -7960,8 +8490,6 @@ class MSDeploy(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param package_uri: Package URI
     :type package_uri: str
     :param connection_string: SQL Connection String
@@ -7999,7 +8527,6 @@ class MSDeploy(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'package_uri': {'key': 'properties.packageUri', 'type': 'str'},
         'connection_string': {'key': 'properties.connectionString', 'type': 'str'},
         'db_type': {'key': 'properties.dbType', 'type': 'str'},
@@ -8009,15 +8536,15 @@ class MSDeploy(ProxyOnlyResource):
         'app_offline': {'key': 'properties.appOffline', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, package_uri: str=None, connection_string: str=None, db_type: str=None, set_parameters_xml_file_uri: str=None, set_parameters=None, skip_app_data: bool=None, app_offline: bool=None, **kwargs) -> None:
-        super(MSDeploy, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.package_uri = package_uri
-        self.connection_string = connection_string
-        self.db_type = db_type
-        self.set_parameters_xml_file_uri = set_parameters_xml_file_uri
-        self.set_parameters = set_parameters
-        self.skip_app_data = skip_app_data
-        self.app_offline = app_offline
+    def __init__(self, **kwargs):
+        super(MSDeploy, self).__init__(**kwargs)
+        self.package_uri = kwargs.get('package_uri', None)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.db_type = kwargs.get('db_type', None)
+        self.set_parameters_xml_file_uri = kwargs.get('set_parameters_xml_file_uri', None)
+        self.set_parameters = kwargs.get('set_parameters', None)
+        self.skip_app_data = kwargs.get('skip_app_data', None)
+        self.app_offline = kwargs.get('app_offline', None)
 
 
 class MSDeployLog(ProxyOnlyResource):
@@ -8034,11 +8561,9 @@ class MSDeployLog(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar entries: List of log entry messages
     :vartype entries:
-     list[~azure.mgmt.web.v2020_09_01.models.MSDeployLogEntry]
+     list[~azure.mgmt.web.v2020_12_01.models.MSDeployLogEntry]
     """
 
     _validation = {
@@ -8053,12 +8578,11 @@ class MSDeployLog(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'entries': {'key': 'properties.entries', 'type': '[MSDeployLogEntry]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(MSDeployLog, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(MSDeployLog, self).__init__(**kwargs)
         self.entries = None
 
 
@@ -8073,7 +8597,7 @@ class MSDeployLogEntry(Model):
     :ivar type: Log entry type. Possible values include: 'Message', 'Warning',
      'Error'
     :vartype type: str or
-     ~azure.mgmt.web.v2020_09_01.models.MSDeployLogEntryType
+     ~azure.mgmt.web.v2020_12_01.models.MSDeployLogEntryType
     :ivar message: Log entry message
     :vartype message: str
     """
@@ -8090,7 +8614,7 @@ class MSDeployLogEntry(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(MSDeployLogEntry, self).__init__(**kwargs)
         self.time = None
         self.type = None
@@ -8111,14 +8635,12 @@ class MSDeployStatus(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar deployer: Username of deployer
     :vartype deployer: str
     :ivar provisioning_state: Provisioning state. Possible values include:
      'accepted', 'running', 'succeeded', 'failed', 'canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.MSDeployProvisioningState
+     ~azure.mgmt.web.v2020_12_01.models.MSDeployProvisioningState
     :ivar start_time: Start time of deploy operation
     :vartype start_time: datetime
     :ivar end_time: End time of deploy operation
@@ -8143,7 +8665,6 @@ class MSDeployStatus(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'deployer': {'key': 'properties.deployer', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'MSDeployProvisioningState'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
@@ -8151,8 +8672,8 @@ class MSDeployStatus(ProxyOnlyResource):
         'complete': {'key': 'properties.complete', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(MSDeployStatus, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(MSDeployStatus, self).__init__(**kwargs)
         self.deployer = None
         self.provisioning_state = None
         self.start_time = None
@@ -8171,9 +8692,9 @@ class NameIdentifier(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(NameIdentifier, self).__init__(**kwargs)
-        self.name = name
+        self.name = kwargs.get('name', None)
 
 
 class NameValuePair(Model):
@@ -8190,39 +8711,10 @@ class NameValuePair(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, value: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(NameValuePair, self).__init__(**kwargs)
-        self.name = name
-        self.value = value
-
-
-class NetworkAccessControlEntry(Model):
-    """Network access control entry.
-
-    :param action: Action object. Possible values include: 'Permit', 'Deny'
-    :type action: str or
-     ~azure.mgmt.web.v2020_09_01.models.AccessControlEntryAction
-    :param description: Description of network access control entry.
-    :type description: str
-    :param order: Order of precedence.
-    :type order: int
-    :param remote_subnet: Remote subnet.
-    :type remote_subnet: str
-    """
-
-    _attribute_map = {
-        'action': {'key': 'action', 'type': 'AccessControlEntryAction'},
-        'description': {'key': 'description', 'type': 'str'},
-        'order': {'key': 'order', 'type': 'int'},
-        'remote_subnet': {'key': 'remoteSubnet', 'type': 'str'},
-    }
-
-    def __init__(self, *, action=None, description: str=None, order: int=None, remote_subnet: str=None, **kwargs) -> None:
-        super(NetworkAccessControlEntry, self).__init__(**kwargs)
-        self.action = action
-        self.description = description
-        self.order = order
-        self.remote_subnet = remote_subnet
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
 
 
 class NetworkFeatures(ProxyOnlyResource):
@@ -8240,19 +8732,17 @@ class NetworkFeatures(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar virtual_network_name: The Virtual Network name.
     :vartype virtual_network_name: str
     :ivar virtual_network_connection: The Virtual Network summary view.
     :vartype virtual_network_connection:
-     ~azure.mgmt.web.v2020_09_01.models.VnetInfo
+     ~azure.mgmt.web.v2020_12_01.models.VnetInfo
     :ivar hybrid_connections: The Hybrid Connections summary view.
     :vartype hybrid_connections:
-     list[~azure.mgmt.web.v2020_09_01.models.RelayServiceConnectionEntity]
+     list[~azure.mgmt.web.v2020_12_01.models.RelayServiceConnectionEntity]
     :ivar hybrid_connections_v2: The Hybrid Connection V2 (Service Bus) view.
     :vartype hybrid_connections_v2:
-     list[~azure.mgmt.web.v2020_09_01.models.HybridConnection]
+     list[~azure.mgmt.web.v2020_12_01.models.HybridConnection]
     """
 
     _validation = {
@@ -8270,15 +8760,14 @@ class NetworkFeatures(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'virtual_network_name': {'key': 'properties.virtualNetworkName', 'type': 'str'},
         'virtual_network_connection': {'key': 'properties.virtualNetworkConnection', 'type': 'VnetInfo'},
         'hybrid_connections': {'key': 'properties.hybridConnections', 'type': '[RelayServiceConnectionEntity]'},
         'hybrid_connections_v2': {'key': 'properties.hybridConnectionsV2', 'type': '[HybridConnection]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(NetworkFeatures, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(NetworkFeatures, self).__init__(**kwargs)
         self.virtual_network_name = None
         self.virtual_network_connection = None
         self.hybrid_connections = None
@@ -8304,15 +8793,15 @@ class NetworkTrace(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, *, path: str=None, status: str=None, message: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(NetworkTrace, self).__init__(**kwargs)
-        self.path = path
-        self.status = status
-        self.message = message
+        self.path = kwargs.get('path', None)
+        self.status = kwargs.get('status', None)
+        self.message = kwargs.get('message', None)
 
 
 class Nonce(ProxyOnlyResource):
-    """Nonce.
+    """The configuration settings of the nonce used in the login flow.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -8325,11 +8814,11 @@ class Nonce(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param validate_nonce:
+    :param validate_nonce: <code>false</code> if the nonce should not be
+     validated while completing the login flow; otherwise, <code>true</code>.
     :type validate_nonce: bool
-    :param nonce_expiration_interval:
+    :param nonce_expiration_interval: The time after the request is made when
+     the nonce should expire.
     :type nonce_expiration_interval: str
     """
 
@@ -8344,19 +8833,19 @@ class Nonce(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'validate_nonce': {'key': 'properties.validateNonce', 'type': 'bool'},
         'nonce_expiration_interval': {'key': 'properties.nonceExpirationInterval', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, validate_nonce: bool=None, nonce_expiration_interval: str=None, **kwargs) -> None:
-        super(Nonce, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.validate_nonce = validate_nonce
-        self.nonce_expiration_interval = nonce_expiration_interval
+    def __init__(self, **kwargs):
+        super(Nonce, self).__init__(**kwargs)
+        self.validate_nonce = kwargs.get('validate_nonce', None)
+        self.nonce_expiration_interval = kwargs.get('nonce_expiration_interval', None)
 
 
 class OpenIdConnectClientCredential(ProxyOnlyResource):
-    """OpenIdConnectClientCredential.
+    """The authentication client credentials of the custom Open ID Connect
+    provider.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -8369,12 +8858,12 @@ class OpenIdConnectClientCredential(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param method: Possible values include: 'ClientSecretPost'
+    :param method: The method that should be used to authenticate the user.
+     Possible values include: 'ClientSecretPost'
     :type method: str or
-     ~azure.mgmt.web.v2020_09_01.models.ClientCredentialMethod
-    :param client_secret_setting_name:
+     ~azure.mgmt.web.v2020_12_01.models.ClientCredentialMethod
+    :param client_secret_setting_name: The app setting that contains the
+     client secret for the custom Open ID Connect provider.
     :type client_secret_setting_name: str
     """
 
@@ -8389,19 +8878,19 @@ class OpenIdConnectClientCredential(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'method': {'key': 'properties.method', 'type': 'ClientCredentialMethod'},
         'client_secret_setting_name': {'key': 'properties.clientSecretSettingName', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, method=None, client_secret_setting_name: str=None, **kwargs) -> None:
-        super(OpenIdConnectClientCredential, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.method = method
-        self.client_secret_setting_name = client_secret_setting_name
+    def __init__(self, **kwargs):
+        super(OpenIdConnectClientCredential, self).__init__(**kwargs)
+        self.method = kwargs.get('method', None)
+        self.client_secret_setting_name = kwargs.get('client_secret_setting_name', None)
 
 
 class OpenIdConnectConfig(ProxyOnlyResource):
-    """OpenIdConnectConfig.
+    """The configuration settings of the endpoints used for the custom Open ID
+    Connect provider.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -8414,17 +8903,18 @@ class OpenIdConnectConfig(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param authorization_endpoint:
+    :param authorization_endpoint: The endpoint to be used to make an
+     authorization request.
     :type authorization_endpoint: str
-    :param token_endpoint:
+    :param token_endpoint: The endpoint to be used to request a token.
     :type token_endpoint: str
-    :param issuer:
+    :param issuer: The endpoint that issues the token.
     :type issuer: str
-    :param certification_uri:
+    :param certification_uri: The endpoint that provides the keys necessary to
+     validate the token.
     :type certification_uri: str
-    :param well_known_open_id_configuration:
+    :param well_known_open_id_configuration: The endpoint that contains all
+     the configuration endpoints for the provider.
     :type well_known_open_id_configuration: str
     """
 
@@ -8439,7 +8929,6 @@ class OpenIdConnectConfig(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'authorization_endpoint': {'key': 'properties.authorizationEndpoint', 'type': 'str'},
         'token_endpoint': {'key': 'properties.tokenEndpoint', 'type': 'str'},
         'issuer': {'key': 'properties.issuer', 'type': 'str'},
@@ -8447,17 +8936,18 @@ class OpenIdConnectConfig(ProxyOnlyResource):
         'well_known_open_id_configuration': {'key': 'properties.wellKnownOpenIdConfiguration', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, authorization_endpoint: str=None, token_endpoint: str=None, issuer: str=None, certification_uri: str=None, well_known_open_id_configuration: str=None, **kwargs) -> None:
-        super(OpenIdConnectConfig, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.authorization_endpoint = authorization_endpoint
-        self.token_endpoint = token_endpoint
-        self.issuer = issuer
-        self.certification_uri = certification_uri
-        self.well_known_open_id_configuration = well_known_open_id_configuration
+    def __init__(self, **kwargs):
+        super(OpenIdConnectConfig, self).__init__(**kwargs)
+        self.authorization_endpoint = kwargs.get('authorization_endpoint', None)
+        self.token_endpoint = kwargs.get('token_endpoint', None)
+        self.issuer = kwargs.get('issuer', None)
+        self.certification_uri = kwargs.get('certification_uri', None)
+        self.well_known_open_id_configuration = kwargs.get('well_known_open_id_configuration', None)
 
 
 class OpenIdConnectLogin(ProxyOnlyResource):
-    """OpenIdConnectLogin.
+    """The configuration settings of the login flow of the custom Open ID Connect
+    provider.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -8470,11 +8960,11 @@ class OpenIdConnectLogin(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param name_claim_type:
+    :param name_claim_type: The name of the claim that contains the users
+     name.
     :type name_claim_type: str
-    :param scopes:
+    :param scopes: A list of the scopes that should be requested while
+     authenticating.
     :type scopes: list[str]
     """
 
@@ -8489,19 +8979,19 @@ class OpenIdConnectLogin(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'name_claim_type': {'key': 'properties.nameClaimType', 'type': 'str'},
         'scopes': {'key': 'properties.scopes', 'type': '[str]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, name_claim_type: str=None, scopes=None, **kwargs) -> None:
-        super(OpenIdConnectLogin, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.name_claim_type = name_claim_type
-        self.scopes = scopes
+    def __init__(self, **kwargs):
+        super(OpenIdConnectLogin, self).__init__(**kwargs)
+        self.name_claim_type = kwargs.get('name_claim_type', None)
+        self.scopes = kwargs.get('scopes', None)
 
 
 class OpenIdConnectRegistration(ProxyOnlyResource):
-    """OpenIdConnectRegistration.
+    """The configuration settings of the app registration for the custom Open ID
+    Connect provider.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -8514,16 +9004,16 @@ class OpenIdConnectRegistration(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param client_id:
+    :param client_id: The client id of the custom Open ID Connect provider.
     :type client_id: str
-    :param client_credential:
+    :param client_credential: The authentication credentials of the custom
+     Open ID Connect provider.
     :type client_credential:
-     ~azure.mgmt.web.v2020_09_01.models.OpenIdConnectClientCredential
-    :param open_id_connect_configuration:
+     ~azure.mgmt.web.v2020_12_01.models.OpenIdConnectClientCredential
+    :param open_id_connect_configuration: The configuration settings of the
+     endpoints used for the custom Open ID Connect provider.
     :type open_id_connect_configuration:
-     ~azure.mgmt.web.v2020_09_01.models.OpenIdConnectConfig
+     ~azure.mgmt.web.v2020_12_01.models.OpenIdConnectConfig
     """
 
     _validation = {
@@ -8537,17 +9027,16 @@ class OpenIdConnectRegistration(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'client_id': {'key': 'properties.clientId', 'type': 'str'},
         'client_credential': {'key': 'properties.clientCredential', 'type': 'OpenIdConnectClientCredential'},
         'open_id_connect_configuration': {'key': 'properties.openIdConnectConfiguration', 'type': 'OpenIdConnectConfig'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, client_id: str=None, client_credential=None, open_id_connect_configuration=None, **kwargs) -> None:
-        super(OpenIdConnectRegistration, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.client_id = client_id
-        self.client_credential = client_credential
-        self.open_id_connect_configuration = open_id_connect_configuration
+    def __init__(self, **kwargs):
+        super(OpenIdConnectRegistration, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_credential = kwargs.get('client_credential', None)
+        self.open_id_connect_configuration = kwargs.get('open_id_connect_configuration', None)
 
 
 class Operation(Model):
@@ -8559,9 +9048,9 @@ class Operation(Model):
     :type name: str
     :param status: The current status of the operation. Possible values
      include: 'InProgress', 'Failed', 'Succeeded', 'TimedOut', 'Created'
-    :type status: str or ~azure.mgmt.web.v2020_09_01.models.OperationStatus
+    :type status: str or ~azure.mgmt.web.v2020_12_01.models.OperationStatus
     :param errors: Any errors associate with the operation.
-    :type errors: list[~azure.mgmt.web.v2020_09_01.models.ErrorEntity]
+    :type errors: list[~azure.mgmt.web.v2020_12_01.models.ErrorEntity]
     :param created_time: Time when operation has started.
     :type created_time: datetime
     :param modified_time: Time when operation has been updated.
@@ -8583,16 +9072,16 @@ class Operation(Model):
         'geo_master_operation_id': {'key': 'geoMasterOperationId', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, name: str=None, status=None, errors=None, created_time=None, modified_time=None, expiration_time=None, geo_master_operation_id: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
-        self.id = id
-        self.name = name
-        self.status = status
-        self.errors = errors
-        self.created_time = created_time
-        self.modified_time = modified_time
-        self.expiration_time = expiration_time
-        self.geo_master_operation_id = geo_master_operation_id
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.status = kwargs.get('status', None)
+        self.errors = kwargs.get('errors', None)
+        self.created_time = kwargs.get('created_time', None)
+        self.modified_time = kwargs.get('modified_time', None)
+        self.expiration_time = kwargs.get('expiration_time', None)
+        self.geo_master_operation_id = kwargs.get('geo_master_operation_id', None)
 
 
 class OutboundEnvironmentEndpoint(Model):
@@ -8606,7 +9095,7 @@ class OutboundEnvironmentEndpoint(Model):
     :param endpoints: The endpoints that the App Service Environment reaches
      the service at.
     :type endpoints:
-     list[~azure.mgmt.web.v2020_09_01.models.EndpointDependency]
+     list[~azure.mgmt.web.v2020_12_01.models.EndpointDependency]
     """
 
     _attribute_map = {
@@ -8614,10 +9103,10 @@ class OutboundEnvironmentEndpoint(Model):
         'endpoints': {'key': 'endpoints', 'type': '[EndpointDependency]'},
     }
 
-    def __init__(self, *, category: str=None, endpoints=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(OutboundEnvironmentEndpoint, self).__init__(**kwargs)
-        self.category = category
-        self.endpoints = endpoints
+        self.category = kwargs.get('category', None)
+        self.endpoints = kwargs.get('endpoints', None)
 
 
 class PerfMonResponse(Model):
@@ -8628,7 +9117,7 @@ class PerfMonResponse(Model):
     :param message: The message.
     :type message: str
     :param data: The performance monitor counters.
-    :type data: ~azure.mgmt.web.v2020_09_01.models.PerfMonSet
+    :type data: ~azure.mgmt.web.v2020_12_01.models.PerfMonSet
     """
 
     _attribute_map = {
@@ -8637,11 +9126,11 @@ class PerfMonResponse(Model):
         'data': {'key': 'data', 'type': 'PerfMonSet'},
     }
 
-    def __init__(self, *, code: str=None, message: str=None, data=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(PerfMonResponse, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.data = data
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.data = kwargs.get('data', None)
 
 
 class PerfMonSample(Model):
@@ -8661,11 +9150,11 @@ class PerfMonSample(Model):
         'value': {'key': 'value', 'type': 'float'},
     }
 
-    def __init__(self, *, time=None, instance_name: str=None, value: float=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(PerfMonSample, self).__init__(**kwargs)
-        self.time = time
-        self.instance_name = instance_name
-        self.value = value
+        self.time = kwargs.get('time', None)
+        self.instance_name = kwargs.get('instance_name', None)
+        self.value = kwargs.get('value', None)
 
 
 class PerfMonSet(Model):
@@ -8680,7 +9169,7 @@ class PerfMonSet(Model):
     :param time_grain: Presented time grain.
     :type time_grain: str
     :param values: Collection of workers that are active during this time.
-    :type values: list[~azure.mgmt.web.v2020_09_01.models.PerfMonSample]
+    :type values: list[~azure.mgmt.web.v2020_12_01.models.PerfMonSample]
     """
 
     _attribute_map = {
@@ -8691,13 +9180,13 @@ class PerfMonSet(Model):
         'values': {'key': 'values', 'type': '[PerfMonSample]'},
     }
 
-    def __init__(self, *, name: str=None, start_time=None, end_time=None, time_grain: str=None, values=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(PerfMonSet, self).__init__(**kwargs)
-        self.name = name
-        self.start_time = start_time
-        self.end_time = end_time
-        self.time_grain = time_grain
-        self.values = values
+        self.name = kwargs.get('name', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.time_grain = kwargs.get('time_grain', None)
+        self.values = kwargs.get('values', None)
 
 
 class PremierAddOn(Resource):
@@ -8720,8 +9209,6 @@ class PremierAddOn(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param sku: Premier add on SKU.
     :type sku: str
     :param product: Premier add on Product.
@@ -8748,7 +9235,6 @@ class PremierAddOn(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'vendor': {'key': 'properties.vendor', 'type': 'str'},
@@ -8756,13 +9242,13 @@ class PremierAddOn(Resource):
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, kind: str=None, tags=None, system_data=None, sku: str=None, product: str=None, vendor: str=None, marketplace_publisher: str=None, marketplace_offer: str=None, **kwargs) -> None:
-        super(PremierAddOn, self).__init__(kind=kind, location=location, tags=tags, system_data=system_data, **kwargs)
-        self.sku = sku
-        self.product = product
-        self.vendor = vendor
-        self.marketplace_publisher = marketplace_publisher
-        self.marketplace_offer = marketplace_offer
+    def __init__(self, **kwargs):
+        super(PremierAddOn, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.product = kwargs.get('product', None)
+        self.vendor = kwargs.get('vendor', None)
+        self.marketplace_publisher = kwargs.get('marketplace_publisher', None)
+        self.marketplace_offer = kwargs.get('marketplace_offer', None)
 
 
 class PremierAddOnOffer(ProxyOnlyResource):
@@ -8779,8 +9265,6 @@ class PremierAddOnOffer(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param sku: Premier add on SKU.
     :type sku: str
     :param product: Premier add on offer Product.
@@ -8796,7 +9280,7 @@ class PremierAddOnOffer(ProxyOnlyResource):
      restricted to. Possible values include: 'None', 'Free', 'Shared', 'Basic',
      'Standard', 'Premium'
     :type web_hosting_plan_restrictions: str or
-     ~azure.mgmt.web.v2020_09_01.models.AppServicePlanRestrictions
+     ~azure.mgmt.web.v2020_12_01.models.AppServicePlanRestrictions
     :param privacy_policy_url: Privacy policy URL.
     :type privacy_policy_url: str
     :param legal_terms_url: Legal terms URL.
@@ -8818,7 +9302,6 @@ class PremierAddOnOffer(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'vendor': {'key': 'properties.vendor', 'type': 'str'},
@@ -8831,18 +9314,18 @@ class PremierAddOnOffer(ProxyOnlyResource):
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, sku: str=None, product: str=None, vendor: str=None, promo_code_required: bool=None, quota: int=None, web_hosting_plan_restrictions=None, privacy_policy_url: str=None, legal_terms_url: str=None, marketplace_publisher: str=None, marketplace_offer: str=None, **kwargs) -> None:
-        super(PremierAddOnOffer, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.sku = sku
-        self.product = product
-        self.vendor = vendor
-        self.promo_code_required = promo_code_required
-        self.quota = quota
-        self.web_hosting_plan_restrictions = web_hosting_plan_restrictions
-        self.privacy_policy_url = privacy_policy_url
-        self.legal_terms_url = legal_terms_url
-        self.marketplace_publisher = marketplace_publisher
-        self.marketplace_offer = marketplace_offer
+    def __init__(self, **kwargs):
+        super(PremierAddOnOffer, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.product = kwargs.get('product', None)
+        self.vendor = kwargs.get('vendor', None)
+        self.promo_code_required = kwargs.get('promo_code_required', None)
+        self.quota = kwargs.get('quota', None)
+        self.web_hosting_plan_restrictions = kwargs.get('web_hosting_plan_restrictions', None)
+        self.privacy_policy_url = kwargs.get('privacy_policy_url', None)
+        self.legal_terms_url = kwargs.get('legal_terms_url', None)
+        self.marketplace_publisher = kwargs.get('marketplace_publisher', None)
+        self.marketplace_offer = kwargs.get('marketplace_offer', None)
 
 
 class PremierAddOnPatchResource(ProxyOnlyResource):
@@ -8859,8 +9342,6 @@ class PremierAddOnPatchResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param sku: Premier add on SKU.
     :type sku: str
     :param product: Premier add on Product.
@@ -8884,7 +9365,6 @@ class PremierAddOnPatchResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'vendor': {'key': 'properties.vendor', 'type': 'str'},
@@ -8892,13 +9372,13 @@ class PremierAddOnPatchResource(ProxyOnlyResource):
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, sku: str=None, product: str=None, vendor: str=None, marketplace_publisher: str=None, marketplace_offer: str=None, **kwargs) -> None:
-        super(PremierAddOnPatchResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.sku = sku
-        self.product = product
-        self.vendor = vendor
-        self.marketplace_publisher = marketplace_publisher
-        self.marketplace_offer = marketplace_offer
+    def __init__(self, **kwargs):
+        super(PremierAddOnPatchResource, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.product = kwargs.get('product', None)
+        self.vendor = kwargs.get('vendor', None)
+        self.marketplace_publisher = kwargs.get('marketplace_publisher', None)
+        self.marketplace_offer = kwargs.get('marketplace_offer', None)
 
 
 class PrivateAccess(ProxyOnlyResource):
@@ -8915,14 +9395,12 @@ class PrivateAccess(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param enabled: Whether private access is enabled or not.
     :type enabled: bool
     :param virtual_networks: The Virtual Networks (and subnets) allowed to
      access the site privately.
     :type virtual_networks:
-     list[~azure.mgmt.web.v2020_09_01.models.PrivateAccessVirtualNetwork]
+     list[~azure.mgmt.web.v2020_12_01.models.PrivateAccessVirtualNetwork]
     """
 
     _validation = {
@@ -8936,15 +9414,14 @@ class PrivateAccess(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'virtual_networks': {'key': 'properties.virtualNetworks', 'type': '[PrivateAccessVirtualNetwork]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, enabled: bool=None, virtual_networks=None, **kwargs) -> None:
-        super(PrivateAccess, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.enabled = enabled
-        self.virtual_networks = virtual_networks
+    def __init__(self, **kwargs):
+        super(PrivateAccess, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.virtual_networks = kwargs.get('virtual_networks', None)
 
 
 class PrivateAccessSubnet(Model):
@@ -8962,10 +9439,10 @@ class PrivateAccessSubnet(Model):
         'key': {'key': 'key', 'type': 'int'},
     }
 
-    def __init__(self, *, name: str=None, key: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(PrivateAccessSubnet, self).__init__(**kwargs)
-        self.name = name
-        self.key = key
+        self.name = kwargs.get('name', None)
+        self.key = kwargs.get('key', None)
 
 
 class PrivateAccessVirtualNetwork(Model):
@@ -8981,7 +9458,7 @@ class PrivateAccessVirtualNetwork(Model):
      Virtual Network. An empty array (but not null) is interpreted to mean that
      all subnets are allowed within this Virtual Network.
     :type subnets:
-     list[~azure.mgmt.web.v2020_09_01.models.PrivateAccessSubnet]
+     list[~azure.mgmt.web.v2020_12_01.models.PrivateAccessSubnet]
     """
 
     _attribute_map = {
@@ -8991,63 +9468,12 @@ class PrivateAccessVirtualNetwork(Model):
         'subnets': {'key': 'subnets', 'type': '[PrivateAccessSubnet]'},
     }
 
-    def __init__(self, *, name: str=None, key: int=None, resource_id: str=None, subnets=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(PrivateAccessVirtualNetwork, self).__init__(**kwargs)
-        self.name = name
-        self.key = key
-        self.resource_id = resource_id
-        self.subnets = subnets
-
-
-class PrivateEndpointConnectionResource(ProxyOnlyResource):
-    """Private Endpoint Connection ARM resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :ivar provisioning_state:
-    :vartype provisioning_state: str
-    :param private_endpoint: PrivateEndpoint of a remote private endpoint
-     connection
-    :type private_endpoint: ~azure.mgmt.web.v2020_09_01.models.ArmIdWrapper
-    :param private_link_service_connection_state:
-    :type private_link_service_connection_state:
-     ~azure.mgmt.web.v2020_09_01.models.PrivateLinkConnectionState
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'ArmIdWrapper'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkConnectionState'},
-    }
-
-    def __init__(self, *, kind: str=None, system_data=None, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
-        super(PrivateEndpointConnectionResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.provisioning_state = None
-        self.private_endpoint = private_endpoint
-        self.private_link_service_connection_state = private_link_service_connection_state
+        self.name = kwargs.get('name', None)
+        self.key = kwargs.get('key', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.subnets = kwargs.get('subnets', None)
 
 
 class PrivateLinkConnectionApprovalRequestResource(ProxyOnlyResource):
@@ -9064,11 +9490,9 @@ class PrivateLinkConnectionApprovalRequestResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param private_link_service_connection_state:
     :type private_link_service_connection_state:
-     ~azure.mgmt.web.v2020_09_01.models.PrivateLinkConnectionState
+     ~azure.mgmt.web.v2020_12_01.models.PrivateLinkConnectionState
     """
 
     _validation = {
@@ -9082,13 +9506,12 @@ class PrivateLinkConnectionApprovalRequestResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkConnectionState'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, private_link_service_connection_state=None, **kwargs) -> None:
-        super(PrivateLinkConnectionApprovalRequestResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.private_link_service_connection_state = private_link_service_connection_state
+    def __init__(self, **kwargs):
+        super(PrivateLinkConnectionApprovalRequestResource, self).__init__(**kwargs)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
 
 
 class PrivateLinkConnectionState(Model):
@@ -9108,11 +9531,11 @@ class PrivateLinkConnectionState(Model):
         'actions_required': {'key': 'actionsRequired', 'type': 'str'},
     }
 
-    def __init__(self, *, status: str=None, description: str=None, actions_required: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(PrivateLinkConnectionState, self).__init__(**kwargs)
-        self.status = status
-        self.description = description
-        self.actions_required = actions_required
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.actions_required = kwargs.get('actions_required', None)
 
 
 class PrivateLinkResource(Model):
@@ -9128,7 +9551,7 @@ class PrivateLinkResource(Model):
     :type type: str
     :param properties: Required. Properties of a private link resource
     :type properties:
-     ~azure.mgmt.web.v2020_09_01.models.PrivateLinkResourceProperties
+     ~azure.mgmt.web.v2020_12_01.models.PrivateLinkResourceProperties
     """
 
     _validation = {
@@ -9145,12 +9568,12 @@ class PrivateLinkResource(Model):
         'properties': {'key': 'properties', 'type': 'PrivateLinkResourceProperties'},
     }
 
-    def __init__(self, *, id: str, name: str, type: str, properties, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(PrivateLinkResource, self).__init__(**kwargs)
-        self.id = id
-        self.name = name
-        self.type = type
-        self.properties = properties
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.properties = kwargs.get('properties', None)
 
 
 class PrivateLinkResourceProperties(Model):
@@ -9179,7 +9602,7 @@ class PrivateLinkResourceProperties(Model):
         'required_zone_names': {'key': 'requiredZoneNames', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(PrivateLinkResourceProperties, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
@@ -9192,7 +9615,7 @@ class PrivateLinkResourcesWrapper(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required.
-    :type value: list[~azure.mgmt.web.v2020_09_01.models.PrivateLinkResource]
+    :type value: list[~azure.mgmt.web.v2020_12_01.models.PrivateLinkResource]
     """
 
     _validation = {
@@ -9203,9 +9626,9 @@ class PrivateLinkResourcesWrapper(Model):
         'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
     }
 
-    def __init__(self, *, value, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(PrivateLinkResourcesWrapper, self).__init__(**kwargs)
-        self.value = value
+        self.value = kwargs.get('value', None)
 
 
 class ProcessInfo(ProxyOnlyResource):
@@ -9222,8 +9645,6 @@ class ProcessInfo(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar identifier: ARM Identifier for deployment.
     :vartype identifier: int
     :param deployment_name: Deployment name.
@@ -9243,11 +9664,11 @@ class ProcessInfo(ProxyOnlyResource):
     :param children: Child process list.
     :type children: list[str]
     :param threads: Thread list.
-    :type threads: list[~azure.mgmt.web.v2020_09_01.models.ProcessThreadInfo]
+    :type threads: list[~azure.mgmt.web.v2020_12_01.models.ProcessThreadInfo]
     :param open_file_handles: List of open files.
     :type open_file_handles: list[str]
     :param modules: List of modules.
-    :type modules: list[~azure.mgmt.web.v2020_09_01.models.ProcessModuleInfo]
+    :type modules: list[~azure.mgmt.web.v2020_12_01.models.ProcessModuleInfo]
     :param file_name: File name of this process.
     :type file_name: str
     :param command_line: Command line.
@@ -9310,7 +9731,6 @@ class ProcessInfo(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'identifier': {'key': 'properties.identifier', 'type': 'int'},
         'deployment_name': {'key': 'properties.deployment_name', 'type': 'str'},
         'href': {'key': 'properties.href', 'type': 'str'},
@@ -9349,44 +9769,44 @@ class ProcessInfo(ProxyOnlyResource):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, deployment_name: str=None, href: str=None, minidump: str=None, is_profile_running: bool=None, is_iis_profile_running: bool=None, iis_profile_timeout_in_seconds: float=None, parent: str=None, children=None, threads=None, open_file_handles=None, modules=None, file_name: str=None, command_line: str=None, user_name: str=None, handle_count: int=None, module_count: int=None, thread_count: int=None, start_time=None, total_cpu_time: str=None, user_cpu_time: str=None, privileged_cpu_time: str=None, working_set: int=None, peak_working_set: int=None, private_memory: int=None, virtual_memory: int=None, peak_virtual_memory: int=None, paged_system_memory: int=None, non_paged_system_memory: int=None, paged_memory: int=None, peak_paged_memory: int=None, time_stamp=None, environment_variables=None, is_scm_site: bool=None, is_webjob: bool=None, description: str=None, **kwargs) -> None:
-        super(ProcessInfo, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(ProcessInfo, self).__init__(**kwargs)
         self.identifier = None
-        self.deployment_name = deployment_name
-        self.href = href
-        self.minidump = minidump
-        self.is_profile_running = is_profile_running
-        self.is_iis_profile_running = is_iis_profile_running
-        self.iis_profile_timeout_in_seconds = iis_profile_timeout_in_seconds
-        self.parent = parent
-        self.children = children
-        self.threads = threads
-        self.open_file_handles = open_file_handles
-        self.modules = modules
-        self.file_name = file_name
-        self.command_line = command_line
-        self.user_name = user_name
-        self.handle_count = handle_count
-        self.module_count = module_count
-        self.thread_count = thread_count
-        self.start_time = start_time
-        self.total_cpu_time = total_cpu_time
-        self.user_cpu_time = user_cpu_time
-        self.privileged_cpu_time = privileged_cpu_time
-        self.working_set = working_set
-        self.peak_working_set = peak_working_set
-        self.private_memory = private_memory
-        self.virtual_memory = virtual_memory
-        self.peak_virtual_memory = peak_virtual_memory
-        self.paged_system_memory = paged_system_memory
-        self.non_paged_system_memory = non_paged_system_memory
-        self.paged_memory = paged_memory
-        self.peak_paged_memory = peak_paged_memory
-        self.time_stamp = time_stamp
-        self.environment_variables = environment_variables
-        self.is_scm_site = is_scm_site
-        self.is_webjob = is_webjob
-        self.description = description
+        self.deployment_name = kwargs.get('deployment_name', None)
+        self.href = kwargs.get('href', None)
+        self.minidump = kwargs.get('minidump', None)
+        self.is_profile_running = kwargs.get('is_profile_running', None)
+        self.is_iis_profile_running = kwargs.get('is_iis_profile_running', None)
+        self.iis_profile_timeout_in_seconds = kwargs.get('iis_profile_timeout_in_seconds', None)
+        self.parent = kwargs.get('parent', None)
+        self.children = kwargs.get('children', None)
+        self.threads = kwargs.get('threads', None)
+        self.open_file_handles = kwargs.get('open_file_handles', None)
+        self.modules = kwargs.get('modules', None)
+        self.file_name = kwargs.get('file_name', None)
+        self.command_line = kwargs.get('command_line', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.handle_count = kwargs.get('handle_count', None)
+        self.module_count = kwargs.get('module_count', None)
+        self.thread_count = kwargs.get('thread_count', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.total_cpu_time = kwargs.get('total_cpu_time', None)
+        self.user_cpu_time = kwargs.get('user_cpu_time', None)
+        self.privileged_cpu_time = kwargs.get('privileged_cpu_time', None)
+        self.working_set = kwargs.get('working_set', None)
+        self.peak_working_set = kwargs.get('peak_working_set', None)
+        self.private_memory = kwargs.get('private_memory', None)
+        self.virtual_memory = kwargs.get('virtual_memory', None)
+        self.peak_virtual_memory = kwargs.get('peak_virtual_memory', None)
+        self.paged_system_memory = kwargs.get('paged_system_memory', None)
+        self.non_paged_system_memory = kwargs.get('non_paged_system_memory', None)
+        self.paged_memory = kwargs.get('paged_memory', None)
+        self.peak_paged_memory = kwargs.get('peak_paged_memory', None)
+        self.time_stamp = kwargs.get('time_stamp', None)
+        self.environment_variables = kwargs.get('environment_variables', None)
+        self.is_scm_site = kwargs.get('is_scm_site', None)
+        self.is_webjob = kwargs.get('is_webjob', None)
+        self.description = kwargs.get('description', None)
 
 
 class ProcessModuleInfo(ProxyOnlyResource):
@@ -9403,8 +9823,6 @@ class ProcessModuleInfo(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param base_address: Base address. Used as module identifier in ARM
      resource URI.
     :type base_address: str
@@ -9441,7 +9859,6 @@ class ProcessModuleInfo(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'base_address': {'key': 'properties.base_address', 'type': 'str'},
         'file_name': {'key': 'properties.file_name', 'type': 'str'},
         'href': {'key': 'properties.href', 'type': 'str'},
@@ -9455,19 +9872,19 @@ class ProcessModuleInfo(ProxyOnlyResource):
         'language': {'key': 'properties.language', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, base_address: str=None, file_name: str=None, href: str=None, file_path: str=None, module_memory_size: int=None, file_version: str=None, file_description: str=None, product: str=None, product_version: str=None, is_debug: bool=None, language: str=None, **kwargs) -> None:
-        super(ProcessModuleInfo, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.base_address = base_address
-        self.file_name = file_name
-        self.href = href
-        self.file_path = file_path
-        self.module_memory_size = module_memory_size
-        self.file_version = file_version
-        self.file_description = file_description
-        self.product = product
-        self.product_version = product_version
-        self.is_debug = is_debug
-        self.language = language
+    def __init__(self, **kwargs):
+        super(ProcessModuleInfo, self).__init__(**kwargs)
+        self.base_address = kwargs.get('base_address', None)
+        self.file_name = kwargs.get('file_name', None)
+        self.href = kwargs.get('href', None)
+        self.file_path = kwargs.get('file_path', None)
+        self.module_memory_size = kwargs.get('module_memory_size', None)
+        self.file_version = kwargs.get('file_version', None)
+        self.file_description = kwargs.get('file_description', None)
+        self.product = kwargs.get('product', None)
+        self.product_version = kwargs.get('product_version', None)
+        self.is_debug = kwargs.get('is_debug', None)
+        self.language = kwargs.get('language', None)
 
 
 class ProcessThreadInfo(ProxyOnlyResource):
@@ -9484,8 +9901,6 @@ class ProcessThreadInfo(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar identifier: Site extension ID.
     :vartype identifier: int
     :param href: HRef URI.
@@ -9524,7 +9939,6 @@ class ProcessThreadInfo(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'identifier': {'key': 'properties.identifier', 'type': 'int'},
         'href': {'key': 'properties.href', 'type': 'str'},
         'process': {'key': 'properties.process', 'type': 'str'},
@@ -9539,20 +9953,20 @@ class ProcessThreadInfo(ProxyOnlyResource):
         'wait_reason': {'key': 'properties.wait_reason', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, href: str=None, process: str=None, start_address: str=None, current_priority: int=None, priority_level: str=None, base_priority: int=None, start_time=None, total_processor_time: str=None, user_processor_time: str=None, state: str=None, wait_reason: str=None, **kwargs) -> None:
-        super(ProcessThreadInfo, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(ProcessThreadInfo, self).__init__(**kwargs)
         self.identifier = None
-        self.href = href
-        self.process = process
-        self.start_address = start_address
-        self.current_priority = current_priority
-        self.priority_level = priority_level
-        self.base_priority = base_priority
-        self.start_time = start_time
-        self.total_processor_time = total_processor_time
-        self.user_processor_time = user_processor_time
-        self.state = state
-        self.wait_reason = wait_reason
+        self.href = kwargs.get('href', None)
+        self.process = kwargs.get('process', None)
+        self.start_address = kwargs.get('start_address', None)
+        self.current_priority = kwargs.get('current_priority', None)
+        self.priority_level = kwargs.get('priority_level', None)
+        self.base_priority = kwargs.get('base_priority', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.total_processor_time = kwargs.get('total_processor_time', None)
+        self.user_processor_time = kwargs.get('user_processor_time', None)
+        self.state = kwargs.get('state', None)
+        self.wait_reason = kwargs.get('wait_reason', None)
 
 
 class PublicCertificate(ProxyOnlyResource):
@@ -9569,14 +9983,12 @@ class PublicCertificate(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param blob: Public Certificate byte array
     :type blob: bytearray
     :param public_certificate_location: Public Certificate Location. Possible
      values include: 'CurrentUserMy', 'LocalMachineMy', 'Unknown'
     :type public_certificate_location: str or
-     ~azure.mgmt.web.v2020_09_01.models.PublicCertificateLocation
+     ~azure.mgmt.web.v2020_12_01.models.PublicCertificateLocation
     :ivar thumbprint: Certificate Thumbprint
     :vartype thumbprint: str
     """
@@ -9593,16 +10005,15 @@ class PublicCertificate(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'blob': {'key': 'properties.blob', 'type': 'bytearray'},
         'public_certificate_location': {'key': 'properties.publicCertificateLocation', 'type': 'PublicCertificateLocation'},
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, blob: bytearray=None, public_certificate_location=None, **kwargs) -> None:
-        super(PublicCertificate, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.blob = blob
-        self.public_certificate_location = public_certificate_location
+    def __init__(self, **kwargs):
+        super(PublicCertificate, self).__init__(**kwargs)
+        self.blob = kwargs.get('blob', None)
+        self.public_certificate_location = kwargs.get('public_certificate_location', None)
         self.thumbprint = None
 
 
@@ -9622,8 +10033,6 @@ class PushSettings(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param is_push_enabled: Required. Gets or sets a flag indicating whether
      the Push endpoint is enabled.
     :type is_push_enabled: bool
@@ -9655,19 +10064,59 @@ class PushSettings(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'is_push_enabled': {'key': 'properties.isPushEnabled', 'type': 'bool'},
         'tag_whitelist_json': {'key': 'properties.tagWhitelistJson', 'type': 'str'},
         'tags_requiring_auth': {'key': 'properties.tagsRequiringAuth', 'type': 'str'},
         'dynamic_tags_json': {'key': 'properties.dynamicTagsJson', 'type': 'str'},
     }
 
-    def __init__(self, *, is_push_enabled: bool, kind: str=None, system_data=None, tag_whitelist_json: str=None, tags_requiring_auth: str=None, dynamic_tags_json: str=None, **kwargs) -> None:
-        super(PushSettings, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.is_push_enabled = is_push_enabled
-        self.tag_whitelist_json = tag_whitelist_json
-        self.tags_requiring_auth = tags_requiring_auth
-        self.dynamic_tags_json = dynamic_tags_json
+    def __init__(self, **kwargs):
+        super(PushSettings, self).__init__(**kwargs)
+        self.is_push_enabled = kwargs.get('is_push_enabled', None)
+        self.tag_whitelist_json = kwargs.get('tag_whitelist_json', None)
+        self.tags_requiring_auth = kwargs.get('tags_requiring_auth', None)
+        self.dynamic_tags_json = kwargs.get('dynamic_tags_json', None)
+
+
+class QueryUtterancesResult(Model):
+    """Result for utterances query.
+
+    :param sample_utterance: A sample utterance.
+    :type sample_utterance: ~azure.mgmt.web.v2020_12_01.models.SampleUtterance
+    :param score: Score of a sample utterance.
+    :type score: float
+    """
+
+    _attribute_map = {
+        'sample_utterance': {'key': 'sampleUtterance', 'type': 'SampleUtterance'},
+        'score': {'key': 'score', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QueryUtterancesResult, self).__init__(**kwargs)
+        self.sample_utterance = kwargs.get('sample_utterance', None)
+        self.score = kwargs.get('score', None)
+
+
+class QueryUtterancesResults(Model):
+    """Suggested utterances where the detector can be applicable.
+
+    :param query: Search Query.
+    :type query: str
+    :param results: Array of utterance results for search query.
+    :type results:
+     list[~azure.mgmt.web.v2020_12_01.models.QueryUtterancesResult]
+    """
+
+    _attribute_map = {
+        'query': {'key': 'query', 'type': 'str'},
+        'results': {'key': 'results', 'type': '[QueryUtterancesResult]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QueryUtterancesResults, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
+        self.results = kwargs.get('results', None)
 
 
 class RampUpRule(Model):
@@ -9719,16 +10168,16 @@ class RampUpRule(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, action_host_name: str=None, reroute_percentage: float=None, change_step: float=None, change_interval_in_minutes: int=None, min_reroute_percentage: float=None, max_reroute_percentage: float=None, change_decision_callback_url: str=None, name: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(RampUpRule, self).__init__(**kwargs)
-        self.action_host_name = action_host_name
-        self.reroute_percentage = reroute_percentage
-        self.change_step = change_step
-        self.change_interval_in_minutes = change_interval_in_minutes
-        self.min_reroute_percentage = min_reroute_percentage
-        self.max_reroute_percentage = max_reroute_percentage
-        self.change_decision_callback_url = change_decision_callback_url
-        self.name = name
+        self.action_host_name = kwargs.get('action_host_name', None)
+        self.reroute_percentage = kwargs.get('reroute_percentage', None)
+        self.change_step = kwargs.get('change_step', None)
+        self.change_interval_in_minutes = kwargs.get('change_interval_in_minutes', None)
+        self.min_reroute_percentage = kwargs.get('min_reroute_percentage', None)
+        self.max_reroute_percentage = kwargs.get('max_reroute_percentage', None)
+        self.change_decision_callback_url = kwargs.get('change_decision_callback_url', None)
+        self.name = kwargs.get('name', None)
 
 
 class Recommendation(ProxyOnlyResource):
@@ -9745,8 +10194,6 @@ class Recommendation(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param creation_time: Timestamp when this instance was created.
     :type creation_time: datetime
     :param recommendation_id: A GUID value that each recommendation object is
@@ -9759,7 +10206,7 @@ class Recommendation(ProxyOnlyResource):
      applies, e.g. Subscription, ServerFarm, Site. Possible values include:
      'ServerFarm', 'Subscription', 'WebSite'
     :type resource_scope: str or
-     ~azure.mgmt.web.v2020_09_01.models.ResourceScopeType
+     ~azure.mgmt.web.v2020_12_01.models.ResourceScopeType
     :param rule_name: Unique name of the rule.
     :type rule_name: str
     :param display_name: UI friendly name of the rule (may not be unique).
@@ -9769,10 +10216,10 @@ class Recommendation(ProxyOnlyResource):
     :param level: Level indicating how critical this recommendation can
      impact. Possible values include: 'Critical', 'Warning', 'Information',
      'NonUrgentSuggestion'
-    :type level: str or ~azure.mgmt.web.v2020_09_01.models.NotificationLevel
+    :type level: str or ~azure.mgmt.web.v2020_12_01.models.NotificationLevel
     :param channels: List of channels that this recommendation can apply.
      Possible values include: 'Notification', 'Api', 'Email', 'Webhook', 'All'
-    :type channels: str or ~azure.mgmt.web.v2020_09_01.models.Channels
+    :type channels: str or ~azure.mgmt.web.v2020_12_01.models.Channels
     :ivar category_tags: The list of category tags that this recommendation
      belongs to.
     :vartype category_tags: list[str]
@@ -9825,7 +10272,6 @@ class Recommendation(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'recommendation_id': {'key': 'properties.recommendationId', 'type': 'str'},
         'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
@@ -9851,31 +10297,31 @@ class Recommendation(ProxyOnlyResource):
         'forward_link': {'key': 'properties.forwardLink', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, creation_time=None, recommendation_id: str=None, resource_id: str=None, resource_scope=None, rule_name: str=None, display_name: str=None, message: str=None, level=None, channels=None, action_name: str=None, enabled: int=None, states=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score: float=None, is_dynamic: bool=None, extension_name: str=None, blade_name: str=None, forward_link: str=None, **kwargs) -> None:
-        super(Recommendation, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.creation_time = creation_time
-        self.recommendation_id = recommendation_id
-        self.resource_id = resource_id
-        self.resource_scope = resource_scope
-        self.rule_name = rule_name
-        self.display_name = display_name
-        self.message = message
-        self.level = level
-        self.channels = channels
+    def __init__(self, **kwargs):
+        super(Recommendation, self).__init__(**kwargs)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.recommendation_id = kwargs.get('recommendation_id', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_scope = kwargs.get('resource_scope', None)
+        self.rule_name = kwargs.get('rule_name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.message = kwargs.get('message', None)
+        self.level = kwargs.get('level', None)
+        self.channels = kwargs.get('channels', None)
         self.category_tags = None
-        self.action_name = action_name
-        self.enabled = enabled
-        self.states = states
-        self.start_time = start_time
-        self.end_time = end_time
-        self.next_notification_time = next_notification_time
-        self.notification_expiration_time = notification_expiration_time
-        self.notified_time = notified_time
-        self.score = score
-        self.is_dynamic = is_dynamic
-        self.extension_name = extension_name
-        self.blade_name = blade_name
-        self.forward_link = forward_link
+        self.action_name = kwargs.get('action_name', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.states = kwargs.get('states', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.next_notification_time = kwargs.get('next_notification_time', None)
+        self.notification_expiration_time = kwargs.get('notification_expiration_time', None)
+        self.notified_time = kwargs.get('notified_time', None)
+        self.score = kwargs.get('score', None)
+        self.is_dynamic = kwargs.get('is_dynamic', None)
+        self.extension_name = kwargs.get('extension_name', None)
+        self.blade_name = kwargs.get('blade_name', None)
+        self.forward_link = kwargs.get('forward_link', None)
 
 
 class RecommendationRule(ProxyOnlyResource):
@@ -9893,8 +10339,6 @@ class RecommendationRule(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param recommendation_name: Unique name of the rule.
     :type recommendation_name: str
     :param display_name: UI friendly name of the rule.
@@ -9913,10 +10357,10 @@ class RecommendationRule(ProxyOnlyResource):
     :param level: Level of impact indicating how critical this rule is.
      Possible values include: 'Critical', 'Warning', 'Information',
      'NonUrgentSuggestion'
-    :type level: str or ~azure.mgmt.web.v2020_09_01.models.NotificationLevel
+    :type level: str or ~azure.mgmt.web.v2020_12_01.models.NotificationLevel
     :param channels: List of available channels that this rule applies.
      Possible values include: 'Notification', 'Api', 'Email', 'Webhook', 'All'
-    :type channels: str or ~azure.mgmt.web.v2020_09_01.models.Channels
+    :type channels: str or ~azure.mgmt.web.v2020_12_01.models.Channels
     :ivar category_tags: The list of category tags that this recommendation
      rule belongs to.
     :vartype category_tags: list[str]
@@ -9946,7 +10390,6 @@ class RecommendationRule(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'recommendation_name': {'key': 'properties.recommendationName', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'message': {'key': 'properties.message', 'type': 'str'},
@@ -9962,21 +10405,21 @@ class RecommendationRule(ProxyOnlyResource):
         'forward_link': {'key': 'properties.forwardLink', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, recommendation_name: str=None, display_name: str=None, message: str=None, recommendation_id: str=None, description: str=None, action_name: str=None, level=None, channels=None, is_dynamic: bool=None, extension_name: str=None, blade_name: str=None, forward_link: str=None, **kwargs) -> None:
-        super(RecommendationRule, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.recommendation_name = recommendation_name
-        self.display_name = display_name
-        self.message = message
-        self.recommendation_id = recommendation_id
-        self.description = description
-        self.action_name = action_name
-        self.level = level
-        self.channels = channels
+    def __init__(self, **kwargs):
+        super(RecommendationRule, self).__init__(**kwargs)
+        self.recommendation_name = kwargs.get('recommendation_name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.message = kwargs.get('message', None)
+        self.recommendation_id = kwargs.get('recommendation_id', None)
+        self.description = kwargs.get('description', None)
+        self.action_name = kwargs.get('action_name', None)
+        self.level = kwargs.get('level', None)
+        self.channels = kwargs.get('channels', None)
         self.category_tags = None
-        self.is_dynamic = is_dynamic
-        self.extension_name = extension_name
-        self.blade_name = blade_name
-        self.forward_link = forward_link
+        self.is_dynamic = kwargs.get('is_dynamic', None)
+        self.extension_name = kwargs.get('extension_name', None)
+        self.blade_name = kwargs.get('blade_name', None)
+        self.forward_link = kwargs.get('forward_link', None)
 
 
 class ReissueCertificateOrderRequest(ProxyOnlyResource):
@@ -9993,8 +10436,6 @@ class ReissueCertificateOrderRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param key_size: Certificate Key Size.
     :type key_size: int
     :param delay_existing_revoke_in_hours: Delay in hours to revoke existing
@@ -10018,19 +10459,18 @@ class ReissueCertificateOrderRequest(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'key_size': {'key': 'properties.keySize', 'type': 'int'},
         'delay_existing_revoke_in_hours': {'key': 'properties.delayExistingRevokeInHours', 'type': 'int'},
         'csr': {'key': 'properties.csr', 'type': 'str'},
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, key_size: int=None, delay_existing_revoke_in_hours: int=None, csr: str=None, is_private_key_external: bool=None, **kwargs) -> None:
-        super(ReissueCertificateOrderRequest, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.key_size = key_size
-        self.delay_existing_revoke_in_hours = delay_existing_revoke_in_hours
-        self.csr = csr
-        self.is_private_key_external = is_private_key_external
+    def __init__(self, **kwargs):
+        super(ReissueCertificateOrderRequest, self).__init__(**kwargs)
+        self.key_size = kwargs.get('key_size', None)
+        self.delay_existing_revoke_in_hours = kwargs.get('delay_existing_revoke_in_hours', None)
+        self.csr = kwargs.get('csr', None)
+        self.is_private_key_external = kwargs.get('is_private_key_external', None)
 
 
 class RelayServiceConnectionEntity(ProxyOnlyResource):
@@ -10047,8 +10487,6 @@ class RelayServiceConnectionEntity(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param entity_name:
     :type entity_name: str
     :param entity_connection_string:
@@ -10076,7 +10514,6 @@ class RelayServiceConnectionEntity(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'entity_name': {'key': 'properties.entityName', 'type': 'str'},
         'entity_connection_string': {'key': 'properties.entityConnectionString', 'type': 'str'},
         'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
@@ -10086,23 +10523,133 @@ class RelayServiceConnectionEntity(ProxyOnlyResource):
         'biztalk_uri': {'key': 'properties.biztalkUri', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, entity_name: str=None, entity_connection_string: str=None, resource_type: str=None, resource_connection_string: str=None, hostname: str=None, port: int=None, biztalk_uri: str=None, **kwargs) -> None:
-        super(RelayServiceConnectionEntity, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.entity_name = entity_name
-        self.entity_connection_string = entity_connection_string
-        self.resource_type = resource_type
-        self.resource_connection_string = resource_connection_string
-        self.hostname = hostname
-        self.port = port
-        self.biztalk_uri = biztalk_uri
+    def __init__(self, **kwargs):
+        super(RelayServiceConnectionEntity, self).__init__(**kwargs)
+        self.entity_name = kwargs.get('entity_name', None)
+        self.entity_connection_string = kwargs.get('entity_connection_string', None)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.resource_connection_string = kwargs.get('resource_connection_string', None)
+        self.hostname = kwargs.get('hostname', None)
+        self.port = kwargs.get('port', None)
+        self.biztalk_uri = kwargs.get('biztalk_uri', None)
+
+
+class RemotePrivateEndpointConnection(ProxyOnlyResource):
+    """A remote private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar provisioning_state:
+    :vartype provisioning_state: str
+    :param private_endpoint: PrivateEndpoint of a remote private endpoint
+     connection
+    :type private_endpoint: ~azure.mgmt.web.v2020_12_01.models.ArmIdWrapper
+    :param private_link_service_connection_state:
+    :type private_link_service_connection_state:
+     ~azure.mgmt.web.v2020_12_01.models.PrivateLinkConnectionState
+    :param ip_addresses: Private IPAddresses mapped to the remote private
+     endpoint
+    :type ip_addresses: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'ArmIdWrapper'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkConnectionState'},
+        'ip_addresses': {'key': 'properties.ipAddresses', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RemotePrivateEndpointConnection, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.ip_addresses = kwargs.get('ip_addresses', None)
+
+
+class RemotePrivateEndpointConnectionARMResource(ProxyOnlyResource):
+    """Remote Private Endpoint Connection ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar provisioning_state:
+    :vartype provisioning_state: str
+    :param private_endpoint: PrivateEndpoint of a remote private endpoint
+     connection
+    :type private_endpoint: ~azure.mgmt.web.v2020_12_01.models.ArmIdWrapper
+    :param private_link_service_connection_state:
+    :type private_link_service_connection_state:
+     ~azure.mgmt.web.v2020_12_01.models.PrivateLinkConnectionState
+    :param ip_addresses: Private IPAddresses mapped to the remote private
+     endpoint
+    :type ip_addresses: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'ArmIdWrapper'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkConnectionState'},
+        'ip_addresses': {'key': 'properties.ipAddresses', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RemotePrivateEndpointConnectionARMResource, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.ip_addresses = kwargs.get('ip_addresses', None)
 
 
 class Rendering(Model):
     """Instructions for rendering the data.
 
     :param type: Rendering Type. Possible values include: 'NoGraph', 'Table',
-     'TimeSeries', 'TimeSeriesPerInstance'
-    :type type: str or ~azure.mgmt.web.v2020_09_01.models.RenderingType
+     'TimeSeries', 'TimeSeriesPerInstance', 'PieChart', 'DataSummary', 'Email',
+     'Insights', 'DynamicInsight', 'Markdown', 'Detector', 'DropDown', 'Card',
+     'Solution', 'Guage', 'Form', 'ChangeSets', 'ChangeAnalysisOnboarding',
+     'ChangesView', 'AppInsight', 'DependencyGraph', 'DownTime', 'SummaryCard',
+     'SearchComponent', 'AppInsightEnablement'
+    :type type: str or ~azure.mgmt.web.v2020_12_01.models.RenderingType
     :param title: Title of data
     :type title: str
     :param description: Description of the data that will help it be
@@ -10116,11 +10663,11 @@ class Rendering(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, type=None, title: str=None, description: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Rendering, self).__init__(**kwargs)
-        self.type = type
-        self.title = title
-        self.description = description
+        self.type = kwargs.get('type', None)
+        self.title = kwargs.get('title', None)
+        self.description = kwargs.get('description', None)
 
 
 class RenewCertificateOrderRequest(ProxyOnlyResource):
@@ -10137,8 +10684,6 @@ class RenewCertificateOrderRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param key_size: Certificate Key Size.
     :type key_size: int
     :param csr: Csr to be used for re-key operation.
@@ -10159,17 +10704,16 @@ class RenewCertificateOrderRequest(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'key_size': {'key': 'properties.keySize', 'type': 'int'},
         'csr': {'key': 'properties.csr', 'type': 'str'},
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, key_size: int=None, csr: str=None, is_private_key_external: bool=None, **kwargs) -> None:
-        super(RenewCertificateOrderRequest, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.key_size = key_size
-        self.csr = csr
-        self.is_private_key_external = is_private_key_external
+    def __init__(self, **kwargs):
+        super(RenewCertificateOrderRequest, self).__init__(**kwargs)
+        self.key_size = kwargs.get('key_size', None)
+        self.csr = kwargs.get('csr', None)
+        self.is_private_key_external = kwargs.get('is_private_key_external', None)
 
 
 class RequestsBasedTrigger(Model):
@@ -10186,10 +10730,10 @@ class RequestsBasedTrigger(Model):
         'time_interval': {'key': 'timeInterval', 'type': 'str'},
     }
 
-    def __init__(self, *, count: int=None, time_interval: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(RequestsBasedTrigger, self).__init__(**kwargs)
-        self.count = count
-        self.time_interval = time_interval
+        self.count = kwargs.get('count', None)
+        self.time_interval = kwargs.get('time_interval', None)
 
 
 class ResourceHealthMetadata(ProxyOnlyResource):
@@ -10206,8 +10750,6 @@ class ResourceHealthMetadata(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param category: The category that the resource matches in the RHC Policy
      File
     :type category: str
@@ -10226,15 +10768,14 @@ class ResourceHealthMetadata(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'category': {'key': 'properties.category', 'type': 'str'},
         'signal_availability': {'key': 'properties.signalAvailability', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, category: str=None, signal_availability: bool=None, **kwargs) -> None:
-        super(ResourceHealthMetadata, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.category = category
-        self.signal_availability = signal_availability
+    def __init__(self, **kwargs):
+        super(ResourceHealthMetadata, self).__init__(**kwargs)
+        self.category = kwargs.get('category', None)
+        self.signal_availability = kwargs.get('signal_availability', None)
 
 
 class ResourceMetricAvailability(Model):
@@ -10259,7 +10800,7 @@ class ResourceMetricAvailability(Model):
         'retention': {'key': 'retention', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ResourceMetricAvailability, self).__init__(**kwargs)
         self.time_grain = None
         self.retention = None
@@ -10279,8 +10820,6 @@ class ResourceMetricDefinition(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar unit: Unit of the metric.
     :vartype unit: str
     :ivar primary_aggregation_type: Primary aggregation type.
@@ -10288,7 +10827,7 @@ class ResourceMetricDefinition(ProxyOnlyResource):
     :ivar metric_availabilities: List of time grains supported for the metric
      together with retention period.
     :vartype metric_availabilities:
-     list[~azure.mgmt.web.v2020_09_01.models.ResourceMetricAvailability]
+     list[~azure.mgmt.web.v2020_12_01.models.ResourceMetricAvailability]
     :ivar resource_uri: Resource URI.
     :vartype resource_uri: str
     :ivar properties: Resource metric definition properties.
@@ -10311,7 +10850,6 @@ class ResourceMetricDefinition(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'unit': {'key': 'properties.unit', 'type': 'str'},
         'primary_aggregation_type': {'key': 'properties.primaryAggregationType', 'type': 'str'},
         'metric_availabilities': {'key': 'properties.metricAvailabilities', 'type': '[ResourceMetricAvailability]'},
@@ -10319,8 +10857,8 @@ class ResourceMetricDefinition(ProxyOnlyResource):
         'properties': {'key': 'properties.properties', 'type': '{str}'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(ResourceMetricDefinition, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(ResourceMetricDefinition, self).__init__(**kwargs)
         self.unit = None
         self.primary_aggregation_type = None
         self.metric_availabilities = None
@@ -10340,7 +10878,7 @@ class ResourceNameAvailability(Model):
      indicates that the name is already in use and is therefore unavailable.
      Possible values include: 'Invalid', 'AlreadyExists'
     :type reason: str or
-     ~azure.mgmt.web.v2020_09_01.models.InAvailabilityReasonType
+     ~azure.mgmt.web.v2020_12_01.models.InAvailabilityReasonType
     :param message: If reason == invalid, provide the user with the reason why
      the given name is invalid, and provide the resource naming requirements so
      that the user can select a valid name. If reason == AlreadyExists, explain
@@ -10355,11 +10893,11 @@ class ResourceNameAvailability(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, *, name_available: bool=None, reason=None, message: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ResourceNameAvailability, self).__init__(**kwargs)
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+        self.name_available = kwargs.get('name_available', None)
+        self.reason = kwargs.get('reason', None)
+        self.message = kwargs.get('message', None)
 
 
 class ResourceNameAvailabilityRequest(Model):
@@ -10374,7 +10912,7 @@ class ResourceNameAvailabilityRequest(Model):
      'Microsoft.Web/sites', 'Microsoft.Web/sites/slots',
      'Microsoft.Web/hostingEnvironments', 'Microsoft.Web/publishingUsers'
     :type type: str or
-     ~azure.mgmt.web.v2020_09_01.models.CheckNameResourceTypes
+     ~azure.mgmt.web.v2020_12_01.models.CheckNameResourceTypes
     :param is_fqdn: Is fully qualified domain name.
     :type is_fqdn: bool
     """
@@ -10390,27 +10928,94 @@ class ResourceNameAvailabilityRequest(Model):
         'is_fqdn': {'key': 'isFqdn', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str, type, is_fqdn: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ResourceNameAvailabilityRequest, self).__init__(**kwargs)
-        self.name = name
-        self.type = type
-        self.is_fqdn = is_fqdn
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.is_fqdn = kwargs.get('is_fqdn', None)
+
+
+class ResponseMessageEnvelopeRemotePrivateEndpointConnection(Model):
+    """Message envelope that contains the common Azure resource manager properties
+    and the resource provider specific content.
+
+    :param id: Resource Id. Typically ID is populated only for responses to
+     GET requests. Caller is responsible for passing in this
+     value for GET requests only.
+     For example:
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupId}/providers/Microsoft.Web/sites/{sitename}
+    :type id: str
+    :param name: Name of resource.
+    :type name: str
+    :param type: Type of resource e.g "Microsoft.Web/sites".
+    :type type: str
+    :param location: Geographical region resource belongs to e.g.
+     SouthCentralUS, SouthEastAsia.
+    :type location: str
+    :param tags: Tags associated with resource.
+    :type tags: dict[str, str]
+    :param plan: Azure resource manager plan.
+    :type plan: ~azure.mgmt.web.v2020_12_01.models.ArmPlan
+    :param properties: Resource specific properties.
+    :type properties:
+     ~azure.mgmt.web.v2020_12_01.models.RemotePrivateEndpointConnection
+    :param sku: SKU description of the resource.
+    :type sku: ~azure.mgmt.web.v2020_12_01.models.SkuDescription
+    :param status: Azure-AsyncOperation Status info.
+    :type status: str
+    :param error: Azure-AsyncOperation Error info.
+    :type error: ~azure.mgmt.web.v2020_12_01.models.ErrorEntity
+    :param identity: MSI resource
+    :type identity: ~azure.mgmt.web.v2020_12_01.models.ManagedServiceIdentity
+    :param zones: Logical Availability Zones the service is hosted in
+    :type zones: list[str]
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'plan': {'key': 'plan', 'type': 'ArmPlan'},
+        'properties': {'key': 'properties', 'type': 'RemotePrivateEndpointConnection'},
+        'sku': {'key': 'sku', 'type': 'SkuDescription'},
+        'status': {'key': 'status', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ErrorEntity'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResponseMessageEnvelopeRemotePrivateEndpointConnection, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.plan = kwargs.get('plan', None)
+        self.properties = kwargs.get('properties', None)
+        self.sku = kwargs.get('sku', None)
+        self.status = kwargs.get('status', None)
+        self.error = kwargs.get('error', None)
+        self.identity = kwargs.get('identity', None)
+        self.zones = kwargs.get('zones', None)
 
 
 class ResponseMetaData(Model):
     """ResponseMetaData.
 
     :param data_source: Source of the Data
-    :type data_source: ~azure.mgmt.web.v2020_09_01.models.DataSource
+    :type data_source: ~azure.mgmt.web.v2020_12_01.models.DataSource
     """
 
     _attribute_map = {
         'data_source': {'key': 'dataSource', 'type': 'DataSource'},
     }
 
-    def __init__(self, *, data_source=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ResponseMetaData, self).__init__(**kwargs)
-        self.data_source = data_source
+        self.data_source = kwargs.get('data_source', None)
 
 
 class RestoreRequest(ProxyOnlyResource):
@@ -10429,8 +11034,6 @@ class RestoreRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param storage_account_url: Required. SAS URL to the container.
     :type storage_account_url: str
     :param blob_name: Name of a blob which contains the backup.
@@ -10444,7 +11047,7 @@ class RestoreRequest(ProxyOnlyResource):
     :param databases: Collection of databases which should be restored. This
      list has to match the list of databases included in the backup.
     :type databases:
-     list[~azure.mgmt.web.v2020_09_01.models.DatabaseBackupSetting]
+     list[~azure.mgmt.web.v2020_12_01.models.DatabaseBackupSetting]
     :param ignore_conflicting_host_names: Changes a logic when restoring an
      app with custom domains. <code>true</code> to remove custom domains
      automatically. If <code>false</code>, custom domains are added to
@@ -10460,7 +11063,7 @@ class RestoreRequest(ProxyOnlyResource):
     :param operation_type: Operation type. Possible values include: 'Default',
      'Clone', 'Relocation', 'Snapshot', 'CloudFS'. Default value: "Default" .
     :type operation_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.BackupRestoreOperationType
+     ~azure.mgmt.web.v2020_12_01.models.BackupRestoreOperationType
     :param adjust_connection_strings: <code>true</code> if
      SiteConfig.ConnectionStrings should be set in new app; otherwise,
      <code>false</code>.
@@ -10483,7 +11086,6 @@ class RestoreRequest(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
         'blob_name': {'key': 'properties.blobName', 'type': 'str'},
         'overwrite': {'key': 'properties.overwrite', 'type': 'bool'},
@@ -10497,19 +11099,44 @@ class RestoreRequest(ProxyOnlyResource):
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
     }
 
-    def __init__(self, *, storage_account_url: str, overwrite: bool, kind: str=None, system_data=None, blob_name: str=None, site_name: str=None, databases=None, ignore_conflicting_host_names: bool=False, ignore_databases: bool=False, app_service_plan: str=None, operation_type="Default", adjust_connection_strings: bool=None, hosting_environment: str=None, **kwargs) -> None:
-        super(RestoreRequest, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.storage_account_url = storage_account_url
-        self.blob_name = blob_name
-        self.overwrite = overwrite
-        self.site_name = site_name
-        self.databases = databases
-        self.ignore_conflicting_host_names = ignore_conflicting_host_names
-        self.ignore_databases = ignore_databases
-        self.app_service_plan = app_service_plan
-        self.operation_type = operation_type
-        self.adjust_connection_strings = adjust_connection_strings
-        self.hosting_environment = hosting_environment
+    def __init__(self, **kwargs):
+        super(RestoreRequest, self).__init__(**kwargs)
+        self.storage_account_url = kwargs.get('storage_account_url', None)
+        self.blob_name = kwargs.get('blob_name', None)
+        self.overwrite = kwargs.get('overwrite', None)
+        self.site_name = kwargs.get('site_name', None)
+        self.databases = kwargs.get('databases', None)
+        self.ignore_conflicting_host_names = kwargs.get('ignore_conflicting_host_names', False)
+        self.ignore_databases = kwargs.get('ignore_databases', False)
+        self.app_service_plan = kwargs.get('app_service_plan', None)
+        self.operation_type = kwargs.get('operation_type', "Default")
+        self.adjust_connection_strings = kwargs.get('adjust_connection_strings', None)
+        self.hosting_environment = kwargs.get('hosting_environment', None)
+
+
+class SampleUtterance(Model):
+    """Sample utterance.
+
+    :param text: Text attribute of sample utterance.
+    :type text: str
+    :param links: Links attribute of sample utterance.
+    :type links: list[str]
+    :param qid: Question id of sample utterance (for stackoverflow questions
+     titles).
+    :type qid: str
+    """
+
+    _attribute_map = {
+        'text': {'key': 'text', 'type': 'str'},
+        'links': {'key': 'links', 'type': '[str]'},
+        'qid': {'key': 'qid', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SampleUtterance, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
+        self.links = kwargs.get('links', None)
+        self.qid = kwargs.get('qid', None)
 
 
 class ServiceSpecification(Model):
@@ -10517,10 +11144,10 @@ class ServiceSpecification(Model):
 
     :param metric_specifications:
     :type metric_specifications:
-     list[~azure.mgmt.web.v2020_09_01.models.MetricSpecification]
+     list[~azure.mgmt.web.v2020_12_01.models.MetricSpecification]
     :param log_specifications:
     :type log_specifications:
-     list[~azure.mgmt.web.v2020_09_01.models.LogSpecification]
+     list[~azure.mgmt.web.v2020_12_01.models.LogSpecification]
     """
 
     _attribute_map = {
@@ -10528,10 +11155,10 @@ class ServiceSpecification(Model):
         'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
     }
 
-    def __init__(self, *, metric_specifications=None, log_specifications=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ServiceSpecification, self).__init__(**kwargs)
-        self.metric_specifications = metric_specifications
-        self.log_specifications = log_specifications
+        self.metric_specifications = kwargs.get('metric_specifications', None)
+        self.log_specifications = kwargs.get('log_specifications', None)
 
 
 class Site(Resource):
@@ -10554,8 +11181,6 @@ class Site(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar state: Current state of the app.
     :vartype state: str
     :ivar host_names: Hostnames associated with the app.
@@ -10564,7 +11189,7 @@ class Site(Resource):
     :vartype repository_site_name: str
     :ivar usage_state: State indicating whether the app has exceeded its quota
      usage. Read-only. Possible values include: 'Normal', 'Exceeded'
-    :vartype usage_state: str or ~azure.mgmt.web.v2020_09_01.models.UsageState
+    :vartype usage_state: str or ~azure.mgmt.web.v2020_12_01.models.UsageState
     :param enabled: <code>true</code> if the app is enabled; otherwise,
      <code>false</code>. Setting this value to false disables the app (takes
      the app offline).
@@ -10577,11 +11202,11 @@ class Site(Resource):
      the app. Possible values include: 'Normal', 'Limited',
      'DisasterRecoveryMode'
     :vartype availability_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.SiteAvailabilityState
+     ~azure.mgmt.web.v2020_12_01.models.SiteAvailabilityState
     :param host_name_ssl_states: Hostname SSL states are used to manage the
      SSL bindings for app's hostnames.
     :type host_name_ssl_states:
-     list[~azure.mgmt.web.v2020_09_01.models.HostNameSslState]
+     list[~azure.mgmt.web.v2020_12_01.models.HostNameSslState]
     :param server_farm_id: Resource ID of the associated App Service plan,
      formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
@@ -10597,7 +11222,7 @@ class Site(Resource):
      Read-only.
     :vartype last_modified_time_utc: datetime
     :param site_config: Configuration of the app.
-    :type site_config: ~azure.mgmt.web.v2020_09_01.models.SiteConfig
+    :type site_config: ~azure.mgmt.web.v2020_12_01.models.SiteConfig
     :ivar traffic_manager_host_names: Azure Traffic Manager hostnames
      associated with the app. Read-only.
     :vartype traffic_manager_host_names: list[str]
@@ -10611,7 +11236,7 @@ class Site(Resource):
     :param hosting_environment_profile: App Service Environment to use for the
      app.
     :type hosting_environment_profile:
-     ~azure.mgmt.web.v2020_09_01.models.HostingEnvironmentProfile
+     ~azure.mgmt.web.v2020_12_01.models.HostingEnvironmentProfile
     :param client_affinity_enabled: <code>true</code> to enable client
      affinity; <code>false</code> to stop sending session affinity cookies,
      which route client requests in the same session to the same instance.
@@ -10626,9 +11251,10 @@ class Site(Resource):
      - ClientCertEnabled: true and ClientCertMode: Required means ClientCert is
      required.
      - ClientCertEnabled: true and ClientCertMode: Optional means ClientCert is
-     optional or accepted. Possible values include: 'Required', 'Optional'
+     optional or accepted. Possible values include: 'Required', 'Optional',
+     'OptionalInteractiveUser'
     :type client_cert_mode: str or
-     ~azure.mgmt.web.v2020_09_01.models.ClientCertMode
+     ~azure.mgmt.web.v2020_12_01.models.ClientCertMode
     :param client_cert_exclusion_paths: client certificate authentication
      comma-separated exclusion paths
     :type client_cert_exclusion_paths: str
@@ -10662,7 +11288,7 @@ class Site(Resource):
     :vartype max_number_of_workers: int
     :param cloning_info: If specified during app creation, the app is cloned
      from a source app.
-    :type cloning_info: ~azure.mgmt.web.v2020_09_01.models.CloningInfo
+    :type cloning_info: ~azure.mgmt.web.v2020_12_01.models.CloningInfo
     :ivar resource_group: Name of the resource group the app belongs to.
      Read-only.
     :vartype resource_group: str
@@ -10673,7 +11299,7 @@ class Site(Resource):
     :vartype default_host_name: str
     :ivar slot_swap_status: Status of the last deployment slot swap operation.
     :vartype slot_swap_status:
-     ~azure.mgmt.web.v2020_09_01.models.SlotSwapStatus
+     ~azure.mgmt.web.v2020_12_01.models.SlotSwapStatus
     :param https_only: HttpsOnly: configures a web site to accept only https
      requests. Issues redirect for
      http requests
@@ -10681,12 +11307,23 @@ class Site(Resource):
     :param redundancy_mode: Site redundancy mode. Possible values include:
      'None', 'Manual', 'Failover', 'ActiveActive', 'GeoRedundant'
     :type redundancy_mode: str or
-     ~azure.mgmt.web.v2020_09_01.models.RedundancyMode
+     ~azure.mgmt.web.v2020_12_01.models.RedundancyMode
     :ivar in_progress_operation_id: Specifies an operation id if this site has
      a pending operation.
     :vartype in_progress_operation_id: str
+    :param storage_account_required: Checks if Customer provided storage
+     account is required
+    :type storage_account_required: bool
+    :param key_vault_reference_identity: Identity to use for Key Vault
+     Reference authentication.
+    :type key_vault_reference_identity: str
+    :param virtual_network_subnet_id: Azure Resource Manager ID of the Virtual
+     network and subnet to be joined by Regional VNET Integration.
+     This must be of the form
+     /subscriptions/{subscriptionName}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
+    :type virtual_network_subnet_id: str
     :param identity:
-    :type identity: ~azure.mgmt.web.v2020_09_01.models.ManagedServiceIdentity
+    :type identity: ~azure.mgmt.web.v2020_12_01.models.ManagedServiceIdentity
     """
 
     _validation = {
@@ -10721,7 +11358,6 @@ class Site(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
         'repository_site_name': {'key': 'properties.repositorySiteName', 'type': 'str'},
@@ -10760,50 +11396,56 @@ class Site(Resource):
         'https_only': {'key': 'properties.httpsOnly', 'type': 'bool'},
         'redundancy_mode': {'key': 'properties.redundancyMode', 'type': 'RedundancyMode'},
         'in_progress_operation_id': {'key': 'properties.inProgressOperationId', 'type': 'str'},
+        'storage_account_required': {'key': 'properties.storageAccountRequired', 'type': 'bool'},
+        'key_vault_reference_identity': {'key': 'properties.keyVaultReferenceIdentity', 'type': 'str'},
+        'virtual_network_subnet_id': {'key': 'properties.virtualNetworkSubnetId', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
-    def __init__(self, *, location: str, kind: str=None, tags=None, system_data=None, enabled: bool=None, host_name_ssl_states=None, server_farm_id: str=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, site_config=None, scm_site_also_stopped: bool=False, hosting_environment_profile=None, client_affinity_enabled: bool=None, client_cert_enabled: bool=None, client_cert_mode=None, client_cert_exclusion_paths: str=None, host_names_disabled: bool=None, custom_domain_verification_id: str=None, container_size: int=None, daily_memory_time_quota: int=None, cloning_info=None, https_only: bool=None, redundancy_mode=None, identity=None, **kwargs) -> None:
-        super(Site, self).__init__(kind=kind, location=location, tags=tags, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(Site, self).__init__(**kwargs)
         self.state = None
         self.host_names = None
         self.repository_site_name = None
         self.usage_state = None
-        self.enabled = enabled
+        self.enabled = kwargs.get('enabled', None)
         self.enabled_host_names = None
         self.availability_state = None
-        self.host_name_ssl_states = host_name_ssl_states
-        self.server_farm_id = server_farm_id
-        self.reserved = reserved
-        self.is_xenon = is_xenon
-        self.hyper_v = hyper_v
+        self.host_name_ssl_states = kwargs.get('host_name_ssl_states', None)
+        self.server_farm_id = kwargs.get('server_farm_id', None)
+        self.reserved = kwargs.get('reserved', False)
+        self.is_xenon = kwargs.get('is_xenon', False)
+        self.hyper_v = kwargs.get('hyper_v', False)
         self.last_modified_time_utc = None
-        self.site_config = site_config
+        self.site_config = kwargs.get('site_config', None)
         self.traffic_manager_host_names = None
-        self.scm_site_also_stopped = scm_site_also_stopped
+        self.scm_site_also_stopped = kwargs.get('scm_site_also_stopped', False)
         self.target_swap_slot = None
-        self.hosting_environment_profile = hosting_environment_profile
-        self.client_affinity_enabled = client_affinity_enabled
-        self.client_cert_enabled = client_cert_enabled
-        self.client_cert_mode = client_cert_mode
-        self.client_cert_exclusion_paths = client_cert_exclusion_paths
-        self.host_names_disabled = host_names_disabled
-        self.custom_domain_verification_id = custom_domain_verification_id
+        self.hosting_environment_profile = kwargs.get('hosting_environment_profile', None)
+        self.client_affinity_enabled = kwargs.get('client_affinity_enabled', None)
+        self.client_cert_enabled = kwargs.get('client_cert_enabled', None)
+        self.client_cert_mode = kwargs.get('client_cert_mode', None)
+        self.client_cert_exclusion_paths = kwargs.get('client_cert_exclusion_paths', None)
+        self.host_names_disabled = kwargs.get('host_names_disabled', None)
+        self.custom_domain_verification_id = kwargs.get('custom_domain_verification_id', None)
         self.outbound_ip_addresses = None
         self.possible_outbound_ip_addresses = None
-        self.container_size = container_size
-        self.daily_memory_time_quota = daily_memory_time_quota
+        self.container_size = kwargs.get('container_size', None)
+        self.daily_memory_time_quota = kwargs.get('daily_memory_time_quota', None)
         self.suspended_till = None
         self.max_number_of_workers = None
-        self.cloning_info = cloning_info
+        self.cloning_info = kwargs.get('cloning_info', None)
         self.resource_group = None
         self.is_default_container = None
         self.default_host_name = None
         self.slot_swap_status = None
-        self.https_only = https_only
-        self.redundancy_mode = redundancy_mode
+        self.https_only = kwargs.get('https_only', None)
+        self.redundancy_mode = kwargs.get('redundancy_mode', None)
         self.in_progress_operation_id = None
-        self.identity = identity
+        self.storage_account_required = kwargs.get('storage_account_required', None)
+        self.key_vault_reference_identity = kwargs.get('key_vault_reference_identity', None)
+        self.virtual_network_subnet_id = kwargs.get('virtual_network_subnet_id', None)
+        self.identity = kwargs.get('identity', None)
 
 
 class SiteAuthSettings(ProxyOnlyResource):
@@ -10821,8 +11463,6 @@ class SiteAuthSettings(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param enabled: <code>true</code> if the Authentication / Authorization
      feature is enabled for the current app; otherwise, <code>false</code>.
     :type enabled: bool
@@ -10835,7 +11475,7 @@ class SiteAuthSettings(ProxyOnlyResource):
      unauthenticated client attempts to access the app. Possible values
      include: 'RedirectToLoginPage', 'AllowAnonymous'
     :type unauthenticated_client_action: str or
-     ~azure.mgmt.web.v2020_09_01.models.UnauthenticatedClientAction
+     ~azure.mgmt.web.v2020_12_01.models.UnauthenticatedClientAction
     :param token_store_enabled: <code>true</code> to durably store
      platform-specific security tokens that are obtained during login flows;
      otherwise, <code>false</code>.
@@ -10856,7 +11496,7 @@ class SiteAuthSettings(ProxyOnlyResource):
      'AzureActiveDirectory', 'Facebook', 'Google', 'MicrosoftAccount',
      'Twitter', 'Github'
     :type default_provider: str or
-     ~azure.mgmt.web.v2020_09_01.models.BuiltInAuthenticationProvider
+     ~azure.mgmt.web.v2020_12_01.models.BuiltInAuthenticationProvider
     :param token_refresh_extension_hours: The number of hours after session
      token expiration that a session token can be used to
      call the token refresh API. The default is 72 hours.
@@ -11013,6 +11653,11 @@ class SiteAuthSettings(ProxyOnlyResource):
      settings.
      If the path is relative, base will the site's root directory.
     :type auth_file_path: str
+    :param config_version: The ConfigVersion of the Authentication /
+     Authorization feature in use for the current app.
+     The setting in this value can control the behavior of the control plane
+     for Authentication / Authorization.
+    :type config_version: str
     """
 
     _validation = {
@@ -11026,7 +11671,6 @@ class SiteAuthSettings(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'runtime_version': {'key': 'properties.runtimeVersion', 'type': 'str'},
         'unauthenticated_client_action': {'key': 'properties.unauthenticatedClientAction', 'type': 'UnauthenticatedClientAction'},
@@ -11064,51 +11708,54 @@ class SiteAuthSettings(ProxyOnlyResource):
         'microsoft_account_oauth_scopes': {'key': 'properties.microsoftAccountOAuthScopes', 'type': '[str]'},
         'is_auth_from_file': {'key': 'properties.isAuthFromFile', 'type': 'str'},
         'auth_file_path': {'key': 'properties.authFilePath', 'type': 'str'},
+        'config_version': {'key': 'properties.configVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, enabled: bool=None, runtime_version: str=None, unauthenticated_client_action=None, token_store_enabled: bool=None, allowed_external_redirect_urls=None, default_provider=None, token_refresh_extension_hours: float=None, client_id: str=None, client_secret: str=None, client_secret_setting_name: str=None, client_secret_certificate_thumbprint: str=None, issuer: str=None, validate_issuer: bool=None, allowed_audiences=None, additional_login_params=None, aad_claims_authorization: str=None, google_client_id: str=None, google_client_secret: str=None, google_client_secret_setting_name: str=None, google_oauth_scopes=None, facebook_app_id: str=None, facebook_app_secret: str=None, facebook_app_secret_setting_name: str=None, facebook_oauth_scopes=None, git_hub_client_id: str=None, git_hub_client_secret: str=None, git_hub_client_secret_setting_name: str=None, git_hub_oauth_scopes=None, twitter_consumer_key: str=None, twitter_consumer_secret: str=None, twitter_consumer_secret_setting_name: str=None, microsoft_account_client_id: str=None, microsoft_account_client_secret: str=None, microsoft_account_client_secret_setting_name: str=None, microsoft_account_oauth_scopes=None, is_auth_from_file: str=None, auth_file_path: str=None, **kwargs) -> None:
-        super(SiteAuthSettings, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.enabled = enabled
-        self.runtime_version = runtime_version
-        self.unauthenticated_client_action = unauthenticated_client_action
-        self.token_store_enabled = token_store_enabled
-        self.allowed_external_redirect_urls = allowed_external_redirect_urls
-        self.default_provider = default_provider
-        self.token_refresh_extension_hours = token_refresh_extension_hours
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.client_secret_setting_name = client_secret_setting_name
-        self.client_secret_certificate_thumbprint = client_secret_certificate_thumbprint
-        self.issuer = issuer
-        self.validate_issuer = validate_issuer
-        self.allowed_audiences = allowed_audiences
-        self.additional_login_params = additional_login_params
-        self.aad_claims_authorization = aad_claims_authorization
-        self.google_client_id = google_client_id
-        self.google_client_secret = google_client_secret
-        self.google_client_secret_setting_name = google_client_secret_setting_name
-        self.google_oauth_scopes = google_oauth_scopes
-        self.facebook_app_id = facebook_app_id
-        self.facebook_app_secret = facebook_app_secret
-        self.facebook_app_secret_setting_name = facebook_app_secret_setting_name
-        self.facebook_oauth_scopes = facebook_oauth_scopes
-        self.git_hub_client_id = git_hub_client_id
-        self.git_hub_client_secret = git_hub_client_secret
-        self.git_hub_client_secret_setting_name = git_hub_client_secret_setting_name
-        self.git_hub_oauth_scopes = git_hub_oauth_scopes
-        self.twitter_consumer_key = twitter_consumer_key
-        self.twitter_consumer_secret = twitter_consumer_secret
-        self.twitter_consumer_secret_setting_name = twitter_consumer_secret_setting_name
-        self.microsoft_account_client_id = microsoft_account_client_id
-        self.microsoft_account_client_secret = microsoft_account_client_secret
-        self.microsoft_account_client_secret_setting_name = microsoft_account_client_secret_setting_name
-        self.microsoft_account_oauth_scopes = microsoft_account_oauth_scopes
-        self.is_auth_from_file = is_auth_from_file
-        self.auth_file_path = auth_file_path
+    def __init__(self, **kwargs):
+        super(SiteAuthSettings, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.runtime_version = kwargs.get('runtime_version', None)
+        self.unauthenticated_client_action = kwargs.get('unauthenticated_client_action', None)
+        self.token_store_enabled = kwargs.get('token_store_enabled', None)
+        self.allowed_external_redirect_urls = kwargs.get('allowed_external_redirect_urls', None)
+        self.default_provider = kwargs.get('default_provider', None)
+        self.token_refresh_extension_hours = kwargs.get('token_refresh_extension_hours', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.client_secret_setting_name = kwargs.get('client_secret_setting_name', None)
+        self.client_secret_certificate_thumbprint = kwargs.get('client_secret_certificate_thumbprint', None)
+        self.issuer = kwargs.get('issuer', None)
+        self.validate_issuer = kwargs.get('validate_issuer', None)
+        self.allowed_audiences = kwargs.get('allowed_audiences', None)
+        self.additional_login_params = kwargs.get('additional_login_params', None)
+        self.aad_claims_authorization = kwargs.get('aad_claims_authorization', None)
+        self.google_client_id = kwargs.get('google_client_id', None)
+        self.google_client_secret = kwargs.get('google_client_secret', None)
+        self.google_client_secret_setting_name = kwargs.get('google_client_secret_setting_name', None)
+        self.google_oauth_scopes = kwargs.get('google_oauth_scopes', None)
+        self.facebook_app_id = kwargs.get('facebook_app_id', None)
+        self.facebook_app_secret = kwargs.get('facebook_app_secret', None)
+        self.facebook_app_secret_setting_name = kwargs.get('facebook_app_secret_setting_name', None)
+        self.facebook_oauth_scopes = kwargs.get('facebook_oauth_scopes', None)
+        self.git_hub_client_id = kwargs.get('git_hub_client_id', None)
+        self.git_hub_client_secret = kwargs.get('git_hub_client_secret', None)
+        self.git_hub_client_secret_setting_name = kwargs.get('git_hub_client_secret_setting_name', None)
+        self.git_hub_oauth_scopes = kwargs.get('git_hub_oauth_scopes', None)
+        self.twitter_consumer_key = kwargs.get('twitter_consumer_key', None)
+        self.twitter_consumer_secret = kwargs.get('twitter_consumer_secret', None)
+        self.twitter_consumer_secret_setting_name = kwargs.get('twitter_consumer_secret_setting_name', None)
+        self.microsoft_account_client_id = kwargs.get('microsoft_account_client_id', None)
+        self.microsoft_account_client_secret = kwargs.get('microsoft_account_client_secret', None)
+        self.microsoft_account_client_secret_setting_name = kwargs.get('microsoft_account_client_secret_setting_name', None)
+        self.microsoft_account_oauth_scopes = kwargs.get('microsoft_account_oauth_scopes', None)
+        self.is_auth_from_file = kwargs.get('is_auth_from_file', None)
+        self.auth_file_path = kwargs.get('auth_file_path', None)
+        self.config_version = kwargs.get('config_version', None)
 
 
 class SiteAuthSettingsV2(ProxyOnlyResource):
-    """SiteAuthSettingsV2.
+    """Configuration settings for the Azure App Service Authentication /
+    Authorization V2 feature.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -11121,20 +11768,25 @@ class SiteAuthSettingsV2(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param platform:
-    :type platform: ~azure.mgmt.web.v2020_09_01.models.AuthPlatform
-    :param global_validation:
+    :param platform: The configuration settings of the platform of App Service
+     Authentication/Authorization.
+    :type platform: ~azure.mgmt.web.v2020_12_01.models.AuthPlatform
+    :param global_validation: The configuration settings that determines the
+     validation flow of users using App Service Authentication/Authorization.
     :type global_validation:
-     ~azure.mgmt.web.v2020_09_01.models.GlobalValidation
-    :param identity_providers:
+     ~azure.mgmt.web.v2020_12_01.models.GlobalValidation
+    :param identity_providers: The configuration settings of each of the
+     identity providers used to configure App Service
+     Authentication/Authorization.
     :type identity_providers:
-     ~azure.mgmt.web.v2020_09_01.models.IdentityProviders
-    :param login:
-    :type login: ~azure.mgmt.web.v2020_09_01.models.Login
-    :param http_settings:
-    :type http_settings: ~azure.mgmt.web.v2020_09_01.models.HttpSettings
+     ~azure.mgmt.web.v2020_12_01.models.IdentityProviders
+    :param login: The configuration settings of the login flow of users using
+     App Service Authentication/Authorization.
+    :type login: ~azure.mgmt.web.v2020_12_01.models.Login
+    :param http_settings: The configuration settings of the HTTP requests for
+     authentication and authorization requests made against App Service
+     Authentication/Authorization.
+    :type http_settings: ~azure.mgmt.web.v2020_12_01.models.HttpSettings
     """
 
     _validation = {
@@ -11148,7 +11800,6 @@ class SiteAuthSettingsV2(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'platform': {'key': 'properties.platform', 'type': 'AuthPlatform'},
         'global_validation': {'key': 'properties.globalValidation', 'type': 'GlobalValidation'},
         'identity_providers': {'key': 'properties.identityProviders', 'type': 'IdentityProviders'},
@@ -11156,13 +11807,13 @@ class SiteAuthSettingsV2(ProxyOnlyResource):
         'http_settings': {'key': 'properties.httpSettings', 'type': 'HttpSettings'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, platform=None, global_validation=None, identity_providers=None, login=None, http_settings=None, **kwargs) -> None:
-        super(SiteAuthSettingsV2, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.platform = platform
-        self.global_validation = global_validation
-        self.identity_providers = identity_providers
-        self.login = login
-        self.http_settings = http_settings
+    def __init__(self, **kwargs):
+        super(SiteAuthSettingsV2, self).__init__(**kwargs)
+        self.platform = kwargs.get('platform', None)
+        self.global_validation = kwargs.get('global_validation', None)
+        self.identity_providers = kwargs.get('identity_providers', None)
+        self.login = kwargs.get('login', None)
+        self.http_settings = kwargs.get('http_settings', None)
 
 
 class SiteCloneability(Model):
@@ -11170,20 +11821,20 @@ class SiteCloneability(Model):
 
     :param result: Name of app. Possible values include: 'Cloneable',
      'PartiallyCloneable', 'NotCloneable'
-    :type result: str or ~azure.mgmt.web.v2020_09_01.models.CloneAbilityResult
+    :type result: str or ~azure.mgmt.web.v2020_12_01.models.CloneAbilityResult
     :param blocking_features: List of features enabled on app that prevent
      cloning.
     :type blocking_features:
-     list[~azure.mgmt.web.v2020_09_01.models.SiteCloneabilityCriterion]
+     list[~azure.mgmt.web.v2020_12_01.models.SiteCloneabilityCriterion]
     :param unsupported_features: List of features enabled on app that are
      non-blocking but cannot be cloned. The app can still be cloned
      but the features in this list will not be set up on cloned app.
     :type unsupported_features:
-     list[~azure.mgmt.web.v2020_09_01.models.SiteCloneabilityCriterion]
+     list[~azure.mgmt.web.v2020_12_01.models.SiteCloneabilityCriterion]
     :param blocking_characteristics: List of blocking application
      characteristics.
     :type blocking_characteristics:
-     list[~azure.mgmt.web.v2020_09_01.models.SiteCloneabilityCriterion]
+     list[~azure.mgmt.web.v2020_12_01.models.SiteCloneabilityCriterion]
     """
 
     _attribute_map = {
@@ -11193,12 +11844,12 @@ class SiteCloneability(Model):
         'blocking_characteristics': {'key': 'blockingCharacteristics', 'type': '[SiteCloneabilityCriterion]'},
     }
 
-    def __init__(self, *, result=None, blocking_features=None, unsupported_features=None, blocking_characteristics=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SiteCloneability, self).__init__(**kwargs)
-        self.result = result
-        self.blocking_features = blocking_features
-        self.unsupported_features = unsupported_features
-        self.blocking_characteristics = blocking_characteristics
+        self.result = kwargs.get('result', None)
+        self.blocking_features = kwargs.get('blocking_features', None)
+        self.unsupported_features = kwargs.get('unsupported_features', None)
+        self.blocking_characteristics = kwargs.get('blocking_characteristics', None)
 
 
 class SiteCloneabilityCriterion(Model):
@@ -11215,10 +11866,10 @@ class SiteCloneabilityCriterion(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, description: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SiteCloneabilityCriterion, self).__init__(**kwargs)
-        self.name = name
-        self.description = description
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
 
 
 class SiteConfig(Model):
@@ -11273,21 +11924,21 @@ class SiteConfig(Model):
     :param publishing_username: Publishing user name.
     :type publishing_username: str
     :param app_settings: Application settings.
-    :type app_settings: list[~azure.mgmt.web.v2020_09_01.models.NameValuePair]
+    :type app_settings: list[~azure.mgmt.web.v2020_12_01.models.NameValuePair]
     :param connection_strings: Connection strings.
     :type connection_strings:
-     list[~azure.mgmt.web.v2020_09_01.models.ConnStringInfo]
+     list[~azure.mgmt.web.v2020_12_01.models.ConnStringInfo]
     :ivar machine_key: Site MachineKey.
-    :vartype machine_key: ~azure.mgmt.web.v2020_09_01.models.SiteMachineKey
+    :vartype machine_key: ~azure.mgmt.web.v2020_12_01.models.SiteMachineKey
     :param handler_mappings: Handler mappings.
     :type handler_mappings:
-     list[~azure.mgmt.web.v2020_09_01.models.HandlerMapping]
+     list[~azure.mgmt.web.v2020_12_01.models.HandlerMapping]
     :param document_root: Document root.
     :type document_root: str
     :param scm_type: SCM type. Possible values include: 'None', 'Dropbox',
      'Tfs', 'LocalGit', 'GitHub', 'CodePlexGit', 'CodePlexHg', 'BitbucketGit',
      'BitbucketHg', 'ExternalGit', 'ExternalHg', 'OneDrive', 'VSO', 'VSTSRM'
-    :type scm_type: str or ~azure.mgmt.web.v2020_09_01.models.ScmType
+    :type scm_type: str or ~azure.mgmt.web.v2020_12_01.models.ScmType
     :param use32_bit_worker_process: <code>true</code> to use 32-bit worker
      process; otherwise, <code>false</code>.
     :type use32_bit_worker_process: bool
@@ -11308,24 +11959,24 @@ class SiteConfig(Model):
     :param managed_pipeline_mode: Managed pipeline mode. Possible values
      include: 'Integrated', 'Classic'
     :type managed_pipeline_mode: str or
-     ~azure.mgmt.web.v2020_09_01.models.ManagedPipelineMode
+     ~azure.mgmt.web.v2020_12_01.models.ManagedPipelineMode
     :param virtual_applications: Virtual applications.
     :type virtual_applications:
-     list[~azure.mgmt.web.v2020_09_01.models.VirtualApplication]
+     list[~azure.mgmt.web.v2020_12_01.models.VirtualApplication]
     :param load_balancing: Site load balancing. Possible values include:
      'WeightedRoundRobin', 'LeastRequests', 'LeastResponseTime',
-     'WeightedTotalTraffic', 'RequestHash'
+     'WeightedTotalTraffic', 'RequestHash', 'PerSiteRoundRobin'
     :type load_balancing: str or
-     ~azure.mgmt.web.v2020_09_01.models.SiteLoadBalancing
+     ~azure.mgmt.web.v2020_12_01.models.SiteLoadBalancing
     :param experiments: This is work around for polymorphic types.
-    :type experiments: ~azure.mgmt.web.v2020_09_01.models.Experiments
+    :type experiments: ~azure.mgmt.web.v2020_12_01.models.Experiments
     :param limits: Site limits.
-    :type limits: ~azure.mgmt.web.v2020_09_01.models.SiteLimits
+    :type limits: ~azure.mgmt.web.v2020_12_01.models.SiteLimits
     :param auto_heal_enabled: <code>true</code> if Auto Heal is enabled;
      otherwise, <code>false</code>.
     :type auto_heal_enabled: bool
     :param auto_heal_rules: Auto Heal rules.
-    :type auto_heal_rules: ~azure.mgmt.web.v2020_09_01.models.AutoHealRules
+    :type auto_heal_rules: ~azure.mgmt.web.v2020_12_01.models.AutoHealRules
     :param tracing_options: Tracing options.
     :type tracing_options: str
     :param vnet_name: Virtual Network name.
@@ -11338,16 +11989,16 @@ class SiteConfig(Model):
      this app. These will be assigned dynamically on runtime.
     :type vnet_private_ports_count: int
     :param cors: Cross-Origin Resource Sharing (CORS) settings.
-    :type cors: ~azure.mgmt.web.v2020_09_01.models.CorsSettings
+    :type cors: ~azure.mgmt.web.v2020_12_01.models.CorsSettings
     :param push: Push endpoint settings.
-    :type push: ~azure.mgmt.web.v2020_09_01.models.PushSettings
+    :type push: ~azure.mgmt.web.v2020_12_01.models.PushSettings
     :param api_definition: Information about the formal API definition for the
      app.
-    :type api_definition: ~azure.mgmt.web.v2020_09_01.models.ApiDefinitionInfo
+    :type api_definition: ~azure.mgmt.web.v2020_12_01.models.ApiDefinitionInfo
     :param api_management_config: Azure API management settings linked to the
      app.
     :type api_management_config:
-     ~azure.mgmt.web.v2020_09_01.models.ApiManagementConfig
+     ~azure.mgmt.web.v2020_12_01.models.ApiManagementConfig
     :param auto_swap_slot_name: Auto-swap slot name.
     :type auto_swap_slot_name: str
     :param local_my_sql_enabled: <code>true</code> to enable local MySQL;
@@ -11357,12 +12008,15 @@ class SiteConfig(Model):
     :type managed_service_identity_id: int
     :param x_managed_service_identity_id: Explicit Managed Service Identity Id
     :type x_managed_service_identity_id: int
+    :param key_vault_reference_identity: Identity to use for Key Vault
+     Reference authentication.
+    :type key_vault_reference_identity: str
     :param ip_security_restrictions: IP security restrictions for main.
     :type ip_security_restrictions:
-     list[~azure.mgmt.web.v2020_09_01.models.IpSecurityRestriction]
+     list[~azure.mgmt.web.v2020_12_01.models.IpSecurityRestriction]
     :param scm_ip_security_restrictions: IP security restrictions for scm.
     :type scm_ip_security_restrictions:
-     list[~azure.mgmt.web.v2020_09_01.models.IpSecurityRestriction]
+     list[~azure.mgmt.web.v2020_12_01.models.IpSecurityRestriction]
     :param scm_ip_security_restrictions_use_main: IP security restrictions for
      scm to use main.
     :type scm_ip_security_restrictions_use_main: bool
@@ -11373,25 +12027,58 @@ class SiteConfig(Model):
      TLS required for SSL requests. Possible values include: '1.0', '1.1',
      '1.2'
     :type min_tls_version: str or
-     ~azure.mgmt.web.v2020_09_01.models.SupportedTlsVersions
+     ~azure.mgmt.web.v2020_12_01.models.SupportedTlsVersions
     :param scm_min_tls_version: ScmMinTlsVersion: configures the minimum
      version of TLS required for SSL requests for SCM site. Possible values
      include: '1.0', '1.1', '1.2'
     :type scm_min_tls_version: str or
-     ~azure.mgmt.web.v2020_09_01.models.SupportedTlsVersions
+     ~azure.mgmt.web.v2020_12_01.models.SupportedTlsVersions
     :param ftps_state: State of FTP / FTPS service. Possible values include:
      'AllAllowed', 'FtpsOnly', 'Disabled'
-    :type ftps_state: str or ~azure.mgmt.web.v2020_09_01.models.FtpsState
+    :type ftps_state: str or ~azure.mgmt.web.v2020_12_01.models.FtpsState
     :param pre_warmed_instance_count: Number of preWarmed instances.
      This setting only applies to the Consumption and Elastic Plans
     :type pre_warmed_instance_count: int
+    :param function_app_scale_limit: Maximum number of workers that a site can
+     scale out to.
+     This setting only applies to the Consumption and Elastic Premium Plans
+    :type function_app_scale_limit: int
     :param health_check_path: Health check path
     :type health_check_path: str
+    :param functions_runtime_scale_monitoring_enabled: Gets or sets a value
+     indicating whether functions runtime scale monitoring is enabled. When
+     enabled,
+     the ScaleController will not monitor event sources directly, but will
+     instead call to the
+     runtime to get scale status.
+    :type functions_runtime_scale_monitoring_enabled: bool
+    :param website_time_zone: Sets the time zone a site uses for generating
+     timestamps. Compatible with Linux and Windows App Service. Setting the
+     WEBSITE_TIME_ZONE app setting takes precedence over this config. For
+     Linux, expects tz database values https://www.iana.org/time-zones (for a
+     quick reference see
+     https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). For
+     Windows, expects one of the time zones listed under
+     HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time
+     Zones
+    :type website_time_zone: str
+    :param minimum_elastic_instance_count: Number of minimum instance count
+     for a site
+     This setting only applies to the Elastic Plans
+    :type minimum_elastic_instance_count: int
+    :param azure_storage_accounts: List of Azure Storage Accounts.
+    :type azure_storage_accounts: dict[str,
+     ~azure.mgmt.web.v2020_12_01.models.AzureStorageInfoValue]
+    :param public_network_access: Property to allow or block all public
+     traffic.
+    :type public_network_access: str
     """
 
     _validation = {
         'machine_key': {'readonly': True},
         'pre_warmed_instance_count': {'maximum': 10, 'minimum': 0},
+        'function_app_scale_limit': {'minimum': 0},
+        'minimum_elastic_instance_count': {'maximum': 20, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -11446,6 +12133,7 @@ class SiteConfig(Model):
         'local_my_sql_enabled': {'key': 'localMySqlEnabled', 'type': 'bool'},
         'managed_service_identity_id': {'key': 'managedServiceIdentityId', 'type': 'int'},
         'x_managed_service_identity_id': {'key': 'xManagedServiceIdentityId', 'type': 'int'},
+        'key_vault_reference_identity': {'key': 'keyVaultReferenceIdentity', 'type': 'str'},
         'ip_security_restrictions': {'key': 'ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
         'scm_ip_security_restrictions': {'key': 'scmIpSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
         'scm_ip_security_restrictions_use_main': {'key': 'scmIpSecurityRestrictionsUseMain', 'type': 'bool'},
@@ -11454,71 +12142,123 @@ class SiteConfig(Model):
         'scm_min_tls_version': {'key': 'scmMinTlsVersion', 'type': 'str'},
         'ftps_state': {'key': 'ftpsState', 'type': 'str'},
         'pre_warmed_instance_count': {'key': 'preWarmedInstanceCount', 'type': 'int'},
+        'function_app_scale_limit': {'key': 'functionAppScaleLimit', 'type': 'int'},
         'health_check_path': {'key': 'healthCheckPath', 'type': 'str'},
+        'functions_runtime_scale_monitoring_enabled': {'key': 'functionsRuntimeScaleMonitoringEnabled', 'type': 'bool'},
+        'website_time_zone': {'key': 'websiteTimeZone', 'type': 'str'},
+        'minimum_elastic_instance_count': {'key': 'minimumElasticInstanceCount', 'type': 'int'},
+        'azure_storage_accounts': {'key': 'azureStorageAccounts', 'type': '{AzureStorageInfoValue}'},
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
     }
 
-    def __init__(self, *, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, power_shell_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, acr_use_managed_identity_creds: bool=None, acr_user_managed_identity_id: str=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, vnet_route_all_enabled: bool=None, vnet_private_ports_count: int=None, cors=None, push=None, api_definition=None, api_management_config=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, scm_ip_security_restrictions=None, scm_ip_security_restrictions_use_main: bool=None, http20_enabled: bool=True, min_tls_version=None, scm_min_tls_version=None, ftps_state=None, pre_warmed_instance_count: int=None, health_check_path: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SiteConfig, self).__init__(**kwargs)
-        self.number_of_workers = number_of_workers
-        self.default_documents = default_documents
-        self.net_framework_version = net_framework_version
-        self.php_version = php_version
-        self.python_version = python_version
-        self.node_version = node_version
-        self.power_shell_version = power_shell_version
-        self.linux_fx_version = linux_fx_version
-        self.windows_fx_version = windows_fx_version
-        self.request_tracing_enabled = request_tracing_enabled
-        self.request_tracing_expiration_time = request_tracing_expiration_time
-        self.remote_debugging_enabled = remote_debugging_enabled
-        self.remote_debugging_version = remote_debugging_version
-        self.http_logging_enabled = http_logging_enabled
-        self.acr_use_managed_identity_creds = acr_use_managed_identity_creds
-        self.acr_user_managed_identity_id = acr_user_managed_identity_id
-        self.logs_directory_size_limit = logs_directory_size_limit
-        self.detailed_error_logging_enabled = detailed_error_logging_enabled
-        self.publishing_username = publishing_username
-        self.app_settings = app_settings
-        self.connection_strings = connection_strings
+        self.number_of_workers = kwargs.get('number_of_workers', None)
+        self.default_documents = kwargs.get('default_documents', None)
+        self.net_framework_version = kwargs.get('net_framework_version', "v4.6")
+        self.php_version = kwargs.get('php_version', None)
+        self.python_version = kwargs.get('python_version', None)
+        self.node_version = kwargs.get('node_version', None)
+        self.power_shell_version = kwargs.get('power_shell_version', None)
+        self.linux_fx_version = kwargs.get('linux_fx_version', None)
+        self.windows_fx_version = kwargs.get('windows_fx_version', None)
+        self.request_tracing_enabled = kwargs.get('request_tracing_enabled', None)
+        self.request_tracing_expiration_time = kwargs.get('request_tracing_expiration_time', None)
+        self.remote_debugging_enabled = kwargs.get('remote_debugging_enabled', None)
+        self.remote_debugging_version = kwargs.get('remote_debugging_version', None)
+        self.http_logging_enabled = kwargs.get('http_logging_enabled', None)
+        self.acr_use_managed_identity_creds = kwargs.get('acr_use_managed_identity_creds', None)
+        self.acr_user_managed_identity_id = kwargs.get('acr_user_managed_identity_id', None)
+        self.logs_directory_size_limit = kwargs.get('logs_directory_size_limit', None)
+        self.detailed_error_logging_enabled = kwargs.get('detailed_error_logging_enabled', None)
+        self.publishing_username = kwargs.get('publishing_username', None)
+        self.app_settings = kwargs.get('app_settings', None)
+        self.connection_strings = kwargs.get('connection_strings', None)
         self.machine_key = None
-        self.handler_mappings = handler_mappings
-        self.document_root = document_root
-        self.scm_type = scm_type
-        self.use32_bit_worker_process = use32_bit_worker_process
-        self.web_sockets_enabled = web_sockets_enabled
-        self.always_on = always_on
-        self.java_version = java_version
-        self.java_container = java_container
-        self.java_container_version = java_container_version
-        self.app_command_line = app_command_line
-        self.managed_pipeline_mode = managed_pipeline_mode
-        self.virtual_applications = virtual_applications
-        self.load_balancing = load_balancing
-        self.experiments = experiments
-        self.limits = limits
-        self.auto_heal_enabled = auto_heal_enabled
-        self.auto_heal_rules = auto_heal_rules
-        self.tracing_options = tracing_options
-        self.vnet_name = vnet_name
-        self.vnet_route_all_enabled = vnet_route_all_enabled
-        self.vnet_private_ports_count = vnet_private_ports_count
-        self.cors = cors
-        self.push = push
-        self.api_definition = api_definition
-        self.api_management_config = api_management_config
-        self.auto_swap_slot_name = auto_swap_slot_name
-        self.local_my_sql_enabled = local_my_sql_enabled
-        self.managed_service_identity_id = managed_service_identity_id
-        self.x_managed_service_identity_id = x_managed_service_identity_id
-        self.ip_security_restrictions = ip_security_restrictions
-        self.scm_ip_security_restrictions = scm_ip_security_restrictions
-        self.scm_ip_security_restrictions_use_main = scm_ip_security_restrictions_use_main
-        self.http20_enabled = http20_enabled
-        self.min_tls_version = min_tls_version
-        self.scm_min_tls_version = scm_min_tls_version
-        self.ftps_state = ftps_state
-        self.pre_warmed_instance_count = pre_warmed_instance_count
-        self.health_check_path = health_check_path
+        self.handler_mappings = kwargs.get('handler_mappings', None)
+        self.document_root = kwargs.get('document_root', None)
+        self.scm_type = kwargs.get('scm_type', None)
+        self.use32_bit_worker_process = kwargs.get('use32_bit_worker_process', None)
+        self.web_sockets_enabled = kwargs.get('web_sockets_enabled', None)
+        self.always_on = kwargs.get('always_on', None)
+        self.java_version = kwargs.get('java_version', None)
+        self.java_container = kwargs.get('java_container', None)
+        self.java_container_version = kwargs.get('java_container_version', None)
+        self.app_command_line = kwargs.get('app_command_line', None)
+        self.managed_pipeline_mode = kwargs.get('managed_pipeline_mode', None)
+        self.virtual_applications = kwargs.get('virtual_applications', None)
+        self.load_balancing = kwargs.get('load_balancing', None)
+        self.experiments = kwargs.get('experiments', None)
+        self.limits = kwargs.get('limits', None)
+        self.auto_heal_enabled = kwargs.get('auto_heal_enabled', None)
+        self.auto_heal_rules = kwargs.get('auto_heal_rules', None)
+        self.tracing_options = kwargs.get('tracing_options', None)
+        self.vnet_name = kwargs.get('vnet_name', None)
+        self.vnet_route_all_enabled = kwargs.get('vnet_route_all_enabled', None)
+        self.vnet_private_ports_count = kwargs.get('vnet_private_ports_count', None)
+        self.cors = kwargs.get('cors', None)
+        self.push = kwargs.get('push', None)
+        self.api_definition = kwargs.get('api_definition', None)
+        self.api_management_config = kwargs.get('api_management_config', None)
+        self.auto_swap_slot_name = kwargs.get('auto_swap_slot_name', None)
+        self.local_my_sql_enabled = kwargs.get('local_my_sql_enabled', False)
+        self.managed_service_identity_id = kwargs.get('managed_service_identity_id', None)
+        self.x_managed_service_identity_id = kwargs.get('x_managed_service_identity_id', None)
+        self.key_vault_reference_identity = kwargs.get('key_vault_reference_identity', None)
+        self.ip_security_restrictions = kwargs.get('ip_security_restrictions', None)
+        self.scm_ip_security_restrictions = kwargs.get('scm_ip_security_restrictions', None)
+        self.scm_ip_security_restrictions_use_main = kwargs.get('scm_ip_security_restrictions_use_main', None)
+        self.http20_enabled = kwargs.get('http20_enabled', True)
+        self.min_tls_version = kwargs.get('min_tls_version', None)
+        self.scm_min_tls_version = kwargs.get('scm_min_tls_version', None)
+        self.ftps_state = kwargs.get('ftps_state', None)
+        self.pre_warmed_instance_count = kwargs.get('pre_warmed_instance_count', None)
+        self.function_app_scale_limit = kwargs.get('function_app_scale_limit', None)
+        self.health_check_path = kwargs.get('health_check_path', None)
+        self.functions_runtime_scale_monitoring_enabled = kwargs.get('functions_runtime_scale_monitoring_enabled', None)
+        self.website_time_zone = kwargs.get('website_time_zone', None)
+        self.minimum_elastic_instance_count = kwargs.get('minimum_elastic_instance_count', None)
+        self.azure_storage_accounts = kwargs.get('azure_storage_accounts', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
+
+
+class SiteConfigPropertiesDictionary(Model):
+    """Site config properties dictionary.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar use32_bit_worker_process: <code>true</code> if use32BitWorkerProcess
+     should be set to true for the stack; otherwise, <code>false</code>.
+    :vartype use32_bit_worker_process: bool
+    :ivar linux_fx_version: LinuxFxVersion configuration setting.
+    :vartype linux_fx_version: str
+    :ivar java_version: JavaVersion configuration setting.
+    :vartype java_version: str
+    :ivar power_shell_version: PowerShellVersion configuration setting.
+    :vartype power_shell_version: str
+    """
+
+    _validation = {
+        'use32_bit_worker_process': {'readonly': True},
+        'linux_fx_version': {'readonly': True},
+        'java_version': {'readonly': True},
+        'power_shell_version': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'use32_bit_worker_process': {'key': 'use32BitWorkerProcess', 'type': 'bool'},
+        'linux_fx_version': {'key': 'linuxFxVersion', 'type': 'str'},
+        'java_version': {'key': 'javaVersion', 'type': 'str'},
+        'power_shell_version': {'key': 'powerShellVersion', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SiteConfigPropertiesDictionary, self).__init__(**kwargs)
+        self.use32_bit_worker_process = None
+        self.linux_fx_version = None
+        self.java_version = None
+        self.power_shell_version = None
 
 
 class SiteConfigResource(ProxyOnlyResource):
@@ -11535,8 +12275,6 @@ class SiteConfigResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param number_of_workers: Number of workers.
     :type number_of_workers: int
     :param default_documents: Default documents.
@@ -11583,21 +12321,21 @@ class SiteConfigResource(ProxyOnlyResource):
     :param publishing_username: Publishing user name.
     :type publishing_username: str
     :param app_settings: Application settings.
-    :type app_settings: list[~azure.mgmt.web.v2020_09_01.models.NameValuePair]
+    :type app_settings: list[~azure.mgmt.web.v2020_12_01.models.NameValuePair]
     :param connection_strings: Connection strings.
     :type connection_strings:
-     list[~azure.mgmt.web.v2020_09_01.models.ConnStringInfo]
+     list[~azure.mgmt.web.v2020_12_01.models.ConnStringInfo]
     :ivar machine_key: Site MachineKey.
-    :vartype machine_key: ~azure.mgmt.web.v2020_09_01.models.SiteMachineKey
+    :vartype machine_key: ~azure.mgmt.web.v2020_12_01.models.SiteMachineKey
     :param handler_mappings: Handler mappings.
     :type handler_mappings:
-     list[~azure.mgmt.web.v2020_09_01.models.HandlerMapping]
+     list[~azure.mgmt.web.v2020_12_01.models.HandlerMapping]
     :param document_root: Document root.
     :type document_root: str
     :param scm_type: SCM type. Possible values include: 'None', 'Dropbox',
      'Tfs', 'LocalGit', 'GitHub', 'CodePlexGit', 'CodePlexHg', 'BitbucketGit',
      'BitbucketHg', 'ExternalGit', 'ExternalHg', 'OneDrive', 'VSO', 'VSTSRM'
-    :type scm_type: str or ~azure.mgmt.web.v2020_09_01.models.ScmType
+    :type scm_type: str or ~azure.mgmt.web.v2020_12_01.models.ScmType
     :param use32_bit_worker_process: <code>true</code> to use 32-bit worker
      process; otherwise, <code>false</code>.
     :type use32_bit_worker_process: bool
@@ -11618,24 +12356,24 @@ class SiteConfigResource(ProxyOnlyResource):
     :param managed_pipeline_mode: Managed pipeline mode. Possible values
      include: 'Integrated', 'Classic'
     :type managed_pipeline_mode: str or
-     ~azure.mgmt.web.v2020_09_01.models.ManagedPipelineMode
+     ~azure.mgmt.web.v2020_12_01.models.ManagedPipelineMode
     :param virtual_applications: Virtual applications.
     :type virtual_applications:
-     list[~azure.mgmt.web.v2020_09_01.models.VirtualApplication]
+     list[~azure.mgmt.web.v2020_12_01.models.VirtualApplication]
     :param load_balancing: Site load balancing. Possible values include:
      'WeightedRoundRobin', 'LeastRequests', 'LeastResponseTime',
-     'WeightedTotalTraffic', 'RequestHash'
+     'WeightedTotalTraffic', 'RequestHash', 'PerSiteRoundRobin'
     :type load_balancing: str or
-     ~azure.mgmt.web.v2020_09_01.models.SiteLoadBalancing
+     ~azure.mgmt.web.v2020_12_01.models.SiteLoadBalancing
     :param experiments: This is work around for polymorphic types.
-    :type experiments: ~azure.mgmt.web.v2020_09_01.models.Experiments
+    :type experiments: ~azure.mgmt.web.v2020_12_01.models.Experiments
     :param limits: Site limits.
-    :type limits: ~azure.mgmt.web.v2020_09_01.models.SiteLimits
+    :type limits: ~azure.mgmt.web.v2020_12_01.models.SiteLimits
     :param auto_heal_enabled: <code>true</code> if Auto Heal is enabled;
      otherwise, <code>false</code>.
     :type auto_heal_enabled: bool
     :param auto_heal_rules: Auto Heal rules.
-    :type auto_heal_rules: ~azure.mgmt.web.v2020_09_01.models.AutoHealRules
+    :type auto_heal_rules: ~azure.mgmt.web.v2020_12_01.models.AutoHealRules
     :param tracing_options: Tracing options.
     :type tracing_options: str
     :param vnet_name: Virtual Network name.
@@ -11648,16 +12386,16 @@ class SiteConfigResource(ProxyOnlyResource):
      this app. These will be assigned dynamically on runtime.
     :type vnet_private_ports_count: int
     :param cors: Cross-Origin Resource Sharing (CORS) settings.
-    :type cors: ~azure.mgmt.web.v2020_09_01.models.CorsSettings
+    :type cors: ~azure.mgmt.web.v2020_12_01.models.CorsSettings
     :param push: Push endpoint settings.
-    :type push: ~azure.mgmt.web.v2020_09_01.models.PushSettings
+    :type push: ~azure.mgmt.web.v2020_12_01.models.PushSettings
     :param api_definition: Information about the formal API definition for the
      app.
-    :type api_definition: ~azure.mgmt.web.v2020_09_01.models.ApiDefinitionInfo
+    :type api_definition: ~azure.mgmt.web.v2020_12_01.models.ApiDefinitionInfo
     :param api_management_config: Azure API management settings linked to the
      app.
     :type api_management_config:
-     ~azure.mgmt.web.v2020_09_01.models.ApiManagementConfig
+     ~azure.mgmt.web.v2020_12_01.models.ApiManagementConfig
     :param auto_swap_slot_name: Auto-swap slot name.
     :type auto_swap_slot_name: str
     :param local_my_sql_enabled: <code>true</code> to enable local MySQL;
@@ -11667,12 +12405,15 @@ class SiteConfigResource(ProxyOnlyResource):
     :type managed_service_identity_id: int
     :param x_managed_service_identity_id: Explicit Managed Service Identity Id
     :type x_managed_service_identity_id: int
+    :param key_vault_reference_identity: Identity to use for Key Vault
+     Reference authentication.
+    :type key_vault_reference_identity: str
     :param ip_security_restrictions: IP security restrictions for main.
     :type ip_security_restrictions:
-     list[~azure.mgmt.web.v2020_09_01.models.IpSecurityRestriction]
+     list[~azure.mgmt.web.v2020_12_01.models.IpSecurityRestriction]
     :param scm_ip_security_restrictions: IP security restrictions for scm.
     :type scm_ip_security_restrictions:
-     list[~azure.mgmt.web.v2020_09_01.models.IpSecurityRestriction]
+     list[~azure.mgmt.web.v2020_12_01.models.IpSecurityRestriction]
     :param scm_ip_security_restrictions_use_main: IP security restrictions for
      scm to use main.
     :type scm_ip_security_restrictions_use_main: bool
@@ -11683,20 +12424,51 @@ class SiteConfigResource(ProxyOnlyResource):
      TLS required for SSL requests. Possible values include: '1.0', '1.1',
      '1.2'
     :type min_tls_version: str or
-     ~azure.mgmt.web.v2020_09_01.models.SupportedTlsVersions
+     ~azure.mgmt.web.v2020_12_01.models.SupportedTlsVersions
     :param scm_min_tls_version: ScmMinTlsVersion: configures the minimum
      version of TLS required for SSL requests for SCM site. Possible values
      include: '1.0', '1.1', '1.2'
     :type scm_min_tls_version: str or
-     ~azure.mgmt.web.v2020_09_01.models.SupportedTlsVersions
+     ~azure.mgmt.web.v2020_12_01.models.SupportedTlsVersions
     :param ftps_state: State of FTP / FTPS service. Possible values include:
      'AllAllowed', 'FtpsOnly', 'Disabled'
-    :type ftps_state: str or ~azure.mgmt.web.v2020_09_01.models.FtpsState
+    :type ftps_state: str or ~azure.mgmt.web.v2020_12_01.models.FtpsState
     :param pre_warmed_instance_count: Number of preWarmed instances.
      This setting only applies to the Consumption and Elastic Plans
     :type pre_warmed_instance_count: int
+    :param function_app_scale_limit: Maximum number of workers that a site can
+     scale out to.
+     This setting only applies to the Consumption and Elastic Premium Plans
+    :type function_app_scale_limit: int
     :param health_check_path: Health check path
     :type health_check_path: str
+    :param functions_runtime_scale_monitoring_enabled: Gets or sets a value
+     indicating whether functions runtime scale monitoring is enabled. When
+     enabled,
+     the ScaleController will not monitor event sources directly, but will
+     instead call to the
+     runtime to get scale status.
+    :type functions_runtime_scale_monitoring_enabled: bool
+    :param website_time_zone: Sets the time zone a site uses for generating
+     timestamps. Compatible with Linux and Windows App Service. Setting the
+     WEBSITE_TIME_ZONE app setting takes precedence over this config. For
+     Linux, expects tz database values https://www.iana.org/time-zones (for a
+     quick reference see
+     https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). For
+     Windows, expects one of the time zones listed under
+     HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time
+     Zones
+    :type website_time_zone: str
+    :param minimum_elastic_instance_count: Number of minimum instance count
+     for a site
+     This setting only applies to the Elastic Plans
+    :type minimum_elastic_instance_count: int
+    :param azure_storage_accounts: List of Azure Storage Accounts.
+    :type azure_storage_accounts: dict[str,
+     ~azure.mgmt.web.v2020_12_01.models.AzureStorageInfoValue]
+    :param public_network_access: Property to allow or block all public
+     traffic.
+    :type public_network_access: str
     """
 
     _validation = {
@@ -11705,6 +12477,8 @@ class SiteConfigResource(ProxyOnlyResource):
         'type': {'readonly': True},
         'machine_key': {'readonly': True},
         'pre_warmed_instance_count': {'maximum': 10, 'minimum': 0},
+        'function_app_scale_limit': {'minimum': 0},
+        'minimum_elastic_instance_count': {'maximum': 20, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -11712,7 +12486,6 @@ class SiteConfigResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'number_of_workers': {'key': 'properties.numberOfWorkers', 'type': 'int'},
         'default_documents': {'key': 'properties.defaultDocuments', 'type': '[str]'},
         'net_framework_version': {'key': 'properties.netFrameworkVersion', 'type': 'str'},
@@ -11764,6 +12537,7 @@ class SiteConfigResource(ProxyOnlyResource):
         'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
         'managed_service_identity_id': {'key': 'properties.managedServiceIdentityId', 'type': 'int'},
         'x_managed_service_identity_id': {'key': 'properties.xManagedServiceIdentityId', 'type': 'int'},
+        'key_vault_reference_identity': {'key': 'properties.keyVaultReferenceIdentity', 'type': 'str'},
         'ip_security_restrictions': {'key': 'properties.ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
         'scm_ip_security_restrictions': {'key': 'properties.scmIpSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
         'scm_ip_security_restrictions_use_main': {'key': 'properties.scmIpSecurityRestrictionsUseMain', 'type': 'bool'},
@@ -11772,71 +12546,84 @@ class SiteConfigResource(ProxyOnlyResource):
         'scm_min_tls_version': {'key': 'properties.scmMinTlsVersion', 'type': 'str'},
         'ftps_state': {'key': 'properties.ftpsState', 'type': 'str'},
         'pre_warmed_instance_count': {'key': 'properties.preWarmedInstanceCount', 'type': 'int'},
+        'function_app_scale_limit': {'key': 'properties.functionAppScaleLimit', 'type': 'int'},
         'health_check_path': {'key': 'properties.healthCheckPath', 'type': 'str'},
+        'functions_runtime_scale_monitoring_enabled': {'key': 'properties.functionsRuntimeScaleMonitoringEnabled', 'type': 'bool'},
+        'website_time_zone': {'key': 'properties.websiteTimeZone', 'type': 'str'},
+        'minimum_elastic_instance_count': {'key': 'properties.minimumElasticInstanceCount', 'type': 'int'},
+        'azure_storage_accounts': {'key': 'properties.azureStorageAccounts', 'type': '{AzureStorageInfoValue}'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, power_shell_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, acr_use_managed_identity_creds: bool=None, acr_user_managed_identity_id: str=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, vnet_route_all_enabled: bool=None, vnet_private_ports_count: int=None, cors=None, push=None, api_definition=None, api_management_config=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, scm_ip_security_restrictions=None, scm_ip_security_restrictions_use_main: bool=None, http20_enabled: bool=True, min_tls_version=None, scm_min_tls_version=None, ftps_state=None, pre_warmed_instance_count: int=None, health_check_path: str=None, **kwargs) -> None:
-        super(SiteConfigResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.number_of_workers = number_of_workers
-        self.default_documents = default_documents
-        self.net_framework_version = net_framework_version
-        self.php_version = php_version
-        self.python_version = python_version
-        self.node_version = node_version
-        self.power_shell_version = power_shell_version
-        self.linux_fx_version = linux_fx_version
-        self.windows_fx_version = windows_fx_version
-        self.request_tracing_enabled = request_tracing_enabled
-        self.request_tracing_expiration_time = request_tracing_expiration_time
-        self.remote_debugging_enabled = remote_debugging_enabled
-        self.remote_debugging_version = remote_debugging_version
-        self.http_logging_enabled = http_logging_enabled
-        self.acr_use_managed_identity_creds = acr_use_managed_identity_creds
-        self.acr_user_managed_identity_id = acr_user_managed_identity_id
-        self.logs_directory_size_limit = logs_directory_size_limit
-        self.detailed_error_logging_enabled = detailed_error_logging_enabled
-        self.publishing_username = publishing_username
-        self.app_settings = app_settings
-        self.connection_strings = connection_strings
+    def __init__(self, **kwargs):
+        super(SiteConfigResource, self).__init__(**kwargs)
+        self.number_of_workers = kwargs.get('number_of_workers', None)
+        self.default_documents = kwargs.get('default_documents', None)
+        self.net_framework_version = kwargs.get('net_framework_version', "v4.6")
+        self.php_version = kwargs.get('php_version', None)
+        self.python_version = kwargs.get('python_version', None)
+        self.node_version = kwargs.get('node_version', None)
+        self.power_shell_version = kwargs.get('power_shell_version', None)
+        self.linux_fx_version = kwargs.get('linux_fx_version', None)
+        self.windows_fx_version = kwargs.get('windows_fx_version', None)
+        self.request_tracing_enabled = kwargs.get('request_tracing_enabled', None)
+        self.request_tracing_expiration_time = kwargs.get('request_tracing_expiration_time', None)
+        self.remote_debugging_enabled = kwargs.get('remote_debugging_enabled', None)
+        self.remote_debugging_version = kwargs.get('remote_debugging_version', None)
+        self.http_logging_enabled = kwargs.get('http_logging_enabled', None)
+        self.acr_use_managed_identity_creds = kwargs.get('acr_use_managed_identity_creds', None)
+        self.acr_user_managed_identity_id = kwargs.get('acr_user_managed_identity_id', None)
+        self.logs_directory_size_limit = kwargs.get('logs_directory_size_limit', None)
+        self.detailed_error_logging_enabled = kwargs.get('detailed_error_logging_enabled', None)
+        self.publishing_username = kwargs.get('publishing_username', None)
+        self.app_settings = kwargs.get('app_settings', None)
+        self.connection_strings = kwargs.get('connection_strings', None)
         self.machine_key = None
-        self.handler_mappings = handler_mappings
-        self.document_root = document_root
-        self.scm_type = scm_type
-        self.use32_bit_worker_process = use32_bit_worker_process
-        self.web_sockets_enabled = web_sockets_enabled
-        self.always_on = always_on
-        self.java_version = java_version
-        self.java_container = java_container
-        self.java_container_version = java_container_version
-        self.app_command_line = app_command_line
-        self.managed_pipeline_mode = managed_pipeline_mode
-        self.virtual_applications = virtual_applications
-        self.load_balancing = load_balancing
-        self.experiments = experiments
-        self.limits = limits
-        self.auto_heal_enabled = auto_heal_enabled
-        self.auto_heal_rules = auto_heal_rules
-        self.tracing_options = tracing_options
-        self.vnet_name = vnet_name
-        self.vnet_route_all_enabled = vnet_route_all_enabled
-        self.vnet_private_ports_count = vnet_private_ports_count
-        self.cors = cors
-        self.push = push
-        self.api_definition = api_definition
-        self.api_management_config = api_management_config
-        self.auto_swap_slot_name = auto_swap_slot_name
-        self.local_my_sql_enabled = local_my_sql_enabled
-        self.managed_service_identity_id = managed_service_identity_id
-        self.x_managed_service_identity_id = x_managed_service_identity_id
-        self.ip_security_restrictions = ip_security_restrictions
-        self.scm_ip_security_restrictions = scm_ip_security_restrictions
-        self.scm_ip_security_restrictions_use_main = scm_ip_security_restrictions_use_main
-        self.http20_enabled = http20_enabled
-        self.min_tls_version = min_tls_version
-        self.scm_min_tls_version = scm_min_tls_version
-        self.ftps_state = ftps_state
-        self.pre_warmed_instance_count = pre_warmed_instance_count
-        self.health_check_path = health_check_path
+        self.handler_mappings = kwargs.get('handler_mappings', None)
+        self.document_root = kwargs.get('document_root', None)
+        self.scm_type = kwargs.get('scm_type', None)
+        self.use32_bit_worker_process = kwargs.get('use32_bit_worker_process', None)
+        self.web_sockets_enabled = kwargs.get('web_sockets_enabled', None)
+        self.always_on = kwargs.get('always_on', None)
+        self.java_version = kwargs.get('java_version', None)
+        self.java_container = kwargs.get('java_container', None)
+        self.java_container_version = kwargs.get('java_container_version', None)
+        self.app_command_line = kwargs.get('app_command_line', None)
+        self.managed_pipeline_mode = kwargs.get('managed_pipeline_mode', None)
+        self.virtual_applications = kwargs.get('virtual_applications', None)
+        self.load_balancing = kwargs.get('load_balancing', None)
+        self.experiments = kwargs.get('experiments', None)
+        self.limits = kwargs.get('limits', None)
+        self.auto_heal_enabled = kwargs.get('auto_heal_enabled', None)
+        self.auto_heal_rules = kwargs.get('auto_heal_rules', None)
+        self.tracing_options = kwargs.get('tracing_options', None)
+        self.vnet_name = kwargs.get('vnet_name', None)
+        self.vnet_route_all_enabled = kwargs.get('vnet_route_all_enabled', None)
+        self.vnet_private_ports_count = kwargs.get('vnet_private_ports_count', None)
+        self.cors = kwargs.get('cors', None)
+        self.push = kwargs.get('push', None)
+        self.api_definition = kwargs.get('api_definition', None)
+        self.api_management_config = kwargs.get('api_management_config', None)
+        self.auto_swap_slot_name = kwargs.get('auto_swap_slot_name', None)
+        self.local_my_sql_enabled = kwargs.get('local_my_sql_enabled', False)
+        self.managed_service_identity_id = kwargs.get('managed_service_identity_id', None)
+        self.x_managed_service_identity_id = kwargs.get('x_managed_service_identity_id', None)
+        self.key_vault_reference_identity = kwargs.get('key_vault_reference_identity', None)
+        self.ip_security_restrictions = kwargs.get('ip_security_restrictions', None)
+        self.scm_ip_security_restrictions = kwargs.get('scm_ip_security_restrictions', None)
+        self.scm_ip_security_restrictions_use_main = kwargs.get('scm_ip_security_restrictions_use_main', None)
+        self.http20_enabled = kwargs.get('http20_enabled', True)
+        self.min_tls_version = kwargs.get('min_tls_version', None)
+        self.scm_min_tls_version = kwargs.get('scm_min_tls_version', None)
+        self.ftps_state = kwargs.get('ftps_state', None)
+        self.pre_warmed_instance_count = kwargs.get('pre_warmed_instance_count', None)
+        self.function_app_scale_limit = kwargs.get('function_app_scale_limit', None)
+        self.health_check_path = kwargs.get('health_check_path', None)
+        self.functions_runtime_scale_monitoring_enabled = kwargs.get('functions_runtime_scale_monitoring_enabled', None)
+        self.website_time_zone = kwargs.get('website_time_zone', None)
+        self.minimum_elastic_instance_count = kwargs.get('minimum_elastic_instance_count', None)
+        self.azure_storage_accounts = kwargs.get('azure_storage_accounts', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
 
 
 class SiteConfigurationSnapshotInfo(ProxyOnlyResource):
@@ -11853,8 +12640,6 @@ class SiteConfigurationSnapshotInfo(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar time: The time the snapshot was taken.
     :vartype time: datetime
     :ivar snapshot_id: The id of the snapshot
@@ -11874,13 +12659,12 @@ class SiteConfigurationSnapshotInfo(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'time': {'key': 'properties.time', 'type': 'iso-8601'},
         'snapshot_id': {'key': 'properties.snapshotId', 'type': 'int'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(SiteConfigurationSnapshotInfo, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(SiteConfigurationSnapshotInfo, self).__init__(**kwargs)
         self.time = None
         self.snapshot_id = None
 
@@ -11899,8 +12683,6 @@ class SiteExtensionInfo(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param extension_id: Site extension ID.
     :type extension_id: str
     :param title:
@@ -11908,7 +12690,7 @@ class SiteExtensionInfo(ProxyOnlyResource):
     :param extension_type: Site extension type. Possible values include:
      'Gallery', 'WebRoot'
     :type extension_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.SiteExtensionType
+     ~azure.mgmt.web.v2020_12_01.models.SiteExtensionType
     :param summary: Summary description.
     :type summary: str
     :param description: Detailed description.
@@ -11957,7 +12739,6 @@ class SiteExtensionInfo(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'extension_id': {'key': 'properties.extension_id', 'type': 'str'},
         'title': {'key': 'properties.title', 'type': 'str'},
         'extension_type': {'key': 'properties.extension_type', 'type': 'SiteExtensionType'},
@@ -11980,28 +12761,28 @@ class SiteExtensionInfo(ProxyOnlyResource):
         'comment': {'key': 'properties.comment', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, extension_id: str=None, title: str=None, extension_type=None, summary: str=None, description: str=None, version: str=None, extension_url: str=None, project_url: str=None, icon_url: str=None, license_url: str=None, feed_url: str=None, authors=None, installer_command_line_params: str=None, published_date_time=None, download_count: int=None, local_is_latest_version: bool=None, local_path: str=None, installed_date_time=None, provisioning_state: str=None, comment: str=None, **kwargs) -> None:
-        super(SiteExtensionInfo, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.extension_id = extension_id
-        self.title = title
-        self.extension_type = extension_type
-        self.summary = summary
-        self.description = description
-        self.version = version
-        self.extension_url = extension_url
-        self.project_url = project_url
-        self.icon_url = icon_url
-        self.license_url = license_url
-        self.feed_url = feed_url
-        self.authors = authors
-        self.installer_command_line_params = installer_command_line_params
-        self.published_date_time = published_date_time
-        self.download_count = download_count
-        self.local_is_latest_version = local_is_latest_version
-        self.local_path = local_path
-        self.installed_date_time = installed_date_time
-        self.provisioning_state = provisioning_state
-        self.comment = comment
+    def __init__(self, **kwargs):
+        super(SiteExtensionInfo, self).__init__(**kwargs)
+        self.extension_id = kwargs.get('extension_id', None)
+        self.title = kwargs.get('title', None)
+        self.extension_type = kwargs.get('extension_type', None)
+        self.summary = kwargs.get('summary', None)
+        self.description = kwargs.get('description', None)
+        self.version = kwargs.get('version', None)
+        self.extension_url = kwargs.get('extension_url', None)
+        self.project_url = kwargs.get('project_url', None)
+        self.icon_url = kwargs.get('icon_url', None)
+        self.license_url = kwargs.get('license_url', None)
+        self.feed_url = kwargs.get('feed_url', None)
+        self.authors = kwargs.get('authors', None)
+        self.installer_command_line_params = kwargs.get('installer_command_line_params', None)
+        self.published_date_time = kwargs.get('published_date_time', None)
+        self.download_count = kwargs.get('download_count', None)
+        self.local_is_latest_version = kwargs.get('local_is_latest_version', None)
+        self.local_path = kwargs.get('local_path', None)
+        self.installed_date_time = kwargs.get('installed_date_time', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.comment = kwargs.get('comment', None)
 
 
 class SiteLimits(Model):
@@ -12021,11 +12802,11 @@ class SiteLimits(Model):
         'max_disk_size_in_mb': {'key': 'maxDiskSizeInMb', 'type': 'long'},
     }
 
-    def __init__(self, *, max_percentage_cpu: float=None, max_memory_in_mb: int=None, max_disk_size_in_mb: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SiteLimits, self).__init__(**kwargs)
-        self.max_percentage_cpu = max_percentage_cpu
-        self.max_memory_in_mb = max_memory_in_mb
-        self.max_disk_size_in_mb = max_disk_size_in_mb
+        self.max_percentage_cpu = kwargs.get('max_percentage_cpu', None)
+        self.max_memory_in_mb = kwargs.get('max_memory_in_mb', None)
+        self.max_disk_size_in_mb = kwargs.get('max_disk_size_in_mb', None)
 
 
 class SiteLogsConfig(ProxyOnlyResource):
@@ -12042,19 +12823,17 @@ class SiteLogsConfig(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param application_logs: Application logs configuration.
     :type application_logs:
-     ~azure.mgmt.web.v2020_09_01.models.ApplicationLogsConfig
+     ~azure.mgmt.web.v2020_12_01.models.ApplicationLogsConfig
     :param http_logs: HTTP logs configuration.
-    :type http_logs: ~azure.mgmt.web.v2020_09_01.models.HttpLogsConfig
+    :type http_logs: ~azure.mgmt.web.v2020_12_01.models.HttpLogsConfig
     :param failed_requests_tracing: Failed requests tracing configuration.
     :type failed_requests_tracing:
-     ~azure.mgmt.web.v2020_09_01.models.EnabledConfig
+     ~azure.mgmt.web.v2020_12_01.models.EnabledConfig
     :param detailed_error_messages: Detailed error messages configuration.
     :type detailed_error_messages:
-     ~azure.mgmt.web.v2020_09_01.models.EnabledConfig
+     ~azure.mgmt.web.v2020_12_01.models.EnabledConfig
     """
 
     _validation = {
@@ -12068,19 +12847,18 @@ class SiteLogsConfig(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'application_logs': {'key': 'properties.applicationLogs', 'type': 'ApplicationLogsConfig'},
         'http_logs': {'key': 'properties.httpLogs', 'type': 'HttpLogsConfig'},
         'failed_requests_tracing': {'key': 'properties.failedRequestsTracing', 'type': 'EnabledConfig'},
         'detailed_error_messages': {'key': 'properties.detailedErrorMessages', 'type': 'EnabledConfig'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, application_logs=None, http_logs=None, failed_requests_tracing=None, detailed_error_messages=None, **kwargs) -> None:
-        super(SiteLogsConfig, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.application_logs = application_logs
-        self.http_logs = http_logs
-        self.failed_requests_tracing = failed_requests_tracing
-        self.detailed_error_messages = detailed_error_messages
+    def __init__(self, **kwargs):
+        super(SiteLogsConfig, self).__init__(**kwargs)
+        self.application_logs = kwargs.get('application_logs', None)
+        self.http_logs = kwargs.get('http_logs', None)
+        self.failed_requests_tracing = kwargs.get('failed_requests_tracing', None)
+        self.detailed_error_messages = kwargs.get('detailed_error_messages', None)
 
 
 class SiteMachineKey(Model):
@@ -12103,12 +12881,12 @@ class SiteMachineKey(Model):
         'decryption_key': {'key': 'decryptionKey', 'type': 'str'},
     }
 
-    def __init__(self, *, validation: str=None, validation_key: str=None, decryption: str=None, decryption_key: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SiteMachineKey, self).__init__(**kwargs)
-        self.validation = validation
-        self.validation_key = validation_key
-        self.decryption = decryption
-        self.decryption_key = decryption_key
+        self.validation = kwargs.get('validation', None)
+        self.validation_key = kwargs.get('validation_key', None)
+        self.decryption = kwargs.get('decryption', None)
+        self.decryption_key = kwargs.get('decryption_key', None)
 
 
 class SitePatchResource(ProxyOnlyResource):
@@ -12125,8 +12903,6 @@ class SitePatchResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar state: Current state of the app.
     :vartype state: str
     :ivar host_names: Hostnames associated with the app.
@@ -12135,7 +12911,7 @@ class SitePatchResource(ProxyOnlyResource):
     :vartype repository_site_name: str
     :ivar usage_state: State indicating whether the app has exceeded its quota
      usage. Read-only. Possible values include: 'Normal', 'Exceeded'
-    :vartype usage_state: str or ~azure.mgmt.web.v2020_09_01.models.UsageState
+    :vartype usage_state: str or ~azure.mgmt.web.v2020_12_01.models.UsageState
     :param enabled: <code>true</code> if the app is enabled; otherwise,
      <code>false</code>. Setting this value to false disables the app (takes
      the app offline).
@@ -12148,11 +12924,11 @@ class SitePatchResource(ProxyOnlyResource):
      the app. Possible values include: 'Normal', 'Limited',
      'DisasterRecoveryMode'
     :vartype availability_state: str or
-     ~azure.mgmt.web.v2020_09_01.models.SiteAvailabilityState
+     ~azure.mgmt.web.v2020_12_01.models.SiteAvailabilityState
     :param host_name_ssl_states: Hostname SSL states are used to manage the
      SSL bindings for app's hostnames.
     :type host_name_ssl_states:
-     list[~azure.mgmt.web.v2020_09_01.models.HostNameSslState]
+     list[~azure.mgmt.web.v2020_12_01.models.HostNameSslState]
     :param server_farm_id: Resource ID of the associated App Service plan,
      formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
@@ -12168,7 +12944,7 @@ class SitePatchResource(ProxyOnlyResource):
      Read-only.
     :vartype last_modified_time_utc: datetime
     :param site_config: Configuration of the app.
-    :type site_config: ~azure.mgmt.web.v2020_09_01.models.SiteConfig
+    :type site_config: ~azure.mgmt.web.v2020_12_01.models.SiteConfig
     :ivar traffic_manager_host_names: Azure Traffic Manager hostnames
      associated with the app. Read-only.
     :vartype traffic_manager_host_names: list[str]
@@ -12182,7 +12958,7 @@ class SitePatchResource(ProxyOnlyResource):
     :param hosting_environment_profile: App Service Environment to use for the
      app.
     :type hosting_environment_profile:
-     ~azure.mgmt.web.v2020_09_01.models.HostingEnvironmentProfile
+     ~azure.mgmt.web.v2020_12_01.models.HostingEnvironmentProfile
     :param client_affinity_enabled: <code>true</code> to enable client
      affinity; <code>false</code> to stop sending session affinity cookies,
      which route client requests in the same session to the same instance.
@@ -12197,9 +12973,10 @@ class SitePatchResource(ProxyOnlyResource):
      - ClientCertEnabled: true and ClientCertMode: Required means ClientCert is
      required.
      - ClientCertEnabled: true and ClientCertMode: Optional means ClientCert is
-     optional or accepted. Possible values include: 'Required', 'Optional'
+     optional or accepted. Possible values include: 'Required', 'Optional',
+     'OptionalInteractiveUser'
     :type client_cert_mode: str or
-     ~azure.mgmt.web.v2020_09_01.models.ClientCertMode
+     ~azure.mgmt.web.v2020_12_01.models.ClientCertMode
     :param client_cert_exclusion_paths: client certificate authentication
      comma-separated exclusion paths
     :type client_cert_exclusion_paths: str
@@ -12233,7 +13010,7 @@ class SitePatchResource(ProxyOnlyResource):
     :vartype max_number_of_workers: int
     :param cloning_info: If specified during app creation, the app is cloned
      from a source app.
-    :type cloning_info: ~azure.mgmt.web.v2020_09_01.models.CloningInfo
+    :type cloning_info: ~azure.mgmt.web.v2020_12_01.models.CloningInfo
     :ivar resource_group: Name of the resource group the app belongs to.
      Read-only.
     :vartype resource_group: str
@@ -12244,7 +13021,7 @@ class SitePatchResource(ProxyOnlyResource):
     :vartype default_host_name: str
     :ivar slot_swap_status: Status of the last deployment slot swap operation.
     :vartype slot_swap_status:
-     ~azure.mgmt.web.v2020_09_01.models.SlotSwapStatus
+     ~azure.mgmt.web.v2020_12_01.models.SlotSwapStatus
     :param https_only: HttpsOnly: configures a web site to accept only https
      requests. Issues redirect for
      http requests
@@ -12252,12 +13029,23 @@ class SitePatchResource(ProxyOnlyResource):
     :param redundancy_mode: Site redundancy mode. Possible values include:
      'None', 'Manual', 'Failover', 'ActiveActive', 'GeoRedundant'
     :type redundancy_mode: str or
-     ~azure.mgmt.web.v2020_09_01.models.RedundancyMode
+     ~azure.mgmt.web.v2020_12_01.models.RedundancyMode
     :ivar in_progress_operation_id: Specifies an operation id if this site has
      a pending operation.
     :vartype in_progress_operation_id: str
+    :param storage_account_required: Checks if Customer provided storage
+     account is required
+    :type storage_account_required: bool
+    :param key_vault_reference_identity: Identity to use for Key Vault
+     Reference authentication.
+    :type key_vault_reference_identity: str
+    :param virtual_network_subnet_id: Azure Resource Manager ID of the Virtual
+     network and subnet to be joined by Regional VNET Integration.
+     This must be of the form
+     /subscriptions/{subscriptionName}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
+    :type virtual_network_subnet_id: str
     :param identity:
-    :type identity: ~azure.mgmt.web.v2020_09_01.models.ManagedServiceIdentity
+    :type identity: ~azure.mgmt.web.v2020_12_01.models.ManagedServiceIdentity
     """
 
     _validation = {
@@ -12289,7 +13077,6 @@ class SitePatchResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
         'repository_site_name': {'key': 'properties.repositorySiteName', 'type': 'str'},
@@ -12328,50 +13115,56 @@ class SitePatchResource(ProxyOnlyResource):
         'https_only': {'key': 'properties.httpsOnly', 'type': 'bool'},
         'redundancy_mode': {'key': 'properties.redundancyMode', 'type': 'RedundancyMode'},
         'in_progress_operation_id': {'key': 'properties.inProgressOperationId', 'type': 'str'},
+        'storage_account_required': {'key': 'properties.storageAccountRequired', 'type': 'bool'},
+        'key_vault_reference_identity': {'key': 'properties.keyVaultReferenceIdentity', 'type': 'str'},
+        'virtual_network_subnet_id': {'key': 'properties.virtualNetworkSubnetId', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, enabled: bool=None, host_name_ssl_states=None, server_farm_id: str=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, site_config=None, scm_site_also_stopped: bool=False, hosting_environment_profile=None, client_affinity_enabled: bool=None, client_cert_enabled: bool=None, client_cert_mode=None, client_cert_exclusion_paths: str=None, host_names_disabled: bool=None, custom_domain_verification_id: str=None, container_size: int=None, daily_memory_time_quota: int=None, cloning_info=None, https_only: bool=None, redundancy_mode=None, identity=None, **kwargs) -> None:
-        super(SitePatchResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(SitePatchResource, self).__init__(**kwargs)
         self.state = None
         self.host_names = None
         self.repository_site_name = None
         self.usage_state = None
-        self.enabled = enabled
+        self.enabled = kwargs.get('enabled', None)
         self.enabled_host_names = None
         self.availability_state = None
-        self.host_name_ssl_states = host_name_ssl_states
-        self.server_farm_id = server_farm_id
-        self.reserved = reserved
-        self.is_xenon = is_xenon
-        self.hyper_v = hyper_v
+        self.host_name_ssl_states = kwargs.get('host_name_ssl_states', None)
+        self.server_farm_id = kwargs.get('server_farm_id', None)
+        self.reserved = kwargs.get('reserved', False)
+        self.is_xenon = kwargs.get('is_xenon', False)
+        self.hyper_v = kwargs.get('hyper_v', False)
         self.last_modified_time_utc = None
-        self.site_config = site_config
+        self.site_config = kwargs.get('site_config', None)
         self.traffic_manager_host_names = None
-        self.scm_site_also_stopped = scm_site_also_stopped
+        self.scm_site_also_stopped = kwargs.get('scm_site_also_stopped', False)
         self.target_swap_slot = None
-        self.hosting_environment_profile = hosting_environment_profile
-        self.client_affinity_enabled = client_affinity_enabled
-        self.client_cert_enabled = client_cert_enabled
-        self.client_cert_mode = client_cert_mode
-        self.client_cert_exclusion_paths = client_cert_exclusion_paths
-        self.host_names_disabled = host_names_disabled
-        self.custom_domain_verification_id = custom_domain_verification_id
+        self.hosting_environment_profile = kwargs.get('hosting_environment_profile', None)
+        self.client_affinity_enabled = kwargs.get('client_affinity_enabled', None)
+        self.client_cert_enabled = kwargs.get('client_cert_enabled', None)
+        self.client_cert_mode = kwargs.get('client_cert_mode', None)
+        self.client_cert_exclusion_paths = kwargs.get('client_cert_exclusion_paths', None)
+        self.host_names_disabled = kwargs.get('host_names_disabled', None)
+        self.custom_domain_verification_id = kwargs.get('custom_domain_verification_id', None)
         self.outbound_ip_addresses = None
         self.possible_outbound_ip_addresses = None
-        self.container_size = container_size
-        self.daily_memory_time_quota = daily_memory_time_quota
+        self.container_size = kwargs.get('container_size', None)
+        self.daily_memory_time_quota = kwargs.get('daily_memory_time_quota', None)
         self.suspended_till = None
         self.max_number_of_workers = None
-        self.cloning_info = cloning_info
+        self.cloning_info = kwargs.get('cloning_info', None)
         self.resource_group = None
         self.is_default_container = None
         self.default_host_name = None
         self.slot_swap_status = None
-        self.https_only = https_only
-        self.redundancy_mode = redundancy_mode
+        self.https_only = kwargs.get('https_only', None)
+        self.redundancy_mode = kwargs.get('redundancy_mode', None)
         self.in_progress_operation_id = None
-        self.identity = identity
+        self.storage_account_required = kwargs.get('storage_account_required', None)
+        self.key_vault_reference_identity = kwargs.get('key_vault_reference_identity', None)
+        self.virtual_network_subnet_id = kwargs.get('virtual_network_subnet_id', None)
+        self.identity = kwargs.get('identity', None)
 
 
 class SitePhpErrorLogFlag(ProxyOnlyResource):
@@ -12388,8 +13181,6 @@ class SitePhpErrorLogFlag(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param local_log_errors: Local log_errors setting.
     :type local_log_errors: str
     :param master_log_errors: Master log_errors setting.
@@ -12411,19 +13202,18 @@ class SitePhpErrorLogFlag(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'local_log_errors': {'key': 'properties.localLogErrors', 'type': 'str'},
         'master_log_errors': {'key': 'properties.masterLogErrors', 'type': 'str'},
         'local_log_errors_max_length': {'key': 'properties.localLogErrorsMaxLength', 'type': 'str'},
         'master_log_errors_max_length': {'key': 'properties.masterLogErrorsMaxLength', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, local_log_errors: str=None, master_log_errors: str=None, local_log_errors_max_length: str=None, master_log_errors_max_length: str=None, **kwargs) -> None:
-        super(SitePhpErrorLogFlag, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.local_log_errors = local_log_errors
-        self.master_log_errors = master_log_errors
-        self.local_log_errors_max_length = local_log_errors_max_length
-        self.master_log_errors_max_length = master_log_errors_max_length
+    def __init__(self, **kwargs):
+        super(SitePhpErrorLogFlag, self).__init__(**kwargs)
+        self.local_log_errors = kwargs.get('local_log_errors', None)
+        self.master_log_errors = kwargs.get('master_log_errors', None)
+        self.local_log_errors_max_length = kwargs.get('local_log_errors_max_length', None)
+        self.master_log_errors_max_length = kwargs.get('master_log_errors_max_length', None)
 
 
 class SiteSeal(Model):
@@ -12443,9 +13233,9 @@ class SiteSeal(Model):
         'html': {'key': 'html', 'type': 'str'},
     }
 
-    def __init__(self, *, html: str, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SiteSeal, self).__init__(**kwargs)
-        self.html = html
+        self.html = kwargs.get('html', None)
 
 
 class SiteSealRequest(Model):
@@ -12463,10 +13253,10 @@ class SiteSealRequest(Model):
         'locale': {'key': 'locale', 'type': 'str'},
     }
 
-    def __init__(self, *, light_theme: bool=None, locale: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SiteSealRequest, self).__init__(**kwargs)
-        self.light_theme = light_theme
-        self.locale = locale
+        self.light_theme = kwargs.get('light_theme', None)
+        self.locale = kwargs.get('locale', None)
 
 
 class SiteSourceControl(ProxyOnlyResource):
@@ -12483,8 +13273,6 @@ class SiteSourceControl(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param repo_url: Repository or source control URL.
     :type repo_url: str
     :param branch: Name of branch to use for deployment.
@@ -12502,6 +13290,10 @@ class SiteSourceControl(ProxyOnlyResource):
     :param is_mercurial: <code>true</code> for a Mercurial repository;
      <code>false</code> for a Git repository.
     :type is_mercurial: bool
+    :param git_hub_action_configuration: If GitHub Action is selected, than
+     the associated configuration.
+    :type git_hub_action_configuration:
+     ~azure.mgmt.web.v2020_12_01.models.GitHubActionConfiguration
     """
 
     _validation = {
@@ -12515,23 +13307,24 @@ class SiteSourceControl(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'repo_url': {'key': 'properties.repoUrl', 'type': 'str'},
         'branch': {'key': 'properties.branch', 'type': 'str'},
         'is_manual_integration': {'key': 'properties.isManualIntegration', 'type': 'bool'},
         'is_git_hub_action': {'key': 'properties.isGitHubAction', 'type': 'bool'},
         'deployment_rollback_enabled': {'key': 'properties.deploymentRollbackEnabled', 'type': 'bool'},
         'is_mercurial': {'key': 'properties.isMercurial', 'type': 'bool'},
+        'git_hub_action_configuration': {'key': 'properties.gitHubActionConfiguration', 'type': 'GitHubActionConfiguration'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, repo_url: str=None, branch: str=None, is_manual_integration: bool=None, is_git_hub_action: bool=None, deployment_rollback_enabled: bool=None, is_mercurial: bool=None, **kwargs) -> None:
-        super(SiteSourceControl, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.repo_url = repo_url
-        self.branch = branch
-        self.is_manual_integration = is_manual_integration
-        self.is_git_hub_action = is_git_hub_action
-        self.deployment_rollback_enabled = deployment_rollback_enabled
-        self.is_mercurial = is_mercurial
+    def __init__(self, **kwargs):
+        super(SiteSourceControl, self).__init__(**kwargs)
+        self.repo_url = kwargs.get('repo_url', None)
+        self.branch = kwargs.get('branch', None)
+        self.is_manual_integration = kwargs.get('is_manual_integration', None)
+        self.is_git_hub_action = kwargs.get('is_git_hub_action', None)
+        self.deployment_rollback_enabled = kwargs.get('deployment_rollback_enabled', None)
+        self.is_mercurial = kwargs.get('is_mercurial', None)
+        self.git_hub_action_configuration = kwargs.get('git_hub_action_configuration', None)
 
 
 class SkuCapacity(Model):
@@ -12541,6 +13334,9 @@ class SkuCapacity(Model):
     :type minimum: int
     :param maximum: Maximum number of workers for this App Service plan SKU.
     :type maximum: int
+    :param elastic_maximum: Maximum number of Elastic workers for this App
+     Service plan SKU.
+    :type elastic_maximum: int
     :param default: Default number of workers for this App Service plan SKU.
     :type default: int
     :param scale_type: Available scale configurations for an App Service plan.
@@ -12550,16 +13346,18 @@ class SkuCapacity(Model):
     _attribute_map = {
         'minimum': {'key': 'minimum', 'type': 'int'},
         'maximum': {'key': 'maximum', 'type': 'int'},
+        'elastic_maximum': {'key': 'elasticMaximum', 'type': 'int'},
         'default': {'key': 'default', 'type': 'int'},
         'scale_type': {'key': 'scaleType', 'type': 'str'},
     }
 
-    def __init__(self, *, minimum: int=None, maximum: int=None, default: int=None, scale_type: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SkuCapacity, self).__init__(**kwargs)
-        self.minimum = minimum
-        self.maximum = maximum
-        self.default = default
-        self.scale_type = scale_type
+        self.minimum = kwargs.get('minimum', None)
+        self.maximum = kwargs.get('maximum', None)
+        self.elastic_maximum = kwargs.get('elastic_maximum', None)
+        self.default = kwargs.get('default', None)
+        self.scale_type = kwargs.get('scale_type', None)
 
 
 class SkuDescription(Model):
@@ -12576,12 +13374,12 @@ class SkuDescription(Model):
     :param capacity: Current number of instances assigned to the resource.
     :type capacity: int
     :param sku_capacity: Min, max, and default scale values of the SKU.
-    :type sku_capacity: ~azure.mgmt.web.v2020_09_01.models.SkuCapacity
+    :type sku_capacity: ~azure.mgmt.web.v2020_12_01.models.SkuCapacity
     :param locations: Locations of the SKU.
     :type locations: list[str]
     :param capabilities: Capabilities of the SKU, e.g., is traffic manager
      enabled?
-    :type capabilities: list[~azure.mgmt.web.v2020_09_01.models.Capability]
+    :type capabilities: list[~azure.mgmt.web.v2020_12_01.models.Capability]
     """
 
     _attribute_map = {
@@ -12595,16 +13393,16 @@ class SkuDescription(Model):
         'capabilities': {'key': 'capabilities', 'type': '[Capability]'},
     }
 
-    def __init__(self, *, name: str=None, tier: str=None, size: str=None, family: str=None, capacity: int=None, sku_capacity=None, locations=None, capabilities=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SkuDescription, self).__init__(**kwargs)
-        self.name = name
-        self.tier = tier
-        self.size = size
-        self.family = family
-        self.capacity = capacity
-        self.sku_capacity = sku_capacity
-        self.locations = locations
-        self.capabilities = capabilities
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.size = kwargs.get('size', None)
+        self.family = kwargs.get('family', None)
+        self.capacity = kwargs.get('capacity', None)
+        self.sku_capacity = kwargs.get('sku_capacity', None)
+        self.locations = kwargs.get('locations', None)
+        self.capabilities = kwargs.get('capabilities', None)
 
 
 class SkuInfo(Model):
@@ -12613,9 +13411,9 @@ class SkuInfo(Model):
     :param resource_type: Resource type that this SKU applies to.
     :type resource_type: str
     :param sku: Name and tier of the SKU.
-    :type sku: ~azure.mgmt.web.v2020_09_01.models.SkuDescription
+    :type sku: ~azure.mgmt.web.v2020_12_01.models.SkuDescription
     :param capacity: Min, max, and default scale values of the SKU.
-    :type capacity: ~azure.mgmt.web.v2020_09_01.models.SkuCapacity
+    :type capacity: ~azure.mgmt.web.v2020_12_01.models.SkuCapacity
     """
 
     _attribute_map = {
@@ -12624,11 +13422,11 @@ class SkuInfo(Model):
         'capacity': {'key': 'capacity', 'type': 'SkuCapacity'},
     }
 
-    def __init__(self, *, resource_type: str=None, sku=None, capacity=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SkuInfo, self).__init__(**kwargs)
-        self.resource_type = resource_type
-        self.sku = sku
-        self.capacity = capacity
+        self.resource_type = kwargs.get('resource_type', None)
+        self.sku = kwargs.get('sku', None)
+        self.capacity = kwargs.get('capacity', None)
 
 
 class SkuInfos(Model):
@@ -12638,7 +13436,7 @@ class SkuInfos(Model):
     :type resource_type: str
     :param skus: List of SKUs the subscription is able to use.
     :type skus:
-     list[~azure.mgmt.web.v2020_09_01.models.GlobalCsmSkuDescription]
+     list[~azure.mgmt.web.v2020_12_01.models.GlobalCsmSkuDescription]
     """
 
     _attribute_map = {
@@ -12646,10 +13444,10 @@ class SkuInfos(Model):
         'skus': {'key': 'skus', 'type': '[GlobalCsmSkuDescription]'},
     }
 
-    def __init__(self, *, resource_type: str=None, skus=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SkuInfos, self).__init__(**kwargs)
-        self.resource_type = resource_type
-        self.skus = skus
+        self.resource_type = kwargs.get('resource_type', None)
+        self.skus = kwargs.get('skus', None)
 
 
 class SlotConfigNamesResource(ProxyOnlyResource):
@@ -12666,8 +13464,6 @@ class SlotConfigNamesResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param connection_string_names: List of connection string names.
     :type connection_string_names: list[str]
     :param app_setting_names: List of application settings names.
@@ -12688,17 +13484,16 @@ class SlotConfigNamesResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'connection_string_names': {'key': 'properties.connectionStringNames', 'type': '[str]'},
         'app_setting_names': {'key': 'properties.appSettingNames', 'type': '[str]'},
         'azure_storage_config_names': {'key': 'properties.azureStorageConfigNames', 'type': '[str]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, connection_string_names=None, app_setting_names=None, azure_storage_config_names=None, **kwargs) -> None:
-        super(SlotConfigNamesResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.connection_string_names = connection_string_names
-        self.app_setting_names = app_setting_names
-        self.azure_storage_config_names = azure_storage_config_names
+    def __init__(self, **kwargs):
+        super(SlotConfigNamesResource, self).__init__(**kwargs)
+        self.connection_string_names = kwargs.get('connection_string_names', None)
+        self.app_setting_names = kwargs.get('app_setting_names', None)
+        self.azure_storage_config_names = kwargs.get('azure_storage_config_names', None)
 
 
 class SlotDifference(ProxyOnlyResource):
@@ -12715,8 +13510,6 @@ class SlotDifference(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar level: Level of the difference: Information, Warning or Error.
     :vartype level: str
     :ivar setting_type: The type of the setting: General, AppSetting or
@@ -12753,7 +13546,6 @@ class SlotDifference(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'level': {'key': 'properties.level', 'type': 'str'},
         'setting_type': {'key': 'properties.settingType', 'type': 'str'},
         'diff_rule': {'key': 'properties.diffRule', 'type': 'str'},
@@ -12763,8 +13555,8 @@ class SlotDifference(ProxyOnlyResource):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(SlotDifference, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(SlotDifference, self).__init__(**kwargs)
         self.level = None
         self.setting_type = None
         self.diff_rule = None
@@ -12801,7 +13593,7 @@ class SlotSwapStatus(Model):
         'destination_slot_name': {'key': 'destinationSlotName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SlotSwapStatus, self).__init__(**kwargs)
         self.timestamp_utc = None
         self.source_slot_name = None
@@ -12813,6 +13605,8 @@ class SlowRequestsBasedTrigger(Model):
 
     :param time_taken: Time taken.
     :type time_taken: str
+    :param path: Request Path.
+    :type path: str
     :param count: Request Count.
     :type count: int
     :param time_interval: Time interval.
@@ -12821,15 +13615,17 @@ class SlowRequestsBasedTrigger(Model):
 
     _attribute_map = {
         'time_taken': {'key': 'timeTaken', 'type': 'str'},
+        'path': {'key': 'path', 'type': 'str'},
         'count': {'key': 'count', 'type': 'int'},
         'time_interval': {'key': 'timeInterval', 'type': 'str'},
     }
 
-    def __init__(self, *, time_taken: str=None, count: int=None, time_interval: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SlowRequestsBasedTrigger, self).__init__(**kwargs)
-        self.time_taken = time_taken
-        self.count = count
-        self.time_interval = time_interval
+        self.time_taken = kwargs.get('time_taken', None)
+        self.path = kwargs.get('path', None)
+        self.count = kwargs.get('count', None)
+        self.time_interval = kwargs.get('time_interval', None)
 
 
 class Snapshot(ProxyOnlyResource):
@@ -12846,8 +13642,6 @@ class Snapshot(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar time: The time the snapshot was taken.
     :vartype time: str
     """
@@ -12864,12 +13658,11 @@ class Snapshot(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'time': {'key': 'properties.time', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(Snapshot, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(Snapshot, self).__init__(**kwargs)
         self.time = None
 
 
@@ -12892,10 +13685,10 @@ class SnapshotRecoverySource(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, id: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SnapshotRecoverySource, self).__init__(**kwargs)
-        self.location = location
-        self.id = id
+        self.location = kwargs.get('location', None)
+        self.id = kwargs.get('id', None)
 
 
 class SnapshotRestoreRequest(ProxyOnlyResource):
@@ -12914,8 +13707,6 @@ class SnapshotRestoreRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param snapshot_time: Point in time in which the app restore should be
      done, formatted as a DateTime string.
     :type snapshot_time: str
@@ -12923,7 +13714,7 @@ class SnapshotRestoreRequest(ProxyOnlyResource):
      contents will be retrieved from.
      If empty, the targeted web app will be used as the source.
     :type recovery_source:
-     ~azure.mgmt.web.v2020_09_01.models.SnapshotRecoverySource
+     ~azure.mgmt.web.v2020_12_01.models.SnapshotRecoverySource
     :param overwrite: Required. If <code>true</code> the restore operation can
      overwrite source app; otherwise, <code>false</code>.
     :type overwrite: bool
@@ -12951,7 +13742,6 @@ class SnapshotRestoreRequest(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'snapshot_time': {'key': 'properties.snapshotTime', 'type': 'str'},
         'recovery_source': {'key': 'properties.recoverySource', 'type': 'SnapshotRecoverySource'},
         'overwrite': {'key': 'properties.overwrite', 'type': 'bool'},
@@ -12960,14 +13750,14 @@ class SnapshotRestoreRequest(ProxyOnlyResource):
         'use_dr_secondary': {'key': 'properties.useDRSecondary', 'type': 'bool'},
     }
 
-    def __init__(self, *, overwrite: bool, kind: str=None, system_data=None, snapshot_time: str=None, recovery_source=None, recover_configuration: bool=None, ignore_conflicting_host_names: bool=None, use_dr_secondary: bool=None, **kwargs) -> None:
-        super(SnapshotRestoreRequest, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.snapshot_time = snapshot_time
-        self.recovery_source = recovery_source
-        self.overwrite = overwrite
-        self.recover_configuration = recover_configuration
-        self.ignore_conflicting_host_names = ignore_conflicting_host_names
-        self.use_dr_secondary = use_dr_secondary
+    def __init__(self, **kwargs):
+        super(SnapshotRestoreRequest, self).__init__(**kwargs)
+        self.snapshot_time = kwargs.get('snapshot_time', None)
+        self.recovery_source = kwargs.get('recovery_source', None)
+        self.overwrite = kwargs.get('overwrite', None)
+        self.recover_configuration = kwargs.get('recover_configuration', None)
+        self.ignore_conflicting_host_names = kwargs.get('ignore_conflicting_host_names', None)
+        self.use_dr_secondary = kwargs.get('use_dr_secondary', None)
 
 
 class Solution(Model):
@@ -12983,12 +13773,12 @@ class Solution(Model):
     :type description: str
     :param type: Type of Solution. Possible values include: 'QuickSolution',
      'DeepInvestigation', 'BestPractices'
-    :type type: str or ~azure.mgmt.web.v2020_09_01.models.SolutionType
+    :type type: str or ~azure.mgmt.web.v2020_12_01.models.SolutionType
     :param data: Solution Data.
-    :type data: list[list[~azure.mgmt.web.v2020_09_01.models.NameValuePair]]
+    :type data: list[list[~azure.mgmt.web.v2020_12_01.models.NameValuePair]]
     :param metadata: Solution Metadata.
     :type metadata:
-     list[list[~azure.mgmt.web.v2020_09_01.models.NameValuePair]]
+     list[list[~azure.mgmt.web.v2020_12_01.models.NameValuePair]]
     """
 
     _attribute_map = {
@@ -13001,15 +13791,15 @@ class Solution(Model):
         'metadata': {'key': 'metadata', 'type': '[[NameValuePair]]'},
     }
 
-    def __init__(self, *, id: float=None, display_name: str=None, order: float=None, description: str=None, type=None, data=None, metadata=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Solution, self).__init__(**kwargs)
-        self.id = id
-        self.display_name = display_name
-        self.order = order
-        self.description = description
-        self.type = type
-        self.data = data
-        self.metadata = metadata
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.order = kwargs.get('order', None)
+        self.description = kwargs.get('description', None)
+        self.type = kwargs.get('type', None)
+        self.data = kwargs.get('data', None)
+        self.metadata = kwargs.get('metadata', None)
 
 
 class SourceControl(ProxyOnlyResource):
@@ -13026,8 +13816,6 @@ class SourceControl(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param token: OAuth access token.
     :type token: str
     :param token_secret: OAuth access token secret.
@@ -13049,19 +13837,18 @@ class SourceControl(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'token': {'key': 'properties.token', 'type': 'str'},
         'token_secret': {'key': 'properties.tokenSecret', 'type': 'str'},
         'refresh_token': {'key': 'properties.refreshToken', 'type': 'str'},
         'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, token: str=None, token_secret: str=None, refresh_token: str=None, expiration_time=None, **kwargs) -> None:
-        super(SourceControl, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.token = token
-        self.token_secret = token_secret
-        self.refresh_token = refresh_token
-        self.expiration_time = expiration_time
+    def __init__(self, **kwargs):
+        super(SourceControl, self).__init__(**kwargs)
+        self.token = kwargs.get('token', None)
+        self.token_secret = kwargs.get('token_secret', None)
+        self.refresh_token = kwargs.get('refresh_token', None)
+        self.expiration_time = kwargs.get('expiration_time', None)
 
 
 class StackMajorVersion(Model):
@@ -13076,7 +13863,7 @@ class StackMajorVersion(Model):
     :type is_default: bool
     :param minor_versions: Minor versions associated with the major version.
     :type minor_versions:
-     list[~azure.mgmt.web.v2020_09_01.models.StackMinorVersion]
+     list[~azure.mgmt.web.v2020_12_01.models.StackMinorVersion]
     :param application_insights: <code>true</code> if this supports
      Application Insights; otherwise, <code>false</code>.
     :type application_insights: bool
@@ -13089,6 +13876,18 @@ class StackMajorVersion(Model):
     :param is_hidden: <code>true</code> if this stack should be hidden for new
      customers on portal, otherwise <code>false</code>.
     :type is_hidden: bool
+    :param app_settings_dictionary: <appSettings>
+     <appSetting name="FUNCTIONS_WORKER_RUNTIME" value="dotnet" />
+     </appSettings>
+     Example: All the function apps need AppSetting: "FUNCTIONS_WORKER_RUNTIME"
+     to be set stack name
+    :type app_settings_dictionary: dict[str, object]
+    :param site_config_properties_dictionary: <siteConfigProperties>
+     <siteConfigProperty name="Use32BitWorkerProcess" value="false" />
+     </siteConfigProperties>
+     Example: All Linux Function Apps, need Use32BitWorkerProcess to be set to
+     0
+    :type site_config_properties_dictionary: dict[str, object]
     """
 
     _attribute_map = {
@@ -13100,18 +13899,22 @@ class StackMajorVersion(Model):
         'is_preview': {'key': 'isPreview', 'type': 'bool'},
         'is_deprecated': {'key': 'isDeprecated', 'type': 'bool'},
         'is_hidden': {'key': 'isHidden', 'type': 'bool'},
+        'app_settings_dictionary': {'key': 'appSettingsDictionary', 'type': '{object}'},
+        'site_config_properties_dictionary': {'key': 'siteConfigPropertiesDictionary', 'type': '{object}'},
     }
 
-    def __init__(self, *, display_version: str=None, runtime_version: str=None, is_default: bool=None, minor_versions=None, application_insights: bool=None, is_preview: bool=None, is_deprecated: bool=None, is_hidden: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(StackMajorVersion, self).__init__(**kwargs)
-        self.display_version = display_version
-        self.runtime_version = runtime_version
-        self.is_default = is_default
-        self.minor_versions = minor_versions
-        self.application_insights = application_insights
-        self.is_preview = is_preview
-        self.is_deprecated = is_deprecated
-        self.is_hidden = is_hidden
+        self.display_version = kwargs.get('display_version', None)
+        self.runtime_version = kwargs.get('runtime_version', None)
+        self.is_default = kwargs.get('is_default', None)
+        self.minor_versions = kwargs.get('minor_versions', None)
+        self.application_insights = kwargs.get('application_insights', None)
+        self.is_preview = kwargs.get('is_preview', None)
+        self.is_deprecated = kwargs.get('is_deprecated', None)
+        self.is_hidden = kwargs.get('is_hidden', None)
+        self.app_settings_dictionary = kwargs.get('app_settings_dictionary', None)
+        self.site_config_properties_dictionary = kwargs.get('site_config_properties_dictionary', None)
 
 
 class StackMinorVersion(Model):
@@ -13136,12 +13939,12 @@ class StackMinorVersion(Model):
         'is_remote_debugging_enabled': {'key': 'isRemoteDebuggingEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, display_version: str=None, runtime_version: str=None, is_default: bool=None, is_remote_debugging_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(StackMinorVersion, self).__init__(**kwargs)
-        self.display_version = display_version
-        self.runtime_version = runtime_version
-        self.is_default = is_default
-        self.is_remote_debugging_enabled = is_remote_debugging_enabled
+        self.display_version = kwargs.get('display_version', None)
+        self.runtime_version = kwargs.get('runtime_version', None)
+        self.is_default = kwargs.get('is_default', None)
+        self.is_remote_debugging_enabled = kwargs.get('is_remote_debugging_enabled', None)
 
 
 class StampCapacity(Model):
@@ -13160,11 +13963,12 @@ class StampCapacity(Model):
     :param compute_mode: Shared/dedicated workers. Possible values include:
      'Shared', 'Dedicated', 'Dynamic'
     :type compute_mode: str or
-     ~azure.mgmt.web.v2020_09_01.models.ComputeModeOptions
+     ~azure.mgmt.web.v2020_12_01.models.ComputeModeOptions
     :param worker_size: Size of the machines. Possible values include:
-     'Small', 'Medium', 'Large', 'D1', 'D2', 'D3', 'NestedSmall', 'Default'
+     'Small', 'Medium', 'Large', 'D1', 'D2', 'D3', 'SmallV3', 'MediumV3',
+     'LargeV3', 'NestedSmall', 'NestedSmallLinux', 'Default'
     :type worker_size: str or
-     ~azure.mgmt.web.v2020_09_01.models.WorkerSizeOptions
+     ~azure.mgmt.web.v2020_12_01.models.WorkerSizeOptions
     :param worker_size_id: Size ID of machines:
      0 - Small
      1 - Medium
@@ -13197,19 +14001,19 @@ class StampCapacity(Model):
         'is_linux': {'key': 'isLinux', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str=None, available_capacity: int=None, total_capacity: int=None, unit: str=None, compute_mode=None, worker_size=None, worker_size_id: int=None, exclude_from_capacity_allocation: bool=None, is_applicable_for_all_compute_modes: bool=None, site_mode: str=None, is_linux: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(StampCapacity, self).__init__(**kwargs)
-        self.name = name
-        self.available_capacity = available_capacity
-        self.total_capacity = total_capacity
-        self.unit = unit
-        self.compute_mode = compute_mode
-        self.worker_size = worker_size
-        self.worker_size_id = worker_size_id
-        self.exclude_from_capacity_allocation = exclude_from_capacity_allocation
-        self.is_applicable_for_all_compute_modes = is_applicable_for_all_compute_modes
-        self.site_mode = site_mode
-        self.is_linux = is_linux
+        self.name = kwargs.get('name', None)
+        self.available_capacity = kwargs.get('available_capacity', None)
+        self.total_capacity = kwargs.get('total_capacity', None)
+        self.unit = kwargs.get('unit', None)
+        self.compute_mode = kwargs.get('compute_mode', None)
+        self.worker_size = kwargs.get('worker_size', None)
+        self.worker_size_id = kwargs.get('worker_size_id', None)
+        self.exclude_from_capacity_allocation = kwargs.get('exclude_from_capacity_allocation', None)
+        self.is_applicable_for_all_compute_modes = kwargs.get('is_applicable_for_all_compute_modes', None)
+        self.site_mode = kwargs.get('site_mode', None)
+        self.is_linux = kwargs.get('is_linux', None)
 
 
 class StaticSiteARMResource(Resource):
@@ -13232,8 +14036,6 @@ class StaticSiteARMResource(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar default_hostname: The default autogenerated hostname for the static
      site.
     :vartype default_hostname: str
@@ -13248,9 +14050,39 @@ class StaticSiteARMResource(Resource):
     :type repository_token: str
     :param build_properties: Build properties to configure on the repository.
     :type build_properties:
-     ~azure.mgmt.web.v2020_09_01.models.StaticSiteBuildProperties
+     ~azure.mgmt.web.v2020_12_01.models.StaticSiteBuildProperties
+    :ivar private_endpoint_connections: Private endpoint connections
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.web.v2020_12_01.models.ResponseMessageEnvelopeRemotePrivateEndpointConnection]
+    :param staging_environment_policy: State indicating whether staging
+     environments are allowed or not allowed for a static web app. Possible
+     values include: 'Enabled', 'Disabled'
+    :type staging_environment_policy: str or
+     ~azure.mgmt.web.v2020_12_01.models.StagingEnvironmentPolicy
+    :param allow_config_file_updates: <code>false</code> if config file is
+     locked for this static web app; otherwise, <code>true</code>.
+    :type allow_config_file_updates: bool
+    :param template_properties: Template options for generating a new
+     repository.
+    :type template_properties:
+     ~azure.mgmt.web.v2020_12_01.models.StaticSiteTemplateOptions
+    :ivar content_distribution_endpoint: The content distribution endpoint for
+     the static site.
+    :vartype content_distribution_endpoint: str
+    :ivar key_vault_reference_identity: Identity to use for Key Vault
+     Reference authentication.
+    :vartype key_vault_reference_identity: str
+    :ivar user_provided_function_apps: User provided function apps registered
+     with the static site
+    :vartype user_provided_function_apps:
+     list[~azure.mgmt.web.v2020_12_01.models.StaticSiteUserProvidedFunctionApp]
+    :ivar provider: The provider that submitted the last deployment to the
+     primary environment of the static site.
+    :vartype provider: str
     :param sku:
-    :type sku: ~azure.mgmt.web.v2020_09_01.models.SkuDescription
+    :type sku: ~azure.mgmt.web.v2020_12_01.models.SkuDescription
+    :param identity:
+    :type identity: ~azure.mgmt.web.v2020_12_01.models.ManagedServiceIdentity
     """
 
     _validation = {
@@ -13260,6 +14092,11 @@ class StaticSiteARMResource(Resource):
         'type': {'readonly': True},
         'default_hostname': {'readonly': True},
         'custom_domains': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
+        'content_distribution_endpoint': {'readonly': True},
+        'key_vault_reference_identity': {'readonly': True},
+        'user_provided_function_apps': {'readonly': True},
+        'provider': {'readonly': True},
     }
 
     _attribute_map = {
@@ -13269,25 +14106,42 @@ class StaticSiteARMResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'default_hostname': {'key': 'properties.defaultHostname', 'type': 'str'},
         'repository_url': {'key': 'properties.repositoryUrl', 'type': 'str'},
         'branch': {'key': 'properties.branch', 'type': 'str'},
         'custom_domains': {'key': 'properties.customDomains', 'type': '[str]'},
         'repository_token': {'key': 'properties.repositoryToken', 'type': 'str'},
         'build_properties': {'key': 'properties.buildProperties', 'type': 'StaticSiteBuildProperties'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ResponseMessageEnvelopeRemotePrivateEndpointConnection]'},
+        'staging_environment_policy': {'key': 'properties.stagingEnvironmentPolicy', 'type': 'StagingEnvironmentPolicy'},
+        'allow_config_file_updates': {'key': 'properties.allowConfigFileUpdates', 'type': 'bool'},
+        'template_properties': {'key': 'properties.templateProperties', 'type': 'StaticSiteTemplateOptions'},
+        'content_distribution_endpoint': {'key': 'properties.contentDistributionEndpoint', 'type': 'str'},
+        'key_vault_reference_identity': {'key': 'properties.keyVaultReferenceIdentity', 'type': 'str'},
+        'user_provided_function_apps': {'key': 'properties.userProvidedFunctionApps', 'type': '[StaticSiteUserProvidedFunctionApp]'},
+        'provider': {'key': 'properties.provider', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
-    def __init__(self, *, location: str, kind: str=None, tags=None, system_data=None, repository_url: str=None, branch: str=None, repository_token: str=None, build_properties=None, sku=None, **kwargs) -> None:
-        super(StaticSiteARMResource, self).__init__(kind=kind, location=location, tags=tags, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(StaticSiteARMResource, self).__init__(**kwargs)
         self.default_hostname = None
-        self.repository_url = repository_url
-        self.branch = branch
+        self.repository_url = kwargs.get('repository_url', None)
+        self.branch = kwargs.get('branch', None)
         self.custom_domains = None
-        self.repository_token = repository_token
-        self.build_properties = build_properties
-        self.sku = sku
+        self.repository_token = kwargs.get('repository_token', None)
+        self.build_properties = kwargs.get('build_properties', None)
+        self.private_endpoint_connections = None
+        self.staging_environment_policy = kwargs.get('staging_environment_policy', None)
+        self.allow_config_file_updates = kwargs.get('allow_config_file_updates', None)
+        self.template_properties = kwargs.get('template_properties', None)
+        self.content_distribution_endpoint = None
+        self.key_vault_reference_identity = None
+        self.user_provided_function_apps = None
+        self.provider = None
+        self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
 
 
 class StaticSiteBuildARMResource(ProxyOnlyResource):
@@ -13304,8 +14158,6 @@ class StaticSiteBuildARMResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar build_id: An identifier for the static site build.
     :vartype build_id: str
     :ivar source_branch: The source branch.
@@ -13322,7 +14174,11 @@ class StaticSiteBuildARMResource(ProxyOnlyResource):
     :ivar status: The status of the static site build. Possible values
      include: 'WaitingForDeployment', 'Uploading', 'Deploying', 'Ready',
      'Failed', 'Deleting', 'Detached'
-    :vartype status: str or ~azure.mgmt.web.v2020_09_01.models.BuildStatus
+    :vartype status: str or ~azure.mgmt.web.v2020_12_01.models.BuildStatus
+    :ivar user_provided_function_apps: User provided function apps registered
+     with the static site build
+    :vartype user_provided_function_apps:
+     list[~azure.mgmt.web.v2020_12_01.models.StaticSiteUserProvidedFunctionApp]
     """
 
     _validation = {
@@ -13336,6 +14192,7 @@ class StaticSiteBuildARMResource(ProxyOnlyResource):
         'created_time_utc': {'readonly': True},
         'last_updated_on': {'readonly': True},
         'status': {'readonly': True},
+        'user_provided_function_apps': {'readonly': True},
     }
 
     _attribute_map = {
@@ -13343,7 +14200,6 @@ class StaticSiteBuildARMResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'build_id': {'key': 'properties.buildId', 'type': 'str'},
         'source_branch': {'key': 'properties.sourceBranch', 'type': 'str'},
         'pull_request_title': {'key': 'properties.pullRequestTitle', 'type': 'str'},
@@ -13351,10 +14207,11 @@ class StaticSiteBuildARMResource(ProxyOnlyResource):
         'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
         'last_updated_on': {'key': 'properties.lastUpdatedOn', 'type': 'iso-8601'},
         'status': {'key': 'properties.status', 'type': 'str'},
+        'user_provided_function_apps': {'key': 'properties.userProvidedFunctionApps', 'type': '[StaticSiteUserProvidedFunctionApp]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(StaticSiteBuildARMResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(StaticSiteBuildARMResource, self).__init__(**kwargs)
         self.build_id = None
         self.source_branch = None
         self.pull_request_title = None
@@ -13362,6 +14219,7 @@ class StaticSiteBuildARMResource(ProxyOnlyResource):
         self.created_time_utc = None
         self.last_updated_on = None
         self.status = None
+        self.user_provided_function_apps = None
 
 
 class StaticSiteBuildProperties(Model):
@@ -13371,22 +14229,46 @@ class StaticSiteBuildProperties(Model):
     :type app_location: str
     :param api_location: The path to the api code within the repository.
     :type api_location: str
-    :param app_artifact_location: The path of the app artifacts after
-     building.
+    :param app_artifact_location: Deprecated: The path of the app artifacts
+     after building (deprecated in favor of OutputLocation)
     :type app_artifact_location: str
+    :param output_location: The output path of the app after building.
+    :type output_location: str
+    :param app_build_command: A custom command to run during deployment of the
+     static content application.
+    :type app_build_command: str
+    :param api_build_command: A custom command to run during deployment of the
+     Azure Functions API application.
+    :type api_build_command: str
+    :param skip_github_action_workflow_generation: Skip Github Action workflow
+     generation.
+    :type skip_github_action_workflow_generation: bool
+    :param github_action_secret_name_override: Github Action secret name
+     override.
+    :type github_action_secret_name_override: str
     """
 
     _attribute_map = {
         'app_location': {'key': 'appLocation', 'type': 'str'},
         'api_location': {'key': 'apiLocation', 'type': 'str'},
         'app_artifact_location': {'key': 'appArtifactLocation', 'type': 'str'},
+        'output_location': {'key': 'outputLocation', 'type': 'str'},
+        'app_build_command': {'key': 'appBuildCommand', 'type': 'str'},
+        'api_build_command': {'key': 'apiBuildCommand', 'type': 'str'},
+        'skip_github_action_workflow_generation': {'key': 'skipGithubActionWorkflowGeneration', 'type': 'bool'},
+        'github_action_secret_name_override': {'key': 'githubActionSecretNameOverride', 'type': 'str'},
     }
 
-    def __init__(self, *, app_location: str=None, api_location: str=None, app_artifact_location: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(StaticSiteBuildProperties, self).__init__(**kwargs)
-        self.app_location = app_location
-        self.api_location = api_location
-        self.app_artifact_location = app_artifact_location
+        self.app_location = kwargs.get('app_location', None)
+        self.api_location = kwargs.get('api_location', None)
+        self.app_artifact_location = kwargs.get('app_artifact_location', None)
+        self.output_location = kwargs.get('output_location', None)
+        self.app_build_command = kwargs.get('app_build_command', None)
+        self.api_build_command = kwargs.get('api_build_command', None)
+        self.skip_github_action_workflow_generation = kwargs.get('skip_github_action_workflow_generation', None)
+        self.github_action_secret_name_override = kwargs.get('github_action_secret_name_override', None)
 
 
 class StaticSiteCustomDomainOverviewARMResource(ProxyOnlyResource):
@@ -13403,13 +14285,20 @@ class StaticSiteCustomDomainOverviewARMResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar domain_name: The domain name for the static site custom domain.
     :vartype domain_name: str
     :ivar created_on: The date and time on which the custom domain was created
      for the static site.
     :vartype created_on: datetime
+    :ivar status: The status of the custom domain. Possible values include:
+     'RetrievingValidationToken', 'Validating', 'Adding', 'Ready', 'Failed',
+     'Deleting'
+    :vartype status: str or
+     ~azure.mgmt.web.v2020_12_01.models.CustomDomainStatus
+    :ivar validation_token: The TXT record validation token
+    :vartype validation_token: str
+    :ivar error_message:
+    :vartype error_message: str
     """
 
     _validation = {
@@ -13418,6 +14307,9 @@ class StaticSiteCustomDomainOverviewARMResource(ProxyOnlyResource):
         'type': {'readonly': True},
         'domain_name': {'readonly': True},
         'created_on': {'readonly': True},
+        'status': {'readonly': True},
+        'validation_token': {'readonly': True},
+        'error_message': {'readonly': True},
     }
 
     _attribute_map = {
@@ -13425,15 +14317,58 @@ class StaticSiteCustomDomainOverviewARMResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'domain_name': {'key': 'properties.domainName', 'type': 'str'},
         'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'validation_token': {'key': 'properties.validationToken', 'type': 'str'},
+        'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(StaticSiteCustomDomainOverviewARMResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(StaticSiteCustomDomainOverviewARMResource, self).__init__(**kwargs)
         self.domain_name = None
         self.created_on = None
+        self.status = None
+        self.validation_token = None
+        self.error_message = None
+
+
+class StaticSiteCustomDomainRequestPropertiesARMResource(ProxyOnlyResource):
+    """Static Site Custom Domain Request Properties ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param validation_method: Validation method for adding a custom domain.
+     Default value: "cname-delegation" .
+    :type validation_method: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'validation_method': {'key': 'properties.validationMethod', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteCustomDomainRequestPropertiesARMResource, self).__init__(**kwargs)
+        self.validation_method = kwargs.get('validation_method', "cname-delegation")
 
 
 class StaticSiteFunctionOverviewARMResource(ProxyOnlyResource):
@@ -13450,14 +14385,12 @@ class StaticSiteFunctionOverviewARMResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar function_name: The name for the function
     :vartype function_name: str
     :ivar trigger_type: The trigger type of the function. Possible values
      include: 'HttpTrigger', 'Unknown'
     :vartype trigger_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.TriggerTypes
+     ~azure.mgmt.web.v2020_12_01.models.TriggerTypes
     """
 
     _validation = {
@@ -13473,13 +14406,12 @@ class StaticSiteFunctionOverviewARMResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'function_name': {'key': 'properties.functionName', 'type': 'str'},
         'trigger_type': {'key': 'properties.triggerType', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(StaticSiteFunctionOverviewARMResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(StaticSiteFunctionOverviewARMResource, self).__init__(**kwargs)
         self.function_name = None
         self.trigger_type = None
 
@@ -13498,8 +14430,6 @@ class StaticSitePatchResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar default_hostname: The default autogenerated hostname for the static
      site.
     :vartype default_hostname: str
@@ -13514,7 +14444,35 @@ class StaticSitePatchResource(ProxyOnlyResource):
     :type repository_token: str
     :param build_properties: Build properties to configure on the repository.
     :type build_properties:
-     ~azure.mgmt.web.v2020_09_01.models.StaticSiteBuildProperties
+     ~azure.mgmt.web.v2020_12_01.models.StaticSiteBuildProperties
+    :ivar private_endpoint_connections: Private endpoint connections
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.web.v2020_12_01.models.ResponseMessageEnvelopeRemotePrivateEndpointConnection]
+    :param staging_environment_policy: State indicating whether staging
+     environments are allowed or not allowed for a static web app. Possible
+     values include: 'Enabled', 'Disabled'
+    :type staging_environment_policy: str or
+     ~azure.mgmt.web.v2020_12_01.models.StagingEnvironmentPolicy
+    :param allow_config_file_updates: <code>false</code> if config file is
+     locked for this static web app; otherwise, <code>true</code>.
+    :type allow_config_file_updates: bool
+    :param template_properties: Template options for generating a new
+     repository.
+    :type template_properties:
+     ~azure.mgmt.web.v2020_12_01.models.StaticSiteTemplateOptions
+    :ivar content_distribution_endpoint: The content distribution endpoint for
+     the static site.
+    :vartype content_distribution_endpoint: str
+    :ivar key_vault_reference_identity: Identity to use for Key Vault
+     Reference authentication.
+    :vartype key_vault_reference_identity: str
+    :ivar user_provided_function_apps: User provided function apps registered
+     with the static site
+    :vartype user_provided_function_apps:
+     list[~azure.mgmt.web.v2020_12_01.models.StaticSiteUserProvidedFunctionApp]
+    :ivar provider: The provider that submitted the last deployment to the
+     primary environment of the static site.
+    :vartype provider: str
     """
 
     _validation = {
@@ -13523,6 +14481,11 @@ class StaticSitePatchResource(ProxyOnlyResource):
         'type': {'readonly': True},
         'default_hostname': {'readonly': True},
         'custom_domains': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
+        'content_distribution_endpoint': {'readonly': True},
+        'key_vault_reference_identity': {'readonly': True},
+        'user_provided_function_apps': {'readonly': True},
+        'provider': {'readonly': True},
     }
 
     _attribute_map = {
@@ -13530,23 +14493,38 @@ class StaticSitePatchResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'default_hostname': {'key': 'properties.defaultHostname', 'type': 'str'},
         'repository_url': {'key': 'properties.repositoryUrl', 'type': 'str'},
         'branch': {'key': 'properties.branch', 'type': 'str'},
         'custom_domains': {'key': 'properties.customDomains', 'type': '[str]'},
         'repository_token': {'key': 'properties.repositoryToken', 'type': 'str'},
         'build_properties': {'key': 'properties.buildProperties', 'type': 'StaticSiteBuildProperties'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ResponseMessageEnvelopeRemotePrivateEndpointConnection]'},
+        'staging_environment_policy': {'key': 'properties.stagingEnvironmentPolicy', 'type': 'StagingEnvironmentPolicy'},
+        'allow_config_file_updates': {'key': 'properties.allowConfigFileUpdates', 'type': 'bool'},
+        'template_properties': {'key': 'properties.templateProperties', 'type': 'StaticSiteTemplateOptions'},
+        'content_distribution_endpoint': {'key': 'properties.contentDistributionEndpoint', 'type': 'str'},
+        'key_vault_reference_identity': {'key': 'properties.keyVaultReferenceIdentity', 'type': 'str'},
+        'user_provided_function_apps': {'key': 'properties.userProvidedFunctionApps', 'type': '[StaticSiteUserProvidedFunctionApp]'},
+        'provider': {'key': 'properties.provider', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, repository_url: str=None, branch: str=None, repository_token: str=None, build_properties=None, **kwargs) -> None:
-        super(StaticSitePatchResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(StaticSitePatchResource, self).__init__(**kwargs)
         self.default_hostname = None
-        self.repository_url = repository_url
-        self.branch = branch
+        self.repository_url = kwargs.get('repository_url', None)
+        self.branch = kwargs.get('branch', None)
         self.custom_domains = None
-        self.repository_token = repository_token
-        self.build_properties = build_properties
+        self.repository_token = kwargs.get('repository_token', None)
+        self.build_properties = kwargs.get('build_properties', None)
+        self.private_endpoint_connections = None
+        self.staging_environment_policy = kwargs.get('staging_environment_policy', None)
+        self.allow_config_file_updates = kwargs.get('allow_config_file_updates', None)
+        self.template_properties = kwargs.get('template_properties', None)
+        self.content_distribution_endpoint = None
+        self.key_vault_reference_identity = None
+        self.user_provided_function_apps = None
+        self.provider = None
 
 
 class StaticSiteResetPropertiesARMResource(ProxyOnlyResource):
@@ -13563,8 +14541,6 @@ class StaticSiteResetPropertiesARMResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param repository_token: The token which proves admin privileges to the
      repository.
     :type repository_token: str
@@ -13584,15 +14560,14 @@ class StaticSiteResetPropertiesARMResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'repository_token': {'key': 'properties.repositoryToken', 'type': 'str'},
         'should_update_repository': {'key': 'properties.shouldUpdateRepository', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, repository_token: str=None, should_update_repository: bool=None, **kwargs) -> None:
-        super(StaticSiteResetPropertiesARMResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.repository_token = repository_token
-        self.should_update_repository = should_update_repository
+    def __init__(self, **kwargs):
+        super(StaticSiteResetPropertiesARMResource, self).__init__(**kwargs)
+        self.repository_token = kwargs.get('repository_token', None)
+        self.should_update_repository = kwargs.get('should_update_repository', None)
 
 
 class StaticSitesWorkflowPreview(ProxyOnlyResource):
@@ -13609,8 +14584,6 @@ class StaticSitesWorkflowPreview(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar path: The path for the workflow file to be generated
     :vartype path: str
     :ivar contents: The contents for the workflow file to be generated
@@ -13630,13 +14603,12 @@ class StaticSitesWorkflowPreview(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'path': {'key': 'properties.path', 'type': 'str'},
         'contents': {'key': 'properties.contents', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(StaticSitesWorkflowPreview, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(StaticSitesWorkflowPreview, self).__init__(**kwargs)
         self.path = None
         self.contents = None
 
@@ -13655,15 +14627,13 @@ class StaticSitesWorkflowPreviewRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param repository_url: URL for the repository of the static site.
     :type repository_url: str
     :param branch: The target branch in the repository.
     :type branch: str
     :param build_properties: Build properties to configure on the repository.
     :type build_properties:
-     ~azure.mgmt.web.v2020_09_01.models.StaticSiteBuildProperties
+     ~azure.mgmt.web.v2020_12_01.models.StaticSiteBuildProperties
     """
 
     _validation = {
@@ -13677,17 +14647,50 @@ class StaticSitesWorkflowPreviewRequest(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'repository_url': {'key': 'properties.repositoryUrl', 'type': 'str'},
         'branch': {'key': 'properties.branch', 'type': 'str'},
         'build_properties': {'key': 'properties.buildProperties', 'type': 'StaticSiteBuildProperties'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, repository_url: str=None, branch: str=None, build_properties=None, **kwargs) -> None:
-        super(StaticSitesWorkflowPreviewRequest, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.repository_url = repository_url
-        self.branch = branch
-        self.build_properties = build_properties
+    def __init__(self, **kwargs):
+        super(StaticSitesWorkflowPreviewRequest, self).__init__(**kwargs)
+        self.repository_url = kwargs.get('repository_url', None)
+        self.branch = kwargs.get('branch', None)
+        self.build_properties = kwargs.get('build_properties', None)
+
+
+class StaticSiteTemplateOptions(Model):
+    """Template Options for the static site.
+
+    :param template_repository_url: URL of the template repository. The newly
+     generated repository will be based on this one.
+    :type template_repository_url: str
+    :param owner: Owner of the newly generated repository.
+    :type owner: str
+    :param repository_name: Name of the newly generated repository.
+    :type repository_name: str
+    :param description: Description of the newly generated repository.
+    :type description: str
+    :param is_private: Whether or not the newly generated repository is a
+     private repository. Defaults to false (i.e. public).
+    :type is_private: bool
+    """
+
+    _attribute_map = {
+        'template_repository_url': {'key': 'templateRepositoryUrl', 'type': 'str'},
+        'owner': {'key': 'owner', 'type': 'str'},
+        'repository_name': {'key': 'repositoryName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'is_private': {'key': 'isPrivate', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteTemplateOptions, self).__init__(**kwargs)
+        self.template_repository_url = kwargs.get('template_repository_url', None)
+        self.owner = kwargs.get('owner', None)
+        self.repository_name = kwargs.get('repository_name', None)
+        self.description = kwargs.get('description', None)
+        self.is_private = kwargs.get('is_private', None)
 
 
 class StaticSiteUserARMResource(ProxyOnlyResource):
@@ -13704,8 +14707,6 @@ class StaticSiteUserARMResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar provider: The identity provider for the static site user.
     :vartype provider: str
     :ivar user_id: The user id for the static site user.
@@ -13731,19 +14732,18 @@ class StaticSiteUserARMResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provider': {'key': 'properties.provider', 'type': 'str'},
         'user_id': {'key': 'properties.userId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'roles': {'key': 'properties.roles', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, roles: str=None, **kwargs) -> None:
-        super(StaticSiteUserARMResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(StaticSiteUserARMResource, self).__init__(**kwargs)
         self.provider = None
         self.user_id = None
         self.display_name = None
-        self.roles = roles
+        self.roles = kwargs.get('roles', None)
 
 
 class StaticSiteUserInvitationRequestResource(ProxyOnlyResource):
@@ -13760,8 +14760,6 @@ class StaticSiteUserInvitationRequestResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param domain: The domain name for the static site custom domain.
     :type domain: str
     :param provider: The identity provider for the static site user.
@@ -13787,7 +14785,6 @@ class StaticSiteUserInvitationRequestResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'domain': {'key': 'properties.domain', 'type': 'str'},
         'provider': {'key': 'properties.provider', 'type': 'str'},
         'user_details': {'key': 'properties.userDetails', 'type': 'str'},
@@ -13795,13 +14792,13 @@ class StaticSiteUserInvitationRequestResource(ProxyOnlyResource):
         'num_hours_to_expiration': {'key': 'properties.numHoursToExpiration', 'type': 'int'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, domain: str=None, provider: str=None, user_details: str=None, roles: str=None, num_hours_to_expiration: int=None, **kwargs) -> None:
-        super(StaticSiteUserInvitationRequestResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.domain = domain
-        self.provider = provider
-        self.user_details = user_details
-        self.roles = roles
-        self.num_hours_to_expiration = num_hours_to_expiration
+    def __init__(self, **kwargs):
+        super(StaticSiteUserInvitationRequestResource, self).__init__(**kwargs)
+        self.domain = kwargs.get('domain', None)
+        self.provider = kwargs.get('provider', None)
+        self.user_details = kwargs.get('user_details', None)
+        self.roles = kwargs.get('roles', None)
+        self.num_hours_to_expiration = kwargs.get('num_hours_to_expiration', None)
 
 
 class StaticSiteUserInvitationResponseResource(ProxyOnlyResource):
@@ -13818,8 +14815,6 @@ class StaticSiteUserInvitationResponseResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar expires_on: The expiration time of the invitation
     :vartype expires_on: datetime
     :ivar invitation_url: The url for the invitation link
@@ -13839,15 +14834,187 @@ class StaticSiteUserInvitationResponseResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'expires_on': {'key': 'properties.expiresOn', 'type': 'iso-8601'},
         'invitation_url': {'key': 'properties.invitationUrl', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(StaticSiteUserInvitationResponseResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(StaticSiteUserInvitationResponseResource, self).__init__(**kwargs)
         self.expires_on = None
         self.invitation_url = None
+
+
+class StaticSiteUserProvidedFunctionApp(ProxyOnlyResource):
+    """A static site user provided function.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param function_app_resource_id: The resource id of the function app
+     registered with the static site
+    :type function_app_resource_id: str
+    :param function_app_region: The region of the function app registered with
+     the static site
+    :type function_app_region: str
+    :ivar created_on: The date and time on which the function app was
+     registered with the static site.
+    :vartype created_on: datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'created_on': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'function_app_resource_id': {'key': 'properties.functionAppResourceId', 'type': 'str'},
+        'function_app_region': {'key': 'properties.functionAppRegion', 'type': 'str'},
+        'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteUserProvidedFunctionApp, self).__init__(**kwargs)
+        self.function_app_resource_id = kwargs.get('function_app_resource_id', None)
+        self.function_app_region = kwargs.get('function_app_region', None)
+        self.created_on = None
+
+
+class StaticSiteUserProvidedFunctionAppARMResource(ProxyOnlyResource):
+    """Static Site User Provided Function App ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param function_app_resource_id: The resource id of the function app
+     registered with the static site
+    :type function_app_resource_id: str
+    :param function_app_region: The region of the function app registered with
+     the static site
+    :type function_app_region: str
+    :ivar created_on: The date and time on which the function app was
+     registered with the static site.
+    :vartype created_on: datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'created_on': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'function_app_resource_id': {'key': 'properties.functionAppResourceId', 'type': 'str'},
+        'function_app_region': {'key': 'properties.functionAppRegion', 'type': 'str'},
+        'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteUserProvidedFunctionAppARMResource, self).__init__(**kwargs)
+        self.function_app_resource_id = kwargs.get('function_app_resource_id', None)
+        self.function_app_region = kwargs.get('function_app_region', None)
+        self.created_on = None
+
+
+class StaticSiteZipDeploymentARMResource(ProxyOnlyResource):
+    """Static site zip deployment ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param app_zip_url: URL for the zipped app content
+    :type app_zip_url: str
+    :param api_zip_url: URL for the zipped api content
+    :type api_zip_url: str
+    :param deployment_title: A title to label the deployment
+    :type deployment_title: str
+    :param provider: The provider submitting this deployment
+    :type provider: str
+    :param function_language: The language of the api content, if it exists
+    :type function_language: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'app_zip_url': {'key': 'properties.appZipUrl', 'type': 'str'},
+        'api_zip_url': {'key': 'properties.apiZipUrl', 'type': 'str'},
+        'deployment_title': {'key': 'properties.deploymentTitle', 'type': 'str'},
+        'provider': {'key': 'properties.provider', 'type': 'str'},
+        'function_language': {'key': 'properties.functionLanguage', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StaticSiteZipDeploymentARMResource, self).__init__(**kwargs)
+        self.app_zip_url = kwargs.get('app_zip_url', None)
+        self.api_zip_url = kwargs.get('api_zip_url', None)
+        self.deployment_title = kwargs.get('deployment_title', None)
+        self.provider = kwargs.get('provider', None)
+        self.function_language = kwargs.get('function_language', None)
+
+
+class Status(Model):
+    """Identify the status of the most severe insight generated by the detector.
+
+    :param message: Descriptive message.
+    :type message: str
+    :param status_id: Level of the most severe insight generated by the
+     detector. Possible values include: 'Critical', 'Warning', 'Info',
+     'Success', 'None'
+    :type status_id: str or ~azure.mgmt.web.v2020_12_01.models.InsightStatus
+    """
+
+    _attribute_map = {
+        'message': {'key': 'message', 'type': 'str'},
+        'status_id': {'key': 'statusId', 'type': 'InsightStatus'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Status, self).__init__(**kwargs)
+        self.message = kwargs.get('message', None)
+        self.status_id = kwargs.get('status_id', None)
 
 
 class StatusCodesBasedTrigger(Model):
@@ -13863,6 +15030,8 @@ class StatusCodesBasedTrigger(Model):
     :type count: int
     :param time_interval: Time interval.
     :type time_interval: str
+    :param path: Request Path
+    :type path: str
     """
 
     _attribute_map = {
@@ -13871,15 +15040,45 @@ class StatusCodesBasedTrigger(Model):
         'win32_status': {'key': 'win32Status', 'type': 'int'},
         'count': {'key': 'count', 'type': 'int'},
         'time_interval': {'key': 'timeInterval', 'type': 'str'},
+        'path': {'key': 'path', 'type': 'str'},
     }
 
-    def __init__(self, *, status: int=None, sub_status: int=None, win32_status: int=None, count: int=None, time_interval: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(StatusCodesBasedTrigger, self).__init__(**kwargs)
-        self.status = status
-        self.sub_status = sub_status
-        self.win32_status = win32_status
-        self.count = count
-        self.time_interval = time_interval
+        self.status = kwargs.get('status', None)
+        self.sub_status = kwargs.get('sub_status', None)
+        self.win32_status = kwargs.get('win32_status', None)
+        self.count = kwargs.get('count', None)
+        self.time_interval = kwargs.get('time_interval', None)
+        self.path = kwargs.get('path', None)
+
+
+class StatusCodesRangeBasedTrigger(Model):
+    """Trigger based on range of status codes.
+
+    :param status_codes: HTTP status code.
+    :type status_codes: str
+    :param path:
+    :type path: str
+    :param count: Request Count.
+    :type count: int
+    :param time_interval: Time interval.
+    :type time_interval: str
+    """
+
+    _attribute_map = {
+        'status_codes': {'key': 'statusCodes', 'type': 'str'},
+        'path': {'key': 'path', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'int'},
+        'time_interval': {'key': 'timeInterval', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StatusCodesRangeBasedTrigger, self).__init__(**kwargs)
+        self.status_codes = kwargs.get('status_codes', None)
+        self.path = kwargs.get('path', None)
+        self.count = kwargs.get('count', None)
+        self.time_interval = kwargs.get('time_interval', None)
 
 
 class StorageMigrationOptions(ProxyOnlyResource):
@@ -13898,8 +15097,6 @@ class StorageMigrationOptions(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param azurefiles_connection_string: Required. AzureFiles connection
      string.
     :type azurefiles_connection_string: str
@@ -13927,19 +15124,18 @@ class StorageMigrationOptions(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'azurefiles_connection_string': {'key': 'properties.azurefilesConnectionString', 'type': 'str'},
         'azurefiles_share': {'key': 'properties.azurefilesShare', 'type': 'str'},
         'switch_site_after_migration': {'key': 'properties.switchSiteAfterMigration', 'type': 'bool'},
         'block_write_access_to_site': {'key': 'properties.blockWriteAccessToSite', 'type': 'bool'},
     }
 
-    def __init__(self, *, azurefiles_connection_string: str, azurefiles_share: str, kind: str=None, system_data=None, switch_site_after_migration: bool=False, block_write_access_to_site: bool=False, **kwargs) -> None:
-        super(StorageMigrationOptions, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.azurefiles_connection_string = azurefiles_connection_string
-        self.azurefiles_share = azurefiles_share
-        self.switch_site_after_migration = switch_site_after_migration
-        self.block_write_access_to_site = block_write_access_to_site
+    def __init__(self, **kwargs):
+        super(StorageMigrationOptions, self).__init__(**kwargs)
+        self.azurefiles_connection_string = kwargs.get('azurefiles_connection_string', None)
+        self.azurefiles_share = kwargs.get('azurefiles_share', None)
+        self.switch_site_after_migration = kwargs.get('switch_site_after_migration', False)
+        self.block_write_access_to_site = kwargs.get('block_write_access_to_site', False)
 
 
 class StorageMigrationResponse(ProxyOnlyResource):
@@ -13956,8 +15152,6 @@ class StorageMigrationResponse(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar operation_id: When server starts the migration process, it will
      return an operation ID identifying that particular migration operation.
     :vartype operation_id: str
@@ -13975,12 +15169,11 @@ class StorageMigrationResponse(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'operation_id': {'key': 'properties.operationId', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(StorageMigrationResponse, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(StorageMigrationResponse, self).__init__(**kwargs)
         self.operation_id = None
 
 
@@ -13998,8 +15191,6 @@ class StringDictionary(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param properties: Settings.
     :type properties: dict[str, str]
     """
@@ -14015,13 +15206,77 @@ class StringDictionary(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, properties=None, **kwargs) -> None:
-        super(StringDictionary, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(StringDictionary, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class StringList(ProxyOnlyResource):
+    """String list resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param properties: List of string resources.
+    :type properties: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StringList, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class SupportTopic(Model):
+    """Defines a unique Support Topic.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Support Topic Id
+    :vartype id: str
+    :ivar pes_id: Unique resource Id
+    :vartype pes_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'pes_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'pes_id': {'key': 'pesId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SupportTopic, self).__init__(**kwargs)
+        self.id = None
+        self.pes_id = None
 
 
 class SwiftVirtualNetwork(ProxyOnlyResource):
@@ -14039,8 +15294,6 @@ class SwiftVirtualNetwork(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param subnet_resource_id: The Virtual Network subnet's resource ID. This
      is the subnet that this Web App will join. This subnet must have a
      delegation to Microsoft.Web/serverFarms defined first.
@@ -14061,56 +15314,14 @@ class SwiftVirtualNetwork(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'subnet_resource_id': {'key': 'properties.subnetResourceId', 'type': 'str'},
         'swift_supported': {'key': 'properties.swiftSupported', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, subnet_resource_id: str=None, swift_supported: bool=None, **kwargs) -> None:
-        super(SwiftVirtualNetwork, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.subnet_resource_id = subnet_resource_id
-        self.swift_supported = swift_supported
-
-
-class SystemData(Model):
-    """Metadata pertaining to creation and last modification of the resource.
-
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource.
-     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
-    :type created_by_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the
-     resource. Possible values include: 'User', 'Application',
-     'ManagedIdentity', 'Key'
-    :type last_modified_by_type: str or
-     ~azure.mgmt.web.v2020_09_01.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC)
-    :type last_modified_at: datetime
-    """
-
-    _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
-    }
-
-    def __init__(self, *, created_by: str=None, created_by_type=None, created_at=None, last_modified_by: str=None, last_modified_by_type=None, last_modified_at=None, **kwargs) -> None:
-        super(SystemData, self).__init__(**kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
+    def __init__(self, **kwargs):
+        super(SwiftVirtualNetwork, self).__init__(**kwargs)
+        self.subnet_resource_id = kwargs.get('subnet_resource_id', None)
+        self.swift_supported = kwargs.get('swift_supported', None)
 
 
 class TldLegalAgreement(Model):
@@ -14141,16 +15352,16 @@ class TldLegalAgreement(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, *, agreement_key: str, title: str, content: str, url: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(TldLegalAgreement, self).__init__(**kwargs)
-        self.agreement_key = agreement_key
-        self.title = title
-        self.content = content
-        self.url = url
+        self.agreement_key = kwargs.get('agreement_key', None)
+        self.title = kwargs.get('title', None)
+        self.content = kwargs.get('content', None)
+        self.url = kwargs.get('url', None)
 
 
 class TokenStore(ProxyOnlyResource):
-    """TokenStore.
+    """The configuration settings of the token store.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -14163,17 +15374,22 @@ class TokenStore(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param enabled:
+    :param enabled: <code>true</code> to durably store platform-specific
+     security tokens that are obtained during login flows; otherwise,
+     <code>false</code>.
+     The default is <code>false</code>.
     :type enabled: bool
-    :param token_refresh_extension_hours:
+    :param token_refresh_extension_hours: The number of hours after session
+     token expiration that a session token can be used to
+     call the token refresh API. The default is 72 hours.
     :type token_refresh_extension_hours: float
-    :param file_system:
-    :type file_system: ~azure.mgmt.web.v2020_09_01.models.FileSystemTokenStore
-    :param azure_blob_storage:
+    :param file_system: The configuration settings of the storage of the
+     tokens if a file system is used.
+    :type file_system: ~azure.mgmt.web.v2020_12_01.models.FileSystemTokenStore
+    :param azure_blob_storage: The configuration settings of the storage of
+     the tokens if blob storage is used.
     :type azure_blob_storage:
-     ~azure.mgmt.web.v2020_09_01.models.BlobStorageTokenStore
+     ~azure.mgmt.web.v2020_12_01.models.BlobStorageTokenStore
     """
 
     _validation = {
@@ -14187,19 +15403,18 @@ class TokenStore(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'token_refresh_extension_hours': {'key': 'properties.tokenRefreshExtensionHours', 'type': 'float'},
         'file_system': {'key': 'properties.fileSystem', 'type': 'FileSystemTokenStore'},
         'azure_blob_storage': {'key': 'properties.azureBlobStorage', 'type': 'BlobStorageTokenStore'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, enabled: bool=None, token_refresh_extension_hours: float=None, file_system=None, azure_blob_storage=None, **kwargs) -> None:
-        super(TokenStore, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.enabled = enabled
-        self.token_refresh_extension_hours = token_refresh_extension_hours
-        self.file_system = file_system
-        self.azure_blob_storage = azure_blob_storage
+    def __init__(self, **kwargs):
+        super(TokenStore, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.token_refresh_extension_hours = kwargs.get('token_refresh_extension_hours', None)
+        self.file_system = kwargs.get('file_system', None)
+        self.azure_blob_storage = kwargs.get('azure_blob_storage', None)
 
 
 class TopLevelDomain(ProxyOnlyResource):
@@ -14216,8 +15431,6 @@ class TopLevelDomain(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param privacy: If <code>true</code>, then the top level domain supports
      domain privacy; otherwise, <code>false</code>.
     :type privacy: bool
@@ -14234,13 +15447,12 @@ class TopLevelDomain(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'privacy': {'key': 'properties.privacy', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, privacy: bool=None, **kwargs) -> None:
-        super(TopLevelDomain, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.privacy = privacy
+    def __init__(self, **kwargs):
+        super(TopLevelDomain, self).__init__(**kwargs)
+        self.privacy = kwargs.get('privacy', None)
 
 
 class TopLevelDomainAgreementOption(Model):
@@ -14261,10 +15473,10 @@ class TopLevelDomainAgreementOption(Model):
         'for_transfer': {'key': 'forTransfer', 'type': 'bool'},
     }
 
-    def __init__(self, *, include_privacy: bool=None, for_transfer: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(TopLevelDomainAgreementOption, self).__init__(**kwargs)
-        self.include_privacy = include_privacy
-        self.for_transfer = for_transfer
+        self.include_privacy = kwargs.get('include_privacy', None)
+        self.for_transfer = kwargs.get('for_transfer', None)
 
 
 class TriggeredJobHistory(ProxyOnlyResource):
@@ -14282,10 +15494,8 @@ class TriggeredJobHistory(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param runs: List of triggered web job runs.
-    :type runs: list[~azure.mgmt.web.v2020_09_01.models.TriggeredJobRun]
+    :type runs: list[~azure.mgmt.web.v2020_12_01.models.TriggeredJobRun]
     """
 
     _validation = {
@@ -14299,13 +15509,12 @@ class TriggeredJobHistory(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'runs': {'key': 'properties.runs', 'type': '[TriggeredJobRun]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, runs=None, **kwargs) -> None:
-        super(TriggeredJobHistory, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.runs = runs
+    def __init__(self, **kwargs):
+        super(TriggeredJobHistory, self).__init__(**kwargs)
+        self.runs = kwargs.get('runs', None)
 
 
 class TriggeredJobRun(ProxyOnlyResource):
@@ -14322,8 +15531,6 @@ class TriggeredJobRun(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param web_job_id: Job ID.
     :type web_job_id: str
     :param web_job_name: Job name.
@@ -14331,7 +15538,7 @@ class TriggeredJobRun(ProxyOnlyResource):
     :param status: Job status. Possible values include: 'Success', 'Failed',
      'Error'
     :type status: str or
-     ~azure.mgmt.web.v2020_09_01.models.TriggeredWebJobStatus
+     ~azure.mgmt.web.v2020_12_01.models.TriggeredWebJobStatus
     :param start_time: Start time.
     :type start_time: datetime
     :param end_time: End time.
@@ -14361,7 +15568,6 @@ class TriggeredJobRun(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'web_job_id': {'key': 'properties.web_job_id', 'type': 'str'},
         'web_job_name': {'key': 'properties.web_job_name', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'TriggeredWebJobStatus'},
@@ -14375,19 +15581,19 @@ class TriggeredJobRun(ProxyOnlyResource):
         'trigger': {'key': 'properties.trigger', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, web_job_id: str=None, web_job_name: str=None, status=None, start_time=None, end_time=None, duration: str=None, output_url: str=None, error_url: str=None, url: str=None, job_name: str=None, trigger: str=None, **kwargs) -> None:
-        super(TriggeredJobRun, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.web_job_id = web_job_id
-        self.web_job_name = web_job_name
-        self.status = status
-        self.start_time = start_time
-        self.end_time = end_time
-        self.duration = duration
-        self.output_url = output_url
-        self.error_url = error_url
-        self.url = url
-        self.job_name = job_name
-        self.trigger = trigger
+    def __init__(self, **kwargs):
+        super(TriggeredJobRun, self).__init__(**kwargs)
+        self.web_job_id = kwargs.get('web_job_id', None)
+        self.web_job_name = kwargs.get('web_job_name', None)
+        self.status = kwargs.get('status', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.duration = kwargs.get('duration', None)
+        self.output_url = kwargs.get('output_url', None)
+        self.error_url = kwargs.get('error_url', None)
+        self.url = kwargs.get('url', None)
+        self.job_name = kwargs.get('job_name', None)
+        self.trigger = kwargs.get('trigger', None)
 
 
 class TriggeredWebJob(ProxyOnlyResource):
@@ -14404,10 +15610,8 @@ class TriggeredWebJob(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param latest_run: Latest job run information.
-    :type latest_run: ~azure.mgmt.web.v2020_09_01.models.TriggeredJobRun
+    :type latest_run: ~azure.mgmt.web.v2020_12_01.models.TriggeredJobRun
     :param history_url: History URL.
     :type history_url: str
     :param scheduler_logs_url: Scheduler Logs URL.
@@ -14420,7 +15624,7 @@ class TriggeredWebJob(ProxyOnlyResource):
     :type extra_info_url: str
     :param web_job_type: Job type. Possible values include: 'Continuous',
      'Triggered'
-    :type web_job_type: str or ~azure.mgmt.web.v2020_09_01.models.WebJobType
+    :type web_job_type: str or ~azure.mgmt.web.v2020_12_01.models.WebJobType
     :param error: Error information.
     :type error: str
     :param using_sdk: Using SDK?
@@ -14440,7 +15644,6 @@ class TriggeredWebJob(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'latest_run': {'key': 'properties.latest_run', 'type': 'TriggeredJobRun'},
         'history_url': {'key': 'properties.history_url', 'type': 'str'},
         'scheduler_logs_url': {'key': 'properties.scheduler_logs_url', 'type': 'str'},
@@ -14453,22 +15656,22 @@ class TriggeredWebJob(ProxyOnlyResource):
         'settings': {'key': 'properties.settings', 'type': '{object}'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, latest_run=None, history_url: str=None, scheduler_logs_url: str=None, run_command: str=None, url: str=None, extra_info_url: str=None, web_job_type=None, error: str=None, using_sdk: bool=None, settings=None, **kwargs) -> None:
-        super(TriggeredWebJob, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.latest_run = latest_run
-        self.history_url = history_url
-        self.scheduler_logs_url = scheduler_logs_url
-        self.run_command = run_command
-        self.url = url
-        self.extra_info_url = extra_info_url
-        self.web_job_type = web_job_type
-        self.error = error
-        self.using_sdk = using_sdk
-        self.settings = settings
+    def __init__(self, **kwargs):
+        super(TriggeredWebJob, self).__init__(**kwargs)
+        self.latest_run = kwargs.get('latest_run', None)
+        self.history_url = kwargs.get('history_url', None)
+        self.scheduler_logs_url = kwargs.get('scheduler_logs_url', None)
+        self.run_command = kwargs.get('run_command', None)
+        self.url = kwargs.get('url', None)
+        self.extra_info_url = kwargs.get('extra_info_url', None)
+        self.web_job_type = kwargs.get('web_job_type', None)
+        self.error = kwargs.get('error', None)
+        self.using_sdk = kwargs.get('using_sdk', None)
+        self.settings = kwargs.get('settings', None)
 
 
 class Twitter(ProxyOnlyResource):
-    """Twitter.
+    """The configuration settings of the Twitter provider.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -14481,12 +15684,12 @@ class Twitter(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param enabled:
+    :param enabled: <code>false</code> if the Twitter provider should not be
+     enabled despite the set registration; otherwise, <code>true</code>.
     :type enabled: bool
-    :param registration:
-    :type registration: ~azure.mgmt.web.v2020_09_01.models.TwitterRegistration
+    :param registration: The configuration settings of the app registration
+     for the Twitter provider.
+    :type registration: ~azure.mgmt.web.v2020_12_01.models.TwitterRegistration
     """
 
     _validation = {
@@ -14500,19 +15703,19 @@ class Twitter(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'registration': {'key': 'properties.registration', 'type': 'TwitterRegistration'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, enabled: bool=None, registration=None, **kwargs) -> None:
-        super(Twitter, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.enabled = enabled
-        self.registration = registration
+    def __init__(self, **kwargs):
+        super(Twitter, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.registration = kwargs.get('registration', None)
 
 
 class TwitterRegistration(ProxyOnlyResource):
-    """TwitterRegistration.
+    """The configuration settings of the app registration for the Twitter
+    provider.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -14525,11 +15728,14 @@ class TwitterRegistration(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
-    :param consumer_key:
+    :param consumer_key: The OAuth 1.0a consumer key of the Twitter
+     application used for sign-in.
+     This setting is required for enabling Twitter Sign-In.
+     Twitter Sign-In documentation: https://dev.twitter.com/web/sign-in
     :type consumer_key: str
-    :param consumer_secret_setting_name:
+    :param consumer_secret_setting_name: The app setting name that contains
+     the OAuth 1.0a consumer secret of the Twitter
+     application used for sign-in.
     :type consumer_secret_setting_name: str
     """
 
@@ -14544,15 +15750,14 @@ class TwitterRegistration(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'consumer_key': {'key': 'properties.consumerKey', 'type': 'str'},
         'consumer_secret_setting_name': {'key': 'properties.consumerSecretSettingName', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, consumer_key: str=None, consumer_secret_setting_name: str=None, **kwargs) -> None:
-        super(TwitterRegistration, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.consumer_key = consumer_key
-        self.consumer_secret_setting_name = consumer_secret_setting_name
+    def __init__(self, **kwargs):
+        super(TwitterRegistration, self).__init__(**kwargs)
+        self.consumer_key = kwargs.get('consumer_key', None)
+        self.consumer_secret_setting_name = kwargs.get('consumer_secret_setting_name', None)
 
 
 class Usage(ProxyOnlyResource):
@@ -14569,8 +15774,6 @@ class Usage(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :ivar display_name: Friendly name shown in the UI.
     :vartype display_name: str
     :ivar resource_name: Name of the quota resource.
@@ -14586,7 +15789,7 @@ class Usage(ProxyOnlyResource):
     :ivar compute_mode: Compute mode used for this usage. Possible values
      include: 'Shared', 'Dedicated', 'Dynamic'
     :vartype compute_mode: str or
-     ~azure.mgmt.web.v2020_09_01.models.ComputeModeOptions
+     ~azure.mgmt.web.v2020_12_01.models.ComputeModeOptions
     :ivar site_mode: Site mode used for this usage.
     :vartype site_mode: str
     """
@@ -14610,7 +15813,6 @@ class Usage(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'resource_name': {'key': 'properties.resourceName', 'type': 'str'},
         'unit': {'key': 'properties.unit', 'type': 'str'},
@@ -14621,8 +15823,8 @@ class Usage(ProxyOnlyResource):
         'site_mode': {'key': 'properties.siteMode', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, **kwargs) -> None:
-        super(Usage, self).__init__(kind=kind, system_data=system_data, **kwargs)
+    def __init__(self, **kwargs):
+        super(Usage, self).__init__(**kwargs)
         self.display_name = None
         self.resource_name = None
         self.unit = None
@@ -14649,8 +15851,6 @@ class User(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param publishing_user_name: Required. Username used for publishing.
     :type publishing_user_name: str
     :param publishing_password: Password used for publishing.
@@ -14676,7 +15876,6 @@ class User(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'publishing_user_name': {'key': 'properties.publishingUserName', 'type': 'str'},
         'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str'},
         'publishing_password_hash': {'key': 'properties.publishingPasswordHash', 'type': 'str'},
@@ -14684,13 +15883,13 @@ class User(ProxyOnlyResource):
         'scm_uri': {'key': 'properties.scmUri', 'type': 'str'},
     }
 
-    def __init__(self, *, publishing_user_name: str, kind: str=None, system_data=None, publishing_password: str=None, publishing_password_hash: str=None, publishing_password_hash_salt: str=None, scm_uri: str=None, **kwargs) -> None:
-        super(User, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.publishing_user_name = publishing_user_name
-        self.publishing_password = publishing_password
-        self.publishing_password_hash = publishing_password_hash
-        self.publishing_password_hash_salt = publishing_password_hash_salt
-        self.scm_uri = scm_uri
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        self.publishing_user_name = kwargs.get('publishing_user_name', None)
+        self.publishing_password = kwargs.get('publishing_password', None)
+        self.publishing_password_hash = kwargs.get('publishing_password_hash', None)
+        self.publishing_password_hash_salt = kwargs.get('publishing_password_hash_salt', None)
+        self.scm_uri = kwargs.get('scm_uri', None)
 
 
 class ValidateRequest(Model):
@@ -14701,9 +15900,9 @@ class ValidateRequest(Model):
     :param name: Required. Resource name to verify.
     :type name: str
     :param type: Required. Resource type used for verification. Possible
-     values include: 'ServerFarm', 'Site'
+     values include: 'ServerFarm', 'Site', 'Microsoft.Web/hostingEnvironments'
     :type type: str or
-     ~azure.mgmt.web.v2020_09_01.models.ValidateResourceTypes
+     ~azure.mgmt.web.v2020_12_01.models.ValidateResourceTypes
     :param location: Required. Expected location of the resource.
     :type location: str
     :param server_farm_id: ARM resource ID of an App Service plan that would
@@ -14739,6 +15938,9 @@ class ValidateRequest(Model):
     :type container_image_tag: str
     :param container_image_platform: Platform (windows or linux)
     :type container_image_platform: str
+    :param app_service_environment: App Service Environment Properties
+    :type app_service_environment:
+     ~azure.mgmt.web.v2020_12_01.models.AppServiceEnvironment
     """
 
     _validation = {
@@ -14765,26 +15967,28 @@ class ValidateRequest(Model):
         'container_image_repository': {'key': 'properties.containerImageRepository', 'type': 'str'},
         'container_image_tag': {'key': 'properties.containerImageTag', 'type': 'str'},
         'container_image_platform': {'key': 'properties.containerImagePlatform', 'type': 'str'},
+        'app_service_environment': {'key': 'properties.appServiceEnvironment', 'type': 'AppServiceEnvironment'},
     }
 
-    def __init__(self, *, name: str, type, location: str, server_farm_id: str=None, sku_name: str=None, need_linux_workers: bool=None, is_spot: bool=None, capacity: int=None, hosting_environment: str=None, is_xenon: bool=None, container_registry_base_url: str=None, container_registry_username: str=None, container_registry_password: str=None, container_image_repository: str=None, container_image_tag: str=None, container_image_platform: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ValidateRequest, self).__init__(**kwargs)
-        self.name = name
-        self.type = type
-        self.location = location
-        self.server_farm_id = server_farm_id
-        self.sku_name = sku_name
-        self.need_linux_workers = need_linux_workers
-        self.is_spot = is_spot
-        self.capacity = capacity
-        self.hosting_environment = hosting_environment
-        self.is_xenon = is_xenon
-        self.container_registry_base_url = container_registry_base_url
-        self.container_registry_username = container_registry_username
-        self.container_registry_password = container_registry_password
-        self.container_image_repository = container_image_repository
-        self.container_image_tag = container_image_tag
-        self.container_image_platform = container_image_platform
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.location = kwargs.get('location', None)
+        self.server_farm_id = kwargs.get('server_farm_id', None)
+        self.sku_name = kwargs.get('sku_name', None)
+        self.need_linux_workers = kwargs.get('need_linux_workers', None)
+        self.is_spot = kwargs.get('is_spot', None)
+        self.capacity = kwargs.get('capacity', None)
+        self.hosting_environment = kwargs.get('hosting_environment', None)
+        self.is_xenon = kwargs.get('is_xenon', None)
+        self.container_registry_base_url = kwargs.get('container_registry_base_url', None)
+        self.container_registry_username = kwargs.get('container_registry_username', None)
+        self.container_registry_password = kwargs.get('container_registry_password', None)
+        self.container_image_repository = kwargs.get('container_image_repository', None)
+        self.container_image_tag = kwargs.get('container_image_tag', None)
+        self.container_image_platform = kwargs.get('container_image_platform', None)
+        self.app_service_environment = kwargs.get('app_service_environment', None)
 
 
 class ValidateResponse(Model):
@@ -14793,7 +15997,7 @@ class ValidateResponse(Model):
     :param status: Result of validation.
     :type status: str
     :param error: Error details for the case when validation fails.
-    :type error: ~azure.mgmt.web.v2020_09_01.models.ValidateResponseError
+    :type error: ~azure.mgmt.web.v2020_12_01.models.ValidateResponseError
     """
 
     _attribute_map = {
@@ -14801,10 +16005,10 @@ class ValidateResponse(Model):
         'error': {'key': 'error', 'type': 'ValidateResponseError'},
     }
 
-    def __init__(self, *, status: str=None, error=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ValidateResponse, self).__init__(**kwargs)
-        self.status = status
-        self.error = error
+        self.status = kwargs.get('status', None)
+        self.error = kwargs.get('error', None)
 
 
 class ValidateResponseError(Model):
@@ -14821,10 +16025,10 @@ class ValidateResponseError(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ValidateResponseError, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
 
 
 class VirtualApplication(Model):
@@ -14839,7 +16043,7 @@ class VirtualApplication(Model):
     :type preload_enabled: bool
     :param virtual_directories: Virtual directories for virtual application.
     :type virtual_directories:
-     list[~azure.mgmt.web.v2020_09_01.models.VirtualDirectory]
+     list[~azure.mgmt.web.v2020_12_01.models.VirtualDirectory]
     """
 
     _attribute_map = {
@@ -14849,12 +16053,12 @@ class VirtualApplication(Model):
         'virtual_directories': {'key': 'virtualDirectories', 'type': '[VirtualDirectory]'},
     }
 
-    def __init__(self, *, virtual_path: str=None, physical_path: str=None, preload_enabled: bool=None, virtual_directories=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(VirtualApplication, self).__init__(**kwargs)
-        self.virtual_path = virtual_path
-        self.physical_path = physical_path
-        self.preload_enabled = preload_enabled
-        self.virtual_directories = virtual_directories
+        self.virtual_path = kwargs.get('virtual_path', None)
+        self.physical_path = kwargs.get('physical_path', None)
+        self.preload_enabled = kwargs.get('preload_enabled', None)
+        self.virtual_directories = kwargs.get('virtual_directories', None)
 
 
 class VirtualDirectory(Model):
@@ -14871,10 +16075,10 @@ class VirtualDirectory(Model):
         'physical_path': {'key': 'physicalPath', 'type': 'str'},
     }
 
-    def __init__(self, *, virtual_path: str=None, physical_path: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(VirtualDirectory, self).__init__(**kwargs)
-        self.virtual_path = virtual_path
-        self.physical_path = physical_path
+        self.virtual_path = kwargs.get('virtual_path', None)
+        self.physical_path = kwargs.get('physical_path', None)
 
 
 class VirtualIPMapping(Model):
@@ -14900,13 +16104,13 @@ class VirtualIPMapping(Model):
         'service_name': {'key': 'serviceName', 'type': 'str'},
     }
 
-    def __init__(self, *, virtual_ip: str=None, internal_http_port: int=None, internal_https_port: int=None, in_use: bool=None, service_name: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(VirtualIPMapping, self).__init__(**kwargs)
-        self.virtual_ip = virtual_ip
-        self.internal_http_port = internal_http_port
-        self.internal_https_port = internal_https_port
-        self.in_use = in_use
-        self.service_name = service_name
+        self.virtual_ip = kwargs.get('virtual_ip', None)
+        self.internal_http_port = kwargs.get('internal_http_port', None)
+        self.internal_https_port = kwargs.get('internal_https_port', None)
+        self.in_use = kwargs.get('in_use', None)
+        self.service_name = kwargs.get('service_name', None)
 
 
 class VirtualNetworkProfile(Model):
@@ -14915,7 +16119,9 @@ class VirtualNetworkProfile(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource id of the Virtual Network.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Resource id of the Virtual Network.
     :type id: str
     :ivar name: Name of the Virtual Network (read-only).
     :vartype name: str
@@ -14926,6 +16132,7 @@ class VirtualNetworkProfile(Model):
     """
 
     _validation = {
+        'id': {'required': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -14937,12 +16144,12 @@ class VirtualNetworkProfile(Model):
         'subnet': {'key': 'subnet', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, subnet: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(VirtualNetworkProfile, self).__init__(**kwargs)
-        self.id = id
+        self.id = kwargs.get('id', None)
         self.name = None
         self.type = None
-        self.subnet = subnet
+        self.subnet = kwargs.get('subnet', None)
 
 
 class VnetGateway(ProxyOnlyResource):
@@ -14962,8 +16169,6 @@ class VnetGateway(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param vnet_name: The Virtual Network name.
     :type vnet_name: str
     :param vpn_package_uri: Required. The URI where the VPN package can be
@@ -14983,15 +16188,14 @@ class VnetGateway(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
         'vpn_package_uri': {'key': 'properties.vpnPackageUri', 'type': 'str'},
     }
 
-    def __init__(self, *, vpn_package_uri: str, kind: str=None, system_data=None, vnet_name: str=None, **kwargs) -> None:
-        super(VnetGateway, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.vnet_name = vnet_name
-        self.vpn_package_uri = vpn_package_uri
+    def __init__(self, **kwargs):
+        super(VnetGateway, self).__init__(**kwargs)
+        self.vnet_name = kwargs.get('vnet_name', None)
+        self.vpn_package_uri = kwargs.get('vpn_package_uri', None)
 
 
 class VnetInfo(ProxyOnlyResource):
@@ -15008,8 +16212,6 @@ class VnetInfo(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param vnet_resource_id: The Virtual Network's resource ID.
     :type vnet_resource_id: str
     :ivar cert_thumbprint: The client certificate thumbprint.
@@ -15019,7 +16221,7 @@ class VnetInfo(ProxyOnlyResource):
      Point-To-Site VPN connection.
     :type cert_blob: str
     :ivar routes: The routes that this Virtual Network connection uses.
-    :vartype routes: list[~azure.mgmt.web.v2020_09_01.models.VnetRoute]
+    :vartype routes: list[~azure.mgmt.web.v2020_12_01.models.VnetRoute]
     :ivar resync_required: <code>true</code> if a resync is required;
      otherwise, <code>false</code>.
     :vartype resync_required: bool
@@ -15044,7 +16246,6 @@ class VnetInfo(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'vnet_resource_id': {'key': 'properties.vnetResourceId', 'type': 'str'},
         'cert_thumbprint': {'key': 'properties.certThumbprint', 'type': 'str'},
         'cert_blob': {'key': 'properties.certBlob', 'type': 'str'},
@@ -15054,15 +16255,15 @@ class VnetInfo(ProxyOnlyResource):
         'is_swift': {'key': 'properties.isSwift', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, vnet_resource_id: str=None, cert_blob: str=None, dns_servers: str=None, is_swift: bool=None, **kwargs) -> None:
-        super(VnetInfo, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.vnet_resource_id = vnet_resource_id
+    def __init__(self, **kwargs):
+        super(VnetInfo, self).__init__(**kwargs)
+        self.vnet_resource_id = kwargs.get('vnet_resource_id', None)
         self.cert_thumbprint = None
-        self.cert_blob = cert_blob
+        self.cert_blob = kwargs.get('cert_blob', None)
         self.routes = None
         self.resync_required = None
-        self.dns_servers = dns_servers
-        self.is_swift = is_swift
+        self.dns_servers = kwargs.get('dns_servers', None)
+        self.is_swift = kwargs.get('is_swift', None)
 
 
 class VnetParameters(ProxyOnlyResource):
@@ -15079,14 +16280,14 @@ class VnetParameters(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param vnet_resource_group: The Resource Group of the VNET to be validated
     :type vnet_resource_group: str
     :param vnet_name: The name of the VNET to be validated
     :type vnet_name: str
     :param vnet_subnet_name: The subnet name to be validated
     :type vnet_subnet_name: str
+    :param subnet_resource_id: The ARM Resource ID of the subnet to validate
+    :type subnet_resource_id: str
     """
 
     _validation = {
@@ -15100,17 +16301,18 @@ class VnetParameters(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'vnet_resource_group': {'key': 'properties.vnetResourceGroup', 'type': 'str'},
         'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
         'vnet_subnet_name': {'key': 'properties.vnetSubnetName', 'type': 'str'},
+        'subnet_resource_id': {'key': 'properties.subnetResourceId', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, vnet_resource_group: str=None, vnet_name: str=None, vnet_subnet_name: str=None, **kwargs) -> None:
-        super(VnetParameters, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.vnet_resource_group = vnet_resource_group
-        self.vnet_name = vnet_name
-        self.vnet_subnet_name = vnet_subnet_name
+    def __init__(self, **kwargs):
+        super(VnetParameters, self).__init__(**kwargs)
+        self.vnet_resource_group = kwargs.get('vnet_resource_group', None)
+        self.vnet_name = kwargs.get('vnet_name', None)
+        self.vnet_subnet_name = kwargs.get('vnet_subnet_name', None)
+        self.subnet_resource_id = kwargs.get('subnet_resource_id', None)
 
 
 class VnetRoute(ProxyOnlyResource):
@@ -15128,8 +16330,6 @@ class VnetRoute(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param start_address: The starting address for this route. This may also
      include a CIDR notation, in which case the end address must not be
      specified.
@@ -15144,7 +16344,7 @@ class VnetRoute(ProxyOnlyResource):
      STATIC - Static route set on the app only
      These values will be used for syncing an app's routes with those from a
      Virtual Network. Possible values include: 'DEFAULT', 'INHERITED', 'STATIC'
-    :type route_type: str or ~azure.mgmt.web.v2020_09_01.models.RouteType
+    :type route_type: str or ~azure.mgmt.web.v2020_12_01.models.RouteType
     """
 
     _validation = {
@@ -15158,17 +16358,16 @@ class VnetRoute(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'start_address': {'key': 'properties.startAddress', 'type': 'str'},
         'end_address': {'key': 'properties.endAddress', 'type': 'str'},
         'route_type': {'key': 'properties.routeType', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, start_address: str=None, end_address: str=None, route_type=None, **kwargs) -> None:
-        super(VnetRoute, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.start_address = start_address
-        self.end_address = end_address
-        self.route_type = route_type
+    def __init__(self, **kwargs):
+        super(VnetRoute, self).__init__(**kwargs)
+        self.start_address = kwargs.get('start_address', None)
+        self.end_address = kwargs.get('end_address', None)
+        self.route_type = kwargs.get('route_type', None)
 
 
 class VnetValidationFailureDetails(ProxyOnlyResource):
@@ -15185,13 +16384,16 @@ class VnetValidationFailureDetails(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
+    :param message: Text describing the validation outcome.
+    :type message: str
     :param failed: A flag describing whether or not validation failed.
     :type failed: bool
     :param failed_tests: A list of tests that failed in the validation.
     :type failed_tests:
-     list[~azure.mgmt.web.v2020_09_01.models.VnetValidationTestFailure]
+     list[~azure.mgmt.web.v2020_12_01.models.VnetValidationTestFailure]
+    :param warnings: A list of warnings generated during validation.
+    :type warnings:
+     list[~azure.mgmt.web.v2020_12_01.models.VnetValidationTestFailure]
     """
 
     _validation = {
@@ -15205,15 +16407,18 @@ class VnetValidationFailureDetails(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'message': {'key': 'properties.message', 'type': 'str'},
         'failed': {'key': 'properties.failed', 'type': 'bool'},
         'failed_tests': {'key': 'properties.failedTests', 'type': '[VnetValidationTestFailure]'},
+        'warnings': {'key': 'properties.warnings', 'type': '[VnetValidationTestFailure]'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, failed: bool=None, failed_tests=None, **kwargs) -> None:
-        super(VnetValidationFailureDetails, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.failed = failed
-        self.failed_tests = failed_tests
+    def __init__(self, **kwargs):
+        super(VnetValidationFailureDetails, self).__init__(**kwargs)
+        self.message = kwargs.get('message', None)
+        self.failed = kwargs.get('failed', None)
+        self.failed_tests = kwargs.get('failed_tests', None)
+        self.warnings = kwargs.get('warnings', None)
 
 
 class VnetValidationTestFailure(ProxyOnlyResource):
@@ -15230,8 +16435,6 @@ class VnetValidationTestFailure(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param test_name: The name of the test that failed.
     :type test_name: str
     :param details: The details of what caused the failure, e.g. the blocking
@@ -15250,15 +16453,14 @@ class VnetValidationTestFailure(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'test_name': {'key': 'properties.testName', 'type': 'str'},
         'details': {'key': 'properties.details', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, test_name: str=None, details: str=None, **kwargs) -> None:
-        super(VnetValidationTestFailure, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.test_name = test_name
-        self.details = details
+    def __init__(self, **kwargs):
+        super(VnetValidationTestFailure, self).__init__(**kwargs)
+        self.test_name = kwargs.get('test_name', None)
+        self.details = kwargs.get('details', None)
 
 
 class WebAppCollection(Model):
@@ -15270,7 +16472,7 @@ class WebAppCollection(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. Collection of resources.
-    :type value: list[~azure.mgmt.web.v2020_09_01.models.Site]
+    :type value: list[~azure.mgmt.web.v2020_12_01.models.Site]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
@@ -15285,10 +16487,262 @@ class WebAppCollection(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, *, value, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(WebAppCollection, self).__init__(**kwargs)
-        self.value = value
+        self.value = kwargs.get('value', None)
         self.next_link = None
+
+
+class WebAppMajorVersion(Model):
+    """Web App stack major version.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar display_text: Web App stack major version (display only).
+    :vartype display_text: str
+    :ivar value: Web App stack major version name.
+    :vartype value: str
+    :ivar minor_versions: Minor versions associated with the major version.
+    :vartype minor_versions:
+     list[~azure.mgmt.web.v2020_12_01.models.WebAppMinorVersion]
+    """
+
+    _validation = {
+        'display_text': {'readonly': True},
+        'value': {'readonly': True},
+        'minor_versions': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'display_text': {'key': 'displayText', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+        'minor_versions': {'key': 'minorVersions', 'type': '[WebAppMinorVersion]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WebAppMajorVersion, self).__init__(**kwargs)
+        self.display_text = None
+        self.value = None
+        self.minor_versions = None
+
+
+class WebAppMinorVersion(Model):
+    """Web App stack minor version.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar display_text: Web App stack minor version (display only).
+    :vartype display_text: str
+    :ivar value: Web App stack major version name.
+    :vartype value: str
+    :ivar stack_settings: Settings associated with the minor version.
+    :vartype stack_settings: ~azure.mgmt.web.v2020_12_01.models.WebAppRuntimes
+    """
+
+    _validation = {
+        'display_text': {'readonly': True},
+        'value': {'readonly': True},
+        'stack_settings': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'display_text': {'key': 'displayText', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+        'stack_settings': {'key': 'stackSettings', 'type': 'WebAppRuntimes'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WebAppMinorVersion, self).__init__(**kwargs)
+        self.display_text = None
+        self.value = None
+        self.stack_settings = None
+
+
+class WebAppRuntimes(Model):
+    """Web App stack runtimes.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar linux_runtime_settings: Linux-specific settings associated with the
+     minor version.
+    :vartype linux_runtime_settings:
+     ~azure.mgmt.web.v2020_12_01.models.WebAppRuntimeSettings
+    :ivar windows_runtime_settings: Windows-specific settings associated with
+     the minor version.
+    :vartype windows_runtime_settings:
+     ~azure.mgmt.web.v2020_12_01.models.WebAppRuntimeSettings
+    :ivar linux_container_settings: Linux-specific settings associated with
+     the Java container minor version.
+    :vartype linux_container_settings:
+     ~azure.mgmt.web.v2020_12_01.models.LinuxJavaContainerSettings
+    :ivar windows_container_settings: Windows-specific settings associated
+     with the Java container minor version.
+    :vartype windows_container_settings:
+     ~azure.mgmt.web.v2020_12_01.models.WindowsJavaContainerSettings
+    """
+
+    _validation = {
+        'linux_runtime_settings': {'readonly': True},
+        'windows_runtime_settings': {'readonly': True},
+        'linux_container_settings': {'readonly': True},
+        'windows_container_settings': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'linux_runtime_settings': {'key': 'linuxRuntimeSettings', 'type': 'WebAppRuntimeSettings'},
+        'windows_runtime_settings': {'key': 'windowsRuntimeSettings', 'type': 'WebAppRuntimeSettings'},
+        'linux_container_settings': {'key': 'linuxContainerSettings', 'type': 'LinuxJavaContainerSettings'},
+        'windows_container_settings': {'key': 'windowsContainerSettings', 'type': 'WindowsJavaContainerSettings'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WebAppRuntimes, self).__init__(**kwargs)
+        self.linux_runtime_settings = None
+        self.windows_runtime_settings = None
+        self.linux_container_settings = None
+        self.windows_container_settings = None
+
+
+class WebAppRuntimeSettings(Model):
+    """Web App runtime settings.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar runtime_version: Web App stack minor version (runtime only).
+    :vartype runtime_version: str
+    :ivar remote_debugging_supported: <code>true</code> if remote debugging is
+     supported for the stack; otherwise, <code>false</code>.
+    :vartype remote_debugging_supported: bool
+    :ivar app_insights_settings: Application Insights settings associated with
+     the minor version.
+    :vartype app_insights_settings:
+     ~azure.mgmt.web.v2020_12_01.models.AppInsightsWebAppStackSettings
+    :ivar git_hub_action_settings: GitHub Actions settings associated with the
+     minor version.
+    :vartype git_hub_action_settings:
+     ~azure.mgmt.web.v2020_12_01.models.GitHubActionWebAppStackSettings
+    :ivar is_preview: <code>true</code> if the stack is in preview; otherwise,
+     <code>false</code>.
+    :vartype is_preview: bool
+    :ivar is_deprecated: <code>true</code> if the stack is deprecated;
+     otherwise, <code>false</code>.
+    :vartype is_deprecated: bool
+    :ivar is_hidden: <code>true</code> if the stack should be hidden;
+     otherwise, <code>false</code>.
+    :vartype is_hidden: bool
+    :ivar end_of_life_date: End-of-life date for the minor version.
+    :vartype end_of_life_date: datetime
+    :ivar is_auto_update: <code>true</code> if the stack version is
+     auto-updated; otherwise, <code>false</code>.
+    :vartype is_auto_update: bool
+    :ivar is_early_access: <code>true</code> if the minor version is
+     early-access; otherwise, <code>false</code>.
+    :vartype is_early_access: bool
+    """
+
+    _validation = {
+        'runtime_version': {'readonly': True},
+        'remote_debugging_supported': {'readonly': True},
+        'app_insights_settings': {'readonly': True},
+        'git_hub_action_settings': {'readonly': True},
+        'is_preview': {'readonly': True},
+        'is_deprecated': {'readonly': True},
+        'is_hidden': {'readonly': True},
+        'end_of_life_date': {'readonly': True},
+        'is_auto_update': {'readonly': True},
+        'is_early_access': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
+        'remote_debugging_supported': {'key': 'remoteDebuggingSupported', 'type': 'bool'},
+        'app_insights_settings': {'key': 'appInsightsSettings', 'type': 'AppInsightsWebAppStackSettings'},
+        'git_hub_action_settings': {'key': 'gitHubActionSettings', 'type': 'GitHubActionWebAppStackSettings'},
+        'is_preview': {'key': 'isPreview', 'type': 'bool'},
+        'is_deprecated': {'key': 'isDeprecated', 'type': 'bool'},
+        'is_hidden': {'key': 'isHidden', 'type': 'bool'},
+        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
+        'is_auto_update': {'key': 'isAutoUpdate', 'type': 'bool'},
+        'is_early_access': {'key': 'isEarlyAccess', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WebAppRuntimeSettings, self).__init__(**kwargs)
+        self.runtime_version = None
+        self.remote_debugging_supported = None
+        self.app_insights_settings = None
+        self.git_hub_action_settings = None
+        self.is_preview = None
+        self.is_deprecated = None
+        self.is_hidden = None
+        self.end_of_life_date = None
+        self.is_auto_update = None
+        self.is_early_access = None
+
+
+class WebAppStack(ProxyOnlyResource):
+    """Web App stack.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar location: Web App stack location.
+    :vartype location: str
+    :ivar display_text: Web App stack (display only).
+    :vartype display_text: str
+    :ivar value: Web App stack name.
+    :vartype value: str
+    :ivar major_versions: List of major versions available.
+    :vartype major_versions:
+     list[~azure.mgmt.web.v2020_12_01.models.WebAppMajorVersion]
+    :ivar preferred_os: Web App stack preferred OS. Possible values include:
+     'Windows', 'Linux'
+    :vartype preferred_os: str or
+     ~azure.mgmt.web.v2020_12_01.models.StackPreferredOs
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+        'display_text': {'readonly': True},
+        'value': {'readonly': True},
+        'major_versions': {'readonly': True},
+        'preferred_os': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'display_text': {'key': 'properties.displayText', 'type': 'str'},
+        'value': {'key': 'properties.value', 'type': 'str'},
+        'major_versions': {'key': 'properties.majorVersions', 'type': '[WebAppMajorVersion]'},
+        'preferred_os': {'key': 'properties.preferredOs', 'type': 'StackPreferredOs'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WebAppStack, self).__init__(**kwargs)
+        self.location = None
+        self.display_text = None
+        self.value = None
+        self.major_versions = None
+        self.preferred_os = None
 
 
 class WebJob(ProxyOnlyResource):
@@ -15305,8 +16759,6 @@ class WebJob(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param run_command: Run command.
     :type run_command: str
     :param url: Job URL.
@@ -15315,7 +16767,7 @@ class WebJob(ProxyOnlyResource):
     :type extra_info_url: str
     :param web_job_type: Job type. Possible values include: 'Continuous',
      'Triggered'
-    :type web_job_type: str or ~azure.mgmt.web.v2020_09_01.models.WebJobType
+    :type web_job_type: str or ~azure.mgmt.web.v2020_12_01.models.WebJobType
     :param error: Error information.
     :type error: str
     :param using_sdk: Using SDK?
@@ -15335,7 +16787,6 @@ class WebJob(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'run_command': {'key': 'properties.run_command', 'type': 'str'},
         'url': {'key': 'properties.url', 'type': 'str'},
         'extra_info_url': {'key': 'properties.extra_info_url', 'type': 'str'},
@@ -15345,15 +16796,15 @@ class WebJob(ProxyOnlyResource):
         'settings': {'key': 'properties.settings', 'type': '{object}'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, run_command: str=None, url: str=None, extra_info_url: str=None, web_job_type=None, error: str=None, using_sdk: bool=None, settings=None, **kwargs) -> None:
-        super(WebJob, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.run_command = run_command
-        self.url = url
-        self.extra_info_url = extra_info_url
-        self.web_job_type = web_job_type
-        self.error = error
-        self.using_sdk = using_sdk
-        self.settings = settings
+    def __init__(self, **kwargs):
+        super(WebJob, self).__init__(**kwargs)
+        self.run_command = kwargs.get('run_command', None)
+        self.url = kwargs.get('url', None)
+        self.extra_info_url = kwargs.get('extra_info_url', None)
+        self.web_job_type = kwargs.get('web_job_type', None)
+        self.error = kwargs.get('error', None)
+        self.using_sdk = kwargs.get('using_sdk', None)
+        self.settings = kwargs.get('settings', None)
 
 
 class WebSiteInstanceStatus(ProxyOnlyResource):
@@ -15370,10 +16821,8 @@ class WebSiteInstanceStatus(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param state: Possible values include: 'READY', 'STOPPED', 'UNKNOWN'
-    :type state: str or ~azure.mgmt.web.v2020_09_01.models.SiteRuntimeState
+    :type state: str or ~azure.mgmt.web.v2020_12_01.models.SiteRuntimeState
     :param status_url: Link to the GetStatusApi in Kudu
     :type status_url: str
     :param detector_url: Link to the Diagnose and Solve Portal
@@ -15384,7 +16833,7 @@ class WebSiteInstanceStatus(ProxyOnlyResource):
     :type health_check_url: str
     :param containers:
     :type containers: dict[str,
-     ~azure.mgmt.web.v2020_09_01.models.ContainerInfo]
+     ~azure.mgmt.web.v2020_12_01.models.ContainerInfo]
     """
 
     _validation = {
@@ -15398,7 +16847,6 @@ class WebSiteInstanceStatus(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'state': {'key': 'properties.state', 'type': 'SiteRuntimeState'},
         'status_url': {'key': 'properties.statusUrl', 'type': 'str'},
         'detector_url': {'key': 'properties.detectorUrl', 'type': 'str'},
@@ -15407,56 +16855,77 @@ class WebSiteInstanceStatus(ProxyOnlyResource):
         'containers': {'key': 'properties.containers', 'type': '{ContainerInfo}'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, state=None, status_url: str=None, detector_url: str=None, console_url: str=None, health_check_url: str=None, containers=None, **kwargs) -> None:
-        super(WebSiteInstanceStatus, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.state = state
-        self.status_url = status_url
-        self.detector_url = detector_url
-        self.console_url = console_url
-        self.health_check_url = health_check_url
-        self.containers = containers
+    def __init__(self, **kwargs):
+        super(WebSiteInstanceStatus, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.status_url = kwargs.get('status_url', None)
+        self.detector_url = kwargs.get('detector_url', None)
+        self.console_url = kwargs.get('console_url', None)
+        self.health_check_url = kwargs.get('health_check_url', None)
+        self.containers = kwargs.get('containers', None)
 
 
-class WorkerPool(Model):
-    """Worker pool of an App Service Environment.
+class WindowsJavaContainerSettings(Model):
+    """Windows Java Container settings.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param worker_size_id: Worker size ID for referencing this worker pool.
-    :type worker_size_id: int
-    :param compute_mode: Shared or dedicated app hosting. Possible values
-     include: 'Shared', 'Dedicated', 'Dynamic'
-    :type compute_mode: str or
-     ~azure.mgmt.web.v2020_09_01.models.ComputeModeOptions
-    :param worker_size: VM size of the worker pool instances.
-    :type worker_size: str
-    :param worker_count: Number of instances in the worker pool.
-    :type worker_count: int
-    :ivar instance_names: Names of all instances in the worker pool (read
-     only).
-    :vartype instance_names: list[str]
+    :ivar java_container: Java container (runtime only).
+    :vartype java_container: str
+    :ivar java_container_version: Java container version (runtime only).
+    :vartype java_container_version: str
+    :ivar is_preview: <code>true</code> if the stack is in preview; otherwise,
+     <code>false</code>.
+    :vartype is_preview: bool
+    :ivar is_deprecated: <code>true</code> if the stack is deprecated;
+     otherwise, <code>false</code>.
+    :vartype is_deprecated: bool
+    :ivar is_hidden: <code>true</code> if the stack should be hidden;
+     otherwise, <code>false</code>.
+    :vartype is_hidden: bool
+    :ivar end_of_life_date: End-of-life date for the minor version.
+    :vartype end_of_life_date: datetime
+    :ivar is_auto_update: <code>true</code> if the stack version is
+     auto-updated; otherwise, <code>false</code>.
+    :vartype is_auto_update: bool
+    :ivar is_early_access: <code>true</code> if the minor version is
+     early-access; otherwise, <code>false</code>.
+    :vartype is_early_access: bool
     """
 
     _validation = {
-        'instance_names': {'readonly': True},
+        'java_container': {'readonly': True},
+        'java_container_version': {'readonly': True},
+        'is_preview': {'readonly': True},
+        'is_deprecated': {'readonly': True},
+        'is_hidden': {'readonly': True},
+        'end_of_life_date': {'readonly': True},
+        'is_auto_update': {'readonly': True},
+        'is_early_access': {'readonly': True},
     }
 
     _attribute_map = {
-        'worker_size_id': {'key': 'workerSizeId', 'type': 'int'},
-        'compute_mode': {'key': 'computeMode', 'type': 'ComputeModeOptions'},
-        'worker_size': {'key': 'workerSize', 'type': 'str'},
-        'worker_count': {'key': 'workerCount', 'type': 'int'},
-        'instance_names': {'key': 'instanceNames', 'type': '[str]'},
+        'java_container': {'key': 'javaContainer', 'type': 'str'},
+        'java_container_version': {'key': 'javaContainerVersion', 'type': 'str'},
+        'is_preview': {'key': 'isPreview', 'type': 'bool'},
+        'is_deprecated': {'key': 'isDeprecated', 'type': 'bool'},
+        'is_hidden': {'key': 'isHidden', 'type': 'bool'},
+        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
+        'is_auto_update': {'key': 'isAutoUpdate', 'type': 'bool'},
+        'is_early_access': {'key': 'isEarlyAccess', 'type': 'bool'},
     }
 
-    def __init__(self, *, worker_size_id: int=None, compute_mode=None, worker_size: str=None, worker_count: int=None, **kwargs) -> None:
-        super(WorkerPool, self).__init__(**kwargs)
-        self.worker_size_id = worker_size_id
-        self.compute_mode = compute_mode
-        self.worker_size = worker_size
-        self.worker_count = worker_count
-        self.instance_names = None
+    def __init__(self, **kwargs):
+        super(WindowsJavaContainerSettings, self).__init__(**kwargs)
+        self.java_container = None
+        self.java_container_version = None
+        self.is_preview = None
+        self.is_deprecated = None
+        self.is_hidden = None
+        self.end_of_life_date = None
+        self.is_auto_update = None
+        self.is_early_access = None
 
 
 class WorkerPoolResource(ProxyOnlyResource):
@@ -15473,14 +16942,12 @@ class WorkerPoolResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: The system metadata relating to this resource.
-    :type system_data: ~azure.mgmt.web.v2020_09_01.models.SystemData
     :param worker_size_id: Worker size ID for referencing this worker pool.
     :type worker_size_id: int
     :param compute_mode: Shared or dedicated app hosting. Possible values
      include: 'Shared', 'Dedicated', 'Dynamic'
     :type compute_mode: str or
-     ~azure.mgmt.web.v2020_09_01.models.ComputeModeOptions
+     ~azure.mgmt.web.v2020_12_01.models.ComputeModeOptions
     :param worker_size: VM size of the worker pool instances.
     :type worker_size: str
     :param worker_count: Number of instances in the worker pool.
@@ -15489,7 +16956,7 @@ class WorkerPoolResource(ProxyOnlyResource):
      only).
     :vartype instance_names: list[str]
     :param sku:
-    :type sku: ~azure.mgmt.web.v2020_09_01.models.SkuDescription
+    :type sku: ~azure.mgmt.web.v2020_12_01.models.SkuDescription
     """
 
     _validation = {
@@ -15504,7 +16971,6 @@ class WorkerPoolResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'worker_size_id': {'key': 'properties.workerSizeId', 'type': 'int'},
         'compute_mode': {'key': 'properties.computeMode', 'type': 'ComputeModeOptions'},
         'worker_size': {'key': 'properties.workerSize', 'type': 'str'},
@@ -15513,11 +16979,11 @@ class WorkerPoolResource(ProxyOnlyResource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, *, kind: str=None, system_data=None, worker_size_id: int=None, compute_mode=None, worker_size: str=None, worker_count: int=None, sku=None, **kwargs) -> None:
-        super(WorkerPoolResource, self).__init__(kind=kind, system_data=system_data, **kwargs)
-        self.worker_size_id = worker_size_id
-        self.compute_mode = compute_mode
-        self.worker_size = worker_size
-        self.worker_count = worker_count
+    def __init__(self, **kwargs):
+        super(WorkerPoolResource, self).__init__(**kwargs)
+        self.worker_size_id = kwargs.get('worker_size_id', None)
+        self.compute_mode = kwargs.get('compute_mode', None)
+        self.worker_size = kwargs.get('worker_size', None)
+        self.worker_count = kwargs.get('worker_count', None)
         self.instance_names = None
-        self.sku = sku
+        self.sku = kwargs.get('sku', None)
