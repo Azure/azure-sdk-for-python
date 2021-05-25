@@ -1,13 +1,22 @@
 # Azure AgriFood Farming client library for Python
+FarmBeats is a B2B PaaS offering from Microsoft that makes it easy for AgriFood companies to build intelligent digital agriculture solutions on Azure. FarmBeats allows users to acquire, aggregate, and process agricultural data from various sources (farm equipment, weather, satellite) without the need to invest in deep data engineering resources.  Customers can build SaaS solutions on top of FarmBeats and leverage first class support for model building to generate insights at scale.
+
+Use FarmBeats client library for Python to do the following. 
+
+- Create & update farmers, farms, fields, seasonal fields and boundaries.
+- Ingest satellite and weather data for areas of interest.
+- Ingest farm operations data covering tilling, planting, harvesting and application of farm inputs.
+
+[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Changelog][change_log]
 
 ## Getting started
 
 ### Prerequisites
 
-- Python 2.7, or 3.6 or later is required to use this package.
-- You must have an [Azure subscription][azure_subscription] and an AgriFood resource to use this package.
-
-#### Create an AgriFood Resource
+To use this package, you must have:
+- Azure subscription - [Create a free account][azure_subscription]
+- AgriFood (FarmBeats) resource - [Install FarmBeats][install_farmbeats]
+- Python 2.7, 3.6 or later - [Install Python][python]
 
 ### Install the package
 
@@ -44,6 +53,23 @@ client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net
 ```
 
 ## Key concepts
+Basic understanding of below terms will help to get started with FarmBeats client library.
+
+### [Farm Hierarchy][farm_hierarchy]
+Farm hierarchy is a collection of below entities.
+- Farmer - is the custodian of all the agronomic data.
+- Farm - is a logical collection of fields and/or seasonal fields. They do not have any area associated with them.
+- Field - is a multi-polygon area. This is expected to be stable across seasons.
+- Seasonal field - is a multi-polygon area. To define a seasonal boundary we need the details of area (boundary), time (season) and crop. New seasonal fields are expected to be created for every growing season.
+- Boundary - is the actual multi-polygon area expressed as a geometry (in geojson). It is normally associated with a field or a seasonal field. Satellite, weather and farm operations data is linked to a boundary.
+- Cascade delete - Agronomic data is stored hierarchically with farmer as the root. The hierarchy includes Farmer -> Farms -> Fields -> Seasonal Fields -> Boundaries -> Associated data (satellite, weather, farm operations). Cascade delete refers to the process of deleting any node and its subtree. 
+    
+### [Scenes][scenes]
+Scenes refers to images normally ingested using satellite APIs. This includes raw bands and derived bands (Ex: NDVI). Scenes may also include spatial outputs of an inference or AI/ML model (Ex: LAI).
+
+### [Farm Operations][farm_operations_docs]
+Fam operations includes details pertaining to tilling, planting, application of pesticides & nutrients, and harvesting. This can either be manually pushed into FarmBeats using APIs or the same information can be pulled from farm equipment service providers like John Deere. 
+
 
 ## Examples
 
@@ -305,6 +331,9 @@ client.crops.get(crop_id="crop_id", logging_enable=True)
 
 ## Next steps
 
+### Additional documentation
+For more extensive documentation on the FarmBeats, see the [FarmBeats documentation][product_docs] on docs.microsoft.com.
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
@@ -314,15 +343,25 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information see the [Code of Conduct FAQ][coc_faq] or contact [opencode@microsoft.com][coc_contact] with any additional questions or comments.
 
 <!-- LINKS -->
-
-[azure_subscription]: https://azure.microsoft.com/free/
-[pip]: https://pypi.org/project/pip/
+[api_docs]: https://aka.ms/FarmBeatsAPIDocumentationPaaS
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
-[python_logging]: https://docs.python.org/3.5/library/logging.html
+[azure_subscription]: https://azure.microsoft.com/free/
+[change_log]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/CHANGELOG.md
 [cla]: https://cla.microsoft.com
-[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
+[coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
+[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential/
+[farm_hierarchy]: https://aka.ms/FarmBeatsFarmHierarchyDocs
+[farm_operations_docs]: https://aka.ms/FarmBeatsFarmOperationsDocumentation
+[install_farmbeats]: https://aka.ms/FarmBeatsInstallDocumentationPaaS
+[product_docs]: https://aka.ms/FarmBeatsProductDocumentationPaaS
+[pip]: https://pypi.org/project/pip/
+[pypi]: https://pypi.org/
+[python]: https://www.python.org/downloads/
+[python_logging]: https://docs.python.org/3.5/library/logging.html
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/samples/
+[scenes]: https://aka.ms/FarmBeatsSatellitePaaSDocumentation
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/
