@@ -472,7 +472,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-fr-product-docs]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview
 [python-fr-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
 [python-fr-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples
-[train-a-model-using-labeled-data]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/get-started-with-form-recognizer#train--analyze-a-custom-form
 
 [training_data]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
 [azure_subscription]: https://azure.microsoft.com/free/
