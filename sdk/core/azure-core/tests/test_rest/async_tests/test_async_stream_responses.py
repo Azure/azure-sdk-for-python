@@ -3,11 +3,12 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from azure.core.exceptions import HttpResponseError, ServiceRequestError
 import functools
 import os
 import json
 import pytest
-from azure.core.rest import AsyncHttpResponse, HttpRequest, ResponseClosedError, StreamConsumedError
+from azure.core.rest import StreamConsumedError, HttpRequest, ResponseClosedError, StreamConsumedError
 
 def _assert_stream_state(response, open):
     # if open is true, check the stream is open.
@@ -22,136 +23,190 @@ def _assert_stream_state(response, open):
         assert all(checks)
 
 @pytest.mark.asyncio
-async def test_iter_raw(async_client):
+async def test_iter_raw(client):
     request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
-    async with async_client.send_request(request, stream_response=True) as response:
+    async with client.send_request(request, stream=True) as response:
         raw = b""
-        for part in response.iter_raw():
+        async for part in response.iter_raw():
             raw += part
         assert raw == b"Hello, world!"
 
-# def test_iter_raw_on_iterable(async_client):
-#     request = HttpRequest("GET", "http://127.0.0.1:5000/streams/iterable")
+@pytest.mark.asyncio
+async def test_iter_raw_on_iterable(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/iterable")
 
-#     with async_client.send_request(request, stream_response=True) as response:
-#         raw = b""
-#         for part in response.iter_raw():
-#             raw += part
-#         assert raw == b"Hello, world!"
-# @pytest.mark.asyncio
-# async def test_iter_raw_with_chunk_size(send_request):
-#     await _iter_raw_with_chunk_size_helper(chunk_size=5, send_request=send_request)
-#     await _iter_raw_with_chunk_size_helper(chunk_size=13, send_request=send_request)
-#     await _iter_raw_with_chunk_size_helper(chunk_size=20, send_request=send_request)
+    async with client.send_request(request, stream=True) as response:
+        raw = b""
+        async for part in response.iter_raw():
+            raw += part
+        assert raw == b"Hello, world!"
 
-# @pytest.mark.asyncio
-# async def test_iter_raw_num_bytes_downloaded(send_request):
-#     response = await send_request(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
+@pytest.mark.asyncio
+async def test_iter_with_error(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/errors/403")
 
-#     num_downloaded = response.num_bytes_downloaded
-#     async for chunk in response.iter_raw():
-#         assert len(chunk) == (response.num_bytes_downloaded - num_downloaded)
-#         num_downloaded = response.num_bytes_downloaded
+    async with client.send_request(request, stream=True) as response:
+        try:
+            response.raise_for_status()
+        except HttpResponseError as e:
+            pass
+    assert response.is_closed
 
-# async def _iter_bytes_with_chunk_size_helper(chunk_size, send_request):
-#     response = await send_request(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
-#     raw = b""
-#     async for chunk in response.iter_bytes(chunk_size=chunk_size):
-#         _assert_stream_state(response, open=True)
-#         raw += chunk
-#         assert len(chunk) <= chunk_size
-#     _assert_stream_state(response, open=False)
-#     assert raw == _read_jpeg_file()
+    try:
+        async with client.send_request(request, stream=True) as response:
+            response.raise_for_status()
+    except HttpResponseError as e:
+        pass
 
-# @pytest.mark.asyncio
-# async def test_iter_bytes(send_request):
-#     response = await send_request(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
-#     raw = b""
-#     async for chunk in response.iter_bytes():
-#         _assert_stream_state(response, open=True)
-#         raw += chunk
-#     _assert_stream_state(response, open=False)
-#     assert raw == _read_jpeg_file()
+    assert response.is_closed
 
-# @pytest.mark.asyncio
-# async def test_iter_bytes_with_chunk_size(send_request):
-#     await _iter_bytes_with_chunk_size_helper(chunk_size=5, send_request=send_request)
-#     await _iter_bytes_with_chunk_size_helper(chunk_size=13, send_request=send_request)
-#     await _iter_bytes_with_chunk_size_helper(chunk_size=20, send_request=send_request)
+    request = HttpRequest("GET", "http://doesNotExist")
+    with pytest.raises(ServiceRequestError):
+        async with (await client.send_request(request, stream=True)):
+            raise ValueError("Should error before entering")
+    assert response.is_closed
 
-# @pytest.mark.asyncio
-# async def test_iter_text(send_request):
-#     response = await send_request(HttpRequest("GET", "http://localhost:3000/streams/text"))
-#     raw = ""
-#     async for chunk in response.iter_text():
-#         _assert_stream_state(response, open=True)
-#         raw += chunk
-#     _assert_stream_state(response, open=False)
-#     # just going to verify that we got 10 stream chunks from the url
-#     assert len([r for r in raw.split("\n") if r]) == 10
+@pytest.mark.asyncio
+async def test_iter_raw_with_chunksize(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
 
-# async def _iter_text_with_chunk_size_helper(chunk_size, send_request):
-#     response = await send_request(HttpRequest("GET", "http://localhost:3000/streams/text"))
-#     raw = ""
-#     async for chunk in response.iter_text(chunk_size=chunk_size):
-#         _assert_stream_state(response, open=True)
-#         raw += chunk
-#         assert len(chunk) <= chunk_size
-#     _assert_stream_state(response, open=False)
-#     assert len([r for r in raw.split("\n") if r]) == 10
+    async with client.send_request(request, stream=True) as response:
+        parts = []
+        async for part in response.iter_raw(chunk_size=5):
+            parts.append(part)
+        assert parts == [b"Hello", b", wor", b"ld!"]
 
-# @pytest.mark.asyncio
-# async def test_iter_text_with_chunk_size(send_request):
-#     await _iter_text_with_chunk_size_helper(chunk_size=5, send_request=send_request)
-#     await _iter_text_with_chunk_size_helper(chunk_size=13, send_request=send_request)
-#     await _iter_text_with_chunk_size_helper(chunk_size=20, send_request=send_request)
+    async with client.send_request(request, stream=True) as response:
+        parts = []
+        async for part in response.iter_raw(chunk_size=13):
+            parts.append(part)
+        assert parts == [b"Hello, world!"]
 
-# @pytest.mark.asyncio
-# async def test_iter_lines(send_request):
-#     response = await send_request(HttpRequest("GET", "http://localhost:3000/streams/text"))
-#     lines = []
-#     async for chunk in response.iter_lines():
-#         _assert_stream_state(response, open=True)
-#         lines.append(chunk)
-#     _assert_stream_state(response, open=False)
-#     assert len(lines) == 10
-#     for line in lines:
-#         assert line == "Hello, world!\n"
+    async with client.send_request(request, stream=True) as response:
+        parts = []
+        async for part in response.iter_raw(chunk_size=20):
+            parts.append(part)
+        assert parts == [b"Hello, world!"]
+
+@pytest.mark.asyncio
+async def test_iter_raw_num_bytes_downloaded(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
+
+    async with client.send_request(request, stream=True) as response:
+        num_downloaded = response.num_bytes_downloaded
+        async for part in response.iter_raw():
+            assert len(part) == (response.num_bytes_downloaded - num_downloaded)
+            num_downloaded = response.num_bytes_downloaded
+
+@pytest.mark.asyncio
+async def test_iter_bytes(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
+
+    async with client.send_request(request, stream=True) as response:
+        raw = b""
+        async for chunk in response.iter_bytes():
+            _assert_stream_state(response, open=True)
+            raw += chunk
+        _assert_stream_state(response, open=False)
+        assert raw == b"Hello, world!"
+
+@pytest.mark.asyncio
+async def test_iter_bytes_with_chunk_size(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
+
+    async with client.send_request(request, stream=True) as response:
+        parts = []
+        async for part in response.iter_bytes(chunk_size=5):
+            parts.append(part)
+        assert parts == [b"Hello", b", wor", b"ld!"]
+
+    async with client.send_request(request, stream=True) as response:
+        parts = []
+        async for part in response.iter_bytes(chunk_size=13):
+            parts.append(part)
+        assert parts == [b"Hello, world!"]
+
+    async with client.send_request(request, stream=True) as response:
+        parts = []
+        async for part in response.iter_bytes(chunk_size=20):
+            parts.append(part)
+        assert parts == [b"Hello, world!"]
+
+@pytest.mark.asyncio
+async def test_iter_text(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/basic/string")
+
+    async with client.send_request(request, stream=True) as response:
+        content = ""
+        async for part in response.iter_text():
+            content += part
+        assert content == "Hello, world!"
+
+@pytest.mark.asyncio
+async def test_iter_text_with_chunk_size(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/basic/string")
+
+    async with client.send_request(request, stream=True) as response:
+        parts = []
+        async for part in response.iter_text(chunk_size=5):
+            parts.append(part)
+        assert parts == ["Hello", ", wor", "ld!"]
+
+    async with client.send_request(request, stream=True) as response:
+        parts = []
+        async for part in response.iter_text(chunk_size=13):
+            parts.append(part)
+        assert parts == ["Hello, world!"]
+
+    async with client.send_request(request, stream=True) as response:
+        parts = []
+        async for part in response.iter_text(chunk_size=20):
+            parts.append(part)
+        assert parts == ["Hello, world!"]
+
+@pytest.mark.asyncio
+async def test_iter_lines(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/basic/lines")
+
+    async with client.send_request(request, stream=True) as response:
+        content = []
+        async for line in response.iter_lines():
+            content.append(line)
+        assert content == ["Hello,\n", "world!"]
 
 
-# @pytest.mark.asyncio
-# async def test_sync_streaming_response(send_request):
-#     response = await send_request(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
+@pytest.mark.asyncio
+async def test_streaming_response(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
 
-#     assert response.status_code == 200
-#     assert not response.is_closed
+    async with client.send_request(request, stream=True) as response:
+        assert response.status_code == 200
+        assert not response.is_closed
 
-#     content = await response.read()
+        content = await response.read()
 
-#     with open(HTTPBIN_JPEG_FILE_NAME, "rb") as f:
-#         file_bytes = f.read()
-#     assert content == file_bytes
-#     assert response.content == file_bytes
-#     assert response.is_closed
+        assert content == b"Hello, world!"
+        assert response.content == b"Hello, world!"
+        assert response.is_closed
 
+@pytest.mark.asyncio
+async def test_cannot_read_after_stream_consumed(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
+    async with client.send_request(request, stream=True) as response:
+        content = b""
+        async for chunk in response.iter_bytes():
+            content += chunk
 
-# @pytest.mark.asyncio
-# async def test_cannot_read_after_stream_consumed(send_request):
-#     response = await send_request(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
+        with pytest.raises(StreamConsumedError) as ex:
+            await response.read()
+    assert "You are attempting to read or stream content that has already been streamed" in str(ex.value)
 
-#     content = b""
-#     async for chunk in response.iter_bytes():
-#         content += chunk
+@pytest.mark.asyncio
+async def test_cannot_read_after_response_closed(client):
+    request = HttpRequest("GET", "http://127.0.0.1:5000/streams/basic")
+    async with client.send_request(request, stream=True) as response:
+        pass
 
-#     with pytest.raises(ResponseClosedError) as ex:
-#         await response.read()
-#     assert "You can not try to read or stream this response's content, since the response has been closed" in str(ex.value)
-
-# @pytest.mark.asyncio
-# async def test_cannot_read_after_response_closed(send_request):
-#     response = await send_request(HttpRequest("GET", "http://localhost:3000/streams/jpeg"))
-
-#     await response.close()
-#     with pytest.raises(ResponseClosedError) as ex:
-#         await response.read()
-#     assert "You can not try to read or stream this response's content, since the response has been closed" in str(ex.value)
+    with pytest.raises(ResponseClosedError) as ex:
+        await response.read()
+    assert "You can not try to read or stream this response's content, since the response has been closed" in str(ex.value)

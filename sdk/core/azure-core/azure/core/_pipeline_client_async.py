@@ -36,6 +36,8 @@ from .pipeline.policies import (
     RequestIdPolicy,
     AsyncRetryPolicy,
 )
+from typing import Any, Awaitable
+from .rest import HttpRequest, _AsyncContextManager, AsyncHttpResponse
 
 try:
     from typing import TYPE_CHECKING
@@ -57,7 +59,6 @@ if TYPE_CHECKING:
     )  # pylint: disable=unused-import
 
 _LOGGER = logging.getLogger(__name__)
-
 
 class AsyncPipelineClient(PipelineClientBase):
     """Service client core methods.
@@ -168,3 +169,21 @@ class AsyncPipelineClient(PipelineClientBase):
             transport = AioHttpTransport(**kwargs)
 
         return AsyncPipeline(transport, policies)
+
+    def send_request(
+        self,
+        request: HttpRequest,
+        *,
+        stream: bool = False,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+        wrapped = self._pipeline.run(request, stream=stream, **kwargs)
+        return _AsyncContextManager(wrapped=wrapped)

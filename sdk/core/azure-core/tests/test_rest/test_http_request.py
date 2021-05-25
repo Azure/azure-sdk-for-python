@@ -197,7 +197,7 @@ def test_multipart_invalid_key(key):
     assert "Invalid type for data key" in str(e.value)
     assert repr(key) in str(e.value)
 
-@pytest.mark.parametrize(("value"), (1, 2.3, None, [None, "abc"], {None: "abc"}))
+@pytest.mark.parametrize(("value"), (1, 2.3, [None, "abc"], {None: "abc"}))
 def test_multipart_invalid_value(value):
 
     data = {"text": value}

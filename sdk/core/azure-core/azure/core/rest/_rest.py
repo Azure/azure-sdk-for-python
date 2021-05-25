@@ -26,7 +26,7 @@
 import cgi
 from json import loads
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ContextManager
 
 from azure.core.pipeline.transport import (
     HttpRequest as _PipelineTransportHttpRequest,
@@ -46,6 +46,7 @@ if TYPE_CHECKING:
         Any,
         Iterator,
         Union,
+        Callable,
     )
     from ._helpers import HeadersType
     ByteStream = Iterable[bytes]
@@ -58,7 +59,7 @@ if TYPE_CHECKING:
 
 
 ################################## CLASSES ######################################
-class _StreamContextManager(object):
+class _SyncContextManager(object):
     def __init__(self, pipeline, request, **kwargs):
         # type: (Pipeline, HttpRequest, Any) -> None
         """Used so we can treat stream requests and responses as a context manager.
@@ -74,14 +75,10 @@ class _StreamContextManager(object):
     def __enter__(self):
         # type: (...) -> HttpResponse
         """Actually make the call only when we enter. For sync stream_response calls"""
-        pipeline_transport_response = self.pipeline.run(
+        self.response = self.pipeline.run(
             self.request._internal_request,
             stream=True,
             **self.kwargs
-        ).http_response
-        self.response = HttpResponse(
-            request=self.request,
-            _internal_response=pipeline_transport_response
         )
         return self.response
 
@@ -374,10 +371,10 @@ class HttpResponse(object):
 
     def _validate_streaming_access(self):
         # type: (...) -> None
-        if self.is_closed:
-            raise ResponseClosedError()
         if self.is_stream_consumed:
             raise StreamConsumedError()
+        if self.is_closed:
+            raise ResponseClosedError()
 
     def close(self):
         # type: (...) -> None

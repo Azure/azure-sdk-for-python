@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+import functools
 import logging
 try:
     from collections.abc import Iterable
@@ -40,6 +40,7 @@ from .pipeline.policies import (
     RetryPolicy,
 )
 from .pipeline.transport import RequestsTransport
+from .rest import HttpResponse, _SyncContextManager
 
 try:
     from typing import TYPE_CHECKING
@@ -59,6 +60,7 @@ if TYPE_CHECKING:
         Iterator,
         cast,
     )  # pylint: disable=unused-import
+    from .rest import HttpRequest
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -170,3 +172,29 @@ class PipelineClient(PipelineClientBase):
             transport = RequestsTransport(**kwargs)
 
         return Pipeline(transport, policies)
+
+    def send_request(self, request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        # """
+        # stream = kwargs.pop("stream", False)
+        # wrapped = functools.partial(
+        #     self._pipeline.run,
+        #     request=request,
+        #     **kwargs
+        # )
+        # return _SyncContextManager(wrapped=wrapped, stream=stream)
+        if kwargs.pop("stream", False):
+            return _SyncContextManager(
+                pipeline=self._pipeline,
+                request=request,
+            )
+        response = self._pipeline.run(request, **kwargs)
+        response.read()
+        return response

@@ -25,6 +25,8 @@
 # --------------------------------------------------------------------------
 import asyncio
 import cgi
+import collections
+import collections.abc
 from json import loads
 from typing import (
     Any,
@@ -33,10 +35,12 @@ from typing import (
     Iterable, Iterator,
     Optional,
     Union,
-    cast,
+    AsyncContextManager,
 )
+
+from attr.setters import pipe
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline import Pipeline, AsyncPipeline
+from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (
     HttpRequest as _PipelineTransportHttpRequest,
 )
@@ -52,6 +56,8 @@ from ._helpers import (
     _set_body,
     _lookup_encoding,
     _parse_lines_from_text,
+    _set_content_length_header,
+    _set_content_type_header,
 )
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
@@ -59,7 +65,7 @@ ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 class _StreamContextManagerBase:
     def __init__(
         self,
-        pipeline: Union[Pipeline, AsyncPipeline],
+        pipeline,
         request: "HttpRequest",
         **kwargs
     ):
@@ -76,18 +82,14 @@ class _StreamContextManagerBase:
         self.kwargs = kwargs
         self.response: Optional[Union[HttpResponse, AsyncHttpResponse]] = None
 
-class _StreamContextManager(_StreamContextManagerBase):
+class _SyncContextManager(_StreamContextManagerBase):
 
     def __enter__(self) -> "HttpResponse":
         """Actually make the call only when we enter. For sync stream_response calls"""
-        pipeline_transport_response = cast(Pipeline, self.pipeline).run(
+        self.response = self.pipeline.run(
             self.request._internal_request,
             stream=True,
             **self.kwargs
-        ).http_response
-        self.response = HttpResponse(
-            request=self.request,
-            _internal_response=pipeline_transport_response
         )
         return self.response
 
@@ -98,23 +100,18 @@ class _StreamContextManager(_StreamContextManagerBase):
     def close(self):
         self.response.close()
 
-class _AsyncStreamContextManager(_StreamContextManagerBase):
-    async def __aenter__(self) -> "AsyncHttpResponse":
-        """Actually make the call only when we enter. For async stream_response calls."""
-        if not isinstance(self.pipeline, AsyncPipeline):
-            raise TypeError(
-                "Only async calls should enter here. If you mean to do a sync call, "
-                "make sure to use 'with' instead."
-            )
-        pipeline_transport_response = (await self.pipeline.run(
-            self.request._internal_request,
-            stream=True,
-            **self.kwargs
-        )).http_response
-        self.response = AsyncHttpResponse(
-            request=self.request,
-            _internal_response=pipeline_transport_response
-        )
+class _AsyncContextManager(collections.abc.Awaitable, AsyncContextManager):
+
+    def __init__(self, wrapped: collections.abc.Awaitable):
+        super().__init__()
+        self.wrapped = wrapped
+        self.response = None
+
+    def __await__(self):
+        return self.wrapped.__await__()
+
+    async def __aenter__(self):
+        self.response = await self
         return self.response
 
     async def __aexit__(self, *args):
@@ -122,6 +119,17 @@ class _AsyncStreamContextManager(_StreamContextManagerBase):
 
     async def close(self):
         await self.response.close()
+
+def _add_async_body_checks(
+    content, data, internal_request
+):
+    if data is not None and not isinstance(data, dict):
+        content = data
+        data = None
+    if content is not None:
+        if isinstance(content, collections.AsyncIterable):
+            _set_content_length_header("Transfer-Encoding", "chunked", internal_request)
+            _set_content_type_header("application/octet-stream", internal_request)
 
 ################################## CLASSES ######################################
 
@@ -183,6 +191,11 @@ class HttpRequest:
             data=data,
             files=files,
             json=json,
+            internal_request=self._internal_request
+        )
+        _add_async_body_checks(
+            content=content,
+            data=data,
             internal_request=self._internal_request
         )
 
@@ -393,10 +406,10 @@ class _HttpResponseBase:
         )
 
     def _validate_streaming_access(self) -> None:
-        if self.is_closed:
-            raise ResponseClosedError()
         if self.is_stream_consumed:
             raise StreamConsumedError()
+        if self.is_closed:
+            raise ResponseClosedError()
 
 class HttpResponse(_HttpResponseBase):
 
