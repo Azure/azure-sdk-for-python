@@ -14,10 +14,12 @@ if TYPE_CHECKING:
 class KeyVaultPermission(object):
     """Role definition permissions.
 
-    :ivar list[str] actions:
-    :ivar list[str] not_actions:
-    :ivar list[str] data_actions:
-    :ivar list[str] not_data_actions:
+    :ivar list[str] actions: Action permissions that are granted.
+    :ivar list[str] not_actions: Action permissions that are excluded but not denied. They may be granted by other role
+     definitions assigned to a principal.
+    :ivar list[str] data_actions: Data action permissions that are granted.
+    :ivar list[str] not_data_actions: Data action permissions that are excluded but not denied. They may be granted by
+     other role definitions assigned to a principal.
     """
 
     def __init__(self, **kwargs):
