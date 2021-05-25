@@ -1198,7 +1198,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             **kwargs
         )
         credential_entity_id = response_headers["Location"].split("credentials/")[1]
-        return self.get_credential_entity(credential_entity_id)
+        return await self.get_credential_entity(credential_entity_id)
 
     @distributed_trace
     def list_credential_entities(

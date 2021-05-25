@@ -64,8 +64,6 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
             self.azure_table_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_TABLE_CONNECTION_STRING")
             self.azure_blob_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_BLOB_CONNECTION_STRING")
             self.azure_cosmosdb_connection_string = self.get_settings_value("METRICS_ADVISOR_COSMOS_DB_CONNECTION_STRING")
-            self.http_request_get_url = self.get_settings_value("METRICS_ADVISOR_HTTP_GET_URL")
-            self.http_request_post_url = self.get_settings_value("METRICS_ADVISOR_HTTP_POST_URL")
             self.application_insights_api_key = self.get_settings_value("METRICS_ADVISOR_APPLICATION_INSIGHTS_API_KEY")
             self.azure_data_explorer_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_DATA_EXPLORER_CONNECTION_STRING")
             self.influxdb_connection_string = self.get_settings_value("METRICS_ADVISOR_INFLUX_DB_CONNECTION_STRING")
@@ -74,7 +72,6 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
             self.mongodb_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_MONGO_DB_CONNECTION_STRING")
             self.mysql_connection_string = self.get_settings_value("METRICS_ADVISOR_MYSQL_CONNECTION_STRING")
             self.postgresql_connection_string = self.get_settings_value("METRICS_ADVISOR_POSTGRESQL_CONNECTION_STRING")
-            self.elasticsearch_auth_header = self.get_settings_value("METRICS_ADVISOR_ELASTICSEARCH_AUTH_HEADER")
             self.anomaly_detection_configuration_id = self.get_settings_value("METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID")
             self.data_feed_id = self.get_settings_value("METRICS_ADVISOR_DATA_FEED_ID")
             self.metric_id = self.get_settings_value("METRICS_ADVISOR_METRIC_ID")
@@ -92,14 +89,6 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
             )
             self.scrubber.register_name_pair(
                 self.azure_cosmosdb_connection_string,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.http_request_get_url,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.http_request_post_url,
                 "connectionstring"
             )
             self.scrubber.register_name_pair(
@@ -135,10 +124,6 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
                 "connectionstring"
             )
             self.scrubber.register_name_pair(
-                self.elasticsearch_auth_header,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
                 self.metric_id,
                 "metric_id"
             )
@@ -158,8 +143,6 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
             self.azure_table_connection_string = "AZURE_TABLE_CONNECTION_STRING"
             self.azure_blob_connection_string = "AZURE_BLOB_CONNECTION_STRING"
             self.azure_cosmosdb_connection_string = "COSMOS_DB_CONNECTION_STRING"
-            self.http_request_get_url = "METRICS_ADVISOR_HTTP_GET_URL"
-            self.http_request_post_url = "METRICS_ADVISOR_HTTP_POST_URL"
             self.application_insights_api_key = "METRICS_ADVISOR_APPLICATION_INSIGHTS_API_KEY"
             self.azure_data_explorer_connection_string = "METRICS_ADVISOR_AZURE_DATA_EXPLORER_CONNECTION_STRING"
             self.influxdb_connection_string = "METRICS_ADVISOR_INFLUXDB_CONNECTION_STRING"
@@ -168,7 +151,6 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
             self.mongodb_connection_string = "METRICS_ADVISOR_AZURE_MONGODB_CONNECTION_STRING"
             self.mysql_connection_string = "METRICS_ADVISOR_MYSQL_CONNECTION_STRING"
             self.postgresql_connection_string = "METRICS_ADVISOR_POSTGRESQL_CONNECTION_STRING"
-            self.elasticsearch_auth_header = "METRICS_ADVISOR_ELASTICSEARCH_AUTH"
             self.anomaly_detection_configuration_id = "anomaly_detection_configuration_id"
             self.data_feed_id = "data_feed_id"
             self.metric_id = "metric_id"

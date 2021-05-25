@@ -1223,7 +1223,6 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             **kwargs
         )
 
-
     @distributed_trace
     def get_credential_entity(
         self,

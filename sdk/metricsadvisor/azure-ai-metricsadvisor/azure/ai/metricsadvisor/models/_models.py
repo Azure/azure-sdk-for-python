@@ -3280,8 +3280,8 @@ class ServicePrincipalInKVCredentialEntity(object):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, data_source_credential_name, client_id, client_secret, tenant_id, **kwargs):
-        # type: (str, str, str, str, Any) -> None
+    def __init__(self, data_source_credential_name, **kwargs):
+        # type: (str, str, Any) -> None
         self.data_source_credential_type = 'ServicePrincipalInKV'
         self.data_source_credential_name = data_source_credential_name
         self.key_vault_endpoint = kwargs['key_vault_endpoint']
