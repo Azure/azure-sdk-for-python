@@ -52,7 +52,12 @@ Once you have authenticated and created the client object as shown in the [Authe
 section, you can create a farmer within the FarmBeats resource like this:
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
 from azure.agrifood.farming.models import Farmer
+
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
 
 farmer = client.farmers.create_or_update(
     farmer_id="farmer-1",
@@ -71,7 +76,12 @@ farmer = client.farmers.create_or_update(
 
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
 from azure.agrifood.farming.models import Farm
+
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
 
 farmer_id = "farmer-1" # Using farmer from previous example
 
@@ -93,9 +103,15 @@ farm = client.farms.create_or_update(
 Creating a Season object, spanning from April to August of 2021.
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
 from azure.agrifood.farming.models import Season
+
 from isodate.tzinfo import Utc
 from datetime import datetime
+
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
 
 season = client.seasons.create_or_update(
     season_id="season-summer-2021",
@@ -114,7 +130,12 @@ In this example, we create a Seasonal Field, using the Season and Field objects
 created in the preceding examples.
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
 from azure.agrifood.farming.models import SeasonalField
+
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
 
 farmer_id = "farmer-1"
 farm_id = "farm-1"
@@ -135,7 +156,12 @@ seasonal_field = client.seasonal_fields.create_or_update(
 Creating a Boundary for the Seasonal Field created in the preceding example.
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
 from azure.agrifood.farming.models import Boundary, Polygon
+
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
 
 farmer_id = "farmer-1"
 seasonal_field_id = "westlake-summer-2021"
@@ -171,10 +197,15 @@ a Poller object. Calling the `.result()` method on the poller object
 waits for the operation to terminate, and returns the final status.
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
+from azure.agrifood.farming.models import SatelliteDataIngestionJob, SatelliteData
+
 from isodate.tzinfo import Utc
 from datetime import datetime
 
-from azure.agrifood.farming.models import SatelliteData, 
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
 
 farmer_id = "farmer-1"
 boundary_id = "westlake-boundary-1"
@@ -204,6 +235,13 @@ satellite_job = satellite_job_poller.result()
 Querying for the scenes created by the job in the previous example.
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
+
+from datetime import datetime
+
+credential = DefaultAzureCredential()
+client = FarmBeatsClient(endpoint="https://<my-account-name>.farmbeats.azure.net", credential=credential)
 
 farmer_id = "farmer-1"
 boundary_id = "westlake-boundary-1"
