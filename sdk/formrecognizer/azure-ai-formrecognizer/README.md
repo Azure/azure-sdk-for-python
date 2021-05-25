@@ -11,7 +11,7 @@ from form documents. It includes the following main functionalities:
     * Invoice model - Recognize data from invoices using a prebuilt model.
     * Identity document model - Recognize data from identity documents using a prebuilt model.
 
-[Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs]| [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
+[Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
 ## Getting started
 
@@ -472,8 +472,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-fr-product-docs]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview
 [python-fr-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
 [python-fr-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples
-[train-a-model-using-labeled-data]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/python-labeled-data#train-a-model-using-labeled-data
-
 
 [training_data]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
 [azure_subscription]: https://azure.microsoft.com/free/
