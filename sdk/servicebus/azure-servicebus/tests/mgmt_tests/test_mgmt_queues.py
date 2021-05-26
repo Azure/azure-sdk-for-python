@@ -194,7 +194,6 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
         with pytest.raises(TypeError):
             mgmt_service.delete_queue(queue_name=None)
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_create_by_name(self, servicebus_namespace_connection_string, **kwargs):
@@ -212,7 +211,6 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
         finally:
             mgmt_service.delete_queue(queue_name)
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_create_with_invalid_name(self, servicebus_namespace_connection_string, **kwargs):
@@ -226,7 +224,6 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             mgmt_service.create_queue('')
 
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_create_with_queue_description(self, servicebus_namespace_connection_string, **kwargs):
@@ -317,7 +314,6 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             mgmt_service.delete_topic(topic_name)
             mgmt_service.close()
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
@@ -331,7 +327,6 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
         finally:
             mgmt_service.delete_queue(queue_name)
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_update_success(self, servicebus_namespace_connection_string, servicebus_namespace, **kwargs):
@@ -450,7 +445,6 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             mgmt_service.delete_topic(topic_name)
             mgmt_service.close()
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
@@ -585,7 +579,6 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
         with pytest.raises(TypeError):
             QueueProperties("randomname")
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_update_dict_success(self, servicebus_namespace_connection_string, servicebus_namespace, **kwargs):
@@ -674,7 +667,6 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             mgmt_service.delete_queue(queue_name)
             mgmt_service.close()
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
