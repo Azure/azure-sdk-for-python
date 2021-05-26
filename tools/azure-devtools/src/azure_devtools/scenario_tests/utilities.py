@@ -3,11 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import base64
 import hashlib
+import inspect
 import math
 import os
-import base64
-import inspect
+import zlib
 
 
 def create_random_name(prefix='aztest', length=24):
@@ -88,3 +89,9 @@ def trim_kwargs_from_test_function(fn, kwargs):
 
 def is_preparer_func(fn):
     return getattr(fn, '__is_preparer', False)
+
+
+def _decompress_body(body, enc):
+    zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
+    decompressor = zlib.decompressobj(wbits=zlib_mode)
+    return decompressor.decompress(body)

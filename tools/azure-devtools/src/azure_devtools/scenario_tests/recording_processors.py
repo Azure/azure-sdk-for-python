@@ -6,8 +6,7 @@ from copy import deepcopy
 from zlib import decompress
 import six
 
-from ._helpers import _decompress_body, _compress_body
-from .utilities import is_text_payload, is_json_payload, is_batch_payload
+from .utilities import is_text_payload, is_json_payload, is_batch_payload, _decompress_body
 
 
 class RecordingProcessor(object):
@@ -261,6 +260,7 @@ class GeneralNameReplacer(RecordingProcessor):
             if enc in ["gzip", "deflate"] and isinstance(response["body"]["string"], six.binary_type):
                 decompressed = _decompress_body(response['body']["string"], enc)
                 decompressed = decompressed.decode("utf-8")
+
                 for old, new in self.names_name:
                     try:
                         decompressed = decompressed.replace(old, new)
@@ -268,8 +268,9 @@ class GeneralNameReplacer(RecordingProcessor):
                         decompressed.decode('utf8', 'backslashreplace').replace(old, new).encode('utf8', 'backslashreplace')
                     except TypeError:
                         pass
-                decompressed = decompressed.encode("utf-8")
-                response['body']["string"] = _compress_body(decompressed, enc)
+
+                response['body']["string"] = decompressed
+                response["headers"].pop("content-encoding")
 
 
 class RequestUrlNormalizer(RecordingProcessor):
