@@ -92,10 +92,17 @@ def is_preparer_func(fn):
     return getattr(fn, '__is_preparer', False)
 
 
-def _decompress_body(body, enc):
-    zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
-    decompressor = zlib.decompressobj(wbits=zlib_mode)
-    return decompressor.decompress(body)
+def _decompress_response_body(response):
+    if "content-encoding" in response["headers"]:
+        enc = response['headers']['content-encoding'].lower()
+        if enc in ["gzip", "deflate"] and isinstance(response["body"]["string"], six.binary_type):
+            zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
+            decompressor = zlib.decompressobj(wbits=zlib_mode)
+            decompressed = decompressor.decompress(response["body"]["string"])
+            decompressed = decompressed.decode("utf-8")
+            response["body"]["string"] = decompressed
+            response["headers"].pop("content-encoding")
+    return response
 
 
 def replace_subscription_id(val, replacement="00000000-0000-0000-0000-000000000000"):

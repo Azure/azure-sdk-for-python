@@ -10,7 +10,7 @@ from .utilities import (
     is_text_payload,
     is_json_payload,
     is_batch_payload,
-    _decompress_body,
+    _decompress_response_body,
     replace_subscription_id
 )
 
@@ -216,6 +216,7 @@ class GeneralNameReplacer(RecordingProcessor):
         return new_body
 
     def process_response(self, response):
+        response = _decompress_response_body(response)
         for old, new in self.names_name:
             if is_text_payload(response) and response['body']['string']:
                 try:
@@ -230,7 +231,6 @@ class GeneralNameReplacer(RecordingProcessor):
             self.replace_header(response, 'azure-asyncoperation', old, new)
             self.replace_header(response, "www-authenticate", old, new)
 
-        self._scrub_compressed_body(response)
         response["url"] = replace_subscription_id(response["url"])
 
         try:
@@ -245,24 +245,6 @@ class GeneralNameReplacer(RecordingProcessor):
                 pass
 
         return response
-
-    def _scrub_compressed_body(self, response):
-        if "content-encoding" in response["headers"]:
-            enc = response['headers']['content-encoding'].lower()
-            if enc in ["gzip", "deflate"] and isinstance(response["body"]["string"], six.binary_type):
-                decompressed = _decompress_body(response['body']["string"], enc)
-                decompressed = decompressed.decode("utf-8")
-
-                for old, new in self.names_name:
-                    try:
-                        decompressed = decompressed.replace(old, new)
-                    except UnicodeDecodeError:
-                        decompressed.decode('utf8', 'backslashreplace').replace(old, new).encode('utf8', 'backslashreplace')
-                    except TypeError:
-                        pass
-
-                response['body']["string"] = decompressed
-                response["headers"].pop("content-encoding")
 
 
 class RequestUrlNormalizer(RecordingProcessor):
