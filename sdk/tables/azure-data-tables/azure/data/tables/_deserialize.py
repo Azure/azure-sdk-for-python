@@ -200,13 +200,14 @@ def _convert_to_entity(entry_element):
             entity[name] = new_property
 
     # extract etag from entry
-    etag = odata.get("etag")
+    etag = odata.pop("etag", None)
+    odata.pop("metadata", None)
     if timestamp:
         if not etag:
             etag = "W/\"datetime'" + url_quote(timestamp) + "'\""
         timestamp = _from_entity_datetime(timestamp)
-
-    entity._metadata = {'etag': etag, 'timestamp': timestamp}  # pylint: disable=protected-access
+    odata.update({'etag': etag, 'timestamp': timestamp})
+    entity._metadata = odata  # pylint: disable=protected-access
     return entity
 
 

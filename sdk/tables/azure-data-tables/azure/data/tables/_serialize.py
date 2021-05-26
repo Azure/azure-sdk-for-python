@@ -97,7 +97,7 @@ def _to_entity_float(value):
         return EdmType.DOUBLE, "Infinity"
     if value == float("-inf"):
         return EdmType.DOUBLE, "-Infinity"
-    return None, value
+    return EdmType.DOUBLE, value
 
 
 def _to_entity_guid(value):
@@ -191,7 +191,6 @@ def _add_entity_properties(source):
     properties = {}
 
     to_send = dict(source)  # shallow copy
-    to_send.pop("_metadata", None)
 
     # set properties type for types we know if value has no type info.
     # if value has type info, then set the type to value.type
