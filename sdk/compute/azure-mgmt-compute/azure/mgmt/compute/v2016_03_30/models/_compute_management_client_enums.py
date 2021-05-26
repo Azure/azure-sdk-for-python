@@ -101,8 +101,8 @@ class VirtualMachineScaleSetSkuScaleType(with_metaclass(_CaseInsensitiveEnumMeta
 
 class VirtualMachineSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
-    see `Sizes for virtual machines <https://docs.microsoft.com/azure/virtual-machines/virtual-
-    machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+    see `Sizes for virtual machines
+    <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
     :code:`<br>`:code:`<br>` The available VM sizes depend on region and availability set. For a
     list of available sizes use these APIs:  :code:`<br>`:code:`<br>` `List all available virtual
     machine sizes in an availability set
