@@ -40,7 +40,7 @@ with servicebus_client:
                 sequence_numbers=deferred_sequenced_numbers
             )
 
-            time.sleep(1)   # wait for delay in deferral before receiving
+            time.sleep(10)   # wait for delay in deferral before receiving
 
             for msg in received_deferred_msg:
                 print("Completing deferred msg: {}".format(str(msg)))
