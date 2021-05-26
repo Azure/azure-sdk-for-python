@@ -6,7 +6,13 @@ from copy import deepcopy
 from zlib import decompress
 import six
 
-from .utilities import is_text_payload, is_json_payload, is_batch_payload, _decompress_body
+from .utilities import (
+    is_text_payload,
+    is_json_payload,
+    is_batch_payload,
+    _decompress_body,
+    replace_subscription_id
+)
 
 
 class RecordingProcessor(object):
@@ -37,41 +43,26 @@ class SubscriptionRecordingProcessor(RecordingProcessor):
         self._replacement = replacement
 
     def process_request(self, request):
-        request.uri = self._replace_subscription_id(request.uri)
+        request.uri = replace_subscription_id(request.uri, replacement=self._replacement)
 
         if is_text_payload(request) and request.body:
-            request.body = self._replace_subscription_id(request.body.decode()).encode()
+            request.body = replace_subscription_id(request.body.decode(), replacement=self._replacement).encode()
 
         return request
 
     def process_response(self, response):
         if is_text_payload(response) and response['body']['string']:
-            response['body']['string'] = self._replace_subscription_id(response['body']['string'])
+            response['body']['string'] = replace_subscription_id(response['body']['string'], replacement=self._replacement)
 
-        self.replace_header_fn(response, 'location', self._replace_subscription_id)
-        self.replace_header_fn(response, 'azure-asyncoperation', self._replace_subscription_id)
+        self.replace_header_fn(response, 'location', replace_subscription_id)
+        self.replace_header_fn(response, 'azure-asyncoperation', replace_subscription_id)
 
         try:
-            response["url"] = self._replace_subscription_id(response["url"])
+            response["url"] = replace_subscription_id(response["url"], replacement=self._replacement)
         except KeyError:
             pass
 
         return response
-
-    def _replace_subscription_id(self, val):
-        import re
-        # subscription presents in all api call
-        retval = re.sub('/(subscriptions)/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
-                        r'/\1/{}'.format(self._replacement),
-                        val,
-                        flags=re.IGNORECASE)
-
-        # subscription is also used in graph call
-        retval = re.sub('https://(graph.windows.net)/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
-                        r'https://\1/{}'.format(self._replacement),
-                        retval,
-                        flags=re.IGNORECASE)
-        return retval
 
 
 class LargeRequestBodyProcessor(RecordingProcessor):
@@ -240,6 +231,7 @@ class GeneralNameReplacer(RecordingProcessor):
             self.replace_header(response, "www-authenticate", old, new)
 
         self._scrub_compressed_body(response)
+        response["url"] = replace_subscription_id(response["url"])
 
         try:
             for old, new in self.names_name:

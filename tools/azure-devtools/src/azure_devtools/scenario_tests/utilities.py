@@ -8,6 +8,7 @@ import hashlib
 import inspect
 import math
 import os
+import re
 import zlib
 
 
@@ -95,3 +96,18 @@ def _decompress_body(body, enc):
     zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
     decompressor = zlib.decompressobj(wbits=zlib_mode)
     return decompressor.decompress(body)
+
+
+def replace_subscription_id(val, replacement="00000000-0000-0000-0000-000000000000"):
+    # subscription presents in all api call
+    retval = re.sub('/(subscriptions)/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+                    r'/\1/{}'.format(replacement),
+                    val,
+                    flags=re.IGNORECASE)
+
+    # subscription is also used in graph call
+    retval = re.sub('https://(graph.windows.net)/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+                    r'https://\1/{}'.format(replacement),
+                    retval,
+                    flags=re.IGNORECASE)
+    return retval
