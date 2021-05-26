@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, overload
+from typing import TYPE_CHECKING, overload, Any, Dict, Optional, Union
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
@@ -20,7 +20,6 @@ from ._helpers import _parse_next_link, _is_tag
 from ._models import RepositoryProperties, ArtifactTagProperties, ArtifactManifestProperties
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Union
     from azure.core.credentials import TokenCredential
 
 
@@ -593,12 +592,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             for artifact in client.list_manifests():
                 received_properties = client.update_manifest_properties(
                     artifact.digest,
-                    ManifestWriteableProperties(
-                        can_delete=False,
-                        can_list=False,
-                        can_read=False,
-                        can_write=False,
-                    ),
+                    can_delete=False,
+                    can_list=False,
+                    can_read=False,
+                    can_write=False,
                 )
         """
         repository = args[0]
@@ -607,12 +604,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if len(args) == 3:
             properties = args[2]
         else:
-            properties = ArtifactManifestProperties(
-                can_delete=kwargs.pop("can_delete", None),
-                can_list=kwargs.pop("can_list", None),
-                can_read=kwargs.pop("can_read", None),
-                can_write=kwargs.pop("can_write", None),
-            )
+            properties = ArtifactManifestProperties()
+
+        properties.can_delete = kwargs.pop("can_delete", properties.can_delete)
+        properties.can_list = kwargs.pop("can_list", properties.can_list)
+        properties.can_read = kwargs.pop("can_read", properties.can_read)
+        properties.can_write = kwargs.pop("can_write", properties.can_write)
 
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
@@ -660,13 +657,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             tag_identifier = "latest"
             received = client.update_tag_properties(
+                "my_repository",
                 tag_identifier,
-                TagWriteableProperties(
-                    can_delete=False,
-                    can_list=False,
-                    can_read=False,
-                    can_write=False,
-                ),
+                can_delete=False,
+                can_list=False,
+                can_read=False,
+                can_write=False,
             )
         """
         repository = args[0]
@@ -675,12 +671,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if len(args) == 3:
             properties = args[2]
         else:
-            properties = ArtifactTagProperties(
-                can_delete=kwargs.pop("can_delete", None),
-                can_list=kwargs.pop("can_list", None),
-                can_read=kwargs.pop("can_read", None),
-                can_write=kwargs.pop("can_write", None),
-            )
+            properties = ArtifactTagProperties()
+
+        properties.can_delete = kwargs.pop("can_delete", properties.can_delete)
+        properties.can_list = kwargs.pop("can_list", properties.can_list)
+        properties.can_read = kwargs.pop("can_read", properties.can_read)
+        properties.can_write = kwargs.pop("can_write", properties.can_write)
 
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.update_tag_attributes(
@@ -718,13 +714,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             properties = args[1]
         else:
             repository = args[0]
-            properties = RepositoryProperties(
-                can_delete=kwargs.pop("can_delete", None),
-                can_list=kwargs.pop("can_list", None),
-                can_read=kwargs.pop("can_read", None),
-                can_write=kwargs.pop("can_write", None),
-                teleport_enabled=kwargs.pop("teleport_enabled", None),
-            )
+            properties = RepositoryProperties()
+
+        properties.can_delete = kwargs.pop("can_delete", properties.can_delete)
+        properties.can_list = kwargs.pop("can_list", properties.can_list)
+        properties.can_read = kwargs.pop("can_read", properties.can_read)
+        properties.can_write = kwargs.pop("can_write", properties.can_write)
+        properties.teleport_enabled = kwargs.pop("teleport_enabled", None)
 
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.set_properties(

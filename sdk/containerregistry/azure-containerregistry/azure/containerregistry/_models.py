@@ -27,6 +27,18 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     :ivar bool can_write: Delete Permissions for an artifact
     :ivar bool can_read: Delete Permissions for an artifact
     :ivar bool can_list: Delete Permissions for an artifact
+    :ivar architecture: CPU Architecture of an artifact
+    :vartype architecture: ~azure.containerregistry.ArtifactArchitecture
+    :ivar created_on: Time and date an artifact was created
+    :vartype created_on: ~datetime.datetime
+    :ivar str digest: Digest for the artifact
+    :ivar last_updated_on: Time and date an artifact was last updated
+    :vartype last_updated_on: datetime.datetime
+    :ivar operating_system: Operating system for the artifact
+    :vartype operating_system: ~azure.containerregistry.ArtifactOperatingSystem
+    :ivar str repository_name: Repository name the artifact belongs to
+    :ivar str size: Size of the artifact
+    :ivar List[str] tags: Tags associated with a registry artifact
     """
 
     def __init__(self, **kwargs):
@@ -123,6 +135,13 @@ class RepositoryProperties(object):
     :ivar bool can_read: Delete Permissions for an artifact
     :ivar bool can_list: Delete Permissions for an artifact
     :ivar bool teleport_enabled: Teleport enabled for the repository
+    :ivar created_on: Time the repository was created
+    :vartype created_on: datetime.datetime
+    :ivar last_updated_on: Time the repository was last updated
+    :vartype last_updated_on: datetime.datetime
+    :ivar int manifest_count: Number of manifest in the repository
+    :ivar str name: Name of the repository
+    :ivar int tag_count: Number of tags associated with the repositor
     """
 
     def __init__(self, **kwargs):
@@ -210,6 +229,13 @@ class ArtifactTagProperties(object):
     :ivar bool can_write: Delete Permissions for an artifact
     :ivar bool can_read: Delete Permissions for an artifact
     :ivar bool can_list: Delete Permissions for an artifact
+    :ivar created_on: Time the tag was created
+    :vartype created_on: datetime.datetime
+    :ivar str digest: Digest for the tag
+    :ivar last_updated_on: Time the tag was last updated
+    :vartype last_updated_on: datetime.datetime
+    :ivar str name: Name of the image the tag corresponds to
+    :ivar str repository: Repository the tag belongs to
     """
 
     def __init__(self, **kwargs):
@@ -260,7 +286,7 @@ class ArtifactTagProperties(object):
     @property
     def last_updated_on(self):
         # type: () -> datetime
-        return self.last_updated_on
+        return self._last_updated_on
 
     @property
     def name(self):

@@ -47,6 +47,7 @@ class DeleteOperations(object):
                 # [END list_repository_names]
 
                 # [START list_tags]
+                # Keep the three most recent tags, delete everything else
                 tag_count = 0
                 async for tag in client.list_tags(repository, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
                     tag_count += 1

@@ -12,6 +12,7 @@ from azure.containerregistry import (
     ArtifactManifestProperties,
     ManifestOrder,
     ArtifactTagProperties,
+    TagOrder
 )
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.async_paging import AsyncItemPaged
@@ -179,11 +180,8 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         count = 0
         async for artifact in client.list_manifests(BUSYBOX):
-            assert artifact is not None
             assert isinstance(artifact, ArtifactManifestProperties)
-            assert artifact.created_on is not None
             assert isinstance(artifact.created_on, datetime)
-            assert artifact.last_updated_on is not None
             assert isinstance(artifact.last_updated_on, datetime)
             assert artifact.repository_name == BUSYBOX
             count += 1
@@ -220,6 +218,16 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         assert count > 0
 
+        prev_last_updated_on = None
+        count = 0
+        async for artifact in client.list_manifests(BUSYBOX, order_by="timedesc"):
+            if prev_last_updated_on:
+                assert artifact.last_updated_on < prev_last_updated_on
+            prev_last_updated_on = artifact.last_updated_on
+            count += 1
+
+        assert count > 0
+
     @acr_preparer()
     async def test_list_registry_artifacts_ascending(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
@@ -227,6 +235,16 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         prev_last_updated_on = None
         count = 0
         async for artifact in client.list_manifests(BUSYBOX, order_by=ManifestOrder.LAST_UPDATE_TIME_ASCENDING):
+            if prev_last_updated_on:
+                assert artifact.last_updated_on > prev_last_updated_on
+            prev_last_updated_on = artifact.last_updated_on
+            count += 1
+
+        assert count > 0
+
+        prev_last_updated_on = None
+        count = 0
+        async for artifact in client.list_manifests(BUSYBOX, order_by="timeasc"):
             if prev_last_updated_on:
                 assert artifact.last_updated_on > prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -411,6 +429,64 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         count = 0
         async for tag in client.list_tags(repo):
             assert "{}:{}".format(repo, tag.name) in tags
+            count += 1
+        assert count == 4
+
+    @acr_preparer()
+    async def test_list_tags_order_descending(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
+        self.import_image(HELLO_WORLD, tags)
+
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        prev_last_updated_on = None
+        count = 0
+        async for tag in client.list_tags(repo, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
+            assert "{}:{}".format(repo, tag.name) in tags
+            if prev_last_updated_on:
+                assert tag.last_updated_on < prev_last_updated_on
+            prev_last_updated_on = tag.last_updated_on
+            count += 1
+        assert count == 4
+
+        prev_last_updated_on = None
+        count = 0
+        async for tag in client.list_tags(repo, order_by="timedesc"):
+            assert "{}:{}".format(repo, tag.name) in tags
+            if prev_last_updated_on:
+                assert tag.last_updated_on < prev_last_updated_on
+            prev_last_updated_on = tag.last_updated_on
+            count += 1
+        assert count == 4
+
+    @acr_preparer()
+    async def test_list_tags_order_ascending(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
+        self.import_image(HELLO_WORLD, tags)
+
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        prev_last_updated_on = None
+        count = 0
+        async for tag in client.list_tags(repo, order_by=TagOrder.LAST_UPDATE_TIME_ASCENDING):
+            assert "{}:{}".format(repo, tag.name) in tags
+            if prev_last_updated_on:
+                assert tag.last_updated_on > prev_last_updated_on
+            prev_last_updated_on = tag.last_updated_on
+            count += 1
+        assert count == 4
+
+        prev_last_updated_on = None
+        count = 0
+        async for tag in client.list_tags(repo, order_by="timeasc"):
+            assert "{}:{}".format(repo, tag.name) in tags
+            if prev_last_updated_on:
+                assert tag.last_updated_on > prev_last_updated_on
+            prev_last_updated_on = tag.last_updated_on
             count += 1
         assert count == 4
 
