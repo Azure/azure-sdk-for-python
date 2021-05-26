@@ -152,7 +152,7 @@ def convert_to_generated_data_feed_type(
         )
 
     return generated_feed_type(
-        data_source_parameter=source.__dict__,
+        data_source_parameter=source._to_generated(),
         data_feed_name=name,
         granularity_name=granularity.granularity_type,
         granularity_amount=granularity.custom_granularity_value,

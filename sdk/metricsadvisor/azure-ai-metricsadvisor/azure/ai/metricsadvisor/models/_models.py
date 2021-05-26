@@ -47,15 +47,25 @@ from .._generated.models import (
     PeriodFeedbackValue,
     EmailHookParameterPatch as _EmailHookParameterPatch,
     WebhookHookParameterPatch as _WebhookHookParameterPatch,
+    AzureBlobParameter as _AzureBlobParameter,
     AzureBlobParameterPatch as _AzureBlobParameterPatch,
+    SqlSourceParameter as _SQLSourceParameter,
     SQLSourceParameterPatch as _SQLSourceParameterPatch,
+    AzureApplicationInsightsParameter as _AzureApplicationInsightsParameter,
     AzureApplicationInsightsParameterPatch as _AzureApplicationInsightsParameterPatch,
+    AzureCosmosDBParameter as _AzureCosmosDBParameter,
     AzureCosmosDBParameterPatch as _AzureCosmosDBParameterPatch,
+    AzureTableParameter as _AzureTableParameter,
     AzureTableParameterPatch as _AzureTableParameterPatch,
+    AzureEventHubsParameter as _AzureEventHubsParameter,
     AzureEventHubsParameterPatch as _AzureEventHubsParameterPatch,
+    InfluxDBParameter as _InfluxDBParameter,
     InfluxDBParameterPatch as _InfluxDBParameterPatch,
+    MongoDBParameter as _MongoDBParameter,
     MongoDBParameterPatch as _MongoDBParameterPatch,
+    AzureDataLakeStorageGen2Parameter as _AzureDataLakeStorageGen2Parameter,
     AzureDataLakeStorageGen2ParameterPatch as _AzureDataLakeStorageGen2ParameterPatch,
+    AzureLogAnalyticsParameter as _AzureLogAnalyticsParameter,
     AzureLogAnalyticsParameterPatch as _AzureLogAnalyticsParameterPatch,
     DimensionGroupIdentity as _DimensionGroupIdentity,
     SeriesIdentity as _SeriesIdentity,
@@ -63,10 +73,10 @@ from .._generated.models import (
     AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
     AnomalyAlertingConfigurationPatch as _AnomalyAlertingConfigurationPatch,
     AnomalyDetectionConfigurationPatch as _AnomalyDetectionConfigurationPatch,
-    AzureSQLConnectionStringCredentialPatch as _AzureSQLConnectionStringCredentialPatch,
-    AzureSQLConnectionStringParamPatch as _AzureSQLConnectionStringParamPatch,
     AzureSQLConnectionStringParam as _AzureSQLConnectionStringParam,
+    AzureSQLConnectionStringParamPatch as _AzureSQLConnectionStringParamPatch,
     AzureSQLConnectionStringCredential as _AzureSQLConnectionStringCredential,
+    AzureSQLConnectionStringCredentialPatch as _AzureSQLConnectionStringCredentialPatch,
     DataLakeGen2SharedKeyCredentialPatch as _DataLakeGen2SharedKeyCredentialPatch,
     DataLakeGen2SharedKeyParamPatch as _DataLakeGen2SharedKeyParamPatch,
     DataLakeGen2SharedKeyCredential as _DataLakeGen2SharedKeyCredential,
@@ -977,6 +987,14 @@ class AzureApplicationInsightsDataFeedSource(object):
             query=source.query
         )
 
+    def _to_generated(self):
+        return _AzureApplicationInsightsParameter(
+            azure_cloud=self.azure_cloud,
+            application_id=self.application_id,
+            api_key=self.api_key,
+            query=self.query
+        )
+
     def _to_generated_patch(self):
         return _AzureApplicationInsightsParameterPatch(
             azure_cloud=self.azure_cloud,
@@ -1019,6 +1037,13 @@ class AzureBlobDataFeedSource(object):
             connection_string=source.connection_string,
             container=source.container,
             blob_template=source.blob_template
+        )
+
+    def _to_generated(self):
+        return _AzureBlobParameter(
+            connection_string=self.connection_string,
+            container=self.container,
+            blob_template=self.blob_template
         )
 
     def _to_generated_patch(self):
@@ -1075,6 +1100,14 @@ class AzureCosmosDBDataFeedSource(object):
             collection_id=source.collection_id
         )
 
+    def _to_generated(self):
+        return _AzureCosmosDBParameter(
+            connection_string=self.connection_string,
+            sql_query=self.sql_query,
+            database=self.database,
+            collection_id=self.collection_id
+        )
+
     def _to_generated_patch(self):
         return _AzureCosmosDBParameterPatch(
             connection_string=self.connection_string,
@@ -1111,6 +1144,12 @@ class AzureDataExplorerDataFeedSource(object):
         return cls(
             connection_string=source.connection_string,
             query=source.query,
+        )
+
+    def _to_generated(self):
+        return _SQLSourceParameter(
+            connection_string=self.connection_string,
+            query=self.query,
         )
 
     def _to_generated_patch(self):
@@ -1154,6 +1193,13 @@ class AzureTableDataFeedSource(object):
             table=source.table
         )
 
+    def _to_generated(self):
+        return _AzureTableParameter(
+            connection_string=self.connection_string,
+            query=self.query,
+            table=self.table
+        )
+
     def _to_generated_patch(self):
         return _AzureTableParameterPatch(
             connection_string=self.connection_string,
@@ -1189,6 +1235,12 @@ class AzureEventHubsDataFeedSource(object):
         return cls(
             connection_string=source.connection_string,
             consumer_group=source.consumer_group
+        )
+
+    def _to_generated(self):
+        return _AzureEventHubsParameter(
+            connection_string=self.connection_string,
+            consumer_group=self.consumer_group,
         )
 
     def _to_generated_patch(self):
@@ -1250,6 +1302,15 @@ class InfluxDBDataFeedSource(object):
             query=source.query
         )
 
+    def _to_generated(self):
+        return _InfluxDBParameter(
+            connection_string=self.connection_string,
+            database=self.database,
+            user_name=self.user_name,
+            password=self.password,
+            query=self.query
+        )
+
     def _to_generated_patch(self):
         return _InfluxDBParameterPatch(
             connection_string=self.connection_string,
@@ -1289,6 +1350,12 @@ class MySqlDataFeedSource(object):
             query=source.query,
         )
 
+    def _to_generated(self):
+        return _SQLSourceParameter(
+            connection_string=self.connection_string,
+            query=self.query
+        )
+
     def _to_generated_patch(self):
         return _SQLSourceParameterPatch(
             connection_string=self.connection_string,
@@ -1325,6 +1392,12 @@ class PostgreSqlDataFeedSource(object):
             query=source.query,
         )
 
+    def _to_generated(self):
+        return _SQLSourceParameter(
+            connection_string=self.connection_string,
+            query=self.query
+        )
+
     def _to_generated_patch(self):
         return _SQLSourceParameterPatch(
             connection_string=self.connection_string,
@@ -1359,6 +1432,12 @@ class SQLServerDataFeedSource(object):
         return cls(
             connection_string=source.connection_string,
             query=source.query,
+        )
+
+    def _to_generated(self):
+        return _SQLSourceParameter(
+            connection_string=self.connection_string,
+            query=self.query,
         )
 
     def _to_generated_patch(self):
@@ -1421,6 +1500,15 @@ class AzureDataLakeStorageGen2DataFeedSource(object):
             file_template=source.file_template
         )
 
+    def _to_generated(self):
+        return _AzureDataLakeStorageGen2Parameter(
+            account_name=self.account_name,
+            account_key=self.account_key,
+            file_system_name=self.file_system_name,
+            directory_template=self.directory_template,
+            file_template=self.file_template
+        )
+
     def _to_generated_patch(self):
         return _AzureDataLakeStorageGen2ParameterPatch(
             account_name=self.account_name,
@@ -1481,6 +1569,15 @@ class AzureLogAnalyticsDataFeedSource(object):
             query=source.query
         )
 
+    def _to_generated(self):
+        return _AzureLogAnalyticsParameter(
+            tenant_id=self.tenant_id,
+            client_id=self.client_id,
+            client_secret=self.client_secret,
+            workspace_id=self.workspace_id,
+            query=self.query
+        )
+
     def _to_generated_patch(self):
         return _AzureLogAnalyticsParameterPatch(
             tenant_id=self.tenant_id,
@@ -1523,6 +1620,13 @@ class MongoDBDataFeedSource(object):
             connection_string=source.connection_string,
             database=source.database,
             command=source.command
+        )
+
+    def _to_generated(self):
+        return _MongoDBParameter(
+            connection_string=self.connection_string,
+            database=self.database,
+            command=self.command
         )
 
     def _to_generated_patch(self):
@@ -3283,6 +3387,18 @@ class ServicePrincipalInKVCredentialEntity(object):
 
     def __init__(self, name, **kwargs):
         # type: (str, Any) -> None
+        if not "key_vault_endpoint" in kwargs:
+            raise ValueError("key_vault_endpoint is required.")
+        if not "key_vault_client_id" in kwargs:
+            raise ValueError("key_vault_client_id is required.")
+        if not "key_vault_client_secret" in kwargs:
+            raise ValueError("key_vault_client_secret is required.")
+        if not "service_principal_id_name_in_kv" in kwargs:
+            raise ValueError("service_principal_id_name_in_kv is required.")
+        if not "service_principal_secret_name_in_kv" in kwargs:
+            raise ValueError("service_principal_secret_name_in_kv is required.")
+        if not "tenant_id" in kwargs:
+            raise ValueError("tenant_id is required.")
         self.credential_entity_type = 'ServicePrincipalInKV'
         self.name = name
         self.key_vault_endpoint = kwargs['key_vault_endpoint']
