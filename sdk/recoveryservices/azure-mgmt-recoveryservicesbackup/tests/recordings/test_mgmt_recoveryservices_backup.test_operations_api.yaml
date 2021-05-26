@@ -9,15 +9,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-recoveryservicesbackup/0.11.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-recoveryservicesbackup/1.0.0b2 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/providers/Microsoft.RecoveryServices/operations?api-version=2016-08-10
   response:
     body:
-      string: '{"value":[{"name":"microsoft.recoveryservices/Locations/backupPreValidateProtection/action","display":{"provider":"microsoft.recoveryservices","resource":"PreValidate
+      string: '{"value":[{"name":"microsoft.recoveryservices/Locations/backupAadProperties/read","display":{"provider":"microsoft.recoveryservices","resource":"Recovery
+        Points","operation":"Get Aad Properties for CRR","description":"Get AAD Properties
+        for authentication in the third region for Cross Region Restore."},"origin":"user"},{"name":"microsoft.recoveryservices/Locations/backupCrossRegionRestore/action","display":{"provider":"microsoft.recoveryservices","resource":"Recovery
+        Points","operation":"Cross Region Restore","description":"Trigger Cross region
+        restore."},"origin":"user"},{"name":"microsoft.recoveryservices/Locations/backupCrrJob/action","display":{"provider":"microsoft.recoveryservices","resource":"CRR
+        Job Details","operation":"Get CRR Job Details","description":"Get Cross Region
+        Restore Job Details in the secondary region for Recovery Services Vault."},"origin":"user"},{"name":"microsoft.recoveryservices/Locations/backupCrrJobs/action","display":{"provider":"microsoft.recoveryservices","resource":"CRR
+        Jobs","operation":"List CRR Jobs","description":"List Cross Region Restore
+        Jobs in the secondary region for Recovery Services Vault."},"origin":"user"},{"name":"microsoft.recoveryservices/Locations/backupCrrOperationResults/read","display":{"provider":"microsoft.recoveryservices","resource":"CRR
+        Operation Results","operation":"Get CRR Operation Result","description":"Returns
+        CRR Operation Result for Recovery Services Vault."},"origin":"user"},{"name":"microsoft.recoveryservices/Locations/backupCrrOperationsStatus/read","display":{"provider":"microsoft.recoveryservices","resource":"CRR
+        Operation Status","operation":"Get CRR Operation Status","description":"Returns
+        CRR Operation Status for Recovery Services Vault."},"origin":"user"},{"name":"microsoft.recoveryservices/Locations/backupPreValidateProtection/action","display":{"provider":"microsoft.recoveryservices","resource":"PreValidate
         Protection","operation":"Pre Validate Enable Protection","description":""},"origin":"user"},{"name":"microsoft.recoveryservices/Locations/backupProtectedItem/write","display":{"provider":"microsoft.recoveryservices","resource":"Protected
         Items","operation":"Create Backup Protected Item","description":"Create a
         backup Protected Item"},"origin":"user"},{"name":"microsoft.recoveryservices/Locations/backupProtectedItems/read","display":{"provider":"microsoft.recoveryservices","resource":"Protected
@@ -25,19 +38,7 @@ interactions:
         of all Protected Items."},"origin":"user"},{"name":"microsoft.recoveryservices/Locations/backupStatus/action","display":{"provider":"microsoft.recoveryservices","resource":"Backup
         Status","operation":"Check Backup Status for Vault","description":"Check Backup
         Status for Recovery Services Vaults"},"origin":"user"},{"name":"microsoft.recoveryservices/Locations/backupValidateFeatures/action","display":{"provider":"microsoft.recoveryservices","resource":"Validate
-        Features","operation":"Validate Features","description":"Validate Features"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupAadProperties/read","display":{"provider":"microsoft.recoveryservices","resource":"Recovery
-        Points","operation":"Get Aad Properties for CRR","description":"Get AAD Properties
-        for authentication in the third region for Cross Region Restore."},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupCrossRegionRestore/action","display":{"provider":"microsoft.recoveryservices","resource":"Recovery
-        Points","operation":"CRR Recovery Points","description":"Cross Region Restore
-        Recovery Points for Protected Items."},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupCrrJob/action","display":{"provider":"microsoft.recoveryservices","resource":"CRR
-        Job Details","operation":"Get CRR Job Details","description":"Get Cross Region
-        Restore Job Details in the secondary region for Recovery Services Vault."},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupCrrJobs/action","display":{"provider":"microsoft.recoveryservices","resource":"CRR
-        Jobs","operation":"List CRR Jobs","description":"List Cross Region Restore
-        Jobs in the secondary region for Recovery Services Vault."},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupCrrOperationResults/read","display":{"provider":"microsoft.recoveryservices","resource":"CRR
-        Operation Results","operation":"Get CRR Operation Result","description":"Returns
-        CRR Operation Result for Recovery Services Vault."},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupCrrOperationsStatus/read","display":{"provider":"microsoft.recoveryservices","resource":"CRR
-        Operation Status","operation":"Get CRR Operation Status","description":"Returns
-        CRR Operation Status for Recovery Services Vault."},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupEncryptionConfigs/read","display":{"provider":"microsoft.recoveryservices","resource":"Vault
+        Features","operation":"Validate Features","description":"Validate Features"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupEncryptionConfigs/read","display":{"provider":"microsoft.recoveryservices","resource":"Vault
         Encryption Config","operation":"Get Backup Resource Encryption Config","description":"Gets
         Backup Resource Encryption Configuration."},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupEncryptionConfigs/write","display":{"provider":"microsoft.recoveryservices","resource":"Vault
         Encryption Config","operation":"Put Backup Resource Encryption Config","description":"Updates
@@ -77,7 +78,9 @@ interactions:
         Items","operation":"Get Protected Item Details","description":"Returns object
         details of the Protected Item"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupFabrics/protectionContainers/protectedItems/recoveryPoints/accessToken/action","display":{"provider":"microsoft.recoveryservices","resource":"Recovery
         Points","operation":"Get AccessToken","description":"Get AccessToken for Cross
-        Region Restore."},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupFabrics/protectionContainers/protectedItems/recoveryPoints/provisionInstantItemRecovery/action","display":{"provider":"microsoft.recoveryservices","resource":"Recovery
+        Region Restore."},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupFabrics/protectionContainers/protectedItems/recoveryPoints/move/action","display":{"provider":"microsoft.recoveryservices","resource":"Recovery
+        Points","operation":"Move Recovery point to another tier","description":"Move
+        Recovery point to another tier"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupFabrics/protectionContainers/protectedItems/recoveryPoints/provisionInstantItemRecovery/action","display":{"provider":"microsoft.recoveryservices","resource":"Recovery
         Points","operation":"Provision Instant Item Recovery for Protected Item","description":"Provision
         Instant Item Recovery for Protected Item"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupFabrics/protectionContainers/protectedItems/recoveryPoints/read","display":{"provider":"microsoft.recoveryservices","resource":"Recovery
         Points","operation":"Get Recovery Points","description":"Get Recovery Points
@@ -85,7 +88,9 @@ interactions:
         Points","operation":"Restore Recovery Points","description":"Restore Recovery
         Points for Protected Items."},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupFabrics/protectionContainers/protectedItems/recoveryPoints/revokeInstantItemRecovery/action","display":{"provider":"microsoft.recoveryservices","resource":"Recovery
         Points","operation":"Revoke Instant Item Recovery for Protected Item","description":"Revoke
-        Instant Item Recovery for Protected Item"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupFabrics/protectionContainers/protectedItems/write","display":{"provider":"microsoft.recoveryservices","resource":"Protected
+        Instant Item Recovery for Protected Item"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupFabrics/protectionContainers/protectedItems/recoveryPointsRecommendedForMove/action","display":{"provider":"microsoft.recoveryservices","resource":"Recovery
+        Points","operation":"Get Recovery points recommended for move to another tier","description":"Get
+        Recovery points recommended for move to another tier"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupFabrics/protectionContainers/protectedItems/write","display":{"provider":"microsoft.recoveryservices","resource":"Protected
         Items","operation":"Create Backup Protected Item","description":"Create a
         backup Protected Item"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupFabrics/protectionContainers/read","display":{"provider":"microsoft.recoveryservices","resource":"Protection
         Containers","operation":"Get Registered Container","description":"Returns
@@ -122,7 +127,21 @@ interactions:
         Protection Containers","operation":"Get Containers In Subscription","description":"Returns
         all containers belonging to the subscription"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupProtectionIntents/read","display":{"provider":"microsoft.recoveryservices","resource":"Protection
         Intent","operation":"List all backup Protection Intents","description":"List
-        all backup Protection Intents"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupSecurityPIN/action","display":{"provider":"microsoft.recoveryservices","resource":"Security
+        all backup Protection Intents"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupResourceGuardProxies/delete","display":{"provider":"microsoft.recoveryservices","resource":"Resource
+        Guard Proxy","operation":"Delete ResourceGuard proxy","description":"The Delete
+        ResourceGuard proxy operation deletes the specified Azure resource of type
+        ''ResourceGuard proxy''"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupResourceGuardProxies/read","display":{"provider":"microsoft.recoveryservices","resource":"Resource
+        Guard Proxy","operation":"Get ResourceGuard proxy","description":"Get ResourceGuard
+        proxy operation gets an object representing the Azure resource of type ''ResourceGuard
+        proxy''"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupResourceGuardProxies/read","display":{"provider":"microsoft.recoveryservices","resource":"Resource
+        Guard Proxy","operation":"Get the list of ResourceGuard proxies for a resource","description":"Get
+        the list of ResourceGuard proxies for a resource"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupResourceGuardProxies/unlockDelete/action","display":{"provider":"microsoft.recoveryservices","resource":"Resource
+        Guard Proxy","operation":"Unlock delete ResourceGuard proxy operation unlocks
+        the next delete critical operation","description":"Unlock delete ResourceGuard
+        proxy operation unlocks the next delete critical operation"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupResourceGuardProxies/write","display":{"provider":"microsoft.recoveryservices","resource":"Resource
+        Guard Proxy","operation":"Create ResourceGuard proxy","description":"Create
+        ResourceGuard proxy operation creates an Azure resource of type ''ResourceGuard
+        Proxy''"},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupSecurityPIN/action","display":{"provider":"microsoft.recoveryservices","resource":"Security
         Pin Info","operation":"Get Security PIN Info","description":"Returns Security
         PIN Information for Recovery Services Vault."},"origin":"user"},{"name":"microsoft.recoveryservices/Vaults/backupUsageSummaries/read","display":{"provider":"microsoft.recoveryservices","resource":"Backup
         Usages Summaries","operation":"Recovery Services Protected Items and Protected
@@ -355,7 +374,9 @@ interactions:
         ","description":"Read any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationProtectionIntents/write","display":{"provider":"Microsoft.RecoveryServices","operation":"Create
         or Update ","description":"Create or Update any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationVaultSettings/read","display":{"provider":"Microsoft.RecoveryServices","operation":"Read
         ","description":"Read any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationVaultSettings/write","display":{"provider":"Microsoft.RecoveryServices","operation":"Create
-        or Update ","description":"Create or Update any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/Vaults/vaultTokens/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Vaults","operation":"Vault
+        or Update ","description":"Create or Update any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationSupportedRegionMappings/read","display":{"provider":"Microsoft.RecoveryServices","operation":"Read
+        ","description":"Read any "},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/vaults/replicationFabrics/moveWebApp/action","display":{"provider":"Microsoft.RecoveryServices","resource":"Fabrics","operation":"Move
+        WebApp","description":"Move WebApp"},"origin":"user,system"},{"name":"Microsoft.RecoveryServices/Vaults/vaultTokens/read","display":{"provider":"Microsoft.RecoveryServices","resource":"Vaults","operation":"Vault
         Token","description":"The Vault Token operation can be used to get Vault Token
         for vault level backend operations."},"origin":"user"},{"name":"Microsoft.RecoveryServices/Vaults/registeredIdentities/write","display":{"provider":"Microsoft.RecoveryServices","resource":"Vaults","operation":"Register
         Service Container","description":"The Register Service Container operation
@@ -419,11 +440,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '64686'
+      - '67545'
       content-type:
       - application/json
       date:
-      - Mon, 28 Dec 2020 09:03:46 GMT
+      - Wed, 26 May 2021 08:02:40 GMT
       expires:
       - '-1'
       pragma:
