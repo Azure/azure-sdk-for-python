@@ -42,7 +42,7 @@ exclude_packages = [
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
     ]
-
+ 
 setup(
     name=PACKAGE_NAME,
     version=version,
