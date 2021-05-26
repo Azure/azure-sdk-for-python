@@ -4272,7 +4272,7 @@ class ContinuousWebJob(ProxyOnlyResource):
     :param using_sdk: Using SDK?.
     :type using_sdk: bool
     :param settings: Job settings.
-    :type settings: dict[str, object]
+    :type settings: dict[str, any]
     """
 
     _validation = {
@@ -4399,8 +4399,8 @@ class CookieExpiration(ProxyOnlyResource):
 class CorsSettings(msrest.serialization.Model):
     """Cross-Origin Resource Sharing (CORS) settings for the app.
 
-    :param allowed_origins: Gets or sets the list of origins that should be allowed to make cross-
-     origin
+    :param allowed_origins: Gets or sets the list of origins that should be allowed to make
+     cross-origin
      calls (for example: http://example.com:12345). Use "*" to allow all.
     :type allowed_origins: list[str]
     :param support_credentials: Gets or sets whether CORS requests with credentials are allowed.
@@ -6351,8 +6351,8 @@ class DomainControlCenterSsoRequest(msrest.serialization.Model):
     :vartype url: str
     :ivar post_parameter_key: Post parameter key.
     :vartype post_parameter_key: str
-    :ivar post_parameter_value: Post parameter value. Client should use 'application/x-www-form-
-     urlencoded' encoding for this value.
+    :ivar post_parameter_value: Post parameter value. Client should use
+     'application/x-www-form-urlencoded' encoding for this value.
     :vartype post_parameter_value: str
     """
 
@@ -7014,7 +7014,7 @@ class FunctionEnvelope(ProxyOnlyResource):
     :param href: Function URI.
     :type href: str
     :param config: Config information.
-    :type config: object
+    :type config: any
     :param files: File list.
     :type files: dict[str, str]
     :param test_data: Test data used when testing via the Azure Portal.
@@ -8304,8 +8304,8 @@ class IpSecurityRestriction(msrest.serialization.Model):
     :param description: IP restriction rule description.
     :type description: str
     :param headers: IP restriction rule headers.
-     X-Forwarded-Host (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-
-     Host#Examples).
+     X-Forwarded-Host
+     (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host#Examples).
      The matching logic is ..
     
     
@@ -8316,8 +8316,8 @@ class IpSecurityRestriction(msrest.serialization.Model):
        but not the root domain contoso.com or multi-level foo.bar.contoso.com
      * Unicode host names are allowed but are converted to Punycode for matching.
     
-     X-Forwarded-For (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-
-     For#Examples).
+     X-Forwarded-For
+     (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For#Examples).
      The matching logic is ..
     
     
@@ -12046,8 +12046,8 @@ class Site(Resource):
      settings. Read-only.
     :vartype outbound_ip_addresses: str
     :ivar possible_outbound_ip_addresses: List of IP addresses that the app uses for outbound
-     connections (e.g. database access). Includes VIPs from all tenants except dataComponent. Read-
-     only.
+     connections (e.g. database access). Includes VIPs from all tenants except dataComponent.
+     Read-only.
     :vartype possible_outbound_ip_addresses: str
     :param container_size: Size of the function container.
     :type container_size: int
@@ -12274,8 +12274,8 @@ class SiteAuthSettings(ProxyOnlyResource):
      When using Azure Active Directory, this value is the URI of the directory tenant, e.g.
      https://sts.windows.net/{tenant-guid}/.
      This URI is a case-sensitive identifier for the token issuer.
-     More information on OpenID Connect Discovery: http://openid.net/specs/openid-connect-
-     discovery-1_0.html.
+     More information on OpenID Connect Discovery:
+     http://openid.net/specs/openid-connect-discovery-1_0.html.
     :type issuer: str
     :param validate_issuer: Gets a value indicating whether the issuer should be a valid HTTPS url
      and be validated as such.
@@ -12370,8 +12370,8 @@ class SiteAuthSettings(ProxyOnlyResource):
     :param microsoft_account_o_auth_scopes: The OAuth 2.0 scopes that will be requested as part of
      Microsoft Account authentication.
      This setting is optional. If not specified, "wl.basic" is used as the default scope.
-     Microsoft Account Scopes and permissions documentation: https://msdn.microsoft.com/en-
-     us/library/dn631845.aspx.
+     Microsoft Account Scopes and permissions documentation:
+     https://msdn.microsoft.com/en-us/library/dn631845.aspx.
     :type microsoft_account_o_auth_scopes: list[str]
     :param is_auth_from_file: "true" if the auth config settings should be read from a file,
      "false" otherwise.
@@ -12630,6 +12630,11 @@ class SiteConfig(msrest.serialization.Model):
     :param http_logging_enabled: :code:`<code>true</code>` if HTTP logging is enabled; otherwise,
      :code:`<code>false</code>`.
     :type http_logging_enabled: bool
+    :param acr_use_managed_identity_creds: Flag to use Managed Identity Creds for ACR pull.
+    :type acr_use_managed_identity_creds: bool
+    :param acr_user_managed_identity_id: If using user managed identity, the user managed identity
+     ClientId.
+    :type acr_user_managed_identity_id: str
     :param logs_directory_size_limit: HTTP logs directory size limit.
     :type logs_directory_size_limit: int
     :param detailed_error_logging_enabled: :code:`<code>true</code>` if detailed error logging is
@@ -12758,6 +12763,8 @@ class SiteConfig(msrest.serialization.Model):
         'remote_debugging_enabled': {'key': 'remoteDebuggingEnabled', 'type': 'bool'},
         'remote_debugging_version': {'key': 'remoteDebuggingVersion', 'type': 'str'},
         'http_logging_enabled': {'key': 'httpLoggingEnabled', 'type': 'bool'},
+        'acr_use_managed_identity_creds': {'key': 'acrUseManagedIdentityCreds', 'type': 'bool'},
+        'acr_user_managed_identity_id': {'key': 'acrUserManagedIdentityID', 'type': 'str'},
         'logs_directory_size_limit': {'key': 'logsDirectorySizeLimit', 'type': 'int'},
         'detailed_error_logging_enabled': {'key': 'detailedErrorLoggingEnabled', 'type': 'bool'},
         'publishing_username': {'key': 'publishingUsername', 'type': 'str'},
@@ -12823,6 +12830,8 @@ class SiteConfig(msrest.serialization.Model):
         self.remote_debugging_enabled = kwargs.get('remote_debugging_enabled', None)
         self.remote_debugging_version = kwargs.get('remote_debugging_version', None)
         self.http_logging_enabled = kwargs.get('http_logging_enabled', None)
+        self.acr_use_managed_identity_creds = kwargs.get('acr_use_managed_identity_creds', None)
+        self.acr_user_managed_identity_id = kwargs.get('acr_user_managed_identity_id', None)
         self.logs_directory_size_limit = kwargs.get('logs_directory_size_limit', None)
         self.detailed_error_logging_enabled = kwargs.get('detailed_error_logging_enabled', None)
         self.publishing_username = kwargs.get('publishing_username', None)
@@ -12915,6 +12924,11 @@ class SiteConfigResource(ProxyOnlyResource):
     :param http_logging_enabled: :code:`<code>true</code>` if HTTP logging is enabled; otherwise,
      :code:`<code>false</code>`.
     :type http_logging_enabled: bool
+    :param acr_use_managed_identity_creds: Flag to use Managed Identity Creds for ACR pull.
+    :type acr_use_managed_identity_creds: bool
+    :param acr_user_managed_identity_id: If using user managed identity, the user managed identity
+     ClientId.
+    :type acr_user_managed_identity_id: str
     :param logs_directory_size_limit: HTTP logs directory size limit.
     :type logs_directory_size_limit: int
     :param detailed_error_logging_enabled: :code:`<code>true</code>` if detailed error logging is
@@ -13052,6 +13066,8 @@ class SiteConfigResource(ProxyOnlyResource):
         'remote_debugging_enabled': {'key': 'properties.remoteDebuggingEnabled', 'type': 'bool'},
         'remote_debugging_version': {'key': 'properties.remoteDebuggingVersion', 'type': 'str'},
         'http_logging_enabled': {'key': 'properties.httpLoggingEnabled', 'type': 'bool'},
+        'acr_use_managed_identity_creds': {'key': 'properties.acrUseManagedIdentityCreds', 'type': 'bool'},
+        'acr_user_managed_identity_id': {'key': 'properties.acrUserManagedIdentityID', 'type': 'str'},
         'logs_directory_size_limit': {'key': 'properties.logsDirectorySizeLimit', 'type': 'int'},
         'detailed_error_logging_enabled': {'key': 'properties.detailedErrorLoggingEnabled', 'type': 'bool'},
         'publishing_username': {'key': 'properties.publishingUsername', 'type': 'str'},
@@ -13117,6 +13133,8 @@ class SiteConfigResource(ProxyOnlyResource):
         self.remote_debugging_enabled = kwargs.get('remote_debugging_enabled', None)
         self.remote_debugging_version = kwargs.get('remote_debugging_version', None)
         self.http_logging_enabled = kwargs.get('http_logging_enabled', None)
+        self.acr_use_managed_identity_creds = kwargs.get('acr_use_managed_identity_creds', None)
+        self.acr_user_managed_identity_id = kwargs.get('acr_user_managed_identity_id', None)
         self.logs_directory_size_limit = kwargs.get('logs_directory_size_limit', None)
         self.detailed_error_logging_enabled = kwargs.get('detailed_error_logging_enabled', None)
         self.publishing_username = kwargs.get('publishing_username', None)
@@ -13635,8 +13653,8 @@ class SitePatchResource(ProxyOnlyResource):
      settings. Read-only.
     :vartype outbound_ip_addresses: str
     :ivar possible_outbound_ip_addresses: List of IP addresses that the app uses for outbound
-     connections (e.g. database access). Includes VIPs from all tenants except dataComponent. Read-
-     only.
+     connections (e.g. database access). Includes VIPs from all tenants except dataComponent.
+     Read-only.
     :vartype possible_outbound_ip_addresses: str
     :param container_size: Size of the function container.
     :type container_size: int
@@ -16336,7 +16354,7 @@ class TriggeredWebJob(ProxyOnlyResource):
     :param using_sdk: Using SDK?.
     :type using_sdk: bool
     :param settings: Job settings.
-    :type settings: dict[str, object]
+    :type settings: dict[str, any]
     """
 
     _validation = {
@@ -17020,8 +17038,8 @@ class VnetInfo(ProxyOnlyResource):
     :ivar resync_required: :code:`<code>true</code>` if a resync is required; otherwise,
      :code:`<code>false</code>`.
     :vartype resync_required: bool
-    :param dns_servers: DNS servers to be used by this Virtual Network. This should be a comma-
-     separated list of IP addresses.
+    :param dns_servers: DNS servers to be used by this Virtual Network. This should be a
+     comma-separated list of IP addresses.
     :type dns_servers: str
     :param is_swift: Flag that is used to denote if this is VNET injection.
     :type is_swift: bool
@@ -17362,7 +17380,7 @@ class WebJob(ProxyOnlyResource):
     :param using_sdk: Using SDK?.
     :type using_sdk: bool
     :param settings: Job settings.
-    :type settings: dict[str, object]
+    :type settings: dict[str, any]
     """
 
     _validation = {

@@ -16,17 +16,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 7076dbc4-b0a9-4b3e-b87b-f3fab7a8eacb
+      - cbf299ed-db00-45d6-a42c-36b313846e34
       date:
-      - Thu, 13 May 2021 22:35:49 GMT
+      - Tue, 18 May 2021 17:48:09 GMT
       operation-location:
-      - https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/6bbb1e83-c762-4517-8283-51f07b481500
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/5aceeec2-84da-4146-953b-773e40195a79
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -34,7 +34,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '84'
+      - '88'
     status:
       code: 202
       message: Accepted
@@ -50,21 +50,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/6bbb1e83-c762-4517-8283-51f07b481500
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/health/jobs/5aceeec2-84da-4146-953b-773e40195a79
   response:
     body:
-      string: '{"jobId":"6bbb1e83-c762-4517-8283-51f07b481500","lastUpdateDateTime":"2021-05-13T22:35:53Z","createdDateTime":"2021-05-13T22:35:49Z","expirationDateTime":"2021-05-14T22:35:49Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[{"offset":31,"length":18,"text":"Parkinsons
+      string: '{"jobId":"5aceeec2-84da-4146-953b-773e40195a79","lastUpdateDateTime":"2021-05-18T17:48:12Z","createdDateTime":"2021-05-18T17:48:09Z","expirationDateTime":"2021-05-19T17:48:09Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[{"offset":31,"length":18,"text":"Parkinsons
         Disease","category":"Diagnosis","confidenceScore":1.0,"name":"Parkinson Disease","links":[{"dataSource":"UMLS","id":"C0030567"},{"dataSource":"AOD","id":"0000006203"},{"dataSource":"BI","id":"BI00554"},{"dataSource":"CCPSS","id":"1018057"},{"dataSource":"CCS","id":"6.2.1"},{"dataSource":"CCSR_10","id":"NVS004"},{"dataSource":"CHV","id":"0000009319"},{"dataSource":"COSTAR","id":"559"},{"dataSource":"CSP","id":"2057-3689"},{"dataSource":"CST","id":"EXTRAPYR
         SYND"},{"dataSource":"ICD10","id":"G20"},{"dataSource":"ICD10AM","id":"G20"},{"dataSource":"ICD10CM","id":"G20"},{"dataSource":"ICD9CM","id":"332.0"},{"dataSource":"ICPC2ICD10ENG","id":"MTHU004748"},{"dataSource":"ICPC2P","id":"N87001"},{"dataSource":"LCH_NW","id":"sh85098115"},{"dataSource":"LNC","id":"MTHU020807"},{"dataSource":"MDR","id":"10061536"},{"dataSource":"MEDCIN","id":"32004"},{"dataSource":"MEDLINEPLUS","id":"85"},{"dataSource":"MSH","id":"D010300"},{"dataSource":"NANDA-I","id":"03003"},{"dataSource":"NCI","id":"C26845"},{"dataSource":"NCI_CELLOSAURUS","id":"C26845"},{"dataSource":"NCI_CPTAC","id":"C26845"},{"dataSource":"NCI_NCI-GLOSS","id":"CDR0000044140"},{"dataSource":"OMIM","id":"516000"},{"dataSource":"PSY","id":"36720"},{"dataSource":"QMR","id":"R0121461"},{"dataSource":"RAM","id":"DX353"},{"dataSource":"RCD","id":"F12.."},{"dataSource":"SNM","id":"D-8450"},{"dataSource":"SNMI","id":"DA-21012"},{"dataSource":"SNOMEDCT_US","id":"49049000"},{"dataSource":"WHO","id":"0106"}]},{"offset":51,"length":2,"text":"PD","category":"Diagnosis","confidenceScore":1.0,"name":"Parkinson
         Disease","links":[{"dataSource":"UMLS","id":"C0030567"},{"dataSource":"AOD","id":"0000006203"},{"dataSource":"BI","id":"BI00554"},{"dataSource":"CCPSS","id":"1018057"},{"dataSource":"CCS","id":"6.2.1"},{"dataSource":"CCSR_10","id":"NVS004"},{"dataSource":"CHV","id":"0000009319"},{"dataSource":"COSTAR","id":"559"},{"dataSource":"CSP","id":"2057-3689"},{"dataSource":"CST","id":"EXTRAPYR
         SYND"},{"dataSource":"ICD10","id":"G20"},{"dataSource":"ICD10AM","id":"G20"},{"dataSource":"ICD10CM","id":"G20"},{"dataSource":"ICD9CM","id":"332.0"},{"dataSource":"ICPC2ICD10ENG","id":"MTHU004748"},{"dataSource":"ICPC2P","id":"N87001"},{"dataSource":"LCH_NW","id":"sh85098115"},{"dataSource":"LNC","id":"MTHU020807"},{"dataSource":"MDR","id":"10061536"},{"dataSource":"MEDCIN","id":"32004"},{"dataSource":"MEDLINEPLUS","id":"85"},{"dataSource":"MSH","id":"D010300"},{"dataSource":"NANDA-I","id":"03003"},{"dataSource":"NCI","id":"C26845"},{"dataSource":"NCI_CELLOSAURUS","id":"C26845"},{"dataSource":"NCI_CPTAC","id":"C26845"},{"dataSource":"NCI_NCI-GLOSS","id":"CDR0000044140"},{"dataSource":"OMIM","id":"516000"},{"dataSource":"PSY","id":"36720"},{"dataSource":"QMR","id":"R0121461"},{"dataSource":"RAM","id":"DX353"},{"dataSource":"RCD","id":"F12.."},{"dataSource":"SNM","id":"D-8450"},{"dataSource":"SNMI","id":"DA-21012"},{"dataSource":"SNOMEDCT_US","id":"49049000"},{"dataSource":"WHO","id":"0106"}]}],"relations":[{"relationType":"Abbreviation","entities":[{"ref":"#/results/documents/0/entities/0","role":"FullTerm"},{"ref":"#/results/documents/0/entities/1","role":"AbbreviatedTerm"}]}],"warnings":[]}],"errors":[],"modelVersion":"2021-03-01"}}'
     headers:
       apim-request-id:
-      - 9a36b415-b970-4aca-8e46-fdee26618a89
+      - 073ea353-d31b-439c-b1be-2eb6d3776c84
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 22:35:54 GMT
+      - Tue, 18 May 2021 17:48:14 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -72,7 +72,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '40'
+      - '33'
     status:
       code: 200
       message: OK

@@ -47,9 +47,6 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 120
-  - name: TestSamples
-    type: boolean
-    default: false
   - name: Location
     type: string
     default: ''
@@ -129,7 +126,6 @@ stages:
               AllocateResourceGroup: ${{ parameters.AllocateResourceGroup }}
               DeployArmTemplate: ${{ parameters.DeployArmTemplate }}
               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-              TestSamples: ${{ parameters.TestSamples }}
             MatrixConfigs:
               # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
               - ${{ each config in parameters.MatrixConfigs }}:

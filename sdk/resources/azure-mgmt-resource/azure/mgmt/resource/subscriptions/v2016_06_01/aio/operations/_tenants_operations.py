@@ -43,7 +43,7 @@ class TenantsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TenantListResult"]:
         """Gets the tenants for your account.
 

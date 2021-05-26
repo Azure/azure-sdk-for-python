@@ -7,13 +7,14 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
 
 from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -23,10 +24,14 @@ from azure.data.tables import (
     TableEntity,
     EntityProperty,
     EdmType,
-    UpdateMode
+    UpdateMode,
+    generate_table_sas,
+    TableSasPermissions,
+    TableServiceClient,
+    AccessPolicy
 )
 
-from _shared.testcase import TableTestCase, SLEEP_DELAY
+from _shared.testcase import TableTestCase
 from preparers import cosmos_decorator
 
 # ------------------------------------------------------------------------------
@@ -469,12 +474,12 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            entity = {'RowKey': 'rk'}
+            entity = {'RowKey': u'rk'}
 
             # Act
-            with pytest.raises(ValueError):
-                self.table.create_entity(entity=entity)
-            # Assert
+            with pytest.raises(ValueError) as error:
+                resp = self.table.create_entity(entity=entity)
+                assert str(error).contains("PartitionKey must be present in an entity")
         finally:
             self._tear_down()
 
@@ -483,7 +488,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            entity = {'RowKey': 'rk', 'PartitionKey': ''}
+            entity = {'RowKey': u'rk', 'PartitionKey': u''}
 
             # Act
             with pytest.raises(HttpResponseError):
@@ -499,11 +504,12 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            entity = {'PartitionKey': 'pk'}
+            entity = {'PartitionKey': u'pk'}
 
             # Act
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError) as error:
                 resp = self.table.create_entity(entity=entity)
+                assert str(error).contains("RowKey must be present in an entity")
 
             # Assert
         finally:
@@ -514,7 +520,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            entity = {'PartitionKey': 'pk', 'RowKey': ''}
+            entity = {'PartitionKey': u'pk', 'RowKey': u''}
 
             # Act
             with pytest.raises(HttpResponseError):
@@ -551,12 +557,10 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             resp = self.table.get_entity(partition_key=entity['PartitionKey'],
                                          row_key=entity['RowKey'],
                                          select=['age', 'ratio'])
-            resp.pop('_metadata', None)
             assert resp == {'age': 39, 'ratio': 3.1}
             resp = self.table.get_entity(partition_key=entity['PartitionKey'],
                                          row_key=entity['RowKey'],
                                          select='age,ratio')
-            resp.pop('_metadata', None)
             assert resp == {'age': 39, 'ratio': 3.1}
         finally:
             self._tear_down()
@@ -1200,15 +1204,15 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
-            assert resp['EmptyByte'].value ==  b''
+            assert resp['EmptyByte'] ==  b''
             assert resp['EmptyUnicode'] ==  u''
-            assert resp['SpacesOnlyByte'].value ==  b'   '
+            assert resp['SpacesOnlyByte'] ==  b'   '
             assert resp['SpacesOnlyUnicode'] ==  u'   '
-            assert resp['SpacesBeforeByte'].value ==  b'   Text'
+            assert resp['SpacesBeforeByte'] ==  b'   Text'
             assert resp['SpacesBeforeUnicode'] ==  u'   Text'
-            assert resp['SpacesAfterByte'].value ==  b'Text   '
+            assert resp['SpacesAfterByte'] ==  b'Text   '
             assert resp['SpacesAfterUnicode'] ==  u'Text   '
-            assert resp['SpacesBeforeAndAfterByte'].value ==  b'   Text   '
+            assert resp['SpacesBeforeAndAfterByte'] ==  b'   Text   '
             assert resp['SpacesBeforeAndAfterUnicode'] ==  u'   Text   '
         finally:
             self._tear_down()
@@ -1246,7 +1250,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Assert
             assert resp is not None
-            assert resp['binary'].value ==  binary_data
+            assert resp['binary'] ==  binary_data
         finally:
             self._tear_down()
 
@@ -1582,5 +1586,157 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             assert isinstance(updated['datetime1'], datetime)
             assert isinstance(updated['datetime2'], datetime)
             assert updated['datetime1'].tables_service_value == dotnet_timestamp
+        finally:
+            self._tear_down()
+
+    @cosmos_decorator
+    def test_sas_query(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            # Arrange
+            entity, _ = self._insert_random_entity()
+            token = self.generate_sas(
+                generate_table_sas,
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                permission=TableSasPermissions(read=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start=datetime.utcnow() - timedelta(minutes=1),
+            )
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=AzureSasCredential(token),
+            )
+            table = service.get_table_client(self.table_name)
+            entities = list(table.query_entities(
+                "PartitionKey eq '{}'".format(entity['PartitionKey'])))
+
+            # Assert
+            assert len(entities) ==  1
+            self._assert_default_entity(entities[0])
+        finally:
+            self._tear_down()
+
+    @cosmos_decorator
+    def test_sas_add(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            # Arrange
+            token = self.generate_sas(
+                generate_table_sas,
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                permission=TableSasPermissions(add=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start=datetime.utcnow() - timedelta(minutes=1),
+            )
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=AzureSasCredential(token),
+            )
+            table = service.get_table_client(self.table_name)
+
+            entity = self._create_random_entity_dict()
+            table.create_entity(entity=entity)
+
+            # Assert
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
+            self._assert_default_entity(resp)
+        finally:
+            self._tear_down()
+
+    @cosmos_decorator
+    def test_sas_add_outside_range(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            # Arrange
+            token = self.generate_sas(
+                generate_table_sas,
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                permission=TableSasPermissions(add=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start_pk='test', start_rk='test1',
+                end_pk='test', end_rk='test1',
+            )
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=AzureSasCredential(token),
+            )
+            table = service.get_table_client(self.table_name)
+            with pytest.raises(HttpResponseError):
+                entity = self._create_random_entity_dict()
+                table.create_entity(entity=entity)
+
+            # Assert
+        finally:
+            self._tear_down()
+
+    @cosmos_decorator
+    def test_sas_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            # Arrange
+            entity, _ = self._insert_random_entity()
+            token = self.generate_sas(
+                generate_table_sas,
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                permission=TableSasPermissions(update=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+            )
+
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=AzureSasCredential(token),
+            )
+            table = service.get_table_client(self.table_name)
+            updated_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
+            resp = table.update_entity(mode=UpdateMode.REPLACE, entity=updated_entity)
+
+            # Assert
+            received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
+            assert resp is not None
+            self._assert_updated_entity(received_entity)
+        finally:
+            self._tear_down()
+
+    @cosmos_decorator
+    def test_sas_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            # Arrange
+            entity, _ = self._insert_random_entity()
+            token = self.generate_sas(
+                generate_table_sas,
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                permission=TableSasPermissions(delete=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+            )
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=AzureSasCredential(token),
+            )
+            table = service.get_table_client(self.table_name)
+            table.delete_entity(entity['PartitionKey'], entity['RowKey'])
+
+            # Assert
+            with pytest.raises(ResourceNotFoundError):
+                self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
         finally:
             self._tear_down()

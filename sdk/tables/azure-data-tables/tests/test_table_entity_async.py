@@ -247,8 +247,9 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity = {'RowKey': 'rk'}
 
             # Act
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError) as error:
                 resp = await self.table.create_entity(entity=entity)
+                assert str(error).contains("PartitionKey must be present in an entity")
         finally:
             await self._tear_down()
 
@@ -273,10 +274,9 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity = {'PartitionKey': 'pk'}
 
             # Act
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError) as error:
                 resp = await self.table.create_entity(entity=entity)
-
-            # Assert
+                assert str(error).contains("PartitionKey must be present in an entity")
         finally:
             await self._tear_down()
 
@@ -993,15 +993,15 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({
-                'EmptyByte': '',
+                'EmptyByte': b'',
                 'EmptyUnicode': u'',
-                'SpacesOnlyByte': '   ',
+                'SpacesOnlyByte': b'   ',
                 'SpacesOnlyUnicode': u'   ',
-                'SpacesBeforeByte': '   Text',
+                'SpacesBeforeByte': b'   Text',
                 'SpacesBeforeUnicode': u'   Text',
-                'SpacesAfterByte': 'Text   ',
+                'SpacesAfterByte': b'Text   ',
                 'SpacesAfterUnicode': u'Text   ',
-                'SpacesBeforeAndAfterByte': '   Text   ',
+                'SpacesBeforeAndAfterByte': b'   Text   ',
                 'SpacesBeforeAndAfterUnicode': u'   Text   ',
             })
 
@@ -1011,15 +1011,15 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Assert
             assert resp is not None
-            assert resp['EmptyByte'] ==  ''
+            assert resp['EmptyByte'] ==  b''
             assert resp['EmptyUnicode'] ==  u''
-            assert resp['SpacesOnlyByte'] ==  '   '
+            assert resp['SpacesOnlyByte'] ==  b'   '
             assert resp['SpacesOnlyUnicode'] ==  u'   '
-            assert resp['SpacesBeforeByte'] ==  '   Text'
+            assert resp['SpacesBeforeByte'] ==  b'   Text'
             assert resp['SpacesBeforeUnicode'] ==  u'   Text'
-            assert resp['SpacesAfterByte'] ==  'Text   '
+            assert resp['SpacesAfterByte'] ==  b'Text   '
             assert resp['SpacesAfterUnicode'] ==  u'Text   '
-            assert resp['SpacesBeforeAndAfterByte'] ==  '   Text   '
+            assert resp['SpacesBeforeAndAfterByte'] ==  b'   Text   '
             assert resp['SpacesBeforeAndAfterUnicode'] ==  u'   Text   '
         finally:
             await self._tear_down()
@@ -1057,7 +1057,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Assert
             assert resp is not None
-            assert resp['binary'].value ==  binary_data
+            assert resp['binary'] ==  binary_data
         finally:
             await self._tear_down()
 
@@ -1602,7 +1602,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_query(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
 
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1637,7 +1636,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_add(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1670,7 +1668,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_add_inside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1702,7 +1699,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_add_outside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1733,7 +1729,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_update(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1767,7 +1762,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1797,7 +1791,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_upper_case_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1833,7 +1826,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:

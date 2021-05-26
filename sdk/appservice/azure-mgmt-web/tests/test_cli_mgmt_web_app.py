@@ -24,6 +24,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
             azure.mgmt.web.WebSiteManagementClient
         )
 
+    @unittest.skip('skip temporarily')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_web_app_slot(self, resource_group):
         # covered: 15
@@ -341,6 +342,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         result = self.mgmt_client.web_apps.delete(resource_group_name=RESOURCE_GROUP, name=NAME)
 
+    @unittest.skip('skip temporarily')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_web_app(self, resource_group):
         # coverd: 16

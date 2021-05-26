@@ -7,15 +7,6 @@
 #--------------------------------------------------------------------------
 
 
-# TEST SCENARIO COVERAGE
-# ----------------------
-# Methods Total   : 7
-# Methods Covered : 7
-# Examples Total  : 7
-# Examples Tested : 7
-# Coverage %      : 100
-# ----------------------
-
 from logging import fatal
 from typing import Any, ByteString
 import unittest

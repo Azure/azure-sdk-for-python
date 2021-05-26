@@ -46,7 +46,7 @@ class RecoverableDatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecoverableDatabase":
         """Gets a recoverable database, which is a resource representing a database's geo backup.
 
@@ -108,7 +108,7 @@ class RecoverableDatabasesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecoverableDatabaseListResult"]:
         """Gets a list of recoverable databases.
 

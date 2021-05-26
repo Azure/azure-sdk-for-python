@@ -23,17 +23,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - be2db9b3-eb5c-4655-9874-c6ffc80bb365
+      - 2aca33d0-c4c8-4a05-bae1-cb78525a6e7f
       date:
-      - Thu, 13 May 2021 23:45:06 GMT
+      - Tue, 18 May 2021 18:25:21 GMT
       operation-location:
-      - https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/e6eef8c2-76b5-40df-a2ff-98afce0e0912
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/d64ff7b6-4882-4694-ba8a-7055d50e5faf
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -41,7 +41,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '7798'
+      - '230'
     status:
       code: 202
       message: Accepted
@@ -57,19 +57,19 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/e6eef8c2-76b5-40df-a2ff-98afce0e0912
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/d64ff7b6-4882-4694-ba8a-7055d50e5faf
   response:
     body:
-      string: '{"jobId":"e6eef8c2-76b5-40df-a2ff-98afce0e0912","lastUpdateDateTime":"2021-05-13T23:45:08Z","createdDateTime":"2021-05-13T23:44:58Z","expirationDateTime":"2021-05-14T23:44:58Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-05-13T23:45:08Z"},"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-05-13T23:45:07.5074977Z","name":"NA","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"name":"Test
+      string: '{"jobId":"d64ff7b6-4882-4694-ba8a-7055d50e5faf","lastUpdateDateTime":"2021-05-18T18:25:24Z","createdDateTime":"2021-05-18T18:25:21Z","expirationDateTime":"2021-05-19T18:25:21Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-05-18T18:25:24Z"},"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-05-18T18:25:22.822091Z","name":"NA","state":"succeeded","results":{"documents":[{"id":"0","entities":[{"name":"Test
         (assessment)","matches":[{"text":"Test","offset":0,"length":4,"confidenceScore":0.04}],"language":"en","id":"Test
         (assessment)","url":"https://en.wikipedia.org/wiki/Test_(assessment)","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}}]}}'
     headers:
       apim-request-id:
-      - c03b8012-4fc9-464e-8cd1-211d3fe0bda4
+      - 5f754806-ec40-4b7d-b75b-b26551a82046
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 23:45:11 GMT
+      - Tue, 18 May 2021 18:25:26 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -77,7 +77,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '33'
+      - '31'
     status:
       code: 200
       message: OK

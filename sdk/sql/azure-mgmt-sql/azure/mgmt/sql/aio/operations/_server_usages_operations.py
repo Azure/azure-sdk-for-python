@@ -45,7 +45,7 @@ class ServerUsagesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServerUsageListResult"]:
         """Returns server usages.
 

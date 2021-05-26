@@ -48,7 +48,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FailoverGroup":
         """Gets a failover group.
 
@@ -112,7 +112,7 @@ class FailoverGroupsOperations:
         server_name: str,
         failover_group_name: str,
         parameters: "_models.FailoverGroup",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.FailoverGroup"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FailoverGroup"]]
         error_map = {
@@ -172,7 +172,7 @@ class FailoverGroupsOperations:
         server_name: str,
         failover_group_name: str,
         parameters: "_models.FailoverGroup",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FailoverGroup"]:
         """Creates or updates a failover group.
 
@@ -187,8 +187,8 @@ class FailoverGroupsOperations:
         :type parameters: ~azure.mgmt.sql.models.FailoverGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FailoverGroup or the result of cls(response)
@@ -248,7 +248,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -292,7 +292,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a failover group.
 
@@ -305,8 +305,8 @@ class FailoverGroupsOperations:
         :type failover_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -363,7 +363,7 @@ class FailoverGroupsOperations:
         server_name: str,
         failover_group_name: str,
         parameters: "_models.FailoverGroupUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.FailoverGroup"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FailoverGroup"]]
         error_map = {
@@ -420,7 +420,7 @@ class FailoverGroupsOperations:
         server_name: str,
         failover_group_name: str,
         parameters: "_models.FailoverGroupUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FailoverGroup"]:
         """Updates a failover group.
 
@@ -435,8 +435,8 @@ class FailoverGroupsOperations:
         :type parameters: ~azure.mgmt.sql.models.FailoverGroupUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FailoverGroup or the result of cls(response)
@@ -495,7 +495,7 @@ class FailoverGroupsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FailoverGroupListResult"]:
         """Lists the failover groups in a server.
 
@@ -571,7 +571,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.FailoverGroup"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FailoverGroup"]]
         error_map = {
@@ -622,7 +622,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FailoverGroup"]:
         """Fails over from the current primary server to this server.
 
@@ -635,8 +635,8 @@ class FailoverGroupsOperations:
         :type failover_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FailoverGroup or the result of cls(response)
@@ -695,7 +695,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.FailoverGroup"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FailoverGroup"]]
         error_map = {
@@ -746,7 +746,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FailoverGroup"]:
         """Fails over from the current primary server to this server. This operation might result in data
         loss.
@@ -760,8 +760,8 @@ class FailoverGroupsOperations:
         :type failover_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FailoverGroup or the result of cls(response)

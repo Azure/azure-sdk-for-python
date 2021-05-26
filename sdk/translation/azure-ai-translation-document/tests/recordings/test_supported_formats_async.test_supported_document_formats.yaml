@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-ai-translation-document/1.0.0b2 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/documents/formats
+    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/documents/formats
   response:
     body:
       string: !!binary |
@@ -21,21 +21,22 @@ interactions:
         Sj4uYgiymUBacHid1la31f8LkizooJIabkp3O5mZW6FgAd0dl0z9UcivzL4W1DkKyYJG0aDnzOUv
         5KwOX9wiVlsoCAAA
     headers:
-      apim-request-id: b50c3373-6977-47bc-8d9c-8cf9e56257d0
+      age: '0'
+      apim-request-id: 16b598c7-0942-43ed-bf3b-acf497963837
       cache-control: public,max-age=1
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Sat, 08 May 2021 01:51:50 GMT
+      date: Fri, 21 May 2021 17:00:47 GMT
       etag: '"44A88B37BE223B6C068718250B179D652514ABB810E8DD9DCD271B2759493859"'
-      set-cookie: ARRAffinitySameSite=20358cd7aa5d6b0695f01ef171fc9a95880154357830e1c6bb513b73834a2e5f;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.westus.microsofttranslator.com
+      set-cookie: ARRAffinitySameSite=20358cd7aa5d6b0695f01ef171fc9a95880154357830e1c6bb513b73834a2e5f;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
       x-powered-by: ASP.NET
-      x-requestid: b50c3373-6977-47bc-8d9c-8cf9e56257d0
+      x-requestid: 3bb730b2-5175-4c08-a6bc-def02cf41be4
     status:
       code: 200
       message: OK
-    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/documents/formats
+    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0/documents/formats
 version: 1
