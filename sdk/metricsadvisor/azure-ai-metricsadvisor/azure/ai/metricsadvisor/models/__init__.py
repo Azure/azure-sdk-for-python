@@ -40,7 +40,8 @@ from .._generated.models._azure_cognitive_service_metrics_advisor_restapi_open_a
     PeriodType,
     FeedbackType,
     TimeMode as AlertQueryTimeMode,
-    DataSourceCredentialType
+    DataSourceCredentialType,
+    AuthenticationTypeEnum
 )
 
 from .._generated.models import (
@@ -206,5 +207,6 @@ __all__ = (
     "DataLakeGen2SharedKeyCredentialEntity",
     "ServicePrincipalCredentialEntity",
     "ServicePrincipalInKVCredentialEntity",
-    "DataSourceCredentialType"
+    "DataSourceCredentialType",
+    "AuthenticationTypeEnum"
 )

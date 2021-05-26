@@ -461,7 +461,11 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
 
     def _to_generated_patch(self, data_source_feed_type, kwargs):
         source_param = kwargs.pop("dataSourceParameter", None)
+        authentication_type = None
+        credential_id = None
         if source_param:
+            authentication_type = source_param.authentication_type
+            credential_id = source_param.credential_id
             source_param = source_param._to_generated_patch()
 
         rollup_type = kwargs.pop("needRollup", None)
@@ -508,7 +512,9 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
             or self.options.admin_emails if self.options else None,
             status=kwargs.pop("status", None) or self.status,
             action_link_template=kwargs.pop("actionLinkTemplate", None)
-            or self.options.action_link_template if self.options else None
+            or self.options.action_link_template if self.options else None,
+            authentication_type=authentication_type,
+            credential_id=credential_id
         )
 
 
@@ -950,33 +956,39 @@ class AnomalyDetectionConfiguration(object):
 class AzureApplicationInsightsDataFeedSource(object):
     """AzureApplicationInsightsDataFeedSource.
 
-    :param azure_cloud: Required. Azure cloud environment.
-    :type azure_cloud: str
-    :param application_id: Required. Azure Application Insights ID.
-    :type application_id: str
-    :param api_key: Required. API Key.
-    :type api_key: str
-    :param query: Required. Query.
+    :keyword str azure_cloud: Azure cloud environment.
+    :keyword str application_id: Azure Application Insights ID.
+    :keyword str api_key: API Key.
+    :param str query: Required. Query.
     :type query: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :keyword str credential_id: The credential entity id.
     """
 
-    def __init__(self, azure_cloud, application_id, api_key, query, **kwargs):  # pylint: disable=unused-argument
-        # type: (str, str, str, str, Any) -> None
+    def __init__(self, query, authentication_type="Basic", **kwargs):
+        # type: (str, str, **Any) -> None
         self.data_source_type = 'AzureApplicationInsights'  # type: str
-        self.azure_cloud = azure_cloud
-        self.application_id = application_id
-        self.api_key = api_key
+        self.azure_cloud = kwargs.get("azure_cloud", None)
+        self.application_id = kwargs.get("application_id", None)
+        self.api_key = kwargs.get("api_key", None)
         self.query = query
+        self.authentication_type = authentication_type
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return "AzureApplicationInsightsDataFeedSource(data_source_type={}, azure_cloud={}, application_id={}, " \
-               "api_key={}, query={})".format(
-                    self.data_source_type,
-                    self.azure_cloud,
-                    self.application_id,
-                    self.api_key,
-                    self.query
-                )[:1024]
+               "api_key={}, query={}, authentication_type={}, credential_id={})".format(
+            self.data_source_type,
+            self.azure_cloud,
+            self.application_id,
+            self.api_key,
+            self.query,
+            self.authentication_type,
+            self.credential_id
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -1007,29 +1019,37 @@ class AzureApplicationInsightsDataFeedSource(object):
 class AzureBlobDataFeedSource(object):
     """AzureBlobDataFeedSource.
 
-    :param connection_string: Required. Azure Blob connection string.
-    :type connection_string: str
+    :keyword str connection_string: Azure Blob connection string.
     :param container: Required. Container.
     :type container: str
     :param blob_template: Required. Blob Template.
     :type blob_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :keyword str credential_id: The credential entity id.
     """
 
-    def __init__(self, connection_string, container, blob_template, **kwargs):  # pylint: disable=unused-argument
-        # type: (str, str, str, Any) -> None
+    def __init__(self, container, blob_template, authentication_type="Basic", **kwargs):
+        # type: (str, str, str, **Any) -> None
         self.data_source_type = 'AzureBlob'  # type: str
-        self.connection_string = connection_string
+        self.connection_string = kwargs.get("connection_string", None)
         self.container = container
         self.blob_template = blob_template
+        self.authentication_type = authentication_type
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return "AzureBlobDataFeedSource(data_source_type={}, connection_string={}, container={}, " \
-               "blob_template={})".format(
-                    self.data_source_type,
-                    self.connection_string,
-                    self.container,
-                    self.blob_template
-                )[:1024]
+               "blob_template={}, authentication_type={}, credential_id={})".format(
+            self.data_source_type,
+            self.connection_string,
+            self.container,
+            self.blob_template,
+            self.authentication_type,
+            self.credential_id
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -1057,39 +1077,48 @@ class AzureBlobDataFeedSource(object):
 class AzureCosmosDBDataFeedSource(object):
     """AzureCosmosDBDataFeedSource.
 
-    :param connection_string: Required. Azure CosmosDB connection string.
-    :type connection_string: str
+    :keyword str connection_string: Azure CosmosDB connection string.
     :param sql_query: Required. Query script.
     :type sql_query: str
     :param database: Required. Database name.
     :type database: str
     :param collection_id: Required. Collection id.
     :type collection_id: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :keyword str credential_id: The credential entity id.
     """
 
     def __init__(
-        self, connection_string,
-        sql_query,
-        database,
-        collection_id,
-        **kwargs
-    ):  # pylint: disable=unused-argument
-        # type: (str, str, str, str, Any) -> None
+            self,
+            sql_query,
+            database,
+            collection_id,
+            authentication_type="Basic",
+            **kwargs
+    ):
+        # type: (str, str, str, str, **Any) -> None
         self.data_source_type = 'AzureCosmosDB'  # type: str
-        self.connection_string = connection_string
+        self.connection_string = kwargs.get("connection_string", None)
         self.sql_query = sql_query
         self.database = database
         self.collection_id = collection_id
+        self.authentication_type = authentication_type
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return "AzureCosmosDBDataFeedSource(data_source_type={}, connection_string={}, sql_query={}, database={}, " \
-               "collection_id={})".format(
-                    self.data_source_type,
-                    self.connection_string,
-                    self.sql_query,
-                    self.database,
-                    self.collection_id
-                )[:1024]
+               "collection_id={}, authentication_type={}, credential_id={})".format(
+            self.data_source_type,
+            self.connection_string,
+            self.sql_query,
+            self.database,
+            self.collection_id,
+            self.authentication_type,
+            self.credential_id
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -1120,24 +1149,33 @@ class AzureCosmosDBDataFeedSource(object):
 class AzureDataExplorerDataFeedSource(object):
     """AzureDataExplorerDataFeedSource.
 
-    :param connection_string: Required. Database connection string.
-    :type connection_string: str
+    :keyword str connection_string: Database connection string.
     :param query: Required. Query script.
     :type query: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :keyword str credential_id: The credential entity id.
     """
 
-    def __init__(self, connection_string, query, **kwargs):  # pylint: disable=unused-argument
-        # type: (str, str, Any) -> None
+    def __init__(self, query, authentication_type="Basic", **kwargs):
+        # type: (str, str, **Any) -> None
         self.data_source_type = 'AzureDataExplorer'  # type: str
-        self.connection_string = connection_string
+        self.connection_string = kwargs.get("connection_string", None)
         self.query = query
+        self.authentication_type = authentication_type
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
-        return "AzureDataExplorerDataFeedSource(data_source_type={}, connection_string={}, query={})".format(
-                    self.data_source_type,
-                    self.connection_string,
-                    self.query
-                )[:1024]
+        return "AzureDataExplorerDataFeedSource(data_source_type={}, connection_string={}, query={}, " \
+               "authentication_type={}, credential_id={})".format(
+            self.data_source_type,
+            self.connection_string,
+            self.query,
+            self.authentication_type,
+            self.credential_id
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -1162,28 +1200,37 @@ class AzureDataExplorerDataFeedSource(object):
 class AzureTableDataFeedSource(object):
     """AzureTableDataFeedSource.
 
-    :param connection_string: Required. Azure Table connection string.
-    :type connection_string: str
+    :keyword str connection_string: Azure Table connection string.
     :param query: Required. Query script.
     :type query: str
     :param table: Required. Table name.
     :type table: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :keyword str credential_id: The credential entity id.
     """
 
-    def __init__(self, connection_string, query, table, **kwargs):  # pylint: disable=unused-argument
-        # type: (str, str, str, Any) -> None
+    def __init__(self, query, table, authentication_type="Basic", **kwargs):
+        # type: (str, str, str, **Any) -> None
         self.data_source_type = 'AzureTable'  # type: str
-        self.connection_string = connection_string
+        self.connection_string = kwargs.get("connection_string", None)
         self.query = query
         self.table = table
+        self.authentication_type = authentication_type
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
-        return "AzureTableDataFeedSource(data_source_type={}, connection_string={}, query={}, table={})".format(
-                    self.data_source_type,
-                    self.connection_string,
-                    self.query,
-                    self.table
-                )[:1024]
+        return "AzureTableDataFeedSource(data_source_type={}, connection_string={}, query={}, table={}, " \
+               "authentication_type={}, credential_id={})".format(
+            self.data_source_type,
+            self.connection_string,
+            self.query,
+            self.table,
+            self.authentication_type,
+            self.credential_id
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -1211,24 +1258,33 @@ class AzureTableDataFeedSource(object):
 class AzureEventHubsDataFeedSource(object):
     """AzureEventHubsDataFeedSource.
 
-    :param connection_string: Required. The connection string of this Azure Event Hubs.
-    :type connection_string: str
+    :keyword str connection_string: The connection string of this Azure Event Hubs.
     :param consumer_group: Required. The consumer group to be used in this data feed.
     :type consumer_group: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :keyword str credential_id: The credential entity id.
     """
 
-    def __init__(self, connection_string, consumer_group, **kwargs):    # pylint: disable=unused-argument
+    def __init__(self, consumer_group, authentication_type="Basic", **kwargs):
         # type: (str, str, **Any) -> None
         self.data_source_type = 'AzureEventHubs'  # type: str
-        self.connection_string = connection_string
+        self.connection_string = kwargs.get("connection_string", None)
         self.consumer_group = consumer_group
+        self.authentication_type = authentication_type
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
-        return "AzureEventHubsDataFeedSource(data_source_type={}, connection_string={}, consumer_group={})".format(
-                    self.data_source_type,
-                    self.connection_string,
-                    self.consumer_group,
-                )[:1024]
+        return "AzureEventHubsDataFeedSource(data_source_type={}, connection_string={}, consumer_group={}, " \
+               "authentication_type={}, credential_id={})".format(
+            self.data_source_type,
+            self.connection_string,
+            self.consumer_group,
+            self.authentication_type,
+            self.credential_id
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -1253,44 +1309,42 @@ class AzureEventHubsDataFeedSource(object):
 class InfluxDBDataFeedSource(object):
     """InfluxDBDataFeedSource.
 
-    :param connection_string: Required. InfluxDB connection string.
-    :type connection_string: str
-    :param database: Required. Database name.
-    :type database: str
-    :param user_name: Required. Database access user.
-    :type user_name: str
-    :param password: Required. Database access password.
-    :type password: str
+    :keyword str connection_string: InfluxDB connection string.
+    :keyword str database: Database name.
+    :keyword str user_name: Database access user.
+    :keyword str password: Required. Database access password.
     :param query: Required. Query script.
     :type query: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :keyword str credential_id: The credential entity id.
     """
 
-    def __init__(
-        self, connection_string,
-        database,
-        user_name,
-        password,
-        query,
-        **kwargs
-    ):  # pylint: disable=unused-argument
-        # type: (str, str, str, str, str, Any) -> None
+    def __init__(self, query, authentication_type="Basic", **kwargs):
+        # type: (str, str, **Any) -> None
         self.data_source_type = 'InfluxDB'  # type: str
-        self.connection_string = connection_string
-        self.database = database
-        self.user_name = user_name
-        self.password = password
+        self.connection_string = kwargs.get("connection_string", None)
+        self.database = kwargs.get("database", None)
+        self.user_name = kwargs.get("user_name", None)
+        self.password = kwargs.get("password", None)
         self.query = query
+        self.authentication_type = authentication_type
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return "InfluxDBDataFeedSource(data_source_type={}, connection_string={}, database={}, user_name={}, " \
-               "password={}, query={})".format(
-                    self.data_source_type,
-                    self.connection_string,
-                    self.database,
-                    self.user_name,
-                    self.password,
-                    self.query
-                )[:1024]
+               "password={}, query={}, authentication_type={}, credential_id={})".format(
+            self.data_source_type,
+            self.connection_string,
+            self.database,
+            self.user_name,
+            self.password,
+            self.query,
+            self.authentication_type,
+            self.credential_id
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -1324,24 +1378,28 @@ class InfluxDBDataFeedSource(object):
 class MySqlDataFeedSource(object):
     """MySqlDataFeedSource.
 
-    :param connection_string: Required. Database connection string.
-    :type connection_string: str
+    :keyword str connection_string: Database connection string.
     :param query: Required. Query script.
     :type query: str
     """
 
-    def __init__(self, connection_string, query, **kwargs):  # pylint: disable=unused-argument
-        # type: (str, str, Any) -> None
+    def __init__(self, query, authentication_type="Basic", **kwargs):
+        # type: (str, str, **Any) -> None
         self.data_source_type = 'MySql'  # type: str
-        self.connection_string = connection_string
+        self.connection_string = kwargs.get("connection_string", None)
         self.query = query
+        self.authentication_type = authentication_type
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
-        return "MySqlDataFeedSource(data_source_type={}, connection_string={}, query={})".format(
-                    self.data_source_type,
-                    self.connection_string,
-                    self.query
-                )[:1024]
+        return "MySqlDataFeedSource(data_source_type={}, connection_string={}, query={}, " \
+               "authentication_type={}, credential_id={})".format(
+            self.data_source_type,
+            self.connection_string,
+            self.query,
+            self.authentication_type,
+            self.credential_id
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -1366,24 +1424,33 @@ class MySqlDataFeedSource(object):
 class PostgreSqlDataFeedSource(object):
     """PostgreSqlDataFeedSource.
 
-    :param connection_string: Required. Database connection string.
-    :type connection_string: str
+    :keyword str connection_string: Database connection string.
     :param query: Required. Query script.
     :type query: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :keyword str credential_id: The credential entity id.
     """
 
-    def __init__(self, connection_string, query, **kwargs):  # pylint: disable=unused-argument
-        # type: (str, str, Any) -> None
+    def __init__(self, query, authentication_type="Basic", **kwargs):
+        # type: (str, str, **Any) -> None
         self.data_source_type = 'PostgreSql'  # type: str
-        self.connection_string = connection_string
+        self.connection_string = kwargs.get("connection_string", None)
         self.query = query
+        self.authentication_type = authentication_type
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
-        return "PostgreSqlDataFeedSource(data_source_type={}, connection_string={}, query={})".format(
-                    self.data_source_type,
-                    self.connection_string,
-                    self.query
-                )[:1024]
+        return "PostgreSqlDataFeedSource(data_source_type={}, connection_string={}, query={}, " \
+               "authentication_type={}, credential_id={})".format(
+            self.data_source_type,
+            self.connection_string,
+            self.query,
+            self.authentication_type,
+            self.credential_id
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -1408,24 +1475,33 @@ class PostgreSqlDataFeedSource(object):
 class SQLServerDataFeedSource(object):
     """SQLServerDataFeedSource.
 
-    :param connection_string: Required. Database connection string.
-    :type connection_string: str
+    :keyword str connection_string: Database connection string.
     :param query: Required. Query script.
     :type query: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :keyword str credential_id: The credential entity id.
     """
 
-    def __init__(self, connection_string, query, **kwargs):  # pylint: disable=unused-argument
-        # type: (str, str, Any) -> None
+    def __init__(self, query, authentication_type="Basic", **kwargs):
+        # type: (str, str, **Any) -> None
         self.data_source_type = 'SqlServer'  # type: str
-        self.connection_string = connection_string
+        self.connection_string = kwargs.get("connection_string", None)
         self.query = query
+        self.authentication_type = authentication_type
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
-        return "SQLServerDataFeedSource(data_source_type={}, connection_string={}, query={})".format(
-                    self.data_source_type,
-                    self.connection_string,
-                    self.query
-                )[:1024]
+        return "SQLServerDataFeedSource(data_source_type={}, connection_string={}, query={}, " \
+               "authentication_type={}, credential_id={})".format(
+            self.data_source_type,
+            self.connection_string,
+            self.query,
+            self.authentication_type,
+            self.credential_id
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -1450,45 +1526,52 @@ class SQLServerDataFeedSource(object):
 class AzureDataLakeStorageGen2DataFeedSource(object):
     """AzureDataLakeStorageGen2DataFeedSource.
 
-    :param account_name: Required. Account name.
-    :type account_name: str
-    :param account_key: Required. Account key.
-    :type account_key: str
+    :keyword str account_name: Account name.
+    :keyword str account_key: Account key.
     :param file_system_name: Required. File system name (Container).
     :type file_system_name: str
     :param directory_template: Required. Directory template.
     :type directory_template: str
     :param file_template: Required. File template.
     :type file_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :keyword str credential_id: The credential entity id.
     """
 
     def __init__(
-        self,
-        account_name,
-        account_key,
-        file_system_name,
-        directory_template,
-        file_template,
-        **kwargs
-    ):  # pylint: disable=unused-argument
-        # type: (str, str, str, str, str, Any) -> None
+            self,
+            file_system_name,
+            directory_template,
+            file_template,
+            authentication_type="Basic",
+            **kwargs
+    ):
+        # type: (str, str, str, str, **Any) -> None
         self.data_source_type = 'AzureDataLakeStorageGen2'  # type: str
-        self.account_name = account_name
-        self.account_key = account_key
+        self.account_name = kwargs.get("account_name", None)
+        self.account_key = kwargs.get("account_key", None)
         self.file_system_name = file_system_name
         self.directory_template = directory_template
         self.file_template = file_template
+        self.authentication_type = authentication_type
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return "AzureDataLakeStorageGen2DataFeedSource(data_source_type={}, account_name={}, account_key={}, " \
-               "file_system_name={}, directory_template={}, file_template={})".format(
-                    self.data_source_type,
-                    self.account_name,
-                    self.account_key,
-                    self.file_system_name,
-                    self.directory_template,
-                    self.file_template
-                )[:1024]
+               "file_system_name={}, directory_template={}, file_template={}, authentication_type={}," \
+               " credential_id={})".format(
+            self.data_source_type,
+            self.account_name,
+            self.account_key,
+            self.file_system_name,
+            self.directory_template,
+            self.file_template,
+            self.authentication_type,
+            self.credential_id
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -1522,41 +1605,45 @@ class AzureDataLakeStorageGen2DataFeedSource(object):
 class AzureLogAnalyticsDataFeedSource(object):
     """AzureLogAnalyticsDataFeedSource.
 
-    :param tenant_id: Required. The tenant id of service principal that have access to this Log
+    :keyword str tenant_id: The tenant id of service principal that have access to this Log
      Analytics.
-    :type tenant_id: str
-    :param client_id: Required. The client id of service principal that have access to this Log
+    :keyword str client_id: The client id of service principal that have access to this Log
      Analytics.
-    :type client_id: str
-    :param client_secret: Required. The client secret of service principal that have access to this
-     Log Analytics.
-    :type client_secret: str
+    :keyword str client_secret: The client secret of service principal that have access to this Log Analytics.
     :param workspace_id: Required. The workspace id of this Log Analytics.
     :type workspace_id: str
     :param query: Required. The KQL (Kusto Query Language) query to fetch data from this Log
      Analytics.
     :type query: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :keyword str credential_id: The credential entity id.
     """
 
-    def __init__(self, tenant_id, client_id,        # pylint: disable=unused-argument
-                 client_secret, workspace_id, query, **kwargs):  # pylint: disable=unused-argument
-        # type: (str, str, str, str, str, **Any) -> None
+    def __init__(self, workspace_id, query, authentication_type="Basic", **kwargs):
+        # type: (str, str, str, **Any) -> None
         self.data_source_type = 'AzureLogAnalytics'  # type: str
-        self.tenant_id = tenant_id
-        self.client_id = client_id
-        self.client_secret = client_secret
+        self.tenant_id = kwargs.get("tenant_id", None)
+        self.client_id = kwargs.get("client_id", None)
+        self.client_secret = kwargs.get("client_secret", None)
         self.workspace_id = workspace_id
         self.query = query
+        self.authentication_type = authentication_type
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return "AzureLogAnalyticsDataFeedSource(data_source_type={}, tenant_id={}, client_id={}, " \
-               "client_secret={}, workspace_id={}, query={})".format(
+               "client_secret={}, workspace_id={}, query={}, authentication_type={}, credential_id={})".format(
             self.data_source_type,
             self.tenant_id,
             self.client_id,
             self.client_secret,
             self.workspace_id,
-            self.query
+            self.query,
+            self.authentication_type,
+            self.credential_id
         )[:1024]
 
     @classmethod
@@ -1591,28 +1678,36 @@ class AzureLogAnalyticsDataFeedSource(object):
 class MongoDBDataFeedSource(object):
     """MongoDBDataFeedSource.
 
-    :param connection_string: Required. MongoDB connection string.
-    :type connection_string: str
-    :param database: Required. Database name.
-    :type database: str
+    ::keyword str connection_string: MongoDB connection string.
+    :keyword str database: Database name.
     :param command: Required. Query script.
     :type command: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :keyword str credential_id: The credential entity id.
     """
 
-    def __init__(self, connection_string, database, command, **kwargs):  # pylint: disable=unused-argument
-        # type: (str, str, str, Any) -> None
+    def __init__(self, command, authentication_type="Basic", **kwargs):
+        # type: (str, str, **Any) -> None
         self.data_source_type = 'MongoDB'  # type: str
-        self.connection_string = connection_string
-        self.database = database
+        self.connection_string = kwargs.get("connection_string", None)
+        self.database = kwargs.get("database", None)
         self.command = command
+        self.authentication_type = authentication_type
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
-        return "MongoDBDataFeedSource(data_source_type={}, connection_string={}, database={}, command={})".format(
-                    self.data_source_type,
-                    self.connection_string,
-                    self.database,
-                    self.command
-                )[:1024]
+        return "MongoDBDataFeedSource(data_source_type={}, connection_string={}, database={}, command={}, " \
+               "authentication_type={}, credential_id={})".format(
+            self.data_source_type,
+            self.connection_string,
+            self.database,
+            self.command,
+            self.authentication_type,
+            self.credential_id
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, source):

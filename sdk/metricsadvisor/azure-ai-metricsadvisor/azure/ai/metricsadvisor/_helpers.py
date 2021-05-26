@@ -95,6 +95,8 @@ def construct_data_feed_dict(update_kwargs):
         update_kwargs["dataStartFrom"] = Serializer.serialize_iso(update_kwargs["dataStartFrom"])
 
     if "dataSourceParameter" in update_kwargs:
+        update_kwargs["authenticationType"] = update_kwargs["dataSourceParameter"].authentication_type
+        update_kwargs["credentialId"] = update_kwargs["dataSourceParameter"].credential_id
         update_kwargs["dataSourceParameter"] = update_kwargs["dataSourceParameter"]._to_generated_patch()
     return update_kwargs
 
@@ -153,6 +155,8 @@ def convert_to_generated_data_feed_type(
 
     return generated_feed_type(
         data_source_parameter=source._to_generated(),
+        authentication_type=source.authentication_type,
+        credential_id=source.credential_id,
         data_feed_name=name,
         granularity_name=granularity.granularity_type,
         granularity_amount=granularity.custom_granularity_value,
