@@ -45,7 +45,7 @@ class DeletedServersOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeletedServerListResult"]:
         """Gets a list of all deleted servers in a subscription.
 
@@ -113,7 +113,7 @@ class DeletedServersOperations:
         self,
         location_name: str,
         deleted_server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeletedServer":
         """Gets a deleted server.
 
@@ -170,7 +170,7 @@ class DeletedServersOperations:
     def list_by_location(
         self,
         location_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeletedServerListResult"]:
         """Gets a list of deleted servers for a location.
 
@@ -241,7 +241,7 @@ class DeletedServersOperations:
         self,
         location_name: str,
         deleted_server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DeletedServer"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DeletedServer"]]
         error_map = {
@@ -290,7 +290,7 @@ class DeletedServersOperations:
         self,
         location_name: str,
         deleted_server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DeletedServer"]:
         """Recovers a deleted server.
 
@@ -300,8 +300,8 @@ class DeletedServersOperations:
         :type deleted_server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeletedServer or the result of cls(response)

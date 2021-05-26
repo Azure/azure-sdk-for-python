@@ -48,7 +48,7 @@ class ServerDevOpsAuditSettingsOperations:
         resource_group_name: str,
         server_name: str,
         dev_ops_auditing_settings_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServerDevOpsAuditingSettings":
         """Gets a server's DevOps audit settings.
 
@@ -113,7 +113,7 @@ class ServerDevOpsAuditSettingsOperations:
         server_name: str,
         dev_ops_auditing_settings_name: str,
         parameters: "_models.ServerDevOpsAuditingSettings",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ServerDevOpsAuditingSettings"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ServerDevOpsAuditingSettings"]]
         error_map = {
@@ -170,7 +170,7 @@ class ServerDevOpsAuditSettingsOperations:
         server_name: str,
         dev_ops_auditing_settings_name: str,
         parameters: "_models.ServerDevOpsAuditingSettings",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ServerDevOpsAuditingSettings"]:
         """Creates or updates a server's DevOps audit settings.
 
@@ -186,8 +186,8 @@ class ServerDevOpsAuditSettingsOperations:
         :type parameters: ~azure.mgmt.sql.models.ServerDevOpsAuditingSettings
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServerDevOpsAuditingSettings or the result of cls(response)
@@ -246,7 +246,7 @@ class ServerDevOpsAuditSettingsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServerDevOpsAuditSettingsListResult"]:
         """Lists DevOps audit settings of a server.
 
