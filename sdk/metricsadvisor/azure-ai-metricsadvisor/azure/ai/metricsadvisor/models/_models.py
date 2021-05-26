@@ -3387,17 +3387,17 @@ class ServicePrincipalInKVCredentialEntity(object):
 
     def __init__(self, name, **kwargs):
         # type: (str, Any) -> None
-        if not "key_vault_endpoint" in kwargs:
+        if "key_vault_endpoint" not in kwargs:
             raise ValueError("key_vault_endpoint is required.")
-        if not "key_vault_client_id" in kwargs:
+        if "key_vault_client_id" not in kwargs:
             raise ValueError("key_vault_client_id is required.")
-        if not "key_vault_client_secret" in kwargs:
+        if "key_vault_client_secret" not in kwargs:
             raise ValueError("key_vault_client_secret is required.")
-        if not "service_principal_id_name_in_kv" in kwargs:
+        if "service_principal_id_name_in_kv" not in kwargs:
             raise ValueError("service_principal_id_name_in_kv is required.")
-        if not "service_principal_secret_name_in_kv" in kwargs:
+        if "service_principal_secret_name_in_kv" not in kwargs:
             raise ValueError("service_principal_secret_name_in_kv is required.")
-        if not "tenant_id" in kwargs:
+        if "tenant_id" not in kwargs:
             raise ValueError("tenant_id is required.")
         self.credential_entity_type = 'ServicePrincipalInKV'
         self.name = name
