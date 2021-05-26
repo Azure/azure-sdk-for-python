@@ -627,7 +627,9 @@ class FormPage(object):
         returned is 300 per page. The lines are sorted top to bottom, left to right, although in
         certain cases proximity is treated with higher priority. As the sorting order depends on
         the detected text, it may change across images and OCR version updates. Thus, business
-        logic should be built upon the actual line location instead of order.
+        logic should be built upon the actual line location instead of order. The reading order
+        of lines can be specified by the `reading_order` keyword argument (Note: `reading_order`
+        only supported in `begin_recognize_content` and `begin_recognize_content_from_url`).
     :ivar selection_marks: List of selection marks extracted from the page.
     :vartype selection_marks: list[~azure.ai.formrecognizer.FormSelectionMark]
 

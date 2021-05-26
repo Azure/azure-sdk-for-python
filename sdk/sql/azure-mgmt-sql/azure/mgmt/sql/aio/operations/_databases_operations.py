@@ -49,7 +49,7 @@ class DatabasesOperations:
         server_name: str,
         database_name: str,
         filter: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MetricListResult"]:
         """Returns database metrics.
 
@@ -131,7 +131,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MetricDefinitionListResult"]:
         """Returns database metric definitions.
 
@@ -210,7 +210,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseListResult"]:
         """Gets a list of databases.
 
@@ -290,7 +290,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Database":
         """Gets a database.
 
@@ -354,7 +354,7 @@ class DatabasesOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.Database",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Database"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Database"]]
         error_map = {
@@ -414,7 +414,7 @@ class DatabasesOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.Database",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Database"]:
         """Creates a new database or updates an existing database.
 
@@ -429,8 +429,8 @@ class DatabasesOperations:
         :type parameters: ~azure.mgmt.sql.models.Database
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of cls(response)
@@ -490,7 +490,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -534,7 +534,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the database.
 
@@ -547,8 +547,8 @@ class DatabasesOperations:
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -605,7 +605,7 @@ class DatabasesOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.DatabaseUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Database"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Database"]]
         error_map = {
@@ -662,7 +662,7 @@ class DatabasesOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.DatabaseUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Database"]:
         """Updates an existing database.
 
@@ -677,8 +677,8 @@ class DatabasesOperations:
         :type parameters: ~azure.mgmt.sql.models.DatabaseUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of cls(response)
@@ -738,7 +738,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseListResult"]:
         """Gets a list of databases in an elastic pool.
 
@@ -818,7 +818,7 @@ class DatabasesOperations:
         server_name: str,
         database_name: str,
         replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -865,7 +865,7 @@ class DatabasesOperations:
         server_name: str,
         database_name: str,
         replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Failovers a database.
 
@@ -880,8 +880,8 @@ class DatabasesOperations:
         :type replica_type: str or ~azure.mgmt.sql.models.ReplicaType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -937,7 +937,7 @@ class DatabasesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseListResult"]:
         """Gets a list of inaccessible databases in a logical server.
 
@@ -1013,7 +1013,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Database"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Database"]]
         error_map = {
@@ -1064,7 +1064,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Database"]:
         """Pauses a database.
 
@@ -1077,8 +1077,8 @@ class DatabasesOperations:
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of cls(response)
@@ -1137,7 +1137,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Database"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Database"]]
         error_map = {
@@ -1188,7 +1188,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Database"]:
         """Resumes a database.
 
@@ -1201,8 +1201,8 @@ class DatabasesOperations:
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of cls(response)
@@ -1261,7 +1261,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1305,7 +1305,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Upgrades a data warehouse.
 
@@ -1318,8 +1318,8 @@ class DatabasesOperations:
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1376,7 +1376,7 @@ class DatabasesOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.ResourceMoveDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Renames a database.
 
@@ -1442,7 +1442,7 @@ class DatabasesOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.ImportExistingDatabaseDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ImportExportOperationResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ImportExportOperationResult"]]
         error_map = {
@@ -1499,7 +1499,7 @@ class DatabasesOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.ImportExistingDatabaseDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ImportExportOperationResult"]:
         """Imports a bacpac into a new database.
 
@@ -1514,8 +1514,8 @@ class DatabasesOperations:
         :type parameters: ~azure.mgmt.sql.models.ImportExistingDatabaseDefinition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ImportExportOperationResult or the result of cls(response)
@@ -1576,7 +1576,7 @@ class DatabasesOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.ExportDatabaseDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ImportExportOperationResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ImportExportOperationResult"]]
         error_map = {
@@ -1633,7 +1633,7 @@ class DatabasesOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.ExportDatabaseDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ImportExportOperationResult"]:
         """Exports a database.
 
@@ -1648,8 +1648,8 @@ class DatabasesOperations:
         :type parameters: ~azure.mgmt.sql.models.ExportDatabaseDefinition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ImportExportOperationResult or the result of cls(response)

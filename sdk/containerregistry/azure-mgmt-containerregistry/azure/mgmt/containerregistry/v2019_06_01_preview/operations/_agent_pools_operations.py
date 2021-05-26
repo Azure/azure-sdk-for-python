@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class AgentPoolsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -54,7 +54,7 @@ class AgentPoolsOperations(object):
         agent_pool_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AgentPool"
+        # type: (...) -> "_models.AgentPool"
         """Gets the detailed information for a given agent pool.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -69,7 +69,7 @@ class AgentPoolsOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentPool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgentPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -101,7 +101,7 @@ class AgentPoolsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AgentPool', pipeline_response)
@@ -117,11 +117,11 @@ class AgentPoolsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         agent_pool_name,  # type: str
-        agent_pool,  # type: "models.AgentPool"
+        agent_pool,  # type: "_models.AgentPool"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AgentPool"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgentPool"]
+        # type: (...) -> "_models.AgentPool"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -158,7 +158,7 @@ class AgentPoolsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -178,10 +178,10 @@ class AgentPoolsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         agent_pool_name,  # type: str
-        agent_pool,  # type: "models.AgentPool"
+        agent_pool,  # type: "_models.AgentPool"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.AgentPool"]
+        # type: (...) -> LROPoller["_models.AgentPool"]
         """Creates an agent pool for a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -195,8 +195,8 @@ class AgentPoolsOperations(object):
         :type agent_pool: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentPool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either AgentPool or the result of cls(response)
@@ -204,7 +204,7 @@ class AgentPoolsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgentPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPool"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -230,7 +230,14 @@ class AgentPoolsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'agentPoolName': self._serialize.url("agent_pool_name", agent_pool_name, 'str', max_length=20, min_length=3, pattern=r'^[a-zA-Z0-9-]*$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -284,7 +291,7 @@ class AgentPoolsOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -311,8 +318,8 @@ class AgentPoolsOperations(object):
         :type agent_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -342,7 +349,14 @@ class AgentPoolsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'agentPoolName': self._serialize.url("agent_pool_name", agent_pool_name, 'str', max_length=20, min_length=3, pattern=r'^[a-zA-Z0-9-]*$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -361,11 +375,11 @@ class AgentPoolsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         agent_pool_name,  # type: str
-        update_parameters,  # type: "models.AgentPoolUpdateParameters"
+        update_parameters,  # type: "_models.AgentPoolUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AgentPool"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgentPool"]
+        # type: (...) -> "_models.AgentPool"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -402,7 +416,7 @@ class AgentPoolsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -422,10 +436,10 @@ class AgentPoolsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         agent_pool_name,  # type: str
-        update_parameters,  # type: "models.AgentPoolUpdateParameters"
+        update_parameters,  # type: "_models.AgentPoolUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.AgentPool"]
+        # type: (...) -> LROPoller["_models.AgentPool"]
         """Updates an agent pool with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -439,8 +453,8 @@ class AgentPoolsOperations(object):
         :type update_parameters: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentPoolUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either AgentPool or the result of cls(response)
@@ -448,7 +462,7 @@ class AgentPoolsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgentPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPool"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -474,7 +488,14 @@ class AgentPoolsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'agentPoolName': self._serialize.url("agent_pool_name", agent_pool_name, 'str', max_length=20, min_length=3, pattern=r'^[a-zA-Z0-9-]*$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -494,7 +515,7 @@ class AgentPoolsOperations(object):
         registry_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AgentPoolListResult"]
+        # type: (...) -> Iterable["_models.AgentPoolListResult"]
         """Lists all the agent pools for a specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -507,7 +528,7 @@ class AgentPoolsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentPoolListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgentPoolListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPoolListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -554,7 +575,7 @@ class AgentPoolsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -572,7 +593,7 @@ class AgentPoolsOperations(object):
         agent_pool_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AgentPoolQueueStatus"
+        # type: (...) -> "_models.AgentPoolQueueStatus"
         """Gets the count of queued runs for a given agent pool.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -587,7 +608,7 @@ class AgentPoolsOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentPoolQueueStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgentPoolQueueStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPoolQueueStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -619,7 +640,7 @@ class AgentPoolsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AgentPoolQueueStatus', pipeline_response)
