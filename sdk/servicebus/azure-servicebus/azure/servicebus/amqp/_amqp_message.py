@@ -107,35 +107,11 @@ class AMQPAnnotatedMessage(object):
     def __init__(self, **kwargs):
         # type: (Any) -> None
         self._message = kwargs.pop("message", None)
+        self._encoding = kwargs.pop("encoding", "UTF-8")
 
+        # internal usage only for service bus received message
         if self._message:
-            # internal usage only for service bus received message
-            self._properties = AMQPMessageProperties(
-                message_id=self._message.properties.message_id,
-                user_id=self._message.properties.user_id,
-                to=self._message.properties.to,
-                subject=self._message.properties.subject,
-                reply_to=self._message.properties.reply_to,
-                correlation_id=self._message.properties.correlation_id,
-                content_type=self._message.properties.content_type,
-                content_encoding=self._message.properties.content_encoding,
-                absolute_expiry_time=self._message.properties.absolute_expiry_time,
-                creation_time=self._message.properties.creation_time,
-                group_id=self._message.properties.group_id,
-                group_sequence=self._message.properties.group_sequence,
-                reply_to_group_id=self._message.properties.reply_to_group_id,
-            ) if self._message.properties else None
-            self._header = AMQPMessageHeader(
-                delivery_count=self._message.header.delivery_count,
-                time_to_live=self._message.header.time_to_live,
-                first_acquirer=self._message.header.first_acquirer,
-                durable=self._message.header.durable,
-                priority=self._message.header.priority
-            ) if self._message.header else None
-            self._footer = self._message.footer
-            self._annotations = self._message.annotations
-            self._delivery_annotations = self._message.delivery_annotations
-            self._application_properties = self._message.application_properties
+            self._from_amqp_message(self._message)
             return
 
         # manually constructed AMQPAnnotatedMessage
@@ -202,6 +178,35 @@ class AMQPAnnotatedMessage(object):
             message_repr += ", annotations=<read-error>"
         return "AMQPAnnotatedMessage({})".format(message_repr)[:1024]
 
+    def _from_amqp_message(self, message):
+        # populate the properties from an uamqp message
+        self._properties = AMQPMessageProperties(
+            message_id=message.properties.message_id,
+            user_id=message.properties.user_id,
+            to=message.properties.to,
+            subject=message.properties.subject,
+            reply_to=message.properties.reply_to,
+            correlation_id=message.properties.correlation_id,
+            content_type=message.properties.content_type,
+            content_encoding=message.properties.content_encoding,
+            absolute_expiry_time=message.properties.absolute_expiry_time,
+            creation_time=message.properties.creation_time,
+            group_id=message.properties.group_id,
+            group_sequence=message.properties.group_sequence,
+            reply_to_group_id=message.properties.reply_to_group_id,
+        ) if message.properties else None
+        self._header = AMQPMessageHeader(
+            delivery_count=message.header.delivery_count,
+            time_to_live=message.header.time_to_live,
+            first_acquirer=message.header.first_acquirer,
+            durable=message.header.durable,
+            priority=message.header.priority
+        ) if message.header else None
+        self._footer = message.footer
+        self._annotations = message.annotations
+        self._delivery_annotations = message.delivery_annotations
+        self._application_properties = message.application_properties
+
     def _to_outing_amqp_message(self):
         message_header = None
         if self.header:
@@ -212,7 +217,10 @@ class AMQPAnnotatedMessage(object):
             message_header.durable = self.header.durable
             message_header.priority = self.header.priority
 
-        message_properties = uamqp.message.MessageProperties(**self.properties) if self.properties else None
+        message_properties = uamqp.message.MessageProperties(
+            **self.properties,
+            encoding=self._encoding
+        ) if self.properties else None
 
         self._message.header = message_header
         self._message.properties = message_properties
@@ -405,7 +413,7 @@ class AMQPMessageHeader(DictMixin):
     :vartype priority: Optional[int]
     """
     def __init__(self, **kwargs):
-        self.delivery_count = kwargs.get("delivery_count", 0)
+        self.delivery_count = kwargs.get("delivery_count")
         self.time_to_live = kwargs.get("time_to_live")
         self.first_acquirer = kwargs.get("first_acquirer")
         self.durable = kwargs.get("durable")
