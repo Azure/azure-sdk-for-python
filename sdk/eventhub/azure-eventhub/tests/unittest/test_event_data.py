@@ -96,3 +96,4 @@ def test_event_data_batch():
     assert batch.size_in_bytes == 97 and len(batch) == 1
     with pytest.raises(ValueError):
         batch.add(EventData("A"))
+
