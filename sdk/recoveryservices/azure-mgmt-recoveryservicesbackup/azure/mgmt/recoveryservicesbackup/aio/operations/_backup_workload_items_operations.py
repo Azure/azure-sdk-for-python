@@ -49,7 +49,7 @@ class BackupWorkloadItemsOperations:
         container_name: str,
         filter: Optional[str] = None,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkloadItemResourceList"]:
         """Provides a pageable list of workload item of a specific container according to the query filter
         and the pagination
@@ -78,7 +78,7 @@ class BackupWorkloadItemsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
