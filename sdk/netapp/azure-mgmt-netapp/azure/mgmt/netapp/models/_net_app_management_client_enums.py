@@ -30,11 +30,25 @@ class ActiveDirectoryStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     """Status of the Active Directory
     """
 
-    CREATED = "Created"  #: Active Directory created but not in use.
-    IN_USE = "InUse"  #: Active Directory in use by SMB Volume.
-    DELETED = "Deleted"  #: Active Directory Deleted.
-    ERROR = "Error"  #: Error with the Active Directory.
-    UPDATING = "Updating"  #: Active Directory Updating.
+    #: Active Directory created but not in use.
+    CREATED = "Created"
+    #: Active Directory in use by SMB Volume.
+    IN_USE = "InUse"
+    #: Active Directory Deleted.
+    DELETED = "Deleted"
+    #: Error with the Active Directory.
+    ERROR = "Error"
+    #: Active Directory Updating.
+    UPDATING = "Updating"
+
+class BackupType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of backup Manual or Scheduled
+    """
+
+    #: Manual backup.
+    MANUAL = "Manual"
+    #: Scheduled backup.
+    SCHEDULED = "Scheduled"
 
 class CheckNameResourceTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Resource type used for verification.
@@ -91,8 +105,10 @@ class QosType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The qos type of the pool
     """
 
-    AUTO = "Auto"  #: qos type Auto.
-    MANUAL = "Manual"  #: qos type Manual.
+    #: qos type Auto.
+    AUTO = "Auto"
+    #: qos type Manual.
+    MANUAL = "Manual"
 
 class RelationshipStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the mirror relationship
@@ -120,6 +136,9 @@ class ServiceLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The service level of the file system
     """
 
-    STANDARD = "Standard"  #: Standard service level.
-    PREMIUM = "Premium"  #: Premium service level.
-    ULTRA = "Ultra"  #: Ultra service level.
+    #: Standard service level.
+    STANDARD = "Standard"
+    #: Premium service level.
+    PREMIUM = "Premium"
+    #: Ultra service level.
+    ULTRA = "Ultra"

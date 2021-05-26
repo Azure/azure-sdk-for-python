@@ -39,7 +39,8 @@ from .._generated.models._azure_cognitive_service_metrics_advisor_restapi_open_a
     ChangePointValue,
     PeriodType,
     FeedbackType,
-    TimeMode as AlertQueryTimeMode
+    TimeMode as AlertQueryTimeMode,
+    DataSourceCredentialType
 )
 
 from .._generated.models import (
@@ -74,7 +75,7 @@ from ._models import (
     AzureBlobDataFeedSource,
     AzureCosmosDBDataFeedSource,
     AzureTableDataFeedSource,
-    HttpRequestDataFeedSource,
+    AzureLogAnalyticsDataFeedSource,
     InfluxDBDataFeedSource,
     SQLServerDataFeedSource,
     MongoDBDataFeedSource,
@@ -107,11 +108,15 @@ from ._models import (
     MetricSeriesData,
     AnomalyAlert,
     AzureDataLakeStorageGen2DataFeedSource,
-    ElasticsearchDataFeedSource,
+    AzureEventHubsDataFeedSource,
     MetricAnomalyAlertScopeType,
     DataFeedRollupType,
     IncidentRootCause,
-    MetricEnrichedSeriesData
+    MetricEnrichedSeriesData,
+    SQLConnectionStringCredentialEntity,
+    DataLakeGen2SharedKeyCredentialEntity,
+    ServicePrincipalCredentialEntity,
+    ServicePrincipalInKVCredentialEntity,
 )
 
 
@@ -150,7 +155,7 @@ __all__ = (
     "AzureBlobDataFeedSource",
     "AzureCosmosDBDataFeedSource",
     "AzureTableDataFeedSource",
-    "HttpRequestDataFeedSource",
+    "AzureLogAnalyticsDataFeedSource",
     "InfluxDBDataFeedSource",
     "SQLServerDataFeedSource",
     "MongoDBDataFeedSource",
@@ -188,7 +193,7 @@ __all__ = (
     "HardThresholdCondition",
     "SeriesIdentity",
     "AzureDataLakeStorageGen2DataFeedSource",
-    "ElasticsearchDataFeedSource",
+    "AzureEventHubsDataFeedSource",
     "AnomalyValue",
     "ChangePointValue",
     "PeriodType",
@@ -196,5 +201,10 @@ __all__ = (
     "AlertQueryTimeMode",
     "IncidentRootCause",
     "SeverityFilterCondition",
-    "MetricEnrichedSeriesData"
+    "MetricEnrichedSeriesData",
+    "SQLConnectionStringCredentialEntity",
+    "DataLakeGen2SharedKeyCredentialEntity",
+    "ServicePrincipalCredentialEntity",
+    "ServicePrincipalInKVCredentialEntity",
+    "DataSourceCredentialType"
 )

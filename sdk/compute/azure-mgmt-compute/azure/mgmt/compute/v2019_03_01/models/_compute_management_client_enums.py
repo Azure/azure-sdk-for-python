@@ -254,9 +254,7 @@ class OperatingSystemStateTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     SPECIALIZED = "Specialized"
 
 class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """This property allows you to specify the supported type of the OS that application is built for.
-    :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Windows**
-    :code:`<br>`:code:`<br>` **Linux**
+    """The operating system of the osDiskImage.
     """
 
     WINDOWS = "Windows"
@@ -360,8 +358,8 @@ class StorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     StandardSSD_LRS uses Standard SSD. Premium_LRS uses Premium SSD. UltraSSD_LRS uses Ultra disk.
     For more information regarding disks supported for Windows Virtual Machines, refer to
     https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disks-types and, for Linux
-    Virtual Machines, refer to https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-
-    types
+    Virtual Machines, refer to
+    https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-types
     """
 
     STANDARD_LRS = "Standard_LRS"
@@ -430,8 +428,8 @@ class VirtualMachineScaleSetSkuScaleType(with_metaclass(_CaseInsensitiveEnumMeta
 
 class VirtualMachineSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
-    see `Sizes for virtual machines <https://docs.microsoft.com/azure/virtual-machines/virtual-
-    machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+    see `Sizes for virtual machines
+    <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
     :code:`<br>`:code:`<br>` The available VM sizes depend on region and availability set. For a
     list of available sizes use these APIs:  :code:`<br>`:code:`<br>` `List all available virtual
     machine sizes in an availability set

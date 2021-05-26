@@ -44,9 +44,6 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 120
-  - name: TestSamples
-    type: boolean
-    default: false
   - name: Location
     type: string
     default: ''
@@ -130,7 +127,6 @@ jobs:
           BuildTargetingString: $(BuildTargetingStringValue)
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           CoverageArg: $(CoverageArg)
-          TestSamples: ${{ parameters.TestSamples }}
           EnvVars:
             AZURE_RUN_MODE: 'Live' #Record, Playback
             ${{ insert }}: ${{ parameters.EnvVars }}

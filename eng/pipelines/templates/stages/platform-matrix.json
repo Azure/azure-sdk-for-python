@@ -1,6 +1,8 @@
 {
   "displayNames": {
-    "--disablecov": ""
+    "--disablecov": "",
+    "false": "",
+    "true": ""
   },
   "matrix": {
     "Agent": {
@@ -9,7 +11,8 @@
       "macOS-10.15": { "OSVmImage": "macOS-10.15", "Pool": "Azure Pipelines" }
     },
     "PythonVersion": [ "pypy3", "2.7", "3.6", "3.7", "3.8" ],
-    "CoverageArg": "--disablecov"
+    "CoverageArg": "--disablecov",
+    "TestSamples": "false"
   },
   "include": [
     {
@@ -18,7 +21,8 @@
           "OSVmImage": "MMSUbuntu18.04",
           "Pool": "azsdk-pool-mms-ubuntu-1804-general",
           "PythonVersion": "3.9",
-          "CoverageArg": ""
+          "CoverageArg": "",
+          "TestSamples": "false"
         }
       }
     }

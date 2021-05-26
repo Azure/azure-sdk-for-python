@@ -44,7 +44,7 @@ class OperationsHealthOperations:
     def list_by_location(
         self,
         location_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OperationsHealthListResult"]:
         """Gets a service operation health status.
 

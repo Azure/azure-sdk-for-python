@@ -56,7 +56,7 @@ class JobStepExecutionsOperations:
         is_active: Optional[bool] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobExecutionListResult"]:
         """Lists the step executions of a job execution.
 
@@ -176,7 +176,7 @@ class JobStepExecutionsOperations:
         job_name: str,
         job_execution_id: str,
         step_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobExecution":
         """Gets a step execution of a job execution.
 

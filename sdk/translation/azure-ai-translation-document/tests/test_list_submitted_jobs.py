@@ -125,7 +125,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         docs_per_job = 2
 
         # create some jobs
-        start = datetime.now()
+        start = datetime.utcnow()
         job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs

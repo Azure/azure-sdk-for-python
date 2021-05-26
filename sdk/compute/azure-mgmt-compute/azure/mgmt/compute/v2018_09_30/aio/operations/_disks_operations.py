@@ -48,7 +48,7 @@ class DisksOperations:
         resource_group_name: str,
         disk_name: str,
         disk: "_models.Disk",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Disk":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Disk"]
         error_map = {
@@ -105,7 +105,7 @@ class DisksOperations:
         resource_group_name: str,
         disk_name: str,
         disk: "_models.Disk",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Disk"]:
         """Creates or updates a disk.
 
@@ -119,8 +119,8 @@ class DisksOperations:
         :type disk: ~azure.mgmt.compute.v2018_09_30.models.Disk
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Disk or the result of cls(response)
@@ -178,7 +178,7 @@ class DisksOperations:
         resource_group_name: str,
         disk_name: str,
         disk: "_models.DiskUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Disk":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Disk"]
         error_map = {
@@ -235,7 +235,7 @@ class DisksOperations:
         resource_group_name: str,
         disk_name: str,
         disk: "_models.DiskUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Disk"]:
         """Updates (patches) a disk.
 
@@ -249,8 +249,8 @@ class DisksOperations:
         :type disk: ~azure.mgmt.compute.v2018_09_30.models.DiskUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Disk or the result of cls(response)
@@ -307,7 +307,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Disk":
         """Gets information about a disk.
 
@@ -367,7 +367,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -409,7 +409,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a disk.
 
@@ -421,8 +421,8 @@ class DisksOperations:
         :type disk_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -474,7 +474,7 @@ class DisksOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiskList"]:
         """Lists all the disks under a resource group.
 
@@ -543,7 +543,7 @@ class DisksOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiskList"]:
         """Lists all the disks under a subscription.
 
@@ -612,7 +612,7 @@ class DisksOperations:
         resource_group_name: str,
         disk_name: str,
         grant_access_data: "_models.GrantAccessData",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.AccessUri"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AccessUri"]]
         error_map = {
@@ -667,7 +667,7 @@ class DisksOperations:
         resource_group_name: str,
         disk_name: str,
         grant_access_data: "_models.GrantAccessData",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AccessUri"]:
         """Grants access to a disk.
 
@@ -682,8 +682,8 @@ class DisksOperations:
         :type grant_access_data: ~azure.mgmt.compute.v2018_09_30.models.GrantAccessData
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AccessUri or the result of cls(response)
@@ -740,7 +740,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -782,7 +782,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Revokes access to a disk.
 
@@ -794,8 +794,8 @@ class DisksOperations:
         :type disk_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
