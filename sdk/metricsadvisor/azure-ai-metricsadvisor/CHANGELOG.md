@@ -6,6 +6,7 @@
 - Added AzureLogAnalyticsDataFeedSource and AzureEventHubsDataFeedSource
 - Update method now returns the updated object
 - Added CredentialEntities and CredentialEntity operations
+- Added authentication type support for data feed
 
 **Breaking Changes**
 
