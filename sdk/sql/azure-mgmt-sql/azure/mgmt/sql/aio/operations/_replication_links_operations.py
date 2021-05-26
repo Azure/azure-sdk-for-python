@@ -49,7 +49,7 @@ class ReplicationLinksOperations:
         server_name: str,
         database_name: str,
         link_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a database replication link. Cannot be done during failover.
 
@@ -111,7 +111,7 @@ class ReplicationLinksOperations:
         server_name: str,
         database_name: str,
         link_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -157,7 +157,7 @@ class ReplicationLinksOperations:
         server_name: str,
         database_name: str,
         link_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Sets which replica database is primary by failing over from the current primary replica
         database.
@@ -173,8 +173,8 @@ class ReplicationLinksOperations:
         :type link_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -233,7 +233,7 @@ class ReplicationLinksOperations:
         server_name: str,
         database_name: str,
         link_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -279,7 +279,7 @@ class ReplicationLinksOperations:
         server_name: str,
         database_name: str,
         link_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Sets which replica database is primary by failing over from the current primary replica
         database. This operation might result in data loss.
@@ -295,8 +295,8 @@ class ReplicationLinksOperations:
         :type link_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -356,7 +356,7 @@ class ReplicationLinksOperations:
         database_name: str,
         link_id: str,
         parameters: "_models.UnlinkParameters",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -408,7 +408,7 @@ class ReplicationLinksOperations:
         database_name: str,
         link_id: str,
         parameters: "_models.UnlinkParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a database replication link in forced or friendly way.
 
@@ -425,8 +425,8 @@ class ReplicationLinksOperations:
         :type parameters: ~azure.mgmt.sql.models.UnlinkParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -485,7 +485,7 @@ class ReplicationLinksOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ReplicationLinksListResult"]:
         """Gets a list of replication links on database.
 
@@ -565,7 +565,7 @@ class ReplicationLinksOperations:
         server_name: str,
         database_name: str,
         replication_link_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ReplicationLink":
         """Gets a replication link.
 
@@ -630,7 +630,7 @@ class ReplicationLinksOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ReplicationLinksListResult"]:
         """Gets a list of replication links.
 

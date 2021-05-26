@@ -46,7 +46,7 @@ class JobsOperations:
         resource_group_name: str,
         server_name: str,
         job_agent_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobListResult"]:
         """Gets a list of jobs.
 
@@ -126,7 +126,7 @@ class JobsOperations:
         server_name: str,
         job_agent_name: str,
         job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Job":
         """Gets a job.
 
@@ -194,7 +194,7 @@ class JobsOperations:
         job_agent_name: str,
         job_name: str,
         parameters: "_models.Job",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Job":
         """Creates or updates a job.
 
@@ -272,7 +272,7 @@ class JobsOperations:
         server_name: str,
         job_agent_name: str,
         job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a job.
 
