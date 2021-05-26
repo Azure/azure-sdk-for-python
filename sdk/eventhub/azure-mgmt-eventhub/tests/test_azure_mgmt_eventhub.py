@@ -26,6 +26,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
             azure.mgmt.eventhub.EventHubManagementClient
         )
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer()
     def test_eh_eventhub_curd(self, resource_group, location):
 

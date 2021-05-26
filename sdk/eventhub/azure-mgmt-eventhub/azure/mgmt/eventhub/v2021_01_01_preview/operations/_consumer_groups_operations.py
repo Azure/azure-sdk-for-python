@@ -24,7 +24,7 @@ class ConsumerGroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2018-01-01-preview".
+    :ivar api_version: Client API Version. Constant value: "2021-01-01-preview".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ConsumerGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01-preview"
+        self.api_version = "2021-01-01-preview"
 
         self.config = config
 
@@ -63,10 +63,10 @@ class ConsumerGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ConsumerGroup or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.ConsumerGroup
+        :rtype: ~azure.mgmt.eventhub.v2021_01_01_preview.models.ConsumerGroup
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         parameters = models.ConsumerGroup(user_metadata=user_metadata)
 
@@ -139,7 +139,7 @@ class ConsumerGroupsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -196,10 +196,10 @@ class ConsumerGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ConsumerGroup or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.ConsumerGroup
+        :rtype: ~azure.mgmt.eventhub.v2021_01_01_preview.models.ConsumerGroup
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -271,9 +271,9 @@ class ConsumerGroupsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ConsumerGroup
         :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.ConsumerGroupPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.ConsumerGroup]
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.ConsumerGroupPaged[~azure.mgmt.eventhub.v2021_01_01_preview.models.ConsumerGroup]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:

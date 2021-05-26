@@ -24,7 +24,7 @@ class Operations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2018-01-01-preview".
+    :ivar api_version: Client API Version. Constant value: "2021-01-01-preview".
     """
 
     models = models
@@ -34,7 +34,7 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01-preview"
+        self.api_version = "2021-01-01-preview"
 
         self.config = config
 
@@ -49,9 +49,9 @@ class Operations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Operation
         :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.OperationPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.Operation]
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.OperationPaged[~azure.mgmt.eventhub.v2021_01_01_preview.models.Operation]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:

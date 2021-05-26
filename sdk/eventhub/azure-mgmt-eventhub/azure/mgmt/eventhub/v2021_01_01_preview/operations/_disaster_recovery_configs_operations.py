@@ -24,7 +24,7 @@ class DisasterRecoveryConfigsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2018-01-01-preview".
+    :ivar api_version: Client API Version. Constant value: "2021-01-01-preview".
     """
 
     models = models
@@ -34,219 +34,9 @@ class DisasterRecoveryConfigsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01-preview"
+        self.api_version = "2021-01-01-preview"
 
         self.config = config
-
-    def list_authorization_rules(
-            self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of authorization rules for a Namespace.
-
-        :param resource_group_name: Name of the resource group within the
-         azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The Namespace name
-        :type namespace_name: str
-        :param alias: The Disaster Recovery configuration name
-        :type alias: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AuthorizationRule
-        :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRulePaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_authorization_rules.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.AuthorizationRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules'}
-
-    def get_authorization_rule(
-            self, resource_group_name, namespace_name, alias, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an AuthorizationRule for a Namespace by rule name.
-
-        :param resource_group_name: Name of the resource group within the
-         azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The Namespace name
-        :type namespace_name: str
-        :param alias: The Disaster Recovery configuration name
-        :type alias: str
-        :param authorization_rule_name: The authorization rule name.
-        :type authorization_rule_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AuthorizationRule or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.get_authorization_rule.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('AuthorizationRule', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules/{authorizationRuleName}'}
-
-    def list_keys(
-            self, resource_group_name, namespace_name, alias, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the primary and secondary connection strings for the Namespace.
-
-        :param resource_group_name: Name of the resource group within the
-         azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The Namespace name
-        :type namespace_name: str
-        :param alias: The Disaster Recovery configuration name
-        :type alias: str
-        :param authorization_rule_name: The authorization rule name.
-        :type authorization_rule_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AccessKeys or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AccessKeys or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.list_keys.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('AccessKeys', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules/{authorizationRuleName}/listKeys'}
 
     def check_name_availability(
             self, resource_group_name, namespace_name, name, custom_headers=None, raw=False, **operation_config):
@@ -266,10 +56,10 @@ class DisasterRecoveryConfigsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: CheckNameAvailabilityResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.CheckNameAvailabilityResult
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.CheckNameAvailabilityResult
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         parameters = models.CheckNameAvailabilityParameter(name=name)
 
@@ -334,9 +124,9 @@ class DisasterRecoveryConfigsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ArmDisasterRecovery
         :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecoveryPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecovery]
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.ArmDisasterRecoveryPaged[~azure.mgmt.eventhub.v2021_01_01_preview.models.ArmDisasterRecovery]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -414,10 +204,10 @@ class DisasterRecoveryConfigsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: ArmDisasterRecovery or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecovery or
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.ArmDisasterRecovery or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         parameters = models.ArmDisasterRecovery(partner_namespace=partner_namespace, alternate_name=alternate_name)
 
@@ -486,7 +276,7 @@ class DisasterRecoveryConfigsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -542,10 +332,10 @@ class DisasterRecoveryConfigsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: ArmDisasterRecovery or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecovery or
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.ArmDisasterRecovery or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -609,7 +399,7 @@ class DisasterRecoveryConfigsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.break_pairing.metadata['url']
@@ -666,7 +456,7 @@ class DisasterRecoveryConfigsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.fail_over.metadata['url']
@@ -702,3 +492,213 @@ class DisasterRecoveryConfigsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     fail_over.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/failover'}
+
+    def list_authorization_rules(
+            self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of authorization rules for a Namespace.
+
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The Namespace name
+        :type namespace_name: str
+        :param alias: The Disaster Recovery configuration name
+        :type alias: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of AuthorizationRule
+        :rtype:
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.AuthorizationRulePaged[~azure.mgmt.eventhub.v2021_01_01_preview.models.AuthorizationRule]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_authorization_rules.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+                    'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.AuthorizationRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules'}
+
+    def get_authorization_rule(
+            self, resource_group_name, namespace_name, alias, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
+        """Gets an AuthorizationRule for a Namespace by rule name.
+
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The Namespace name
+        :type namespace_name: str
+        :param alias: The Disaster Recovery configuration name
+        :type alias: str
+        :param authorization_rule_name: The authorization rule name.
+        :type authorization_rule_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AuthorizationRule or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.AuthorizationRule or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_authorization_rule.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('AuthorizationRule', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules/{authorizationRuleName}'}
+
+    def list_keys(
+            self, resource_group_name, namespace_name, alias, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the primary and secondary connection strings for the Namespace.
+
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The Namespace name
+        :type namespace_name: str
+        :param alias: The Disaster Recovery configuration name
+        :type alias: str
+        :param authorization_rule_name: The authorization rule name.
+        :type authorization_rule_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AccessKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.v2021_01_01_preview.models.AccessKeys or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2021_01_01_preview.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.list_keys.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('AccessKeys', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules/{authorizationRuleName}/listKeys'}
