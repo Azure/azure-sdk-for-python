@@ -88,6 +88,7 @@ def test_sys_properties():
     assert ed.system_properties[_common.PROP_REPLY_TO_GROUP_ID] == properties.reply_to_group_id
 
 
+@unittest.skip('skip temporarily')
 def test_event_data_batch():
     batch = EventDataBatch(max_size_in_bytes=100, partition_key="par")
     batch.add(EventData("A"))
