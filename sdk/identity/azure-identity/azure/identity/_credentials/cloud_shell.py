@@ -28,7 +28,6 @@ class CloudShellCredential(GetTokenMixin):
             self._client = ManagedIdentityClient(
                 request_factory=functools.partial(_get_request, url),
                 base_headers={"Metadata": "true"},
-                _identity_config=kwargs.pop("identity_config", None),
                 **kwargs
             )
         else:
