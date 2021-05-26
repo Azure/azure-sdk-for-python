@@ -66,7 +66,7 @@ class RecoveryPointsOperations(object):
          ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResourcePaged[~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2020-10-01"
+        api_version = "2021-01-01"
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -125,7 +125,7 @@ class RecoveryPointsOperations(object):
         deserialized = models.RecoveryPointResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints'}
 
     def get(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, recovery_point_id, custom_headers=None, raw=False, **operation_config):
@@ -160,7 +160,7 @@ class RecoveryPointsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2020-10-01"
+        api_version = "2021-01-01"
 
         # Construct URL
         url = self.get.metadata['url']
@@ -207,7 +207,7 @@ class RecoveryPointsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}'}
 
     def get_access_token(
             self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, recovery_point_id, parameters, custom_headers=None, raw=False, **operation_config):

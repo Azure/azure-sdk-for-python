@@ -11,8 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrest.polling import LROPoller, NoPolling
-from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -26,7 +24,7 @@ class BMSPrepareDataMoveOperationResultOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2020-10-01".
+    :ivar api_version: Client Api Version. Constant value: "2021-01-01".
     """
 
     models = models
@@ -36,13 +34,34 @@ class BMSPrepareDataMoveOperationResultOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-10-01"
+        self.api_version = "2021-01-01"
 
         self.config = config
 
-
-    def _get_initial(
+    def get(
             self, vault_name, resource_group_name, operation_id, custom_headers=None, raw=False, **operation_config):
+        """Fetches Operation Result for Prepare Data Move.
+
+        :param vault_name: The name of the recovery services vault.
+        :type vault_name: str
+        :param resource_group_name: The name of the resource group where the
+         recovery services vault is present.
+        :type resource_group_name: str
+        :param operation_id:
+        :type operation_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: VaultStorageConfigOperationResultResponse or
+         ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.VaultStorageConfigOperationResultResponse
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`NewErrorResponseException<azure.mgmt.recoveryservicesbackup.models.NewErrorResponseException>`
+        """
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
@@ -75,7 +94,6 @@ class BMSPrepareDataMoveOperationResultOperations(object):
             raise models.NewErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('VaultStorageConfigOperationResultResponse', response)
 
@@ -84,57 +102,4 @@ class BMSPrepareDataMoveOperationResultOperations(object):
             return client_raw_response
 
         return deserialized
-
-    def get(
-            self, vault_name, resource_group_name, operation_id, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Fetches Operation Result for Prepare Data Move.
-
-        :param vault_name: The name of the recovery services vault.
-        :type vault_name: str
-        :param resource_group_name: The name of the resource group where the
-         recovery services vault is present.
-        :type resource_group_name: str
-        :param operation_id:
-        :type operation_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         VaultStorageConfigOperationResultResponse or
-         ClientRawResponse<VaultStorageConfigOperationResultResponse> if
-         raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.recoveryservicesbackup.models.VaultStorageConfigOperationResultResponse]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.recoveryservicesbackup.models.VaultStorageConfigOperationResultResponse]]
-        :raises:
-         :class:`NewErrorResponseException<azure.mgmt.recoveryservicesbackup.models.NewErrorResponseException>`
-        """
-        raw_result = self._get_initial(
-            vault_name=vault_name,
-            resource_group_name=resource_group_name,
-            operation_id=operation_id,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('VaultStorageConfigOperationResultResponse', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig/operationResults/{operationId}'}
