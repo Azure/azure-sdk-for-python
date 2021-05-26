@@ -7,8 +7,6 @@ from sys import platform
 import configparser
 from subprocess import Popen
 from typing import cast
-from datetime import datetime
-import time
 
 from azure.storage.blob import BlobServiceClient
 from azure.servicebus.control_client import ServiceBusService, EventHub
