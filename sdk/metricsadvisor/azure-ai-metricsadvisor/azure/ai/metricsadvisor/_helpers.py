@@ -50,7 +50,7 @@ def construct_alert_config_dict(update_kwargs):
 def construct_detection_config_dict(update_kwargs):
 
     if "wholeMetricConfiguration" in update_kwargs:
-        update_kwargs["wholeMetricConfiguration"] = update_kwargs["wholeMetricConfiguration"]._to_generated() \
+        update_kwargs["wholeMetricConfiguration"] = update_kwargs["wholeMetricConfiguration"]._to_generated_patch() \
             if update_kwargs["wholeMetricConfiguration"] else None
     if "dimensionGroupOverrideConfigurations" in update_kwargs:
         update_kwargs["dimensionGroupOverrideConfigurations"] = [

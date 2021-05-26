@@ -26,10 +26,15 @@ from .._generated.models import (
     EmailHookInfo as _EmailHookInfo,
     WebhookHookInfo as _WebhookHookInfo,
     WholeMetricConfiguration as _WholeMetricConfiguration,
+    WholeMetricConfigurationPatch as _WholeMetricConfigurationPatch,
     SuppressCondition as _SuppressCondition,
+    SuppressConditionPatch as _SuppressConditionPatch,
     HardThresholdCondition as _HardThresholdCondition,
+    HardThresholdConditionPatch as _HardThresholdConditionPatch,
     ChangeThresholdCondition as _ChangeThresholdCondition,
+    ChangeThresholdConditionPatch as _ChangeThresholdConditionPatch,
     SmartDetectionCondition as _SmartDetectionCondition,
+    SmartDetectionConditionPatch as _SmartDetectionConditionPatch,
     DimensionGroupConfiguration as _DimensionGroupConfiguration,
     SeriesConfiguration as _SeriesConfiguration,
     EmailHookInfoPatch as _EmailHookInfoPatch,
@@ -944,7 +949,7 @@ class AnomalyDetectionConfiguration(object):
         return _AnomalyDetectionConfigurationPatch(
             name=name or self.name,
             description=description or self.description,
-            whole_metric_configuration=whole_series_detection_condition._to_generated()
+            whole_metric_configuration=whole_series_detection_condition._to_generated_patch()
             if whole_series_detection_condition else None,
             dimension_group_override_configurations=[group._to_generated() for group in series_group]
             if series_group else None,
@@ -1977,6 +1982,17 @@ class MetricDetectionCondition(object):
             if self.change_threshold_condition else None
         )
 
+    def _to_generated_patch(self):
+        return _WholeMetricConfigurationPatch(
+            condition_operator=self.cross_conditions_operator,
+            smart_detection_condition=self.smart_detection_condition._to_generated_patch()
+            if self.smart_detection_condition else None,
+            hard_threshold_condition=self.hard_threshold_condition._to_generated_patch()
+            if self.hard_threshold_condition else None,
+            change_threshold_condition=self.change_threshold_condition._to_generated_patch()
+            if self.change_threshold_condition else None
+        )
+
 
 class ChangeThresholdCondition(object):
     """ChangeThresholdCondition.
@@ -2039,6 +2055,18 @@ class ChangeThresholdCondition(object):
             within_range=self.within_range,
             anomaly_detector_direction=self.anomaly_detector_direction,
             suppress_condition=_SuppressCondition(
+                min_number=self.suppress_condition.min_number,
+                min_ratio=self.suppress_condition.min_ratio,
+            )
+        )
+
+    def _to_generated_patch(self):
+        return _ChangeThresholdConditionPatch(
+            change_percentage=self.change_percentage,
+            shift_point=self.shift_point,
+            within_range=self.within_range,
+            anomaly_detector_direction=self.anomaly_detector_direction,
+            suppress_condition=_SuppressConditionPatch(
                 min_number=self.suppress_condition.min_number,
                 min_ratio=self.suppress_condition.min_ratio,
             )
@@ -2122,6 +2150,15 @@ class SmartDetectionCondition(object):
             )
         )
 
+    def _to_generated_patch(self):
+        return _SmartDetectionConditionPatch(
+            sensitivity=self.sensitivity,
+            anomaly_detector_direction=self.anomaly_detector_direction,
+            suppress_condition=_SuppressConditionPatch(
+                min_number=self.suppress_condition.min_number,
+                min_ratio=self.suppress_condition.min_ratio,
+            )
+        )
 
 class HardThresholdCondition(object):
     """HardThresholdCondition.
@@ -2171,6 +2208,17 @@ class HardThresholdCondition(object):
             upper_bound=self.upper_bound,
             anomaly_detector_direction=self.anomaly_detector_direction,
             suppress_condition=_SuppressCondition(
+                min_number=self.suppress_condition.min_number,
+                min_ratio=self.suppress_condition.min_ratio,
+            )
+        )
+
+    def _to_generated_patch(self):
+        return _HardThresholdConditionPatch(
+            lower_bound=self.lower_bound,
+            upper_bound=self.upper_bound,
+            anomaly_detector_direction=self.anomaly_detector_direction,
+            suppress_condition=_SuppressConditionPatch(
                 min_number=self.suppress_condition.min_number,
                 min_ratio=self.suppress_condition.min_ratio,
             )
