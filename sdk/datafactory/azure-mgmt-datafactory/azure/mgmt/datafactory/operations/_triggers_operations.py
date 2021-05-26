@@ -172,7 +172,7 @@ class TriggersOperations(object):
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(filter_parameters, 'TriggerFilterParameters')
-        body_content_kwargs['content'] = body_content
+        body_content_kwargs['content'] = {"properties" : body_content}
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
