@@ -25,41 +25,41 @@ import os
 from azure.communication.siprouting import SIPRoutingClient
 from azure.communication.siprouting._generated.models import Trunk, TrunkRoute, SipConfiguration
 
+
 class Update_sip_configuration_samples(object):
-    connection_string = os.getenv(
-        "AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING")
+    def __init__(self):
+        connection_string = os.getenv(
+            "AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING")
+        self._client = SIPRoutingClient.from_connection_string(
+            connection_string)
 
-    def update_sip_trunk_configuration_sample():
+    def update_sip_trunk_configuration_sample(self):
         test_trunks = {os.getenv("SAMPLE_TRUNK_NAME"): Trunk(
-            sip_signaling_port = (os.getenv("SAMPLE_TRUNK_SIP_PORT")))}
+            sip_signaling_port=int(os.getenv("SAMPLE_TRUNK_SIP_PORT")))}
         test_trunk_routes = [TrunkRoute(
-            name = os.getenv("SAMPLE_TRUNK_ROUTE_NAME"), number_pattern = os.getenv("SAMPLE_NUMBER_PATTERN"), trunks=[os.getenv("SAMPLE_TRUNK_NAME")])]
-        test_sip_configuration = SipConfiguration(
-            trunks = test_trunks, routes = test_trunk_routes)
+            name=os.getenv("SAMPLE_TRUNK_ROUTE_NAME"), number_pattern=os.getenv("SAMPLE_NUMBER_PATTERN"), trunks=[os.getenv("SAMPLE_TRUNK_NAME")])]
 
-        client = SIPRoutingClient.from_connection_string(
-            Update_sip_configuration_samples.connection_string)
-        response = client.update_sip_trunk_configuration(
-            test_sip_configuration)
+        response = self._client.update_sip_trunk_configuration(
+            test_trunks,
+            test_trunk_routes)
         print(response)
 
-    def update_pstn_gateways_sample():
+    def update_pstn_gateways_sample(self):
         test_trunks = {os.getenv("SAMPLE_TRUNK_NAME"): Trunk(
-            sip_signaling_port = (os.getenv("SAMPLE_TRUNK_SIP_PORT")))}
-        client = SIPRoutingClient.from_connection_string(
-            Update_sip_configuration_samples.connection_string)
-        response = client.update_sip_trunk_configuration(
+            sip_signaling_port=(int(os.getenv("SAMPLE_TRUNK_SIP_PORT"))))}
+
+        response = self._client.update_pstn_gateways(
             test_trunks)
         print(response)
 
-    def update_routing_settings():
+    def update_routing_settings(self):
         test_trunk_routes = [TrunkRoute(
-            name = os.getenv("SAMPLE_TRUNK_ROUTE_NAME"), number_pattern = os.getenv("SAMPLE_NUMBER_PATTERN"), trunks=[os.getenv("SAMPLE_TRUNK_NAME")])]
-        client = SIPRoutingClient.from_connection_string(
-            Update_sip_configuration_samples.connection_string)
-        response = client.update_sip_trunk_configuration(
+            name=os.getenv("SAMPLE_TRUNK_ROUTE_NAME"), number_pattern=os.getenv("SAMPLE_NUMBER_PATTERN"), trunks=[os.getenv("SAMPLE_TRUNK_NAME")])]
+
+        response = self._client.update_routing_settings(
             test_trunk_routes)
         print(response)
+
 
 if __name__ == '__main__':
     samples = Update_sip_configuration_samples()
