@@ -1,4 +1,5 @@
 [packaging]
+auto_update = false
 package_name = "azure-cognitiveservices-personalizer"
 package_nspkg = "azure-cognitiveservices-nspkg"
 package_pprint_name = "Personalizer"
