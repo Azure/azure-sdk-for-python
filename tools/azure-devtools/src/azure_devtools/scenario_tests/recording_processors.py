@@ -10,7 +10,6 @@ from .utilities import (
     is_text_payload,
     is_json_payload,
     is_batch_payload,
-    _decompress_response_body,
     replace_subscription_id
 )
 
@@ -216,7 +215,6 @@ class GeneralNameReplacer(RecordingProcessor):
         return new_body
 
     def process_response(self, response):
-        response = _decompress_response_body(response)
         for old, new in self.names_name:
             if is_text_payload(response) and response['body']['string']:
                 try:
