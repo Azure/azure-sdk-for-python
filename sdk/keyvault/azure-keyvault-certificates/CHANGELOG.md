@@ -1,6 +1,10 @@
 # Release History
 
 ## 4.3.0b1 (Unreleased)
+### Changed
+- Key Vault API version 7.2 is now the default
+- Updated msrest requirement to >=0.6.21
+
 ### Added
 - Added method `parse_key_vault_certificate_id` that parses out a full ID returned by Key Vault, so users can easily
 access the certificate's `name`, `vault_url`, and `version`.
