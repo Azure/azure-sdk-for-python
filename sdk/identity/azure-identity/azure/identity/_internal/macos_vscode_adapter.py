@@ -13,7 +13,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def get_user_settings():
     try:
-        path = os.path.join(os.environ["USER"], "Library", "Application Support", "Code", "User", "settings.json")
+        path = os.path.join(os.environ["HOME"], "Library", "Application Support", "Code", "User", "settings.json")
         with open(path) as file:
             return json.load(file)
     except Exception as ex:  # pylint:disable=broad-except
