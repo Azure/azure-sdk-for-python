@@ -1917,3 +1917,109 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             assert updated['datetime1'].tables_service_value == dotnet_timestamp
         finally:
             self._tear_down()
+    
+    @tables_decorator
+    def test_datetime_duplicate_field(self, tables_storage_account_name, tables_primary_storage_account_key):
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9)
+        }
+        try:
+            self.table.create_entity(entity)
+            received = self.table.get_entity(partition, row)
+
+            assert 'Timestamp' not in received
+            assert 'timestamp' in received.metadata
+            assert isinstance(received.metadata['timestamp'], datetime)
+            assert received.metadata['timestamp'].year > 2020
+        
+            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9)
+            self.table.update_entity(received, mode=UpdateMode.REPLACE)
+            received = self.table.get_entity(partition, row)
+
+            assert 'timestamp' in received
+            assert isinstance(received['timestamp'], datetime)
+            assert received['timestamp'].year == 1999
+            assert isinstance(received.metadata['timestamp'], datetime)
+            assert received.metadata['timestamp'].year > 2020
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    def test_etag_duplicate_field(self, tables_storage_account_name, tables_primary_storage_account_key):
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'ETag': u'foo',
+            'etag': u'bar',
+            'Etag': u'baz',
+        }
+        try:
+            self.table.create_entity(entity)
+            created = self.table.get_entity(partition, row)
+
+            assert created['ETag'] == u'foo'
+            assert created['etag'] == u'bar'
+            assert created['Etag'] == u'baz'
+            assert created.metadata['etag'].startswith(u'W/"datetime\'')
+
+            entity['ETag'] = u'one'
+            entity['etag'] = u'two'
+            entity['Etag'] = u'three'
+            with pytest.raises(ValueError):
+                self.table.update_entity(entity, match_condition=MatchConditions.IfNotModified)
+        
+            created['ETag'] = u'one'
+            created['etag'] = u'two'
+            created['Etag'] = u'three'
+            self.table.update_entity(created, match_condition=MatchConditions.IfNotModified)
+
+            updated = self.table.get_entity(partition, row)
+            assert updated['ETag'] == u'one'
+            assert updated['etag'] == u'two'
+            assert updated['Etag'] == u'three'
+            assert updated.metadata['etag'].startswith(u'W/"datetime\'')
+            assert updated.metadata['etag'] != created.metadata['etag']
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    def test_entity_create_response_echo(self, tables_storage_account_name, tables_primary_storage_account_key):
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'Value': u'foobar',
+            'Answer': 42
+        }
+        try:
+            result = self.table.create_entity(entity)
+            assert 'preference_applied' not in result
+            assert 'content' not in result
+            self.table.delete_entity(entity)
+
+            result = self.table.create_entity(entity, headers={'Prefer': 'return-no-content'})
+            assert 'preference_applied' in result
+            assert result['preference_applied'] == 'return-no-content'
+            assert 'content' in result
+            assert result['content'] is None
+            self.table.delete_entity(entity)
+
+            result = self.table.create_entity(entity, headers={'Prefer': 'return-content'})
+            assert 'preference_applied' in result
+            assert result['preference_applied'] == 'return-content'
+            assert 'content' in result
+            assert result['content']['PartitionKey'] == partition
+            assert result['content']['Value'] == u'foobar'
+            assert result['content']['Answer'] == 42
+        finally:
+            self._tear_down()

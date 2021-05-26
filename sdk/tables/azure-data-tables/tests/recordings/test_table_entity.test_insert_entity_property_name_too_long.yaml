@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 23 Apr 2021 17:43:03 GMT
+      - Wed, 26 May 2021 15:48:09 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 23 Apr 2021 17:43:03 GMT
+      - Wed, 26 May 2021 15:48:09 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 23 Apr 2021 17:43:03 GMT
+      - Wed, 26 May 2021 15:48:08 GMT
       location:
       - https://fake_table_account.table.core.windows.net/Tables('uttablee10d18a6')
       server:
@@ -66,11 +66,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 23 Apr 2021 17:43:04 GMT
+      - Wed, 26 May 2021 15:48:09 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 23 Apr 2021 17:43:04 GMT
+      - Wed, 26 May 2021 15:48:09 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -78,14 +78,14 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"PropertyNameTooLong","message":{"lang":"en-US","value":"The
-        property name exceeds the maximum allowed length (255).\nRequestId:a1de1e90-d002-007d-6b68-38ab07000000\nTime:2021-04-23T17:43:04.3558935Z"}}}'
+        property name exceeds the maximum allowed length (255).\nRequestId:ab08b8f5-5002-0097-0946-528c29000000\nTime:2021-05-26T15:48:09.2545029Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 23 Apr 2021 17:43:03 GMT
+      - Wed, 26 May 2021 15:48:08 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -101,6 +101,50 @@ interactions:
     body: null
     headers:
       Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 26 May 2021 15:48:09 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 26 May 2021 15:48:09 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"uttablee10d18a6"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Wed, 26 May 2021 15:48:09 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      vary:
+      - Origin
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
       - application/json
       Accept-Encoding:
       - gzip, deflate
@@ -109,11 +153,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 23 Apr 2021 17:43:04 GMT
+      - Wed, 26 May 2021 15:48:09 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 23 Apr 2021 17:43:04 GMT
+      - Wed, 26 May 2021 15:48:09 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -127,7 +171,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 23 Apr 2021 17:43:04 GMT
+      - Wed, 26 May 2021 15:48:09 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
