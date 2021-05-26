@@ -24,7 +24,11 @@ from .models import (
     ChangePointFeedback,
     CommentFeedback,
     PeriodFeedback,
-    DataFeedRollupType
+    DataFeedRollupType,
+    SQLConnectionStringCredentialEntity,
+    DataLakeGen2SharedKeyCredentialEntity,
+    ServicePrincipalCredentialEntity,
+    ServicePrincipalInKVCredentialEntity
 )
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
@@ -108,15 +112,15 @@ def convert_to_generated_data_feed_type(
 
     :param generated_feed_type: generated model type of data feed
     :type generated_feed_type: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
+        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, AzureLogAnalyticsDataFeed,
         InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-        ElasticsearchDataFeed]
+        AzureEventHubsDataFeed]
     :param str name: Name for the data feed.
     :param source: The exposed model source of the data feed
     :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDBDataFeedSource,
         AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource, AzureTableDataFeedSource,
-        HttpRequestDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
-        SQLServerDataFeedSource, MongoDBDataFeedSource, ElasticsearchDataFeedSource]
+        AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
+        SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
     :param granularity: Granularity type and amount if using custom.
     :type granularity: ~azure.ai.metricsadvisor.models.DataFeedGranularity
     :param schema: Data feed schema
@@ -126,9 +130,9 @@ def convert_to_generated_data_feed_type(
     :param options: Data feed options.
     :type options: ~azure.ai.metricsadvisor.models.DataFeedOptions
     :rtype: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
+        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, AzureLogAnalyticsDataFeed,
         InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-        ElasticsearchDataFeed]
+        AzureEventHubsDataFeed]
     :return: The generated model for the data source type
     """
 
@@ -148,7 +152,7 @@ def convert_to_generated_data_feed_type(
         )
 
     return generated_feed_type(
-        data_source_parameter=source.__dict__,
+        data_source_parameter=source._to_generated(),
         data_feed_name=name,
         granularity_name=granularity.granularity_type,
         granularity_amount=granularity.custom_granularity_value,
@@ -217,3 +221,12 @@ def get_authentication_policy(credential):
         )
 
     return authentication_policy
+
+def convert_to_credential_entity(credential_entity):
+    if credential_entity.data_source_credential_type == "AzureSQLConnectionString":
+        return SQLConnectionStringCredentialEntity._from_generated(credential_entity)
+    if credential_entity.data_source_credential_type == "DataLakeGen2SharedKey":
+        return DataLakeGen2SharedKeyCredentialEntity._from_generated(credential_entity)
+    if credential_entity.data_source_credential_type == "ServicePrincipal":
+        return ServicePrincipalCredentialEntity._from_generated(credential_entity)
+    return ServicePrincipalInKVCredentialEntity._from_generated(credential_entity)

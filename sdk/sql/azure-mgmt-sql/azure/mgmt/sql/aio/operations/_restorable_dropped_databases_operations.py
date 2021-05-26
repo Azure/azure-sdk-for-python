@@ -45,7 +45,7 @@ class RestorableDroppedDatabasesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RestorableDroppedDatabaseListResult"]:
         """Gets a list of restorable dropped databases.
 
@@ -121,7 +121,7 @@ class RestorableDroppedDatabasesOperations:
         resource_group_name: str,
         server_name: str,
         restorable_dropped_database_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RestorableDroppedDatabase":
         """Gets a restorable dropped database.
 

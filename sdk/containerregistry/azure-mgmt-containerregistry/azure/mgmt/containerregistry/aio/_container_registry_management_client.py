@@ -9,12 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Serializer, Deserializer
+from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+from msrest import Deserializer, Serializer
+
 from ._configuration import ContainerRegistryManagementClientConfiguration
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -38,9 +45,10 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Microsoft Azure subscription ID.
     :type subscription_id: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
-    :param str base_url: Service URL
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
+    :param base_url: Service URL
+    :type base_url: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
@@ -54,17 +62,19 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
             'build_steps': '2018-02-01-preview',
             'build_tasks': '2018-02-01-preview',
             'builds': '2018-02-01-preview',
+            'runs': '2019-04-01',
+            'tasks': '2019-04-01',
         }},
         _PROFILE_TAG + " latest"
     )
 
     def __init__(
         self,
-        credential,  # type: "AsyncTokenCredential"
-        subscription_id,  # type: str
-        api_version=None,
-        base_url=None,
-        profile=KnownProfiles.default,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        api_version: Optional[str] = None,
+        base_url: Optional[str] = None,
+        profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
         if not base_url:
@@ -93,6 +103,7 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
            * 2019-05-01-preview: :mod:`v2019_05_01_preview.models<azure.mgmt.containerregistry.v2019_05_01_preview.models>`
            * 2019-06-01-preview: :mod:`v2019_06_01_preview.models<azure.mgmt.containerregistry.v2019_06_01_preview.models>`
            * 2019-12-01-preview: :mod:`v2019_12_01_preview.models<azure.mgmt.containerregistry.v2019_12_01_preview.models>`
+           * 2020-11-01-preview: :mod:`v2020_11_01_preview.models<azure.mgmt.containerregistry.v2020_11_01_preview.models>`
         """
         if api_version == '2017-03-01':
             from ..v2017_03_01 import models
@@ -121,6 +132,9 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-12-01-preview':
             from ..v2019_12_01_preview import models
             return models
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -128,13 +142,10 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01-preview: :class:`AgentPoolsOperations<azure.mgmt.containerregistry.v2019_06_01_preview.aio.operations.AgentPoolsOperations>`
-           * 2019-12-01-preview: :class:`AgentPoolsOperations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.AgentPoolsOperations>`
         """
         api_version = self._get_api_version('agent_pools')
         if api_version == '2019-06-01-preview':
             from ..v2019_06_01_preview.aio.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2019-12-01-preview':
-            from ..v2019_12_01_preview.aio.operations import AgentPoolsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'agent_pools'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -179,14 +190,30 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def connected_registries(self):
+        """Instance depends on the API version:
+
+           * 2020-11-01-preview: :class:`ConnectedRegistriesOperations<azure.mgmt.containerregistry.v2020_11_01_preview.aio.operations.ConnectedRegistriesOperations>`
+        """
+        api_version = self._get_api_version('connected_registries')
+        if api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import ConnectedRegistriesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'connected_registries'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def export_pipelines(self):
         """Instance depends on the API version:
 
            * 2019-12-01-preview: :class:`ExportPipelinesOperations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.ExportPipelinesOperations>`
+           * 2020-11-01-preview: :class:`ExportPipelinesOperations<azure.mgmt.containerregistry.v2020_11_01_preview.aio.operations.ExportPipelinesOperations>`
         """
         api_version = self._get_api_version('export_pipelines')
         if api_version == '2019-12-01-preview':
             from ..v2019_12_01_preview.aio.operations import ExportPipelinesOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import ExportPipelinesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'export_pipelines'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -196,10 +223,13 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-12-01-preview: :class:`ImportPipelinesOperations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.ImportPipelinesOperations>`
+           * 2020-11-01-preview: :class:`ImportPipelinesOperations<azure.mgmt.containerregistry.v2020_11_01_preview.aio.operations.ImportPipelinesOperations>`
         """
         api_version = self._get_api_version('import_pipelines')
         if api_version == '2019-12-01-preview':
             from ..v2019_12_01_preview.aio.operations import ImportPipelinesOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import ImportPipelinesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'import_pipelines'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -210,33 +240,21 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2017-03-01: :class:`Operations<azure.mgmt.containerregistry.v2017_03_01.aio.operations.Operations>`
            * 2017-10-01: :class:`Operations<azure.mgmt.containerregistry.v2017_10_01.aio.operations.Operations>`
-           * 2018-02-01-preview: :class:`Operations<azure.mgmt.containerregistry.v2018_02_01_preview.aio.operations.Operations>`
-           * 2018-09-01: :class:`Operations<azure.mgmt.containerregistry.v2018_09_01.aio.operations.Operations>`
-           * 2019-04-01: :class:`Operations<azure.mgmt.containerregistry.v2019_04_01.aio.operations.Operations>`
            * 2019-05-01: :class:`Operations<azure.mgmt.containerregistry.v2019_05_01.aio.operations.Operations>`
-           * 2019-05-01-preview: :class:`Operations<azure.mgmt.containerregistry.v2019_05_01_preview.aio.operations.Operations>`
-           * 2019-06-01-preview: :class:`Operations<azure.mgmt.containerregistry.v2019_06_01_preview.aio.operations.Operations>`
            * 2019-12-01-preview: :class:`Operations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.Operations>`
+           * 2020-11-01-preview: :class:`Operations<azure.mgmt.containerregistry.v2020_11_01_preview.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2017-03-01':
             from ..v2017_03_01.aio.operations import Operations as OperationClass
         elif api_version == '2017-10-01':
             from ..v2017_10_01.aio.operations import Operations as OperationClass
-        elif api_version == '2018-02-01-preview':
-            from ..v2018_02_01_preview.aio.operations import Operations as OperationClass
-        elif api_version == '2018-09-01':
-            from ..v2018_09_01.aio.operations import Operations as OperationClass
-        elif api_version == '2019-04-01':
-            from ..v2019_04_01.aio.operations import Operations as OperationClass
         elif api_version == '2019-05-01':
             from ..v2019_05_01.aio.operations import Operations as OperationClass
-        elif api_version == '2019-05-01-preview':
-            from ..v2019_05_01_preview.aio.operations import Operations as OperationClass
-        elif api_version == '2019-06-01-preview':
-            from ..v2019_06_01_preview.aio.operations import Operations as OperationClass
         elif api_version == '2019-12-01-preview':
             from ..v2019_12_01_preview.aio.operations import Operations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -246,10 +264,13 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-12-01-preview: :class:`PipelineRunsOperations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.PipelineRunsOperations>`
+           * 2020-11-01-preview: :class:`PipelineRunsOperations<azure.mgmt.containerregistry.v2020_11_01_preview.aio.operations.PipelineRunsOperations>`
         """
         api_version = self._get_api_version('pipeline_runs')
         if api_version == '2019-12-01-preview':
             from ..v2019_12_01_preview.aio.operations import PipelineRunsOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import PipelineRunsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'pipeline_runs'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -259,10 +280,13 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-12-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.PrivateEndpointConnectionsOperations>`
+           * 2020-11-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerregistry.v2020_11_01_preview.aio.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2019-12-01-preview':
             from ..v2019_12_01_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -280,6 +304,7 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
            * 2019-05-01-preview: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2019_05_01_preview.aio.operations.RegistriesOperations>`
            * 2019-06-01-preview: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2019_06_01_preview.aio.operations.RegistriesOperations>`
            * 2019-12-01-preview: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.RegistriesOperations>`
+           * 2020-11-01-preview: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2020_11_01_preview.aio.operations.RegistriesOperations>`
         """
         api_version = self._get_api_version('registries')
         if api_version == '2017-03-01':
@@ -300,6 +325,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2019_06_01_preview.aio.operations import RegistriesOperations as OperationClass
         elif api_version == '2019-12-01-preview':
             from ..v2019_12_01_preview.aio.operations import RegistriesOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import RegistriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'registries'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -309,31 +336,19 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2017-10-01: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2017_10_01.aio.operations.ReplicationsOperations>`
-           * 2018-02-01-preview: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2018_02_01_preview.aio.operations.ReplicationsOperations>`
-           * 2018-09-01: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2018_09_01.aio.operations.ReplicationsOperations>`
-           * 2019-04-01: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2019_04_01.aio.operations.ReplicationsOperations>`
            * 2019-05-01: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2019_05_01.aio.operations.ReplicationsOperations>`
-           * 2019-05-01-preview: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2019_05_01_preview.aio.operations.ReplicationsOperations>`
-           * 2019-06-01-preview: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2019_06_01_preview.aio.operations.ReplicationsOperations>`
            * 2019-12-01-preview: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.ReplicationsOperations>`
+           * 2020-11-01-preview: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2020_11_01_preview.aio.operations.ReplicationsOperations>`
         """
         api_version = self._get_api_version('replications')
         if api_version == '2017-10-01':
             from ..v2017_10_01.aio.operations import ReplicationsOperations as OperationClass
-        elif api_version == '2018-02-01-preview':
-            from ..v2018_02_01_preview.aio.operations import ReplicationsOperations as OperationClass
-        elif api_version == '2018-09-01':
-            from ..v2018_09_01.aio.operations import ReplicationsOperations as OperationClass
-        elif api_version == '2019-04-01':
-            from ..v2019_04_01.aio.operations import ReplicationsOperations as OperationClass
         elif api_version == '2019-05-01':
             from ..v2019_05_01.aio.operations import ReplicationsOperations as OperationClass
-        elif api_version == '2019-05-01-preview':
-            from ..v2019_05_01_preview.aio.operations import ReplicationsOperations as OperationClass
-        elif api_version == '2019-06-01-preview':
-            from ..v2019_06_01_preview.aio.operations import ReplicationsOperations as OperationClass
         elif api_version == '2019-12-01-preview':
             from ..v2019_12_01_preview.aio.operations import ReplicationsOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import ReplicationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'replications'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -344,21 +359,15 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2018-09-01: :class:`RunsOperations<azure.mgmt.containerregistry.v2018_09_01.aio.operations.RunsOperations>`
            * 2019-04-01: :class:`RunsOperations<azure.mgmt.containerregistry.v2019_04_01.aio.operations.RunsOperations>`
-           * 2019-05-01: :class:`RunsOperations<azure.mgmt.containerregistry.v2019_05_01.aio.operations.RunsOperations>`
            * 2019-06-01-preview: :class:`RunsOperations<azure.mgmt.containerregistry.v2019_06_01_preview.aio.operations.RunsOperations>`
-           * 2019-12-01-preview: :class:`RunsOperations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.RunsOperations>`
         """
         api_version = self._get_api_version('runs')
         if api_version == '2018-09-01':
             from ..v2018_09_01.aio.operations import RunsOperations as OperationClass
         elif api_version == '2019-04-01':
             from ..v2019_04_01.aio.operations import RunsOperations as OperationClass
-        elif api_version == '2019-05-01':
-            from ..v2019_05_01.aio.operations import RunsOperations as OperationClass
         elif api_version == '2019-06-01-preview':
             from ..v2019_06_01_preview.aio.operations import RunsOperations as OperationClass
-        elif api_version == '2019-12-01-preview':
-            from ..v2019_12_01_preview.aio.operations import RunsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'runs'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -368,16 +377,13 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-05-01-preview: :class:`ScopeMapsOperations<azure.mgmt.containerregistry.v2019_05_01_preview.aio.operations.ScopeMapsOperations>`
-           * 2019-06-01-preview: :class:`ScopeMapsOperations<azure.mgmt.containerregistry.v2019_06_01_preview.aio.operations.ScopeMapsOperations>`
-           * 2019-12-01-preview: :class:`ScopeMapsOperations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.ScopeMapsOperations>`
+           * 2020-11-01-preview: :class:`ScopeMapsOperations<azure.mgmt.containerregistry.v2020_11_01_preview.aio.operations.ScopeMapsOperations>`
         """
         api_version = self._get_api_version('scope_maps')
         if api_version == '2019-05-01-preview':
             from ..v2019_05_01_preview.aio.operations import ScopeMapsOperations as OperationClass
-        elif api_version == '2019-06-01-preview':
-            from ..v2019_06_01_preview.aio.operations import ScopeMapsOperations as OperationClass
-        elif api_version == '2019-12-01-preview':
-            from ..v2019_12_01_preview.aio.operations import ScopeMapsOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import ScopeMapsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'scope_maps'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -387,13 +393,10 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01-preview: :class:`TaskRunsOperations<azure.mgmt.containerregistry.v2019_06_01_preview.aio.operations.TaskRunsOperations>`
-           * 2019-12-01-preview: :class:`TaskRunsOperations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.TaskRunsOperations>`
         """
         api_version = self._get_api_version('task_runs')
         if api_version == '2019-06-01-preview':
             from ..v2019_06_01_preview.aio.operations import TaskRunsOperations as OperationClass
-        elif api_version == '2019-12-01-preview':
-            from ..v2019_12_01_preview.aio.operations import TaskRunsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'task_runs'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -404,21 +407,15 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2018-09-01: :class:`TasksOperations<azure.mgmt.containerregistry.v2018_09_01.aio.operations.TasksOperations>`
            * 2019-04-01: :class:`TasksOperations<azure.mgmt.containerregistry.v2019_04_01.aio.operations.TasksOperations>`
-           * 2019-05-01: :class:`TasksOperations<azure.mgmt.containerregistry.v2019_05_01.aio.operations.TasksOperations>`
            * 2019-06-01-preview: :class:`TasksOperations<azure.mgmt.containerregistry.v2019_06_01_preview.aio.operations.TasksOperations>`
-           * 2019-12-01-preview: :class:`TasksOperations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.TasksOperations>`
         """
         api_version = self._get_api_version('tasks')
         if api_version == '2018-09-01':
             from ..v2018_09_01.aio.operations import TasksOperations as OperationClass
         elif api_version == '2019-04-01':
             from ..v2019_04_01.aio.operations import TasksOperations as OperationClass
-        elif api_version == '2019-05-01':
-            from ..v2019_05_01.aio.operations import TasksOperations as OperationClass
         elif api_version == '2019-06-01-preview':
             from ..v2019_06_01_preview.aio.operations import TasksOperations as OperationClass
-        elif api_version == '2019-12-01-preview':
-            from ..v2019_12_01_preview.aio.operations import TasksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'tasks'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -428,16 +425,13 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-05-01-preview: :class:`TokensOperations<azure.mgmt.containerregistry.v2019_05_01_preview.aio.operations.TokensOperations>`
-           * 2019-06-01-preview: :class:`TokensOperations<azure.mgmt.containerregistry.v2019_06_01_preview.aio.operations.TokensOperations>`
-           * 2019-12-01-preview: :class:`TokensOperations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.TokensOperations>`
+           * 2020-11-01-preview: :class:`TokensOperations<azure.mgmt.containerregistry.v2020_11_01_preview.aio.operations.TokensOperations>`
         """
         api_version = self._get_api_version('tokens')
         if api_version == '2019-05-01-preview':
             from ..v2019_05_01_preview.aio.operations import TokensOperations as OperationClass
-        elif api_version == '2019-06-01-preview':
-            from ..v2019_06_01_preview.aio.operations import TokensOperations as OperationClass
-        elif api_version == '2019-12-01-preview':
-            from ..v2019_12_01_preview.aio.operations import TokensOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import TokensOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'tokens'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -447,31 +441,19 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2017-10-01: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2017_10_01.aio.operations.WebhooksOperations>`
-           * 2018-02-01-preview: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2018_02_01_preview.aio.operations.WebhooksOperations>`
-           * 2018-09-01: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2018_09_01.aio.operations.WebhooksOperations>`
-           * 2019-04-01: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2019_04_01.aio.operations.WebhooksOperations>`
            * 2019-05-01: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2019_05_01.aio.operations.WebhooksOperations>`
-           * 2019-05-01-preview: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2019_05_01_preview.aio.operations.WebhooksOperations>`
-           * 2019-06-01-preview: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2019_06_01_preview.aio.operations.WebhooksOperations>`
            * 2019-12-01-preview: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.WebhooksOperations>`
+           * 2020-11-01-preview: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2020_11_01_preview.aio.operations.WebhooksOperations>`
         """
         api_version = self._get_api_version('webhooks')
         if api_version == '2017-10-01':
             from ..v2017_10_01.aio.operations import WebhooksOperations as OperationClass
-        elif api_version == '2018-02-01-preview':
-            from ..v2018_02_01_preview.aio.operations import WebhooksOperations as OperationClass
-        elif api_version == '2018-09-01':
-            from ..v2018_09_01.aio.operations import WebhooksOperations as OperationClass
-        elif api_version == '2019-04-01':
-            from ..v2019_04_01.aio.operations import WebhooksOperations as OperationClass
         elif api_version == '2019-05-01':
             from ..v2019_05_01.aio.operations import WebhooksOperations as OperationClass
-        elif api_version == '2019-05-01-preview':
-            from ..v2019_05_01_preview.aio.operations import WebhooksOperations as OperationClass
-        elif api_version == '2019-06-01-preview':
-            from ..v2019_06_01_preview.aio.operations import WebhooksOperations as OperationClass
         elif api_version == '2019-12-01-preview':
             from ..v2019_12_01_preview.aio.operations import WebhooksOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import WebhooksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'webhooks'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

@@ -1,8 +1,17 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0 (2021-06-07)
+
+**New Features**
+- Added AzureLogAnalyticsDataFeedSource and AzureEventHubsDataFeedSource
+- Update method now returns the updated object
+- Added CredentialEntities and CredentialEntity operations
 
 **Breaking Changes**
+
+- Deprecated:
+    - HttpRequestDataFeed
+    - ElasticsearchDataFeed
 
 - Renamed
     - AzureApplicationInsightsDataFeed -> AzureApplicationInsightsDataFeedSource
@@ -10,14 +19,12 @@
     - AzureCosmosDBDataFeed -> AzureCosmosDBDataFeedSource
     - AzureDataExplorerDataFeed -> AzureDataExplorerDataFeedSource
     - AzureTableDataFeed -> AzureTableDataFeedSource
-    - HttpRequestDataFeed -> HttpRequestDataFeedSource
     - InfluxDBDataFeed -> InfluxDBDataFeedSource
     - MySqlDataFeed -> MySqlDataFeedSource
     - PostgreSqlDataFeed -> PostgreSqlDataFeedSource
     - SQLServerDataFeed -> SQLServerDataFeedSource
     - MongoDBDataFeed -> MongoDBDataFeedSource
     - AzureDataLakeStorageGen2DataFeed -> AzureDataLakeStorageGen2DataFeedSource
-    - ElasticsearchDataFeed -> ElasticsearchDataFeedSource
 
 **Dependency Updates**
 

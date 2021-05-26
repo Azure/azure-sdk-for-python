@@ -16,44 +16,30 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import ContainerRegistryManagementClientConfiguration
-from .operations import RegistriesOperations
-from .operations import Operations
-from .operations import ReplicationsOperations
-from .operations import WebhooksOperations
 from .operations import AgentPoolsOperations
+from .operations import RegistriesOperations
 from .operations import RunsOperations
 from .operations import TaskRunsOperations
 from .operations import TasksOperations
-from .operations import ScopeMapsOperations
-from .operations import TokensOperations
 from . import models
 
 
 class ContainerRegistryManagementClient(object):
     """ContainerRegistryManagementClient.
 
-    :ivar registries: RegistriesOperations operations
-    :vartype registries: azure.mgmt.containerregistry.v2019_06_01_preview.operations.RegistriesOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.containerregistry.v2019_06_01_preview.operations.Operations
-    :ivar replications: ReplicationsOperations operations
-    :vartype replications: azure.mgmt.containerregistry.v2019_06_01_preview.operations.ReplicationsOperations
-    :ivar webhooks: WebhooksOperations operations
-    :vartype webhooks: azure.mgmt.containerregistry.v2019_06_01_preview.operations.WebhooksOperations
     :ivar agent_pools: AgentPoolsOperations operations
     :vartype agent_pools: azure.mgmt.containerregistry.v2019_06_01_preview.operations.AgentPoolsOperations
+    :ivar registries: RegistriesOperations operations
+    :vartype registries: azure.mgmt.containerregistry.v2019_06_01_preview.operations.RegistriesOperations
     :ivar runs: RunsOperations operations
     :vartype runs: azure.mgmt.containerregistry.v2019_06_01_preview.operations.RunsOperations
     :ivar task_runs: TaskRunsOperations operations
     :vartype task_runs: azure.mgmt.containerregistry.v2019_06_01_preview.operations.TaskRunsOperations
     :ivar tasks: TasksOperations operations
     :vartype tasks: azure.mgmt.containerregistry.v2019_06_01_preview.operations.TasksOperations
-    :ivar scope_maps: ScopeMapsOperations operations
-    :vartype scope_maps: azure.mgmt.containerregistry.v2019_06_01_preview.operations.ScopeMapsOperations
-    :ivar tokens: TokensOperations operations
-    :vartype tokens: azure.mgmt.containerregistry.v2019_06_01_preview.operations.TokensOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Microsoft Azure subscription ID.
@@ -80,15 +66,9 @@ class ContainerRegistryManagementClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.registries = RegistriesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.replications = ReplicationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.webhooks = WebhooksOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.agent_pools = AgentPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.registries = RegistriesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.runs = RunsOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -96,10 +76,24 @@ class ContainerRegistryManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.tasks = TasksOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.scope_maps = ScopeMapsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.tokens = TokensOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

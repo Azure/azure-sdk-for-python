@@ -48,7 +48,7 @@ class GeoBackupPoliciesOperations:
         database_name: str,
         geo_backup_policy_name: Union[str, "_models.GeoBackupPolicyName"],
         parameters: "_models.GeoBackupPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GeoBackupPolicy":
         """Updates a database geo backup policy.
 
@@ -126,7 +126,7 @@ class GeoBackupPoliciesOperations:
         server_name: str,
         database_name: str,
         geo_backup_policy_name: Union[str, "_models.GeoBackupPolicyName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GeoBackupPolicy":
         """Gets a geo backup policy.
 
@@ -192,7 +192,7 @@ class GeoBackupPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.GeoBackupPolicyListResult"]:
         """Returns a list of geo backup policies.
 

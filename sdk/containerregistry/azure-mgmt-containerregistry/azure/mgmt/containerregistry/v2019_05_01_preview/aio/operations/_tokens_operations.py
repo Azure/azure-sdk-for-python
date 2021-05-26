@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class TokensOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,8 +48,8 @@ class TokensOperations:
         resource_group_name: str,
         registry_name: str,
         token_name: str,
-        **kwargs
-    ) -> "models.Token":
+        **kwargs: Any
+    ) -> "_models.Token":
         """Gets the properties of the specified token.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -64,7 +64,7 @@ class TokensOperations:
         :rtype: ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Token
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Token"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Token"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,10 +111,10 @@ class TokensOperations:
         resource_group_name: str,
         registry_name: str,
         token_name: str,
-        token_create_parameters: "models.Token",
-        **kwargs
-    ) -> "models.Token":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Token"]
+        token_create_parameters: "_models.Token",
+        **kwargs: Any
+    ) -> "_models.Token":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Token"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -170,9 +170,9 @@ class TokensOperations:
         resource_group_name: str,
         registry_name: str,
         token_name: str,
-        token_create_parameters: "models.Token",
-        **kwargs
-    ) -> AsyncLROPoller["models.Token"]:
+        token_create_parameters: "_models.Token",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Token"]:
         """Creates a token for a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -186,8 +186,8 @@ class TokensOperations:
         :type token_create_parameters: ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Token
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Token or the result of cls(response)
@@ -195,7 +195,7 @@ class TokensOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Token"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Token"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -221,7 +221,14 @@ class TokensOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'tokenName': self._serialize.url("token_name", token_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -240,7 +247,7 @@ class TokensOperations:
         resource_group_name: str,
         registry_name: str,
         token_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -284,7 +291,7 @@ class TokensOperations:
         resource_group_name: str,
         registry_name: str,
         token_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a token from a container registry.
 
@@ -297,8 +304,8 @@ class TokensOperations:
         :type token_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -328,7 +335,14 @@ class TokensOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'tokenName': self._serialize.url("token_name", token_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -347,10 +361,10 @@ class TokensOperations:
         resource_group_name: str,
         registry_name: str,
         token_name: str,
-        token_update_parameters: "models.TokenUpdateParameters",
-        **kwargs
-    ) -> "models.Token":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Token"]
+        token_update_parameters: "_models.TokenUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.Token":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Token"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -406,9 +420,9 @@ class TokensOperations:
         resource_group_name: str,
         registry_name: str,
         token_name: str,
-        token_update_parameters: "models.TokenUpdateParameters",
-        **kwargs
-    ) -> AsyncLROPoller["models.Token"]:
+        token_update_parameters: "_models.TokenUpdateParameters",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Token"]:
         """Updates a token with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -422,8 +436,8 @@ class TokensOperations:
         :type token_update_parameters: ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Token or the result of cls(response)
@@ -431,7 +445,7 @@ class TokensOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Token"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Token"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -457,7 +471,14 @@ class TokensOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'tokenName': self._serialize.url("token_name", token_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -475,8 +496,8 @@ class TokensOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.TokenListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.TokenListResult"]:
         """Lists all the tokens for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -489,7 +510,7 @@ class TokensOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TokenListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TokenListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
