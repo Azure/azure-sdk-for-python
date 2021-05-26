@@ -9,11 +9,9 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     RepositoryProperties,
     ArtifactManifestProperties,
-    # RegistryArtifact,
 )
 
 from azure.core.paging import ItemPaged
-from azure.core.pipeline.transport import RequestsTransport
 
 from testcase import ContainerRegistryTestClass
 from constants import HELLO_WORLD

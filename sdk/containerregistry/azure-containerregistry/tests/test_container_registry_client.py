@@ -99,7 +99,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         properties.can_read = False
         properties.can_list = False
         properties.can_write = False
-        # properties.teleport_enabled = False
 
         new_properties = client.update_repository_properties(repository, properties)
 
@@ -107,13 +106,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert properties.can_read == new_properties.can_read
         assert properties.can_list == new_properties.can_list
         assert properties.can_write == new_properties.can_write
-        # assert properties.teleport_enabled == new_properties.teleport_enabled
 
         new_properties.can_delete = True
         new_properties.can_read = True
         new_properties.can_list = True
         new_properties.can_write = True
-        # new_properties.teleport_enabled = True
 
         new_properties = client.update_repository_properties(repository, new_properties)
 
@@ -121,7 +118,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert new_properties.can_read == True
         assert new_properties.can_list == True
         assert new_properties.can_write == True
-        # assert new_properties.teleport_enabled == True
 
     @acr_preparer()
     def test_update_repository_properties_kwargs(self, containerregistry_endpoint):
@@ -141,31 +137,24 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert received.can_list == True
         assert received.can_read == True
         assert received.can_write == True
-        # assert received.teleport_enabled == True
 
         received = client.update_repository_properties(repo, can_read=False)
         assert received.can_delete == False
         assert received.can_list == True
         assert received.can_read == False
         assert received.can_write == True
-        # assert received.teleport_enabled == True
 
         received = client.update_repository_properties(repo, can_write=False)
         assert received.can_delete == False
         assert received.can_list == True
         assert received.can_read == False
         assert received.can_write == False
-        # assert received.teleport_enabled == True
 
         received = client.update_repository_properties(repo, can_list=False)
         assert received.can_delete == False
         assert received.can_list == False
         assert received.can_read == False
         assert received.can_write == False
-        # assert received.teleport_enabled == True
-
-        # received = client.update_repository_properties(repo, teleport_enabled=True)
-        # self.assert_all_properties(received, True)
 
         received = client.update_repository_properties(
             repo,
@@ -173,7 +162,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             can_read=True,
             can_write=True,
             can_list=True,
-            # teleport_enabled=True,
         )
 
         self.assert_all_properties(received, True)

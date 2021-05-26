@@ -63,7 +63,7 @@ class ACRExchangeClient(object):
     async def get_refresh_token(self, service: str, **kwargs: Dict[str, Any]) -> str:
         if not self._refresh_token or self._expiration_time - time.time() > 300:
             self._refresh_token = await self.exchange_aad_token_for_refresh_token(service, **kwargs)
-            self._last_refresh_time = time.time()
+            self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
     async def exchange_aad_token_for_refresh_token(self, service: str = None, **kwargs: Dict[str, Any]) -> str:
