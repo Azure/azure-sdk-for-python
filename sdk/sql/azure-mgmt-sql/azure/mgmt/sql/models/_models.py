@@ -7175,7 +7175,7 @@ class ManagedInstance(TrackedResource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param identity: The Azure Active Directory identity of the managed instance.
-    :type identity: ~azure.mgmt.sql.models.ResourceIdentityWithUserAssignedIdentities
+    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
     :param sku: Managed instance SKU. Allowed values for sku.name: GP_Gen4, GP_Gen5, BC_Gen4,
      BC_Gen5.
     :type sku: ~azure.mgmt.sql.models.Sku
@@ -7281,7 +7281,7 @@ class ManagedInstance(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentityWithUserAssignedIdentities'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
@@ -8656,7 +8656,7 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
     :param sku: Managed instance sku.
     :type sku: ~azure.mgmt.sql.models.Sku
     :param identity: Managed instance identity.
-    :type identity: ~azure.mgmt.sql.models.ResourceIdentityWithUserAssignedIdentities
+    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :ivar provisioning_state:  Possible values include: "Creating", "Deleting", "Updating",
@@ -8753,7 +8753,7 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentityWithUserAssignedIdentities'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
@@ -9632,7 +9632,7 @@ class Operation(msrest.serialization.Model):
      "system".
     :vartype origin: str or ~azure.mgmt.sql.models.OperationOrigin
     :ivar properties: Additional descriptions for the operation.
-    :vartype properties: dict[str, str]
+    :vartype properties: dict[str, any]
     """
 
     _validation = {
@@ -9646,7 +9646,7 @@ class Operation(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': '{object}'},
     }
 
     def __init__(
@@ -10642,7 +10642,7 @@ class RecommendedAction(ProxyResource):
     :ivar linked_objects: Gets the linked objects, if any.
     :vartype linked_objects: list[str]
     :ivar details: Gets additional details specific to this recommended action.
-    :vartype details: dict[str, str]
+    :vartype details: dict[str, any]
     """
 
     _validation = {
@@ -10703,7 +10703,7 @@ class RecommendedAction(ProxyResource):
         'observed_impact': {'key': 'properties.observedImpact', 'type': '[RecommendedActionImpactRecord]'},
         'time_series': {'key': 'properties.timeSeries', 'type': '[RecommendedActionMetricInfo]'},
         'linked_objects': {'key': 'properties.linkedObjects', 'type': '[str]'},
-        'details': {'key': 'properties.details', 'type': '{str}'},
+        'details': {'key': 'properties.details', 'type': '{object}'},
     }
 
     def __init__(
@@ -11277,6 +11277,46 @@ class ReplicationLinksListResult(msrest.serialization.Model):
         super(ReplicationLinksListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class ResourceIdentity(msrest.serialization.Model):
+    """Azure Active Directory identity configuration for a resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param user_assigned_identities: The resource ids of the user assigned identities to use.
+    :type user_assigned_identities: dict[str, ~azure.mgmt.sql.models.UserIdentity]
+    :ivar principal_id: The Azure Active Directory principal id.
+    :vartype principal_id: str
+    :param type: The identity type. Set this to 'SystemAssigned' in order to automatically create
+     and assign an Azure Active Directory principal for the resource. Possible values include:
+     "None", "SystemAssigned", "UserAssigned".
+    :type type: str or ~azure.mgmt.sql.models.IdentityType
+    :ivar tenant_id: The Azure Active Directory tenant id.
+    :vartype tenant_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentity}'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourceIdentity, self).__init__(**kwargs)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+        self.principal_id = None
+        self.type = kwargs.get('type', None)
+        self.tenant_id = None
 
 
 class ResourceIdentityWithUserAssignedIdentities(msrest.serialization.Model):
@@ -12021,7 +12061,7 @@ class Server(TrackedResource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param identity: The Azure Active Directory identity of the server.
-    :type identity: ~azure.mgmt.sql.models.ResourceIdentityWithUserAssignedIdentities
+    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
     :ivar kind: Kind of sql server. This is metadata used for the Azure portal experience.
     :vartype kind: str
     :param administrator_login: Administrator username for the server. Once created it cannot be
@@ -12075,7 +12115,7 @@ class Server(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentityWithUserAssignedIdentities'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'kind': {'key': 'kind', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
@@ -13303,7 +13343,7 @@ class ServerUpdate(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param identity: Server identity.
-    :type identity: ~azure.mgmt.sql.models.ResourceIdentityWithUserAssignedIdentities
+    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param administrator_login: Administrator username for the server. Once created it cannot be
@@ -13347,7 +13387,7 @@ class ServerUpdate(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'ResourceIdentityWithUserAssignedIdentities'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},

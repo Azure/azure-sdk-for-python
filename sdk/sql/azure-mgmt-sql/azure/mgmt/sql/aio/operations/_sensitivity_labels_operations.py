@@ -49,7 +49,7 @@ class SensitivityLabelsOperations:
         skip_token: Optional[str] = None,
         count: Optional[bool] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SensitivityLabelListResult"]:
         """Gets the sensitivity labels of a given database.
 
@@ -141,7 +141,7 @@ class SensitivityLabelsOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.SensitivityLabelUpdateList",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Update sensitivity labels of a given database using an operations batch.
 
@@ -209,7 +209,7 @@ class SensitivityLabelsOperations:
         skip_token: Optional[str] = None,
         include_disabled_recommendations: Optional[bool] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SensitivityLabelListResult"]:
         """Gets the sensitivity labels of a given database.
 
@@ -304,7 +304,7 @@ class SensitivityLabelsOperations:
         schema_name: str,
         table_name: str,
         column_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Enables sensitivity recommendations on a given column (recommendations are enabled by default
         on all columns).
@@ -377,7 +377,7 @@ class SensitivityLabelsOperations:
         schema_name: str,
         table_name: str,
         column_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Disables sensitivity recommendations on a given column.
 
@@ -450,7 +450,7 @@ class SensitivityLabelsOperations:
         table_name: str,
         column_name: str,
         sensitivity_label_source: Union[str, "_models.SensitivityLabelSource"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SensitivityLabel":
         """Gets the sensitivity label of a given column.
 
@@ -529,7 +529,7 @@ class SensitivityLabelsOperations:
         table_name: str,
         column_name: str,
         parameters: "_models.SensitivityLabel",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SensitivityLabel":
         """Creates or updates the sensitivity label of a given column.
 
@@ -617,7 +617,7 @@ class SensitivityLabelsOperations:
         schema_name: str,
         table_name: str,
         column_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the sensitivity label of a given column.
 

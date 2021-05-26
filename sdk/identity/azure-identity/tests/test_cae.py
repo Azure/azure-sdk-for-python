@@ -32,7 +32,7 @@ class CaeTestCase(AzureTestCase):
         scrubber = GeneralNameReplacer()
         super(CaeTestCase, self).__init__(
             *args,
-            recording_processors=[RecordingRedactor(), scrubber],
+            recording_processors=[RecordingRedactor(record_unique_values=True), scrubber],
             replay_processors=[RequestUrlNormalizer(), IdTokenProcessor()],
             **kwargs
         )
