@@ -108,9 +108,14 @@ def get_authentication_policy(
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if hasattr(credential, "get_token"):
-        from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-        return BearerTokenCredentialPolicy(
-            credential, "https://communication.azure.com//.default")
+        if is_async:
+            from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
+            return AsyncBearerTokenCredentialPolicy(
+                credential, "https://communication.azure.com//.default")
+        else:
+            from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+            return BearerTokenCredentialPolicy(
+                credential, "https://communication.azure.com//.default")
     if isinstance(credential, str):
         from .._shared.policy import HMACCredentialsPolicy
         return HMACCredentialsPolicy(endpoint, credential, decode_url=is_async)
