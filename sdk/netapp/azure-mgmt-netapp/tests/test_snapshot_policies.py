@@ -100,6 +100,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
 
     def test_update_snapshot_policies(self):
         create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1)
+
         snapshot_policy_body = SnapshotPolicyPatch(
             location=LOCATION,
             hourly_schedule={},
