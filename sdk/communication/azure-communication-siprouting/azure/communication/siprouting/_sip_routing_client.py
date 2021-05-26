@@ -15,6 +15,7 @@ from ._shared.utils import parse_connection_str
 from ._generated.models import SipConfiguration, Trunk, TrunkRoute
 from ._shared.user_credential import CommunicationTokenCredential
 
+
 class SIPRoutingClient():
     """A client to interact with the AzureCommunicationService SIP routing gateway.
 
@@ -27,9 +28,9 @@ class SIPRoutingClient():
 
     def __init__(
             self,
-            endpoint, # type: str
-            credential, # type: CommunicationTokenCredential
-            **kwargs # type: any
+            endpoint,  # type: str
+            credential,  # type: CommunicationTokenCredential
+            **kwargs  # type: any
     ):  # type: (...) -> SIPRoutingClient
 
         if not credential:
@@ -81,7 +82,7 @@ class SIPRoutingClient():
         """
 
         acs_resource_calling_configuration = self._rest_service.get_sip_configuration(
-            kwargs)
+            **kwargs)
         return acs_resource_calling_configuration
 
     @distributed_trace
@@ -112,7 +113,7 @@ class SIPRoutingClient():
 
         updated_sip_configuration = SipConfiguration(
             trunks=online_pstn_gateways, routes=online_pstn_routing_settings)
-        return self._rest_service.patch_sip_configuration(updated_sip_configuration, kwargs)
+        return self._rest_service.patch_sip_configuration(body=updated_sip_configuration, **kwargs)
 
     @distributed_trace
     def update_pstn_gateways(
@@ -134,7 +135,7 @@ class SIPRoutingClient():
 
         updated_sip_configuration = SipConfiguration(
             trunks=online_pstn_gateways)
-        return self._rest_service.patch_sip_configuration(updated_sip_configuration, kwargs)
+        return self._rest_service.patch_sip_configuration(body=updated_sip_configuration, **kwargs)
 
     @distributed_trace
     def update_routing_settings(
@@ -156,4 +157,4 @@ class SIPRoutingClient():
 
         updated_sip_configuration = SipConfiguration(
             routes=online_pstn_routing_settings)
-        return self._rest_service.patch_sip_configuration(updated_sip_configuration, kwargs)
+        return self._rest_service.patch_sip_configuration(body=updated_sip_configuration, **kwargs)
