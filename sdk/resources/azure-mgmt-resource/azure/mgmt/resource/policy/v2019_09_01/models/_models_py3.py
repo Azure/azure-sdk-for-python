@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import msrest.serialization
 
@@ -21,7 +21,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: str
+    :vartype info: any
     """
 
     _validation = {
@@ -31,7 +31,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(
@@ -133,9 +133,9 @@ class ParameterDefinitionsValue(msrest.serialization.Model):
      "Object", "Boolean", "Integer", "Float", "DateTime".
     :type type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.ParameterType
     :param allowed_values: The allowed values for the parameter.
-    :type allowed_values: list[str]
+    :type allowed_values: list[any]
     :param default_value: The default value for the parameter if no value is provided.
-    :type default_value: str
+    :type default_value: any
     :param metadata: General metadata for the parameter.
     :type metadata:
      ~azure.mgmt.resource.policy.v2019_09_01.models.ParameterDefinitionsValueMetadata
@@ -143,8 +143,8 @@ class ParameterDefinitionsValue(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'allowed_values': {'key': 'allowedValues', 'type': '[str]'},
-        'default_value': {'key': 'defaultValue', 'type': 'str'},
+        'allowed_values': {'key': 'allowedValues', 'type': '[object]'},
+        'default_value': {'key': 'defaultValue', 'type': 'object'},
         'metadata': {'key': 'metadata', 'type': 'ParameterDefinitionsValueMetadata'},
     }
 
@@ -152,8 +152,8 @@ class ParameterDefinitionsValue(msrest.serialization.Model):
         self,
         *,
         type: Optional[Union[str, "ParameterType"]] = None,
-        allowed_values: Optional[List[str]] = None,
-        default_value: Optional[str] = None,
+        allowed_values: Optional[List[Any]] = None,
+        default_value: Optional[Any] = None,
         metadata: Optional["ParameterDefinitionsValueMetadata"] = None,
         **kwargs
     ):
@@ -169,7 +169,7 @@ class ParameterDefinitionsValueMetadata(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, str]
+    :type additional_properties: dict[str, any]
     :param display_name: The display name for the parameter.
     :type display_name: str
     :param description: The description of the parameter.
@@ -177,7 +177,7 @@ class ParameterDefinitionsValueMetadata(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{str}'},
+        'additional_properties': {'key': '', 'type': '{object}'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
     }
@@ -185,7 +185,7 @@ class ParameterDefinitionsValueMetadata(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, str]] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
@@ -200,17 +200,17 @@ class ParameterValuesValue(msrest.serialization.Model):
     """The value of a parameter.
 
     :param value: The value of the parameter.
-    :type value: str
+    :type value: any
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'object'},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[str] = None,
+        value: Optional[Any] = None,
         **kwargs
     ):
         super(ParameterValuesValue, self).__init__(**kwargs)
@@ -252,7 +252,7 @@ class PolicyAssignment(msrest.serialization.Model):
     :type description: str
     :param metadata: The policy assignment metadata. Metadata is an open ended object and is
      typically a collection of key value pairs.
-    :type metadata: str
+    :type metadata: any
     :param enforcement_mode: The policy assignment enforcement mode. Possible values are Default
      and DoNotEnforce. Possible values include: "Default", "DoNotEnforce".
     :type enforcement_mode: str or ~azure.mgmt.resource.policy.v2019_09_01.models.EnforcementMode
@@ -277,7 +277,7 @@ class PolicyAssignment(msrest.serialization.Model):
         'not_scopes': {'key': 'properties.notScopes', 'type': '[str]'},
         'parameters': {'key': 'properties.parameters', 'type': '{ParameterValuesValue}'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'metadata': {'key': 'properties.metadata', 'type': 'str'},
+        'metadata': {'key': 'properties.metadata', 'type': 'object'},
         'enforcement_mode': {'key': 'properties.enforcementMode', 'type': 'str'},
     }
 
@@ -293,7 +293,7 @@ class PolicyAssignment(msrest.serialization.Model):
         not_scopes: Optional[List[str]] = None,
         parameters: Optional[Dict[str, "ParameterValuesValue"]] = None,
         description: Optional[str] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Any] = None,
         enforcement_mode: Optional[Union[str, "EnforcementMode"]] = None,
         **kwargs
     ):
@@ -362,10 +362,10 @@ class PolicyDefinition(msrest.serialization.Model):
     :param description: The policy definition description.
     :type description: str
     :param policy_rule: The policy rule.
-    :type policy_rule: str
+    :type policy_rule: any
     :param metadata: The policy definition metadata.  Metadata is an open ended object and is
      typically a collection of key value pairs.
-    :type metadata: str
+    :type metadata: any
     :param parameters: The parameter definitions for parameters used in the policy rule. The keys
      are the parameter names.
     :type parameters: dict[str,
@@ -386,8 +386,8 @@ class PolicyDefinition(msrest.serialization.Model):
         'mode': {'key': 'properties.mode', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'policy_rule': {'key': 'properties.policyRule', 'type': 'str'},
-        'metadata': {'key': 'properties.metadata', 'type': 'str'},
+        'policy_rule': {'key': 'properties.policyRule', 'type': 'object'},
+        'metadata': {'key': 'properties.metadata', 'type': 'object'},
         'parameters': {'key': 'properties.parameters', 'type': '{ParameterDefinitionsValue}'},
     }
 
@@ -398,8 +398,8 @@ class PolicyDefinition(msrest.serialization.Model):
         mode: Optional[str] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        policy_rule: Optional[str] = None,
-        metadata: Optional[str] = None,
+        policy_rule: Optional[Any] = None,
+        metadata: Optional[Any] = None,
         parameters: Optional[Dict[str, "ParameterDefinitionsValue"]] = None,
         **kwargs
     ):
@@ -556,7 +556,7 @@ class PolicySetDefinition(msrest.serialization.Model):
     :type description: str
     :param metadata: The policy set definition metadata.  Metadata is an open ended object and is
      typically a collection of key value pairs.
-    :type metadata: str
+    :type metadata: any
     :param parameters: The policy set definition parameters that can be used in policy definition
      references.
     :type parameters: dict[str,
@@ -583,7 +583,7 @@ class PolicySetDefinition(msrest.serialization.Model):
         'policy_type': {'key': 'properties.policyType', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'metadata': {'key': 'properties.metadata', 'type': 'str'},
+        'metadata': {'key': 'properties.metadata', 'type': 'object'},
         'parameters': {'key': 'properties.parameters', 'type': '{ParameterDefinitionsValue}'},
         'policy_definitions': {'key': 'properties.policyDefinitions', 'type': '[PolicyDefinitionReference]'},
         'policy_definition_groups': {'key': 'properties.policyDefinitionGroups', 'type': '[PolicyDefinitionGroup]'},
@@ -595,7 +595,7 @@ class PolicySetDefinition(msrest.serialization.Model):
         policy_type: Optional[Union[str, "PolicyType"]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Any] = None,
         parameters: Optional[Dict[str, "ParameterDefinitionsValue"]] = None,
         policy_definitions: Optional[List["PolicyDefinitionReference"]] = None,
         policy_definition_groups: Optional[List["PolicyDefinitionGroup"]] = None,

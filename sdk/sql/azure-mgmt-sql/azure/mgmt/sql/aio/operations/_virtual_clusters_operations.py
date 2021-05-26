@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class VirtualClustersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,10 +43,70 @@ class VirtualClustersOperations:
         self._deserialize = deserializer
         self._config = config
 
+    async def update_dns_servers(
+        self,
+        resource_group_name: str,
+        virtual_cluster_name: str,
+        **kwargs: Any
+    ) -> "_models.UpdateManagedInstanceDnsServersOperation":
+        """Synchronizes the DNS server settings used by the managed instances inside the given virtual
+        cluster.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param virtual_cluster_name: The name of the virtual cluster.
+        :type virtual_cluster_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: UpdateManagedInstanceDnsServersOperation, or the result of cls(response)
+        :rtype: ~azure.mgmt.sql.models.UpdateManagedInstanceDnsServersOperation
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UpdateManagedInstanceDnsServersOperation"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-11-01-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.update_dns_servers.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualClusterName': self._serialize.url("virtual_cluster_name", virtual_cluster_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('UpdateManagedInstanceDnsServersOperation', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    update_dns_servers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/virtualClusters/{virtualClusterName}/updateManagedInstanceDnsServers'}  # type: ignore
+
     def list(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.VirtualClusterListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.VirtualClusterListResult"]:
         """Gets a list of all virtualClusters in the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -54,12 +114,12 @@ class VirtualClustersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.VirtualClusterListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualClusterListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualClusterListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -112,8 +172,8 @@ class VirtualClustersOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.VirtualClusterListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.VirtualClusterListResult"]:
         """Gets a list of virtual clusters in a resource group.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -124,12 +184,12 @@ class VirtualClustersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.VirtualClusterListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualClusterListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualClusterListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -184,8 +244,8 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        **kwargs
-    ) -> "models.VirtualCluster":
+        **kwargs: Any
+    ) -> "_models.VirtualCluster":
         """Gets a virtual cluster.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -198,12 +258,12 @@ class VirtualClustersOperations:
         :rtype: ~azure.mgmt.sql.models.VirtualCluster
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualCluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualCluster"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -243,14 +303,14 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -285,7 +345,7 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a virtual cluster.
 
@@ -296,8 +356,8 @@ class VirtualClustersOperations:
         :type virtual_cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -326,7 +386,13 @@ class VirtualClustersOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualClusterName': self._serialize.url("virtual_cluster_name", virtual_cluster_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -344,15 +410,15 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        parameters: "models.VirtualClusterUpdate",
-        **kwargs
-    ) -> Optional["models.VirtualCluster"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VirtualCluster"]]
+        parameters: "_models.VirtualClusterUpdate",
+        **kwargs: Any
+    ) -> Optional["_models.VirtualCluster"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VirtualCluster"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -399,9 +465,9 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        parameters: "models.VirtualClusterUpdate",
-        **kwargs
-    ) -> AsyncLROPoller["models.VirtualCluster"]:
+        parameters: "_models.VirtualClusterUpdate",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.VirtualCluster"]:
         """Updates a virtual cluster.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -409,12 +475,12 @@ class VirtualClustersOperations:
         :type resource_group_name: str
         :param virtual_cluster_name: The name of the virtual cluster.
         :type virtual_cluster_name: str
-        :param parameters: The requested managed instance resource state.
+        :param parameters: The requested virtual cluster resource state.
         :type parameters: ~azure.mgmt.sql.models.VirtualClusterUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualCluster or the result of cls(response)
@@ -422,7 +488,7 @@ class VirtualClustersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualCluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualCluster"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -447,7 +513,13 @@ class VirtualClustersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualClusterName': self._serialize.url("virtual_cluster_name", virtual_cluster_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

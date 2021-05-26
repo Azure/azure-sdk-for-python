@@ -11,10 +11,10 @@ FILE: sample_train_model_without_labels.py
 
 DESCRIPTION:
     This sample demonstrates how to train a model with unlabeled data. For this sample, you can use the training
-    forms found in https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/training
+    forms found in https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
 
     Upload the forms to your storage container and then generate a container SAS URL using these instructions:
-    https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/python-labeled-data#train-a-model-using-labeled-data
+    https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/get-started-with-form-recognizer#train--analyze-a-custom-form
     More details on setting up a container and required file structure can be found here:
     https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
 
@@ -27,7 +27,7 @@ USAGE:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your forms.
-        See https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/label-tool#connect-to-the-sample-labeling-tool
+        See https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/get-started-with-form-recognizer#train--analyze-a-custom-form
         for more detailed descriptions on how to get it.
 """
 

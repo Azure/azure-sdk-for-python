@@ -81,6 +81,18 @@ class DocumentTranslationTest(AzureTestCase):
             self.storage_key, "fakeZmFrZV9hY29jdW50X2tleQ=="
         )
 
+    def get_oauth_endpoint(self):
+        return os.getenv("TRANSLATION_DOCUMENT_TEST_ENDPOINT")
+
+    def generate_oauth_token(self):
+        if self.is_live:
+            from azure.identity import ClientSecretCredential
+            return ClientSecretCredential(
+                os.getenv("TRANSLATION_TENANT_ID"),
+                os.getenv("TRANSLATION_CLIENT_ID"),
+                os.getenv("TRANSLATION_CLIENT_SECRET"),
+            )
+
     def upload_documents(self, data, container_client):
         if isinstance(data, list):
             for blob in data:

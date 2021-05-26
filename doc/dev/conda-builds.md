@@ -4,6 +4,8 @@
 
 Follow the instructions [here](https://docs.conda.io/projects/conda-build/en/latest/install-conda-build.html) to install `conda` and `conda-build`.
 
+**The Azure SDK Conda artifacts support `python3.8` and `python3.9` only.**
+
 ## CI Build Process
 
 There will be a `CondaArtifact` defined in the `ci.yml` of each service directory. (`sdk/<service>`)
@@ -15,8 +17,17 @@ A Conda Artifact defines:
 - Any other necessary details.
 
 ## How to Build an Azure SDK Conda Package Locally
+#### If using powershell, you will need to prep your environment before proceeding to the next step
 
+```
+powershell -ExecutionPolicy ByPass -NoExit -Command "& '<path-to-conda-folder>\shell\condabin\conda-hook.ps1' ; conda activate '<path-to-conda-folder>' "
+```
+
+Afterwards, invoke `conda init powershell` and re-create the pshell session.
+
+By default, your powershell environment will now load `conda`. If you want pure pip, you will need to use explicit invocations of your `python` locations to create virtual envs.
 ### Set up your conda environment
+
 
 You will notice that all the azure-sdk conda distributions have the **same** version number and requirement set. This is due to the fact that the azure-sdk team pushes our conda packages out in waves. To support this, all versions are set via a common environment variable `AZURESDK_CONDA_VERSION`.
 

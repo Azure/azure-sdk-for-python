@@ -46,7 +46,7 @@ class TemplateSpecsOperations:
         resource_group_name: str,
         template_spec_name: str,
         template_spec: "_models.TemplateSpec",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TemplateSpec":
         """Creates or updates a Template Spec.
 
@@ -117,7 +117,7 @@ class TemplateSpecsOperations:
         resource_group_name: str,
         template_spec_name: str,
         template_spec: Optional["_models.TemplateSpecUpdateModel"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TemplateSpec":
         """Updates Template Spec tags with specified values.
 
@@ -187,7 +187,7 @@ class TemplateSpecsOperations:
         resource_group_name: str,
         template_spec_name: str,
         expand: Optional[Union[str, "_models.TemplateSpecExpandKind"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TemplateSpec":
         """Gets a Template Spec with a given name.
 
@@ -251,7 +251,7 @@ class TemplateSpecsOperations:
         self,
         resource_group_name: str,
         template_spec_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a Template Spec by name. When operation completes, status code 200 returned without
         content.
@@ -307,7 +307,7 @@ class TemplateSpecsOperations:
     def list_by_subscription(
         self,
         expand: Optional[Union[str, "_models.TemplateSpecExpandKind"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TemplateSpecsListResult"]:
         """Lists all the Template Specs within the specified subscriptions.
 
@@ -381,7 +381,7 @@ class TemplateSpecsOperations:
         self,
         resource_group_name: str,
         expand: Optional[Union[str, "_models.TemplateSpecExpandKind"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TemplateSpecsListResult"]:
         """Lists all the Template Specs within the specified resource group.
 

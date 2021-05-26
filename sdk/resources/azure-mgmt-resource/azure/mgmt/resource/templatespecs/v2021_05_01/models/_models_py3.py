@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -64,7 +64,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: str
+    :vartype info: any
     """
 
     _validation = {
@@ -74,7 +74,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(
@@ -140,7 +140,7 @@ class LinkedTemplateArtifact(msrest.serialization.Model):
     :param path: Required. A filesystem safe relative path of the artifact.
     :type path: str
     :param template: Required. The Azure Resource Manager template.
-    :type template: str
+    :type template: any
     """
 
     _validation = {
@@ -150,14 +150,14 @@ class LinkedTemplateArtifact(msrest.serialization.Model):
 
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},
-        'template': {'key': 'template', 'type': 'str'},
+        'template': {'key': 'template', 'type': 'object'},
     }
 
     def __init__(
         self,
         *,
         path: str,
-        template: str,
+        template: Any,
         **kwargs
     ):
         super(LinkedTemplateArtifact, self).__init__(**kwargs)
@@ -242,7 +242,7 @@ class TemplateSpec(AzureResourceBase):
     :type display_name: str
     :param metadata: The Template Spec metadata. Metadata is an open-ended object and is typically
      a collection of key-value pairs.
-    :type metadata: str
+    :type metadata: any
     :ivar versions: High-level information about the versions within this Template Spec. The keys
      are the version names. Only populated if the $expand query parameter is set to 'versions'.
     :vartype versions: dict[str,
@@ -269,7 +269,7 @@ class TemplateSpec(AzureResourceBase):
         'tags': {'key': 'tags', 'type': '{str}'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'metadata': {'key': 'properties.metadata', 'type': 'str'},
+        'metadata': {'key': 'properties.metadata', 'type': 'object'},
         'versions': {'key': 'properties.versions', 'type': '{TemplateSpecVersionInfo}'},
     }
 
@@ -280,7 +280,7 @@ class TemplateSpec(AzureResourceBase):
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         display_name: Optional[str] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Any] = None,
         **kwargs
     ):
         super(TemplateSpec, self).__init__(**kwargs)
@@ -416,11 +416,11 @@ class TemplateSpecVersion(AzureResourceBase):
      list[~azure.mgmt.resource.templatespecs.v2021_05_01.models.LinkedTemplateArtifact]
     :param metadata: The version metadata. Metadata is an open-ended object and is typically a
      collection of key-value pairs.
-    :type metadata: str
+    :type metadata: any
     :param main_template: The main Azure Resource Manager template content.
-    :type main_template: str
+    :type main_template: any
     :param ui_form_definition: The Azure Resource Manager template UI definition content.
-    :type ui_form_definition: str
+    :type ui_form_definition: any
     """
 
     _validation = {
@@ -441,9 +441,9 @@ class TemplateSpecVersion(AzureResourceBase):
         'tags': {'key': 'tags', 'type': '{str}'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'linked_templates': {'key': 'properties.linkedTemplates', 'type': '[LinkedTemplateArtifact]'},
-        'metadata': {'key': 'properties.metadata', 'type': 'str'},
-        'main_template': {'key': 'properties.mainTemplate', 'type': 'str'},
-        'ui_form_definition': {'key': 'properties.uiFormDefinition', 'type': 'str'},
+        'metadata': {'key': 'properties.metadata', 'type': 'object'},
+        'main_template': {'key': 'properties.mainTemplate', 'type': 'object'},
+        'ui_form_definition': {'key': 'properties.uiFormDefinition', 'type': 'object'},
     }
 
     def __init__(
@@ -453,9 +453,9 @@ class TemplateSpecVersion(AzureResourceBase):
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         linked_templates: Optional[List["LinkedTemplateArtifact"]] = None,
-        metadata: Optional[str] = None,
-        main_template: Optional[str] = None,
-        ui_form_definition: Optional[str] = None,
+        metadata: Optional[Any] = None,
+        main_template: Optional[Any] = None,
+        ui_form_definition: Optional[Any] = None,
         **kwargs
     ):
         super(TemplateSpecVersion, self).__init__(**kwargs)

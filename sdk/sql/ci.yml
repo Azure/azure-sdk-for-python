@@ -34,3 +34,4 @@ extends:
       safeName: azuremgmtsql
     - name: azure-mgmt-sqlvirtualmachine
       safeName: azuremgmtsqlvirtualmachine
+

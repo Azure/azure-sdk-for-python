@@ -17,7 +17,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -36,7 +36,7 @@ class JobExecutionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -56,8 +56,8 @@ class JobExecutionsOperations:
         is_active: Optional[bool] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.JobExecutionListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.JobExecutionListResult"]:
         """Lists all executions in a job agent.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -90,12 +90,12 @@ class JobExecutionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.JobExecutionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobExecutionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecutionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -169,7 +169,7 @@ class JobExecutionsOperations:
         job_agent_name: str,
         job_name: str,
         job_execution_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Requests cancellation of a job execution.
 
@@ -194,7 +194,7 @@ class JobExecutionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.cancel.metadata['url']  # type: ignore
@@ -234,14 +234,14 @@ class JobExecutionsOperations:
         server_name: str,
         job_agent_name: str,
         job_name: str,
-        **kwargs
-    ) -> Optional["models.JobExecution"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.JobExecution"]]
+        **kwargs: Any
+    ) -> Optional["_models.JobExecution"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.JobExecution"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -287,8 +287,8 @@ class JobExecutionsOperations:
         server_name: str,
         job_agent_name: str,
         job_name: str,
-        **kwargs
-    ) -> AsyncLROPoller["models.JobExecution"]:
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.JobExecution"]:
         """Starts an elastic job execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -302,8 +302,8 @@ class JobExecutionsOperations:
         :type job_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either JobExecution or the result of cls(response)
@@ -311,7 +311,7 @@ class JobExecutionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobExecution"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecution"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -337,7 +337,15 @@ class JobExecutionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'jobAgentName': self._serialize.url("job_agent_name", job_agent_name, 'str'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -364,8 +372,8 @@ class JobExecutionsOperations:
         is_active: Optional[bool] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
-        **kwargs
-    ) -> AsyncIterable["models.JobExecutionListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.JobExecutionListResult"]:
         """Lists a job's executions.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -400,12 +408,12 @@ class JobExecutionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.JobExecutionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobExecutionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecutionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -480,8 +488,8 @@ class JobExecutionsOperations:
         job_agent_name: str,
         job_name: str,
         job_execution_id: str,
-        **kwargs
-    ) -> "models.JobExecution":
+        **kwargs: Any
+    ) -> "_models.JobExecution":
         """Gets a job execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -500,12 +508,12 @@ class JobExecutionsOperations:
         :rtype: ~azure.mgmt.sql.models.JobExecution
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobExecution"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecution"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -551,14 +559,14 @@ class JobExecutionsOperations:
         job_agent_name: str,
         job_name: str,
         job_execution_id: str,
-        **kwargs
-    ) -> Optional["models.JobExecution"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.JobExecution"]]
+        **kwargs: Any
+    ) -> Optional["_models.JobExecution"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.JobExecution"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -609,8 +617,8 @@ class JobExecutionsOperations:
         job_agent_name: str,
         job_name: str,
         job_execution_id: str,
-        **kwargs
-    ) -> AsyncLROPoller["models.JobExecution"]:
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.JobExecution"]:
         """Creates or updates a job execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -626,8 +634,8 @@ class JobExecutionsOperations:
         :type job_execution_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either JobExecution or the result of cls(response)
@@ -635,7 +643,7 @@ class JobExecutionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobExecution"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecution"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -662,7 +670,16 @@ class JobExecutionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'jobAgentName': self._serialize.url("job_agent_name", job_agent_name, 'str'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
+            'jobExecutionId': self._serialize.url("job_execution_id", job_execution_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

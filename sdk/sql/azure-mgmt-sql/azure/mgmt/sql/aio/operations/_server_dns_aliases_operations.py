@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ServerDnsAliasesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,8 +48,8 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        **kwargs
-    ) -> "models.ServerDnsAlias":
+        **kwargs: Any
+    ) -> "_models.ServerDnsAlias":
         """Gets a server DNS alias.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -57,19 +57,19 @@ class ServerDnsAliasesOperations:
         :type resource_group_name: str
         :param server_name: The name of the server that the alias is pointing to.
         :type server_name: str
-        :param dns_alias_name: The name of the server DNS alias.
+        :param dns_alias_name: The name of the server dns alias.
         :type dns_alias_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServerDnsAlias, or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ServerDnsAlias
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerDnsAlias"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerDnsAlias"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -111,14 +111,14 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        **kwargs
-    ) -> Optional["models.ServerDnsAlias"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ServerDnsAlias"]]
+        **kwargs: Any
+    ) -> Optional["_models.ServerDnsAlias"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ServerDnsAlias"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -165,21 +165,21 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        **kwargs
-    ) -> AsyncLROPoller["models.ServerDnsAlias"]:
-        """Creates a server dns alias.
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ServerDnsAlias"]:
+        """Creates a server DNS alias.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
         :param server_name: The name of the server that the alias is pointing to.
         :type server_name: str
-        :param dns_alias_name: The name of the server DNS alias.
+        :param dns_alias_name: The name of the server dns alias.
         :type dns_alias_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServerDnsAlias or the result of cls(response)
@@ -187,7 +187,7 @@ class ServerDnsAliasesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerDnsAlias"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerDnsAlias"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -212,7 +212,14 @@ class ServerDnsAliasesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'dnsAliasName': self._serialize.url("dns_alias_name", dns_alias_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -231,14 +238,14 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -275,7 +282,7 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the server DNS alias with the given name.
 
@@ -284,12 +291,12 @@ class ServerDnsAliasesOperations:
         :type resource_group_name: str
         :param server_name: The name of the server that the alias is pointing to.
         :type server_name: str
-        :param dns_alias_name: The name of the server DNS alias.
+        :param dns_alias_name: The name of the server dns alias.
         :type dns_alias_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -319,7 +326,14 @@ class ServerDnsAliasesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'dnsAliasName': self._serialize.url("dns_alias_name", dns_alias_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -337,8 +351,8 @@ class ServerDnsAliasesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.ServerDnsAliasListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ServerDnsAliasListResult"]:
         """Gets a list of server DNS aliases for a server.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -351,12 +365,12 @@ class ServerDnsAliasesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ServerDnsAliasListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerDnsAliasListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerDnsAliasListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -413,16 +427,17 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        parameters: "models.ServerDnsAliasAcquisition",
-        **kwargs
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        parameters: "_models.ServerDnsAliasAcquisition",
+        **kwargs: Any
+    ) -> Optional["_models.ServerDnsAlias"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ServerDnsAlias"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._acquire_initial.metadata['url']  # type: ignore
@@ -441,6 +456,7 @@ class ServerDnsAliasesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ServerDnsAliasAcquisition')
@@ -453,9 +469,14 @@ class ServerDnsAliasesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ServerDnsAlias', pipeline_response)
 
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
     _acquire_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/dnsAliases/{dnsAliasName}/acquire'}  # type: ignore
 
     async def begin_acquire(
@@ -463,9 +484,9 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        parameters: "models.ServerDnsAliasAcquisition",
-        **kwargs
-    ) -> AsyncLROPoller[None]:
+        parameters: "_models.ServerDnsAliasAcquisition",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ServerDnsAlias"]:
         """Acquires server DNS alias from another server.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -479,16 +500,16 @@ class ServerDnsAliasesOperations:
         :type parameters: ~azure.mgmt.sql.models.ServerDnsAliasAcquisition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns either ServerDnsAlias or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerDnsAlias]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerDnsAlias"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -508,10 +529,20 @@ class ServerDnsAliasesOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
+            deserialized = self._deserialize('ServerDnsAlias', pipeline_response)
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'dnsAliasName': self._serialize.url("dns_alias_name", dns_alias_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

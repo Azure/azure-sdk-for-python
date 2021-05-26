@@ -12,7 +12,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -21,14 +21,14 @@ interactions:
         should take my cat to the veterinarian.\"}],\"warnings\":[]},{\"id\":\"2\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.03,\"neutral\":0.92,\"negative\":0.05},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.03,\"neutral\":0.92,\"negative\":0.05},\"offset\":0,\"length\":39,\"text\":\"Este
         es un document escrito en Espa\xF1ol.\"}],\"warnings\":[]},{\"id\":\"3\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.13,\"neutral\":0.81,\"negative\":0.06},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.13,\"neutral\":0.81,\"negative\":0.06},\"offset\":0,\"length\":4,\"text\":\"\u732B\u306F\u5E78\u305B\"}],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}"
     headers:
-      apim-request-id: 930d5655-1a86-424f-9dd9-7ae03a1951b9
+      apim-request-id: 03b0570c-166a-456e-b763-afc286680b06
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
-      date: Sat, 08 May 2021 06:58:52 GMT
+      date: Tue, 18 May 2021 17:47:30 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '113'
+      x-envoy-upstream-service-time: '156'
     status:
       code: 200
       message: OK

@@ -45,7 +45,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PolicyAssignment"]:
         """Deletes a policy assignment.
 
@@ -113,7 +113,7 @@ class PolicyAssignmentsOperations:
         scope: str,
         policy_assignment_name: str,
         parameters: "_models.PolicyAssignment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Creates or updates a policy assignment.
 
@@ -185,7 +185,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Retrieves a policy assignment.
 
@@ -250,7 +250,7 @@ class PolicyAssignmentsOperations:
         resource_group_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignmentListResult"]:
         """Retrieves all policy assignments that apply to a resource group.
 
@@ -355,7 +355,7 @@ class PolicyAssignmentsOperations:
         resource_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignmentListResult"]:
         """Retrieves all policy assignments that apply to a resource.
 
@@ -481,7 +481,7 @@ class PolicyAssignmentsOperations:
         management_group_id: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignmentListResult"]:
         """Retrieves all policy assignments that apply to a management group.
 
@@ -576,7 +576,7 @@ class PolicyAssignmentsOperations:
         self,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignmentListResult"]:
         """Retrieves all policy assignments that apply to a subscription.
 
@@ -671,7 +671,7 @@ class PolicyAssignmentsOperations:
     async def delete_by_id(
         self,
         policy_assignment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PolicyAssignment"]:
         """Deletes a policy assignment.
 
@@ -736,7 +736,7 @@ class PolicyAssignmentsOperations:
         self,
         policy_assignment_id: str,
         parameters: "_models.PolicyAssignment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Creates or updates a policy assignment.
 
@@ -808,7 +808,7 @@ class PolicyAssignmentsOperations:
     async def get_by_id(
         self,
         policy_assignment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Retrieves the policy assignment with the given ID.
 

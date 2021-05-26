@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ManagedInstancesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,134 +43,181 @@ class ManagedInstancesOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def _failover_initial(
+    def list_by_instance_pool(
         self,
         resource_group_name: str,
-        managed_instance_name: str,
-        replica_type: Optional[Union[str, "models.ReplicaType"]] = None,
-        **kwargs
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
-
-        # Construct URL
-        url = self._failover_initial.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if replica_type is not None:
-            query_parameters['replicaType'] = self._serialize.query("replica_type", replica_type, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-
-        request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    _failover_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/failover'}  # type: ignore
-
-    async def begin_failover(
-        self,
-        resource_group_name: str,
-        managed_instance_name: str,
-        replica_type: Optional[Union[str, "models.ReplicaType"]] = None,
-        **kwargs
-    ) -> AsyncLROPoller[None]:
-        """Failovers a managed instance.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param managed_instance_name: The name of the managed instance.
-        :type managed_instance_name: str
-        :param replica_type: The type of replica to be failed over.
-        :type replica_type: str or ~azure.mgmt.sql.models.ReplicaType
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._failover_initial(
-                resource_group_name=resource_group_name,
-                managed_instance_name=managed_instance_name,
-                replica_type=replica_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-        kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
-
-        def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/failover'}  # type: ignore
-
-    def list_by_resource_group(
-        self,
-        resource_group_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.ManagedInstanceListResult"]:
-        """Gets a list of managed instances in a resource group.
+        instance_pool_name: str,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ManagedInstanceListResult"]:
+        """Gets a list of all managed instances in an instance pool.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
+        :param instance_pool_name: The instance pool name.
+        :type instance_pool_name: str
+        :param expand: The child resources to include in the response.
+        :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedInstanceListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ManagedInstanceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedInstanceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedInstanceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list_by_instance_pool.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'instancePoolName': self._serialize.url("instance_pool_name", instance_pool_name, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize('ManagedInstanceListResult', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_by_instance_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/instancePools/{instancePoolName}/managedInstances'}  # type: ignore
+
+    def list(
+        self,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ManagedInstanceListResult"]:
+        """Gets a list of all managed instances in the subscription.
+
+        :param expand: The child resources to include in the response.
+        :type expand: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either ManagedInstanceListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ManagedInstanceListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedInstanceListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-11-01-preview"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize('ManagedInstanceListResult', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/managedInstances'}  # type: ignore
+
+    def list_by_resource_group(
+        self,
+        resource_group_name: str,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ManagedInstanceListResult"]:
+        """Gets a list of managed instances in a resource group.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param expand: The child resources to include in the response.
+        :type expand: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either ManagedInstanceListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ManagedInstanceListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedInstanceListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -188,6 +235,8 @@ class ManagedInstancesOperations:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -225,8 +274,9 @@ class ManagedInstancesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        **kwargs
-    ) -> "models.ManagedInstance":
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> "_models.ManagedInstance":
         """Gets a managed instance.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -234,17 +284,19 @@ class ManagedInstancesOperations:
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
+        :param expand: The child resources to include in the response.
+        :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedInstance, or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ManagedInstance
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedInstance"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedInstance"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -258,6 +310,8 @@ class ManagedInstancesOperations:
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
@@ -284,15 +338,15 @@ class ManagedInstancesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: "models.ManagedInstance",
-        **kwargs
-    ) -> Optional["models.ManagedInstance"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ManagedInstance"]]
+        parameters: "_models.ManagedInstance",
+        **kwargs: Any
+    ) -> Optional["_models.ManagedInstance"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ManagedInstance"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -342,9 +396,9 @@ class ManagedInstancesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: "models.ManagedInstance",
-        **kwargs
-    ) -> AsyncLROPoller["models.ManagedInstance"]:
+        parameters: "_models.ManagedInstance",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ManagedInstance"]:
         """Creates or updates a managed instance.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -356,8 +410,8 @@ class ManagedInstancesOperations:
         :type parameters: ~azure.mgmt.sql.models.ManagedInstance
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedInstance or the result of cls(response)
@@ -365,7 +419,7 @@ class ManagedInstancesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedInstance"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedInstance"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -390,7 +444,13 @@ class ManagedInstancesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -408,14 +468,14 @@ class ManagedInstancesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -450,7 +510,7 @@ class ManagedInstancesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a managed instance.
 
@@ -461,8 +521,8 @@ class ManagedInstancesOperations:
         :type managed_instance_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -491,7 +551,13 @@ class ManagedInstancesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -509,15 +575,15 @@ class ManagedInstancesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: "models.ManagedInstanceUpdate",
-        **kwargs
-    ) -> Optional["models.ManagedInstance"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ManagedInstance"]]
+        parameters: "_models.ManagedInstanceUpdate",
+        **kwargs: Any
+    ) -> Optional["_models.ManagedInstance"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ManagedInstance"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -564,9 +630,9 @@ class ManagedInstancesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: "models.ManagedInstanceUpdate",
-        **kwargs
-    ) -> AsyncLROPoller["models.ManagedInstance"]:
+        parameters: "_models.ManagedInstanceUpdate",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ManagedInstance"]:
         """Updates a managed instance.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -578,8 +644,8 @@ class ManagedInstancesOperations:
         :type parameters: ~azure.mgmt.sql.models.ManagedInstanceUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedInstance or the result of cls(response)
@@ -587,7 +653,7 @@ class ManagedInstancesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedInstance"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedInstance"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -612,7 +678,13 @@ class ManagedInstancesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -626,30 +698,53 @@ class ManagedInstancesOperations:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}'}  # type: ignore
 
-    def list_by_instance_pool(
+    def list_by_managed_instance(
         self,
         resource_group_name: str,
-        instance_pool_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.ManagedInstanceListResult"]:
-        """Gets a list of all managed instances in an instance pool.
+        managed_instance_name: str,
+        number_of_queries: Optional[int] = None,
+        databases: Optional[str] = None,
+        start_time: Optional[str] = None,
+        end_time: Optional[str] = None,
+        interval: Optional[Union[str, "_models.QueryTimeGrainType"]] = None,
+        aggregation_function: Optional[Union[str, "_models.AggregationFunctionType"]] = None,
+        observation_metric: Optional[Union[str, "_models.MetricType"]] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.TopQueriesListResult"]:
+        """Get top resource consuming queries of a managed instance.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
-        :param instance_pool_name: The instance pool name.
-        :type instance_pool_name: str
+        :param managed_instance_name: The name of the managed instance.
+        :type managed_instance_name: str
+        :param number_of_queries: How many 'top queries' to return. Default is 5.
+        :type number_of_queries: int
+        :param databases: Comma separated list of databases to be included into search. All DB's are
+         included if this parameter is not specified.
+        :type databases: str
+        :param start_time: Start time for observed period.
+        :type start_time: str
+        :param end_time: End time for observed period.
+        :type end_time: str
+        :param interval: The time step to be used to summarize the metric values. Default value is
+         PT1H.
+        :type interval: str or ~azure.mgmt.sql.models.QueryTimeGrainType
+        :param aggregation_function: Aggregation function to be used, default value is 'sum'.
+        :type aggregation_function: str or ~azure.mgmt.sql.models.AggregationFunctionType
+        :param observation_metric: Metric to be used for ranking top queries. Default is 'cpu'.
+        :type observation_metric: str or ~azure.mgmt.sql.models.MetricType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ManagedInstanceListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ManagedInstanceListResult]
+        :return: An iterator like instance of either TopQueriesListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.TopQueriesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedInstanceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TopQueriesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -659,15 +754,29 @@ class ManagedInstancesOperations:
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_instance_pool.metadata['url']  # type: ignore
+                url = self.list_by_managed_instance.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'instancePoolName': self._serialize.url("instance_pool_name", instance_pool_name, 'str'),
+                    'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
+                if number_of_queries is not None:
+                    query_parameters['numberOfQueries'] = self._serialize.query("number_of_queries", number_of_queries, 'int')
+                if databases is not None:
+                    query_parameters['databases'] = self._serialize.query("databases", databases, 'str')
+                if start_time is not None:
+                    query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'str')
+                if end_time is not None:
+                    query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'str')
+                if interval is not None:
+                    query_parameters['interval'] = self._serialize.query("interval", interval, 'str')
+                if aggregation_function is not None:
+                    query_parameters['aggregationFunction'] = self._serialize.query("aggregation_function", aggregation_function, 'str')
+                if observation_metric is not None:
+                    query_parameters['observationMetric'] = self._serialize.query("observation_metric", observation_metric, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -678,7 +787,7 @@ class ManagedInstancesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('ManagedInstanceListResult', pipeline_response)
+            deserialized = self._deserialize('TopQueriesListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -699,70 +808,118 @@ class ManagedInstancesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_instance_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/instancePools/{instancePoolName}/managedInstances'}  # type: ignore
+    list_by_managed_instance.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/topqueries'}  # type: ignore
 
-    def list(
+    async def _failover_initial(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.ManagedInstanceListResult"]:
-        """Gets a list of all managed instances in the subscription.
-
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ManagedInstanceListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ManagedInstanceListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedInstanceListResult"]
+        resource_group_name: str,
+        managed_instance_name: str,
+        replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
-        accept = "application/json"
+        api_version = "2020-11-01-preview"
 
-        def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        # Construct URL
+        url = self._failover_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        if replica_type is not None:
+            query_parameters['replicaType'] = self._serialize.query("replica_type", replica_type, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
-                request = self._client.get(url, query_parameters, header_parameters)
-            else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
-            return request
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
 
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize('ManagedInstanceListResult', pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
+        if cls:
+            return cls(pipeline_response, None, {})
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+    _failover_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/failover'}  # type: ignore
 
-            return pipeline_response
+    async def begin_failover(
+        self,
+        resource_group_name: str,
+        managed_instance_name: str,
+        replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Failovers a managed instance.
 
-        return AsyncItemPaged(
-            get_next, extract_data
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param managed_instance_name: The name of the managed instance to failover.
+        :type managed_instance_name: str
+        :param replica_type: The type of replica to be failed over.
+        :type replica_type: str or ~azure.mgmt.sql.models.ReplicaType
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/managedInstances'}  # type: ignore
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._failover_initial(
+                resource_group_name=resource_group_name,
+                managed_instance_name=managed_instance_name,
+                replica_type=replica_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/failover'}  # type: ignore
