@@ -290,3 +290,4 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-sqlvirtualmachine msrest>=0.6.21
 #override azure-mgmt-msi msrest>=0.6.21
 #override azure-mgmt-netapp msrest>=0.6.21
+#override azure-mgmt-datadog msrest>=0.6.21
