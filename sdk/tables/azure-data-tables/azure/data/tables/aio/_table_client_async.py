@@ -370,13 +370,13 @@ class TableClient(AsyncTablesBaseClient):
         """
         entity = _add_entity_properties(entity)
         try:
-            metadata, _ = await self._client.table.insert_entity(
+            metadata, content = await self._client.table.insert_entity(
                 table=self.table_name,
                 table_entity_properties=entity,
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
                 **kwargs
             )
-            return _trim_service_metadata(metadata)
+            return _trim_service_metadata(metadata, content=content)
         except HttpResponseError as error:
             decoded = _decode_error(error.response, error.message)
             if decoded.error_code == "PropertiesNeedValue":
@@ -435,8 +435,9 @@ class TableClient(AsyncTablesBaseClient):
         entity = _add_entity_properties(entity)
         try:
             metadata = None
+            content = None
             if mode is UpdateMode.REPLACE:
-                metadata, _ = await self._client.table.update_entity(
+                metadata, content = await self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -446,7 +447,7 @@ class TableClient(AsyncTablesBaseClient):
                     **kwargs
                 )
             elif mode is UpdateMode.MERGE:
-                metadata, _ = await self._client.table.merge_entity(
+                metadata, content = await self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -457,7 +458,7 @@ class TableClient(AsyncTablesBaseClient):
                 )
             else:
                 raise ValueError("Mode type is not supported")
-            return _trim_service_metadata(metadata)
+            return _trim_service_metadata(metadata, content=content)
         except HttpResponseError as error:
             _process_table_error(error)
 
@@ -618,8 +619,9 @@ class TableClient(AsyncTablesBaseClient):
 
         try:
             metadata = None
+            content = None
             if mode is UpdateMode.MERGE:
-                metadata, _ = await self._client.table.merge_entity(
+                metadata, content = await self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -628,7 +630,7 @@ class TableClient(AsyncTablesBaseClient):
                     **kwargs
                 )
             elif mode is UpdateMode.REPLACE:
-                metadata, _ = await self._client.table.update_entity(
+                metadata, content = await self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -643,7 +645,7 @@ class TableClient(AsyncTablesBaseClient):
                         mode
                     )
                 )
-            return _trim_service_metadata(metadata)
+            return _trim_service_metadata(metadata, content=content)
         except HttpResponseError as error:
             _process_table_error(error)
 

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+from typing import Dict, Optional, Any
 from uuid import UUID
 import logging
 import datetime
@@ -201,8 +201,10 @@ def _convert_to_entity(entry_element):
 
     # extract etag from entry
     etag = odata.get("etag")
-    if timestamp and not etag:
-        etag = "W/\"datetime'" + url_quote(timestamp) + "'\""
+    if timestamp:
+        if not etag:
+            etag = "W/\"datetime'" + url_quote(timestamp) + "'\""
+        timestamp = _from_entity_datetime(timestamp)
 
     entity._metadata = {'etag': etag, 'timestamp': timestamp}  # pylint: disable=protected-access
     return entity
@@ -252,10 +254,15 @@ def _return_context_and_deserialized(
     return response.context['location_mode'], deserialized, response_headers
 
 
-def _trim_service_metadata(metadata):
-    # type: (dict[str,str]) -> None
-    return {
+def _trim_service_metadata(metadata, content=None):
+    # type: (Dict[str,str], Optional[Dict[str, Any]]) -> None
+    result = {
         "date": metadata.pop("date", None),
         "etag": metadata.pop("etag", None),
         "version": metadata.pop("version", None),
     }
+    preference = metadata.pop('preference_applied', None)
+    if preference:
+        result["preference_applied"] = preference
+        result["content"] = content
+    return result
