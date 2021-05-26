@@ -9,10 +9,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/20.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-compute/21.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers/WindowsServer/skus/2019-Datacenter/versions/2019.0.20190115?api-version=2020-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers/WindowsServer/skus/2019-Datacenter/versions/2019.0.20190115?api-version=2021-03-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"hyperVGeneration\": \"V1\",\r\n    \"replicaType\":
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Apr 2021 04:15:15 GMT
+      - Tue, 25 May 2021 10:58:06 GMT
       expires:
       - '-1'
       pragma:
@@ -47,7 +47,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetVMImageFromLocation3Min;12999,Microsoft.Compute/GetVMImageFromLocation30Min;73997
+      - Microsoft.Compute/GetVMImageFromLocation3Min;12998,Microsoft.Compute/GetVMImageFromLocation30Min;73997
     status:
       code: 200
       message: OK
@@ -61,17 +61,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/20.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-compute/21.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers/WindowsServer/skus/2019-Datacenter/versions?api-version=2020-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers/WindowsServer/skus/2019-Datacenter/versions?api-version=2021-03-01
   response:
     body:
-      string: "[\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"17763.1098.2003062342\",\r\n
-        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/17763.1098.2003062342\"\r\n
-        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"17763.1158.2004131759\",\r\n
-        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/17763.1158.2004131759\"\r\n
-        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"17763.1217.2005081535\",\r\n
+      string: "[\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"17763.1217.2005081535\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/17763.1217.2005081535\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"17763.1282.2006061952\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/17763.1282.2006061952\"\r\n
@@ -95,6 +91,10 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/17763.1757.2102060435\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"17763.1817.2103030313\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/17763.1817.2103030313\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"17763.1879.2104091832\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/17763.1879.2104091832\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"17763.1935.2105080716\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/17763.1935.2105080716\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"2019.0.20181107\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/2019.0.20181107\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"2019.0.20181122\",\r\n
@@ -118,7 +118,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Apr 2021 04:15:15 GMT
+      - Tue, 25 May 2021 10:58:06 GMT
       expires:
       - '-1'
       pragma:
@@ -135,7 +135,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/ListVMImagesVersionsFromLocation3Min;15999,Microsoft.Compute/ListVMImagesVersionsFromLocation30Min;43997
+      - Microsoft.Compute/ListVMImagesVersionsFromLocation3Min;15998,Microsoft.Compute/ListVMImagesVersionsFromLocation30Min;43997
     status:
       code: 200
       message: OK
@@ -149,10 +149,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/20.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-compute/21.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers?api-version=2020-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers?api-version=2021-03-01
   response:
     body:
       string: "[\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"19h1gen2servertest\",\r\n
@@ -208,7 +208,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Apr 2021 04:15:15 GMT
+      - Tue, 25 May 2021 10:58:06 GMT
       expires:
       - '-1'
       pragma:
@@ -239,10 +239,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/20.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-compute/21.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers?api-version=2020-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers?api-version=2021-03-01
   response:
     body:
       string: "[\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"128technology\",\r\n
@@ -327,6 +327,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/aerospike\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"affinio\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/affinio\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"affirmednetworks1607630812999\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/affirmednetworks1607630812999\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"ageniumscale1591804889317\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/ageniumscale1591804889317\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"aggregion-ltd\",\r\n
@@ -343,6 +345,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/airalabrus\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"aiscaler-cache-control-ddos-and-url-rewriting-\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/aiscaler-cache-control-ddos-and-url-rewriting-\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"aisundowninc1618516322959\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/aisundowninc1618516322959\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"akamai-technologies\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/akamai-technologies\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"akumina\",\r\n
@@ -527,6 +531,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/beyondtrust\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"bi-builders-as\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/bi-builders-as\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"big-id\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/big-id\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"bissantechnology1583581147809\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/bissantechnology1583581147809\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"bitdefendercybersecurity\",\r\n
@@ -541,6 +547,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/black-duck-software\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"blackbird\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/blackbird\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"blackmagicdesignincorporated1596492193249\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/blackmagicdesignincorporated1596492193249\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"blk-technologies\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/blk-technologies\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"blockapps\",\r\n
@@ -621,6 +629,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/center-for-internet-security-inc\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"centeritysystems\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/centeritysystems\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"centrixeltd1594135951373\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/centrixeltd1594135951373\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"centrocomputerspa1584528117084\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/centrocomputerspa1584528117084\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"certivox\",\r\n
@@ -681,6 +691,10 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/cloudflare\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"cloudhouse\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/cloudhouse\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"cloudinfo-4919088\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/cloudinfo-4919088\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"cloudknox\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/cloudknox\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"cloudlanes\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/cloudlanes\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"cloudlink\",\r\n
@@ -941,6 +955,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/egress1589289169584\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"eikonasystemsgmbh1601729310063\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/eikonasystemsgmbh1601729310063\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Elastic\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Elastic\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Elastic.Test\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Elastic.Test\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"elasticbox\",\r\n
@@ -997,6 +1013,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/exact\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"exasol\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/exasol\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"excelero1608461290726\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/excelero1608461290726\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"exivity\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/exivity\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"exonar\",\r\n
@@ -1131,6 +1149,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/hanu\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"haproxy-technologies\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/haproxy-technologies\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"harmanconnectedservicesinc1594928575643\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/harmanconnectedservicesinc1594928575643\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"harpaitalia\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/harpaitalia\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"hashhub\",\r\n
@@ -1181,6 +1201,10 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/ibm\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"ibm-alliance-global-1560886\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/ibm-alliance-global-1560886\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"ibm-alliance-usa-ny-armonk-hq-ibmstorage-6201192\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/ibm-alliance-usa-ny-armonk-hq-ibmstorage-6201192\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"ibm-usa-ny-armonk-hq-6275750-ibmcloud-aiops\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/ibm-usa-ny-armonk-hq-6275750-ibmcloud-aiops\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"iboss\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/iboss\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"iconics\",\r\n
@@ -1193,6 +1217,10 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/iguazio-5069960\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"ikan\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/ikan\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"iliimbiliimveyazlmsistemlerisanvetica1617000555584\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/iliimbiliimveyazlmsistemlerisanvetica1617000555584\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"illuminainc1586452220102\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/illuminainc1586452220102\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"image-technologies\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/image-technologies\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"imaginecommunications\",\r\n
@@ -1259,6 +1287,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/ipswitch\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"iqsol\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/iqsol\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"iquate\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/iquate\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"iquest\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/iquest\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"irion\",\r\n
@@ -1275,6 +1305,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/it4bizdoo\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"itelios\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/itelios\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"itrsgroupltd1620310702149\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/itrsgroupltd1620310702149\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"ivix1595238749040\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/ivix1595238749040\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"iwnamespace\",\r\n
@@ -1489,6 +1521,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.Azure.ActiveDirectory.LinuxSSH\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Microsoft.Azure.Applications\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.Azure.Applications\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Microsoft.Azure.Automation.HybridWorker.Test\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.Azure.Automation.HybridWorker.Test\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Microsoft.Azure.AzureDefenderForServers\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.Azure.AzureDefenderForServers\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Microsoft.Azure.AzureDefenderForSQL\",\r\n
@@ -1929,6 +1963,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.Azure.Monitor.VirtualMachines.Dev.TEST\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Microsoft.Azure.Monitor.VirtualMachines.GuestHealth\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.Azure.Monitor.VirtualMachines.GuestHealth\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Microsoft.Azure.Monitor.VirtualMachines.GuestHealth.DEV\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.Azure.Monitor.VirtualMachines.GuestHealth.DEV\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Microsoft.Azure.Monitor.VirtualMachines.GuestHealth.INT\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.Azure.Monitor.VirtualMachines.GuestHealth.INT\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Microsoft.Azure.Monitor.VirtualMachines.GuestHealth.SCALE\",\r\n
@@ -2065,6 +2101,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.AzureCAT.AzureEnhancedMonitoringTest\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Microsoft.AzureData\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.AzureData\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Microsoft.AzureData.Test\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.AzureData.Test\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Microsoft.AzureMonitor.WorkloadInsights\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Microsoft.AzureMonitor.WorkloadInsights\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Microsoft.AzureMonitor.WorkloadInsights.Canary\",\r\n
@@ -2279,10 +2317,14 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/mxhero\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"my-com\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/my-com\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"myarchinc1614657280935\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/myarchinc1614657280935\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"narrativescience\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/narrativescience\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"nasuni\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/nasuni\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"nasunicorporation\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/nasunicorporation\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"ncache\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/ncache\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"ncbi\",\r\n
@@ -2329,6 +2371,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/netx\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"neusoft-neteye\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/neusoft-neteye\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"newnetcommunicationtechnologies1589991852134\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/newnetcommunicationtechnologies1589991852134\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"NewRelic.Infrastructure.Extensions\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/NewRelic.Infrastructure.Extensions\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"newtglobalconsultingllc1581492268566\",\r\n
@@ -2341,6 +2385,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/nice-it-management-solutions\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"nicepeopleatwork\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/nicepeopleatwork\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"nilespartnersinc1617691698386\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/nilespartnersinc1617691698386\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"niolabs-5229713\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/niolabs-5229713\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"nodejsapi\",\r\n
@@ -2449,6 +2495,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/osnexus\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"outsystems\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/outsystems\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"ovaledge1618392232783\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/ovaledge1618392232783\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"pacteratechnologiesinc\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/pacteratechnologiesinc\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"paladionnetworkspvtltd1606120508449\",\r\n
@@ -2481,12 +2529,16 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/penta-security-systems-inc\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"percona\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/percona\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"perforce\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/perforce\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"periscope-tech-4791746\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/periscope-tech-4791746\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"piolinkinc1582849368309\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/piolinkinc1582849368309\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"pivotal\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/pivotal\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"pixitmedia1591611150480\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/pixitmedia1591611150480\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"plesk\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/plesk\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"pmsoftwareinternational1603102514882\",\r\n
@@ -2659,6 +2711,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/rtts\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"rubrik-inc\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/rubrik-inc\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"runecastsolutionslimited1614186396822\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/runecastsolutionslimited1614186396822\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"s2ix\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/s2ix\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"saama\",\r\n
@@ -2729,6 +2783,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/sepiosystems\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"seppmailag\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/seppmailag\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"seraumo1620002807288\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/seraumo1620002807288\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"service-control-inc\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/service-control-inc\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"shadow-soft\",\r\n
@@ -2861,6 +2917,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/stormshield\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"storreduce\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/storreduce\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"storwarespzoo1611743234900\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/storwarespzoo1611743234900\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"strangebee1595948424730\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/strangebee1595948424730\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"strataidentity1608323708170\",\r\n
@@ -3011,6 +3069,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/testable1603721901088\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"testpro\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/testpro\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"test_test_mix3pptest0011614206850774\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/test_test_mix3pptest0011614206850774\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"test_test_pmc2pc1\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/test_test_pmc2pc1\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"thales-vormetric\",\r\n
@@ -3081,6 +3141,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/trifacta\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"tripwire-inc\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/tripwire-inc\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"truata1612259728221\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/truata1612259728221\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"truestack\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/truestack\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"tryonsolutionsinc1596650621083\",\r\n
@@ -3175,6 +3237,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/visualsoft-center\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"vizixiotplatformretail001\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/vizixiotplatformretail001\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"vmlabinc1613642184700\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/vmlabinc1613642184700\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"vmturbo\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/vmturbo\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"vmware-inc\",\r\n
@@ -3235,6 +3299,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/witfooinc1590167223060\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"wmspanel\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/wmspanel\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"wood1595864497589\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/wood1595864497589\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"workshare-technology\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/workshare-technology\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"world-programming\",\r\n
@@ -3273,6 +3339,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/zabbix\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"zend\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/zend\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"zenterasystemsinc1605292453288\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/zenterasystemsinc1605292453288\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"zerodown_software\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/zerodown_software\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"zerto\",\r\n
@@ -3287,6 +3355,8 @@ interactions:
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/zoomdata\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"zscaler\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/zscaler\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"zscaler1579058425289\",\r\n
+        \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/zscaler1579058425289\"\r\n
         \ },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"zultysinc1596831546163\",\r\n
         \   \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/zultysinc1596831546163\"\r\n
         \ }\r\n]"
@@ -3294,11 +3364,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '345977'
+      - '354026'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Apr 2021 04:15:15 GMT
+      - Tue, 25 May 2021 10:58:07 GMT
       expires:
       - '-1'
       pragma:
@@ -3327,10 +3397,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/20.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-compute/21.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers/WindowsServer/skus?api-version=2020-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers/WindowsServer/skus?api-version=2021-03-01
   response:
     body:
       string: "[\r\n  {\r\n    \"properties\": {\r\n      \"automaticOSUpgradeProperties\":
@@ -3594,7 +3664,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Apr 2021 04:15:16 GMT
+      - Tue, 25 May 2021 10:58:07 GMT
       expires:
       - '-1'
       pragma:
