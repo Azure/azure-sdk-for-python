@@ -26,7 +26,7 @@ from azure.communication.siprouting import SIPRoutingClient
 from azure.communication.siprouting._generated.models import Trunk, TrunkRoute, SipConfiguration
 
 
-class Update_sip_configuration_samples(object):
+class UpdateSIPConfigurationSamples(object):
     def __init__(self):
         connection_string = os.getenv(
             "AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING")
@@ -62,7 +62,7 @@ class Update_sip_configuration_samples(object):
 
 
 if __name__ == '__main__':
-    samples = Update_sip_configuration_samples()
+    samples = UpdateSIPConfigurationSamples()
     samples.update_sip_trunk_configuration_sample()
     samples.update_pstn_gateways_sample()
     samples.update_routing_settings()

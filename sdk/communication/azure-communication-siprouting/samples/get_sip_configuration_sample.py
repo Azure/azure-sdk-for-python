@@ -20,12 +20,17 @@ import os
 
 from azure.communication.siprouting import SIPRoutingClient
 
-def get_sip_configuration_sample():
-    connection_string = os.getenv("AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING")
-    sip_routing_client = SIPRoutingClient.from_connection_string(connection_string)
-    
-    configuration = sip_routing_client.get_sip_configuration()
-    print(configuration)
+class GetSIPConfigurationSample(object):
+    def __init__(self):
+        connection_string = os.getenv(
+            "AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING")
+        self._client = SIPRoutingClient.from_connection_string(
+            connection_string)
+
+    def get_sip_configuration_sample(self):
+        configuration = self._client.get_sip_configuration()
+        print(configuration)
 
 if __name__ == '__main__':
-    get_sip_configuration_sample()
+    sample = GetSIPConfigurationSample()
+    sample.get_sip_configuration_sample()
