@@ -117,9 +117,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
             monthly_backups_to_keep=0,
             enabled=True
         )
-        self.client.backup_policies.begin_update(BP_RESOURCE_GROUP, BP_ACCOUNT, TEST_BACKUP_POLICY_1, backup_policy_body)
-
-        backup_policy = self.client.backup_policies.get(BP_RESOURCE_GROUP, BP_ACCOUNT, TEST_BACKUP_POLICY_1)
+        backup_policy = self.client.backup_policies.begin_update(BP_RESOURCE_GROUP, BP_ACCOUNT, TEST_BACKUP_POLICY_1, backup_policy_body).result()
         self.assertEqual(backup_policy.daily_backups_to_keep, 0)
         self.assertEqual(backup_policy.weekly_backups_to_keep, 1)
 
