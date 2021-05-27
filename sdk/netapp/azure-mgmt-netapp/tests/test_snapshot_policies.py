@@ -109,9 +109,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
             monthly_schedule={},
             enabled=False
         )
-        self.client.snapshot_policies.begin_update(TEST_RG, TEST_ACC_1, TEST_SNAPSHOT_POLICY_1, snapshot_policy_body)
-
-        snapshot_policy = self.client.snapshot_policies.get(TEST_RG, TEST_ACC_1, TEST_SNAPSHOT_POLICY_1)
+        snapshot_policy = self.client.snapshot_policies.begin_update(TEST_RG, TEST_ACC_1, TEST_SNAPSHOT_POLICY_1, snapshot_policy_body).result()
         self.assertEqual(snapshot_policy.daily_schedule.snapshots_to_keep, 1)
         self.assertEqual(snapshot_policy.daily_schedule.hour, 1)
         self.assertEqual(snapshot_policy.daily_schedule.minute, 50)
