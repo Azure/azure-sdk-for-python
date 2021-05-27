@@ -16,7 +16,7 @@ import vcr
 
 from .config import TestConfig
 from .const import ENV_TEST_DIAGNOSE
-from .utilities import create_random_name
+from .utilities import create_random_name, _decompress_response_body
 from .decorators import live_only
 
 
@@ -186,6 +186,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
             response['headers'] = headers
 
             body = response['body']['string']
+            response = _decompress_response_body(response)
             if is_text_payload(response) and body and not isinstance(body, six.string_types):
                 try:
                     response['body']['string'] = body.decode('utf-8')
