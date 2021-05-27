@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import re
+from urllib.parse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
 
@@ -88,4 +89,4 @@ def _enforce_https(request):
 
 def _host_only(url):
     # type: (str) -> str
-    return ""
+    return urlparse(url).netloc

@@ -180,12 +180,12 @@ class ContainerRegistryTestClass(AzureTestCase):
         assert properties.can_write == value
         assert properties.can_list == value
 
-    def create_fully_qualified_reference(self, registry, repository, tag_or_digest):
+    def create_fully_qualified_reference(self, registry, repository, digest):
         return "{}/{}{}{}".format(
-            _host_only(registry),
+            registry,
             repository,
-            ":" if _is_tag(tag_or_digest) else "@",
-            tag_or_digest
+            ":" if _is_tag(digest) else "@",
+            digest.split(":")[-1]
         )
 
 

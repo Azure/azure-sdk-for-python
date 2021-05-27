@@ -224,7 +224,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             "cls",
             lambda objs: [
                 ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-                    x, repository_name=repository
+                    x, repository_name=repository, registry=self._endpoint
                 )
                 for x in objs
             ],

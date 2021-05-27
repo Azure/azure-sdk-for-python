@@ -78,6 +78,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             can_write=generated.can_write,
             can_list=generated.can_list,
             repository_name=kwargs.get("repository_name", None),
+            registry=kwargs.get("registry", None),
         )
 
     def _to_generated(self):
@@ -136,8 +137,13 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             _host_only(self._registry),
             self._repository_name,
             ":" if _is_tag(self._digest) else "@",
-            self._digest
+            self._strip_alg(self._digest)
         )
+
+    def _strip_alg(self, digest):
+        if len(digest.split(":")) == 2:
+            return digest.split(":")[1]
+        return digest
 
 
 class RepositoryProperties(object):
