@@ -16,12 +16,6 @@ try:
 except ImportError:
     from inspect import getargspec as get_arg_spec
 
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib2 import quote  # type: ignore
-
-import pytest
 from dotenv import load_dotenv, find_dotenv
 
 from azure_devtools.scenario_tests import (
@@ -31,6 +25,7 @@ from azure_devtools.scenario_tests import (
     RequestUrlNormalizer,
     AuthenticationMetadataFilter,
     OAuthRequestResponsesFilter,
+    SubscriptionRecordingProcessor,
 )
 from azure_devtools.scenario_tests.config import TestConfig
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
@@ -129,8 +124,7 @@ class AzureTestCase(ReplayableTest):
             config_file=config_file,
             recording_dir=recording_dir,
             recording_name=recording_name or self.qualified_test_name,
-            recording_processors=recording_processors
-            or self._get_recording_processors(),
+            recording_processors=recording_processors or self._get_recording_processors(),
             replay_processors=replay_processors or self._get_replay_processors(),
             recording_patches=recording_patches,
             replay_patches=replay_patches,
@@ -163,6 +157,7 @@ class AzureTestCase(ReplayableTest):
             AuthenticationMetadataFilter(),
             OAuthRequestResponsesFilter(),
             RequestUrlNormalizer(),
+            SubscriptionRecordingProcessor()
         ]
 
     def _get_replay_processors(self):
