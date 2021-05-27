@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 16:51:23 GMT
+      - Wed, 26 May 2021 22:53:25 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 16:51:23 GMT
+      - Wed, 26 May 2021 22:53:25 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -25,8 +25,8 @@ interactions:
       string: '{"TableName":"uttable81c616fa","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Fri, 18 Dec 2020 16:51:24 GMT
-      etag: W/"datetime'2020-12-18T16%3A51%3A24.0350728Z'"
+      date: Wed, 26 May 2021 22:53:25 GMT
+      etag: W/"datetime'2021-05-26T22%3A53%3A25.4978568Z'"
       location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable81c616fa')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -46,11 +46,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 16:51:24 GMT
+      - Wed, 26 May 2021 22:53:25 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 16:51:24 GMT
+      - Wed, 26 May 2021 22:53:25 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -60,8 +60,8 @@ interactions:
       string: '{"TableName":"querytable81c616fa","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Fri, 18 Dec 2020 16:51:24 GMT
-      etag: W/"datetime'2020-12-18T16%3A51%3A24.8121864Z'"
+      date: Wed, 26 May 2021 22:53:25 GMT
+      etag: W/"datetime'2021-05-26T22%3A53%3A25.9344904Z'"
       location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('querytable81c616fa')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -77,11 +77,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 16:51:24 GMT
+      - Wed, 26 May 2021 22:53:26 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 16:51:24 GMT
+      - Wed, 26 May 2021 22:53:26 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -91,11 +91,92 @@ interactions:
       string: '{"value":[],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#querytable81c616fa"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Fri, 18 Dec 2020 16:51:24 GMT
+      date: Wed, 26 May 2021 22:53:25 GMT
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 200
       message: Ok
     url: https://seankaneprim.table.cosmos.azure.com/querytable81c616fa()
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 26 May 2021 22:53:26 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 26 May 2021 22:53:26 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"value":[{"TableName":"uttable81c616fa"},{"TableName":"querytable81c616fa"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Wed, 26 May 2021 22:53:25 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Wed, 26 May 2021 22:53:26 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 26 May 2021 22:53:26 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable81c616fa')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 26 May 2021 22:53:25 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.cosmos.azure.com/Tables('uttable81c616fa')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Wed, 26 May 2021 22:53:26 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 26 May 2021 22:53:26 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('querytable81c616fa')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 26 May 2021 22:53:26 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.cosmos.azure.com/Tables('querytable81c616fa')
 version: 1

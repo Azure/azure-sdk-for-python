@@ -25,12 +25,11 @@ def _get_match_headers(etag, match_condition):
         if not etag:
             raise ValueError("IfNotModified must be specified with etag.")
         return etag
-    elif match_condition == MatchConditions.Unconditionally:
+    if match_condition == MatchConditions.Unconditionally:
         if etag:
             raise ValueError("Etag is not supported for an Unconditional operation.")
         return "*"
-    else:
-        raise ValueError("Unsupported match condition: {}".format(match_condition))
+    raise ValueError("Unsupported match condition: {}".format(match_condition))
 
 
 def _parameter_filter_substitution(parameters, query_filter):
