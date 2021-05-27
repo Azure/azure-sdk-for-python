@@ -56,7 +56,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def delete_repository(self, repository: str, **kwargs: Any) -> None:
-        """Delete a repository
+        """Delete a repository. If the repository cannot be found or a response status code of
+        404 is returned an error will not be raised.
 
         :param str repository: The repository to delete
         :returns: None
@@ -317,7 +318,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def delete_manifest(self, repository: str, tag_or_digest: str, **kwargs: Any) -> None:
-        """Delete a manifest
+        """Delete a manifest. If the manifest cannot be found or a response status code of
+        404 is returned an error will not be raised.
 
         :param str repository: Repository the manifest belongs to
         :param str tag_or_digest: Tag or digest of the manifest to be deleted.
@@ -343,7 +345,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def delete_tag(self, repository: str, tag: str, **kwargs: Any) -> None:
-        """Delete a tag from a repository
+        """Delete a tag from a repository. If the tag cannot be found or a response status code of
+        404 is returned an error will not be raised.
 
         :param str repository: Repository the tag belongs to
         :param str tag: The tag to be deleted
