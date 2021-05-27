@@ -229,7 +229,10 @@ class GeneralNameReplacer(RecordingProcessor):
             self.replace_header(response, 'azure-asyncoperation', old, new)
             self.replace_header(response, "www-authenticate", old, new)
 
-        response["url"] = replace_subscription_id(response["url"])
+        try:
+            response["url"] = replace_subscription_id(response["url"])
+        except KeyError:
+            pass
 
         try:
             for old, new in self.names_name:
