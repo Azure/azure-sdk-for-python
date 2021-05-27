@@ -339,7 +339,7 @@ class KeyVaultKeyIdentifier(object):
             :dedent: 8
     """
 
-    def __init__(self, id):
+    def __init__(self, id):  # pylint: disable=W0622
         # type: (str) -> None
         self._resource_id = parse_key_vault_id(id)
 
