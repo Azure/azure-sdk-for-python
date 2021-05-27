@@ -935,9 +935,9 @@ class ContainerProperties(msrest.serialization.Model):
     :type deleted_time: ~datetime.datetime
     :param remaining_retention_days:
     :type remaining_retention_days: int
-    :param is_immutable_storage_with_versioning_enabled: Indicates if version level worm is enabled
-     on this container.
-    :type is_immutable_storage_with_versioning_enabled: bool
+    :param is_version_level_worm_enabled: Indicates if version level worm is enabled on this
+     container.
+    :type is_version_level_worm_enabled: bool
     """
 
     _validation = {
@@ -958,7 +958,7 @@ class ContainerProperties(msrest.serialization.Model):
         'prevent_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool'},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
         'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
-        'is_immutable_storage_with_versioning_enabled': {'key': 'ImmutableStorageWithVersioningEnabled', 'type': 'bool'},
+        'is_version_level_worm_enabled': {'key': 'VersionLevelWormEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -976,7 +976,7 @@ class ContainerProperties(msrest.serialization.Model):
         prevent_encryption_scope_override: Optional[bool] = None,
         deleted_time: Optional[datetime.datetime] = None,
         remaining_retention_days: Optional[int] = None,
-        is_immutable_storage_with_versioning_enabled: Optional[bool] = None,
+        is_version_level_worm_enabled: Optional[bool] = None,
         **kwargs
     ):
         super(ContainerProperties, self).__init__(**kwargs)
@@ -992,7 +992,7 @@ class ContainerProperties(msrest.serialization.Model):
         self.prevent_encryption_scope_override = prevent_encryption_scope_override
         self.deleted_time = deleted_time
         self.remaining_retention_days = remaining_retention_days
-        self.is_immutable_storage_with_versioning_enabled = is_immutable_storage_with_versioning_enabled
+        self.is_version_level_worm_enabled = is_version_level_worm_enabled
 
 
 class CorsRule(msrest.serialization.Model):

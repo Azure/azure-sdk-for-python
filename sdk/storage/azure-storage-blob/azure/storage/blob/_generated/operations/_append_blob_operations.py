@@ -425,6 +425,7 @@ class AppendBlobOperations(object):
         timeout=None,  # type: Optional[int]
         transactional_content_md5=None,  # type: Optional[bytearray]
         request_id_parameter=None,  # type: Optional[str]
+        copy_source_authorization=None,  # type: Optional[str]
         cpk_info=None,  # type: Optional["_models.CpkInfo"]
         cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
@@ -462,6 +463,9 @@ class AppendBlobOperations(object):
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
+        :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
+         OAuth access token to copy source.
+        :type copy_source_authorization: str
         :param cpk_info: Parameter group.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group.
@@ -586,6 +590,8 @@ class AppendBlobOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        if copy_source_authorization is not None:
+            header_parameters['x-ms-copy-source-authorization'] = self._serialize.header("copy_source_authorization", copy_source_authorization, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
