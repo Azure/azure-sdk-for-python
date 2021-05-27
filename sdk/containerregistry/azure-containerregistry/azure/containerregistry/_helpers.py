@@ -90,3 +90,9 @@ def _enforce_https(request):
 def _host_only(url):
     # type: (str) -> str
     return urlparse(url).netloc
+
+
+def _strip_alg(digest):
+    if len(digest.split(":")) == 2:
+        return digest.split(":")[1]
+    return digest

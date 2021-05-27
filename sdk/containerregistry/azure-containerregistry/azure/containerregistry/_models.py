@@ -14,7 +14,7 @@ from ._generated.models import (
     TagWriteableProperties,
     ManifestWriteableProperties,
 )
-from ._helpers import _host_only, _is_tag
+from ._helpers import _host_only, _is_tag, _strip_alg
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -137,13 +137,8 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             _host_only(self._registry),
             self._repository_name,
             ":" if _is_tag(self._digest) else "@",
-            self._strip_alg(self._digest)
+            _strip_alg(self._digest)
         )
-
-    def _strip_alg(self, digest):
-        if len(digest.split(":")) == 2:
-            return digest.split(":")[1]
-        return digest
 
 
 class RepositoryProperties(object):
