@@ -51,9 +51,10 @@ def test_servicebus_received_message_repr():
         properties=uamqp.message.MessageProperties()
     )
     received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
-    assert "application_properties=None, session_id=None" in received_message.__repr__()
+    repr_str = received_message.__repr__()
+    assert "application_properties=None, session_id=None" in repr_str
     assert "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None,"
-    assert "partition_key=r_key, scheduled_enqueue_time_utc" in received_message.__repr__()
+    assert "partition_key=r_key, scheduled_enqueue_time_utc" in repr_str
 
 
 def test_servicebus_received_message_repr_with_props():
@@ -109,6 +110,54 @@ def test_amqp_message():
         value_body=None,
         header=AMQPMessageHeader(priority=1, delivery_count=1, time_to_live=1, first_acquirer=True, durable=True),
         properties=AMQPMessageProperties(message_id='id', user_id='id', to='to', subject='sub', correlation_id='cid', content_type='ctype', content_encoding='cencoding', creation_time=1, absolute_expiry_time=1, group_id='id', group_sequence=1, reply_to_group_id='id'),
+        footer={"key": "value"},
+        delivery_annotations={"key": "value"},
+        annotations={"key": "value"},
+        application_properties={"key": "value"}
+    )
+
+    assert amqp_annotated_message.body_type == AMQPMessageBodyType.VALUE
+    assert amqp_annotated_message.header.priority == 1
+    assert amqp_annotated_message.header.delivery_count == 1
+    assert amqp_annotated_message.header.time_to_live == 1
+    assert amqp_annotated_message.header.first_acquirer
+    assert amqp_annotated_message.header.durable
+
+    assert amqp_annotated_message.footer == {"key": "value"}
+    assert amqp_annotated_message.delivery_annotations == {"key": "value"}
+    assert amqp_annotated_message.annotations == {"key": "value"}
+    assert amqp_annotated_message.application_properties == {"key": "value"}
+
+    assert amqp_annotated_message.properties.message_id == 'id'
+    assert amqp_annotated_message.properties.user_id == 'id'
+    assert amqp_annotated_message.properties.to == 'to'
+    assert amqp_annotated_message.properties.subject == 'sub'
+    assert amqp_annotated_message.properties.correlation_id == 'cid'
+    assert amqp_annotated_message.properties.content_type == 'ctype'
+    assert amqp_annotated_message.properties.content_encoding == 'cencoding'
+    assert amqp_annotated_message.properties.creation_time == 1
+    assert amqp_annotated_message.properties.absolute_expiry_time == 1
+    assert amqp_annotated_message.properties.group_id == 'id'
+    assert amqp_annotated_message.properties.group_sequence == 1
+    assert amqp_annotated_message.properties.reply_to_group_id == 'id'
+
+    amqp_annotated_message = AMQPAnnotatedMessage(
+        value_body=None,
+        header={"priority": 1, "delivery_count": 1, "time_to_live": 1, "first_acquirer": True, "durable": True},
+        properties={
+            "message_id": "id",
+            "user_id": "id",
+            "to": "to",
+            "subject": "sub",
+            "correlation_id": "cid",
+            "content_type": "ctype",
+            "content_encoding": "cencoding",
+            "creation_time": 1,
+            "absolute_expiry_time": 1,
+            "group_id": "id",
+            "group_sequence": 1,
+            "reply_to_group_id": "id"
+        },
         footer={"key": "value"},
         delivery_annotations={"key": "value"},
         annotations={"key": "value"},

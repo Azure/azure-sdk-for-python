@@ -222,13 +222,26 @@ class AMQPAnnotatedMessage(object):
             encoding=self._encoding
         ) if self.properties else None
 
-        self._message.header = message_header
-        self._message.properties = message_properties
-        self._message.application_properties = self.application_properties
-        self._message.annotations = self.annotations
-        self._message.delivery_annotations = self.delivery_annotations
-        self._message.footer = self.footer
-        return self._message
+        amqp_body = self._message._body  # pylint: disable=protected-access
+        if isinstance(amqp_body, (uamqp.message.DataBody, uamqp.message.SequenceBody)):
+            amqp_body_type = uamqp.MessageBodyType.Data if isinstance(amqp_body, uamqp.message.DataBody) \
+                else uamqp.MessageBodyType.Sequence
+            amqp_body = [data for data in amqp_body.data]
+        else:
+            # amqp_body is type of uamqp.message.ValueBody
+            amqp_body_type = uamqp.MessageBodyType.Value
+            amqp_body = amqp_body.data
+
+        return uamqp.message.Message(
+            body=amqp_body,
+            body_type=amqp_body_type,
+            header=message_header,
+            properties=message_properties,
+            application_properties=self.application_properties,
+            annotations=self.annotations,
+            delivery_annotations=self.delivery_annotations,
+            footer=self.footer
+        )
 
     @property
     def body(self):

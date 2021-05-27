@@ -104,27 +104,26 @@ class ServiceBusMessage(
             # Note: This cannot be renamed until UAMQP no longer relies on this specific name.
             self.message = kwargs["message"]
             self._raw_amqp_message = AMQPAnnotatedMessage(message=self.message)
+            self._amqp_properties = self._raw_amqp_message.properties
+            self._amqp_header = self._raw_amqp_message.header
         else:
             self._build_message(body)
-
-        self._amqp_properties = self._raw_amqp_message.properties
-        self._amqp_header = self._raw_amqp_message.header
-
-        self.application_properties = kwargs.pop("application_properties", None)
-        self.session_id = kwargs.pop("session_id", None)
-        self.message_id = kwargs.pop("message_id", None)
-        self.content_type = kwargs.pop("content_type", None)
-        self.correlation_id = kwargs.pop("correlation_id", None)
-        self.to = kwargs.pop("to", None)
-        self.reply_to = kwargs.pop("reply_to", None)
-        self.reply_to_session_id = kwargs.pop("reply_to_session_id", None)
-        self.subject = kwargs.pop("subject", None)
-        self.scheduled_enqueue_time_utc = kwargs.pop(
-            "scheduled_enqueue_time_utc", None
-        )
-        self.time_to_live = kwargs.pop("time_to_live", None)
-        self.partition_key = kwargs.pop("partition_key", None)
-        self.message = self.raw_amqp_message._to_outing_amqp_message()  # pylint: disable=protected-access
+            self._amqp_properties = self._raw_amqp_message.properties
+            self._amqp_header = self._raw_amqp_message.header
+            self.application_properties = kwargs.pop("application_properties", None)
+            self.session_id = kwargs.pop("session_id", None)
+            self.message_id = kwargs.pop("message_id", None)
+            self.content_type = kwargs.pop("content_type", None)
+            self.correlation_id = kwargs.pop("correlation_id", None)
+            self.to = kwargs.pop("to", None)
+            self.reply_to = kwargs.pop("reply_to", None)
+            self.reply_to_session_id = kwargs.pop("reply_to_session_id", None)
+            self.subject = kwargs.pop("subject", None)
+            self.scheduled_enqueue_time_utc = kwargs.pop(
+                "scheduled_enqueue_time_utc", None
+            )
+            self.time_to_live = kwargs.pop("time_to_live", None)
+            self.partition_key = kwargs.pop("partition_key", None)
 
     def __str__(self):
         return str(self.raw_amqp_message)

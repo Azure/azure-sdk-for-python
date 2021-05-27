@@ -101,9 +101,9 @@ class SenderMixin(object):
                         message.__class__.__name__
                     )
                 )
+            message.scheduled_enqueue_time_utc = schedule_time_utc
             message = transform_messages_to_sendable_if_needed(message)
             trace_message(message, send_span)
-            message.scheduled_enqueue_time_utc = schedule_time_utc
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
             if message.session_id:

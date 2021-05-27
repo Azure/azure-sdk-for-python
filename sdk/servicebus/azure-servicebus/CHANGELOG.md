@@ -6,13 +6,14 @@
 
 - Support for sending AMQP annotated message which allows full access to the AMQP message fields is now GA.
   - Introduced new namespace `azure.servicebus.amqp`.
-  - Introduced new class `azure.servicebus.amqp.AMQPMessageHeader` and `azure.servicebus.amqp.AMQPMessageProperties` for accessing amqp header and properties.
+  - Introduced new classes `azure.servicebus.amqp.AMQPMessageHeader` and `azure.servicebus.amqp.AMQPMessageProperties` for accessing amqp header and properties.
 
 **Breaking Changes from 7.2.0b1**
   - Moved `azure.servicebus.AMQPAnnotatedMessage` to `azure.servicebus.amqp.AMQPAnnotatedMessage`.
   - Moved `azure.servicebus.AMQPMessageBodyType` to `azure.servicebus.amqp.AMQPMessageBodyType`.
   - `AMQPAnnotatedMessage.header` returns `azure.servicebus.amqp.AMQPMessageHeader` instead of `uamqp.message.MessageHeader`.
   - `AMQPAnnotatedMessage.properties` returns `azure.servicebus.amqp.AMQPMessageProperties` instead of `uamqp.message.MessageProperties`.
+  - `raw_amqp_message` on `ServiceBusMessage` and `ServiceBusReceivedMessage` is now a read-only property instead of an instance variable.
 
 **Bug Fixes**
 

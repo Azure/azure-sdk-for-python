@@ -236,9 +236,9 @@ def _convert_to_single_service_bus_message(message, message_type):
         )
 
     if isinstance(message, message_type):
-        return message
+        return message._to_outgoing_message()
     try:
-        return message_type(**cast(Mapping[str, Any], message))
+        return message_type(**cast(Mapping[str, Any], message))._to_outgoing_message()
     except TypeError:
         raise TypeError(
             "Only ServiceBusMessage instances or Mappings representing messages are supported. "
