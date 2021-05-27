@@ -965,7 +965,6 @@ class AzureApplicationInsightsDataFeedSource(object):
     :keyword str application_id: Azure Application Insights ID.
     :keyword str api_key: API Key.
     :param str query: Required. Query.
-    :type query: str
     :param authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
@@ -1683,7 +1682,7 @@ class AzureLogAnalyticsDataFeedSource(object):
 class MongoDbDataFeedSource(object):
     """MongoDbDataFeedSource.
 
-    ::keyword str connection_string: MongoDb connection string.
+    :keyword str connection_string: MongoDb connection string.
     :keyword str database: Database name.
     :param command: Required. Query script.
     :type command: str
