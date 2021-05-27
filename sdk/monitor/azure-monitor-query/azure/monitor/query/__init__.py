@@ -11,27 +11,30 @@ from ._models import (
     LogsQueryResults,
     LogsQueryResultTable,
     LogsQueryResultColumn,
-    MetricsResponse,
+    MetricsResult,
+    LogsBatchResponseError,
     LogsQueryRequest,
     LogsQueryBody,
-    LogsBatchResponse
+    LogsBatchResponse,
+    MetricNamespace,
+    MetricDefinition
 )
 
-from ._generated.models import MetricNamespaceCollection
-    
 from ._version import VERSION
 
 __all__ = [
     "LogsClient",
     "LogsBatchResponse",
+    "LogsBatchResponseError",
     "LogsQueryResults",
     "LogsQueryResultColumn",
     "LogsQueryResultTable",
     "LogsQueryRequest",
     "LogsQueryBody",
     "MetricsClient",
-    "MetricsResponse",
-    "MetricNamespaceCollection"
+    "MetricNamespace",
+    "MetricDefinition",
+    "MetricsResult",
 ]
 
 __version__ = VERSION

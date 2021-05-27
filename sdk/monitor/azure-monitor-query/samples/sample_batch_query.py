@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import os
+import pandas as pd
 from azure.monitor.query import LogsClient
 from azure.identity import ClientSecretCredential
 
@@ -45,17 +46,10 @@ requests = [
 response = client.batch_query(requests)
 
 for response in response.responses:
-    print(response.id)
-    print(response.status)
     body = response.body
     if not body.tables:
         print("Something is wrong")
     else:
         for table in body.tables:
-            for col in table.columns: #LogsQueryResultColumn
-                print(col.name + "/"+  col.type + " | ", end="")
-            print("\n")
-            for row in table.rows:
-                for item in row:
-                    print(item + " | ", end="")
-                print("\n")
+            df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
+            print(df)
