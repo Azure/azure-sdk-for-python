@@ -79,10 +79,10 @@ class AccessControlTests(KeyVaultTestCase):
         permissions = [KeyVaultPermission(allowed_data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         created_definition = await client.set_role_definition(
             role_scope=scope,
-            permissions=permissions,
-            role_name=role_name,
             role_definition_name=definition_name,
-            description="test"
+            role_name=role_name,
+            description="test",
+            permissions=permissions
         )
         assert "/" in created_definition.assignable_scopes
         assert created_definition.role_name == role_name
@@ -90,19 +90,21 @@ class AccessControlTests(KeyVaultTestCase):
         assert created_definition.description == "test"
         assert len(created_definition.permissions) == 1
         assert created_definition.permissions[0].allowed_data_actions == [KeyVaultDataAction.READ_HSM_KEY]
+        assert created_definition.assignable_scopes == [KeyVaultRoleScope.GLOBAL]
 
         # update custom role definition
         permissions = [
             KeyVaultPermission(allowed_data_actions=[], denied_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
         ]
         updated_definition = await client.set_role_definition(
-            role_scope=scope, permissions=permissions, role_definition_name=definition_name
+            role_scope=scope, role_definition_name=definition_name, permissions=permissions
         )
         assert updated_definition.role_name == ""
         assert updated_definition.description == ""
         assert len(updated_definition.permissions) == 1
         assert len(updated_definition.permissions[0].allowed_data_actions) == 0
         assert updated_definition.permissions[0].denied_data_actions == [KeyVaultDataAction.READ_HSM_KEY]
+        assert updated_definition.assignable_scopes == [KeyVaultRoleScope.GLOBAL]
 
         # assert that the created role definition isn't duplicated
         matching_definitions = []
