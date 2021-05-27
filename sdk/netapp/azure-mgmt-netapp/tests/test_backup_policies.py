@@ -118,7 +118,6 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
             enabled=True
         )
         self.client.backup_policies.begin_update(BP_RESOURCE_GROUP, BP_ACCOUNT, TEST_BACKUP_POLICY_1, backup_policy_body)
-        wait_for_backup_policy_state(self.client, "Succeeded")
 
         backup_policy = self.client.backup_policies.get(BP_RESOURCE_GROUP, BP_ACCOUNT, TEST_BACKUP_POLICY_1)
         self.assertEqual(backup_policy.daily_backups_to_keep, 0)
