@@ -17,6 +17,9 @@ from ._generated.models import (
     BatchResponse as InternalBatchResponse,
     BatchResponseError as InternalBatchResponseError,
     LogQueryRequest as InternalLogQueryRequest,
+    MetricNamespace as InternalMetricNamespace,
+    MetricDefinition as InternalMetricDefinition,
+
 )
 
 
@@ -28,7 +31,7 @@ class LogsQueryResultTable(InternalTable):
     :keyword name: Required. The name of the table.
     :paramtype name: str
     :keyword columns: Required. The list of columns in this table.
-    :paramtype columns: list[~monitor_query_client.models.Column]
+    :paramtype columns: list[~azure.monitor.query.LogsQueryResultColumn]
     :keyword rows: Required. The resulting rows from this query.
     :paramtype rows: list[list[str]]
     """
@@ -95,7 +98,7 @@ class LogsQueryResults(InternalQueryResults):
         self.errors = kwargs.get("errors", None)
 
 
-class MetricsResponse(InternalResponse):
+class MetricsResult(InternalResponse):
     """The response to a metrics query.
 
     All required parameters must be populated in order to send to Azure.
@@ -135,7 +138,7 @@ class MetricsResponse(InternalResponse):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        super(MetricsResponse, self).__init__(**kwargs)
+        super(MetricsResult, self).__init__(**kwargs)
         self.cost = kwargs.get("cost", None)
         self.timespan = kwargs["timespan"]
         self.interval = kwargs.get("interval", None)
@@ -170,7 +173,8 @@ class LogsQueryRequest(InternalLogQueryRequest):
 
 
 class LogsQueryBody(InternalQueryBody):
-    """The Analytics query. Learn more about the `Analytics query syntax <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+    """The Analytics query. Learn more about the 
+    `Analytics query syntax <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -192,7 +196,7 @@ class LogsQueryBody(InternalQueryBody):
 
     def __init__(self, query, **kwargs):
         # type: (str, Any) -> None
-        super(QueryBody, self).__init__(**kwargs)
+        super(LogsQueryBody, self).__init__(**kwargs)
         kwargs.setdefault("query", query)
         self.timespan = kwargs.get("timespan", None)
         self.workspaces = kwargs.get("workspaces", None)
@@ -207,12 +211,12 @@ class LogsBatchResponse(InternalBatchResponse):
     :keyword responses: An array of responses corresponding to each individual request in a batch.
     :paramtype responses: list[~monitor_query_client.models.LogQueryResponse]
     :keyword error: Error response for a batch request.
-    :paramtype error: ~monitor_query_client.models.BatchResponseError
+    :paramtype error: ~azure.monitor.query.LogsBatchResponseError
     """
 
     _attribute_map = {
         "responses": {"key": "responses", "type": "[LogQueryResponse]"},
-        "error": {"key": "error", "type": "BatchResponseError"},
+        "error": {"key": "error", "type": "LogsBatchResponseError"},
     }
 
     def __init__(self, **kwargs):
@@ -222,7 +226,7 @@ class LogsBatchResponse(InternalBatchResponse):
         self.error = kwargs.get("error", None)
 
 
-class BatchResponseError(InternalBatchResponseError):
+class LogsBatchResponseError(InternalBatchResponseError):
     """Error response for a batch request.
 
     :param message: The error message describing the cause of the error.
@@ -241,7 +245,97 @@ class BatchResponseError(InternalBatchResponseError):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        super(BatchResponseError, self).__init__(**kwargs)
+        super(LogsBatchResponseError, self).__init__(**kwargs)
         self.message = kwargs.get("message", None)
         self.code = kwargs.get("code", None)
         self.inner_error = kwargs.get("inner_error", None)
+
+class MetricNamespace(InternalMetricNamespace):
+    """Metric namespace class specifies the metadata for a metric namespace.
+
+    :param id: The ID of the metricNamespace.
+    :type id: str
+    :param type: The type of the namespace.
+    :type type: str
+    :param name: The name of the namespace.
+    :type name: str
+    :param properties: Properties which include the fully qualified namespace name.
+    :type properties: ~monitor_query_client.models.MetricNamespaceName
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'MetricNamespaceName'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MetricNamespace, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.type = kwargs.get('type', None)
+        self.name = kwargs.get('name', None)
+        self.properties = kwargs.get('properties', None)
+
+class MetricDefinition(InternalMetricDefinition):
+    """Metric definition class specifies the metadata for a metric.
+
+    :param is_dimension_required: Flag to indicate whether the dimension is required.
+    :type is_dimension_required: bool
+    :param resource_id: the resource identifier of the resource that emitted the metric.
+    :type resource_id: str
+    :param namespace: the namespace the metric belongs to.
+    :type namespace: str
+    :param name: the name and the display name of the metric, i.e. it is a localizable string.
+    :type name: ~monitor_query_client.models.LocalizableString
+    :param unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+     "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
+    :type unit: str or ~monitor_query_client.models.Unit
+    :param primary_aggregation_type: the primary aggregation type value defining how to use the
+     values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
+     "Total".
+    :type primary_aggregation_type: str or ~monitor_query_client.models.AggregationType
+    :param supported_aggregation_types: the collection of what aggregation types are supported.
+    :type supported_aggregation_types: list[str or ~monitor_query_client.models.AggregationType]
+    :param metric_availabilities: the collection of what aggregation intervals are available to be
+     queried.
+    :type metric_availabilities: list[~monitor_query_client.models.MetricAvailability]
+    :param id: the resource identifier of the metric definition.
+    :type id: str
+    :param dimensions: the name and the display name of the dimension, i.e. it is a localizable
+     string.
+    :type dimensions: list[~monitor_query_client.models.LocalizableString]
+    """
+
+    _attribute_map = {
+        'is_dimension_required': {'key': 'isDimensionRequired', 'type': 'bool'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'namespace': {'key': 'namespace', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'LocalizableString'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'primary_aggregation_type': {'key': 'primaryAggregationType', 'type': 'str'},
+        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
+        'metric_availabilities': {'key': 'metricAvailabilities', 'type': '[MetricAvailability]'},
+        'id': {'key': 'id', 'type': 'str'},
+        'dimensions': {'key': 'dimensions', 'type': '[LocalizableString]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MetricDefinition, self).__init__(**kwargs)
+        self.is_dimension_required = kwargs.get('is_dimension_required', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.namespace = kwargs.get('namespace', None)
+        self.name = kwargs.get('name', None)
+        self.unit = kwargs.get('unit', None)
+        self.primary_aggregation_type = kwargs.get('primary_aggregation_type', None)
+        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
+        self.metric_availabilities = kwargs.get('metric_availabilities', None)
+        self.id = kwargs.get('id', None)
+        self.dimensions = kwargs.get('dimensions', None)

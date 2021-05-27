@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Union, Sequence, Dict
 
 from ._generated._monitor_query_client import MonitorQueryClient
 
-from ._generated.models import BatchRequest, QueryBody
+from ._generated.models import BatchRequest
 from ._helpers import get_authentication_policy
 from ._models import LogsQueryResults, LogsQueryRequest, LogsQueryBody
 

@@ -18,7 +18,7 @@ from ._helpers import get_authentication_policy
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.paging import ItemPaged
-    from ._models import MetricsResponse, MetricNamespace, MetricDefinition
+    from ._models import MetricsResult, MetricNamespace, MetricDefinition
 
 
 class MetricsClient(object):
@@ -40,7 +40,7 @@ class MetricsClient(object):
         self._definitions_op = self._client.metric_definitions
 
     def query(self, resource_uri, metricnames, **kwargs):
-        # type: (str, list, Any) -> MetricsResponse
+        # type: (str, list, Any) -> MetricsResult
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
@@ -78,7 +78,7 @@ class MetricsClient(object):
         :keyword metricnamespace: Metric namespace to query metric definitions for.
         :paramtype metricnamespace: str
         :return: Response, or the result of cls(response)
-        :rtype: ~azure.monitor.query.MetricsResponse
+        :rtype: ~azure.monitor.query.MetricsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         kwargs.setdefault("metricnames", ",".join(metricnames))
@@ -97,7 +97,7 @@ class MetricsClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._namespace_op.list(resource_uri)
+        return self._namespace_op.list(resource_uri, **kwargs)
 
     def list_metric_definitions(self, resource_uri, **kwargs):
         # type: (str, Any) -> ItemPaged[MetricDefinition]
@@ -111,7 +111,7 @@ class MetricsClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._namespace_op.list(resource_uri)
+        return self._namespace_op.list(resource_uri, **kwargs)
 
     def close(self):
         # type: () -> None
