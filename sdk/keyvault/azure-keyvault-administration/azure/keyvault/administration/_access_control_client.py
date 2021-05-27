@@ -41,7 +41,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
             principal can be a user, service principal, or security group.
         :keyword role_assignment_name: a name for the role assignment. Must be a UUID.
         :paramtype role_assignment_name: str or uuid.UUID
-        :rtype: KeyVaultRoleAssignment
+        :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
         role_assignment_name = kwargs.pop("role_assignment_name", None) or uuid4()
 
@@ -70,7 +70,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :param role_assignment_name: the assignment's name.
         :type role_assignment_name: str or uuid.UUID
         :returns: the deleted assignment
-        :rtype: KeyVaultRoleAssignment
+        :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
         assignment = self._client.role_assignments.delete(
             vault_base_url=self._vault_url, scope=role_scope, role_assignment_name=str(role_assignment_name), **kwargs
@@ -87,7 +87,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :type role_scope: str or KeyVaultRoleScope
         :param role_assignment_name: the assignment's name.
         :type role_assignment_name: str or uuid.UUID
-        :rtype: KeyVaultRoleAssignment
+        :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
         assignment = self._client.role_assignments.get(
             vault_base_url=self._vault_url, scope=role_scope, role_assignment_name=str(role_assignment_name), **kwargs
@@ -102,7 +102,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :param role_scope: scope of the role assignments. :class:`KeyVaultRoleScope` defines common broad scopes.
             Specify a narrower scope as a string.
         :type role_scope: str or KeyVaultRoleScope
-        :rtype: ~azure.core.paging.ItemPaged[KeyVaultRoleAssignment]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.KeyVaultRoleAssignment]
         """
         return self._client.role_assignments.list_for_scope(
             self._vault_url,
@@ -133,14 +133,14 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :keyword assignable_scopes: the scopes for which the role definition can be assigned.
         :paramtype assignable_scopes: Iterable[str] or Iterable[KeyVaultRoleScope]
         :returns: The created or updated role definition
-        :rtype: KeyVaultRoleDefinition
+        :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
         """
         permissions = [
             self._client.role_definitions.models.Permission(
-                actions=p.allowed_actions,
-                not_actions=p.denied_actions,
-                data_actions=p.allowed_data_actions,
-                not_data_actions=p.denied_data_actions,
+                actions=p.actions,
+                not_actions=p.not_actions,
+                data_actions=p.data_actions,
+                not_data_actions=p.not_data_actions,
             )
             for p in kwargs.pop("permissions", None) or []
         ]
@@ -172,7 +172,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :type role_scope: str or KeyVaultRoleScope
         :param role_definition_name: the role definition's name.
         :type role_definition_name: str or uuid.UUID
-        :rtype: KeyVaultRoleDefinition
+        :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
         """
         definition = self._client.role_definitions.get(
             vault_base_url=self._vault_url, scope=role_scope, role_definition_name=str(role_definition_name), **kwargs
@@ -190,7 +190,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :param role_definition_name: the role definition's name.
         :type role_definition_name: str or uuid.UUID
         :returns: the deleted role definition
-        :rtype: KeyVaultRoleDefinition
+        :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
         """
         definition = self._client.role_definitions.delete(
             vault_base_url=self._vault_url, scope=role_scope, role_definition_name=str(role_definition_name), **kwargs
@@ -205,7 +205,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :param role_scope: scope of the role definitions. :class:`KeyVaultRoleScope` defines common broad scopes.
             Specify a narrower scope as a string.
         :type role_scope: str or KeyVaultRoleScope
-        :rtype: ~azure.core.paging.ItemPaged[KeyVaultRoleDefinition]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.KeyVaultRoleDefinition]
         """
         return self._client.role_definitions.list(
             self._vault_url,
