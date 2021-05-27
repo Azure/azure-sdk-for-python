@@ -84,3 +84,8 @@ def _enforce_https(request):
         raise ServiceRequestError(
             "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
         )
+
+
+def _host_only(url):
+    # type: (str) -> str
+    return ""

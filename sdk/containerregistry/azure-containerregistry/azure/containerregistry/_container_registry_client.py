@@ -403,6 +403,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.get_manifest_properties(repository, tag_or_digest, **kwargs),
             repository_name=repository,
+            registry=self._endpoint,
         )
 
     @distributed_trace
@@ -625,6 +626,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 **kwargs
             ),
             repository_name=repository,
+            registry=self._endpoint,
         )
 
     @overload

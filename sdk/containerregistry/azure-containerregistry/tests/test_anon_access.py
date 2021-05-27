@@ -67,7 +67,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        properties = client.get_repository_properties("library/hello-world")
+        properties = client.get_repository_properties(HELLO_WORLD)
 
         assert isinstance(properties, RepositoryProperties)
         assert properties.name == HELLO_WORLD
@@ -78,8 +78,12 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert client._credential is None
 
         count = 0
-        for manifest in client.list_manifests("library/hello-world"):
+        for manifest in client.list_manifests(HELLO_WORLD):
             assert isinstance(manifest, ArtifactManifestProperties)
+            assert (
+                self.create_fully_qualified_reference(containerregistry_anonregistry_endpoint, HELLO_WORLD, manifest.digest)
+                == manifest.fully_qualified_reference
+            )
             count += 1
         assert count > 0
 
@@ -88,11 +92,16 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        registry_artifact = client.get_manifest_properties("library/hello-world", "latest")
+        registry_artifact = client.get_manifest_properties(HELLO_WORLD, "latest")
 
         assert isinstance(registry_artifact, ArtifactManifestProperties)
         assert "latest" in registry_artifact.tags
-        assert registry_artifact.repository_name == "library/hello-world"
+        assert registry_artifact.repository_name == HELLO_WORLD
+        assert (
+            self.create_fully_qualified_reference(containerregistry_anonregistry_endpoint, HELLO_WORLD, registry_artifact.digest)
+            == registry_artifact.fully_qualified_reference
+        )
+
 
     @acr_preparer()
     def test_list_tags(self, containerregistry_anonregistry_endpoint):
@@ -100,7 +109,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert client._credential is None
 
         count = 0
-        for tag in client.list_tags("library/hello-world"):
+        for tag in client.list_tags(HELLO_WORLD):
             count += 1
             assert isinstance(tag, ArtifactTagProperties)
         assert count > 0

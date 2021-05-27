@@ -14,7 +14,7 @@ from azure.containerregistry import (
 from azure.core.async_paging import AsyncItemPaged
 
 from asynctestcase import AsyncContainerRegistryTestClass
-from constants import HELLO_WORLD
+from constants import HELLO_WORLD, ALPINE
 from preparer import acr_preparer
 
 
@@ -65,10 +65,10 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        properties = await client.get_repository_properties("library/alpine")
+        properties = await client.get_repository_properties(ALPINE)
 
         assert isinstance(properties, RepositoryProperties)
-        assert properties.name == "library/alpine"
+        assert properties.name == ALPINE
 
     @acr_preparer()
     async def test_list_manifests(self, containerregistry_anonregistry_endpoint):
@@ -76,8 +76,13 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert client._credential is None
 
         count = 0
-        async for manifest in client.list_manifests("library/alpine"):
+        async for manifest in client.list_manifests(ALPINE):
             assert isinstance(manifest, ArtifactManifestProperties)
+            assert (
+                self.create_fully_qualified_reference(containerregistry_anonregistry_endpoint, ALPINE, manifest.digest)
+                == manifest.fully_qualified_reference
+            )
+
             count += 1
         assert count > 0
 
@@ -86,11 +91,15 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        registry_artifact = await client.get_manifest_properties("library/alpine", "latest")
+        registry_artifact = await client.get_manifest_properties(ALPINE, "latest")
 
         assert isinstance(registry_artifact, ArtifactManifestProperties)
         assert "latest" in registry_artifact.tags
-        assert registry_artifact.repository_name == "library/alpine"
+        assert registry_artifact.repository_name == ALPINE
+        assert (
+            self.create_fully_qualified_reference(containerregistry_anonregistry_endpoint, ALPINE, registry_artifact.digest)
+            == registry_artifact.fully_qualified_reference
+        )
 
     @acr_preparer()
     async def test_list_tags(self, containerregistry_anonregistry_endpoint):
@@ -98,7 +107,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert client._credential is None
 
         count = 0
-        async for tag in client.list_tags("library/alpine"):
+        async for tag in client.list_tags(ALPINE):
             count += 1
             assert isinstance(tag, ArtifactTagProperties)
         assert count > 0

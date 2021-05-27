@@ -5,7 +5,7 @@
 # ------------------------------------
 
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Any
+from typing import TYPE_CHECKING, Dict, Any, List
 
 from ._generated.models import (
     ArtifactTagProperties as GeneratedArtifactTagProperties,
@@ -14,6 +14,7 @@ from ._generated.models import (
     TagWriteableProperties,
     ManifestWriteableProperties,
 )
+from ._helpers import _host_only, _is_tag
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -39,6 +40,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     :ivar str repository_name: Repository name the artifact belongs to
     :ivar str size: Size of the artifact
     :ivar List[str] tags: Tags associated with a registry artifact
+    :ivar str fully_qualified_reference: The fully qualified reference for an artifact
     """
 
     def __init__(self, **kwargs):
@@ -52,6 +54,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
         if self._operating_system is not None:
             self._operating_system = ArtifactOperatingSystem(self._operating_system)
         self._repository_name = kwargs.get("repository_name", None)
+        self._registry = kwargs.get("registry", None)
         self._size = kwargs.get("size", None)
         self._tags = kwargs.get("tags", None)
         self.can_delete = kwargs.get("can_delete")
@@ -125,6 +128,16 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     def tags(self):
         # type: () -> List[str]
         return self._tags
+
+    @property
+    def fully_qualified_reference(self):
+        # type: () -> str
+        return "{}/{}{}{}".format(
+            _host_only(self._registry),
+            self._repository_name,
+            ":" if _is_tag(self._digest) else "@",
+            self._digest
+        )
 
 
 class RepositoryProperties(object):
