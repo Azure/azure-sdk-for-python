@@ -4,9 +4,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import re
-from urllib.parse import urlparse
+from typing import TYPE_CHECKING, List, Dict
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
+
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineRequest
 
 BEARER = "Bearer"
 AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
