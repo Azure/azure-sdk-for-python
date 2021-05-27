@@ -31,8 +31,8 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
 
         await ts.delete_table(table_name=table_name)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
     @cosmos_decorator_async
     async def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -49,8 +49,8 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         assert created
         await ts.delete_table(table_name=table_name)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
     @cosmos_decorator_async
     async def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -80,8 +80,8 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         for i in range(5):
             await ts.delete_table(table_name + str(i))
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
     @cosmos_decorator_async
     async def test_list_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -99,8 +99,8 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         assert len(tables) >=  1
         assert tables[0] is not None
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
     @cosmos_decorator_async
     async def test_query_tables_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -119,8 +119,8 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         assert len(tables) ==  1
         await ts.delete_table(table.table_name)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
     @cosmos_decorator_async
     async def test_list_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -183,8 +183,8 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         assert tables2_len ==  2
         assert tables1 != tables2
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
     @cosmos_decorator_async
     async def test_delete_table_with_existing_table(self, tables_cosmos_account_name,
@@ -200,8 +200,8 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         # Assert
         assert deleted is None
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
     @cosmos_decorator_async
     async def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_cosmos_account_name,
@@ -211,8 +211,8 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         table_name = self._get_table_reference()
         await ts.delete_table(table_name)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
 
 class TestTableUnitTest(AsyncTableTestCase):

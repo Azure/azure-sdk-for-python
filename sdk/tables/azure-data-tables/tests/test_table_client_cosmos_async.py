@@ -50,8 +50,8 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         async for table in tables:
             count += 1
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
     @cosmos_decorator_async
     async def test_user_agent_custom_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -86,8 +86,8 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         async for table in tables:
             count += 1
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
     @cosmos_decorator_async
     async def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -105,8 +105,8 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         async for table in tables:
             count += 1
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
 
 class TestTableClientUnit(AsyncTableTestCase):

@@ -1,8 +1,10 @@
 import functools
 import inspect
+import time
 
 from azure.core.credentials import AzureNamedKeyCredential
-from devtools_testutils import PowerShellPreparer
+from azure.core.exceptions import HttpResponseError
+from devtools_testutils import PowerShellPreparer, is_live
 
 CosmosPreparer = functools.partial(
     PowerShellPreparer, "tables",
@@ -64,7 +66,23 @@ def cosmos_decorator(func, **kwargs):
         trimmed_kwargs = {k:v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
 
-        func(*args, **trimmed_kwargs)
+        EXPONENTIAL_BACKOFF = 1
+        RETRY_COUNT = 0
+
+        try:
+            return func(*args, **trimmed_kwargs)
+        except HttpResponseError as exc:
+            if is_live() and exc.status_code == 429:
+                print("Retrying: {} {}".format(RETRY_COUNT, EXPONENTIAL_BACKOFF))
+                while RETRY_COUNT < 6:
+                    time.sleep(EXPONENTIAL_BACKOFF)
+                    try:
+                        return func(*args, **trimmed_kwargs)
+                    except HttpResponseError as exc:
+                        print("Retrying: {} {}".format(RETRY_COUNT, EXPONENTIAL_BACKOFF))
+                        EXPONENTIAL_BACKOFF **= 2
+                        RETRY_COUNT += 1
+                        if RETRY_COUNT >= 6:
+                            raise
 
     return wrapper
-

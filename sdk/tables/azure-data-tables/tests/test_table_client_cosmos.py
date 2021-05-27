@@ -51,8 +51,8 @@ class TestTableClient(AzureTestCase, TableTestCase):
         for table in tables:
             count += 1
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
@@ -91,8 +91,8 @@ class TestTableClient(AzureTestCase, TableTestCase):
         for table in tables:
             count += 1
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
@@ -114,8 +114,8 @@ class TestTableClient(AzureTestCase, TableTestCase):
         for table in tables:
             count += 1
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
 
 class TestTableClientUnit(TableTestCase):
