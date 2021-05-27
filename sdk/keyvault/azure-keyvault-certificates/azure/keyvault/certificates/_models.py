@@ -406,8 +406,8 @@ class KeyVaultCertificateIdentifier(object):
             :dedent: 8
     """
 
-    def __init__(self, id):
-        # type: (str) -> None
+    def __init__(self, id):  # pylint: disable=W0622
+        # type: (str) -> KeyVaultCertificateIdentifier
         self._resource_id = parse_key_vault_id(id)
 
     @property
