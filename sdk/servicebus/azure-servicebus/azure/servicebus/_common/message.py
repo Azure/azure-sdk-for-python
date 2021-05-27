@@ -244,6 +244,8 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._amqp_properties:
+            return None
         try:
             return self._amqp_properties.group_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
@@ -258,6 +260,10 @@ class ServiceBusMessage(
                     MESSAGE_PROPERTY_MAX_LENGTH
                 )
             )
+
+        if not self._amqp_properties:
+            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._amqp_properties = self._raw_amqp_message.properties
 
         self._amqp_properties.group_id = value
 
@@ -291,10 +297,10 @@ class ServiceBusMessage(
         """
         p_key = None
         try:
-            p_key = self._raw_amqp_message.annotations.get(
-                _X_OPT_PARTITION_KEY
-            ) or self._raw_amqp_message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)
-            return p_key.decode("UTF-8")
+            p_key = self._raw_amqp_message.annotations.get(  # type: ignore
+                _X_OPT_PARTITION_KEY  # type: ignore
+            ) or self._raw_amqp_message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)  # type: ignore
+            return p_key.decode("UTF-8")  # type: ignore
         except (AttributeError, UnicodeDecodeError):
             return p_key
 
@@ -351,6 +357,9 @@ class ServiceBusMessage(
             self._amqp_header.time_to_live = int(value) * 1000
 
         if self._amqp_header.time_to_live and self._amqp_header.time_to_live != MAX_DURATION_VALUE:
+            if not self._amqp_properties:
+                self._raw_amqp_message.properties = AMQPMessageProperties()
+                self._amqp_properties = self._raw_amqp_message.properties
             self._amqp_properties.creation_time = int(time.mktime(utc_now().timetuple()))
             self._amqp_properties.absolute_expiry_time = min(
                 MAX_ABSOLUTE_EXPIRY_TIME,
@@ -384,6 +393,9 @@ class ServiceBusMessage(
     @scheduled_enqueue_time_utc.setter
     def scheduled_enqueue_time_utc(self, value):
         # type: (datetime.datetime) -> None
+        if not self._amqp_properties:
+            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._amqp_properties = self._raw_amqp_message.properties
         if not self._amqp_properties.message_id:
             self._amqp_properties.message_id = str(uuid.uuid4())
         self._set_message_annotations(_X_OPT_SCHEDULED_ENQUEUE_TIME, value)
@@ -419,6 +431,8 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._amqp_properties:
+            return None
         try:
             return self._amqp_properties.content_type.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
@@ -427,6 +441,9 @@ class ServiceBusMessage(
     @content_type.setter
     def content_type(self, value):
         # type: (str) -> None
+        if not self._amqp_properties:
+            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._amqp_properties = self._raw_amqp_message.properties
         self._amqp_properties.content_type = value
 
     @property
@@ -443,6 +460,8 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._amqp_properties:
+            return None
         try:
             return self._amqp_properties.correlation_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
@@ -451,6 +470,9 @@ class ServiceBusMessage(
     @correlation_id.setter
     def correlation_id(self, value):
         # type: (str) -> None
+        if not self._amqp_properties:
+            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._amqp_properties = self._raw_amqp_message.properties
         self._amqp_properties.correlation_id = value
 
     @property
@@ -463,6 +485,8 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._amqp_properties:
+            return None
         try:
             return self._amqp_properties.subject.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
@@ -471,6 +495,9 @@ class ServiceBusMessage(
     @subject.setter
     def subject(self, value):
         # type: (str) -> None
+        if not self._amqp_properties:
+            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._amqp_properties = self._raw_amqp_message.properties
         self._amqp_properties.subject = value
 
     @property
@@ -486,6 +513,8 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._amqp_properties:
+            return None
         try:
             return self._amqp_properties.message_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
@@ -500,7 +529,9 @@ class ServiceBusMessage(
                     MESSAGE_PROPERTY_MAX_LENGTH
                 )
             )
-
+        if not self._amqp_properties:
+            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._amqp_properties = self._raw_amqp_message.properties
         self._amqp_properties.message_id = value
 
     @property
@@ -518,6 +549,8 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._amqp_properties:
+            return None
         try:
             return self._amqp_properties.reply_to.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
@@ -526,6 +559,9 @@ class ServiceBusMessage(
     @reply_to.setter
     def reply_to(self, value):
         # type: (str) -> None
+        if not self._amqp_properties:
+            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._amqp_properties = self._raw_amqp_message.properties
         self._amqp_properties.reply_to = value
 
     @property
@@ -542,6 +578,8 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._amqp_properties:
+            return None
         try:
             return self._amqp_properties.reply_to_group_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
@@ -557,6 +595,9 @@ class ServiceBusMessage(
                 )
             )
 
+        if not self._amqp_properties:
+            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._amqp_properties = self._raw_amqp_message.properties
         self._amqp_properties.reply_to_group_id = value
 
     @property
@@ -572,6 +613,8 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._amqp_properties:
+            return None
         try:
             return self._amqp_properties.to.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
@@ -580,6 +623,9 @@ class ServiceBusMessage(
     @to.setter
     def to(self, value):
         # type: (str) -> None
+        if not self._amqp_properties:
+            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._amqp_properties = self._raw_amqp_message.properties
         self._amqp_properties.to = value
 
 
@@ -870,7 +916,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         """
         if self._raw_amqp_message.application_properties:
             try:
-                return self._raw_amqp_message.application_properties.get(
+                return self._raw_amqp_message.application_properties.get(  # type: ignore
                     PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION
                 ).decode("UTF-8")
             except AttributeError:
@@ -887,7 +933,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         """
         if self._raw_amqp_message.application_properties:
             try:
-                return self._raw_amqp_message.application_properties.get(
+                return self._raw_amqp_message.application_properties.get(  # type: ignore
                     PROPERTIES_DEAD_LETTER_REASON
                 ).decode("UTF-8")
             except AttributeError:
@@ -906,7 +952,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         """
         if self._raw_amqp_message.annotations:
             try:
-                return self._raw_amqp_message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode(
+                return self._raw_amqp_message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode(  # type: ignore
                     "UTF-8"
                 )
             except AttributeError:

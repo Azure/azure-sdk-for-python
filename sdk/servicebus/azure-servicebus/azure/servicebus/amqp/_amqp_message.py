@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import Optional, Any
+from typing import Optional, Any, cast, Mapping
 
 import uamqp
 
@@ -136,9 +136,10 @@ class AMQPAnnotatedMessage(object):
             self._body_type = uamqp.MessageBodyType.Value
 
         self._message = uamqp.message.Message(body=self._body, body_type=self._body_type)
-        self._header = AMQPMessageHeader(**kwargs.get("header")) if "header" in kwargs else None
-        self._footer = kwargs.get("footer")
-        self._properties = AMQPMessageProperties(**kwargs.get("properties")) if "properties" in kwargs else None
+        header_dict = cast(Mapping, kwargs.get("header"))
+        self._header = AMQPMessageHeader(**header_dict) if "header" in kwargs else None
+        properties_dict = cast(Mapping, kwargs.get("properties"))
+        self._properties = AMQPMessageProperties(**properties_dict) if "properties" in kwargs else None
         self._application_properties = kwargs.get("application_properties")
         self._annotations = kwargs.get("annotations")
         self._delivery_annotations = kwargs.get("delivery_annotations")
@@ -240,10 +241,10 @@ class AMQPAnnotatedMessage(object):
         amqp_body = self._message._body  # pylint: disable=protected-access
         if isinstance(amqp_body, uamqp.message.DataBody):
             amqp_body_type = uamqp.MessageBodyType.Data
-            amqp_body = [data for data in amqp_body.data]
+            amqp_body = list(amqp_body.data)
         elif isinstance(amqp_body, uamqp.message.SequenceBody):
             amqp_body_type = uamqp.MessageBodyType.Sequence
-            amqp_body = [data for data in amqp_body.data]
+            amqp_body = list(amqp_body.data)
         else:
             # amqp_body is type of uamqp.message.ValueBody
             amqp_body_type = uamqp.MessageBodyType.Value
@@ -280,7 +281,7 @@ class AMQPAnnotatedMessage(object):
         rtype: ~azure.servicebus.amqp.AMQPMessageBodyType
         """
         return AMQP_MESSAGE_BODY_TYPE_MAP.get(
-            self._message._body.type  # pylint: disable=protected-access
+            self._message._body.type, AMQPMessageBodyType.VALUE  # pylint: disable=protected-access
         )
 
     @property
