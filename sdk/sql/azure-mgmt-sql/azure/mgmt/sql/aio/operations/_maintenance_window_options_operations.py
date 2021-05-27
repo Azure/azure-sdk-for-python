@@ -46,7 +46,7 @@ class MaintenanceWindowOptionsOperations:
         server_name: str,
         database_name: str,
         maintenance_window_options_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MaintenanceWindowOptions":
         """Gets a list of available maintenance windows.
 

@@ -45,7 +45,7 @@ class RecommendationsOperations:
         self,
         featured: Optional[bool] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecommendationCollection"]:
         """List all recommendations for a subscription.
 
@@ -112,7 +112,7 @@ class RecommendationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -125,7 +125,7 @@ class RecommendationsOperations:
 
     async def reset_all_filters(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Reset all recommendation opt-out settings for a subscription.
 
@@ -173,7 +173,7 @@ class RecommendationsOperations:
     async def disable_recommendation_for_subscription(
         self,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Disables the specified rule so it will not apply to a subscription in the future.
 
@@ -227,7 +227,7 @@ class RecommendationsOperations:
         hosting_environment_name: str,
         expired_only: Optional[bool] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecommendationCollection"]:
         """Get past recommendations for an app, optionally specified by the time range.
 
@@ -300,7 +300,7 @@ class RecommendationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -317,7 +317,7 @@ class RecommendationsOperations:
         hosting_environment_name: str,
         featured: Optional[bool] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecommendationCollection"]:
         """Get all recommendations for an app.
 
@@ -389,7 +389,7 @@ class RecommendationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -405,7 +405,7 @@ class RecommendationsOperations:
         resource_group_name: str,
         environment_name: str,
         hosting_environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Disable all recommendations for an app.
 
@@ -464,7 +464,7 @@ class RecommendationsOperations:
         resource_group_name: str,
         environment_name: str,
         hosting_environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Reset all recommendation opt-out settings for an app.
 
@@ -525,7 +525,7 @@ class RecommendationsOperations:
         name: str,
         update_seen: Optional[bool] = None,
         recommendation_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecommendationRule":
         """Get a recommendation rule for an app.
 
@@ -584,7 +584,7 @@ class RecommendationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RecommendationRule', pipeline_response)
@@ -601,7 +601,7 @@ class RecommendationsOperations:
         environment_name: str,
         name: str,
         hosting_environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Disables the specific rule for a web site permanently.
 
@@ -664,7 +664,7 @@ class RecommendationsOperations:
         site_name: str,
         expired_only: Optional[bool] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecommendationCollection"]:
         """Get past recommendations for an app, optionally specified by the time range.
 
@@ -737,7 +737,7 @@ class RecommendationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -754,7 +754,7 @@ class RecommendationsOperations:
         site_name: str,
         featured: Optional[bool] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecommendationCollection"]:
         """Get all recommendations for an app.
 
@@ -826,7 +826,7 @@ class RecommendationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -841,7 +841,7 @@ class RecommendationsOperations:
         self,
         resource_group_name: str,
         site_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Disable all recommendations for an app.
 
@@ -896,7 +896,7 @@ class RecommendationsOperations:
         self,
         resource_group_name: str,
         site_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Reset all recommendation opt-out settings for an app.
 
@@ -954,7 +954,7 @@ class RecommendationsOperations:
         name: str,
         update_seen: Optional[bool] = None,
         recommendation_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecommendationRule":
         """Get a recommendation rule for an app.
 
@@ -1013,7 +1013,7 @@ class RecommendationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RecommendationRule', pipeline_response)
@@ -1029,7 +1029,7 @@ class RecommendationsOperations:
         resource_group_name: str,
         site_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Disables the specific rule for a web site permanently.
 

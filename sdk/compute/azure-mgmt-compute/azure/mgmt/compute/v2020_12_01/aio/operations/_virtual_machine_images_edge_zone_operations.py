@@ -48,7 +48,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         offer: str,
         skus: str,
         version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualMachineImage":
         """Gets a virtual machine image in an edge zone.
 
@@ -124,7 +124,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         expand: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VirtualMachineImageResource"]:
         """Gets a list of all virtual machine image versions for the specified location, edge zone,
         publisher, offer, and SKU.
@@ -206,7 +206,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         location: str,
         edge_zone: str,
         publisher_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VirtualMachineImageResource"]:
         """Gets a list of virtual machine image offers for the specified location, edge zone and
         publisher.
@@ -268,7 +268,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         self,
         location: str,
         edge_zone: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VirtualMachineImageResource"]:
         """Gets a list of virtual machine image publishers for the specified Azure location and edge zone.
 
@@ -328,7 +328,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         edge_zone: str,
         publisher_name: str,
         offer: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VirtualMachineImageResource"]:
         """Gets a list of virtual machine image SKUs for the specified location, edge zone, publisher, and
         offer.

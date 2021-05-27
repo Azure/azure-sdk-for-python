@@ -49,7 +49,7 @@ class WorkloadGroupsOperations:
         server_name: str,
         database_name: str,
         workload_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkloadGroup":
         """Gets a workload group.
 
@@ -117,7 +117,7 @@ class WorkloadGroupsOperations:
         database_name: str,
         workload_group_name: str,
         parameters: "_models.WorkloadGroup",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.WorkloadGroup"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.WorkloadGroup"]]
         error_map = {
@@ -179,7 +179,7 @@ class WorkloadGroupsOperations:
         database_name: str,
         workload_group_name: str,
         parameters: "_models.WorkloadGroup",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.WorkloadGroup"]:
         """Creates or updates a workload group.
 
@@ -196,8 +196,8 @@ class WorkloadGroupsOperations:
         :type parameters: ~azure.mgmt.sql.models.WorkloadGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WorkloadGroup or the result of cls(response)
@@ -260,7 +260,7 @@ class WorkloadGroupsOperations:
         server_name: str,
         database_name: str,
         workload_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -306,7 +306,7 @@ class WorkloadGroupsOperations:
         server_name: str,
         database_name: str,
         workload_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a workload group.
 
@@ -321,8 +321,8 @@ class WorkloadGroupsOperations:
         :type workload_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -380,7 +380,7 @@ class WorkloadGroupsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkloadGroupListResult"]:
         """Gets the list of workload groups.
 

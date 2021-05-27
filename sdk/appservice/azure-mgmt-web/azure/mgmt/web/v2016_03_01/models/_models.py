@@ -1311,8 +1311,8 @@ class ConnStringInfo(msrest.serialization.Model):
 class CorsSettings(msrest.serialization.Model):
     """Cross-Origin Resource Sharing (CORS) settings for the app.
 
-    :param allowed_origins: Gets or sets the list of origins that should be allowed to make cross-
-     origin
+    :param allowed_origins: Gets or sets the list of origins that should be allowed to make
+     cross-origin
      calls (for example: http://example.com:12345). Use "*" to allow all.
     :type allowed_origins: list[str]
     """
@@ -5692,8 +5692,8 @@ class VnetInfo(ProxyOnlyResource):
     :ivar resync_required: :code:`<code>true</code>` if a resync is required; otherwise,
      :code:`<code>false</code>`.
     :vartype resync_required: bool
-    :param dns_servers: DNS servers to be used by this Virtual Network. This should be a comma-
-     separated list of IP addresses.
+    :param dns_servers: DNS servers to be used by this Virtual Network. This should be a
+     comma-separated list of IP addresses.
     :type dns_servers: str
     """
 

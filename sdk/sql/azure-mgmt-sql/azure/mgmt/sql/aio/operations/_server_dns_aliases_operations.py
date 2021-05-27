@@ -48,7 +48,7 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServerDnsAlias":
         """Gets a server DNS alias.
 
@@ -111,7 +111,7 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ServerDnsAlias"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ServerDnsAlias"]]
         error_map = {
@@ -165,7 +165,7 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ServerDnsAlias"]:
         """Creates a server DNS alias.
 
@@ -178,8 +178,8 @@ class ServerDnsAliasesOperations:
         :type dns_alias_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServerDnsAlias or the result of cls(response)
@@ -238,7 +238,7 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -282,7 +282,7 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the server DNS alias with the given name.
 
@@ -295,8 +295,8 @@ class ServerDnsAliasesOperations:
         :type dns_alias_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -351,7 +351,7 @@ class ServerDnsAliasesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServerDnsAliasListResult"]:
         """Gets a list of server DNS aliases for a server.
 
@@ -428,7 +428,7 @@ class ServerDnsAliasesOperations:
         server_name: str,
         dns_alias_name: str,
         parameters: "_models.ServerDnsAliasAcquisition",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ServerDnsAlias"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ServerDnsAlias"]]
         error_map = {
@@ -485,7 +485,7 @@ class ServerDnsAliasesOperations:
         server_name: str,
         dns_alias_name: str,
         parameters: "_models.ServerDnsAliasAcquisition",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ServerDnsAlias"]:
         """Acquires server DNS alias from another server.
 
@@ -500,8 +500,8 @@ class ServerDnsAliasesOperations:
         :type parameters: ~azure.mgmt.sql.models.ServerDnsAliasAcquisition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServerDnsAlias or the result of cls(response)

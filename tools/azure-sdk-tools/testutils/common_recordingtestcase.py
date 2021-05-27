@@ -1,8 +1,8 @@
-﻿#-------------------------------------------------------------------------
+﻿# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 from contextlib import contextmanager
 import copy
 import inspect
@@ -19,10 +19,10 @@ from .common_extendedtestcase import ExtendedTestCase
 
 
 class TestMode(object):
-    none = 'None' # this will be for unit test, no need for any recordings
-    playback = 'Playback'
-    record = 'Record'
-    live = 'Live'
+    none = "None"  # this will be for unit test, no need for any recordings
+    playback = "Playback"
+    record = "Record"
+    live = "Live"
 
     @staticmethod
     def is_playback(mode):
@@ -40,7 +40,6 @@ class TestMode(object):
 
 
 class RecordingTestCase(ExtendedTestCase):
-
     def __init__(self, *args, **kwargs):
         super(RecordingTestCase, self).__init__(*args, **kwargs)
 
@@ -53,21 +52,21 @@ class RecordingTestCase(ExtendedTestCase):
         # test_mgmt_network.test_public_ip_addresses
         _, filename = os.path.split(inspect.getsourcefile(type(self)))
         name, _ = os.path.splitext(filename)
-        self.qualified_test_name = '{0}.{1}'.format(
+        self.qualified_test_name = "{0}.{1}".format(
             name,
             self._testMethodName,
         )
 
     def init_test_mode(self):
         try:
-            path = os.path.join(self.working_folder, 'testsettings_local.json')
+            path = os.path.join(self.working_folder, "testsettings_local.json")
             with open(path) as testsettings_local_file:
                 test_settings = json.load(testsettings_local_file)
-            self.test_mode = test_settings['mode']
+            self.test_mode = test_settings["mode"]
         except:
             pass
 
-        if getattr(self, 'test_mode', None) is None:
+        if getattr(self, "test_mode", None) is None:
             self.test_mode = TestMode.playback
 
     def sleep(self, seconds):
@@ -79,18 +78,18 @@ class RecordingTestCase(ExtendedTestCase):
 
     def recording(self):
         if TestMode.need_recordingfile(self.test_mode):
-            cassette_name = '{0}.yaml'.format(self.qualified_test_name)
+            cassette_name = "{0}.yaml".format(self.qualified_test_name)
 
             my_vcr = vcr.VCR(
-                before_record_request = self._scrub_sensitive_request_info,
-                before_record_response = self._scrub_sensitive_response_info,
-                record_mode = 'none' if TestMode.is_playback(self.test_mode) else 'all',
+                before_record_request=self._scrub_sensitive_request_info,
+                before_record_response=self._scrub_sensitive_response_info,
+                record_mode="none" if TestMode.is_playback(self.test_mode) else "all",
             )
 
             self.assertIsNotNone(self.working_folder)
             return my_vcr.use_cassette(
-                os.path.join(self.working_folder, 'recordings', cassette_name),
-                filter_headers=['authorization'],
+                os.path.join(self.working_folder, "recordings", cassette_name),
+                filter_headers=["authorization"],
             )
         else:
             return self._nop_context_manager()
@@ -101,9 +100,9 @@ class RecordingTestCase(ExtendedTestCase):
         # resource names, but each test will get the same name on repeat runs,
         # which is needed for playback.
         # Most resource names have a length limit, so we use a crc32
-        self.checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xffffffff
-        name = '{}{}'.format(name, hex(self.checksum)[2:])
-        if name.endswith('L'):
+        self.checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xFFFFFFFF
+        name = "{}{}".format(name, hex(self.checksum)[2:])
+        if name.endswith("L"):
             name = name[:-1]
         return name
 
@@ -112,7 +111,7 @@ class RecordingTestCase(ExtendedTestCase):
         # - Python 2.7 for 2.7/3.3/3.4 (...Microsoft.Compute//availabilitySets...)
         # - Python 3.5 (...Microsoft.Compute/availabilitySets...)
         # I don't know why 3.5 has one / and 2.7-3.4 two /
-        request.uri = re.sub('(?<!:)//','/',request.uri)
+        request.uri = re.sub("(?<!:)//", "/", request.uri)
 
         if not TestMode.is_playback(self.test_mode):
             request.uri = self._scrub(request.uri)
@@ -132,11 +131,12 @@ class RecordingTestCase(ExtendedTestCase):
             # decode_response is supposed to do a copy, but do it bad
             # https://github.com/kevin1024/vcrpy/issues/264
             response = decode_response(response)
-            headers = response.get('headers')
+            headers = response.get("headers")
             if headers:
+
                 def internal_scrub(key, val):
-                    if key.lower() == 'retry-after':
-                        return '0'
+                    if key.lower() == "retry-after":
+                        return "0"
                     return self._scrub(val)
 
                 for name, val in headers.items():
@@ -146,11 +146,11 @@ class RecordingTestCase(ExtendedTestCase):
                     else:
                         headers[name] = internal_scrub(name, val)
 
-            body = response.get('body')
+            body = response.get("body")
             if body:
-                body_str = body.get('string')
+                body_str = body.get("string")
                 if body_str:
-                    response['body']['string'] = self._scrub(body_str)
+                    response["body"]["string"] = self._scrub(body_str)
 
         return response
 
@@ -183,5 +183,6 @@ def record(test):
     def recording_test(self):
         with self.recording():
             test(self)
+
     recording_test.__name__ = test.__name__
     return recording_test

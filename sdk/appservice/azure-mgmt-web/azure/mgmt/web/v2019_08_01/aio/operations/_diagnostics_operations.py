@@ -46,7 +46,7 @@ class DiagnosticsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DetectorResponseCollection"]:
         """List Hosting Environment Detector Responses.
 
@@ -108,7 +108,7 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -127,7 +127,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DetectorResponse":
         """Get Hosting Environment Detector Response.
 
@@ -188,7 +188,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorResponse', pipeline_response)
@@ -203,7 +203,7 @@ class DiagnosticsOperations:
         self,
         resource_group_name: str,
         site_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DetectorResponseCollection"]:
         """List Site Detector Responses.
 
@@ -265,7 +265,7 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -284,7 +284,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DetectorResponse":
         """Get site detector response.
 
@@ -345,7 +345,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorResponse', pipeline_response)
@@ -360,7 +360,7 @@ class DiagnosticsOperations:
         self,
         resource_group_name: str,
         site_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticCategoryCollection"]:
         """Get Diagnostics Categories.
 
@@ -422,7 +422,7 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -438,7 +438,7 @@ class DiagnosticsOperations:
         resource_group_name: str,
         site_name: str,
         diagnostic_category: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticCategory":
         """Get Diagnostics Category.
 
@@ -487,7 +487,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticCategory', pipeline_response)
@@ -503,7 +503,7 @@ class DiagnosticsOperations:
         resource_group_name: str,
         site_name: str,
         diagnostic_category: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticAnalysisCollection"]:
         """Get Site Analyses.
 
@@ -568,7 +568,7 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -585,7 +585,7 @@ class DiagnosticsOperations:
         site_name: str,
         diagnostic_category: str,
         analysis_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AnalysisDefinition":
         """Get Site Analysis.
 
@@ -637,7 +637,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AnalysisDefinition', pipeline_response)
@@ -657,7 +657,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticAnalysis":
         """Execute Analysis.
 
@@ -721,7 +721,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticAnalysis', pipeline_response)
@@ -737,7 +737,7 @@ class DiagnosticsOperations:
         resource_group_name: str,
         site_name: str,
         diagnostic_category: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticDetectorCollection"]:
         """Get Detectors.
 
@@ -802,7 +802,7 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -819,7 +819,7 @@ class DiagnosticsOperations:
         site_name: str,
         diagnostic_category: str,
         detector_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DetectorDefinition":
         """Get Detector.
 
@@ -871,7 +871,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorDefinition', pipeline_response)
@@ -891,7 +891,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticDetectorResponse":
         """Execute Detector.
 
@@ -955,7 +955,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticDetectorResponse', pipeline_response)
@@ -971,7 +971,7 @@ class DiagnosticsOperations:
         resource_group_name: str,
         site_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DetectorResponseCollection"]:
         """List Site Detector Responses.
 
@@ -1036,7 +1036,7 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1056,7 +1056,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DetectorResponse":
         """Get site detector response.
 
@@ -1120,7 +1120,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorResponse', pipeline_response)
@@ -1136,7 +1136,7 @@ class DiagnosticsOperations:
         resource_group_name: str,
         site_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticCategoryCollection"]:
         """Get Diagnostics Categories.
 
@@ -1201,7 +1201,7 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1218,7 +1218,7 @@ class DiagnosticsOperations:
         site_name: str,
         diagnostic_category: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticCategory":
         """Get Diagnostics Category.
 
@@ -1270,7 +1270,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticCategory', pipeline_response)
@@ -1287,7 +1287,7 @@ class DiagnosticsOperations:
         site_name: str,
         diagnostic_category: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticAnalysisCollection"]:
         """Get Site Analyses.
 
@@ -1355,7 +1355,7 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1373,7 +1373,7 @@ class DiagnosticsOperations:
         diagnostic_category: str,
         analysis_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AnalysisDefinition":
         """Get Site Analysis.
 
@@ -1428,7 +1428,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AnalysisDefinition', pipeline_response)
@@ -1449,7 +1449,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticAnalysis":
         """Execute Analysis.
 
@@ -1516,7 +1516,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticAnalysis', pipeline_response)
@@ -1533,7 +1533,7 @@ class DiagnosticsOperations:
         site_name: str,
         diagnostic_category: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticDetectorCollection"]:
         """Get Detectors.
 
@@ -1601,7 +1601,7 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1619,7 +1619,7 @@ class DiagnosticsOperations:
         diagnostic_category: str,
         detector_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DetectorDefinition":
         """Get Detector.
 
@@ -1674,7 +1674,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorDefinition', pipeline_response)
@@ -1695,7 +1695,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticDetectorResponse":
         """Execute Detector.
 
@@ -1762,7 +1762,7 @@ class DiagnosticsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticDetectorResponse', pipeline_response)

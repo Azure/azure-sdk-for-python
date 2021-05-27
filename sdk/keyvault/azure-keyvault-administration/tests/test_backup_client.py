@@ -10,7 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ResourceExistsError
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
-from azure.keyvault.administration import KeyVaultBackupClient, BackupOperation
+from azure.keyvault.administration import KeyVaultBackupClient, KeyVaultBackupOperation
 from azure.keyvault.administration._internal import parse_folder_url
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 import pytest
@@ -91,7 +91,7 @@ class BackupClientTests(KeyVaultTestCase):
         assert_successful_operation(backup_status)
 
         # restore the key
-        restore_poller = backup_client.begin_selective_restore(backup_status.folder_url, sas_token, key_name)
+        restore_poller = backup_client.begin_selective_key_restore(key_name, backup_status.folder_url, sas_token)
 
         # check restore status and result
         job_id = restore_poller.polling_method().resource().job_id
@@ -119,7 +119,7 @@ def test_continuation_token():
     backup_client._client = mock_generated_client
     backup_client.begin_restore("storage uri", "sas", continuation_token=expected_token)
     backup_client.begin_backup("storage uri", "sas", continuation_token=expected_token)
-    backup_client.begin_selective_restore("storage uri", "sas", "key", continuation_token=expected_token)
+    backup_client.begin_selective_key_restore("storage uri", "sas", "key", continuation_token=expected_token)
 
     for method in ("begin_full_backup", "begin_full_restore_operation", "begin_selective_key_restore_operation"):
         mock_method = getattr(mock_generated_client, method)
@@ -129,7 +129,7 @@ def test_continuation_token():
 
 
 def assert_in_progress_operation(operation):
-    if isinstance(operation, BackupOperation):
+    if isinstance(operation, KeyVaultBackupOperation):
         assert operation.folder_url is None
     assert operation.status == "InProgress"
     assert operation.end_time is None
@@ -137,7 +137,7 @@ def assert_in_progress_operation(operation):
 
 
 def assert_successful_operation(operation):
-    if isinstance(operation, BackupOperation):
+    if isinstance(operation, KeyVaultBackupOperation):
         assert operation.folder_url
     assert operation.status == "Succeeded"
     assert isinstance(operation.end_time, datetime)

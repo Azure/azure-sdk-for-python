@@ -42,7 +42,7 @@ class SmsOperations:
     async def send(
         self,
         send_message_request: "_models.SendMessageRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SmsSendResponse":
         """Sends a SMS message from a phone number that belongs to the authenticated account.
 
