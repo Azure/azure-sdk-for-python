@@ -17,7 +17,7 @@ class AsyncRandomStream(BytesIO):
         self._position = 0
         self._remaining = length
         self._closed = False
-    
+
     def reset(self):
         self._position = 0
         self._remaining = self._data_length
