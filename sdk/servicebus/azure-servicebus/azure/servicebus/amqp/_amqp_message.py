@@ -76,6 +76,7 @@ class DictMixin(object):
 
 
 class AMQPAnnotatedMessage(object):
+    # pylint: disable=too-many-instance-attributes
     """
     The AMQP Annotated Message for advanced sending and receiving scenarios which allows you to
     access to low-level AMQP message sections.
@@ -217,15 +218,31 @@ class AMQPAnnotatedMessage(object):
             message_header.durable = self.header.durable
             message_header.priority = self.header.priority
 
-        message_properties = uamqp.message.MessageProperties(
-            **self.properties,
-            encoding=self._encoding
-        ) if self.properties else None
+        message_properties = None
+        if self.properties:
+            message_properties = uamqp.message.MessageProperties(
+                message_id=self.properties.message_id,
+                user_id=self.properties.user_id,
+                to=self.properties.to,
+                subject=self.properties.subject,
+                reply_to=self.properties.reply_to,
+                correlation_id=self.properties.correlation_id,
+                content_type=self.properties.content_type,
+                content_encoding=self.properties.content_encoding,
+                creation_time=self.properties.creation_time,
+                absolute_expiry_time=self.properties.absolute_expiry_time,
+                group_id=self.properties.group_id,
+                group_sequence=self.properties.group_sequence,
+                reply_to_group_id=self.properties.reply_to_group_id,
+                encoding=self._encoding
+            )
 
         amqp_body = self._message._body  # pylint: disable=protected-access
-        if isinstance(amqp_body, (uamqp.message.DataBody, uamqp.message.SequenceBody)):
-            amqp_body_type = uamqp.MessageBodyType.Data if isinstance(amqp_body, uamqp.message.DataBody) \
-                else uamqp.MessageBodyType.Sequence
+        if isinstance(amqp_body, uamqp.message.DataBody):
+            amqp_body_type = uamqp.MessageBodyType.Data
+            amqp_body = [data for data in amqp_body.data]
+        elif isinstance(amqp_body, uamqp.message.SequenceBody):
+            amqp_body_type = uamqp.MessageBodyType.Sequence
             amqp_body = [data for data in amqp_body.data]
         else:
             # amqp_body is type of uamqp.message.ValueBody
@@ -434,6 +451,7 @@ class AMQPMessageHeader(DictMixin):
 
 
 class AMQPMessageProperties(DictMixin):
+    # pylint: disable=too-many-instance-attributes
     """Message properties.
     The properties that are actually used will depend on the service implementation.
     Not all received messages will have all properties, and not all properties
