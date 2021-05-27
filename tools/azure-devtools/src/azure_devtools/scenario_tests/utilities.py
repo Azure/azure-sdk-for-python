@@ -3,11 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import base64
 import hashlib
+import inspect
 import math
 import os
-import base64
-import inspect
+import re
+import six
+import zlib
 
 
 def create_random_name(prefix='aztest', length=24):
@@ -88,3 +91,31 @@ def trim_kwargs_from_test_function(fn, kwargs):
 
 def is_preparer_func(fn):
     return getattr(fn, '__is_preparer', False)
+
+
+def _decompress_response_body(response):
+    if "content-encoding" in response["headers"]:
+        enc = response['headers']['content-encoding'].lower()
+        if enc in ["gzip", "deflate"] and isinstance(response["body"]["string"], six.binary_type):
+            zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
+            decompressor = zlib.decompressobj(wbits=zlib_mode)
+            decompressed = decompressor.decompress(response["body"]["string"])
+            decompressed = decompressed.decode("utf-8")
+            response["body"]["string"] = decompressed
+            response["headers"].pop("content-encoding")
+    return response
+
+
+def replace_subscription_id(val, replacement="00000000-0000-0000-0000-000000000000"):
+    # subscription presents in all api call
+    retval = re.sub('/(subscriptions)/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+                    r'/\1/{}'.format(replacement),
+                    val,
+                    flags=re.IGNORECASE)
+
+    # subscription is also used in graph call
+    retval = re.sub('https://(graph.windows.net)/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+                    r'https://\1/{}'.format(replacement),
+                    retval,
+                    flags=re.IGNORECASE)
+    return retval
