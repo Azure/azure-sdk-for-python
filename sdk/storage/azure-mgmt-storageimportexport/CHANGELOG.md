@@ -30,6 +30,7 @@ This version uses a next-generation code generator that introduces important bre
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
 - This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
+
 ## 0.1.0 (2020-04-11)
 
 * Initial Release
