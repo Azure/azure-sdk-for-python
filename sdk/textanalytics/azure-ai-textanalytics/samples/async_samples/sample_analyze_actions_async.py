@@ -39,7 +39,7 @@ class AnalyzeSampleAsync(object):
             RecognizePiiEntitiesAction,
             ExtractKeyPhrasesAction,
             AnalyzeSentimentAction,
-            AnalyzeActionsType
+            _AnalyzeActionsType
         )
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
@@ -51,12 +51,15 @@ class AnalyzeSampleAsync(object):
         )
 
         documents = [
-            "We went to Contoso Steakhouse located at midtown NYC last week for a dinner party, and we adore the spot! \
-            They provide marvelous food and they have a great menu. The chief cook happens to be the owner (I think his name is John Doe) \
-            and he is super nice, coming out of the kitchen and greeted us all. We enjoyed very much dining in the place! \
-            The Sirloin steak I ordered was tender and juicy, and the place was impeccably clean. You can even pre-order from their \
-            online menu at www.contososteakhouse.com, call 312-555-0176 or send email to order@contososteakhouse.com! \
-            The only complaint I have is the food didn't come fast enough. Overall I highly recommend it!"
+            'We went to Contoso Steakhouse located at midtown NYC last week for a dinner party, and we adore the spot!'\
+            'They provide marvelous food and they have a great menu. The chief cook happens to be the owner (I think his name is John Doe)'\
+            'and he is super nice, coming out of the kitchen and greeted us all.'\
+            ,
+
+            'We enjoyed very much dining in the place!'\
+            'The Sirloin steak I ordered was tender and juicy, and the place was impeccably clean. You can even pre-order from their'\
+            'online menu at www.contososteakhouse.com, call 312-555-0176 or send email to order@contososteakhouse.com!'\
+            'The only complaint I have is the food didn\'t come fast enough. Overall I highly recommend it!'\
         ]
 
         async with text_analytics_client:
@@ -72,71 +75,66 @@ class AnalyzeSampleAsync(object):
                 ]
             )
 
-            result = await poller.result()
+            pages = await poller.result()
 
-            async for action_result in result:
-                if action_result.is_error:
-                    raise ValueError(
-                        "Action has failed with message: {}".format(
-                            action_result.error.message
-                        )
-                    )
-                if action_result.action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES:
-                    print("Results of Entities Recognition action:")
-                    for idx, doc in enumerate(action_result.document_results):
-                        print("\nDocument text: {}".format(documents[idx]))
-                        for entity in doc.entities:
-                            print("Entity: {}".format(entity.text))
-                            print("...Category: {}".format(entity.category))
-                            print("...Confidence Score: {}".format(entity.confidence_score))
-                            print("...Offset: {}".format(entity.offset))
-                        print("------------------------------------------")
+            # To enumerate / zip for async, unless you install a third party library,
+            # you have to read in all of the elements into memory first.
+            # If you're not looking to enumerate / zip, we recommend you just asynchronously
+            # loop over it immediately, without going through this step of reading them into memory
+            result = []
+            async for page in pages:
+                result.append(page)
 
-                if action_result.action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
-                    print("Results of PII Entities Recognition action:")
-                    for idx, doc in enumerate(action_result.document_results):
-                        print("Document text: {}".format(documents[idx]))
-                        for entity in doc.entities:
-                            print("Entity: {}".format(entity.text))
-                            print("Category: {}".format(entity.category))
-                            print("Confidence Score: {}\n".format(entity.confidence_score))
-                        print("------------------------------------------")
+            for doc, document_results in zip(documents, result):
+                print("\nDocument text: {}".format(doc))
+                recognize_entities_result = document_results[0]
+                assert not recognize_entities_result.is_error
+                print("...Results of Recognize Entities Action:")
+                for entity in recognize_entities_result.entities:
+                    print("......Entity: {}".format(entity.text))
+                    print(".........Category: {}".format(entity.category))
+                    print(".........Confidence Score: {}".format(entity.confidence_score))
+                    print(".........Offset: {}".format(entity.offset))
 
-                if action_result.action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES:
-                    print("Results of Key Phrase Extraction action:")
-                    for idx, doc in enumerate(action_result.document_results):
-                        print("Document text: {}\n".format(documents[idx]))
-                        print("Key Phrases: {}\n".format(doc.key_phrases))
-                        print("------------------------------------------")
+                recognize_pii_entities_result = document_results[1]
+                assert not recognize_pii_entities_result.is_error
+                print("...Results of Recognize PII Entities action:")
+                for entity in recognize_pii_entities_result.entities:
+                    print("......Entity: {}".format(entity.text))
+                    print(".........Category: {}".format(entity.category))
+                    print(".........Confidence Score: {}".format(entity.confidence_score))
 
-                if action_result.action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES:
-                    print("Results of Linked Entities Recognition action:")
-                    for idx, doc in enumerate(action_result.document_results):
-                        print("Document text: {}\n".format(documents[idx]))
-                        for linked_entity in doc.entities:
-                            print("Entity name: {}".format(linked_entity.name))
-                            print("...Data source: {}".format(linked_entity.data_source))
-                            print("...Data source language: {}".format(linked_entity.language))
-                            print("...Data source entity ID: {}".format(linked_entity.data_source_entity_id))
-                            print("...Data source URL: {}".format(linked_entity.url))
-                            print("...Document matches:")
-                            for match in linked_entity.matches:
-                                print("......Match text: {}".format(match.text))
-                                print(".........Confidence Score: {}".format(match.confidence_score))
-                                print(".........Offset: {}".format(match.offset))
-                                print(".........Length: {}".format(match.length))
-                        print("------------------------------------------")
+                extract_key_phrases_result = document_results[2]
+                assert not extract_key_phrases_result.is_error
+                print("...Results of Extract Key Phrases action:")
+                print("......Key Phrases: {}".format(extract_key_phrases_result.key_phrases))
 
-                if action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT:
-                    print("Results of Sentiment Analysis action:")
-                    for doc in action_result.document_results:
-                        print("Overall sentiment: {}".format(doc.sentiment))
-                        print("Scores: positive={}; neutral={}; negative={} \n".format(
-                            doc.confidence_scores.positive,
-                            doc.confidence_scores.neutral,
-                            doc.confidence_scores.negative,
-                        ))
-                        print("------------------------------------------")
+                recognize_linked_entities_result = document_results[3]
+                assert not recognize_linked_entities_result.is_error
+                print("...Results of Recognize Linked Entities action:")
+                for linked_entity in recognize_linked_entities_result.entities:
+                    print("......Entity name: {}".format(linked_entity.name))
+                    print(".........Data source: {}".format(linked_entity.data_source))
+                    print(".........Data source language: {}".format(linked_entity.language))
+                    print(".........Data source entity ID: {}".format(linked_entity.data_source_entity_id))
+                    print(".........Data source URL: {}".format(linked_entity.url))
+                    print(".........Document matches:")
+                    for match in linked_entity.matches:
+                        print("............Match text: {}".format(match.text))
+                        print("............Confidence Score: {}".format(match.confidence_score))
+                        print("............Offset: {}".format(match.offset))
+                        print("............Length: {}".format(match.length))
+
+                analyze_sentiment_result = document_results[4]
+                assert not analyze_sentiment_result.is_error
+                print("...Results of Analyze Sentiment action:")
+                print("......Overall sentiment: {}".format(analyze_sentiment_result.sentiment))
+                print("......Scores: positive={}; neutral={}; negative={} \n".format(
+                    analyze_sentiment_result.confidence_scores.positive,
+                    analyze_sentiment_result.confidence_scores.neutral,
+                    analyze_sentiment_result.confidence_scores.negative,
+                ))
+                print("------------------------------------------")
 
         # [END analyze_async]
 

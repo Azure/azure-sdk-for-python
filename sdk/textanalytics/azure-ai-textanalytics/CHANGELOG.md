@@ -2,6 +2,11 @@
 
 ## 5.1.0b8 (Unreleased)
 
+**Breaking Changes**
+- Changed the response structure of `being_analyze_actions`. Now, we return a list of list of an action result of documents
+- Removed `AnalyzeActionsType`
+- Removed `AnalyzeActionsResult`
+- Removed `AnalyzeActionsError`
 
 ## 5.1.0b7 (2021-05-18)
 
