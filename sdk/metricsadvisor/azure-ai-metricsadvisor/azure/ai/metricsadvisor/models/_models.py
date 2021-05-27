@@ -377,10 +377,10 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
     :ivar schema: Data feed schema
     :vartype schema: ~azure.ai.metricsadvisor.models.DataFeedSchema
     :ivar source: Data feed source.
-    :vartype source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDBDataFeedSource,
+    :vartype source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDbDataFeedSource,
         AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource, AzureTableDataFeedSource,
-        AzureEventHubsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
-        SQLServerDataFeedSource, MongoDBDataFeedSource, AzureLogAnalyticsDataFeedSource]
+        AzureEventHubsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
+        SqlServerDataFeedSource, MongoDbDataFeedSource, AzureLogAnalyticsDataFeedSource]
     :ivar status: Data feed status. Possible values include: "Active", "Paused".
         Default value: "Active".
     :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
@@ -969,7 +969,7 @@ class AzureApplicationInsightsDataFeedSource(object):
     :param authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
     :keyword str credential_id: The credential entity id.
     """
 
@@ -1032,7 +1032,7 @@ class AzureBlobDataFeedSource(object):
     :param authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
     :keyword str credential_id: The credential entity id.
     """
 
@@ -1079,8 +1079,8 @@ class AzureBlobDataFeedSource(object):
         )
 
 
-class AzureCosmosDBDataFeedSource(object):
-    """AzureCosmosDBDataFeedSource.
+class AzureCosmosDbDataFeedSource(object):
+    """AzureCosmosDbDataFeedSource.
 
     :keyword str connection_string: Azure CosmosDB connection string.
     :param sql_query: Required. Query script.
@@ -1092,7 +1092,7 @@ class AzureCosmosDBDataFeedSource(object):
     :param authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
     :keyword str credential_id: The credential entity id.
     """
 
@@ -1114,7 +1114,7 @@ class AzureCosmosDBDataFeedSource(object):
         self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
-        return "AzureCosmosDBDataFeedSource(data_source_type={}, connection_string={}, sql_query={}, database={}, " \
+        return "AzureCosmosDbDataFeedSource(data_source_type={}, connection_string={}, sql_query={}, database={}, " \
                "collection_id={}, authentication_type={}, credential_id={})".format(
             self.data_source_type,
             self.connection_string,
@@ -1160,7 +1160,7 @@ class AzureDataExplorerDataFeedSource(object):
     :param authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
     :keyword str credential_id: The credential entity id.
     """
 
@@ -1213,7 +1213,7 @@ class AzureTableDataFeedSource(object):
     :param authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
     :keyword str credential_id: The credential entity id.
     """
 
@@ -1269,7 +1269,7 @@ class AzureEventHubsDataFeedSource(object):
     :param authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
     :keyword str credential_id: The credential entity id.
     """
 
@@ -1311,8 +1311,8 @@ class AzureEventHubsDataFeedSource(object):
         )
 
 
-class InfluxDBDataFeedSource(object):
-    """InfluxDBDataFeedSource.
+class InfluxDbDataFeedSource(object):
+    """InfluxDbDataFeedSource.
 
     :keyword str connection_string: InfluxDB connection string.
     :keyword str database: Database name.
@@ -1323,7 +1323,7 @@ class InfluxDBDataFeedSource(object):
     :param authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
     :keyword str credential_id: The credential entity id.
     """
 
@@ -1339,7 +1339,7 @@ class InfluxDBDataFeedSource(object):
         self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
-        return "InfluxDBDataFeedSource(data_source_type={}, connection_string={}, database={}, user_name={}, " \
+        return "InfluxDbDataFeedSource(data_source_type={}, connection_string={}, database={}, user_name={}, " \
                "password={}, query={}, authentication_type={}, credential_id={})".format(
             self.data_source_type,
             self.connection_string,
@@ -1435,7 +1435,7 @@ class PostgreSqlDataFeedSource(object):
     :param authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
     :keyword str credential_id: The credential entity id.
     """
 
@@ -1477,8 +1477,8 @@ class PostgreSqlDataFeedSource(object):
         )
 
 
-class SQLServerDataFeedSource(object):
-    """SQLServerDataFeedSource.
+class SqlServerDataFeedSource(object):
+    """SqlServerDataFeedSource.
 
     :keyword str connection_string: Database connection string.
     :param query: Required. Query script.
@@ -1486,7 +1486,7 @@ class SQLServerDataFeedSource(object):
     :param authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
     :keyword str credential_id: The credential entity id.
     """
 
@@ -1499,7 +1499,7 @@ class SQLServerDataFeedSource(object):
         self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
-        return "SQLServerDataFeedSource(data_source_type={}, connection_string={}, query={}, " \
+        return "SqlServerDataFeedSource(data_source_type={}, connection_string={}, query={}, " \
                "authentication_type={}, credential_id={})".format(
             self.data_source_type,
             self.connection_string,
@@ -1542,7 +1542,7 @@ class AzureDataLakeStorageGen2DataFeedSource(object):
     :param authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
     :keyword str credential_id: The credential entity id.
     """
 
@@ -1623,7 +1623,7 @@ class AzureLogAnalyticsDataFeedSource(object):
     :param authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
     :keyword str credential_id: The credential entity id.
     """
 
@@ -1680,17 +1680,17 @@ class AzureLogAnalyticsDataFeedSource(object):
         )
 
 
-class MongoDBDataFeedSource(object):
-    """MongoDBDataFeedSource.
+class MongoDbDataFeedSource(object):
+    """MongoDbDataFeedSource.
 
-    ::keyword str connection_string: MongoDB connection string.
+    ::keyword str connection_string: MongoDb connection string.
     :keyword str database: Database name.
     :param command: Required. Query script.
     :type command: str
     :param authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
     :keyword str credential_id: The credential entity id.
     """
 
@@ -1704,7 +1704,7 @@ class MongoDBDataFeedSource(object):
         self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
-        return "MongoDBDataFeedSource(data_source_type={}, connection_string={}, database={}, command={}, " \
+        return "MongoDbDataFeedSource(data_source_type={}, connection_string={}, database={}, command={}, " \
                "authentication_type={}, credential_id={})".format(
             self.data_source_type,
             self.connection_string,
@@ -2582,17 +2582,17 @@ class AnomalyAlert(object):
 
 
 DATA_FEED_TRANSFORM = {
-    "SqlServer": SQLServerDataFeedSource,
+    "SqlServer": SqlServerDataFeedSource,
     "AzureApplicationInsights": AzureApplicationInsightsDataFeedSource,
     "AzureBlob": AzureBlobDataFeedSource,
-    "AzureCosmosDB": AzureCosmosDBDataFeedSource,
+    "AzureCosmosDB": AzureCosmosDbDataFeedSource,
     "AzureDataExplorer": AzureDataExplorerDataFeedSource,
     "AzureTable": AzureTableDataFeedSource,
     "AzureLogAnalytics": AzureLogAnalyticsDataFeedSource,
-    "InfluxDB": InfluxDBDataFeedSource,
+    "InfluxDB": InfluxDbDataFeedSource,
     "MySql": MySqlDataFeedSource,
     "PostgreSql": PostgreSqlDataFeedSource,
-    "MongoDB": MongoDBDataFeedSource,
+    "MongoDB": MongoDbDataFeedSource,
     "AzureDataLakeStorageGen2": AzureDataLakeStorageGen2DataFeedSource,
     "AzureEventHubs": AzureEventHubsDataFeedSource
 }
@@ -3254,8 +3254,8 @@ class PeriodFeedback(msrest.serialization.Model):
             value=value,
         )
 
-class SQLConnectionStringCredentialEntity(object):
-    """SQLConnectionStringCredentialEntity.
+class SqlConnectionStringCredentialEntity(object):
+    """SqlConnectionStringCredentialEntity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3290,7 +3290,7 @@ class SQLConnectionStringCredentialEntity(object):
         self.description = kwargs.get('description', None)
 
     def __repr__(self):
-        return "SQLConnectionStringCredentialEntity(id={}, credential_entity_type={}, name={}, " \
+        return "SqlConnectionStringCredentialEntity(id={}, credential_entity_type={}, name={}, " \
                "connection_string={}, description={})".format(
             self.id,
             self.credential_entity_type,
@@ -3490,8 +3490,8 @@ class ServicePrincipalCredentialEntity(object):
             parameters=param_patch,
         )
 
-class ServicePrincipalInKVCredentialEntity(object):
-    """ServicePrincipalCredentialEntity.
+class ServicePrincipalInKeyVaultCredentialEntity(object):
+    """ServicePrincipalInKeyVaultCredentialEntity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3554,7 +3554,7 @@ class ServicePrincipalInKVCredentialEntity(object):
         self.description = kwargs.get('description', None)
 
     def __repr__(self):
-        return "ServicePrincipalInKVCredentialEntity(id={}, credential_entity_type={}, name={}, " \
+        return "ServicePrincipalInKeyVaultCredentialEntity(id={}, credential_entity_type={}, name={}, " \
                "key_vault_endpoint={}, key_vault_client_id={}, key_vault_client_secret={}, " \
                "service_principal_id_name_in_kv={}, service_principal_secret_name_in_kv={}, tenant_id={}, " \
                "description={})".format(

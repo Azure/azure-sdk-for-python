@@ -9,10 +9,10 @@ import pytest
 from devtools_testutils import AzureTestCase
 
 from azure.ai.metricsadvisor.models import (
-    SQLConnectionStringCredentialEntity,
+    SqlConnectionStringCredentialEntity,
     DataLakeGen2SharedKeyCredentialEntity,
     ServicePrincipalCredentialEntity,
-    ServicePrincipalInKVCredentialEntity
+    ServicePrincipalInKeyVaultCredentialEntity
 )
 from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
 
@@ -25,7 +25,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         async with self.admin_client:
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
-                    credential_entity=SQLConnectionStringCredentialEntity(
+                    credential_entity=SqlConnectionStringCredentialEntity(
                         name=credential_entity_name,
                         connection_string=self.sql_server_connection_string,
                         description="my credential entity",
@@ -81,7 +81,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         async with self.admin_client:
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
-                    credential_entity=ServicePrincipalInKVCredentialEntity(
+                    credential_entity=ServicePrincipalInKeyVaultCredentialEntity(
                         name=credential_entity_name,
                         key_vault_endpoint="key_vault_endpoint",
                         key_vault_client_id="key_vault_client_id",
@@ -104,7 +104,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         async with self.admin_client:
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
-                    credential_entity=SQLConnectionStringCredentialEntity(
+                    credential_entity=SqlConnectionStringCredentialEntity(
                         name=credential_entity_name,
                         connection_string=self.sql_server_connection_string,
                         description="my credential entity",
@@ -124,7 +124,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         async with self.admin_client:
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
-                    credential_entity=SQLConnectionStringCredentialEntity(
+                    credential_entity=SqlConnectionStringCredentialEntity(
                         name=credential_entity_name,
                         connection_string=self.sql_server_connection_string,
                         description="my credential entity",
@@ -185,7 +185,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         async with self.admin_client:
             try:
                 credential_entity = await self.admin_client.create_credential_entity(
-                    credential_entity=ServicePrincipalInKVCredentialEntity(
+                    credential_entity=ServicePrincipalInKeyVaultCredentialEntity(
                         name=credential_entity_name,
                         key_vault_endpoint="key_vault_endpoint",
                         key_vault_client_id="key_vault_client_id",

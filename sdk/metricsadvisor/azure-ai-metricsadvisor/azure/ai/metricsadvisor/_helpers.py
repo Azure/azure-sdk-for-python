@@ -25,10 +25,10 @@ from .models import (
     CommentFeedback,
     PeriodFeedback,
     DataFeedRollupType,
-    SQLConnectionStringCredentialEntity,
+    SqlConnectionStringCredentialEntity,
     DataLakeGen2SharedKeyCredentialEntity,
     ServicePrincipalCredentialEntity,
-    ServicePrincipalInKVCredentialEntity
+    ServicePrincipalInKeyVaultCredentialEntity
 )
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
@@ -119,10 +119,10 @@ def convert_to_generated_data_feed_type(
         AzureEventHubsDataFeed]
     :param str name: Name for the data feed.
     :param source: The exposed model source of the data feed
-    :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDBDataFeedSource,
+    :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDbDataFeedSource,
         AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource, AzureTableDataFeedSource,
-        AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
-        SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
+        AzureLogAnalyticsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
+        SqlServerDataFeedSource, MongoDbDataFeedSource, AzureEventHubsDataFeedSource]
     :param granularity: Granularity type and amount if using custom.
     :type granularity: ~azure.ai.metricsadvisor.models.DataFeedGranularity
     :param schema: Data feed schema
@@ -228,9 +228,9 @@ def get_authentication_policy(credential):
 
 def convert_to_credential_entity(credential_entity):
     if credential_entity.data_source_credential_type == "AzureSQLConnectionString":
-        return SQLConnectionStringCredentialEntity._from_generated(credential_entity)
+        return SqlConnectionStringCredentialEntity._from_generated(credential_entity)
     if credential_entity.data_source_credential_type == "DataLakeGen2SharedKey":
         return DataLakeGen2SharedKeyCredentialEntity._from_generated(credential_entity)
     if credential_entity.data_source_credential_type == "ServicePrincipal":
         return ServicePrincipalCredentialEntity._from_generated(credential_entity)
-    return ServicePrincipalInKVCredentialEntity._from_generated(credential_entity)
+    return ServicePrincipalInKeyVaultCredentialEntity._from_generated(credential_entity)

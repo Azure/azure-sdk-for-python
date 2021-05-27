@@ -71,21 +71,21 @@ from .models._models import (
     DataFeedIngestionProgress,
     AzureApplicationInsightsDataFeedSource,
     AzureBlobDataFeedSource,
-    AzureCosmosDBDataFeedSource,
+    AzureCosmosDbDataFeedSource,
     AzureDataExplorerDataFeedSource,
     AzureTableDataFeedSource,
     AzureLogAnalyticsDataFeedSource,
-    InfluxDBDataFeedSource,
+    InfluxDbDataFeedSource,
     MySqlDataFeedSource,
     PostgreSqlDataFeedSource,
-    SQLServerDataFeedSource,
-    MongoDBDataFeedSource,
+    SqlServerDataFeedSource,
+    MongoDbDataFeedSource,
     AzureDataLakeStorageGen2DataFeedSource,
     AzureEventHubsDataFeedSource,
-    SQLConnectionStringCredentialEntity,
+    SqlConnectionStringCredentialEntity,
     DataLakeGen2SharedKeyCredentialEntity,
     ServicePrincipalCredentialEntity,
-    ServicePrincipalInKVCredentialEntity
+    ServicePrincipalInKeyVaultCredentialEntity
 )
 
 if TYPE_CHECKING:
@@ -105,24 +105,24 @@ if TYPE_CHECKING:
 DataFeedSourceUnion = Union[
     AzureApplicationInsightsDataFeedSource,
     AzureBlobDataFeedSource,
-    AzureCosmosDBDataFeedSource,
+    AzureCosmosDbDataFeedSource,
     AzureDataExplorerDataFeedSource,
     AzureTableDataFeedSource,
     AzureLogAnalyticsDataFeedSource,
-    InfluxDBDataFeedSource,
+    InfluxDbDataFeedSource,
     MySqlDataFeedSource,
     PostgreSqlDataFeedSource,
-    SQLServerDataFeedSource,
-    MongoDBDataFeedSource,
+    SqlServerDataFeedSource,
+    MongoDbDataFeedSource,
     AzureDataLakeStorageGen2DataFeedSource,
     AzureEventHubsDataFeedSource,
 ]
 
 CredentialEntityUnion = Union[
-    SQLConnectionStringCredentialEntity,
+    SqlConnectionStringCredentialEntity,
     DataLakeGen2SharedKeyCredentialEntity,
     ServicePrincipalCredentialEntity,
-    ServicePrincipalInKVCredentialEntity,
+    ServicePrincipalInKeyVaultCredentialEntity,
 ]
 
 DATA_FEED = {
@@ -282,9 +282,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param str name: Name for the data feed.
         :param source: The source of the data feed
         :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
-            AzureCosmosDBDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
-            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
-            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
+            AzureCosmosDbDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SqlServerDataFeedSource, MongoDbDataFeedSource, AzureEventHubsDataFeedSource]
         :param granularity: Granularity type. If using custom granularity, you must instantiate a DataFeedGranularity.
         :type granularity: Union[str, ~azure.ai.metricsadvisor.models.DataFeedGranularityType,
             ~azure.ai.metricsadvisor.models.DataFeedGranularity]
@@ -745,9 +745,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :paramtype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
         :keyword source: The source of the data feed for update
         :paramtype source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
-            AzureCosmosDBDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
-            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
-            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
+            AzureCosmosDbDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SqlServerDataFeedSource, MongoDbDataFeedSource, AzureEventHubsDataFeedSource]
         :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -1242,10 +1242,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param credential_entity_id: Data source credential entity unique ID.
         :type credential_entity_id: str
         :return: The credential entity
-        :rtype: Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
+        :rtype: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
             ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
             ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalInKVCredentialEntity]
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -1270,15 +1270,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """Create a new data source credential entity.
 
         :param credential_entity: The data source credential entity to create
-        :type credential_entity: Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
+        :type credential_entity: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
             ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
             ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalInKVCredentialEntity]
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
         :return: The created data source credential entity
-        :rtype: Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
+        :rtype: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
             ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
             ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalInKVCredentialEntity]
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -1315,10 +1315,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param skip: for paging, skipped number.
         :type skip: int
         :return: Pageable containing credential entities
-        :rtype: ~azure.core.paging.ItemPaged[Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
+        :rtype: ~azure.core.paging.ItemPaged[Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
             ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
             ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalInKVCredentialEntity]]
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -1347,14 +1347,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """Update a credential entity.
 
         :param credential_entity: The new credential entity object
-        :type credential_entity: Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
+        :type credential_entity: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
             ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
             ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalInKVCredentialEntity]
-        :rtype: Union[~azure.ai.metricsadvisor.models.SQLConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :rtype: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
             ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
             ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalInKVCredentialEntity]
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
