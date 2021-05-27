@@ -138,6 +138,7 @@ class AMQPAnnotatedMessage(object):
         self._message = uamqp.message.Message(body=self._body, body_type=self._body_type)
         header_dict = cast(Mapping, kwargs.get("header"))
         self._header = AMQPMessageHeader(**header_dict) if "header" in kwargs else None
+        self._footer = kwargs.get("footer")
         properties_dict = cast(Mapping, kwargs.get("properties"))
         self._properties = AMQPMessageProperties(**properties_dict) if "properties" in kwargs else None
         self._application_properties = kwargs.get("application_properties")
