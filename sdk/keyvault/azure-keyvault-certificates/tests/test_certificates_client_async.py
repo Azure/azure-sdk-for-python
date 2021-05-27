@@ -19,11 +19,11 @@ from azure.keyvault.certificates import (
     KeyType,
     KeyCurveName,
     KeyUsageType,
+    KeyVaultCertificateIdentifier,
     CertificateContentType,
     LifetimeAction,
     CertificateIssuer,
-    IssuerProperties,
-    parse_key_vault_certificate_id
+    IssuerProperties
 )
 from azure.keyvault.certificates.aio import CertificateClient
 import pytest
@@ -84,7 +84,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
         self.assertIsNotNone(pending_cert_operation)
         self.assertIsNotNone(pending_cert_operation.csr)
         self.assertEqual(original_cert_policy.issuer_name, pending_cert_operation.issuer_name)
-        pending_id = parse_key_vault_certificate_id(pending_cert_operation.id)
+        pending_id = KeyVaultCertificateIdentifier(pending_cert_operation.id)
         self.assertEqual(pending_id.vault_url.strip("/"), vault.strip("/"))
         self.assertEqual(pending_id.name, cert_name)
 
@@ -350,7 +350,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
         deleted_certificates = client.list_deleted_certificates()
         deleted = []
         async for c in deleted_certificates:
-            deleted.append(parse_key_vault_certificate_id(source_id=c.id).name)
+            deleted.append(KeyVaultCertificateIdentifier(id=c.id).name)
         self.assertTrue(all(c in deleted for c in certs.keys()))
 
         # recover select certificates (test resources have a "livekvtest" prefix)
@@ -368,7 +368,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
         deleted_certificates = client.list_deleted_certificates()
         deleted = []
         async for c in deleted_certificates:
-            deleted.append(parse_key_vault_certificate_id(source_id=c.id).name)
+            deleted.append(KeyVaultCertificateIdentifier(id=c.id).name)
         self.assertTrue(not any(c in deleted for c in certs.keys()))
 
         # validate the recovered certificates
