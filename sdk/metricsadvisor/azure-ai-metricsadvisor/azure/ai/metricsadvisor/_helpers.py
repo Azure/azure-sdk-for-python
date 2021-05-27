@@ -25,10 +25,10 @@ from .models import (
     CommentFeedback,
     PeriodFeedback,
     DataFeedRollupType,
-    SQLConnectionStringCredentialEntity,
+    SqlConnectionStringCredentialEntity,
     DataLakeGen2SharedKeyCredentialEntity,
     ServicePrincipalCredentialEntity,
-    ServicePrincipalInKVCredentialEntity
+    ServicePrincipalInKeyVaultCredentialEntity
 )
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
@@ -50,7 +50,7 @@ def construct_alert_config_dict(update_kwargs):
 def construct_detection_config_dict(update_kwargs):
 
     if "wholeMetricConfiguration" in update_kwargs:
-        update_kwargs["wholeMetricConfiguration"] = update_kwargs["wholeMetricConfiguration"]._to_generated() \
+        update_kwargs["wholeMetricConfiguration"] = update_kwargs["wholeMetricConfiguration"]._to_generated_patch() \
             if update_kwargs["wholeMetricConfiguration"] else None
     if "dimensionGroupOverrideConfigurations" in update_kwargs:
         update_kwargs["dimensionGroupOverrideConfigurations"] = [
@@ -95,6 +95,8 @@ def construct_data_feed_dict(update_kwargs):
         update_kwargs["dataStartFrom"] = Serializer.serialize_iso(update_kwargs["dataStartFrom"])
 
     if "dataSourceParameter" in update_kwargs:
+        update_kwargs["authenticationType"] = update_kwargs["dataSourceParameter"].authentication_type
+        update_kwargs["credentialId"] = update_kwargs["dataSourceParameter"].credential_id
         update_kwargs["dataSourceParameter"] = update_kwargs["dataSourceParameter"]._to_generated_patch()
     return update_kwargs
 
@@ -117,10 +119,10 @@ def convert_to_generated_data_feed_type(
         AzureEventHubsDataFeed]
     :param str name: Name for the data feed.
     :param source: The exposed model source of the data feed
-    :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDBDataFeedSource,
+    :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDbDataFeedSource,
         AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource, AzureTableDataFeedSource,
-        AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
-        SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
+        AzureLogAnalyticsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
+        SqlServerDataFeedSource, MongoDbDataFeedSource, AzureEventHubsDataFeedSource]
     :param granularity: Granularity type and amount if using custom.
     :type granularity: ~azure.ai.metricsadvisor.models.DataFeedGranularity
     :param schema: Data feed schema
@@ -153,6 +155,8 @@ def convert_to_generated_data_feed_type(
 
     return generated_feed_type(
         data_source_parameter=source._to_generated(),
+        authentication_type=source.authentication_type,
+        credential_id=source.credential_id,
         data_feed_name=name,
         granularity_name=granularity.granularity_type,
         granularity_amount=granularity.custom_granularity_value,
@@ -224,9 +228,9 @@ def get_authentication_policy(credential):
 
 def convert_to_credential_entity(credential_entity):
     if credential_entity.data_source_credential_type == "AzureSQLConnectionString":
-        return SQLConnectionStringCredentialEntity._from_generated(credential_entity)
+        return SqlConnectionStringCredentialEntity._from_generated(credential_entity)
     if credential_entity.data_source_credential_type == "DataLakeGen2SharedKey":
         return DataLakeGen2SharedKeyCredentialEntity._from_generated(credential_entity)
     if credential_entity.data_source_credential_type == "ServicePrincipal":
         return ServicePrincipalCredentialEntity._from_generated(credential_entity)
-    return ServicePrincipalInKVCredentialEntity._from_generated(credential_entity)
+    return ServicePrincipalInKeyVaultCredentialEntity._from_generated(credential_entity)
