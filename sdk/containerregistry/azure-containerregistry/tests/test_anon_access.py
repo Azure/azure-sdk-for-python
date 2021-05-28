@@ -3,17 +3,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import pytest
 import six
 
+from azure.core.exceptions import ClientAuthenticationError
+from azure.core.paging import ItemPaged
 from azure.containerregistry import (
     ArtifactTagProperties,
     RepositoryProperties,
     ArtifactManifestProperties,
-    # RegistryArtifact,
 )
-
-from azure.core.paging import ItemPaged
-from azure.core.pipeline.transport import RequestsTransport
 
 from testcase import ContainerRegistryTestClass
 from constants import HELLO_WORLD
@@ -104,3 +103,27 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             count += 1
             assert isinstance(tag, ArtifactTagProperties)
         assert count > 0
+
+    @acr_preparer()
+    def test_delete_repository(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+        assert client._credential is None
+
+        with pytest.raises(ClientAuthenticationError):
+            client.delete_repository("library/hello-world")
+
+    @acr_preparer()
+    def test_delete_tag(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+        assert client._credential is None
+
+        with pytest.raises(ClientAuthenticationError):
+            client.delete_tag("library/hello-world", "latest")
+
+    @acr_preparer()
+    def test_delete_manifest(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+        assert client._credential is None
+
+        with pytest.raises(ClientAuthenticationError):
+            client.delete_manifest("library/hello-world", "latest")

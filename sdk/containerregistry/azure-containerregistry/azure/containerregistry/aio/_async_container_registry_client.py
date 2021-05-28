@@ -419,7 +419,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 tag_properties = await client.get_tag_properties(tag.name)
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.get_tag_properties_properties(repository, tag, **kwargs),
+            await self._client.container_registry.get_tag_properties(repository, tag, **kwargs),
             repository=repository,
         )
 
