@@ -120,7 +120,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert page_count == 2
         assert table_count == 3
 
-        self._delete_all_tables()
+        self._delete_all_tables(ts)
 
     @tables_decorator
     def test_create_table_if_exists(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -166,7 +166,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert len(tables) >=  1
         assert tables[0] is not None
 
-        self._delete_all_tables()
+        self._delete_all_tables(ts)
 
     @tables_decorator
     def test_query_tables_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):

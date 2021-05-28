@@ -69,7 +69,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         assert page_count == 2
         assert table_count == 3
 
-        await self._delete_all_tables()
+        await self._delete_all_tables(tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
     @cosmos_decorator_async
     async def test_list_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
