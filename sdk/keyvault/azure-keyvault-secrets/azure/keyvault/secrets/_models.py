@@ -248,7 +248,7 @@ class KeyVaultSecret(object):
 class KeyVaultSecretIdentifier(object):
     """Information about a KeyVaultSecret parsed from a secret ID.
 
-    :param str id: the full original identifier of a secret
+    :param str source_id: the full original identifier of a secret
     :raises ValueError: if the secret ID is improperly formatted
     Example:
         .. literalinclude:: ../tests/test_parse_id.py
@@ -259,9 +259,9 @@ class KeyVaultSecretIdentifier(object):
             :dedent: 8
     """
 
-    def __init__(self, id):  # pylint: disable=W0622
+    def __init__(self, source_id):
         # type: (str) -> None
-        self._resource_id = parse_key_vault_id(id)
+        self._resource_id = parse_key_vault_id(source_id)
 
     @property
     def source_id(self):
