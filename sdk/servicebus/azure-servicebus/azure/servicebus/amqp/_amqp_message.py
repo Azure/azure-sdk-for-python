@@ -210,7 +210,7 @@ class AMQPAnnotatedMessage(object):
         self._delivery_annotations = message.delivery_annotations
         self._application_properties = message.application_properties
 
-    def _to_outing_amqp_message(self):
+    def _to_outgoing_amqp_message(self):
         message_header = None
         if self.header:
             message_header = uamqp.message.MessageHeader()

@@ -232,7 +232,7 @@ def _convert_to_single_service_bus_message(message, message_type):
     if isinstance(message, AMQPAnnotatedMessage):
         message = message_type(
             body=None,
-            message=message._to_outing_amqp_message()
+            message=message._to_outgoing_amqp_message()
         )
 
     if isinstance(message, message_type):

@@ -220,7 +220,7 @@ class ServiceBusMessage(
     def _to_outgoing_message(self):
         # type: () -> ServiceBusMessage
         # pylint: disable=protected-access
-        self.message = self.raw_amqp_message._to_outing_amqp_message()
+        self.message = self.raw_amqp_message._to_outgoing_amqp_message()
         self.message.state = MessageState.WaitingToBeSent
         self.message._response = None
         return self
@@ -804,7 +804,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
     def _to_outgoing_message(self):
         # type: () -> ServiceBusMessage
         # pylint: disable=protected-access
-        return ServiceBusMessage(body=None, message=self.raw_amqp_message._to_outing_amqp_message())
+        return ServiceBusMessage(body=None, message=self.raw_amqp_message._to_outgoing_amqp_message())
 
     def __repr__(self):  # pylint: disable=too-many-branches,too-many-statements
         # type: () -> str
