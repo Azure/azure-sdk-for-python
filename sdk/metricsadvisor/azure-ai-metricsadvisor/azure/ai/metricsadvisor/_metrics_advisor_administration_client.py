@@ -60,10 +60,11 @@ from ._helpers import (
     construct_data_feed_dict,
     convert_datetime,
     get_authentication_policy,
-    convert_to_credential_entity,
+    convert_to_datasource_credential,
 )
 from .models._models import (
     DataFeed,
+    NotificationHook,
     EmailNotificationHook,
     WebNotificationHook,
     AnomalyAlertConfiguration,
@@ -82,10 +83,11 @@ from .models._models import (
     MongoDbDataFeedSource,
     AzureDataLakeStorageGen2DataFeedSource,
     AzureEventHubsDataFeedSource,
-    SqlConnectionStringCredentialEntity,
-    DataLakeGen2SharedKeyCredentialEntity,
-    ServicePrincipalCredentialEntity,
-    ServicePrincipalInKeyVaultCredentialEntity
+    DatasourceSqlConnectionString,
+    DatasourceDataLakeGen2SharedKey,
+    DatasourceServicePrincipal,
+    DatasourceServicePrincipalInKeyVault,
+    DatasourceCredential,
 )
 
 if TYPE_CHECKING:
@@ -118,11 +120,11 @@ DataFeedSourceUnion = Union[
     AzureEventHubsDataFeedSource,
 ]
 
-CredentialEntityUnion = Union[
-    SqlConnectionStringCredentialEntity,
-    DataLakeGen2SharedKeyCredentialEntity,
-    ServicePrincipalCredentialEntity,
-    ServicePrincipalInKeyVaultCredentialEntity,
+DatasourceCredentialUnion = Union[
+    DatasourceSqlConnectionString,
+    DatasourceDataLakeGen2SharedKey,
+    DatasourceServicePrincipal,
+    DatasourceServicePrincipalInKeyVault,
 ]
 
 DATA_FEED = {
@@ -1231,173 +1233,174 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
     @distributed_trace
-    def get_credential_entity(
+    def get_datasource_credential(
         self,
-        credential_entity_id,  # type: str
+        credential_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> CredentialEntityUnion
-        """Get a data source credential entity
+        # type: (...) -> DatasourceCredentialUnion
+        """Get a datasource credential
 
-        :param credential_entity_id: Data source credential entity unique ID.
-        :type credential_entity_id: str
-        :return: The credential entity
-        :rtype: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
-            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :param str credential_id: Data source credential entity unique ID.
+        :return: The datasource credential
+        :rtype: Union[~azure.ai.metricsadvisor.models.DatasourceCredential,
+            ~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
+            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_credential_entities.py
-                :start-after: [START get_credential_entity]
-                :end-before: [END get_credential_entity]
+            .. literalinclude:: ../samples/sample_datasource_credentials.py
+                :start-after: [START get_datasource_credential]
+                :end-before: [END get_datasource_credential]
                 :language: python
                 :dedent: 4
-                :caption: Get a credential entity by its ID
+                :caption: Get a datasource credential by its ID
         """
 
-        credential_entity = self._client.get_credential(credential_entity_id, **kwargs)
-        return convert_to_credential_entity(credential_entity)
+        datasource_credential = self._client.get_credential(credential_id, **kwargs)
+        return convert_to_datasource_credential(datasource_credential)
 
     @distributed_trace
-    def create_credential_entity(
-            self, credential_entity,    # type: CredentialEntityUnion
+    def create_datasource_credential(
+            self, datasource_credential,    # type: DatasourceCredentialUnion
             **kwargs  # type: Any
     ):
-        # type: (...) -> CredentialEntityUnion
-        """Create a new data source credential entity.
+        # type: (...) -> DatasourceCredentialUnion
+        """Create a new datasource credential.
 
-        :param credential_entity: The data source credential entity to create
-        :type credential_entity: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
-            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
-        :return: The created data source credential entity
-        :rtype: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
-            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :param datasource_credential: The datasource credential to create
+        :type datasource_credential: Union[~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
+            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]
+        :return: The created datasource credential
+        :rtype: Union[~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
+            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_credential_entities.py
-                :start-after: [START create_credential_entity]
-                :end-before: [END create_credential_entity]
+            .. literalinclude:: ../samples/sample_datasource_credentials.py
+                :start-after: [START create_datasource_credential]
+                :end-before: [END create_datasource_credential]
                 :language: python
                 :dedent: 4
-                :caption: Create a credential entity
+                :caption: Create a datasource credential
         """
 
-        credential_entity_request = None
-        if credential_entity.credential_entity_type in ["AzureSQLConnectionString",
+        datasource_credential_request = None
+        if datasource_credential.credential_type in ["AzureSQLConnectionString",
             "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
-            credential_entity_request = credential_entity._to_generated()
+            datasource_credential_request = datasource_credential._to_generated()
 
         response_headers = self._client.create_credential(  # type: ignore
-            credential_entity_request,  # type: ignore
+            datasource_credential_request,  # type: ignore
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
-        credential_entity_id = response_headers["Location"].split("credentials/")[1]
-        return self.get_credential_entity(credential_entity_id)
+        credential_id = response_headers["Location"].split("credentials/")[1]
+        return self.get_datasource_credential(credential_id)
 
     @distributed_trace
-    def list_credential_entities(
+    def list_datasource_credentials(
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[CredentialEntityUnion]
+        # type: (...) -> ItemPaged[DatasourceCredential]
         """List all credential entities.
 
         :param skip: for paging, skipped number.
         :type skip: int
-        :return: Pageable containing credential entities
-        :rtype: ~azure.core.paging.ItemPaged[Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
-            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]]
+        :return: Pageable containing datasource credential
+        :rtype: ~azure.core.paging.ItemPaged[Union[~azure.ai.metricsadvisor.models.DatasourceCredential,
+            ~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
+            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_credential_entities.py
-                :start-after: [START list_credential_entities]
-                :end-before: [END list_credential_entities]
+            .. literalinclude:: ../samples/sample_datasource_credentials.py
+                :start-after: [START list_datasource_credentials]
+                :end-before: [END list_datasource_credentials]
                 :language: python
                 :dedent: 4
-                :caption: List all of the credential entities under the account
+                :caption: List all of the datasource credentials under the account
         """
         return self._client.list_credentials(  # type: ignore
             cls=kwargs.pop(
                 "cls",
-                lambda credentials: [convert_to_credential_entity(credential) for credential in credentials]),
+                lambda credentials: [convert_to_datasource_credential(credential) for credential in credentials]),
             **kwargs
         )
 
     @distributed_trace
-    def update_credential_entity(
+    def update_datasource_credential(
         self,
-        credential_entity,  # type: CredentialEntityUnion
+        datasource_credential,  # type: DatasourceCredential
         **kwargs  # type: Any
     ):
-        # type: (...) -> CredentialEntityUnion
-        """Update a credential entity.
+        # type: (...) -> DatasourceCredential
+        """Update a datasource credential.
 
-        :param credential_entity: The new credential entity object
-        :type credential_entity: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
-            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
-        :rtype: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
-            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
-            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :param datasource_credential: The new datasource credential object
+        :type datasource_credential: Union[~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
+            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]
+        :rtype: Union[~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
+            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_credential_entities.py
-                :start-after: [START update_credential_entity]
-                :end-before: [END update_credential_entity]
+            .. literalinclude:: ../samples/sample_datasource_credentials.py
+                :start-after: [START update_datasource_credential]
+                :end-before: [END update_datasource_credential]
                 :language: python
                 :dedent: 4
-                :caption: Update an existing credential entity
+                :caption: Update an existing datasource credential
         """
 
-        if credential_entity.credential_entity_type in ["AzureSQLConnectionString",
+        datasource_credential_request = None
+        if datasource_credential.credential_type in ["AzureSQLConnectionString",
             "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
-            credential_entity_request = credential_entity._to_generated_patch()
+            datasource_credential_request = datasource_credential._to_generated_patch()
 
-        updated_credential_entity = self._client.update_credential(
-            credential_entity.id,
-            credential_entity_request,
+        updated_datasource_credential = self._client.update_credential(
+            datasource_credential.id,
+            datasource_credential_request,
             **kwargs
         )
 
-        return convert_to_credential_entity(updated_credential_entity)
+        return convert_to_datasource_credential(updated_datasource_credential)
 
     @distributed_trace
-    def delete_credential_entity(self, credential_entity_id, **kwargs):
+    def delete_datasource_credential(self, credential_id, **kwargs):
         # type: (str, Any) -> None
-        """Delete a credential entity by its ID.
+        """Delete a datasource credential by its ID.
 
-        ::param credential_entity_id: Credential entity unique ID.
-        :type credential_entity_id: str
+        ::param str credential_id: Datasource credential unique ID.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_credential_entities.py
-                :start-after: [START delete_credential_entity]
-                :end-before: [END delete_credential_entity]
+            .. literalinclude:: ../samples/sample_datasource_credentials.py
+                :start-after: [START delete_datasource_credential]
+                :end-before: [END delete_datasource_credential]
                 :language: python
                 :dedent: 4
-                :caption: Delete a credential entity by its ID
+                :caption: Delete a datasource credential by its ID
         """
 
-        self._client.delete_credential(credential_id=credential_entity_id, **kwargs)
+        self._client.delete_credential(credential_id=credential_id, **kwargs)
