@@ -555,5 +555,4 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
 # Tests to add
 # 1. Paging start mid page
-# 2. Anonymous delete throws exception
 # 3. set repository/tag/manifest properties throws exception

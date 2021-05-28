@@ -128,3 +128,30 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         with pytest.raises(ClientAuthenticationError):
             await client.delete_manifest("library/hello-world", "latest")
+
+    @acr_preparer()
+    async def test_update_repository_properties(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+
+        properties = await client.get_repository_properties(HELLO_WORLD)
+
+        with pytest.raises(ClientAuthenticationError):
+            await client.update_repository_properties(HELLO_WORLD, properties, can_delete=True)
+
+    @acr_preparer()
+    async def test_update_tag_properties(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+
+        properties = await client.get_tag_properties(HELLO_WORLD, "latest")
+
+        with pytest.raises(ClientAuthenticationError):
+            await client.update_tag_properties(HELLO_WORLD, "latest", properties, can_delete=True)
+
+    @acr_preparer()
+    async def test_update_manifest_properties(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+
+        properties = await client.get_manifest_properties(HELLO_WORLD, "latest")
+
+        with pytest.raises(ClientAuthenticationError):
+            await client.update_manifest_properties(HELLO_WORLD, "latest", properties, can_delete=True)
