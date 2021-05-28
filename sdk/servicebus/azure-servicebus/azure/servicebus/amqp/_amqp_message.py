@@ -231,8 +231,9 @@ class AMQPAnnotatedMessage(object):
                 correlation_id=self.properties.correlation_id,
                 content_type=self.properties.content_type,
                 content_encoding=self.properties.content_encoding,
-                creation_time=self.properties.creation_time,
-                absolute_expiry_time=self.properties.absolute_expiry_time,
+                creation_time=int(self.properties.creation_time) if self.properties.creation_time else None,
+                absolute_expiry_time=int(self.properties.absolute_expiry_time)
+                if self.properties.absolute_expiry_time else None,
                 group_id=self.properties.group_id,
                 group_sequence=self.properties.group_sequence,
                 reply_to_group_id=self.properties.reply_to_group_id,
