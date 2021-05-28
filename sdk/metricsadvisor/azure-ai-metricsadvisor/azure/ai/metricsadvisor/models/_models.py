@@ -1489,7 +1489,7 @@ class SqlServerDataFeedSource(DataFeedSource):
     :keyword str datasource_sql_connection_string_id: Datasource sql connection string unique id.
     """
 
-    def __init__(self, query,**kwargs):
+    def __init__(self, query, **kwargs):
         # type: (str, **Any) -> None
         super(SqlServerDataFeedSource, self).__init__(
             data_source_type='SqlServer',
