@@ -6,7 +6,6 @@
 from azure.core.credentials import AzureNamedKeyCredential
 import pytest
 import platform
-from time import sleep
 
 from devtools_testutils import AzureTestCase
 
@@ -50,9 +49,6 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         async for table in tables:
             count += 1
 
-        # if self.is_live:
-        #     sleep(SLEEP_DELAY)
-
     @cosmos_decorator_async
     async def test_user_agent_custom_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         custom_app = "TestApp/v1.0"
@@ -86,9 +82,6 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         async for table in tables:
             count += 1
 
-        # if self.is_live:
-        #     sleep(SLEEP_DELAY)
-
     @cosmos_decorator_async
     async def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -104,9 +97,6 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         count = 0
         async for table in tables:
             count += 1
-
-        # if self.is_live:
-        #     sleep(SLEEP_DELAY)
 
 
 class TestTableClientUnit(AsyncTableTestCase):

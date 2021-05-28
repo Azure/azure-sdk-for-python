@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 import pytest
 import platform
-from time import sleep
 import sys
 
 from devtools_testutils import AzureTestCase
@@ -51,9 +50,6 @@ class TestTableClient(AzureTestCase, TableTestCase):
         for table in tables:
             count += 1
 
-        # if self.is_live:
-        #     sleep(SLEEP_DELAY)
-
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     def test_user_agent_custom(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -91,9 +87,6 @@ class TestTableClient(AzureTestCase, TableTestCase):
         for table in tables:
             count += 1
 
-        # if self.is_live:
-        #     sleep(SLEEP_DELAY)
-
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -113,9 +106,6 @@ class TestTableClient(AzureTestCase, TableTestCase):
         count = 0
         for table in tables:
             count += 1
-
-        # if self.is_live:
-        #     sleep(SLEEP_DELAY)
 
 
 class TestTableClientUnit(TableTestCase):
