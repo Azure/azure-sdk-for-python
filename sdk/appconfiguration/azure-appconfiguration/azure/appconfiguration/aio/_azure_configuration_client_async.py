@@ -231,13 +231,12 @@ class AzureAppConfigurationClient:
     @distributed_trace_async
     async def get_configuration_setting(
         self,
-        key,
-        label=None,
-        etag="*",
-        match_condition=MatchConditions.Unconditionally,
-        **kwargs
-    ):
-        # type: (str, Optional[str], Optional[str], Optional[MatchConditions], **Any) -> Union[None, ConfigurationSetting]
+        key: str,
+        label: Optional[str] = None,
+        etag: Optional[str] = "*",
+        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> Union[None, ConfigurationSetting]:
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
 

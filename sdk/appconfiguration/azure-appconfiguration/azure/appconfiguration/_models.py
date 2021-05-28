@@ -3,9 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-from typing import Dict, Optional, Any, List, Union, Optional, Mapping
+from typing import Dict, Optional, Any, List, Union
 from msrest.serialization import Model
 from ._generated.models import KeyValue
+
+
+PolymorphicConfigurationSetting = Union[
+    "ConfigurationSetting", "SecretReferenceConfigurationSetting", "FeatureFlagConfigurationSetting"
+]
 
 
 class ConfigurationSetting(Model):
@@ -59,7 +64,7 @@ class ConfigurationSetting(Model):
 
     @classmethod
     def _from_generated(cls, key_value):
-        # type: (KeyValue) -> Union[ConfigurationSetting, FeatureFlagConfigurationSetting, SecretReferenceConfigurationSetting]
+        # type: (KeyValue) -> PolymorphicConfigurationSetting
         if key_value is None:
             return key_value
         if key_value.content_type is not None:
