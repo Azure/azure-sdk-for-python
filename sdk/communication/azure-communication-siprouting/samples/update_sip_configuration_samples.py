@@ -23,7 +23,7 @@ USAGE:
 import os
 
 from azure.communication.siprouting import SIPRoutingClient
-from azure.communication.siprouting._generated.models import Trunk, TrunkRoute, SipConfiguration
+from azure.communication.siprouting._generated.models import Trunk, TrunkRoute
 
 
 class UpdateSIPConfigurationSamples(object):
