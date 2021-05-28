@@ -24,7 +24,7 @@ These are the global settings for the API.
 
 ``` yaml
 input-file: swagger.json
-tag: package-sip-2021-03-07
+tag: package-sip-2021-05-01
 output-folder: ../azure/communication/siprouting/_generated
 namespace: azure.communication.siprouting
 no-namespace-folders: true
