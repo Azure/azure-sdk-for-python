@@ -69,7 +69,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         # Assert
         if self.is_live:
-            time.sleep(20)
+            time.sleep(30)
         received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
