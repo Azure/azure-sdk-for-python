@@ -23,7 +23,7 @@ class SubscriptionClientOperationsMixin:
     async def check_resource_name(
         self,
         resource_name_definition: Optional["_models.ResourceName"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckResourceNameResult":
         """Checks resource name validity.
 

@@ -59,8 +59,8 @@ class TableOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param table_name: A table name must be unique within a storage account and must be between 3
          and 63 characters.The name must comprise of only alphanumeric characters and it cannot begin
@@ -127,8 +127,8 @@ class TableOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param table_name: A table name must be unique within a storage account and must be between 3
          and 63 characters.The name must comprise of only alphanumeric characters and it cannot begin
@@ -195,8 +195,8 @@ class TableOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param table_name: A table name must be unique within a storage account and must be between 3
          and 63 characters.The name must comprise of only alphanumeric characters and it cannot begin
@@ -263,8 +263,8 @@ class TableOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param table_name: A table name must be unique within a storage account and must be between 3
          and 63 characters.The name must comprise of only alphanumeric characters and it cannot begin
@@ -327,8 +327,8 @@ class TableOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ListTableResource or the result of cls(response)

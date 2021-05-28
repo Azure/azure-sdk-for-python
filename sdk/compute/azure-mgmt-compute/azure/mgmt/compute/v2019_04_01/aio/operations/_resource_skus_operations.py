@@ -44,7 +44,7 @@ class ResourceSkusOperations:
     def list(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceSkusResult"]:
         """Gets the list of Microsoft.Compute SKUs available for your Subscription.
 

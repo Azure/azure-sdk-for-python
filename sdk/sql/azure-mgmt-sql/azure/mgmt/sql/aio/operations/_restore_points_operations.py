@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class RestorePointsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,8 +48,8 @@ class RestorePointsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.RestorePointListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.RestorePointListResult"]:
         """Gets a list of database restore points.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -64,12 +64,12 @@ class RestorePointsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.RestorePointListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RestorePointListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestorePointListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -103,7 +103,7 @@ class RestorePointsOperations:
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -127,15 +127,15 @@ class RestorePointsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: "models.CreateDatabaseRestorePointDefinition",
-        **kwargs
-    ) -> Optional["models.RestorePoint"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.RestorePoint"]]
+        parameters: "_models.CreateDatabaseRestorePointDefinition",
+        **kwargs: Any
+    ) -> Optional["_models.RestorePoint"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.RestorePoint"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -187,9 +187,9 @@ class RestorePointsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: "models.CreateDatabaseRestorePointDefinition",
-        **kwargs
-    ) -> AsyncLROPoller["models.RestorePoint"]:
+        parameters: "_models.CreateDatabaseRestorePointDefinition",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.RestorePoint"]:
         """Creates a restore point for a data warehouse.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -203,8 +203,8 @@ class RestorePointsOperations:
         :type parameters: ~azure.mgmt.sql.models.CreateDatabaseRestorePointDefinition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RestorePoint or the result of cls(response)
@@ -212,7 +212,7 @@ class RestorePointsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RestorePoint"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestorePoint"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -238,7 +238,14 @@ class RestorePointsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -258,8 +265,8 @@ class RestorePointsOperations:
         server_name: str,
         database_name: str,
         restore_point_name: str,
-        **kwargs
-    ) -> "models.RestorePoint":
+        **kwargs: Any
+    ) -> "_models.RestorePoint":
         """Gets a restore point.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -276,12 +283,12 @@ class RestorePointsOperations:
         :rtype: ~azure.mgmt.sql.models.RestorePoint
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RestorePoint"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestorePoint"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -325,7 +332,7 @@ class RestorePointsOperations:
         server_name: str,
         database_name: str,
         restore_point_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a restore point.
 
@@ -348,7 +355,7 @@ class RestorePointsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore

@@ -18,6 +18,33 @@ DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClient
 
 class TestTranslation(DocumentTranslationTest):
 
+    @pytest.mark.live_test_only
+    @DocumentTranslationPreparer()
+    def test_active_directory_auth(self):
+        token = self.generate_oauth_token()
+        endpoint = self.get_oauth_endpoint()
+        client = DocumentTranslationClient(endpoint, token)
+        # prepare containers and test data
+        blob_data = b'This is some text'
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
+        target_container_sas_url = self.create_target_container()
+
+        # prepare translation inputs
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url=source_container_sas_url,
+                targets=[
+                    TranslationTarget(
+                        target_url=target_container_sas_url,
+                        language_code="fr"
+                    )
+                ]
+            )
+        ]
+
+        # submit job and test
+        self._submit_and_validate_translation_job(client, translation_inputs, 1)
+
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_single_source_single_target(self, client):

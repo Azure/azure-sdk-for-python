@@ -6,16 +6,16 @@
 
 import datetime
 from dateutil.tz import tzutc
+import unittest
 import pytest
 from devtools_testutils import AzureTestCase
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.ai.metricsadvisor.models import (
-    SQLServerDataFeedSource,
+    SqlServerDataFeedSource,
     AzureTableDataFeedSource,
     AzureBlobDataFeedSource,
-    AzureCosmosDBDataFeedSource,
-    HttpRequestDataFeedSource,
+    AzureCosmosDbDataFeedSource,
     DataFeedMetric,
     DataFeedDimension,
     DataFeedSchema,
@@ -26,12 +26,11 @@ from azure.ai.metricsadvisor.models import (
     DataFeedRollupSettings,
     AzureApplicationInsightsDataFeedSource,
     AzureDataExplorerDataFeedSource,
-    InfluxDBDataFeedSource,
+    InfluxDbDataFeedSource,
     AzureDataLakeStorageGen2DataFeedSource,
-    MongoDBDataFeedSource,
+    MongoDbDataFeedSource,
     MySqlDataFeedSource,
     PostgreSqlDataFeedSource,
-    ElasticsearchDataFeedSource,
 )
 from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
 
@@ -45,7 +44,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=data_feed_name,
-                    source=SQLServerDataFeedSource(
+                    source=SqlServerDataFeedSource(
                         connection_string=self.sql_server_connection_string,
                         query="select * from adsample2 where Timestamp = @StartTime"
                     ),
@@ -58,7 +57,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
                 self.assertEqual(data_feed.source.data_source_type, "SqlServer")
-                self.assertIsNotNone(data_feed.source.connection_string)
                 self.assertIsNotNone(data_feed.source.query)
                 self.assertEqual(data_feed.granularity.granularity_type, "Daily")
                 self.assertEqual(data_feed.schema.metrics[0].name, "cost")
@@ -76,7 +74,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=data_feed_name,
-                    source=SQLServerDataFeedSource(
+                    source=SqlServerDataFeedSource(
                         connection_string=self.sql_server_connection_string,
                         query=u"select * from adsample2 where Timestamp = @StartTime"
                     ),
@@ -121,7 +119,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
                 self.assertEqual(data_feed.source.data_source_type, "SqlServer")
-                self.assertIsNotNone(data_feed.source.connection_string)
                 self.assertIsNotNone(data_feed.source.query)
                 self.assertEqual(data_feed.granularity.granularity_type, "Daily")
                 self.assertEqual(data_feed.granularity.custom_granularity_value, None)
@@ -167,7 +164,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=data_feed_name,
-                    source=SQLServerDataFeedSource(
+                    source=SqlServerDataFeedSource(
                         connection_string=self.sql_server_connection_string,
                         query=u"select * from adsample2 where Timestamp = @StartTime"
                     ),
@@ -215,7 +212,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
                 self.assertEqual(data_feed.source.data_source_type, "SqlServer")
-                self.assertIsNotNone(data_feed.source.connection_string)
                 self.assertIsNotNone(data_feed.source.query)
                 self.assertEqual(data_feed.granularity.granularity_type, "Custom")
                 self.assertEqual(data_feed.granularity.custom_granularity_value, 20)
@@ -290,7 +286,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
                 self.assertEqual(data_feed.source.data_source_type, "AzureTable")
-                self.assertIsNotNone(data_feed.source.connection_string)
                 self.assertEqual(data_feed.source.table, "adsample")
                 self.assertEqual(data_feed.source.query, "PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'")
             finally:
@@ -331,7 +326,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
                 self.assertEqual(data_feed.source.data_source_type, "AzureBlob")
-                self.assertIsNotNone(data_feed.source.connection_string)
                 self.assertEqual(data_feed.source.container, "adsample")
                 self.assertEqual(data_feed.source.blob_template, "%Y/%m/%d/%h/JsonFormatV2.json")
             finally:
@@ -344,7 +338,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=AzureCosmosDBDataFeedSource(
+                    source=AzureCosmosDbDataFeedSource(
                         connection_string=self.azure_cosmosdb_connection_string,
                         sql_query="'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'",
                         database="adsample",
@@ -373,91 +367,9 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
                 self.assertEqual(data_feed.source.data_source_type, "AzureCosmosDB")
-                self.assertIsNotNone(data_feed.source.connection_string)
                 self.assertEqual(data_feed.source.database, "adsample")
                 self.assertEqual(data_feed.source.collection_id, "adsample")
                 self.assertEqual(data_feed.source.sql_query, "'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'")
-            finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
-
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_with_http_request_get(self):
-        name = self.create_random_name("httprequestfeedgetasync")
-        async with self.admin_client:
-            try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=HttpRequestDataFeedSource(
-                        url=self.http_request_get_url,
-                        http_method="GET"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            DataFeedMetric(name="cost"),
-                            DataFeedMetric(name="revenue")
-                        ],
-                        dimensions=[
-                            DataFeedDimension(name="category"),
-                            DataFeedDimension(name="city")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                    ),
-
-                )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "HttpRequest")
-                self.assertIsNotNone(data_feed.source.url)
-                self.assertEqual(data_feed.source.http_method, "GET")
-
-            finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
-
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_with_http_request_post(self):
-        name = self.create_random_name("httprequestfeedpostasync")
-        async with self.admin_client:
-            try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=HttpRequestDataFeedSource(
-                        url=self.http_request_post_url,
-                        http_method="POST",
-                        payload="{'startTime': '@StartTime'}"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            DataFeedMetric(name="cost"),
-                            DataFeedMetric(name="revenue")
-                        ],
-                        dimensions=[
-                            DataFeedDimension(name="category"),
-                            DataFeedDimension(name="city")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                    ),
-
-                )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "HttpRequest")
-                self.assertIsNotNone(data_feed.source.url)
-                self.assertEqual(data_feed.source.http_method, "POST")
-                self.assertEqual(data_feed.source.payload, "{'startTime': '@StartTime'}")
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
@@ -501,7 +413,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
                 self.assertEqual(data_feed.source.data_source_type, "AzureApplicationInsights")
-                self.assertIsNotNone(data_feed.source.api_key)
                 self.assertEqual(data_feed.source.application_id, "3706fe8b-98f1-47c7-bf69-b73b6e53274d")
                 self.assertIsNotNone(data_feed.source.query)
 
@@ -544,7 +455,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
                 self.assertEqual(data_feed.source.data_source_type, "AzureDataExplorer")
-                self.assertIsNotNone(data_feed.source.connection_string)
                 self.assertEqual(data_feed.source.query, query)
 
             finally:
@@ -557,7 +467,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=InfluxDBDataFeedSource(
+                    source=InfluxDbDataFeedSource(
                         connection_string=self.influxdb_connection_string,
                         database="adsample",
                         user_name="adreadonly",
@@ -587,9 +497,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
                 self.assertEqual(data_feed.source.data_source_type, "InfluxDB")
-                self.assertIsNotNone(data_feed.source.connection_string)
                 self.assertIsNotNone(data_feed.source.query)
-                self.assertIsNotNone(data_feed.source.password)
                 self.assertEqual(data_feed.source.database, "adsample")
                 self.assertEqual(data_feed.source.user_name, "adreadonly")
 
@@ -633,7 +541,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
                 self.assertEqual(data_feed.source.data_source_type, "AzureDataLakeStorageGen2")
-                self.assertIsNotNone(data_feed.source.account_key)
                 self.assertEqual(data_feed.source.account_name, "adsampledatalakegen2")
                 self.assertEqual(data_feed.source.file_system_name, "adsample")
                 self.assertEqual(data_feed.source.directory_template, "%Y/%m/%d")
@@ -649,7 +556,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 data_feed = await self.admin_client.create_data_feed(
                     name=name,
-                    source=MongoDBDataFeedSource(
+                    source=MongoDbDataFeedSource(
                         connection_string=self.mongodb_connection_string,
                         database="adsample",
                         command='{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000,}'
@@ -677,7 +584,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
                 self.assertEqual(data_feed.source.data_source_type, "MongoDB")
-                self.assertIsNotNone(data_feed.source.connection_string)
                 self.assertEqual(data_feed.source.database, "adsample")
                 self.assertEqual(data_feed.source.command, '{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000,}')
 
@@ -718,7 +624,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
                 self.assertEqual(data_feed.source.data_source_type, "MySql")
-                self.assertIsNotNone(data_feed.source.connection_string)
                 self.assertEqual(data_feed.source.query, "'select * from adsample2 where Timestamp = @StartTime'")
 
             finally:
@@ -758,52 +663,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(data_feed.created_time)
                 self.assertIsNotNone(data_feed.name)
                 self.assertEqual(data_feed.source.data_source_type, "PostgreSql")
-                self.assertIsNotNone(data_feed.source.connection_string)
                 self.assertEqual(data_feed.source.query, "'select * from adsample2 where Timestamp = @StartTime'")
-
-            finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
-
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_with_elasticsearch(self):
-        name = self.create_random_name("elasticasync")
-        async with self.admin_client:
-            try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=ElasticsearchDataFeedSource(
-                        host="ad-sample-es.westus2.cloudapp.azure.com",
-                        port="9200",
-                        auth_header=self.elasticsearch_auth_header,
-                        query="'select * from adsample where timestamp = @StartTime'"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            DataFeedMetric(name="cost", display_name="Cost"),
-                            DataFeedMetric(name="revenue", display_name="Revenue")
-                        ],
-                        dimensions=[
-                            DataFeedDimension(name="category", display_name="Category"),
-                            DataFeedDimension(name="city", display_name="City")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                    ),
-
-                )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "Elasticsearch")
-                self.assertIsNotNone(data_feed.source.auth_header)
-                self.assertEqual(data_feed.source.port, "9200")
-                self.assertEqual(data_feed.source.host, "ad-sample-es.westus2.cloudapp.azure.com")
-                self.assertEqual(data_feed.source.query, "'select * from adsample where timestamp = @StartTime'")
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
@@ -853,6 +713,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 feeds_list.append(item)
             assert len(feeds_list) > 0
 
+    @unittest.skip("skip test")
     @AzureTestCase.await_prepared_test
     async def test_list_data_feeds_with_skip(self):
         async with self.admin_client:
@@ -906,14 +767,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.options.rollup_settings.rollup_type, "AlreadyRollup")
                 self.assertEqual(updated.options.rollup_settings.rollup_method, "Sum")
                 self.assertEqual(updated.options.rollup_settings.rollup_identification_value, "sumrollup")
-                self.assertEqual(updated.options.rollup_settings.auto_rollup_group_by_column_names, [])
                 self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "CustomValue")
                 self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 2)
                 self.assertEqual(updated.options.access_mode, "Public")
                 self.assertEqual(updated.options.viewer_emails, ["updated"])
                 self.assertEqual(updated.status, "Paused")
                 self.assertEqual(updated.options.action_link_template, "updated")
-                self.assertEqual(updated.source.connection_string, "updated")
                 self.assertEqual(updated.source.query, "get data")
 
             finally:
@@ -944,7 +803,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     viewer_emails=["updated"],
                     status="Paused",
                     action_link_template="updated",
-                    source=SQLServerDataFeedSource(
+                    source=SqlServerDataFeedSource(
                         connection_string="updated",
                         query="get data"
                     )
@@ -962,14 +821,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.options.rollup_settings.rollup_type, "AlreadyRollup")
                 self.assertEqual(updated.options.rollup_settings.rollup_method, "Sum")
                 self.assertEqual(updated.options.rollup_settings.rollup_identification_value, "sumrollup")
-                self.assertEqual(updated.options.rollup_settings.auto_rollup_group_by_column_names, [])
                 self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "CustomValue")
                 self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 2)
                 self.assertEqual(updated.options.access_mode, "Public")
                 self.assertEqual(updated.options.viewer_emails, ["updated"])
                 self.assertEqual(updated.status, "Paused")
                 self.assertEqual(updated.options.action_link_template, "updated")
-                self.assertEqual(updated.source.connection_string, "updated")
                 self.assertEqual(updated.source.query, "get data")
 
             finally:
@@ -1019,7 +876,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     viewer_emails=["updated"],
                     status="Paused",
                     action_link_template="updated",
-                    source=SQLServerDataFeedSource(
+                    source=SqlServerDataFeedSource(
                         connection_string="updated",
                         query="get data"
                     )
@@ -1037,19 +894,18 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.options.rollup_settings.rollup_type, "AlreadyRollup")
                 self.assertEqual(updated.options.rollup_settings.rollup_method, "Sum")
                 self.assertEqual(updated.options.rollup_settings.rollup_identification_value, "sumrollup")
-                self.assertEqual(updated.options.rollup_settings.auto_rollup_group_by_column_names, [])
                 self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "CustomValue")
                 self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 2)
                 self.assertEqual(updated.options.access_mode, "Public")
                 self.assertEqual(updated.options.viewer_emails, ["updated"])
                 self.assertEqual(updated.status, "Paused")
                 self.assertEqual(updated.options.action_link_template, "updated")
-                self.assertEqual(updated.source.connection_string, "updated")
                 self.assertEqual(updated.source.query, "get data")
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
+    @unittest.skip("skip test")
     @AzureTestCase.await_prepared_test
     async def test_update_data_feed_by_reseting_properties(self):
         async with self.admin_client:
@@ -1088,7 +944,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.options.rollup_settings.rollup_type, "NoRollup")
                 self.assertEqual(updated.options.rollup_settings.rollup_method, "None")
                 self.assertEqual(updated.options.rollup_settings.rollup_identification_value, None)
-                self.assertEqual(updated.options.rollup_settings.auto_rollup_group_by_column_names, [])
                 self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "SmartFilling")
                 self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 0)
                 self.assertEqual(updated.options.access_mode, "Private")
