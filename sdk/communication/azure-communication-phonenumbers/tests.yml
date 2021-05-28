@@ -1,0 +1,23 @@
+trigger: none
+
+stages:
+  - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      AllocateResourceGroup: 'false'
+      BuildTargetingString: 'azure-communication-phonenumbers'
+      JobName: phonenumbers
+      ServiceDirectory: communication
+      DeployArmTemplate: true
+      CloudConfig:
+        Public:
+          SubscriptionConfigurations:
+            - $(sub-config-azure-cloud-test-resources)
+            - $(sub-config-communication-services-cloud-test-resources-common)
+            - $(sub-config-communication-services-cloud-test-resources-python)
+          MatrixReplace:
+            - TestSamples=.*/true
+        Int:
+            SubscriptionConfigurations:
+              - $(sub-config-communication-int-test-resources-common)
+              - $(sub-config-communication-int-test-resources-python)
+      Clouds: Public,Int
