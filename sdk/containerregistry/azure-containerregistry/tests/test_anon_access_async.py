@@ -71,12 +71,12 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert properties.name == "library/alpine"
 
     @acr_preparer()
-    async def test_list_manifests(self, containerregistry_anonregistry_endpoint):
+    async def test_list_manifest_properties(self, containerregistry_anonregistry_endpoint):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
         count = 0
-        async for manifest in client.list_manifests("library/alpine"):
+        async for manifest in client.list_manifest_properties("library/alpine"):
             assert isinstance(manifest, ArtifactManifestProperties)
             count += 1
         assert count > 0
@@ -93,12 +93,12 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert registry_artifact.repository_name == "library/alpine"
 
     @acr_preparer()
-    async def test_list_tags(self, containerregistry_anonregistry_endpoint):
+    async def test_list_tag_properties(self, containerregistry_anonregistry_endpoint):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
         count = 0
-        async for tag in client.list_tags("library/alpine"):
+        async for tag in client.list_tag_properties("library/alpine"):
             count += 1
             assert isinstance(tag, ArtifactTagProperties)
         assert count > 0

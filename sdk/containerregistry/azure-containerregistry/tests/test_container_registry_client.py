@@ -178,7 +178,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
 
         count = 0
-        for artifact in client.list_manifests(BUSYBOX):
+        for artifact in client.list_manifest_properties(BUSYBOX):
             assert isinstance(artifact, ArtifactManifestProperties)
             assert isinstance(artifact.created_on, datetime)
             assert isinstance(artifact.last_updated_on, datetime)
@@ -192,7 +192,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
         results_per_page = 2
 
-        pages = client.list_manifests(BUSYBOX, results_per_page=results_per_page)
+        pages = client.list_manifest_properties(BUSYBOX, results_per_page=results_per_page)
         page_count = 0
         for page in pages.by_page():
             reg_count = 0
@@ -209,7 +209,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for artifact in client.list_manifests(BUSYBOX, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
+        for artifact in client.list_manifest_properties(BUSYBOX, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
             if prev_last_updated_on:
                 assert artifact.last_updated_on < prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -219,7 +219,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for artifact in client.list_manifests(BUSYBOX, order_by="timedesc"):
+        for artifact in client.list_manifest_properties(BUSYBOX, order_by="timedesc"):
             if prev_last_updated_on:
                 assert artifact.last_updated_on < prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -233,7 +233,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for artifact in client.list_manifests(BUSYBOX, order_by=ManifestOrder.LAST_UPDATE_TIME_ASCENDING):
+        for artifact in client.list_manifest_properties(BUSYBOX, order_by=ManifestOrder.LAST_UPDATE_TIME_ASCENDING):
             if prev_last_updated_on:
                 assert artifact.last_updated_on > prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -243,7 +243,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for artifact in client.list_manifests(BUSYBOX, order_by="timeasc"):
+        for artifact in client.list_manifest_properties(BUSYBOX, order_by="timeasc"):
             if prev_last_updated_on:
                 assert artifact.last_updated_on > prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -345,24 +345,24 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert received.can_list == True
 
     @acr_preparer()
-    def test_get_tag(self, containerregistry_endpoint):
+    def test_get_tag_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
 
-        properties = client.get_tag(repo, tag)
+        properties = client.get_tag_properties(repo, tag)
 
         assert isinstance(properties, ArtifactTagProperties)
         assert properties.name == tag
 
     @acr_preparer()
-    def test_get_tag_does_not_exist(self, containerregistry_endpoint):
+    def test_get_tag_properties_does_not_exist(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
 
         with pytest.raises(ResourceNotFoundError):
-            client.get_tag("Nonexistent", "Nonexistent")
+            client.get_tag_properties("Nonexistent", "Nonexistent")
 
     @acr_preparer()
     def test_update_tag_properties(self, containerregistry_endpoint):
@@ -372,7 +372,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         client = self.create_registry_client(containerregistry_endpoint)
 
-        properties = client.get_tag(repo, tag)
+        properties = client.get_tag_properties(repo, tag)
         properties.can_delete = False
         properties.can_read = False
         properties.can_write = False
@@ -404,7 +404,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         client = self.create_registry_client(containerregistry_endpoint)
 
-        properties = client.get_tag(repo, tag)
+        properties = client.get_tag_properties(repo, tag)
         received = client.update_tag_properties(repo, tag, can_delete=False)
         assert received.can_delete == False
 
@@ -427,7 +427,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert received.can_list == True
 
     @acr_preparer()
-    def test_list_tags(self, containerregistry_endpoint):
+    def test_list_tag_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
@@ -436,13 +436,13 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
 
         count = 0
-        for tag in client.list_tags(repo):
+        for tag in client.list_tag_properties(repo):
             assert "{}:{}".format(repo, tag.name) in tags
             count += 1
         assert count == 4
 
     @acr_preparer()
-    def test_list_tags_order_descending(self, containerregistry_endpoint):
+    def test_list_tag_properties_order_descending(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
@@ -452,7 +452,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for tag in client.list_tags(repo, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
+        for tag in client.list_tag_properties(repo, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
             assert "{}:{}".format(repo, tag.name) in tags
             if prev_last_updated_on:
                 assert tag.last_updated_on < prev_last_updated_on
@@ -462,7 +462,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for tag in client.list_tags(repo, order_by="timedesc"):
+        for tag in client.list_tag_properties(repo, order_by="timedesc"):
             assert "{}:{}".format(repo, tag.name) in tags
             if prev_last_updated_on:
                 assert tag.last_updated_on < prev_last_updated_on
@@ -471,7 +471,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert count == 4
 
     @acr_preparer()
-    def test_list_tags_order_ascending(self, containerregistry_endpoint):
+    def test_list_tag_properties_order_ascending(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
@@ -481,7 +481,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for tag in client.list_tags(repo, order_by=TagOrder.LAST_UPDATE_TIME_ASCENDING):
+        for tag in client.list_tag_properties(repo, order_by=TagOrder.LAST_UPDATE_TIME_ASCENDING):
             assert "{}:{}".format(repo, tag.name) in tags
             if prev_last_updated_on:
                 assert tag.last_updated_on > prev_last_updated_on
@@ -491,7 +491,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for tag in client.list_tags(repo, order_by="timeasc"):
+        for tag in client.list_tag_properties(repo, order_by="timeasc"):
             assert "{}:{}".format(repo, tag.name) in tags
             if prev_last_updated_on:
                 assert tag.last_updated_on > prev_last_updated_on
@@ -511,7 +511,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client.delete_tag(repo, tag + str(0))
 
         count = 0
-        for tag in client.list_tags(repo):
+        for tag in client.list_tag_properties(repo):
             assert "{}:{}".format(repo, tag.name) in tags[1:]
             count += 1
         assert count == 3

@@ -41,12 +41,12 @@ class DeleteOperations(object):
             print(repository)
             # [END list_repository_names]
 
-            # [START list_tags]
+            # [START list_tag_properties]
             # Keep the three most recent tags, delete everything else
             tag_count = 0
-            tags = client.list_tags(repository, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING)
+            tags = client.list_tag_properties(repository, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING)
             for tag in tags[3:]:
                 client.delete_tag(repository, tag.name)
-            # [END list_tags]
+            # [END list_tag_properties]
 
         client.close()

@@ -191,7 +191,7 @@ def import_image(repository, tags):
 
     import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
 
-    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
+    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tag_propertiess=tags)
 
     result = mgmt_client.registries.begin_import_image(
         rg_name,
@@ -212,7 +212,7 @@ def import_image(repository, tags):
 
     import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
 
-    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
+    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tag_propertiess=tags)
 
     result = mgmt_client.registries.begin_import_image(
         rg_name,

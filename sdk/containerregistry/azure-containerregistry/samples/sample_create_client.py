@@ -51,7 +51,7 @@ class CreateClients(object):
             # Iterate through all the repositories
             for repository_name in client.list_repository_names():
                 if repository_name == "hello-world":
-                    for tag in client.list_tags(repository_name):
+                    for tag in client.list_tag_properties(repository_name):
                         print(tag.digest)
 
                     # [START delete_repository]

@@ -53,7 +53,7 @@ class CreateClients(object):
             async for repository_name in client.list_repository_names():
                 if repository_name == "hello-world":
                     # Create a repository client from the registry client
-                    async for tag in client.list_tags(repository_name):
+                    async for tag in client.list_tag_properties(repository_name):
                         print(tag.digest)
 
                     # [START delete_repository]
