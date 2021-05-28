@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import six
+from typing import Any
 
 class MetricsAdvisorKeyCredential(object):
     """Credential type used for authenticating to an Azure Metrics Advisor service.
