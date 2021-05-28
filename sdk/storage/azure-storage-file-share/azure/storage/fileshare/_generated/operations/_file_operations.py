@@ -1203,6 +1203,7 @@ class FileOperations(object):
         source_content_crc64=None,  # type: Optional[bytearray]
         source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
+        copy_source_authorization=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1235,6 +1236,9 @@ class FileOperations(object):
         :type source_modified_access_conditions: ~azure.storage.fileshare.models.SourceModifiedAccessConditions
         :param lease_access_conditions: Parameter group.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
+        :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
+         OAuth access token to copy source.
+        :type copy_source_authorization: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1287,6 +1291,8 @@ class FileOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if _lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", _lease_id, 'str')
+        if copy_source_authorization is not None:
+            header_parameters['x-ms-copy-source-authorization'] = self._serialize.header("copy_source_authorization", copy_source_authorization, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
