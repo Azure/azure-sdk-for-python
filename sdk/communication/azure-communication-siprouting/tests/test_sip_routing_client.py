@@ -3,7 +3,7 @@ import json
 
 from azure.communication.siprouting import SIPRoutingClient
 from azure.core.credentials import AccessToken
-from azure.communication.siprouting._generated.models import SipConfiguration, Trunk, TrunkRoute
+from azure.communication.siprouting._generated.models import Trunk, TrunkRoute
 
 try:
     from unittest.mock import Mock, patch
@@ -27,7 +27,6 @@ class TestSIPRoutingClient(unittest.TestCase):
 
     def get_simple_test_client(self):
         return SIPRoutingClient("https://endpoint", AccessToken("Fake Token", 0))
-
 
     def setUp(self):
         sip_trunk = Trunk(sip_signaling_port=4001)
@@ -55,20 +54,20 @@ class TestSIPRoutingClient(unittest.TestCase):
         def mock_send(*_, **__):
             return self.response
 
-        dut_client = SIPRoutingClient(
+        test_client = SIPRoutingClient(
             "https://endpoint", AccessToken("Fake Token", 0), transport=Mock(send=mock_send))
 
-        response = dut_client.get_sip_configuration()
+        response = test_client.get_sip_configuration()
 
         self.assertEqual(response.trunks, self.test_trunks)
         self.assertEqual(response.routes, self.test_routes)
 
     def test_update_sip_trunk_configuration(self):
         mock = Mock(send=Mock(return_value=self.response))
-        dut_client = SIPRoutingClient(
+        test_client = SIPRoutingClient(
             "https://endpoint", AccessToken("Fake Token", 0), transport=mock)
 
-        dut_client.update_sip_trunk_configuration(
+        test_client.update_sip_trunk_configuration(
             self.test_trunks, self.test_routes)
 
         payload_string = str(self.payload)
@@ -78,10 +77,10 @@ class TestSIPRoutingClient(unittest.TestCase):
     def test_update_pstn_gateways(self):
         expected_request_body = r'{"trunks": {"trunk_1": {"sipSignalingPort": 4001}}}'
         mock = Mock(send=Mock(return_value=self.response))
-        dut_client = SIPRoutingClient(
+        test_client = SIPRoutingClient(
             "https://endpoint", AccessToken("Fake Token", 0), transport=mock)
 
-        dut_client.update_pstn_gateways(self.test_trunks)
+        test_client.update_pstn_gateways(self.test_trunks)
 
         self.assertEqual(
             mock.send.call_args.args[0].body, expected_request_body)
@@ -90,34 +89,34 @@ class TestSIPRoutingClient(unittest.TestCase):
         expected_request_body = r'{"routes": [{"name": "route_1", "numberPattern": "x", "trunks": ["trunk_1"]}]}'
 
         mock = Mock(send=Mock(return_value=self.response))
-        dut_client = SIPRoutingClient(
+        test_client = SIPRoutingClient(
             "https://endpoint", AccessToken("Fake Token", 0), transport=mock)
 
-        dut_client.update_routing_settings(self.test_routes)
+        test_client.update_routing_settings(self.test_routes)
 
         self.assertEqual(
             mock.send.call_args.args[0].body, expected_request_body)
 
     def test_update_sip_trunk_configuration_no_online_pstn_gateways_raises_value_error(self):
-        dut_client = self.get_simple_test_client()
+        test_client = self.get_simple_test_client()
 
         with self.assertRaises(ValueError):
-            dut_client.update_sip_trunk_configuration(None,self.test_routes)
+            test_client.update_sip_trunk_configuration(None, self.test_routes)
 
     def test_update_sip_trunk_configuration_no_online_pstn_routing_settings_raises_value_error(self):
-        dut_client = self.get_simple_test_client()
+        test_client = self.get_simple_test_client()
 
         with self.assertRaises(ValueError):
-            dut_client.update_sip_trunk_configuration(self.test_trunks,None)
+            test_client.update_sip_trunk_configuration(self.test_trunks, None)
 
     def test_update_pstn_gateways_no_gateways_raises_value_error(self):
-        dut_client = self.get_simple_test_client()
+        test_client = self.get_simple_test_client()
 
         with self.assertRaises(ValueError):
-            dut_client.update_pstn_gateways(None)
-            
+            test_client.update_pstn_gateways(None)
+
     def test_update_routing_settings_no_routting_raises_value_error(self):
-        dut_client = self.get_simple_test_client()
+        test_client = self.get_simple_test_client()
 
         with self.assertRaises(ValueError):
-            dut_client.update_routing_settings(None)
+            test_client.update_routing_settings(None)
