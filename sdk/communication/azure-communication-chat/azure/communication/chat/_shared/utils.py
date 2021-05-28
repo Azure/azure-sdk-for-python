@@ -94,6 +94,7 @@ def create_access_token(token):
 def get_authentication_policy(
         endpoint, # type: str
         credential, # type: TokenCredential or str
+        decode_url=False, # type: bool
         is_async=False, # type: bool
 ):
     # type: (...) -> BearerTokenCredentialPolicy or HMACCredentialPolicy
@@ -116,13 +117,12 @@ def get_authentication_policy(
             from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
             return AsyncBearerTokenCredentialPolicy(
                 credential, "https://communication.azure.com//.default")
-        else:
-            from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-            return BearerTokenCredentialPolicy(
-                credential, "https://communication.azure.com//.default")
+        from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+        return BearerTokenCredentialPolicy(
+            credential, "https://communication.azure.com//.default")
     if isinstance(credential, str):
         from .._shared.policy import HMACCredentialsPolicy
-        return HMACCredentialsPolicy(endpoint, credential, decode_url=is_async)
+        return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 
     raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
                     "or a token credential from azure.identity".format(type(credential)))

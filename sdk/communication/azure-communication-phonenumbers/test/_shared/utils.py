@@ -16,7 +16,7 @@ def create_token_credential():
     return DefaultAzureCredential()
 
 def async_create_token_credential():
-    # type: () -> FakeTokenCredential or DefaultAzureCredential
+    # type: () -> AsyncFakeTokenCredential or DefaultAzureCredential
     from devtools_testutils import is_live
     if not is_live():
         from .async_fake_token_credential import AsyncFakeTokenCredential
