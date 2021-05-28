@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 from azure_devtools.perfstress_tests import PerfStressTest
 from azure.identity import EnvironmentCredential
 from azure.identity.aio import EnvironmentCredential as AsyncEnvironmentCredential
@@ -27,12 +26,12 @@ class GetSecretTest(PerfStressTest):
     async def global_setup(self):
         """The global setup is run only once."""
         await super().global_setup()
-        await self.async_client.set_secret("livekvtestperfsecret", "secret-value")
+        await self.async_client.set_secret("livekvtestgetsecretperfsecret", "secret-value")
 
     async def global_cleanup(self):
         """The global cleanup is run only once."""
-        await self.async_client.delete_secret("livekvtestperfsecret")
-        await self.async_client.purge_deleted_secret("livekvtestperfsecret")
+        await self.async_client.delete_secret("livekvtestgetsecretperfsecret")
+        await self.async_client.purge_deleted_secret("livekvtestgetsecretperfsecret")
         await super().global_cleanup()
 
     async def close(self):
@@ -43,8 +42,8 @@ class GetSecretTest(PerfStressTest):
 
     def run_sync(self):
         """The synchronous perf test."""
-        self.client.get_secret("livekvtestperfsecret")
+        self.client.get_secret("livekvtestgetsecretperfsecret")
 
     async def run_async(self):
         """The asynchronous perf test."""
-        await self.async_client.get_secret("livekvtestperfsecret")
+        await self.async_client.get_secret("livekvtestgetsecretperfsecret")
