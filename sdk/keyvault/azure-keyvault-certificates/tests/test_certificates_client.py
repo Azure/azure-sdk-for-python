@@ -349,7 +349,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
             client.begin_delete_certificate(certificate_name=cert_name).wait()
 
         # validate all our deleted certificates are returned by list_deleted_certificates
-        deleted = [KeyVaultCertificateIdentifier(id=c.id).name for c in client.list_deleted_certificates()]
+        deleted = [KeyVaultCertificateIdentifier(source_id=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(all(c in deleted for c in certs.keys()))
 
         # recover select certificates (test resources have a "livekvtest" prefix)
@@ -364,7 +364,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
             time.sleep(50)
 
         # validate none of our deleted certificates are returned by list_deleted_certificates
-        deleted = [KeyVaultCertificateIdentifier(id=c.id).name for c in client.list_deleted_certificates()]
+        deleted = [KeyVaultCertificateIdentifier(source_id=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(not any(c in deleted for c in certs.keys()))
 
         # validate the recovered certificates
