@@ -3,6 +3,8 @@ import time
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
 
+from devtools_testutils import is_live
+
 from preparers import CosmosPreparer, TablesPreparer, trim_kwargs_from_test_function
 
 
@@ -47,7 +49,8 @@ def tables_decorator_async(func, **kwargs):
                 raise
             print("Retrying: {} {}".format(RETRY_COUNT, EXPONENTIAL_BACKOFF))
             while RETRY_COUNT < 6:
-                time.sleep(EXPONENTIAL_BACKOFF)
+                if is_live():
+                    time.sleep(EXPONENTIAL_BACKOFF)
                 try:
                     return await func(*args, **trimmed_kwargs)
                 except HttpResponseError as exc:

@@ -4,7 +4,7 @@ import time
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import PowerShellPreparer
+from devtools_testutils import PowerShellPreparer, is_live
 
 CosmosPreparer = functools.partial(
     PowerShellPreparer,
@@ -76,7 +76,8 @@ def cosmos_decorator(func, **kwargs):
                 raise
             print("Retrying: {} {}".format(RETRY_COUNT, EXPONENTIAL_BACKOFF))
             while RETRY_COUNT < 6:
-                time.sleep(EXPONENTIAL_BACKOFF)
+                if is_live():
+                    time.sleep(EXPONENTIAL_BACKOFF)
                 try:
                     return func(*args, **trimmed_kwargs)
                 except HttpResponseError as exc:
