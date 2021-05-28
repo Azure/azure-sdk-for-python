@@ -2,14 +2,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
+
 from azure_devtools.perfstress_tests import PerfStressTest
 from azure.identity import EnvironmentCredential
 from azure.identity.aio import EnvironmentCredential as AsyncEnvironmentCredential
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys.aio import KeyClient as AsyncKeyClient
+from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
+from azure.keyvault.keys.crypto.aio import CryptographyClient as AsyncCryptographyClient
 
 
-class GetKeyTest(PerfStressTest):
+class UnwrapTest(PerfStressTest):
 
     def __init__(self, arguments):
         super().__init__(arguments)
@@ -26,24 +30,32 @@ class GetKeyTest(PerfStressTest):
     async def global_setup(self):
         """The global setup is run only once."""
         await super().global_setup()
-        await self.async_client.create_rsa_key("livekvtestgetkeyperfkey")
+        rsa_key = await self.async_client.create_rsa_key("livekvtestunwrapperfkey")
+        self.crypto_client = CryptographyClient(rsa_key, self.credential)
+        self.async_crypto_client = AsyncCryptographyClient(rsa_key, self.async_credential)
+
+        self.test_algorithm = EncryptionAlgorithm.rsa_oaep_256
+        key_bytes = os.urandom(32)
+        self.encrypted_key = self.crypto_client.wrap_key(self.test_algorithm, key_bytes).encrypted_key
+        
 
     async def global_cleanup(self):
         """The global cleanup is run only once."""
-        await self.async_client.delete_key("livekvtestgetkeyperfkey")
-        await self.async_client.purge_deleted_key("livekvtestgetkeyperfkey")
+        await self.async_client.delete_key("livekvtestunwrapperfkey")
+        await self.async_client.purge_deleted_key("livekvtestunwrapperfkey")
         await super().global_cleanup()
 
     async def close(self):
         """This is run after cleanup."""
         await self.async_client.close()
+        await self.async_crypto_client.close()
         await self.async_credential.close()
         await super().close()
 
     def run_sync(self):
         """The synchronous perf test."""
-        self.client.get_key("livekvtestgetkeyperfkey")
+        self.crypto_client.unwrap_key(self.test_algorithm, self.encrypted_key)
 
     async def run_async(self):
         """The asynchronous perf test."""
-        await self.async_client.get_key("livekvtestgetkeyperfkey")
+        await self.async_crypto_client.unwrap_key(self.test_algorithm, self.encrypted_key)
