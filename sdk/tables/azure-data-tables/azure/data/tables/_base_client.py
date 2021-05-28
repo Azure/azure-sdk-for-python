@@ -84,7 +84,6 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 account_url = "https://" + account_url
         except AttributeError:
             raise ValueError("Account URL must be a string.")
-        self._cosmos_endpoint = _is_cosmos_endpoint(account_url)
         parsed_url = urlparse(account_url.rstrip("/"))
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(account_url))
@@ -98,7 +97,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         self._location_mode = kwargs.get("location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
-        self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url.hostname)
+        self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url)
         if ".core." in parsed_url.netloc or ".cosmos." in parsed_url.netloc:
             account = parsed_url.netloc.split(".table.core.")
             if "cosmos" in parsed_url.netloc:
@@ -118,17 +117,19 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         self.credential = credential
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
-        if hasattr(self.credential, "account_name"):
-            self.account_name = self.credential.account_name
+        if hasattr(self.credential, "named_key"):
+            self.account_name = self.credential.named_key.name
             secondary_hostname = "{}-secondary.table.{}".format(
-                self.credential.account_name, SERVICE_HOST_BASE
+                self.credential.named_key.name, SERVICE_HOST_BASE
             )
 
         if not self._hosts:
             if len(account) > 1:
                 secondary_hostname = parsed_url.netloc.replace(
                     account[0], account[0] + "-secondary"
-                )
+                ) + parsed_url.path.replace(
+                    account[0], account[0] + "-secondary"
+                ).rstrip("/")
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
@@ -206,7 +207,7 @@ class TablesBaseClient(AccountHostsMixin):
     def __init__(
         self,
         endpoint,  # type: str
-        credential=None,  # type: Union[AzureNamedKeyCredential, AzureSASCredential]
+        credential=None,  # type: Union[AzureNamedKeyCredential, AzureSasCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -350,7 +351,6 @@ def parse_connection_str(conn_str, credential, keyword_args):
             credential = conn_settings.get("sharedaccesssignature")
             # if "sharedaccesssignature" in conn_settings:
             #     credential = AzureSasCredential(conn_settings['sharedaccesssignature'])
-
     primary = conn_settings.get("tableendpoint")
     secondary = conn_settings.get("tablesecondaryendpoint")
     if not primary:

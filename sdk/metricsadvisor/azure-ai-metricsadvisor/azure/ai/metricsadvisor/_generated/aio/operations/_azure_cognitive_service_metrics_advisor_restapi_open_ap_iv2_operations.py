@@ -22,7 +22,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
 
     async def get_active_series_count(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.UsageStats":
         """Get latest usage stats.
 
@@ -74,7 +74,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def get_anomaly_alerting_configuration(
         self,
         configuration_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AnomalyAlertingConfiguration":
         """Query a single anomaly alerting configuration.
 
@@ -129,9 +129,9 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def update_anomaly_alerting_configuration(
         self,
         configuration_id: str,
-        body: object,
-        **kwargs
-    ) -> None:
+        body: Any,
+        **kwargs: Any
+    ) -> "_models.AnomalyAlertingConfiguration":
         """Update anomaly alerting configuration.
 
         Update anomaly alerting configuration.
@@ -139,13 +139,13 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :param configuration_id: anomaly alerting configuration unique id.
         :type configuration_id: str
         :param body: anomaly alerting configuration.
-        :type body: object
+        :type body: any
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: AnomalyAlertingConfiguration, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertingConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnomalyAlertingConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -176,20 +176,23 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorCode, response)
             raise HttpResponseError(response=response, model=error)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = self._deserialize('AnomalyAlertingConfiguration', pipeline_response)
 
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
     update_anomaly_alerting_configuration.metadata = {'url': '/alert/anomaly/configurations/{configurationId}'}  # type: ignore
 
     async def delete_anomaly_alerting_configuration(
         self,
         configuration_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete anomaly alerting configuration.
 
@@ -241,7 +244,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def create_anomaly_alerting_configuration(
         self,
         body: "_models.AnomalyAlertingConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Create anomaly alerting configuration.
 
@@ -303,7 +306,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         body: "_models.AlertingResultQuery",
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AlertResultList"]:
         """Query alerts under anomaly alerting configuration.
 
@@ -402,7 +405,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         alert_id: str,
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AnomalyResultList"]:
         """Query anomalies under a specific alert.
 
@@ -493,7 +496,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         alert_id: str,
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IncidentResultList"]:
         """Query incidents under a specific alert.
 
@@ -581,7 +584,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def get_anomaly_detection_configuration(
         self,
         configuration_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AnomalyDetectionConfiguration":
         """Query a single anomaly detection configuration.
 
@@ -636,9 +639,9 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def update_anomaly_detection_configuration(
         self,
         configuration_id: str,
-        body: object,
-        **kwargs
-    ) -> None:
+        body: Any,
+        **kwargs: Any
+    ) -> "_models.AnomalyDetectionConfiguration":
         """Update anomaly detection configuration.
 
         Update anomaly detection configuration.
@@ -646,13 +649,13 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :param configuration_id: anomaly detection configuration unique id.
         :type configuration_id: str
         :param body: anomaly detection configuration.
-        :type body: object
+        :type body: any
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: AnomalyDetectionConfiguration, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnomalyDetectionConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -683,20 +686,23 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorCode, response)
             raise HttpResponseError(response=response, model=error)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = self._deserialize('AnomalyDetectionConfiguration', pipeline_response)
 
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
     update_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}'}  # type: ignore
 
     async def delete_anomaly_detection_configuration(
         self,
         configuration_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete anomaly detection configuration.
 
@@ -748,7 +754,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def create_anomaly_detection_configuration(
         self,
         body: "_models.AnomalyDetectionConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Create anomaly detection configuration.
 
@@ -807,14 +813,20 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     def get_anomaly_alerting_configurations_by_anomaly_detection_configuration(
         self,
         configuration_id: str,
-        **kwargs
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.AnomalyAlertingConfigurationList"]:
-        """Query all anomaly alerting configurations for specific anomaly detection configuration.
+        """List all anomaly alerting configurations for specific anomaly detection configuration.
 
-        Query all anomaly alerting configurations for specific anomaly detection configuration.
+        List all anomaly alerting configurations for specific anomaly detection configuration.
 
         :param configuration_id: anomaly detection configuration unique id.
         :type configuration_id: str
+        :param skip: for paging, skipped number.
+        :type skip: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AnomalyAlertingConfigurationList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationList]
@@ -842,6 +854,10 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -884,7 +900,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         self,
         configuration_id: str,
         body: "_models.DetectionSeriesQuery",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SeriesResultList"]:
         """Query series enriched by anomaly detection.
 
@@ -973,7 +989,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         body: "_models.DetectionAnomalyResultQuery",
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AnomalyResultList"]:
         """Query anomalies under anomaly detection configuration.
 
@@ -1072,7 +1088,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         body: "_models.AnomalyDimensionQuery",
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AnomalyDimensionList"]:
         """Query dimension values of anomalies.
 
@@ -1170,7 +1186,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         configuration_id: str,
         body: "_models.DetectionIncidentResultQuery",
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IncidentResultList"]:
         """Query incidents under anomaly detection configuration.
 
@@ -1262,7 +1278,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         configuration_id: str,
         maxpagesize: Optional[int] = None,
         token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IncidentResultList"]:
         """Query incidents under anomaly detection configuration.
 
@@ -1347,7 +1363,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         self,
         configuration_id: str,
         incident_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RootCauseList"]:
         """Query root cause for incident.
 
@@ -1427,7 +1443,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def create_credential(
         self,
         body: "_models.DataSourceCredential",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Create a new data source credential.
 
@@ -1487,7 +1503,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         self,
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataSourceCredentialList"]:
         """List all credentials.
 
@@ -1568,8 +1584,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         self,
         credential_id: str,
         body: "_models.DataSourceCredentialPatch",
-        **kwargs
-    ) -> None:
+        **kwargs: Any
+    ) -> "_models.DataSourceCredential":
         """Update a data source credential.
 
         Update a data source credential.
@@ -1579,11 +1595,11 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :param body: Update data source credential request.
         :type body: ~azure.ai.metricsadvisor.models.DataSourceCredentialPatch
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: DataSourceCredential, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.DataSourceCredential
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataSourceCredential"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1614,20 +1630,23 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorCode, response)
             raise HttpResponseError(response=response, model=error)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = self._deserialize('DataSourceCredential', pipeline_response)
 
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
     update_credential.metadata = {'url': '/credentials/{credentialId}'}  # type: ignore
 
     async def delete_credential(
         self,
         credential_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a data source credential.
 
@@ -1679,7 +1698,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def get_credential(
         self,
         credential_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataSourceCredential":
         """Get a data source credential.
 
@@ -1740,7 +1759,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         creator: Optional[str] = None,
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataFeedList"]:
         """List all data feeds.
 
@@ -1840,7 +1859,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def create_data_feed(
         self,
         body: "_models.DataFeedDetail",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Create a new data feed.
 
@@ -1899,7 +1918,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def get_data_feed_by_id(
         self,
         data_feed_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataFeedDetail":
         """Get a data feed by its id.
 
@@ -1954,9 +1973,9 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def update_data_feed(
         self,
         data_feed_id: str,
-        body: object,
-        **kwargs
-    ) -> None:
+        body: Any,
+        **kwargs: Any
+    ) -> "_models.DataFeedDetail":
         """Update a data feed.
 
         Update a data feed.
@@ -1964,13 +1983,13 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :param data_feed_id: The data feed unique id.
         :type data_feed_id: str
         :param body: parameters to update a data feed.
-        :type body: object
+        :type body: any
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: DataFeedDetail, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.DataFeedDetail
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFeedDetail"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2001,20 +2020,23 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorCode, response)
             raise HttpResponseError(response=response, model=error)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = self._deserialize('DataFeedDetail', pipeline_response)
 
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
     update_data_feed.metadata = {'url': '/dataFeeds/{dataFeedId}'}  # type: ignore
 
     async def delete_data_feed(
         self,
         data_feed_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a data feed.
 
@@ -2066,7 +2088,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def get_metric_feedback(
         self,
         feedback_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MetricFeedback":
         """Get a metric feedback by its id.
 
@@ -2123,7 +2145,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         body: "_models.MetricFeedbackFilter",
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MetricFeedbackList"]:
         """List feedback on the given metric.
 
@@ -2216,7 +2238,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def create_metric_feedback(
         self,
         body: "_models.MetricFeedback",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Create a new metric feedback.
 
@@ -2277,7 +2299,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         hook_name: Optional[str] = None,
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.HookList"]:
         """List all hooks.
 
@@ -2361,7 +2383,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def create_hook(
         self,
         body: "_models.HookInfo",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Create a new hook.
 
@@ -2420,7 +2442,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def get_hook(
         self,
         hook_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HookInfo":
         """Get a hook by its id.
 
@@ -2475,9 +2497,9 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def update_hook(
         self,
         hook_id: str,
-        body: object,
-        **kwargs
-    ) -> None:
+        body: Any,
+        **kwargs: Any
+    ) -> "_models.HookInfo":
         """Update a hook.
 
         Update a hook.
@@ -2485,13 +2507,13 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :param hook_id: Hook unique ID.
         :type hook_id: str
         :param body: Update hook request.
-        :type body: object
+        :type body: any
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: HookInfo, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.HookInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HookInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2522,20 +2544,23 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorCode, response)
             raise HttpResponseError(response=response, model=error)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = self._deserialize('HookInfo', pipeline_response)
 
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
     update_hook.metadata = {'url': '/hooks/{hookId}'}  # type: ignore
 
     async def delete_hook(
         self,
         hook_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a hook.
 
@@ -2590,7 +2615,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         body: "_models.IngestionStatusQueryOptions",
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IngestionStatusList"]:
         """Get data ingestion status by data feed.
 
@@ -2687,7 +2712,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         self,
         data_feed_id: str,
         body: "_models.IngestionProgressResetOptions",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Reset data ingestion status by data feed to backfill data.
 
@@ -2746,7 +2771,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     async def get_ingestion_progress(
         self,
         data_feed_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataFeedIngestionProgress":
         """Get data last success ingestion job timestamp by data feed.
 
@@ -2802,7 +2827,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         self,
         metric_id: str,
         body: "_models.MetricDataQueryOptions",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MetricDataList"]:
         """Get time series data from metric.
 
@@ -2891,7 +2916,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         body: "_models.MetricSeriesQueryOptions",
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MetricSeriesList"]:
         """List series (dimension combinations) from metric.
 
@@ -2990,7 +3015,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         body: "_models.MetricDimensionQueryOptions",
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MetricDimensionList"]:
         """List dimension from certain metric.
 
@@ -3086,14 +3111,20 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     def get_anomaly_detection_configurations_by_metric(
         self,
         metric_id: str,
-        **kwargs
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.AnomalyDetectionConfigurationList"]:
-        """Query all anomaly detection configurations for specific metric.
+        """List all anomaly detection configurations for specific metric.
 
-        Query all anomaly detection configurations for specific metric.
+        List all anomaly detection configurations for specific metric.
 
         :param metric_id: metric unique id.
         :type metric_id: str
+        :param skip: for paging, skipped number.
+        :type skip: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AnomalyDetectionConfigurationList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationList]
@@ -3121,6 +3152,10 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -3165,7 +3200,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         body: "_models.EnrichmentStatusQueryOption",
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.EnrichmentStatusList"]:
         """Query anomaly detection status.
 

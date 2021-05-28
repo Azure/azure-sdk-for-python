@@ -59,7 +59,8 @@ class ManagementGroupSubscriptionsOperations(object):
         :type group_id: str
         :param subscription_id: Subscription ID.
         :type subscription_id: str
-        :param cache_control: Indicates that the request shouldn't utilize any caches.
+        :param cache_control: Indicates whether the request should utilize any caches. Populate the
+         header with 'no-cache' value to bypass existing caches.
         :type cache_control: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SubscriptionUnderManagementGroup, or the result of cls(response)
@@ -71,7 +72,7 @@ class ManagementGroupSubscriptionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         # Construct URL
@@ -98,7 +99,7 @@ class ManagementGroupSubscriptionsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SubscriptionUnderManagementGroup', pipeline_response)
@@ -123,7 +124,8 @@ class ManagementGroupSubscriptionsOperations(object):
         :type group_id: str
         :param subscription_id: Subscription ID.
         :type subscription_id: str
-        :param cache_control: Indicates that the request shouldn't utilize any caches.
+        :param cache_control: Indicates whether the request should utilize any caches. Populate the
+         header with 'no-cache' value to bypass existing caches.
         :type cache_control: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -135,7 +137,7 @@ class ManagementGroupSubscriptionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         # Construct URL
@@ -162,7 +164,7 @@ class ManagementGroupSubscriptionsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -184,7 +186,8 @@ class ManagementGroupSubscriptionsOperations(object):
         :type group_id: str
         :param subscription_id: Subscription ID.
         :type subscription_id: str
-        :param cache_control: Indicates that the request shouldn't utilize any caches.
+        :param cache_control: Indicates whether the request should utilize any caches. Populate the
+         header with 'no-cache' value to bypass existing caches.
         :type cache_control: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SubscriptionUnderManagementGroup, or the result of cls(response)
@@ -196,7 +199,7 @@ class ManagementGroupSubscriptionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         # Construct URL
@@ -223,7 +226,7 @@ class ManagementGroupSubscriptionsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SubscriptionUnderManagementGroup', pipeline_response)
@@ -237,6 +240,7 @@ class ManagementGroupSubscriptionsOperations(object):
     def get_subscriptions_under_management_group(
         self,
         group_id,  # type: str
+        skiptoken=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.ListSubscriptionUnderManagementGroup"]
@@ -244,6 +248,11 @@ class ManagementGroupSubscriptionsOperations(object):
 
         :param group_id: Management Group ID.
         :type group_id: str
+        :param skiptoken: Page continuation token is only used if a previous operation returned a
+         partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a token parameter that specifies a starting point to use for subsequent calls.
+        :type skiptoken: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ListSubscriptionUnderManagementGroup or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.managementgroups.models.ListSubscriptionUnderManagementGroup]
@@ -254,7 +263,7 @@ class ManagementGroupSubscriptionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -272,8 +281,8 @@ class ManagementGroupSubscriptionsOperations(object):
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-                if self._config.skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("self._config.skiptoken", self._config.skiptoken, 'str')
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -296,7 +305,7 @@ class ManagementGroupSubscriptionsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

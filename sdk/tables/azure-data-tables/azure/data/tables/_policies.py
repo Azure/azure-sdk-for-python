@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import time
-from typing import Any, TYPE_CHECKING, Dict, Union, Awaitabled
+from typing import Any, TYPE_CHECKING, Dict
 from wsgiref.handlers import format_date_time
 try:
     from urllib.parse import urlparse

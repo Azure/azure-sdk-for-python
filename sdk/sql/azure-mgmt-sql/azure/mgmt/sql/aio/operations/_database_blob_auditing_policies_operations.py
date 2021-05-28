@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class DatabaseBlobAuditingPoliciesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,8 +46,8 @@ class DatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ) -> "models.DatabaseBlobAuditingPolicy":
+        **kwargs: Any
+    ) -> "_models.DatabaseBlobAuditingPolicy":
         """Gets a database's blob auditing policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -62,13 +62,13 @@ class DatabaseBlobAuditingPoliciesOperations:
         :rtype: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatabaseBlobAuditingPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseBlobAuditingPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         blob_auditing_policy_name = "default"
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -111,9 +111,9 @@ class DatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: "models.DatabaseBlobAuditingPolicy",
-        **kwargs
-    ) -> "models.DatabaseBlobAuditingPolicy":
+        parameters: "_models.DatabaseBlobAuditingPolicy",
+        **kwargs: Any
+    ) -> "_models.DatabaseBlobAuditingPolicy":
         """Creates or updates a database's blob auditing policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -130,13 +130,13 @@ class DatabaseBlobAuditingPoliciesOperations:
         :rtype: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatabaseBlobAuditingPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseBlobAuditingPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         blob_auditing_policy_name = "default"
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -188,8 +188,8 @@ class DatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.DatabaseBlobAuditingPolicyListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.DatabaseBlobAuditingPolicyListResult"]:
         """Lists auditing settings of a database.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -204,12 +204,12 @@ class DatabaseBlobAuditingPoliciesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.DatabaseBlobAuditingPolicyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatabaseBlobAuditingPolicyListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseBlobAuditingPolicyListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

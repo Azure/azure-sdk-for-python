@@ -645,7 +645,6 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
             await mgmt_service.delete_queue(queue_name)
             await mgmt_service.close()
     
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_mgmt_queue_async_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):

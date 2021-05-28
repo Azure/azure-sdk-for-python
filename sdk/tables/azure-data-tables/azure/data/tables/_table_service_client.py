@@ -165,7 +165,7 @@ class TableServiceClient(TablesBaseClient):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors,
+            cors=cors,  # type: ignore
         )
         try:
             self._client.service.set_properties(props, **kwargs)
@@ -324,7 +324,7 @@ class TableServiceClient(TablesBaseClient):
         :rtype: :class:`~azure.data.tables.TableClient`
 
         """
-        pipeline = Pipeline(
+        pipeline = Pipeline(  # type: ignore
             transport=TransportWrapper(self._client._client._pipeline._transport), # pylint: disable = protected-access
             policies=self._policies
         )

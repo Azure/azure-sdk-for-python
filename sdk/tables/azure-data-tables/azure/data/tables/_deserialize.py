@@ -3,20 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Union, Dict, Any
 
-from typing import TYPE_CHECKING
 from uuid import UUID
 import logging
 import datetime
 
-from azure.core.exceptions import ResourceExistsError
+import six
 
 from ._entity import EntityProperty, EdmType, TableEntity
 from ._common_conversion import _decode_base64_to_bytes, TZ_UTC
-from ._error import TableErrorCode
-
-if TYPE_CHECKING:
-    from azure.core.exceptions import AzureError
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,18 +21,6 @@ try:
     from urllib.parse import quote
 except ImportError:
     from urllib2 import quote  # type: ignore
-
-if TYPE_CHECKING:
-    from typing import (  # pylint: disable=ungrouped-imports
-        Union,
-        Optional,
-        Any,
-        Iterable,
-        Dict,
-        List,
-        Type,
-        Tuple,
-    )
 
 
 class TablesEntityDatetime(datetime.datetime):
@@ -62,29 +46,14 @@ def get_enum_value(value):
         return value
 
 
-def _deserialize_table_creation(response, _, headers):
-    if response.status_code == 204:
-        error_code = TableErrorCode.table_already_exists
-        error = ResourceExistsError(
-            message="Table already exists\nRequestId:{}\nTime:{}\nErrorCode:{}".format(
-                headers["x-ms-request-id"], headers["Date"], error_code
-            ),
-            response=response,
-        )
-        error.error_code = error_code
-        error.additional_info = {}
-        raise error
-    return headers
-
-
 def _from_entity_binary(value):
     # type: (str) -> EntityProperty
-    return EntityProperty(_decode_base64_to_bytes(value), EdmType.BINARY)
+    return _decode_base64_to_bytes(value)
 
 
 def _from_entity_int32(value):
-    # type: (str) -> EntityProperty
-    return EntityProperty(int(value), EdmType.INT32)
+    # type: (str) -> int
+    return int(value)
 
 
 def _from_entity_int64(value):
@@ -128,8 +97,10 @@ def _from_entity_guid(value):
 
 
 def _from_entity_str(value):
-    # type: (str) -> EntityProperty
-    return EntityProperty(value, EdmType.STRING)
+    # type: (Union[str, bytes]) -> str
+    if isinstance(value, six.binary_type):
+        return value.decode('utf-8')
+    return value
 
 
 _EDM_TYPES = [

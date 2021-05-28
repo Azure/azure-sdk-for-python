@@ -42,12 +42,12 @@ def event_tuples(system_events):
     return tup_list
 
 def generate_enum_content(tuples):
-    for tup in tup_list:
-        print(tup[0] + " = '" + tup[1] + "'\n")
     print("# these names below are for backward compat only - refrain from using them.")
     for k, v in backward_compat.items():
         print(k + " = '" + v + "'\n")
-
+    print("# backward compat names end here.")
+    for tup in tup_list:
+        print(tup[0] + " = '" + tup[1] + "'\n")
 system_events = [m for m in inspect.getmembers(models) if m[0].endswith('Data')]
 tup_list = event_tuples(system_events)
 

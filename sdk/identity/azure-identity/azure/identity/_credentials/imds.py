@@ -44,9 +44,7 @@ class ImdsCredential(GetTokenMixin):
         # type: (**Any) -> None
         super(ImdsCredential, self).__init__()
 
-        self._client = ManagedIdentityClient(
-            get_request, _identity_config=kwargs.pop("identity_config", None) or {}, **dict(PIPELINE_SETTINGS, **kwargs)
-        )
+        self._client = ManagedIdentityClient(get_request, **dict(PIPELINE_SETTINGS, **kwargs))
         self._endpoint_available = None  # type: Optional[bool]
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 

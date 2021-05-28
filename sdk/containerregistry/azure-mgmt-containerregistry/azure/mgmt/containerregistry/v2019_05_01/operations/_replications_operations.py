@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ReplicationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -54,7 +54,7 @@ class ReplicationsOperations(object):
         replication_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Replication"
+        # type: (...) -> "_models.Replication"
         """Gets the properties of the specified replication.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -69,7 +69,7 @@ class ReplicationsOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2019_05_01.models.Replication
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Replication"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Replication"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -116,11 +116,11 @@ class ReplicationsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         replication_name,  # type: str
-        replication,  # type: "models.Replication"
+        replication,  # type: "_models.Replication"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Replication"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Replication"]
+        # type: (...) -> "_models.Replication"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Replication"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -176,10 +176,10 @@ class ReplicationsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         replication_name,  # type: str
-        replication,  # type: "models.Replication"
+        replication,  # type: "_models.Replication"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Replication"]
+        # type: (...) -> LROPoller["_models.Replication"]
         """Creates a replication for a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -193,8 +193,8 @@ class ReplicationsOperations(object):
         :type replication: ~azure.mgmt.containerregistry.v2019_05_01.models.Replication
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Replication or the result of cls(response)
@@ -202,7 +202,7 @@ class ReplicationsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Replication"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Replication"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -228,7 +228,14 @@ class ReplicationsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'replicationName': self._serialize.url("replication_name", replication_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -306,8 +313,8 @@ class ReplicationsOperations(object):
         :type replication_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -337,7 +344,14 @@ class ReplicationsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'replicationName': self._serialize.url("replication_name", replication_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -356,11 +370,11 @@ class ReplicationsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         replication_name,  # type: str
-        replication_update_parameters,  # type: "models.ReplicationUpdateParameters"
+        replication_update_parameters,  # type: "_models.ReplicationUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Replication"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Replication"]
+        # type: (...) -> "_models.Replication"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Replication"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -416,10 +430,10 @@ class ReplicationsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         replication_name,  # type: str
-        replication_update_parameters,  # type: "models.ReplicationUpdateParameters"
+        replication_update_parameters,  # type: "_models.ReplicationUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Replication"]
+        # type: (...) -> LROPoller["_models.Replication"]
         """Updates a replication for a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -433,8 +447,8 @@ class ReplicationsOperations(object):
         :type replication_update_parameters: ~azure.mgmt.containerregistry.v2019_05_01.models.ReplicationUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Replication or the result of cls(response)
@@ -442,7 +456,7 @@ class ReplicationsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Replication"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Replication"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -468,7 +482,14 @@ class ReplicationsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'replicationName': self._serialize.url("replication_name", replication_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -488,7 +509,7 @@ class ReplicationsOperations(object):
         registry_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ReplicationListResult"]
+        # type: (...) -> Iterable["_models.ReplicationListResult"]
         """Lists all the replications for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -501,7 +522,7 @@ class ReplicationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.v2019_05_01.models.ReplicationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ReplicationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReplicationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

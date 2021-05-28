@@ -16,29 +16,23 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import AzureReservationAPIConfiguration
-from .operations import QuotaOperations
-from .operations import QuotaRequestStatusOperations
-from .operations import AutoQuotaIncreaseOperations
 from .operations import ReservationOperations
 from .operations import AzureReservationAPIOperationsMixin
 from .operations import ReservationOrderOperations
 from .operations import OperationOperations
 from .operations import CalculateExchangeOperations
 from .operations import ExchangeOperations
+from .operations import QuotaOperations
+from .operations import QuotaRequestStatusOperations
 from . import models
 
 
 class AzureReservationAPI(AzureReservationAPIOperationsMixin):
-    """Microsoft Azure Quota Resource Provider.
+    """This API describe Azure Reservation.
 
-    :ivar quota: QuotaOperations operations
-    :vartype quota: azure.mgmt.reservations.operations.QuotaOperations
-    :ivar quota_request_status: QuotaRequestStatusOperations operations
-    :vartype quota_request_status: azure.mgmt.reservations.operations.QuotaRequestStatusOperations
-    :ivar auto_quota_increase: AutoQuotaIncreaseOperations operations
-    :vartype auto_quota_increase: azure.mgmt.reservations.operations.AutoQuotaIncreaseOperations
     :ivar reservation: ReservationOperations operations
     :vartype reservation: azure.mgmt.reservations.operations.ReservationOperations
     :ivar reservation_order: ReservationOrderOperations operations
@@ -49,6 +43,10 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin):
     :vartype calculate_exchange: azure.mgmt.reservations.operations.CalculateExchangeOperations
     :ivar exchange: ExchangeOperations operations
     :vartype exchange: azure.mgmt.reservations.operations.ExchangeOperations
+    :ivar quota: QuotaOperations operations
+    :vartype quota: azure.mgmt.reservations.operations.QuotaOperations
+    :ivar quota_request_status: QuotaRequestStatusOperations operations
+    :vartype quota_request_status: azure.mgmt.reservations.operations.QuotaRequestStatusOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param str base_url: Service URL
@@ -72,12 +70,6 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.quota = QuotaOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.quota_request_status = QuotaRequestStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.auto_quota_increase = AutoQuotaIncreaseOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.reservation = ReservationOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.reservation_order = ReservationOrderOperations(
@@ -88,6 +80,25 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin):
             self._client, self._config, self._serialize, self._deserialize)
         self.exchange = ExchangeOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.quota = QuotaOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.quota_request_status = QuotaRequestStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        http_request.url = self._client.format_url(http_request.url)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

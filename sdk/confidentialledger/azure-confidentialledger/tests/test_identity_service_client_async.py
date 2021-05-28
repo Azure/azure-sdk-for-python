@@ -22,7 +22,7 @@ class ConfidentialLedgerIdentityServiceClientTest(AsyncConfidentialLedgerTestCas
         client = self.create_client_from_credential(
             ConfidentialLedgerIdentityServiceClient,
             credential=None,
-            identity_service_url="https://identity.accledger.azure.com",
+            identity_service_url="https://eastus.identity.confidential-ledger.core.azure.com",
         )
 
         network_identity = await client.get_ledger_identity(

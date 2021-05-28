@@ -3,6 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+import os
 from testcase import DocumentTranslationTest, Document
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 
@@ -10,6 +12,15 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
 
     def __init__(self, method_name):
         super(AsyncDocumentTranslationTest, self).__init__(method_name)
+
+    def generate_oauth_token(self):
+        if self.is_live:
+            from azure.identity.aio import ClientSecretCredential
+            return ClientSecretCredential(
+                os.getenv("TRANSLATION_TENANT_ID"),
+                os.getenv("TRANSLATION_CLIENT_ID"),
+                os.getenv("TRANSLATION_CLIENT_SECRET"),
+            )
 
     async def _submit_and_validate_translation_job_async(self, async_client, translation_inputs, total_docs_count=None):
         # submit job

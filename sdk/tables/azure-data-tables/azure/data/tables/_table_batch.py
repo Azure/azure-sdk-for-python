@@ -13,7 +13,7 @@ from typing import (
     List
 )
 
-from ._common_conversion import _is_cosmos_endpoint, _transform_patch_to_cosmos_post
+from ._common_conversion import _transform_patch_to_cosmos_post
 from ._models import UpdateMode
 from ._serialize import _get_match_headers, _add_entity_properties
 from ._entity import TableEntity
@@ -47,6 +47,7 @@ class TableBatchOperations(object):
         deserializer,  # type: msrest.Deserializer
         config,  # type: AzureTableConfiguration
         table_name,  # type: str
+        is_cosmos_endpoint=False,  # type: bool
         **kwargs  # type: Dict[str, Any]
     ):
         """Create TableClient from a Credential.
@@ -70,6 +71,7 @@ class TableBatchOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
+        self._is_cosmos_endpoint = is_cosmos_endpoint
         self.table_name = table_name
 
         self._partition_key = kwargs.pop("partition_key", None)
@@ -489,7 +491,7 @@ class TableBatchOperations(object):
         request = self._client._client.patch(  # pylint: disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
         )
-        if _is_cosmos_endpoint(url):
+        if self._is_cosmos_endpoint:
             _transform_patch_to_cosmos_post(request)
         self.requests.append(request)
 

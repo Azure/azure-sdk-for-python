@@ -1,47 +1,16 @@
 # coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-import sys
-import locale
-import os
-from time import sleep
-from datetime import (
-    datetime,
-    timedelta,
-)
 
 from devtools_testutils import AzureTestCase
 
 from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError,
-    ResourceExistsError
-)
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import (
-    HeadersPolicy,
-    ContentDecodePolicy,
-)
-
-from azure.data.tables import (
-    ResourceTypes,
-    AccountSasPermissions,
-    TableSasPermissions,
-    CorsRule,
-    RetentionPolicy,
-    UpdateMode,
-    AccessPolicy,
-    TableAnalyticsLogging,
-    Metrics,
-    TableServiceClient,
-    generate_account_sas
-)
+from azure.core.exceptions import ResourceExistsError
+from azure.data.tables import TableServiceClient
 
 from _shared.testcase import TableTestCase, SLEEP_DELAY
 from preparers import cosmos_decorator
@@ -52,38 +21,6 @@ TEST_TABLE_PREFIX = 'pytablesync'
 
 class StorageTableTest(AzureTestCase, TableTestCase):
 
-    # --Helpers-----------------------------------------------------------------
-    def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
-        table_name = self.get_resource_name(prefix)
-        return table_name
-
-    def _create_table(self, ts, prefix=TEST_TABLE_PREFIX, table_list=None):
-        table_name = self._get_table_reference(prefix)
-        try:
-            table = ts.create_table(table_name)
-            if table_list is not None:
-                table_list.append(table)
-        except ResourceExistsError:
-            table = ts.get_table_client(table_name)
-        return table
-
-    def _delete_table(self, ts, table):
-        if table is None:
-            return
-        try:
-            ts.delete_table(table.name)
-        except ResourceNotFoundError:
-            pass
-
-    def _delete_all_tables(self, ts):
-        tables = ts.list_tables()
-        for table in tables:
-            try:
-                ts.delete_table(table.name)
-            except ResourceNotFoundError:
-                pass
-
-    # --Test cases for tables --------------------------------------------------
     @cosmos_decorator
     def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # # Arrange
@@ -97,9 +34,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         # Assert
         assert created.table_name == table_name
         ts.delete_table(table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
     @cosmos_decorator
     def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -115,9 +49,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         # Assert
         assert created
         ts.delete_table(table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
     @cosmos_decorator
     def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -146,10 +77,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         self._delete_all_tables(ts)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-
     @cosmos_decorator
     def test_query_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -164,9 +91,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert len(tables) >=  1
         assert tables[0] is not None
         ts.delete_table(table.table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
     @cosmos_decorator
     def test_query_tables_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -184,9 +108,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         ts.delete_table(table.table_name)
 
         self._delete_all_tables(ts)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
     @cosmos_decorator
     def test_query_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -212,9 +133,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert len(big_page) >=  4
 
         self._delete_all_tables(ts)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
     @cosmos_decorator
     def test_query_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -244,9 +162,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         self._delete_all_tables(ts)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @cosmos_decorator
     def test_delete_table_with_existing_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -258,10 +173,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         # Assert
         existing = list(ts.query_tables("TableName eq '{}'".format(table.table_name)))
-        assert len(existing) ==  0
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        assert len(existing) == 0
 
     @cosmos_decorator
     def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_cosmos_account_name,
@@ -270,9 +182,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
         ts.delete_table(table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
 
 class TestTableUnitTest(TableTestCase):

@@ -1,5 +1,9 @@
 [packaging]
 package_name = "azure-mgmt-recoveryservicesbackup"
-package_pprint_name = "Recovery Services Backup Management"
-package_doc_id = "recovery-services-backup"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Recoveryservicesbackup Management"
+package_doc_id = ""
 is_stable = false
+is_arm = true
+need_msrestazure = false
+need_azuremgmtcore = true

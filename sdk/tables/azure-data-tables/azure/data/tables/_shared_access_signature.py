@@ -46,7 +46,7 @@ class SharedAccessSignature(object):
 
     def generate_account(
         self,
-        services,  # type: Services
+        services,  # type: str
         resource_types,  # type: ResourceTypes
         permission,  # type: Union[AccountSasPermissions, str]
         expiry,  # type: Union[datetime, str]
@@ -60,8 +60,8 @@ class SharedAccessSignature(object):
         Use the returned signature with the sas_token parameter of the service
         or to create a new account object.
 
-        :param Services services:
-            Specifies the services accessible with the account SAS. You can
+        :param str services:
+            Specifies the services as a bitmap accessible with the account SAS. You can
             combine values to provide access to more than one service.
         :param ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account

@@ -706,7 +706,7 @@ def test_local_only_mode_raise():
 
     # Algorithm not supported locally
     with pytest.raises(NotImplementedError) as ex:
-        client.decrypt(EncryptionAlgorithm.a256_gcm, b"...")
+        client.decrypt(EncryptionAlgorithm.a256_gcm, b"...", iv=b"...", authentication_tag=b"...")
     assert EncryptionAlgorithm.a256_gcm in str(ex.value)
     assert KeyOperation.decrypt in str(ex.value)
 
@@ -827,6 +827,9 @@ def test_encrypt_argument_validation():
     with pytest.raises(ValueError) as ex:
         client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...", additional_authenticated_data=b"...")
     assert "additional_authenticated_data" in str(ex.value)
+    with pytest.raises(ValueError) as ex:
+        client.encrypt(EncryptionAlgorithm.a256_cbc, b"...")
+    assert "iv" in str(ex.value) and "required" in str(ex.value)
 
 
 def test_decrypt_argument_validation():
@@ -850,3 +853,9 @@ def test_decrypt_argument_validation():
     with pytest.raises(ValueError) as ex:
         client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...", authentication_tag=b"...")
     assert "authentication_tag" in str(ex.value)
+    with pytest.raises(ValueError) as ex:
+        client.decrypt(EncryptionAlgorithm.a128_gcm, b"...", iv=b"...")
+    assert "authentication_tag" in str(ex.value) and "required" in str(ex.value)
+    with pytest.raises(ValueError) as ex:
+        client.decrypt(EncryptionAlgorithm.a192_cbcpad, b"...")
+    assert "iv" in str(ex.value) and "required" in str(ex.value)

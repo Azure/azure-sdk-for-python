@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 from ..._constants import EnvironmentVariables
 from ..._internal import get_default_authority, normalize_authority
 from .azure_cli import AzureCliCredential
+from .azure_powershell import AzurePowerShellCredential
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
@@ -37,6 +38,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
        which identity to use. See :class:`~azure.identity.aio.SharedTokenCacheCredential` for more details.
     4. The user currently signed in to Visual Studio Code.
     5. The identity currently logged in to the Azure CLI.
+    6. The identity currently logged in to Azure PowerShell.
 
     This default behavior is configurable with keyword arguments.
 
@@ -46,6 +48,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword bool exclude_cli_credential: Whether to exclude the Azure CLI from the credential. Defaults to **False**.
     :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
         variables from the credential. Defaults to **False**.
+    :keyword bool exclude_powershell_credential: Whether to exclude Azure PowerShell. Defaults to **False**.
     :keyword bool exclude_visual_studio_code_credential: Whether to exclude stored credential from VS Code.
         Defaults to **False**.
     :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
@@ -84,6 +87,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
+        exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
         credentials = []  # type: List[AsyncTokenCredential]
         if not exclude_environment_credential:
@@ -105,6 +109,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             credentials.append(VisualStudioCodeCredential(tenant_id=vscode_tenant_id))
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential())
+        if not exclude_powershell_credential:
+            credentials.append(AzurePowerShellCredential())
 
         super().__init__(*credentials)
 

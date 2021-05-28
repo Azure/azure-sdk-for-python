@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._azure_red_hat_open_shift4_client import AzureRedHatOpenShift4Client
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['AzureRedHatOpenShift4Client']
 
 try:
