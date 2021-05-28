@@ -99,8 +99,10 @@ class TableTestCase(object):
         return table
 
     def _delete_all_tables(self, ts):
-        for table in ts.list_tables():
-            ts.delete_table(table.name)
+        if self.is_live:
+            for table in ts.list_tables():
+                ts.delete_table(table.name)
+            self.sleep(10)
 
     def _create_pk_rk(self, pk, rk):
         try:
@@ -354,8 +356,6 @@ class TableTestCase(object):
         if is_live():
             self._delete_all_tables(self.ts)
             self.test_tables = []
-            if self.ts._cosmos_endpoint:
-                self.sleep(SLEEP_DELAY)
             self.ts.close()
 
     def _create_query_table(self, entity_count):
