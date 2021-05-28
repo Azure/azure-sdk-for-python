@@ -11,7 +11,7 @@ FILE: sample_credential_entities_async.py
 
 DESCRIPTION:
     This sample demonstrates how to create, get, list, update, and delete credential entities
-    under your Metrics Advisor account. SQLConnectionStringCredentialEntity is used as an example in this sample.
+    under your Metrics Advisor account. SqlConnectionStringCredentialEntity is used as an example in this sample.
 
 USAGE:
     python sample_credential_entities_async.py
@@ -30,7 +30,7 @@ import asyncio
 async def sample_create_credential_entity_async():
     # [START create_credential_entity_async]
     from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
-    from azure.ai.metricsadvisor.models import SQLConnectionStringCredentialEntity
+    from azure.ai.metricsadvisor.models import SqlConnectionStringCredentialEntity
 
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
@@ -41,7 +41,7 @@ async def sample_create_credential_entity_async():
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     credential_entity = await client.create_credential_entity(
-        credential_entity=SQLConnectionStringCredentialEntity(
+        credential_entity=SqlConnectionStringCredentialEntity(
             name="sql credential entity",
             connection_string=connection_string,
             description="my credential entity",

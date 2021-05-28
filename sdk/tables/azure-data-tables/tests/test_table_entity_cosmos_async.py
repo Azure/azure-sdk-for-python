@@ -424,7 +424,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 await self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
 
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @cosmos_decorator_async
     async def test_get_entity_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):

@@ -94,7 +94,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT5S')
     def test_github_issue_6178(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
@@ -110,7 +110,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             _logger.debug(message.enqueued_time_utc)
                             _logger.debug(message._lock_expired)
                             receiver.complete_message(message)
-                            time.sleep(40)
+                            time.sleep(10)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -271,7 +271,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
     def test_queue_by_queue_client_conn_str_receive_handler_receiveanddelete(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         
         with ServiceBusClient.from_connection_string(
@@ -307,7 +307,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             assert len(messages) == 10
             assert not receiver._running
-            time.sleep(30)
+            time.sleep(10)
     
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, 
@@ -1072,10 +1072,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 content = str(uuid.uuid4())
                 message_id = uuid.uuid4()
                 message = ServiceBusMessage(content)
-                message.time_to_live = timedelta(seconds=30)
+                message.time_to_live = timedelta(seconds=15)
                 sender.send_messages(message)
     
-            time.sleep(30)
+            time.sleep(15)
             with sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=5) as receiver:
                 messages = receiver.receive_messages(5, max_wait_time=10)
             assert not messages
@@ -1212,7 +1212,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
     def test_queue_message_receive_and_delete(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         
         with ServiceBusClient.from_connection_string(
@@ -1239,7 +1239,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with pytest.raises(ValueError):
                     receiver.renew_message_lock(message)
     
-            time.sleep(30)
+            time.sleep(10)
     
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.receive_messages(max_wait_time=10)

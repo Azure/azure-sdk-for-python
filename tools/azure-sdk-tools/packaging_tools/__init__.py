@@ -12,9 +12,9 @@ _LOGGER = logging.getLogger(__name__)
 _CWD = Path(__file__).resolve().parent
 _TEMPLATE_PATH = _CWD / "template"
 
-def build_config(config : Dict[str, Any]) -> Dict[str, str]:
-    """Will build the actual config for Jinja2, based on SDK config.
-    """
+
+def build_config(config: Dict[str, Any]) -> Dict[str, str]:
+    """Will build the actual config for Jinja2, based on SDK config."""
     result = config.copy()
     # Manage the classifier stable/beta
     is_stable = result.pop("is_stable", False)
@@ -24,43 +24,41 @@ def build_config(config : Dict[str, Any]) -> Dict[str, str]:
         result["classifier"] = "Development Status :: 4 - Beta"
     # Manage the nspkg
     package_name = result["package_name"]
-    result["package_nspkg"] = result.pop(
-        "package_nspkg",
-        package_name[:package_name.rindex('-')]+"-nspkg"
-    )
+    result["package_nspkg"] = result.pop("package_nspkg", package_name[: package_name.rindex("-")] + "-nspkg")
     # ARM?
-    result['is_arm'] = result.pop("is_arm", True)
+    result["is_arm"] = result.pop("is_arm", True)
 
     # Do I need msrestazure for this package?
-    result['need_msrestazure'] = result.pop("need_msrestazure", True)
+    result["need_msrestazure"] = result.pop("need_msrestazure", True)
 
     # Pre-compute some Jinja variable that are complicated to do inside the templates
-    package_parts = result["package_nspkg"][:-len('-nspkg')].split('-')
-    result['nspkg_names'] = [
-        ".".join(package_parts[:i+1])
-        for i in range(len(package_parts))
-    ]
-    result['init_names'] = [
-        "/".join(package_parts[:i+1])+"/__init__.py"
-        for i in range(len(package_parts))
-    ]
+    package_parts = result["package_nspkg"][: -len("-nspkg")].split("-")
+    result["nspkg_names"] = [".".join(package_parts[: i + 1]) for i in range(len(package_parts))]
+    result["init_names"] = ["/".join(package_parts[: i + 1]) + "/__init__.py" for i in range(len(package_parts))]
 
     # Return result
     return result
 
 
-def build_packaging(output_folder: str, gh_token: Optional[str]=None, jenkins: bool = False, packages: List[str]=None, build_conf: bool = False) -> None:
+def build_packaging(
+    output_folder: str,
+    gh_token: Optional[str] = None,
+    jenkins: bool = False,
+    packages: List[str] = None,
+    build_conf: bool = False,
+) -> None:
     package_names = set(packages) or set()
     if jenkins:
         sdk_id = os.environ["ghprbGhRepository"]
         pr_number = int(os.environ["ghprbPullId"])
 
         from github import Github
+
         con = Github(gh_token)
         repo = con.get_repo(sdk_id)
         sdk_pr = repo.get_pull(pr_number)
         # "get_files" of Github only download the first 300 files. Might not be enough.
-        package_names |= {f.filename.split('/')[0] for f in sdk_pr.get_files() if f.filename.startswith("azure")}
+        package_names |= {f.filename.split("/")[0] for f in sdk_pr.get_files() if f.filename.startswith("azure")}
 
     if not package_names:
         raise ValueError("Was unable to find out the package names.")
@@ -84,10 +82,7 @@ def build_packaging_by_package_name(package_name: str, output_folder: str, build
         _LOGGER.info(f"Package {package_name} has no auto-packaging update enabled")
         return
 
-    env = Environment(
-        loader=PackageLoader('packaging_tools', 'templates'),
-        keep_trailing_newline=True
-    )
+    env = Environment(loader=PackageLoader("packaging_tools", "templates"), keep_trailing_newline=True)
     conf = build_config(conf)
 
     for template_name in env.list_templates():
@@ -106,11 +101,7 @@ def build_packaging_by_package_name(package_name: str, output_folder: str, build
         if template_name == "__init__.py":
             split_package_name = package_name.split("-")[:-1]
             for i in range(len(split_package_name)):
-                init_path = Path(output_folder).joinpath(
-                    package_name,
-                    *split_package_name[:i+1],
-                    template_name
-                )
+                init_path = Path(output_folder).joinpath(package_name, *split_package_name[: i + 1], template_name)
                 with open(init_path, "w") as fd:
                     fd.write(result)
 
@@ -121,6 +112,5 @@ def build_packaging_by_package_name(package_name: str, output_folder: str, build
     # azure_bdist_wheel had been removed, but need to delete it manually
     with suppress(FileNotFoundError):
         (Path(output_folder) / package_name / "azure_bdist_wheel.py").unlink()
-
 
     _LOGGER.info("Template done %s", package_name)

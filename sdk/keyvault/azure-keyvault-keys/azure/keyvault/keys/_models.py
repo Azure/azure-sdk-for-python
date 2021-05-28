@@ -68,7 +68,7 @@ class KeyProperties(object):
         # type: (str, Optional[_models.KeyAttributes], **Any) -> None
         self._attributes = attributes
         self._id = key_id
-        self._vault_id = parse_key_vault_id(key_id)
+        self._vault_id = KeyVaultKeyIdentifier(key_id)
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
 
@@ -323,6 +323,45 @@ class KeyVaultKey(object):
         :rtype: list[~azure.keyvault.keys.KeyOperation or str]
         """
         return self._key_material.key_ops  # pylint:disable=no-member
+
+
+class KeyVaultKeyIdentifier(object):
+    """Information about a KeyVaultKey parsed from a key ID.
+
+    :param str source_id: the full original identifier of a key
+    :raises ValueError: if the key ID is improperly formatted
+    Example:
+        .. literalinclude:: ../tests/test_parse_id.py
+            :start-after: [START parse_key_vault_key_id]
+            :end-before: [END parse_key_vault_key_id]
+            :language: python
+            :caption: Parse a key's ID
+            :dedent: 8
+    """
+
+    def __init__(self, source_id):
+        # type: (str) -> None
+        self._resource_id = parse_key_vault_id(source_id)
+
+    @property
+    def source_id(self):
+        # type: () -> str
+        return self._resource_id.source_id
+
+    @property
+    def vault_url(self):
+        # type: () -> str
+        return self._resource_id.vault_url
+
+    @property
+    def name(self):
+        # type: () -> str
+        return self._resource_id.name
+
+    @property
+    def version(self):
+        # type: () -> Optional[str]
+        return self._resource_id.version
 
 
 class DeletedKey(KeyVaultKey):

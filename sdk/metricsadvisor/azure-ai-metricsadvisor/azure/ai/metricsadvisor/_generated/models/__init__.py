@@ -468,7 +468,7 @@ __all__ = [
     'MetricSeriesItem',
     'MetricSeriesList',
     'MetricSeriesQueryOptions',
-    'MongoDBDataFeed',
+    'MongoDbDataFeed',
     'MongoDBDataFeedPatch',
     'MongoDBParameter',
     'MongoDBParameterPatch',
