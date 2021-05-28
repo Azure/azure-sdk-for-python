@@ -10,6 +10,8 @@
 
 **Breaking Changes**
 
+- Delete methods now take positional only argument as id.
+
 - Deprecated:
     - HttpRequestDataFeed
     - ElasticsearchDataFeed

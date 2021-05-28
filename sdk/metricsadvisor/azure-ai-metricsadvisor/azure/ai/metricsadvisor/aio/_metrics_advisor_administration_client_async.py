@@ -517,11 +517,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
     @distributed_trace_async
-    async def delete_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> None:
+    async def delete_alert_configuration(self, *alert_configuration_id: str, **kwargs: Any) -> None:
         """Delete an anomaly alert configuration by its ID.
 
-        :param alert_configuration_id: anomaly alert configuration unique id.
-        :type alert_configuration_id: str
+        :param str alert_configuration_id: anomaly alert configuration unique id.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -535,18 +534,19 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Delete an anomaly alert configuration by its ID
         """
+        if len(alert_configuration_id) != 1:
+            raise TypeError("Alert configuration requires exactly one id.")
 
-        await self._client.delete_anomaly_alerting_configuration(alert_configuration_id, **kwargs)
+        await self._client.delete_anomaly_alerting_configuration(alert_configuration_id[0], **kwargs)
 
     @distributed_trace_async
     async def delete_detection_configuration(
-            self, detection_configuration_id: str,
+            self, *detection_configuration_id: str,
             **kwargs: Any
     ) -> None:
         """Delete an anomaly detection configuration by its ID.
 
-        :param detection_configuration_id: anomaly detection configuration unique id.
-        :type detection_configuration_id: str
+        :param str detection_configuration_id: anomaly detection configuration unique id.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -560,15 +560,16 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Delete an anomaly detection configuration by its ID
         """
+        if len(detection_configuration_id) != 1:
+            raise TypeError("Detection configuration requires exactly one id.")
 
-        await self._client.delete_anomaly_detection_configuration(detection_configuration_id, **kwargs)
+        await self._client.delete_anomaly_detection_configuration(detection_configuration_id[0], **kwargs)
 
     @distributed_trace_async
-    async def delete_data_feed(self, data_feed_id: str, **kwargs: Any) -> None:
+    async def delete_data_feed(self, *data_feed_id: str, **kwargs: Any) -> None:
         """Delete a data feed by its ID.
 
-        :param data_feed_id: The data feed unique id.
-        :type data_feed_id: str
+        :param str data_feed_id: The data feed unique id.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -582,15 +583,16 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Delete a data feed by its ID
         """
+        if len(data_feed_id) != 1:
+            raise TypeError("Data feed requires exactly one id.")
 
-        await self._client.delete_data_feed(data_feed_id, **kwargs)
+        await self._client.delete_data_feed(data_feed_id[0], **kwargs)
 
     @distributed_trace_async
-    async def delete_hook(self, hook_id: str, **kwargs: Any) -> None:
+    async def delete_hook(self, *hook_id: str, **kwargs: Any) -> None:
         """Delete a web or email hook by its ID.
 
-        :param hook_id: Hook unique ID.
-        :type hook_id: str
+        :param str hook_id: Hook unique ID.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -604,8 +606,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Delete a hook by its ID
         """
+        if len(hook_id) != 1:
+            raise TypeError("Hook requires exactly one id.")
 
-        await self._client.delete_hook(hook_id, **kwargs)
+        await self._client.delete_hook(hook_id[0], **kwargs)
 
     @distributed_trace_async
     async def update_data_feed(
@@ -1275,17 +1279,16 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
             datasource_credential_request = datasource_credential._to_generated_patch()
 
-        updated_datasource_credential = await self._client.update_credential(
+        updated_datasource_credential = await self._client.update_credential(   # type: ignore
             datasource_credential.id,
-            datasource_credential_request,
+            datasource_credential_request,  # type: ignore
             **kwargs
         )
 
         return convert_to_datasource_credential(updated_datasource_credential)
 
     @distributed_trace_async
-    async def delete_datasource_credential(self, credential_id, **kwargs):
-        # type: (str, Any) -> None
+    async def delete_datasource_credential(self, *credential_id: str, **kwargs: Any) -> None:
         """Delete a datasource credential by its ID.
 
         ::param str credential_id: Datasource credential unique ID.
@@ -1302,5 +1305,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Delete a datasource credential by its ID
         """
+        if len(credential_id) != 1:
+            raise TypeError("Credential requires exactly one id.")
 
-        await self._client.delete_credential(credential_id=credential_id, **kwargs)
+        await self._client.delete_credential(credential_id=credential_id[0], **kwargs)

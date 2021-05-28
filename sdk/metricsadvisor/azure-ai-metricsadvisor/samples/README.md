@@ -73,6 +73,6 @@ what you can do with the Azure Metrics Advisor client library.
 [sample_feedback]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_feedback.py
 [sample_feedback_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_feedback_async.py
 [sample_queries]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_queries.py
-[sample_credential_entities]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_credential_entities.py
-[sample_credential_entities_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_credential_entities_async.py
 [sample_queries_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_queries_async.py
+[sample_datasource_credentials]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_datasource_credentials.py
+[sample_datasource_credentials_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_datasource_credentials_async.py

@@ -973,6 +973,7 @@ class DataFeedSource(dict):
     """
     def __init__(self, data_source_type, **kwargs):
         # type: (str, **Any) -> None
+        super(DataFeedSource, self).__init__(data_source_type=data_source_type, **kwargs)
         self.data_source_type = data_source_type
         self.authentication_type = kwargs.get("authentication_type", None)
         self.credential_id = kwargs.get("credential_id", None)
@@ -1332,7 +1333,7 @@ class InfluxDbDataFeedSource(DataFeedSource):
     """
 
     def __init__(self, query, **kwargs):
-        # type: (str, str, **Any) -> None
+        # type: (str, **Any) -> None
         super(InfluxDbDataFeedSource, self).__init__(
             data_source_type='InfluxDB',
             authentication_type="Basic",
@@ -1766,6 +1767,7 @@ class NotificationHook(dict):
     """
 
     def __init__(self, name, **kwargs):
+        super(NotificationHook, self).__init__(name=name, **kwargs)
         self.id = kwargs.get('id', None)
         self.name = name
         self.description = kwargs.get('description', None)
@@ -3294,20 +3296,22 @@ class DatasourceCredential(dict):
 
     def __init__(self, name, credential_type, **kwargs):
         # type: (str, str, Any) -> None
+        super(DatasourceCredential, self).__init__(name=name, credential_type=credential_type, **kwargs)
         self.credential_type = credential_type
         self.name = name
         self.id = kwargs.get('id', None)
         self.description = kwargs.get('description', None)
 
     def __repr__(self):
-        return "DatasourceCredential(id={}, credential_type={}, name={}, " \
-               "connection_string={}, description={})".format(
+        return "DatasourceCredential(id={}, credential_type={}, name={}, description={})".format(
             self.id,
             self.credential_type,
             self.name,
-            self.connection_string,
             self.description
         )[:1024]
+
+    def _to_generated_patch(self):
+        pass
 
 class DatasourceSqlConnectionString(DatasourceCredential):
     """DatasourceSqlConnectionString.
