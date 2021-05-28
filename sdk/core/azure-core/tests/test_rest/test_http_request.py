@@ -182,7 +182,7 @@ def test_urlencoded_content():
         "Content-Type": "application/x-www-form-urlencoded",
     }
 
-@pytest.mark.parametrize(("key"), (b"abc", 1, 2.3, None))
+@pytest.mark.parametrize(("key"), (1, 2.3, None))
 def test_multipart_invalid_key(key):
 
     data = {key: "abc"}
@@ -196,6 +196,23 @@ def test_multipart_invalid_key(key):
         )
     assert "Invalid type for data key" in str(e.value)
     assert repr(key) in str(e.value)
+
+
+@pytest.mark.skipif(sys.version_info < (3, 0),
+                    reason="In 2.7, b'' is the same as a string, so check doesn't fail")
+def test_multipart_invalid_key_binary_string():
+
+    data = {b"abc": "abc"}
+    files = {"file": io.BytesIO(b"<file content>")}
+    with pytest.raises(TypeError) as e:
+        HttpRequest(
+            url="http://127.0.0.1:8000/",
+            method="POST",
+            data=data,
+            files=files,
+        )
+    assert "Invalid type for data key" in str(e.value)
+    assert repr(b"abc") in str(e.value)
 
 @pytest.mark.parametrize(("value"), (1, 2.3, [None, "abc"], {None: "abc"}))
 def test_multipart_invalid_value(value):

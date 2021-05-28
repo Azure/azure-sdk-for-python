@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import Generic, TypeVar, List, Union, Any, Dict, overload, TYPE_CHECKING
+from typing import Generic, TypeVar, List, Union, Any, Dict
 from azure.core.pipeline import (
     AbstractContextManager,
     PipelineRequest,
@@ -42,12 +42,6 @@ HttpTransportType = TypeVar("HttpTransportType")
 _LOGGER = logging.getLogger(__name__)
 PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
-if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
-    from azure.core.rest import (
-        HttpRequest as RestHttpRequest,
-        HttpResponse as RestHttpResponse,
-    )
 
 class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseType]):
     """Sync implementation of the SansIO policy.
@@ -195,17 +189,8 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
 
-    @overload
     def run(self, request, **kwargs):
-        # type: (PipelineTransportHttpRequest, Any) -> PipelineResponse
-        pass
-
-    @overload
-    def run(self, request, **kwargs):
-        # type: (RestHttpRequest, Any) -> RestHttpResponse
-        pass
-
-    def run(self, request, **kwargs):
+        # type: (HTTPRequestType, Any) -> PipelineResponse
         """Runs the HTTP Request through the chained policies.
 
         :param request: The HTTP request object.
@@ -213,12 +198,6 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         :return: The PipelineResponse object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        rest_request = None
-        try:
-            rest_request = request
-            request = request._internal_request
-        except AttributeError:
-            pass
         self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(
@@ -229,11 +208,4 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
             if self._impl_policies
             else _TransportRunner(self._transport)
         )
-        response = first_node.send(pipeline_request)  # type: ignore
-        if rest_request:
-            from azure.core.rest import HttpResponse
-            return HttpResponse(
-                request=rest_request,
-                _internal_response=response.http_response,
-            )
-        return response
+        return first_node.send(pipeline_request)  # type: ignore

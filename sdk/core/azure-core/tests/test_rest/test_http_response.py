@@ -118,7 +118,7 @@ def test_response_fallback_to_autodetect(send_request):
     )
 
     assert response.headers["Content-Type"] == "text/plain; charset=invalid-codec-name"
-    assert response.text == "おはようございます。"
+    assert response.text == u"おはようございます。"
     assert response.encoding is None
 
 

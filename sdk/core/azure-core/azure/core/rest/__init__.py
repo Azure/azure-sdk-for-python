@@ -29,7 +29,6 @@ try:
     from ._rest_py3 import (
         HttpRequest,
         HttpResponse,
-        _SyncContextManager,
         StreamConsumedError,
         ResponseNotReadError,
         ResponseClosedError,
@@ -38,7 +37,6 @@ except (SyntaxError, ImportError):
     from ._rest import (  # type: ignore
         HttpRequest,
         HttpResponse,
-        _SyncContextManager,
         StreamConsumedError,
         ResponseNotReadError,
         ResponseClosedError,
@@ -48,7 +46,6 @@ __all__ = [
     "HttpVerbs",
     "HttpRequest",
     "HttpResponse",
-    "_SyncContextManager",
     "StreamConsumedError",
     "ResponseNotReadError",
     "ResponseClosedError",
@@ -69,10 +66,10 @@ except (SyntaxError, ImportError):
 
 #### FOR BUGBASH
 
-from ._sync_test_client import TestRestClient
+from ._sync_test_client import TestRestClient  # pylint: disable=unused-import
 __all__.extend(["TestRestClient"])
 try:
-    from ._async_test_client import AsyncTestRestClient
+    from ._async_test_client import AsyncTestRestClient  # pylint: disable=unused-import
     __all__.extend(["AsyncTestRestClient"])
 except (SyntaxError, ImportError):
     pass

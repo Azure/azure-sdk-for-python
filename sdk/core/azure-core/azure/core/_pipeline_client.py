@@ -23,7 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import functools
 import logging
 try:
     from collections.abc import Iterable
@@ -40,7 +39,7 @@ from .pipeline.policies import (
     RetryPolicy,
 )
 from .pipeline.transport import RequestsTransport
-from .rest import HttpResponse, _SyncContextManager
+from .rest import HttpResponse
 
 try:
     from typing import TYPE_CHECKING
@@ -183,18 +182,12 @@ class PipelineClient(PipelineClientBase):
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
         # """
-        # stream = kwargs.pop("stream", False)
-        # wrapped = functools.partial(
-        #     self._pipeline.run,
-        #     request=request,
-        #     **kwargs
-        # )
-        # return _SyncContextManager(wrapped=wrapped, stream=stream)
-        if kwargs.pop("stream", False):
-            return _SyncContextManager(
-                pipeline=self._pipeline,
-                request=request,
-            )
-        response = self._pipeline.run(request, **kwargs)
-        response.read()
+        stream = kwargs.get("stream", False)
+        pipeline_response = self._pipeline.run(request._internal_request, **kwargs)  # pylint: disable=protected-access
+        response = HttpResponse(
+            request=request,
+            _internal_response=pipeline_response.http_response,
+        )
+        if not stream:
+            response.read()
         return response

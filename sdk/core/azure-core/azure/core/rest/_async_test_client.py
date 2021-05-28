@@ -1,3 +1,4 @@
+# pylint: skip-file
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -59,6 +60,22 @@ class AsyncTestRestClient(object):
         )
 
     def send_request(self, request, **kwargs):
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "http://localhost:3000/helloWorld")
+        <HttpRequest [GET], url: 'http://localhost:3000/helloWorld'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
         return self._client.send_request(request, **kwargs)
 
     async def close(self) -> None:

@@ -35,12 +35,9 @@ from typing import (
     Iterable, Iterator,
     Optional,
     Union,
-    AsyncContextManager,
 )
 
-from attr.setters import pipe
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (
     HttpRequest as _PipelineTransportHttpRequest,
 )
@@ -62,48 +59,10 @@ from ._helpers import (
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
-class _StreamContextManagerBase:
-    def __init__(
-        self,
-        pipeline,
-        request: "HttpRequest",
-        **kwargs
-    ):
-        """Used so we can treat stream requests and responses as a context manager.
+class _AsyncContextManager(collections.abc.Awaitable):
 
-        In Autorest, we only return a `StreamContextManager` if users pass in `stream_response` True
-
-        Actually sends request when we enter the context manager, closes response when we exit.
-
-        Heavily inspired from httpx, we want the same behavior for it to feel consistent for users
-        """
-        self.pipeline = pipeline
-        self.request = request
-        self.kwargs = kwargs
-        self.response: Optional[Union[HttpResponse, AsyncHttpResponse]] = None
-
-class _SyncContextManager(_StreamContextManagerBase):
-
-    def __enter__(self) -> "HttpResponse":
-        """Actually make the call only when we enter. For sync stream_response calls"""
-        self.response = self.pipeline.run(
-            self.request._internal_request,
-            stream=True,
-            **self.kwargs
-        )
-        return self.response
-
-    def __exit__(self, *args):
-        """Close our stream connection. For sync calls"""
-        self.response.__exit__(*args)
-
-    def close(self):
-        self.response.close()
-
-class _AsyncContextManager(collections.abc.Awaitable, AsyncContextManager):
-
-    def __init__(self, wrapped: collections.abc.Awaitable):
-        super().__init__()
+    def __init__(self, wrapped: collections.abc.Awaitable, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.wrapped = wrapped
         self.response = None
 
@@ -412,6 +371,9 @@ class _HttpResponseBase:
             raise ResponseClosedError()
 
 class HttpResponse(_HttpResponseBase):
+
+    def __enter__(self) -> "HttpResponse":
+        return self
 
     def close(self) -> None:
         self.is_closed = True

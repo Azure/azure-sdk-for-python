@@ -309,7 +309,7 @@ class HttpResponseError(AzureError):
         # - parameter "message", OR
         # - generic meassage using "reason"
         try:
-            parsed_body = self._parse_odata_body(response)
+            parsed_body = self._parse_odata_body()
             if not parsed_body:
                 # want same behavior as in exception handling, so throwing
                 raise Exception
@@ -331,7 +331,7 @@ class HttpResponseError(AzureError):
         if not self._error:
             if not self.response:
                 return None
-            self._error = self._parse_odata_body(self.response)
+            self._error = self._parse_odata_body()
         return self._error
 
     @error.setter
@@ -348,22 +348,19 @@ class HttpResponseError(AzureError):
     def model(self, val):
         self._model = val
 
-    def _parse_odata_body(self, response):
-        # type: (HttpResponse) -> Optional[ODataV4Format]
-        """Pass in body to parse into error format.
-        This way, we can cleanly raise any errors that come from accessing
-        the response's body before it's ready to consume.
-        """
+    def _parse_odata_body(self):
+        # type: (...) -> Optional[ODataV4Format]
         try:
-            response_text = response.text()
+            response_text = self.response.text()
         except TypeError:
-            response_text = response.text
+            response_text = self.response.text
         try:
             odata_json = json.loads(response_text)
             return self._error_format(odata_json)
         except Exception:  # pylint: disable=broad-except
             # If the body is not JSON valid, just stop now
             pass
+        return None
 
     def __str__(self):
         try:
@@ -439,7 +436,11 @@ class ODataV4Error(HttpResponseError):
         # Ensure field are declared, whatever can happen afterwards
         self.odata_json = None  # type: Optional[Dict[str, Any]]
         try:
-            self.odata_json = json.loads(response)
+            response_text = response.text()
+        except TypeError:
+            response_text = response.text  # type: ignore
+        try:
+            self.odata_json = json.loads(response_text)
             odata_message = self.odata_json.setdefault("error", {}).get("message")
         except Exception:  # pylint: disable=broad-except
             # If the body is not JSON valid, just stop now

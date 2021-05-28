@@ -148,11 +148,15 @@ def _set_content_body(content, internal_request):
 def _verify_and_data_object(key, value):
     if not isinstance(key, str):
         raise TypeError(
-            f"Invalid type for data key. Expected str, got {type(key)}: {key!r}"
+            "Invalid type for data key. Expected str, got {}: {}".format(
+                type(key), key
+            )
         )
     if not isinstance(value, (str, bytes)):
         raise TypeError(
-            f"Invalid type for data value. Expected str or bytes, got {type(value)}: {value!r}"
+            "Invalid type for data value. Expected str or bytes, got {}: {}".format(
+                type(value), value
+            )
     )
 
 def _set_body(content, data, files, json, internal_request):

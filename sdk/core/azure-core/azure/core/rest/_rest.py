@@ -59,35 +59,6 @@ if TYPE_CHECKING:
 
 
 ################################## CLASSES ######################################
-class _SyncContextManager(object):
-    def __init__(self, pipeline, request, **kwargs):
-        # type: (Pipeline, HttpRequest, Any) -> None
-        """Used so we can treat stream requests and responses as a context manager.
-        In Autorest, we only return a `StreamContextManager` if users pass in `stream_response` True
-        Actually sends request when we enter the context manager, closes response when we exit.
-        Heavily inspired from httpx, we want the same behavior for it to feel consistent for users
-        """
-        self.pipeline = pipeline
-        self.request = request
-        self.kwargs = kwargs
-        self.response = None  # type: Optional[HttpResponse]
-
-    def __enter__(self):
-        # type: (...) -> HttpResponse
-        """Actually make the call only when we enter. For sync stream_response calls"""
-        self.response = self.pipeline.run(
-            self.request._internal_request,
-            stream=True,
-            **self.kwargs
-        )
-        return self.response
-
-    def __exit__(self, *args):
-        """Close our stream connection. For sync calls"""
-        self.response.__exit__(*args)
-
-    def close(self):
-        self.response.close()
 
 class HttpRequest(object):
     """Represents an HTTP request.
@@ -375,6 +346,10 @@ class HttpResponse(object):
             raise StreamConsumedError()
         if self.is_closed:
             raise ResponseClosedError()
+
+    def __enter__(self):
+        # type: (...) -> HttpResponse
+        return self
 
     def close(self):
         # type: (...) -> None

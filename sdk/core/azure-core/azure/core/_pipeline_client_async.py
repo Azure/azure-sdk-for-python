@@ -26,6 +26,7 @@
 
 import logging
 from collections.abc import Iterable
+from typing import Any, Awaitable
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -36,7 +37,6 @@ from .pipeline.policies import (
     RequestIdPolicy,
     AsyncRetryPolicy,
 )
-from typing import Any, Awaitable
 from .rest import HttpRequest, _AsyncContextManager, AsyncHttpResponse
 
 try:
@@ -47,7 +47,6 @@ except ImportError:
 if TYPE_CHECKING:
     from typing import (
         List,
-        Any,
         Dict,
         Union,
         IO,
@@ -170,6 +169,16 @@ class AsyncPipelineClient(PipelineClientBase):
 
         return AsyncPipeline(transport, policies)
 
+    async def _make_pipeline_call(self, request, stream, **kwargs):
+        """Want to get rid of this code and use pipeline.run immediately"""
+        pipeline_response = await self._pipeline.run(
+            request._internal_request, stream=stream, **kwargs  # pylint: disable=protected-access
+        )
+        return AsyncHttpResponse(
+            request=request,
+            _internal_response=pipeline_response.http_response,
+        )
+
     def send_request(
         self,
         request: HttpRequest,
@@ -185,5 +194,5 @@ class AsyncPipelineClient(PipelineClientBase):
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
-        wrapped = self._pipeline.run(request, stream=stream, **kwargs)
+        wrapped = self._make_pipeline_call(request, stream=stream, **kwargs)
         return _AsyncContextManager(wrapped=wrapped)

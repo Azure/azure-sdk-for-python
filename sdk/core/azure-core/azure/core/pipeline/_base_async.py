@@ -25,10 +25,9 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Any, Union, List, Generic, TypeVar, Dict, overload
-from azure.core import rest
+from typing import Any, Union, List, Generic, TypeVar, Dict
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext, transport
+from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 from ._tools_async import await_result as _await_result
 
@@ -197,14 +196,6 @@ class AsyncPipeline(
         await self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
 
-    @overload
-    async def run(self, request: transport.HttpRequest, **kwargs: Any) -> transport.AsyncHttpResponse:
-        pass
-
-    @overload
-    async def run(self, request: rest.HttpRequest, **kwargs: Any) -> rest.AsyncHttpResponse:
-        pass
-
     async def run(self, request: HTTPRequestType, **kwargs: Any):
         """Runs the HTTP Request through the chained policies.
 
@@ -213,12 +204,6 @@ class AsyncPipeline(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        rest_request = None
-        try:
-            rest_request = request
-            request = request._internal_request
-        except AttributeError:
-            pass
         await self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)
@@ -227,10 +212,4 @@ class AsyncPipeline(
             if self._impl_policies
             else _AsyncTransportRunner(self._transport)
         )
-        response = await first_node.send(pipeline_request)
-        if rest_request:
-            return rest.AsyncHttpResponse(
-                request=rest_request,
-                _internal_response=response.http_response,
-            )
-        return response
+        return await first_node.send(pipeline_request)

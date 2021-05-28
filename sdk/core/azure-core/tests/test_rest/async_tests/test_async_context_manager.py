@@ -12,6 +12,8 @@ from azure.core.rest import HttpRequest, ResponseNotReadError
 async def test_normal_call(client):
     async def _raise_and_get_text(response):
         response.raise_for_status()
+        with pytest.raises(ResponseNotReadError):
+            response.text
         await response.read()
         assert response.text == "Hello, world!"
         assert response.is_closed
@@ -32,6 +34,8 @@ async def test_stream_call(client):
     async def _raise_and_get_text(response):
         response.raise_for_status()
         assert not response.is_closed
+        with pytest.raises(ResponseNotReadError):
+            response.text
         await response.read()
         assert response.text == "Hello, world!"
         assert response.is_closed
@@ -40,11 +44,11 @@ async def test_stream_call(client):
     await _raise_and_get_text(response)
     assert response.is_closed
 
-    async with client.send_request(request) as response:
+    async with client.send_request(request, stream=True) as response:
         await _raise_and_get_text(response)
     assert response.is_closed
 
-    response = client.send_request(request)
+    response = client.send_request(request, stream=True)
     async with response as response:
         await _raise_and_get_text(response)
 
@@ -76,43 +80,3 @@ async def test_stream_with_error(client):
         assert error.error.message == "You made a bad request"
         assert error.model.code == "BadRequest"
         assert error.error.message == "You made a bad request"
-
-
-
-
-# # @pytest.mark.asyncio
-# # async def test_stream_context_manager_error(client):
-# #     request = HttpRequest(method="GET", url="https://httpbin.org/status/404")
-# #     async with client.send_request(request, stream_response=True) as r:
-# #         with pytest.raises(HttpResponseError) as e:
-# #             r.raise_for_status()
-# #         assert error.status_code == 404
-# #         assert error.reason == "NOT FOUND"
-# #         with pytest.raises(ResponseNotReadError):
-# #             str(error)
-# #         with pytest.raises(ResponseNotReadError):
-# #             r.json()
-# #         with pytest.raises(ResponseNotReadError):
-# #             r.content
-# #         await r.read()
-# #         assert str(error) == "Operation returned an invalid status 'NOT FOUND'"
-# #         assert r.content == b''
-# #     assert r.is_closed
-# #     assert r.is_stream_consumed
-
-# a = "b"
-        # assert len(transport.method_calls) == 1
-        # method_call = transport.method_calls[0]
-        # assert method_call[0] == 'send'  # check method call name
-
-        # assert len(method_call[1])  # assert args
-        # arg = method_call[1][0]
-        # assert arg.url == "https://httpbin.org/get"
-        # assert arg.method == "GET"
-
-        # assert method_call[2] == {"stream": True}  # check kwargs
-
-    # assert actual response from requests etc is closed
-    # internal_response_mock_calls = response._internal_response.internal_response.mock_calls
-    # assert len(internal_response_mock_calls) == 1
-    # assert internal_response_mock_calls[0][0] == '__aexit__'  # assert exit was called
