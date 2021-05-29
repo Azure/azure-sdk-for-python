@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 import uuid
-from typing import Any
+from typing import Any, Optional
 
 from ._generated.models import (
     QueryResults as InternalQueryResults,
@@ -194,11 +194,11 @@ class LogsQueryBody(InternalQueryBody):
     :paramtype azure_resource_ids: list[str]
     """
 
-    def __init__(self, query, **kwargs):
-        # type: (str, Any) -> None
-        super(LogsQueryBody, self).__init__(**kwargs)
+    def __init__(self, query, timespan=None, **kwargs):
+        # type: (str, Optional[str], Any) -> None
         kwargs.setdefault("query", query)
-        self.timespan = kwargs.get("timespan", None)
+        kwargs.setdefault("timespan", timespan)
+        super(LogsQueryBody, self).__init__(**kwargs)
         self.workspaces = kwargs.get("workspaces", None)
         self.qualified_names = kwargs.get("qualified_names", None)
         self.workspace_ids = kwargs.get("workspace_ids", None)
