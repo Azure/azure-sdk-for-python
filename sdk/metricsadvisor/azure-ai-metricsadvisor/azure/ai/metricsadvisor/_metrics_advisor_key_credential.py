@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import six
 from typing import Any
+import six
 
 class MetricsAdvisorKeyCredential(object):
     """Credential type used for authenticating to an Azure Metrics Advisor service.
