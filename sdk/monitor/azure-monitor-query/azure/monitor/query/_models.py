@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 import uuid
-from typing import Any, Optional, Dict
+from typing import Any, Optional
 
 from ._generated.models import (
     QueryResults as InternalQueryResults,
