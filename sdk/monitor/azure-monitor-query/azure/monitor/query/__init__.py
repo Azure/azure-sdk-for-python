@@ -12,29 +12,40 @@ from ._models import (
     LogsQueryResultTable,
     LogsQueryResultColumn,
     MetricsResult,
-    LogsBatchResponseError,
+    LogsBatchResultError,
     LogsQueryRequest,
-    LogsQueryBody,
-    LogsBatchResponse,
+    LogsBatchResults,
+    LogsErrorDetails,
     MetricNamespace,
-    MetricDefinition
+    MetricDefinition,
+    MetricsMetadataValue,
+    TimeSeriesElement,
+    Metric,
+    MetricValue,
+    MetricAvailability
 )
 
 from ._version import VERSION
 
 __all__ = [
     "LogsClient",
-    "LogsBatchResponse",
-    "LogsBatchResponseError",
+    "LogsBatchResults",
+    "LogsBatchResultError",
     "LogsQueryResults",
     "LogsQueryResultColumn",
     "LogsQueryResultTable",
     "LogsQueryRequest",
-    "LogsQueryBody",
+    "LogsErrorDetails",
     "MetricsClient",
     "MetricNamespace",
     "MetricDefinition",
     "MetricsResult",
+    "LocalizableString",
+    "MetricsMetadataValue",
+    "TimeSeriesElement",
+    "Metric",
+    "MetricValue",
+    "MetricAvailability"
 ]
 
 __version__ = VERSION

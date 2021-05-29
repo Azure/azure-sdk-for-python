@@ -26,6 +26,20 @@ def get_authentication_policy(
 
     raise TypeError("Unsupported credential")
 
+def get_metrics_authentication_policy(
+        credential, # type: TokenCredential
+):
+    # type: (...) -> BearerTokenCredentialPolicy
+    """Returns the correct authentication policy
+    """
+
+    if credential is None:
+        raise ValueError("Parameter 'credential' must not be None.")
+    if hasattr(credential, "get_token"):
+        return BearerTokenCredentialPolicy(credential, "https://management.azure.com/.default")
+
+    raise TypeError("Unsupported credential")
+
 def process_error(exception):
     raise_error = HttpResponseError
     raise raise_error(message=exception.message, response=exception.response)
