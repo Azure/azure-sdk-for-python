@@ -7,18 +7,18 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 
-from ._generated._monitor_query_client import (
+from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,
 )
 
-from ._helpers import get_authentication_policy
+from .._helpers import get_authentication_policy
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.paging import ItemPaged
-    from ._models import MetricsResult, MetricNamespace, MetricDefinition
+    from .._models import MetricsResult, MetricNamespace, MetricDefinition
 
 
 class MetricsClient(object):
@@ -39,7 +39,7 @@ class MetricsClient(object):
         self._namespace_op = self._client.metric_namespaces
         self._definitions_op = self._client.metric_definitions
 
-    def query(self, resource_uri, metricnames, **kwargs):
+    async def query(self, resource_uri, metricnames, **kwargs):
         # type: (str, list, Any) -> MetricsResult
         """Lists the metric values for a resource.
 
@@ -82,9 +82,9 @@ class MetricsClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         kwargs.setdefault("metricnames", ",".join(metricnames))
-        return self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
+        return await self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
 
-    def list_metric_namespaces(self, resource_uri, **kwargs):
+    async def list_metric_namespaces(self, resource_uri, **kwargs):
         # type: (str, Any) -> ItemPaged[MetricNamespace]
         """Lists the metric namespaces for the resource.
 
@@ -97,9 +97,9 @@ class MetricsClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._namespace_op.list(resource_uri, **kwargs)
+        return await self._namespace_op.list(resource_uri, **kwargs)
 
-    def list_metric_definitions(self, resource_uri, **kwargs):
+    async def list_metric_definitions(self, resource_uri, **kwargs):
         # type: (str, Any) -> ItemPaged[MetricDefinition]
         """Lists the metric definitions for the resource.
 
@@ -111,18 +111,15 @@ class MetricsClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._namespace_op.list(resource_uri, **kwargs)
+        return await self._namespace_op.list(resource_uri, **kwargs)
 
-    def close(self):
-        # type: () -> None
-        """Close the :class:`~azure.monitor.query.MetricsClient` session."""
-        return self._client.close()
-
-    def __enter__(self):
-        # type: () -> MetricsClient
-        self._client.__enter__()  # pylint:disable=no-member
+    async def __aenter__(self) -> "MetricsClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
-        self._client.__exit__(*args)  # pylint:disable=no-member
+    async def __aexit__(self, *args: "Any") -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """Close the :class:`~azure.monitor.query.aio.MetricsClient` session."""
+        await self._client.__aexit__()
