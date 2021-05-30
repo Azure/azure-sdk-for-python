@@ -5,7 +5,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import Dict, Any, TYPE_CHECKING
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 def get_authentication_policy(
         credential, # type: TokenCredential
@@ -20,3 +25,7 @@ def get_authentication_policy(
         return BearerTokenCredentialPolicy(credential, "https://api.loganalytics.io/.default")
 
     raise TypeError("Unsupported credential")
+
+def process_error(exception):
+    raise_error = HttpResponseError
+    raise raise_error(message=exception.message, response=exception.response)

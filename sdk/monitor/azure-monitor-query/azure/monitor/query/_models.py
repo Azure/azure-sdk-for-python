@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 import uuid
-from typing import Any
+from typing import Any, Optional, Dict
 
 from ._generated.models import (
     QueryResults as InternalQueryResults,
@@ -152,24 +152,29 @@ class LogsQueryRequest(InternalLogQueryRequest):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :param query: The Analytics query. Learn more about the `Analytics query syntax
+     <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+    :type query: str
+    :param timespan: The timespan (in ISO8601 duration format) in which to run the query.
+     If this parameter is not specified, the query will run over all data.
+    :type timespan: str
+    :param workspace: Workspace Id to be included in the query.
+    :type workspace: str
     :keyword request_id: The error details.
     :paramtype request_id: str
     :keyword headers: Dictionary of :code:`<string>`.
     :paramtype headers: dict[str, str]
-    :keyword body: The Analytics query. Learn more about the `Analytics query syntax
-     <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
-    :paramtype body: ~monitor_query_client.models.QueryBody
-    :keyword workspace: Workspace Id to be included in the query.
-    :paramtype workspace: str
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
+    def __init__(self, query, workspace, timespan=None, **kwargs):
+        # type: (str, str, Optional[str], Any) -> None
         super(LogsQueryRequest, self).__init__(**kwargs)
-        self.id = kwargs.get("id", uuid.uuid4())
-        self.headers = kwargs.get("headers", {"Content-Type": "application/json"})
-        self.body = kwargs.get("body", None)
-        self.workspace = kwargs.get("workspace", None)
+        self.id = kwargs.get("request_id", uuid.uuid4())
+        self.headers = kwargs.get("headers", None)
+        self.body = {
+            "query": query, "timespan": timespan
+        }
+        self.workspace = workspace
 
 
 class LogsQueryBody(InternalQueryBody):
@@ -194,11 +199,11 @@ class LogsQueryBody(InternalQueryBody):
     :paramtype azure_resource_ids: list[str]
     """
 
-    def __init__(self, query, **kwargs):
-        # type: (str, Any) -> None
-        super(LogsQueryBody, self).__init__(**kwargs)
+    def __init__(self, query, timespan=None, **kwargs):
+        # type: (str, Optional[str], Any) -> None
         kwargs.setdefault("query", query)
-        self.timespan = kwargs.get("timespan", None)
+        kwargs.setdefault("timespan", timespan)
+        super(LogsQueryBody, self).__init__(**kwargs)
         self.workspaces = kwargs.get("workspaces", None)
         self.qualified_names = kwargs.get("qualified_names", None)
         self.workspace_ids = kwargs.get("workspace_ids", None)

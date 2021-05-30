@@ -5,20 +5,18 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from http.client import HTTPResponse
-from time import time
 from typing import TYPE_CHECKING, Any, Union, Sequence, Dict
 from azure.core.exceptions import HttpResponseError
 
-from ._generated._monitor_query_client import MonitorQueryClient
+from .._generated.aio._monitor_query_client import MonitorQueryClient
 
-from ._generated.models import BatchRequest
-from ._helpers import get_authentication_policy, process_error
-from ._models import LogsQueryResults, LogsQueryRequest, LogsQueryBody
+from .._generated.models import BatchRequest
+from .._helpers import get_authentication_policy, process_error
+from .._models import LogsQueryResults, LogsQueryRequest, LogsQueryBody
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from ._models import LogsBatchResponse
+    from .._models import LogsBatchResponse
 
 
 class LogsClient(object):
@@ -30,9 +28,7 @@ class LogsClient(object):
     :paramtype endpoint: str
     """
 
-    def __init__(self, credential, **kwargs):
-        # type: (TokenCredential, Any) -> None
-
+    def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
         self._endpoint = kwargs.pop('endpoint', 'https://api.loganalytics.io/v1')
         self._client = MonitorQueryClient(
             credential=credential,
@@ -42,8 +38,7 @@ class LogsClient(object):
         )
         self._query_op = self._client.query
 
-    def query(self, workspace_id, query, **kwargs):
-        # type: (str, str, Any) -> LogsQueryResults
+    async def query(self, workspace_id: str, query: str, **kwargs: Any) -> LogsQueryResults:
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -99,7 +94,7 @@ class LogsClient(object):
         )
 
         try:
-            return self._query_op.execute(
+            return await self._query_op.execute(
                 workspace_id=workspace_id,
                 body=body,
                 prefer=prefer,
@@ -108,8 +103,11 @@ class LogsClient(object):
         except HttpResponseError as e:
             process_error(e)
 
-    def batch_query(self, queries, **kwargs):
-        # type: (Union[Sequence[Dict], Sequence[LogsQueryRequest]], Any) -> LogsBatchResponse
+    async def batch_query(
+        self,
+        queries: Union[Sequence[Dict], Sequence[LogsQueryRequest]],
+        **kwargs: Any
+        ) -> LogsBatchResponse:
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -125,18 +123,15 @@ class LogsClient(object):
         except (KeyError, TypeError):
             pass
         batch = BatchRequest(requests=queries)
-        return self._query_op.batch(batch, **kwargs)
+        return await self._query_op.batch(batch, **kwargs)
 
-    def close(self):
-        # type: () -> None
-        """Close the :class:`~azure.monitor.query.LogsClient` session."""
-        return self._client.close()
-
-    def __enter__(self):
-        # type: () -> LogsClient
-        self._client.__enter__()  # pylint:disable=no-member
+    async def __aenter__(self) -> "LogsClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
-        self._client.__exit__(*args)  # pylint:disable=no-member
+    async def __aexit__(self, *args: "Any") -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """Close the :class:`~azure.monitor.query.aio.LogsClient` session."""
+        await self._client.__aexit__()
