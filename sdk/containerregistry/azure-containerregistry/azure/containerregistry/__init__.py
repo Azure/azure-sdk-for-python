@@ -9,8 +9,10 @@
 from ._container_registry_client import ContainerRegistryClient
 from ._container_repository import ContainerRepository
 from ._models import (
-    DeleteRepositoryResult,
+    ArtifactArchitecture,
+    ArtifactOperatingSystem,
     ContentProperties,
+    DeleteRepositoryResult,
     ManifestOrder,
     ArtifactManifestProperties,
     RepositoryProperties,
@@ -23,6 +25,8 @@ from ._version import VERSION
 __version__ = VERSION
 
 __all__ = [
+    "ArtifactArchitecture",
+    "ArtifactOperatingSystem",
     "ContainerRegistryClient",
     "ContainerRepository",
     "ContentProperties",

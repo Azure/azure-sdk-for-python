@@ -15,7 +15,14 @@ from azure.identity._credentials.imds import IMDS_URL
 import pytest
 
 from helpers import mock_response, Request
-from helpers_async import async_validating_transport, AsyncMockTransport, get_completed_future, wrap_in_future
+from helpers_async import (
+    async_validating_transport,
+    AsyncMockTransport,
+    await_test,
+    get_completed_future,
+    wrap_in_future,
+)
+from recorded_test_case import RecordedTestCase
 
 pytestmark = pytest.mark.asyncio
 
@@ -202,3 +209,21 @@ async def test_identity_config():
     token = await credential.get_token(scope)
 
     assert token == expected_token
+
+
+@pytest.mark.usefixtures("record_imds_test")
+class RecordedTests(RecordedTestCase):
+    @await_test
+    async def test_system_assigned(self):
+        credential = ImdsCredential()
+        token = await credential.get_token(self.scope)
+        assert token.token
+        assert isinstance(token.expires_on, int)
+
+    @pytest.mark.usefixtures("user_assigned_identity_client_id")
+    @await_test
+    async def test_user_assigned(self):
+        credential = ImdsCredential(client_id=self.user_assigned_identity_client_id)
+        token = await credential.get_token(self.scope)
+        assert token.token
+        assert isinstance(token.expires_on, int)

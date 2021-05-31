@@ -11424,27 +11424,27 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?readingOrder=basic
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyze?readingOrder=basic
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - f7b6edea-9735-4ee2-88ee-78d26105baf2
+      - ab5953e7-5339-4d71-8a9c-6ae97a9d9321
       content-length:
       - '0'
       date:
-      - Mon, 01 Mar 2021 18:47:49 GMT
+      - Tue, 11 May 2021 00:27:03 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/f7b6edea-9735-4ee2-88ee-78d26105baf2
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyzeResults/ab5953e7-5339-4d71-8a9c-6ae97a9d9321
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '154'
+      - '158'
     status:
       code: 202
       message: Accepted
@@ -11458,48 +11458,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/f7b6edea-9735-4ee2-88ee-78d26105baf2
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyzeResults/ab5953e7-5339-4d71-8a9c-6ae97a9d9321
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2021-03-01T18:47:49Z", "lastUpdatedDateTime":
-        "2021-03-01T18:47:54Z"}'
-    headers:
-      apim-request-id:
-      - fcee5681-1121-4a67-b778-279361a50bf5
-      content-length:
-      - '106'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 01 Mar 2021 18:47:54 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '13'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/f7b6edea-9735-4ee2-88ee-78d26105baf2
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-01T18:47:49Z",
-        "lastUpdatedDateTime": "2021-03-01T18:47:55Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T00:27:03Z",
+        "lastUpdatedDateTime": "2021-05-11T00:27:07Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "lines": [{"boundingBox": [1.0119, 1.6855, 3.9147, 1.6855,
         3.9147, 1.8775, 1.0119, 1.8775], "text": "Quarterly Sales Update: Q3 2019",
@@ -12079,14 +12044,16 @@ interactions:
         {"boundingBox": [7.4627, 9.8142, 7.7628, 9.8142, 7.7628, 9.8988, 7.4627, 9.8988],
         "text": "7.00%", "appearance": {"style": {"name": "other", "confidence": 1}},
         "words": [{"boundingBox": [7.4627, 9.8142, 7.7628, 9.8142, 7.7628, 9.8988,
-        7.4627, 9.8988], "text": "7.00%", "confidence": 1}]}]}, {"page": 2, "angle":
-        0, "width": 8.5, "height": 11, "unit": "inch", "lines": [{"boundingBox": [3.3371,
-        1.0463, 3.4282, 1.0463, 3.4282, 1.1269, 3.3371, 1.1269], "text": "IN", "appearance":
-        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [3.3371,
-        1.0463, 3.4282, 1.0463, 3.4282, 1.1269, 3.3371, 1.1269], "text": "IN", "confidence":
-        1}]}, {"boundingBox": [6.8227, 1.0538, 6.9997, 1.0538, 6.9997, 1.136, 6.8227,
-        1.136], "text": "781", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [6.8227, 1.0538, 6.9997, 1.0538, 6.9997, 1.136,
+        7.4627, 9.8988], "text": "7.00%", "confidence": 1}]}], "selectionMarks": [{"boundingBox":
+        [3.3622, 2.4501, 3.4551, 2.4501, 3.4551, 2.5407, 3.3622, 2.5407], "confidence":
+        0.806, "state": "unselected"}]}, {"page": 2, "angle": 0, "width": 8.5, "height":
+        11, "unit": "inch", "lines": [{"boundingBox": [3.3371, 1.0463, 3.4282, 1.0463,
+        3.4282, 1.1269, 3.3371, 1.1269], "text": "IN", "appearance": {"style": {"name":
+        "other", "confidence": 1}}, "words": [{"boundingBox": [3.3371, 1.0463, 3.4282,
+        1.0463, 3.4282, 1.1269, 3.3371, 1.1269], "text": "IN", "confidence": 1}]},
+        {"boundingBox": [6.8227, 1.0538, 6.9997, 1.0538, 6.9997, 1.136, 6.8227, 1.136],
+        "text": "781", "appearance": {"style": {"name": "other", "confidence": 1}},
+        "words": [{"boundingBox": [6.8227, 1.0538, 6.9997, 1.0538, 6.9997, 1.136,
         6.8227, 1.136], "text": "781", "confidence": 1}]}, {"boundingBox": [7.3994,
         1.0525, 7.7624, 1.0525, 7.7624, 1.1371, 7.3994, 1.1371], "text": "34.20%",
         "appearance": {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox":
@@ -12421,540 +12388,621 @@ interactions:
         5.1391, 7.765, 5.1391, 7.765, 5.2424, 7.3177, 5.2424], "text": "17.49%", "confidence":
         1}]}]}], "pageResults": [{"page": 1, "tables": [{"rows": 29, "columns": 4,
         "cells": [{"rowIndex": 0, "columnIndex": 0, "text": "Division", "boundingBox":
-        [1.8468, 2.2299, 3.2764, 2.2299, 3.2764, 2.4049, 1.8468, 2.4049], "elements":
-        ["#/readResults/0/lines/2/words/0"]}, {"rowIndex": 0, "columnIndex": 1, "text":
-        "Sales Team", "boundingBox": [3.2764, 2.2299, 5.2184, 2.2299, 5.2184, 2.4049,
-        3.2764, 2.4049], "elements": ["#/readResults/0/lines/3/words/0", "#/readResults/0/lines/3/words/1"]},
-        {"rowIndex": 0, "columnIndex": 2, "text": "Units Shipped (Thousands)", "boundingBox":
-        [5.2184, 2.2299, 7.1672, 2.2299, 7.1672, 2.4049, 5.2184, 2.4049], "elements":
-        ["#/readResults/0/lines/4/words/0", "#/readResults/0/lines/4/words/1", "#/readResults/0/lines/4/words/2"]},
-        {"rowIndex": 0, "columnIndex": 3, "text": "YoY", "boundingBox": [7.1672, 2.2299,
-        7.8348, 2.2299, 7.8348, 2.4049, 7.1672, 2.4049], "elements": ["#/readResults/0/lines/5/words/0"]},
-        {"rowIndex": 1, "columnIndex": 0, "text": "New England", "boundingBox": [1.8468,
-        2.4049, 3.2764, 2.4049, 3.2764, 2.5799, 1.8468, 2.5867], "elements": ["#/readResults/0/lines/7/words/0",
-        "#/readResults/0/lines/7/words/1"]}, {"rowIndex": 1, "columnIndex": 1, "text":
-        "CT, ME, MA, NH, RI, VT", "boundingBox": [3.2764, 2.4049, 5.2184, 2.4049,
-        5.2184, 2.5799, 3.2764, 2.5799], "elements": ["#/readResults/0/lines/8/words/0",
-        "#/readResults/0/lines/8/words/1", "#/readResults/0/lines/8/words/2", "#/readResults/0/lines/8/words/3",
-        "#/readResults/0/lines/8/words/4", "#/readResults/0/lines/8/words/5"]}, {"rowIndex":
-        1, "columnIndex": 2, "text": "526", "boundingBox": [5.2184, 2.4049, 7.1672,
-        2.4049, 7.1672, 2.5799, 5.2184, 2.5799], "elements": ["#/readResults/0/lines/9/words/0"]},
-        {"rowIndex": 1, "columnIndex": 3, "text": "0.7%", "boundingBox": [7.1672,
-        2.4049, 7.8348, 2.4049, 7.8348, 2.5799, 7.1672, 2.5799], "elements": ["#/readResults/0/lines/10/words/0"]},
-        {"rowIndex": 2, "columnIndex": 0, "rowSpan": 2, "text": "Mid-Atlantic", "boundingBox":
-        [1.8468, 2.5867, 3.2764, 2.5799, 3.2764, 2.9367, 1.8468, 2.9569], "elements":
-        ["#/readResults/0/lines/11/words/0"]}, {"rowIndex": 2, "columnIndex": 1, "text":
-        "NJ, NY", "boundingBox": [3.2764, 2.5799, 5.2184, 2.5799, 5.2184, 2.7617,
-        3.2764, 2.7617], "elements": ["#/readResults/0/lines/12/words/0", "#/readResults/0/lines/12/words/1"]},
-        {"rowIndex": 2, "columnIndex": 2, "text": "889", "boundingBox": [5.2184, 2.5799,
-        7.1672, 2.5799, 7.1672, 2.7617, 5.2184, 2.7617], "elements": ["#/readResults/0/lines/13/words/0"]},
-        {"rowIndex": 2, "columnIndex": 3, "text": "1.0%", "boundingBox": [7.1672,
-        2.5799, 7.8348, 2.5799, 7.8348, 2.7617, 7.1672, 2.7617], "elements": ["#/readResults/0/lines/14/words/0"]},
-        {"rowIndex": 3, "columnIndex": 1, "text": "PA", "boundingBox": [3.2764, 2.7617,
-        5.2184, 2.7617, 5.2184, 2.9367, 3.2764, 2.9367], "elements": ["#/readResults/0/lines/15/words/0"]},
-        {"rowIndex": 3, "columnIndex": 2, "text": "559", "boundingBox": [5.2184, 2.7617,
-        7.1672, 2.7617, 7.1672, 2.9367, 5.2184, 2.9367], "elements": ["#/readResults/0/lines/16/words/0"]},
-        {"rowIndex": 3, "columnIndex": 3, "text": "(6.2%)", "boundingBox": [7.1672,
-        2.7617, 7.8348, 2.7617, 7.8348, 2.9367, 7.1672, 2.9367], "elements": ["#/readResults/0/lines/17/words/0"]},
-        {"rowIndex": 4, "columnIndex": 0, "text": "Northeast Total", "boundingBox":
-        [1.8468, 2.9569, 3.2764, 2.9367, 3.2764, 3.1184, 1.8468, 3.1117], "elements":
-        ["#/readResults/0/lines/18/words/0", "#/readResults/0/lines/18/words/1"]},
-        {"rowIndex": 4, "columnIndex": 1, "text": "", "boundingBox": [3.2764, 2.9367,
-        5.2184, 2.9367, 5.2184, 3.1184, 3.2764, 3.1184], "elements": []}, {"rowIndex":
-        4, "columnIndex": 2, "text": "1,974", "boundingBox": [5.2184, 2.9367, 7.1672,
-        2.9367, 7.1672, 3.1184, 5.2184, 3.1184], "elements": ["#/readResults/0/lines/19/words/0"]},
-        {"rowIndex": 4, "columnIndex": 3, "text": "(1.1%)", "boundingBox": [7.1672,
-        2.9367, 7.8348, 2.9367, 7.8348, 3.1184, 7.1672, 3.1184], "elements": ["#/readResults/0/lines/20/words/0"]},
-        {"rowIndex": 5, "columnIndex": 0, "rowSpan": 5, "text": "East North Central",
-        "boundingBox": [1.8468, 3.1117, 3.2764, 3.1184, 3.2764, 4.0069, 1.8468, 4.0069],
-        "elements": ["#/readResults/0/lines/22/words/0", "#/readResults/0/lines/22/words/1",
-        "#/readResults/0/lines/22/words/2"]}, {"rowIndex": 5, "columnIndex": 1, "text":
-        "IL", "boundingBox": [3.2764, 3.1184, 5.2184, 3.1184, 5.2184, 3.3002, 3.2764,
-        3.3002], "elements": ["#/readResults/0/lines/23/words/0"]}, {"rowIndex": 5,
-        "columnIndex": 2, "text": "977", "boundingBox": [5.2184, 3.1184, 7.1672, 3.1184,
-        7.1672, 3.3002, 5.2184, 3.3002], "elements": ["#/readResults/0/lines/24/words/0"]},
-        {"rowIndex": 5, "columnIndex": 3, "text": "20.2%", "boundingBox": [7.1672,
-        3.1184, 7.8348, 3.1184, 7.8348, 3.3002, 7.1672, 3.3002], "elements": ["#/readResults/0/lines/25/words/0"]},
-        {"rowIndex": 6, "columnIndex": 1, "text": "IN", "boundingBox": [3.2764, 3.3002,
-        5.2184, 3.3002, 5.2252, 3.4752, 3.2764, 3.4684], "elements": ["#/readResults/0/lines/26/words/0"]},
-        {"rowIndex": 6, "columnIndex": 2, "text": "582", "boundingBox": [5.2184, 3.3002,
-        7.1672, 3.3002, 7.1672, 3.4752, 5.2252, 3.4752], "elements": ["#/readResults/0/lines/27/words/0"]},
-        {"rowIndex": 6, "columnIndex": 3, "text": "9.6%", "boundingBox": [7.1672,
-        3.3002, 7.8348, 3.3002, 7.8348, 3.4752, 7.1672, 3.4752], "elements": ["#/readResults/0/lines/28/words/0"]},
-        {"rowIndex": 7, "columnIndex": 1, "text": "MI", "boundingBox": [3.2764, 3.4684,
-        5.2252, 3.4752, 5.2252, 3.6502, 3.2764, 3.6502], "elements": ["#/readResults/0/lines/29/words/0"]},
-        {"rowIndex": 7, "columnIndex": 2, "text": "929", "boundingBox": [5.2252, 3.4752,
-        7.1672, 3.4752, 7.1672, 3.6502, 5.2252, 3.6502], "elements": ["#/readResults/0/lines/30/words/0"]},
-        {"rowIndex": 7, "columnIndex": 3, "text": "(7.5%)", "boundingBox": [7.1672,
-        3.4752, 7.8348, 3.4752, 7.8348, 3.6502, 7.1672, 3.6502], "elements": ["#/readResults/0/lines/31/words/0"]},
-        {"rowIndex": 8, "columnIndex": 1, "text": "OH", "boundingBox": [3.2764, 3.6502,
-        5.2252, 3.6502, 5.2252, 3.8252, 3.2764, 3.8117], "elements": ["#/readResults/0/lines/32/words/0"]},
-        {"rowIndex": 8, "columnIndex": 2, "text": "860", "boundingBox": [5.2252, 3.6502,
-        7.1672, 3.6502, 7.1672, 3.8252, 5.2252, 3.8252], "elements": ["#/readResults/0/lines/33/words/0"]},
-        {"rowIndex": 8, "columnIndex": 3, "text": "6.8%", "boundingBox": [7.1672,
-        3.6502, 7.8348, 3.6502, 7.8348, 3.8252, 7.1672, 3.8252], "elements": ["#/readResults/0/lines/34/words/0"]},
-        {"rowIndex": 9, "columnIndex": 1, "text": "WI", "boundingBox": [3.2764, 3.8117,
-        5.2252, 3.8252, 5.2252, 4.0002, 3.2764, 4.0069], "elements": ["#/readResults/0/lines/35/words/0"]},
-        {"rowIndex": 9, "columnIndex": 2, "text": "1,765", "boundingBox": [5.2252,
-        3.8252, 7.1672, 3.8252, 7.1672, 4.0002, 5.2252, 4.0002], "elements": ["#/readResults/0/lines/36/words/0"]},
-        {"rowIndex": 9, "columnIndex": 3, "text": "0.9%", "boundingBox": [7.1672,
-        3.8252, 7.8348, 3.8252, 7.8348, 4.0002, 7.1672, 4.0002], "elements": ["#/readResults/0/lines/37/words/0"]},
-        {"rowIndex": 10, "columnIndex": 0, "rowSpan": 5, "text": "West North Central",
-        "boundingBox": [1.8468, 4.0069, 3.2764, 4.0069, 3.2764, 4.9022, 1.8468, 4.8887],
-        "elements": ["#/readResults/0/lines/38/words/0", "#/readResults/0/lines/38/words/1",
-        "#/readResults/0/lines/38/words/2"]}, {"rowIndex": 10, "columnIndex": 1, "text":
-        "IA, KS, NE", "boundingBox": [3.2764, 4.0069, 5.2252, 4.0002, 5.2252, 4.1819,
-        3.2764, 4.1887], "elements": ["#/readResults/0/lines/39/words/0", "#/readResults/0/lines/39/words/1",
-        "#/readResults/0/lines/39/words/2"]}, {"rowIndex": 10, "columnIndex": 2, "text":
-        "754", "boundingBox": [5.2252, 4.0002, 7.1672, 4.0002, 7.1672, 4.1819, 5.2252,
-        4.1819], "elements": ["#/readResults/0/lines/40/words/0"]}, {"rowIndex": 10,
-        "columnIndex": 3, "text": "6.6%", "boundingBox": [7.1672, 4.0002, 7.8348,
-        4.0002, 7.8348, 4.1819, 7.1672, 4.1819], "elements": ["#/readResults/0/lines/41/words/0"]},
-        {"rowIndex": 11, "columnIndex": 1, "text": "MN", "boundingBox": [3.2764, 4.1887,
-        5.2252, 4.1819, 5.2252, 4.3637, 3.2764, 4.3569], "elements": ["#/readResults/0/lines/42/words/0"]},
-        {"rowIndex": 11, "columnIndex": 2, "text": "960", "boundingBox": [5.2252,
-        4.1819, 7.1672, 4.1819, 7.1672, 4.3637, 5.2252, 4.3637], "elements": ["#/readResults/0/lines/43/words/0"]},
-        {"rowIndex": 11, "columnIndex": 3, "text": "13.1%", "boundingBox": [7.1672,
-        4.1819, 7.8348, 4.1819, 7.8348, 4.3637, 7.1672, 4.3637], "elements": ["#/readResults/0/lines/44/words/0"]},
-        {"rowIndex": 12, "columnIndex": 1, "text": "MO", "boundingBox": [3.2764, 4.3569,
-        5.2252, 4.3637, 5.2252, 4.5387, 3.2764, 4.5387], "elements": ["#/readResults/0/lines/45/words/0"]},
-        {"rowIndex": 12, "columnIndex": 2, "text": "767", "boundingBox": [5.2252,
-        4.3637, 7.1672, 4.3637, 7.1672, 4.5387, 5.2252, 4.5387], "elements": ["#/readResults/0/lines/46/words/0"]},
-        {"rowIndex": 12, "columnIndex": 3, "text": "(0.2%)", "boundingBox": [7.1672,
-        4.3637, 7.8348, 4.3637, 7.8348, 4.5387, 7.1672, 4.5387], "elements": ["#/readResults/0/lines/47/words/0"]},
-        {"rowIndex": 13, "columnIndex": 1, "text": "NE", "boundingBox": [3.2764, 4.5387,
-        5.2252, 4.5387, 5.2252, 4.7204, 3.2764, 4.7002], "elements": ["#/readResults/0/lines/48/words/0"]},
-        {"rowIndex": 13, "columnIndex": 2, "text": "725", "boundingBox": [5.2252,
-        4.5387, 7.1672, 4.5387, 7.1672, 4.7204, 5.2252, 4.7204], "elements": ["#/readResults/0/lines/49/words/0"]},
-        {"rowIndex": 13, "columnIndex": 3, "text": "3.2%", "boundingBox": [7.1672,
-        4.5387, 7.8348, 4.5387, 7.8348, 4.7204, 7.1672, 4.7204], "elements": ["#/readResults/0/lines/50/words/0"]},
-        {"rowIndex": 14, "columnIndex": 1, "text": "ND, SD", "boundingBox": [3.2764,
-        4.7002, 5.2252, 4.7204, 5.2252, 4.9022, 3.2764, 4.9022], "elements": ["#/readResults/0/lines/51/words/0",
-        "#/readResults/0/lines/51/words/1"]}, {"rowIndex": 14, "columnIndex": 2, "text":
-        "838", "boundingBox": [5.2252, 4.7204, 7.1672, 4.7204, 7.1672, 4.9022, 5.2252,
-        4.9022], "elements": ["#/readResults/0/lines/52/words/0"]}, {"rowIndex": 14,
-        "columnIndex": 3, "text": "2.5%", "boundingBox": [7.1672, 4.7204, 7.8348,
-        4.7204, 7.8348, 4.9022, 7.1672, 4.9022], "elements": ["#/readResults/0/lines/53/words/0"]},
-        {"rowIndex": 15, "columnIndex": 0, "text": "Midwest Total", "boundingBox":
-        [1.8468, 4.8887, 3.2764, 4.9022, 3.2764, 5.0772, 1.8468, 5.0772], "elements":
-        ["#/readResults/0/lines/54/words/0", "#/readResults/0/lines/54/words/1"]},
-        {"rowIndex": 15, "columnIndex": 1, "text": "", "boundingBox": [3.2764, 4.9022,
-        5.2252, 4.9022, 5.2252, 5.0772, 3.2764, 5.0772], "elements": []}, {"rowIndex":
-        15, "columnIndex": 2, "text": "9,157", "boundingBox": [5.2252, 4.9022, 7.1672,
-        4.9022, 7.1672, 5.0772, 5.2252, 5.0772], "elements": ["#/readResults/0/lines/55/words/0"]},
-        {"rowIndex": 15, "columnIndex": 3, "text": "5.5%", "boundingBox": [7.1672,
-        4.9022, 7.8348, 4.9022, 7.8348, 5.0772, 7.1672, 5.0772], "elements": ["#/readResults/0/lines/56/words/0"]},
-        {"rowIndex": 16, "columnIndex": 0, "rowSpan": 4, "text": "South Atlantic",
-        "boundingBox": [1.8468, 5.0772, 3.2764, 5.0772, 3.2764, 5.7907, 1.8468, 5.7772],
-        "elements": ["#/readResults/0/lines/58/words/0", "#/readResults/0/lines/58/words/1"]},
-        {"rowIndex": 16, "columnIndex": 1, "text": "DE", "boundingBox": [3.2764, 5.0772,
-        5.2252, 5.0772, 5.2252, 5.2522, 3.2764, 5.2522], "elements": ["#/readResults/0/lines/59/words/0"]},
-        {"rowIndex": 16, "columnIndex": 2, "text": "820", "boundingBox": [5.2252,
-        5.0772, 7.1672, 5.0772, 7.1672, 5.2522, 5.2252, 5.2522], "elements": ["#/readResults/0/lines/60/words/0"]},
-        {"rowIndex": 16, "columnIndex": 3, "text": "9.4%", "boundingBox": [7.1672,
-        5.0772, 7.8348, 5.0772, 7.8348, 5.2522, 7.1672, 5.2522], "elements": ["#/readResults/0/lines/61/words/0"]},
-        {"rowIndex": 17, "columnIndex": 1, "text": "FL", "boundingBox": [3.2764, 5.2522,
-        5.2252, 5.2522, 5.2252, 5.4339, 3.2764, 5.4339], "elements": ["#/readResults/0/lines/62/words/0"]},
-        {"rowIndex": 17, "columnIndex": 2, "text": "636", "boundingBox": [5.2252,
-        5.2522, 7.1672, 5.2522, 7.1672, 5.4339, 5.2252, 5.4339], "elements": ["#/readResults/0/lines/63/words/0"]},
-        {"rowIndex": 17, "columnIndex": 3, "text": "4.8%", "boundingBox": [7.1672,
-        5.2522, 7.8348, 5.2522, 7.8348, 5.4339, 7.1672, 5.4339], "elements": ["#/readResults/0/lines/64/words/0"]},
-        {"rowIndex": 18, "columnIndex": 1, "text": "GA, NC, SC", "boundingBox": [3.2764,
-        5.4339, 5.2252, 5.4339, 5.2252, 5.6089, 3.2764, 5.5887], "elements": ["#/readResults/0/lines/65/words/0",
-        "#/readResults/0/lines/65/words/1", "#/readResults/0/lines/65/words/2"]},
-        {"rowIndex": 18, "columnIndex": 2, "text": "858", "boundingBox": [5.2252,
-        5.4339, 7.1672, 5.4339, 7.1672, 5.6089, 5.2252, 5.6089], "elements": ["#/readResults/0/lines/66/words/0"]},
-        {"rowIndex": 18, "columnIndex": 3, "text": "(11.2%)", "boundingBox": [7.1672,
-        5.4339, 7.8348, 5.4339, 7.8348, 5.6089, 7.1672, 5.6089], "elements": ["#/readResults/0/lines/67/words/0"]},
-        {"rowIndex": 19, "columnIndex": 1, "text": "MD, VA, DC, WV", "boundingBox":
-        [3.2764, 5.5887, 5.2252, 5.6089, 5.2252, 5.7907, 3.2764, 5.7907], "elements":
-        ["#/readResults/0/lines/68/words/0", "#/readResults/0/lines/68/words/1", "#/readResults/0/lines/68/words/2",
-        "#/readResults/0/lines/68/words/3"]}, {"rowIndex": 19, "columnIndex": 2, "text":
-        "931", "boundingBox": [5.2252, 5.6089, 7.1672, 5.6089, 7.1672, 5.7907, 5.2252,
-        5.7907], "elements": ["#/readResults/0/lines/69/words/0"]}, {"rowIndex": 19,
-        "columnIndex": 3, "text": "0.2%", "boundingBox": [7.1672, 5.6089, 7.8348,
-        5.6089, 7.8348, 5.7907, 7.1672, 5.7907], "elements": ["#/readResults/0/lines/70/words/0"]},
-        {"rowIndex": 20, "columnIndex": 0, "text": "East South Central", "boundingBox":
-        [1.8468, 5.7772, 3.2764, 5.7907, 3.2764, 5.9657, 1.8468, 5.9859], "elements":
-        ["#/readResults/0/lines/71/words/0", "#/readResults/0/lines/71/words/1", "#/readResults/0/lines/71/words/2"]},
-        {"rowIndex": 20, "columnIndex": 1, "text": "AL, KY, MS, TN", "boundingBox":
-        [3.2764, 5.7907, 5.2252, 5.7907, 5.2252, 5.9657, 3.2764, 5.9657], "elements":
-        ["#/readResults/0/lines/72/words/0", "#/readResults/0/lines/72/words/1", "#/readResults/0/lines/72/words/2",
-        "#/readResults/0/lines/72/words/3"]}, {"rowIndex": 20, "columnIndex": 2, "text":
-        "820", "boundingBox": [5.2252, 5.7907, 7.1672, 5.7907, 7.1672, 5.9657, 5.2252,
-        5.9657], "elements": ["#/readResults/0/lines/73/words/0"]}, {"rowIndex": 20,
-        "columnIndex": 3, "text": "6.2%", "boundingBox": [7.1672, 5.7907, 7.8348,
-        5.7907, 7.8348, 5.9657, 7.1672, 5.9657], "elements": ["#/readResults/0/lines/74/words/0"]},
-        {"rowIndex": 21, "columnIndex": 0, "rowSpan": 2, "text": "West South Central",
-        "boundingBox": [1.8468, 5.9859, 3.2764, 5.9657, 3.2764, 6.3224, 1.8468, 6.3224],
-        "elements": ["#/readResults/0/lines/75/words/0", "#/readResults/0/lines/75/words/1",
-        "#/readResults/0/lines/75/words/2"]}, {"rowIndex": 21, "columnIndex": 1, "text":
-        "AR, OK", "boundingBox": [3.2764, 5.9657, 5.2252, 5.9657, 5.2252, 6.1474,
-        3.2764, 6.1407], "elements": ["#/readResults/0/lines/76/words/0", "#/readResults/0/lines/76/words/1"]},
-        {"rowIndex": 21, "columnIndex": 2, "text": "601", "boundingBox": [5.2252,
-        5.9657, 7.1672, 5.9657, 7.1672, 6.1474, 5.2252, 6.1474], "elements": ["#/readResults/0/lines/77/words/0"]},
-        {"rowIndex": 21, "columnIndex": 3, "text": "11.6%", "boundingBox": [7.1672,
-        5.9657, 7.8348, 5.9657, 7.8348, 6.1474, 7.1672, 6.1474], "elements": ["#/readResults/0/lines/78/words/0"]},
-        {"rowIndex": 22, "columnIndex": 1, "text": "LA, TX", "boundingBox": [3.2764,
-        6.1407, 5.2252, 6.1474, 5.2252, 6.3224, 3.2764, 6.3224], "elements": ["#/readResults/0/lines/79/words/0",
-        "#/readResults/0/lines/79/words/1"]}, {"rowIndex": 22, "columnIndex": 2, "text":
-        "947", "boundingBox": [5.2252, 6.1474, 7.1672, 6.1474, 7.1672, 6.3224, 5.2252,
-        6.3224], "elements": ["#/readResults/0/lines/80/words/0"]}, {"rowIndex": 22,
-        "columnIndex": 3, "text": "4.4%", "boundingBox": [7.1672, 6.1474, 7.8348,
-        6.1474, 7.8348, 6.3224, 7.1672, 6.3224], "elements": ["#/readResults/0/lines/81/words/0"]},
-        {"rowIndex": 23, "columnIndex": 0, "text": "South Total", "boundingBox": [1.8468,
-        6.3224, 3.2764, 6.3224, 3.2764, 6.4974, 1.8468, 6.5042], "elements": ["#/readResults/0/lines/82/words/0",
-        "#/readResults/0/lines/82/words/1"]}, {"rowIndex": 23, "columnIndex": 1, "text":
-        "", "boundingBox": [3.2764, 6.3224, 5.2252, 6.3224, 5.2252, 6.4974, 3.2764,
-        6.4974], "elements": []}, {"rowIndex": 23, "columnIndex": 2, "text": "5,613",
-        "boundingBox": [5.2252, 6.3224, 7.1672, 6.3224, 7.1672, 6.4974, 5.2252, 6.4974],
-        "elements": ["#/readResults/0/lines/83/words/0"]}, {"rowIndex": 23, "columnIndex":
-        3, "text": "3.2%", "boundingBox": [7.1672, 6.3224, 7.8348, 6.3224, 7.8348,
-        6.5042, 7.1672, 6.4974], "elements": ["#/readResults/0/lines/84/words/0"]},
-        {"rowIndex": 24, "columnIndex": 0, "text": "Mountain", "boundingBox": [1.8468,
-        6.5042, 3.2764, 6.4974, 3.2764, 6.6792, 1.8468, 6.6792], "elements": ["#/readResults/0/lines/86/words/0"]},
-        {"rowIndex": 24, "columnIndex": 1, "text": "AZ, CO, ID, MT, NV, NM, UT", "boundingBox":
-        [3.2764, 6.4974, 5.2252, 6.4974, 5.2252, 6.6792, 3.2764, 6.6792], "elements":
+        [1.8468, 2.2299, 3.2831, 2.2299, 3.2831, 2.4049, 1.8468, 2.4049], "elements":
+        ["#/readResults/0/lines/2/words/0"], "isHeader": true}, {"rowIndex": 0, "columnIndex":
+        1, "text": "Sales Team", "boundingBox": [3.2831, 2.2299, 5.2252, 2.2299, 5.2252,
+        2.4049, 3.2831, 2.4049], "elements": ["#/readResults/0/lines/3/words/0", "#/readResults/0/lines/3/words/1"],
+        "isHeader": true}, {"rowIndex": 0, "columnIndex": 2, "text": "Units Shipped
+        (Thousands)", "boundingBox": [5.2252, 2.2299, 7.1672, 2.2299, 7.1672, 2.4049,
+        5.2252, 2.4049], "elements": ["#/readResults/0/lines/4/words/0", "#/readResults/0/lines/4/words/1",
+        "#/readResults/0/lines/4/words/2"], "isHeader": true}, {"rowIndex": 0, "columnIndex":
+        3, "text": "YoY", "boundingBox": [7.1672, 2.2299, 7.8415, 2.2299, 7.8415,
+        2.4117, 7.1672, 2.4049], "elements": ["#/readResults/0/lines/5/words/0"],
+        "isHeader": true}, {"rowIndex": 1, "columnIndex": 0, "text": "New England",
+        "boundingBox": [1.8468, 2.4049, 3.2831, 2.4049, 3.2831, 2.5799, 1.8468, 2.5732],
+        "elements": ["#/readResults/0/lines/7/words/0", "#/readResults/0/lines/7/words/1"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 1, "text": "CT, ME, MA,
+        NH, RI, VT", "boundingBox": [3.2831, 2.4049, 5.2252, 2.4049, 5.2252, 2.5799,
+        3.2831, 2.5799], "elements": ["#/readResults/0/lines/8/words/0", "#/readResults/0/lines/8/words/1",
+        "#/readResults/0/lines/8/words/2", "#/readResults/0/lines/8/words/3", "#/readResults/0/lines/8/words/4",
+        "#/readResults/0/lines/8/words/5", "#/readResults/0/selectionMarks/0"], "isHeader":
+        false}, {"rowIndex": 1, "columnIndex": 2, "text": "526", "boundingBox": [5.2252,
+        2.4049, 7.1672, 2.4049, 7.1672, 2.5799, 5.2252, 2.5799], "elements": ["#/readResults/0/lines/9/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 3, "text": "0.7%", "boundingBox":
+        [7.1672, 2.4049, 7.8415, 2.4117, 7.8415, 2.5799, 7.1672, 2.5799], "elements":
+        ["#/readResults/0/lines/10/words/0"], "isHeader": false}, {"rowIndex": 2,
+        "columnIndex": 0, "text": "Mid-Atlantic", "boundingBox": [1.8468, 2.5732,
+        3.2831, 2.5799, 3.2831, 2.7684, 1.8468, 2.7684], "elements": ["#/readResults/0/lines/11/words/0"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 1, "text": "NJ, NY", "boundingBox":
+        [3.2831, 2.5799, 5.2252, 2.5799, 5.2252, 2.7617, 3.2831, 2.7684], "elements":
+        ["#/readResults/0/lines/12/words/0", "#/readResults/0/lines/12/words/1"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 2, "text": "889", "boundingBox":
+        [5.2252, 2.5799, 7.1672, 2.5799, 7.1672, 2.7617, 5.2252, 2.7617], "elements":
+        ["#/readResults/0/lines/13/words/0"], "isHeader": false}, {"rowIndex": 2,
+        "columnIndex": 3, "text": "1.0%", "boundingBox": [7.1672, 2.5799, 7.8415,
+        2.5799, 7.8415, 2.7684, 7.1672, 2.7617], "elements": ["#/readResults/0/lines/14/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 0, "text": "", "boundingBox":
+        [1.8468, 2.7684, 3.2831, 2.7684, 3.2831, 2.9434, 1.8468, 2.9165], "elements":
+        [], "isHeader": false}, {"rowIndex": 3, "columnIndex": 1, "text": "PA", "boundingBox":
+        [3.2831, 2.7684, 5.2252, 2.7617, 5.2252, 2.9434, 3.2831, 2.9434], "elements":
+        ["#/readResults/0/lines/15/words/0"], "isHeader": false}, {"rowIndex": 3,
+        "columnIndex": 2, "text": "559", "boundingBox": [5.2252, 2.7617, 7.1672, 2.7617,
+        7.1672, 2.9367, 5.2252, 2.9434], "elements": ["#/readResults/0/lines/16/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 3, "text": "(6.2%)", "boundingBox":
+        [7.1672, 2.7617, 7.8415, 2.7684, 7.8415, 2.9434, 7.1672, 2.9367], "elements":
+        ["#/readResults/0/lines/17/words/0"], "isHeader": false}, {"rowIndex": 4,
+        "columnIndex": 0, "text": "Northeast Total", "boundingBox": [1.8468, 2.9165,
+        3.2831, 2.9434, 3.2831, 3.1184, 1.8468, 3.1184], "elements": ["#/readResults/0/lines/18/words/0",
+        "#/readResults/0/lines/18/words/1"], "isHeader": false}, {"rowIndex": 4, "columnIndex":
+        1, "text": "", "boundingBox": [3.2831, 2.9434, 5.2252, 2.9434, 5.2252, 3.1184,
+        3.2831, 3.1184], "elements": [], "isHeader": false}, {"rowIndex": 4, "columnIndex":
+        2, "text": "1,974", "boundingBox": [5.2252, 2.9434, 7.1672, 2.9367, 7.1672,
+        3.1184, 5.2252, 3.1184], "elements": ["#/readResults/0/lines/19/words/0"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 3, "text": "(1.1%)", "boundingBox":
+        [7.1672, 2.9367, 7.8415, 2.9434, 7.8415, 3.1184, 7.1672, 3.1184], "elements":
+        ["#/readResults/0/lines/20/words/0"], "isHeader": false}, {"rowIndex": 5,
+        "columnIndex": 0, "rowSpan": 5, "text": "East North Central", "boundingBox":
+        [1.8468, 3.1184, 3.2831, 3.1184, 3.2764, 4.0069, 1.8468, 4.0069], "elements":
+        ["#/readResults/0/lines/22/words/0", "#/readResults/0/lines/22/words/1", "#/readResults/0/lines/22/words/2"],
+        "isHeader": false}, {"rowIndex": 5, "columnIndex": 1, "text": "IL", "boundingBox":
+        [3.2831, 3.1184, 5.2252, 3.1184, 5.2252, 3.3002, 3.2831, 3.3002], "elements":
+        ["#/readResults/0/lines/23/words/0"], "isHeader": false}, {"rowIndex": 5,
+        "columnIndex": 2, "text": "977", "boundingBox": [5.2252, 3.1184, 7.1672, 3.1184,
+        7.1672, 3.3002, 5.2252, 3.3002], "elements": ["#/readResults/0/lines/24/words/0"],
+        "isHeader": false}, {"rowIndex": 5, "columnIndex": 3, "text": "20.2%", "boundingBox":
+        [7.1672, 3.1184, 7.8415, 3.1184, 7.8415, 3.3002, 7.1672, 3.3002], "elements":
+        ["#/readResults/0/lines/25/words/0"], "isHeader": false}, {"rowIndex": 6,
+        "columnIndex": 1, "text": "IN", "boundingBox": [3.2831, 3.3002, 5.2252, 3.3002,
+        5.2252, 3.4752, 3.2831, 3.4752], "elements": ["#/readResults/0/lines/26/words/0"],
+        "isHeader": false}, {"rowIndex": 6, "columnIndex": 2, "text": "582", "boundingBox":
+        [5.2252, 3.3002, 7.1672, 3.3002, 7.1672, 3.4752, 5.2252, 3.4752], "elements":
+        ["#/readResults/0/lines/27/words/0"], "isHeader": false}, {"rowIndex": 6,
+        "columnIndex": 3, "text": "9.6%", "boundingBox": [7.1672, 3.3002, 7.8415,
+        3.3002, 7.8415, 3.4752, 7.1672, 3.4752], "elements": ["#/readResults/0/lines/28/words/0"],
+        "isHeader": false}, {"rowIndex": 7, "columnIndex": 1, "text": "MI", "boundingBox":
+        [3.2831, 3.4752, 5.2252, 3.4752, 5.2252, 3.6569, 3.2764, 3.6569], "elements":
+        ["#/readResults/0/lines/29/words/0"], "isHeader": false}, {"rowIndex": 7,
+        "columnIndex": 2, "text": "929", "boundingBox": [5.2252, 3.4752, 7.1672, 3.4752,
+        7.1672, 3.6502, 5.2252, 3.6569], "elements": ["#/readResults/0/lines/30/words/0"],
+        "isHeader": false}, {"rowIndex": 7, "columnIndex": 3, "text": "(7.5%)", "boundingBox":
+        [7.1672, 3.4752, 7.8415, 3.4752, 7.8415, 3.6502, 7.1672, 3.6502], "elements":
+        ["#/readResults/0/lines/31/words/0"], "isHeader": false}, {"rowIndex": 8,
+        "columnIndex": 1, "text": "OH", "boundingBox": [3.2764, 3.6569, 5.2252, 3.6569,
+        5.2252, 3.8319, 3.2764, 3.8252], "elements": ["#/readResults/0/lines/32/words/0"],
+        "isHeader": false}, {"rowIndex": 8, "columnIndex": 2, "text": "860", "boundingBox":
+        [5.2252, 3.6569, 7.1672, 3.6502, 7.1672, 3.8319, 5.2252, 3.8319], "elements":
+        ["#/readResults/0/lines/33/words/0"], "isHeader": false}, {"rowIndex": 8,
+        "columnIndex": 3, "text": "6.8%", "boundingBox": [7.1672, 3.6502, 7.8415,
+        3.6502, 7.8415, 3.8319, 7.1672, 3.8319], "elements": ["#/readResults/0/lines/34/words/0"],
+        "isHeader": false}, {"rowIndex": 9, "columnIndex": 1, "text": "WI", "boundingBox":
+        [3.2764, 3.8252, 5.2252, 3.8319, 5.2252, 4.0069, 3.2764, 4.0069], "elements":
+        ["#/readResults/0/lines/35/words/0"], "isHeader": false}, {"rowIndex": 9,
+        "columnIndex": 2, "text": "1,765", "boundingBox": [5.2252, 3.8319, 7.1672,
+        3.8319, 7.1672, 4.0069, 5.2252, 4.0069], "elements": ["#/readResults/0/lines/36/words/0"],
+        "isHeader": false}, {"rowIndex": 9, "columnIndex": 3, "text": "0.9%", "boundingBox":
+        [7.1672, 3.8319, 7.8415, 3.8319, 7.8415, 4.0069, 7.1672, 4.0069], "elements":
+        ["#/readResults/0/lines/37/words/0"], "isHeader": false}, {"rowIndex": 10,
+        "columnIndex": 0, "rowSpan": 5, "text": "West North Central", "boundingBox":
+        [1.8468, 4.0069, 3.2764, 4.0069, 3.2764, 4.8954, 1.8468, 4.8954], "elements":
+        ["#/readResults/0/lines/38/words/0", "#/readResults/0/lines/38/words/1", "#/readResults/0/lines/38/words/2"],
+        "isHeader": false}, {"rowIndex": 10, "columnIndex": 1, "text": "IA, KS, NE",
+        "boundingBox": [3.2764, 4.0069, 5.2252, 4.0069, 5.2252, 4.1887, 3.2764, 4.1887],
+        "elements": ["#/readResults/0/lines/39/words/0", "#/readResults/0/lines/39/words/1",
+        "#/readResults/0/lines/39/words/2"], "isHeader": false}, {"rowIndex": 10,
+        "columnIndex": 2, "text": "754", "boundingBox": [5.2252, 4.0069, 7.1672, 4.0069,
+        7.1672, 4.1887, 5.2252, 4.1887], "elements": ["#/readResults/0/lines/40/words/0"],
+        "isHeader": false}, {"rowIndex": 10, "columnIndex": 3, "text": "6.6%", "boundingBox":
+        [7.1672, 4.0069, 7.8415, 4.0069, 7.8415, 4.1887, 7.1672, 4.1887], "elements":
+        ["#/readResults/0/lines/41/words/0"], "isHeader": false}, {"rowIndex": 11,
+        "columnIndex": 1, "text": "MN", "boundingBox": [3.2764, 4.1887, 5.2252, 4.1887,
+        5.2252, 4.3637, 3.2764, 4.3637], "elements": ["#/readResults/0/lines/42/words/0"],
+        "isHeader": false}, {"rowIndex": 11, "columnIndex": 2, "text": "960", "boundingBox":
+        [5.2252, 4.1887, 7.1672, 4.1887, 7.1672, 4.3637, 5.2252, 4.3637], "elements":
+        ["#/readResults/0/lines/43/words/0"], "isHeader": false}, {"rowIndex": 11,
+        "columnIndex": 3, "text": "13.1%", "boundingBox": [7.1672, 4.1887, 7.8415,
+        4.1887, 7.8415, 4.3637, 7.1672, 4.3637], "elements": ["#/readResults/0/lines/44/words/0"],
+        "isHeader": false}, {"rowIndex": 12, "columnIndex": 1, "text": "MO", "boundingBox":
+        [3.2764, 4.3637, 5.2252, 4.3637, 5.2252, 4.5454, 3.2764, 4.5454], "elements":
+        ["#/readResults/0/lines/45/words/0"], "isHeader": false}, {"rowIndex": 12,
+        "columnIndex": 2, "text": "767", "boundingBox": [5.2252, 4.3637, 7.1672, 4.3637,
+        7.1672, 4.5387, 5.2252, 4.5454], "elements": ["#/readResults/0/lines/46/words/0"],
+        "isHeader": false}, {"rowIndex": 12, "columnIndex": 3, "text": "(0.2%)", "boundingBox":
+        [7.1672, 4.3637, 7.8415, 4.3637, 7.8415, 4.5387, 7.1672, 4.5387], "elements":
+        ["#/readResults/0/lines/47/words/0"], "isHeader": false}, {"rowIndex": 13,
+        "columnIndex": 1, "text": "NE", "boundingBox": [3.2764, 4.5454, 5.2252, 4.5454,
+        5.2252, 4.7204, 3.2764, 4.7204], "elements": ["#/readResults/0/lines/48/words/0"],
+        "isHeader": false}, {"rowIndex": 13, "columnIndex": 2, "text": "725", "boundingBox":
+        [5.2252, 4.5454, 7.1672, 4.5387, 7.1672, 4.7137, 5.2252, 4.7204], "elements":
+        ["#/readResults/0/lines/49/words/0"], "isHeader": false}, {"rowIndex": 13,
+        "columnIndex": 3, "text": "3.2%", "boundingBox": [7.1672, 4.5387, 7.8415,
+        4.5387, 7.8415, 4.7137, 7.1672, 4.7137], "elements": ["#/readResults/0/lines/50/words/0"],
+        "isHeader": false}, {"rowIndex": 14, "columnIndex": 1, "text": "ND, SD", "boundingBox":
+        [3.2764, 4.7204, 5.2252, 4.7204, 5.2252, 4.8954, 3.2764, 4.8954], "elements":
+        ["#/readResults/0/lines/51/words/0", "#/readResults/0/lines/51/words/1"],
+        "isHeader": false}, {"rowIndex": 14, "columnIndex": 2, "text": "838", "boundingBox":
+        [5.2252, 4.7204, 7.1672, 4.7137, 7.1672, 4.8954, 5.2252, 4.8954], "elements":
+        ["#/readResults/0/lines/52/words/0"], "isHeader": false}, {"rowIndex": 14,
+        "columnIndex": 3, "text": "2.5%", "boundingBox": [7.1672, 4.7137, 7.8415,
+        4.7137, 7.8415, 4.9022, 7.1672, 4.8954], "elements": ["#/readResults/0/lines/53/words/0"],
+        "isHeader": false}, {"rowIndex": 15, "columnIndex": 0, "text": "Midwest Total",
+        "boundingBox": [1.8468, 4.8954, 3.2764, 4.8954, 3.2764, 5.0772, 1.8468, 5.0772],
+        "elements": ["#/readResults/0/lines/54/words/0", "#/readResults/0/lines/54/words/1"],
+        "isHeader": false}, {"rowIndex": 15, "columnIndex": 1, "text": "", "boundingBox":
+        [3.2764, 4.8954, 5.2252, 4.8954, 5.2252, 5.0772, 3.2764, 5.0772], "elements":
+        [], "isHeader": false}, {"rowIndex": 15, "columnIndex": 2, "text": "9,157",
+        "boundingBox": [5.2252, 4.8954, 7.1672, 4.8954, 7.1672, 5.0772, 5.2252, 5.0772],
+        "elements": ["#/readResults/0/lines/55/words/0"], "isHeader": false}, {"rowIndex":
+        15, "columnIndex": 3, "text": "5.5%", "boundingBox": [7.1672, 4.8954, 7.8415,
+        4.9022, 7.8415, 5.0772, 7.1672, 5.0772], "elements": ["#/readResults/0/lines/56/words/0"],
+        "isHeader": false}, {"rowIndex": 16, "columnIndex": 0, "rowSpan": 4, "text":
+        "South Atlantic", "boundingBox": [1.8468, 5.0772, 3.2764, 5.0772, 3.2696,
+        5.7839, 1.8468, 5.7839], "elements": ["#/readResults/0/lines/58/words/0",
+        "#/readResults/0/lines/58/words/1"], "isHeader": false}, {"rowIndex": 16,
+        "columnIndex": 1, "text": "DE", "boundingBox": [3.2764, 5.0772, 5.2252, 5.0772,
+        5.2252, 5.2522, 3.2764, 5.2522], "elements": ["#/readResults/0/lines/59/words/0"],
+        "isHeader": false}, {"rowIndex": 16, "columnIndex": 2, "text": "820", "boundingBox":
+        [5.2252, 5.0772, 7.1672, 5.0772, 7.1672, 5.2522, 5.2252, 5.2522], "elements":
+        ["#/readResults/0/lines/60/words/0"], "isHeader": false}, {"rowIndex": 16,
+        "columnIndex": 3, "text": "9.4%", "boundingBox": [7.1672, 5.0772, 7.8415,
+        5.0772, 7.8415, 5.2522, 7.1672, 5.2522], "elements": ["#/readResults/0/lines/61/words/0"],
+        "isHeader": false}, {"rowIndex": 17, "columnIndex": 1, "text": "FL", "boundingBox":
+        [3.2764, 5.2522, 5.2252, 5.2522, 5.2252, 5.4272, 3.2764, 5.4272], "elements":
+        ["#/readResults/0/lines/62/words/0"], "isHeader": false}, {"rowIndex": 17,
+        "columnIndex": 2, "text": "636", "boundingBox": [5.2252, 5.2522, 7.1672, 5.2522,
+        7.1672, 5.4272, 5.2252, 5.4272], "elements": ["#/readResults/0/lines/63/words/0"],
+        "isHeader": false}, {"rowIndex": 17, "columnIndex": 3, "text": "4.8%", "boundingBox":
+        [7.1672, 5.2522, 7.8415, 5.2522, 7.8415, 5.4339, 7.1672, 5.4272], "elements":
+        ["#/readResults/0/lines/64/words/0"], "isHeader": false}, {"rowIndex": 18,
+        "columnIndex": 1, "text": "GA, NC, SC", "boundingBox": [3.2764, 5.4272, 5.2252,
+        5.4272, 5.2252, 5.6089, 3.2764, 5.5955], "elements": ["#/readResults/0/lines/65/words/0",
+        "#/readResults/0/lines/65/words/1", "#/readResults/0/lines/65/words/2"], "isHeader":
+        false}, {"rowIndex": 18, "columnIndex": 2, "text": "858", "boundingBox": [5.2252,
+        5.4272, 7.1672, 5.4272, 7.1672, 5.6022, 5.2252, 5.6089], "elements": ["#/readResults/0/lines/66/words/0"],
+        "isHeader": false}, {"rowIndex": 18, "columnIndex": 3, "text": "(11.2%)",
+        "boundingBox": [7.1672, 5.4272, 7.8415, 5.4339, 7.8415, 5.6089, 7.1672, 5.6022],
+        "elements": ["#/readResults/0/lines/67/words/0"], "isHeader": false}, {"rowIndex":
+        19, "columnIndex": 1, "text": "MD, VA, DC, WV", "boundingBox": [3.2764, 5.5955,
+        5.2252, 5.6089, 5.2252, 5.7907, 3.2696, 5.7839], "elements": ["#/readResults/0/lines/68/words/0",
+        "#/readResults/0/lines/68/words/1", "#/readResults/0/lines/68/words/2", "#/readResults/0/lines/68/words/3"],
+        "isHeader": false}, {"rowIndex": 19, "columnIndex": 2, "text": "931", "boundingBox":
+        [5.2252, 5.6089, 7.1672, 5.6022, 7.1672, 5.7839, 5.2252, 5.7907], "elements":
+        ["#/readResults/0/lines/69/words/0"], "isHeader": false}, {"rowIndex": 19,
+        "columnIndex": 3, "text": "0.2%", "boundingBox": [7.1672, 5.6022, 7.8415,
+        5.6089, 7.8415, 5.7907, 7.1672, 5.7839], "elements": ["#/readResults/0/lines/70/words/0"],
+        "isHeader": false}, {"rowIndex": 20, "columnIndex": 0, "text": "East South
+        Central", "boundingBox": [1.8468, 5.7839, 3.2696, 5.7839, 3.2696, 5.9589,
+        1.8468, 5.9589], "elements": ["#/readResults/0/lines/71/words/0", "#/readResults/0/lines/71/words/1",
+        "#/readResults/0/lines/71/words/2"], "isHeader": false}, {"rowIndex": 20,
+        "columnIndex": 1, "text": "AL, KY, MS, TN", "boundingBox": [3.2696, 5.7839,
+        5.2252, 5.7907, 5.2252, 5.9657, 3.2696, 5.9589], "elements": ["#/readResults/0/lines/72/words/0",
+        "#/readResults/0/lines/72/words/1", "#/readResults/0/lines/72/words/2", "#/readResults/0/lines/72/words/3"],
+        "isHeader": false}, {"rowIndex": 20, "columnIndex": 2, "text": "820", "boundingBox":
+        [5.2252, 5.7907, 7.1672, 5.7839, 7.1672, 5.9657, 5.2252, 5.9657], "elements":
+        ["#/readResults/0/lines/73/words/0"], "isHeader": false}, {"rowIndex": 20,
+        "columnIndex": 3, "text": "6.2%", "boundingBox": [7.1672, 5.7839, 7.8415,
+        5.7907, 7.8415, 5.9657, 7.1672, 5.9657], "elements": ["#/readResults/0/lines/74/words/0"],
+        "isHeader": false}, {"rowIndex": 21, "columnIndex": 0, "rowSpan": 2, "text":
+        "West South Central", "boundingBox": [1.8468, 5.9589, 3.2696, 5.9589, 3.2696,
+        6.3157, 1.8468, 6.3157], "elements": ["#/readResults/0/lines/75/words/0",
+        "#/readResults/0/lines/75/words/1", "#/readResults/0/lines/75/words/2"], "isHeader":
+        false}, {"rowIndex": 21, "columnIndex": 1, "text": "AR, OK", "boundingBox":
+        [3.2696, 5.9589, 5.2252, 5.9657, 5.2252, 6.1407, 3.2696, 6.1474], "elements":
+        ["#/readResults/0/lines/76/words/0", "#/readResults/0/lines/76/words/1"],
+        "isHeader": false}, {"rowIndex": 21, "columnIndex": 2, "text": "601", "boundingBox":
+        [5.2252, 5.9657, 7.1672, 5.9657, 7.1672, 6.1407, 5.2252, 6.1407], "elements":
+        ["#/readResults/0/lines/77/words/0"], "isHeader": false}, {"rowIndex": 21,
+        "columnIndex": 3, "text": "11.6%", "boundingBox": [7.1672, 5.9657, 7.8415,
+        5.9657, 7.8415, 6.1407, 7.1672, 6.1407], "elements": ["#/readResults/0/lines/78/words/0"],
+        "isHeader": false}, {"rowIndex": 22, "columnIndex": 1, "text": "LA, TX", "boundingBox":
+        [3.2696, 6.1474, 5.2252, 6.1407, 5.2252, 6.3157, 3.2696, 6.3157], "elements":
+        ["#/readResults/0/lines/79/words/0", "#/readResults/0/lines/79/words/1"],
+        "isHeader": false}, {"rowIndex": 22, "columnIndex": 2, "text": "947", "boundingBox":
+        [5.2252, 6.1407, 7.1672, 6.1407, 7.1672, 6.3157, 5.2252, 6.3157], "elements":
+        ["#/readResults/0/lines/80/words/0"], "isHeader": false}, {"rowIndex": 22,
+        "columnIndex": 3, "text": "4.4%", "boundingBox": [7.1672, 6.1407, 7.8415,
+        6.1407, 7.8415, 6.3157, 7.1672, 6.3157], "elements": ["#/readResults/0/lines/81/words/0"],
+        "isHeader": false}, {"rowIndex": 23, "columnIndex": 0, "text": "South Total",
+        "boundingBox": [1.8468, 6.3157, 3.2696, 6.3157, 3.2696, 6.4974, 1.8468, 6.4974],
+        "elements": ["#/readResults/0/lines/82/words/0", "#/readResults/0/lines/82/words/1"],
+        "isHeader": false}, {"rowIndex": 23, "columnIndex": 1, "text": "", "boundingBox":
+        [3.2696, 6.3157, 5.2252, 6.3157, 5.2252, 6.4974, 3.2696, 6.4974], "elements":
+        [], "isHeader": false}, {"rowIndex": 23, "columnIndex": 2, "text": "5,613",
+        "boundingBox": [5.2252, 6.3157, 7.1672, 6.3157, 7.1672, 6.4974, 5.2252, 6.4974],
+        "elements": ["#/readResults/0/lines/83/words/0"], "isHeader": false}, {"rowIndex":
+        23, "columnIndex": 3, "text": "3.2%", "boundingBox": [7.1672, 6.3157, 7.8415,
+        6.3157, 7.8415, 6.4974, 7.1672, 6.4974], "elements": ["#/readResults/0/lines/84/words/0"],
+        "isHeader": false}, {"rowIndex": 24, "columnIndex": 0, "text": "Mountain",
+        "boundingBox": [1.8468, 6.4974, 3.2696, 6.4974, 3.2696, 6.6724, 1.8468, 6.6724],
+        "elements": ["#/readResults/0/lines/86/words/0"], "isHeader": false}, {"rowIndex":
+        24, "columnIndex": 1, "text": "AZ, CO, ID, MT, NV, NM, UT", "boundingBox":
+        [3.2696, 6.4974, 5.2252, 6.4974, 5.2252, 6.6792, 3.2696, 6.6724], "elements":
         ["#/readResults/0/lines/87/words/0", "#/readResults/0/lines/87/words/1", "#/readResults/0/lines/87/words/2",
         "#/readResults/0/lines/87/words/3", "#/readResults/0/lines/87/words/4", "#/readResults/0/lines/87/words/5",
-        "#/readResults/0/lines/87/words/6"]}, {"rowIndex": 24, "columnIndex": 2, "text":
-        "1,279", "boundingBox": [5.2252, 6.4974, 7.1672, 6.4974, 7.1672, 6.6792, 5.2252,
-        6.6792], "elements": ["#/readResults/0/lines/88/words/0"]}, {"rowIndex": 24,
-        "columnIndex": 3, "text": "4.0%", "boundingBox": [7.1672, 6.4974, 7.8348,
-        6.5042, 7.8348, 6.6792, 7.1672, 6.6792], "elements": ["#/readResults/0/lines/89/words/0"]},
-        {"rowIndex": 25, "columnIndex": 0, "rowSpan": 3, "text": "Pacific", "boundingBox":
-        [1.8468, 6.6792, 3.2764, 6.6792, 3.2764, 7.2109, 1.8468, 7.184], "elements":
-        ["#/readResults/0/lines/90/words/0"]}, {"rowIndex": 25, "columnIndex": 1,
-        "text": "AK, HI", "boundingBox": [3.2764, 6.6792, 5.2252, 6.6792, 5.2252,
-        6.8542, 3.2764, 6.8542], "elements": ["#/readResults/0/lines/91/words/0",
-        "#/readResults/0/lines/91/words/1"]}, {"rowIndex": 25, "columnIndex": 2, "text":
-        "332", "boundingBox": [5.2252, 6.6792, 7.1672, 6.6792, 7.1672, 6.8542, 5.2252,
-        6.8542], "elements": ["#/readResults/0/lines/92/words/0"]}, {"rowIndex": 25,
-        "columnIndex": 3, "text": "(5.4%)", "boundingBox": [7.1672, 6.6792, 7.8348,
-        6.6792, 7.8348, 6.8542, 7.1672, 6.8542], "elements": ["#/readResults/0/lines/93/words/0"]},
-        {"rowIndex": 26, "columnIndex": 1, "text": "CA", "boundingBox": [3.2764, 6.8542,
-        5.2252, 6.8542, 5.2252, 7.0359, 3.2764, 7.0359], "elements": ["#/readResults/0/lines/94/words/0"]},
-        {"rowIndex": 26, "columnIndex": 2, "text": "989", "boundingBox": [5.2252,
-        6.8542, 7.1672, 6.8542, 7.1672, 7.0359, 5.2252, 7.0359], "elements": ["#/readResults/0/lines/95/words/0"]},
-        {"rowIndex": 26, "columnIndex": 3, "text": "3.0%", "boundingBox": [7.1672,
-        6.8542, 7.8348, 6.8542, 7.8348, 7.0359, 7.1672, 7.0359], "elements": ["#/readResults/0/lines/96/words/0"]},
-        {"rowIndex": 27, "columnIndex": 1, "text": "OR, WA", "boundingBox": [3.2764,
-        7.0359, 5.2252, 7.0359, 5.2252, 7.2109, 3.2764, 7.2109], "elements": ["#/readResults/0/lines/97/words/0",
-        "#/readResults/0/lines/97/words/1"]}, {"rowIndex": 27, "columnIndex": 2, "text":
-        "542", "boundingBox": [5.2252, 7.0359, 7.1672, 7.0359, 7.1672, 7.2109, 5.2252,
-        7.2109], "elements": ["#/readResults/0/lines/98/words/0"]}, {"rowIndex": 27,
-        "columnIndex": 3, "text": "(7.1%)", "boundingBox": [7.1672, 7.0359, 7.8348,
-        7.0359, 7.8348, 7.2109, 7.1672, 7.2109], "elements": ["#/readResults/0/lines/99/words/0"]},
-        {"rowIndex": 28, "columnIndex": 0, "text": "West Total", "boundingBox": [1.8468,
-        7.184, 3.2764, 7.2109, 3.2764, 7.3859, 1.8468, 7.3859], "elements": ["#/readResults/0/lines/100/words/0",
-        "#/readResults/0/lines/100/words/1"]}, {"rowIndex": 28, "columnIndex": 1,
-        "text": "", "boundingBox": [3.2764, 7.2109, 5.2252, 7.2109, 5.2252, 7.3859,
-        3.2764, 7.3859], "elements": []}, {"rowIndex": 28, "columnIndex": 2, "text":
-        "3,142", "boundingBox": [5.2252, 7.2109, 7.1672, 7.2109, 7.1672, 7.3859, 5.2252,
-        7.3859], "elements": ["#/readResults/0/lines/101/words/0"]}, {"rowIndex":
-        28, "columnIndex": 3, "text": "0.8%", "boundingBox": [7.1672, 7.2109, 7.8348,
-        7.2109, 7.8348, 7.3927, 7.1672, 7.3859], "elements": ["#/readResults/0/lines/102/words/0"]}],
-        "boundingBox": [1.2631, 2.2015, 7.8351, 2.2038, 7.8411, 7.4965, 1.2644, 7.4946]},
-        {"rows": 6, "columns": 5, "cells": [{"rowIndex": 0, "columnIndex": 0, "text":
-        "Region", "boundingBox": [0.9994, 8.8629, 1.8363, 8.8629, 1.8363, 9.0483,
-        0.9994, 9.0483], "elements": ["#/readResults/0/lines/107/words/0"]}, {"rowIndex":
-        0, "columnIndex": 1, "text": "Division", "boundingBox": [1.8363, 8.8629, 3.2357,
-        8.869, 3.2427, 9.0483, 1.8363, 9.0483], "elements": ["#/readResults/0/lines/108/words/0"]},
-        {"rowIndex": 0, "columnIndex": 2, "text": "Sales Team", "boundingBox": [3.2357,
-        8.869, 5.1626, 8.869, 5.1696, 9.0483, 3.2427, 9.0483], "elements": ["#/readResults/0/lines/109/words/0",
-        "#/readResults/0/lines/109/words/1"]}, {"rowIndex": 0, "columnIndex": 3, "text":
-        "Units Shipped (Thousands)", "boundingBox": [5.1626, 8.869, 7.0824, 8.8752,
-        7.0754, 9.0483, 5.1696, 9.0483], "elements": ["#/readResults/0/lines/110/words/0",
-        "#/readResults/0/lines/110/words/1", "#/readResults/0/lines/110/words/2"]},
-        {"rowIndex": 0, "columnIndex": 4, "text": "YoY", "boundingBox": [7.0824, 8.8752,
-        7.8349, 8.8752, 7.8349, 9.0483, 7.0754, 9.0483], "elements": ["#/readResults/0/lines/111/words/0"]},
-        {"rowIndex": 1, "columnIndex": 0, "text": "Northeast", "boundingBox": [0.9994,
-        9.0483, 1.8363, 9.0483, 1.8363, 9.2275, 0.9994, 9.2275], "elements": ["#/readResults/0/lines/112/words/0"]},
-        {"rowIndex": 1, "columnIndex": 1, "text": "New England", "boundingBox": [1.8363,
-        9.0483, 3.2427, 9.0483, 3.2427, 9.2275, 1.8363, 9.2275], "elements": ["#/readResults/0/lines/113/words/0",
-        "#/readResults/0/lines/113/words/1"]}, {"rowIndex": 1, "columnIndex": 2, "text":
-        "CT, ME, MA, NH, RI, VT", "boundingBox": [3.2427, 9.0483, 5.1696, 9.0483,
-        5.1696, 9.2275, 3.2427, 9.2275], "elements": ["#/readResults/0/lines/114/words/0",
+        "#/readResults/0/lines/87/words/6"], "isHeader": false}, {"rowIndex": 24,
+        "columnIndex": 2, "text": "1,279", "boundingBox": [5.2252, 6.4974, 7.1672,
+        6.4974, 7.1672, 6.6724, 5.2252, 6.6792], "elements": ["#/readResults/0/lines/88/words/0"],
+        "isHeader": false}, {"rowIndex": 24, "columnIndex": 3, "text": "4.0%", "boundingBox":
+        [7.1672, 6.4974, 7.8415, 6.4974, 7.8415, 6.6792, 7.1672, 6.6724], "elements":
+        ["#/readResults/0/lines/89/words/0"], "isHeader": false}, {"rowIndex": 25,
+        "columnIndex": 0, "rowSpan": 3, "text": "Pacific", "boundingBox": [1.8468,
+        6.6724, 3.2696, 6.6724, 3.2696, 7.2109, 1.8468, 7.1907], "elements": ["#/readResults/0/lines/90/words/0"],
+        "isHeader": false}, {"rowIndex": 25, "columnIndex": 1, "text": "AK, HI", "boundingBox":
+        [3.2696, 6.6724, 5.2252, 6.6792, 5.2252, 6.8542, 3.2696, 6.8474], "elements":
+        ["#/readResults/0/lines/91/words/0", "#/readResults/0/lines/91/words/1"],
+        "isHeader": false}, {"rowIndex": 25, "columnIndex": 2, "text": "332", "boundingBox":
+        [5.2252, 6.6792, 7.1672, 6.6724, 7.1672, 6.8542, 5.2252, 6.8542], "elements":
+        ["#/readResults/0/lines/92/words/0"], "isHeader": false}, {"rowIndex": 25,
+        "columnIndex": 3, "text": "(5.4%)", "boundingBox": [7.1672, 6.6724, 7.8415,
+        6.6792, 7.8415, 6.8542, 7.1672, 6.8542], "elements": ["#/readResults/0/lines/93/words/0"],
+        "isHeader": false}, {"rowIndex": 26, "columnIndex": 1, "text": "CA", "boundingBox":
+        [3.2696, 6.8474, 5.2252, 6.8542, 5.2252, 7.0292, 3.2696, 7.0359], "elements":
+        ["#/readResults/0/lines/94/words/0"], "isHeader": false}, {"rowIndex": 26,
+        "columnIndex": 2, "text": "989", "boundingBox": [5.2252, 6.8542, 7.1672, 6.8542,
+        7.1672, 7.0359, 5.2252, 7.0292], "elements": ["#/readResults/0/lines/95/words/0"],
+        "isHeader": false}, {"rowIndex": 26, "columnIndex": 3, "text": "3.0%", "boundingBox":
+        [7.1672, 6.8542, 7.8415, 6.8542, 7.8415, 7.0359, 7.1672, 7.0359], "elements":
+        ["#/readResults/0/lines/96/words/0"], "isHeader": false}, {"rowIndex": 27,
+        "columnIndex": 1, "text": "OR, WA", "boundingBox": [3.2696, 7.0359, 5.2252,
+        7.0292, 5.2252, 7.2109, 3.2696, 7.2109], "elements": ["#/readResults/0/lines/97/words/0",
+        "#/readResults/0/lines/97/words/1"], "isHeader": false}, {"rowIndex": 27,
+        "columnIndex": 2, "text": "542", "boundingBox": [5.2252, 7.0292, 7.1672, 7.0359,
+        7.1672, 7.2109, 5.2252, 7.2109], "elements": ["#/readResults/0/lines/98/words/0"],
+        "isHeader": false}, {"rowIndex": 27, "columnIndex": 3, "text": "(7.1%)", "boundingBox":
+        [7.1672, 7.0359, 7.8415, 7.0359, 7.8415, 7.2109, 7.1672, 7.2109], "elements":
+        ["#/readResults/0/lines/99/words/0"], "isHeader": false}, {"rowIndex": 28,
+        "columnIndex": 0, "text": "West Total", "boundingBox": [1.8468, 7.1907, 3.2696,
+        7.2109, 3.2696, 7.3859, 1.8468, 7.3859], "elements": ["#/readResults/0/lines/100/words/0",
+        "#/readResults/0/lines/100/words/1"], "isHeader": false}, {"rowIndex": 28,
+        "columnIndex": 1, "text": "", "boundingBox": [3.2696, 7.2109, 5.2252, 7.2109,
+        5.2252, 7.3859, 3.2696, 7.3859], "elements": [], "isHeader": false}, {"rowIndex":
+        28, "columnIndex": 2, "text": "3,142", "boundingBox": [5.2252, 7.2109, 7.1672,
+        7.2109, 7.1672, 7.3859, 5.2252, 7.3859], "elements": ["#/readResults/0/lines/101/words/0"],
+        "isHeader": false}, {"rowIndex": 28, "columnIndex": 3, "text": "0.8%", "boundingBox":
+        [7.1672, 7.2109, 7.8415, 7.2109, 7.8415, 7.3859, 7.1672, 7.3859], "elements":
+        ["#/readResults/0/lines/102/words/0"], "isHeader": false}], "boundingBox":
+        [1.2631, 2.2015, 7.8351, 2.2038, 7.8411, 7.4965, 1.2644, 7.4946]}, {"rows":
+        6, "columns": 5, "cells": [{"rowIndex": 0, "columnIndex": 0, "text": "Region",
+        "boundingBox": [0.9994, 8.869, 1.8363, 8.869, 1.8363, 9.0483, 0.9994, 9.0483],
+        "elements": ["#/readResults/0/lines/107/words/0"], "isHeader": true}, {"rowIndex":
+        0, "columnIndex": 1, "text": "Division", "boundingBox": [1.8363, 8.869, 3.2427,
+        8.869, 3.2498, 9.0483, 1.8363, 9.0483], "elements": ["#/readResults/0/lines/108/words/0"],
+        "isHeader": true}, {"rowIndex": 0, "columnIndex": 2, "text": "Sales Team",
+        "boundingBox": [3.2427, 8.869, 5.1696, 8.869, 5.1626, 9.0483, 3.2498, 9.0483],
+        "elements": ["#/readResults/0/lines/109/words/0", "#/readResults/0/lines/109/words/1"],
+        "isHeader": true}, {"rowIndex": 0, "columnIndex": 3, "text": "Units Shipped
+        (Thousands)", "boundingBox": [5.1696, 8.869, 7.0824, 8.869, 7.0754, 9.0483,
+        5.1626, 9.0483], "elements": ["#/readResults/0/lines/110/words/0", "#/readResults/0/lines/110/words/1",
+        "#/readResults/0/lines/110/words/2"], "isHeader": true}, {"rowIndex": 0, "columnIndex":
+        4, "text": "YoY", "boundingBox": [7.0824, 8.869, 7.8278, 8.869, 7.8349, 9.0483,
+        7.0754, 9.0483], "elements": ["#/readResults/0/lines/111/words/0"], "isHeader":
+        true}, {"rowIndex": 1, "columnIndex": 0, "rowSpan": 2, "text": "Northeast",
+        "boundingBox": [0.9994, 9.0483, 1.8363, 9.0483, 1.8363, 9.4068, 0.9994, 9.4068],
+        "elements": ["#/readResults/0/lines/112/words/0"], "isHeader": false}, {"rowIndex":
+        1, "columnIndex": 1, "text": "New England", "boundingBox": [1.8363, 9.0483,
+        3.2498, 9.0483, 3.2498, 9.2275, 1.8363, 9.2152], "elements": ["#/readResults/0/lines/113/words/0",
+        "#/readResults/0/lines/113/words/1"], "isHeader": false}, {"rowIndex": 1,
+        "columnIndex": 2, "text": "CT, ME, MA, NH, RI, VT", "boundingBox": [3.2498,
+        9.0483, 5.1626, 9.0483, 5.1626, 9.2275, 3.2498, 9.2275], "elements": ["#/readResults/0/lines/114/words/0",
         "#/readResults/0/lines/114/words/1", "#/readResults/0/lines/114/words/2",
         "#/readResults/0/lines/114/words/3", "#/readResults/0/lines/114/words/4",
-        "#/readResults/0/lines/114/words/5"]}, {"rowIndex": 1, "columnIndex": 3, "text":
-        "569", "boundingBox": [5.1696, 9.0483, 7.0754, 9.0483, 7.0754, 9.2275, 5.1696,
-        9.2275], "elements": ["#/readResults/0/lines/115/words/0"]}, {"rowIndex":
-        1, "columnIndex": 4, "text": "8.10%", "boundingBox": [7.0754, 9.0483, 7.8349,
-        9.0483, 7.8349, 9.2275, 7.0754, 9.2275], "elements": ["#/readResults/0/lines/116/words/0"]},
-        {"rowIndex": 2, "columnIndex": 0, "rowSpan": 2, "text": "", "boundingBox":
-        [0.9994, 9.2275, 1.8363, 9.2275, 1.8363, 9.5799, 0.9994, 9.5799], "elements":
-        []}, {"rowIndex": 2, "columnIndex": 1, "text": "Mid-Atlantic", "boundingBox":
-        [1.8363, 9.2275, 3.2427, 9.2275, 3.2498, 9.4006, 1.8363, 9.4006], "elements":
-        ["#/readResults/0/lines/117/words/0"]}, {"rowIndex": 2, "columnIndex": 2,
-        "text": "NJ, NY", "boundingBox": [3.2427, 9.2275, 5.1696, 9.2275, 5.1696,
-        9.4068, 3.2498, 9.4006], "elements": ["#/readResults/0/lines/118/words/0",
-        "#/readResults/0/lines/118/words/1"]}, {"rowIndex": 2, "columnIndex": 3, "text":
-        "934", "boundingBox": [5.1696, 9.2275, 7.0754, 9.2275, 7.0754, 9.4068, 5.1696,
-        9.4068], "elements": ["#/readResults/0/lines/119/words/0"]}, {"rowIndex":
-        2, "columnIndex": 4, "text": "5.10%", "boundingBox": [7.0754, 9.2275, 7.8349,
-        9.2275, 7.8349, 9.4068, 7.0754, 9.4068], "elements": ["#/readResults/0/lines/120/words/0"]},
-        {"rowIndex": 3, "columnIndex": 1, "text": "", "boundingBox": [1.8363, 9.4006,
-        3.2498, 9.4006, 3.2498, 9.5799, 1.8363, 9.5799], "elements": []}, {"rowIndex":
-        3, "columnIndex": 2, "text": "PA", "boundingBox": [3.2498, 9.4006, 5.1696,
-        9.4068, 5.1696, 9.5799, 3.2498, 9.5799], "elements": ["#/readResults/0/lines/121/words/0"]},
-        {"rowIndex": 3, "columnIndex": 3, "text": "571", "boundingBox": [5.1696, 9.4068,
-        7.0754, 9.4068, 7.0754, 9.586, 5.1696, 9.5799], "elements": ["#/readResults/0/lines/122/words/0"]},
-        {"rowIndex": 3, "columnIndex": 4, "text": "2.10%", "boundingBox": [7.0754,
-        9.4068, 7.8349, 9.4068, 7.8349, 9.586, 7.0754, 9.586], "elements": ["#/readResults/0/lines/123/words/0"]},
-        {"rowIndex": 4, "columnIndex": 0, "text": "", "boundingBox": [0.9994, 9.5799,
-        1.8363, 9.5799, 1.8363, 9.7591, 0.9994, 9.7591], "elements": []}, {"rowIndex":
-        4, "columnIndex": 1, "text": "Northeast Total", "boundingBox": [1.8363, 9.5799,
-        3.2498, 9.5799, 3.2568, 9.7591, 1.8363, 9.7591], "elements": ["#/readResults/0/lines/124/words/0",
-        "#/readResults/0/lines/124/words/1"]}, {"rowIndex": 4, "columnIndex": 2, "text":
-        "", "boundingBox": [3.2498, 9.5799, 5.1696, 9.5799, 5.1696, 9.7591, 3.2568,
-        9.7591], "elements": []}, {"rowIndex": 4, "columnIndex": 3, "text": "2074",
-        "boundingBox": [5.1696, 9.5799, 7.0754, 9.586, 7.0683, 9.7591, 5.1696, 9.7591],
-        "elements": ["#/readResults/0/lines/125/words/0"]}, {"rowIndex": 4, "columnIndex":
-        4, "text": "5.05%", "boundingBox": [7.0754, 9.586, 7.8349, 9.586, 7.8278,
-        9.7591, 7.0683, 9.7591], "elements": ["#/readResults/0/lines/126/words/0"]},
-        {"rowIndex": 5, "columnIndex": 0, "text": "Midwest", "boundingBox": [0.9994,
-        9.7591, 1.8363, 9.7591, 1.8363, 9.9384, 0.9994, 9.9384], "elements": ["#/readResults/0/lines/127/words/0"]},
-        {"rowIndex": 5, "columnIndex": 1, "text": "East North Central", "boundingBox":
-        [1.8363, 9.7591, 3.2568, 9.7591, 3.2568, 9.9384, 1.8363, 9.9384], "elements":
-        ["#/readResults/0/lines/128/words/0", "#/readResults/0/lines/128/words/1",
-        "#/readResults/0/lines/128/words/2"]}, {"rowIndex": 5, "columnIndex": 2, "text":
-        "IL", "boundingBox": [3.2568, 9.7591, 5.1696, 9.7591, 5.1696, 9.9384, 3.2568,
-        9.9384], "elements": ["#/readResults/0/lines/129/words/0"]}, {"rowIndex":
-        5, "columnIndex": 3, "text": "1045", "boundingBox": [5.1696, 9.7591, 7.0683,
-        9.7591, 7.0683, 9.9384, 5.1696, 9.9384], "elements": ["#/readResults/0/lines/130/words/0"]},
-        {"rowIndex": 5, "columnIndex": 4, "text": "7.00%", "boundingBox": [7.0683,
-        9.7591, 7.8278, 9.7591, 7.8278, 9.9445, 7.0683, 9.9384], "elements": ["#/readResults/0/lines/131/words/0"]}],
-        "boundingBox": [0.9941, 8.8656, 7.8494, 8.8675, 7.8482, 9.9436, 0.9924, 9.9416]}]},
-        {"page": 2, "tables": [{"rows": 23, "columns": 5, "cells": [{"rowIndex": 0,
-        "columnIndex": 0, "text": "", "boundingBox": [0.9976, 1.0082, 1.8322, 1.0013,
-        1.8322, 1.1597, 0.9976, 1.1597], "elements": []}, {"rowIndex": 0, "columnIndex":
-        1, "rowSpan": 4, "text": "", "boundingBox": [1.8322, 1.0013, 3.242, 0.9944,
-        3.242, 1.7105, 1.8322, 1.7105], "elements": []}, {"rowIndex": 0, "columnIndex":
-        2, "text": "IN", "boundingBox": [3.242, 0.9944, 5.1707, 1.0013, 5.1707, 1.1803,
-        3.242, 1.1597], "elements": ["#/readResults/1/lines/0/words/0"]}, {"rowIndex":
-        0, "columnIndex": 3, "text": "781", "boundingBox": [5.1707, 1.0013, 7.0785,
-        1.0013, 7.0785, 1.1803, 5.1707, 1.1803], "elements": ["#/readResults/1/lines/1/words/0"]},
-        {"rowIndex": 0, "columnIndex": 4, "text": "34.20%", "boundingBox": [7.0785,
-        1.0013, 7.8359, 1.0013, 7.8359, 1.1803, 7.0785, 1.1803], "elements": ["#/readResults/1/lines/2/words/0"]},
-        {"rowIndex": 1, "columnIndex": 0, "text": "", "boundingBox": [0.9976, 1.1597,
-        1.8322, 1.1597, 1.8322, 1.3593, 0.9976, 1.3593], "elements": []}, {"rowIndex":
-        1, "columnIndex": 2, "text": "MI", "boundingBox": [3.242, 1.1597, 5.1707,
-        1.1803, 5.1707, 1.3593, 3.242, 1.3593], "elements": ["#/readResults/1/lines/3/words/0"]},
-        {"rowIndex": 1, "columnIndex": 3, "text": "1114", "boundingBox": [5.1707,
-        1.1803, 7.0785, 1.1803, 7.0785, 1.3593, 5.1707, 1.3593], "elements": ["#/readResults/1/lines/4/words/0"]},
-        {"rowIndex": 1, "columnIndex": 4, "text": "19.90%", "boundingBox": [7.0785,
-        1.1803, 7.8359, 1.1803, 7.8359, 1.3593, 7.0785, 1.3593], "elements": ["#/readResults/1/lines/5/words/0"]},
-        {"rowIndex": 2, "columnIndex": 0, "text": "", "boundingBox": [0.9976, 1.3593,
-        1.8322, 1.3593, 1.8322, 1.5315, 0.9976, 1.5315], "elements": []}, {"rowIndex":
-        2, "columnIndex": 2, "text": "OH", "boundingBox": [3.242, 1.3593, 5.1707,
-        1.3593, 5.1707, 1.5315, 3.242, 1.5315], "elements": ["#/readResults/1/lines/6/words/0"]},
-        {"rowIndex": 2, "columnIndex": 3, "text": "1098", "boundingBox": [5.1707,
-        1.3593, 7.0785, 1.3593, 7.0785, 1.5315, 5.1707, 1.5315], "elements": ["#/readResults/1/lines/7/words/0"]},
-        {"rowIndex": 2, "columnIndex": 4, "text": "27.70%", "boundingBox": [7.0785,
-        1.3593, 7.8359, 1.3593, 7.8359, 1.5315, 7.0785, 1.5315], "elements": ["#/readResults/1/lines/8/words/0"]},
-        {"rowIndex": 3, "columnIndex": 0, "text": "", "boundingBox": [0.9976, 1.5315,
-        1.8322, 1.5315, 1.8322, 1.7105, 0.9976, 1.7105], "elements": []}, {"rowIndex":
-        3, "columnIndex": 2, "text": "WI", "boundingBox": [3.242, 1.5315, 5.1707,
-        1.5315, 5.1707, 1.7105, 3.242, 1.7105], "elements": ["#/readResults/1/lines/9/words/0"]},
-        {"rowIndex": 3, "columnIndex": 3, "text": "2171", "boundingBox": [5.1707,
-        1.5315, 7.0785, 1.5315, 7.0785, 1.7105, 5.1707, 1.7105], "elements": ["#/readResults/1/lines/10/words/0"]},
-        {"rowIndex": 3, "columnIndex": 4, "text": "23.00%", "boundingBox": [7.0785,
-        1.5315, 7.8359, 1.5315, 7.8359, 1.7105, 7.0785, 1.7105], "elements": ["#/readResults/1/lines/11/words/0"]},
-        {"rowIndex": 4, "columnIndex": 0, "text": "", "boundingBox": [0.9976, 1.7105,
-        1.8322, 1.7105, 1.8322, 1.8895, 0.9976, 1.8895], "elements": []}, {"rowIndex":
+        "#/readResults/0/lines/114/words/5"], "isHeader": false}, {"rowIndex": 1,
+        "columnIndex": 3, "text": "569", "boundingBox": [5.1626, 9.0483, 7.0754, 9.0483,
+        7.0754, 9.2275, 5.1626, 9.2275], "elements": ["#/readResults/0/lines/115/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 4, "text": "8.10%", "boundingBox":
+        [7.0754, 9.0483, 7.8349, 9.0483, 7.8349, 9.2275, 7.0754, 9.2275], "elements":
+        ["#/readResults/0/lines/116/words/0"], "isHeader": false}, {"rowIndex": 2,
+        "columnIndex": 1, "text": "Mid-Atlantic", "boundingBox": [1.8363, 9.2152,
+        3.2498, 9.2275, 3.2498, 9.4068, 1.8363, 9.4068], "elements": ["#/readResults/0/lines/117/words/0"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 2, "text": "NJ, NY", "boundingBox":
+        [3.2498, 9.2275, 5.1626, 9.2275, 5.1626, 9.4068, 3.2498, 9.4068], "elements":
+        ["#/readResults/0/lines/118/words/0", "#/readResults/0/lines/118/words/1"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 3, "text": "934", "boundingBox":
+        [5.1626, 9.2275, 7.0754, 9.2275, 7.0754, 9.4068, 5.1626, 9.4068], "elements":
+        ["#/readResults/0/lines/119/words/0"], "isHeader": false}, {"rowIndex": 2,
+        "columnIndex": 4, "text": "5.10%", "boundingBox": [7.0754, 9.2275, 7.8349,
+        9.2275, 7.8349, 9.4068, 7.0754, 9.4068], "elements": ["#/readResults/0/lines/120/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 0, "text": "", "boundingBox":
+        [0.9994, 9.4068, 1.8363, 9.4068, 1.8363, 9.5675, 0.9994, 9.5675], "elements":
+        [], "isHeader": false}, {"rowIndex": 3, "columnIndex": 1, "text": "", "boundingBox":
+        [1.8363, 9.4068, 3.2498, 9.4068, 3.2498, 9.5799, 1.8363, 9.5675], "elements":
+        [], "isHeader": false}, {"rowIndex": 3, "columnIndex": 2, "text": "PA", "boundingBox":
+        [3.2498, 9.4068, 5.1626, 9.4068, 5.1626, 9.5799, 3.2498, 9.5799], "elements":
+        ["#/readResults/0/lines/121/words/0"], "isHeader": false}, {"rowIndex": 3,
+        "columnIndex": 3, "text": "571", "boundingBox": [5.1626, 9.4068, 7.0754, 9.4068,
+        7.0754, 9.5799, 5.1626, 9.5799], "elements": ["#/readResults/0/lines/122/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 4, "text": "2.10%", "boundingBox":
+        [7.0754, 9.4068, 7.8349, 9.4068, 7.8349, 9.5799, 7.0754, 9.5799], "elements":
+        ["#/readResults/0/lines/123/words/0"], "isHeader": false}, {"rowIndex": 4,
+        "columnIndex": 0, "text": "", "boundingBox": [0.9994, 9.5675, 1.8363, 9.5675,
+        1.8363, 9.7591, 0.9994, 9.7591], "elements": [], "isHeader": false}, {"rowIndex":
+        4, "columnIndex": 1, "text": "Northeast Total", "boundingBox": [1.8363, 9.5675,
+        3.2498, 9.5799, 3.2498, 9.7591, 1.8363, 9.7591], "elements": ["#/readResults/0/lines/124/words/0",
+        "#/readResults/0/lines/124/words/1"], "isHeader": false}, {"rowIndex": 4,
+        "columnIndex": 2, "text": "", "boundingBox": [3.2498, 9.5799, 5.1626, 9.5799,
+        5.1626, 9.7591, 3.2498, 9.7591], "elements": [], "isHeader": false}, {"rowIndex":
+        4, "columnIndex": 3, "text": "2074", "boundingBox": [5.1626, 9.5799, 7.0754,
+        9.5799, 7.0754, 9.7591, 5.1626, 9.7591], "elements": ["#/readResults/0/lines/125/words/0"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 4, "text": "5.05%", "boundingBox":
+        [7.0754, 9.5799, 7.8349, 9.5799, 7.8349, 9.7591, 7.0754, 9.7591], "elements":
+        ["#/readResults/0/lines/126/words/0"], "isHeader": false}, {"rowIndex": 5,
+        "columnIndex": 0, "text": "Midwest", "boundingBox": [0.9994, 9.7591, 1.8363,
+        9.7591, 1.8363, 9.9384, 0.9994, 9.9384], "elements": ["#/readResults/0/lines/127/words/0"],
+        "isHeader": false}, {"rowIndex": 5, "columnIndex": 1, "text": "East North
+        Central", "boundingBox": [1.8363, 9.7591, 3.2498, 9.7591, 3.2568, 9.9384,
+        1.8363, 9.9384], "elements": ["#/readResults/0/lines/128/words/0", "#/readResults/0/lines/128/words/1",
+        "#/readResults/0/lines/128/words/2"], "isHeader": false}, {"rowIndex": 5,
+        "columnIndex": 2, "text": "IL", "boundingBox": [3.2498, 9.7591, 5.1626, 9.7591,
+        5.1626, 9.9384, 3.2568, 9.9384], "elements": ["#/readResults/0/lines/129/words/0"],
+        "isHeader": false}, {"rowIndex": 5, "columnIndex": 3, "text": "1045", "boundingBox":
+        [5.1626, 9.7591, 7.0754, 9.7591, 7.0754, 9.9445, 5.1626, 9.9384], "elements":
+        ["#/readResults/0/lines/130/words/0"], "isHeader": false}, {"rowIndex": 5,
+        "columnIndex": 4, "text": "7.00%", "boundingBox": [7.0754, 9.7591, 7.8349,
+        9.7591, 7.8349, 9.9445, 7.0754, 9.9445], "elements": ["#/readResults/0/lines/131/words/0"],
+        "isHeader": false}], "boundingBox": [0.9941, 8.8656, 7.8494, 8.8675, 7.8482,
+        9.9436, 0.9924, 9.9416]}]}, {"page": 2, "tables": [{"rows": 23, "columns":
+        5, "cells": [{"rowIndex": 0, "columnIndex": 0, "rowSpan": 3, "text": "", "boundingBox":
+        [0.9976, 1.0013, 1.8392, 1.0013, 1.8392, 1.5315, 0.9976, 1.5315], "elements":
+        [], "isHeader": true}, {"rowIndex": 0, "columnIndex": 1, "rowSpan": 4, "text":
+        "", "boundingBox": [1.8392, 1.0013, 3.249, 0.9944, 3.249, 1.7105, 1.8392,
+        1.7105], "elements": [], "isHeader": true}, {"rowIndex": 0, "columnIndex":
+        2, "text": "IN", "boundingBox": [3.249, 0.9944, 5.1637, 0.9944, 5.1637, 1.1803,
+        3.249, 1.1734], "elements": ["#/readResults/1/lines/0/words/0"], "isHeader":
+        true}, {"rowIndex": 0, "columnIndex": 3, "text": "781", "boundingBox": [5.1637,
+        0.9944, 7.0714, 0.9944, 7.0714, 1.1803, 5.1637, 1.1803], "elements": ["#/readResults/1/lines/1/words/0"],
+        "isHeader": true}, {"rowIndex": 0, "columnIndex": 4, "text": "34.20%", "boundingBox":
+        [7.0714, 0.9944, 7.8359, 1.0013, 7.8359, 1.1803, 7.0714, 1.1803], "elements":
+        ["#/readResults/1/lines/2/words/0"], "isHeader": true}, {"rowIndex": 1, "columnIndex":
+        2, "text": "MI", "boundingBox": [3.249, 1.1734, 5.1637, 1.1803, 5.1637, 1.3593,
+        3.249, 1.3593], "elements": ["#/readResults/1/lines/3/words/0"], "isHeader":
+        false}, {"rowIndex": 1, "columnIndex": 3, "text": "1114", "boundingBox": [5.1637,
+        1.1803, 7.0714, 1.1803, 7.0785, 1.3593, 5.1637, 1.3593], "elements": ["#/readResults/1/lines/4/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 4, "text": "19.90%", "boundingBox":
+        [7.0714, 1.1803, 7.8359, 1.1803, 7.8359, 1.3593, 7.0785, 1.3593], "elements":
+        ["#/readResults/1/lines/5/words/0"], "isHeader": false}, {"rowIndex": 2, "columnIndex":
+        2, "text": "OH", "boundingBox": [3.249, 1.3593, 5.1637, 1.3593, 5.1637, 1.5315,
+        3.249, 1.5315], "elements": ["#/readResults/1/lines/6/words/0"], "isHeader":
+        false}, {"rowIndex": 2, "columnIndex": 3, "text": "1098", "boundingBox": [5.1637,
+        1.3593, 7.0785, 1.3593, 7.0785, 1.5315, 5.1637, 1.5315], "elements": ["#/readResults/1/lines/7/words/0"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 4, "text": "27.70%", "boundingBox":
+        [7.0785, 1.3593, 7.8359, 1.3593, 7.8359, 1.5315, 7.0785, 1.5315], "elements":
+        ["#/readResults/1/lines/8/words/0"], "isHeader": false}, {"rowIndex": 3, "columnIndex":
+        0, "text": "", "boundingBox": [0.9976, 1.5315, 1.8392, 1.5315, 1.8392, 1.7105,
+        0.9976, 1.7105], "elements": [], "isHeader": false}, {"rowIndex": 3, "columnIndex":
+        2, "text": "WI", "boundingBox": [3.249, 1.5315, 5.1637, 1.5315, 5.1637, 1.7105,
+        3.249, 1.7105], "elements": ["#/readResults/1/lines/9/words/0"], "isHeader":
+        false}, {"rowIndex": 3, "columnIndex": 3, "text": "2171", "boundingBox": [5.1637,
+        1.5315, 7.0785, 1.5315, 7.0785, 1.7105, 5.1637, 1.7105], "elements": ["#/readResults/1/lines/10/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 4, "text": "23.00%", "boundingBox":
+        [7.0785, 1.5315, 7.8359, 1.5315, 7.8359, 1.7105, 7.0785, 1.7105], "elements":
+        ["#/readResults/1/lines/11/words/0"], "isHeader": false}, {"rowIndex": 4,
+        "columnIndex": 0, "text": "", "boundingBox": [0.9976, 1.7105, 1.8392, 1.7105,
+        1.8392, 1.8895, 0.9976, 1.8895], "elements": [], "isHeader": false}, {"rowIndex":
         4, "columnIndex": 1, "rowSpan": 5, "text": "West North Central", "boundingBox":
-        [1.8322, 1.7105, 3.242, 1.7105, 3.242, 2.5987, 1.8322, 2.5918], "elements":
-        ["#/readResults/1/lines/12/words/0", "#/readResults/1/lines/12/words/1", "#/readResults/1/lines/12/words/2"]},
-        {"rowIndex": 4, "columnIndex": 2, "text": "IA, KS, NE", "boundingBox": [3.242,
-        1.7105, 5.1707, 1.7105, 5.1707, 1.8826, 3.242, 1.8895], "elements": ["#/readResults/1/lines/13/words/0",
-        "#/readResults/1/lines/13/words/1", "#/readResults/1/lines/13/words/2"]},
-        {"rowIndex": 4, "columnIndex": 3, "text": "996", "boundingBox": [5.1707, 1.7105,
-        7.0785, 1.7105, 7.0785, 1.8826, 5.1707, 1.8826], "elements": ["#/readResults/1/lines/14/words/0"]},
-        {"rowIndex": 4, "columnIndex": 4, "text": "32.10%", "boundingBox": [7.0785,
-        1.7105, 7.8359, 1.7105, 7.8359, 1.8826, 7.0785, 1.8826], "elements": ["#/readResults/1/lines/15/words/0"]},
-        {"rowIndex": 5, "columnIndex": 0, "text": "", "boundingBox": [0.9976, 1.8895,
-        1.8322, 1.8895, 1.8322, 2.0686, 0.9976, 2.0686], "elements": []}, {"rowIndex":
-        5, "columnIndex": 2, "text": "MN", "boundingBox": [3.242, 1.8895, 5.1707,
-        1.8826, 5.1637, 2.0686, 3.242, 2.0686], "elements": ["#/readResults/1/lines/16/words/0"]},
-        {"rowIndex": 5, "columnIndex": 3, "text": "1077", "boundingBox": [5.1707,
-        1.8826, 7.0785, 1.8826, 7.0785, 2.0686, 5.1637, 2.0686], "elements": ["#/readResults/1/lines/17/words/0"]},
-        {"rowIndex": 5, "columnIndex": 4, "text": "12.20%", "boundingBox": [7.0785,
-        1.8826, 7.8359, 1.8826, 7.8359, 2.0686, 7.0785, 2.0686], "elements": ["#/readResults/1/lines/18/words/0"]},
-        {"rowIndex": 6, "columnIndex": 0, "text": "", "boundingBox": [0.9976, 2.0686,
-        1.8322, 2.0686, 1.8322, 2.2407, 0.9976, 2.2407], "elements": []}, {"rowIndex":
-        6, "columnIndex": 2, "text": "MO", "boundingBox": [3.242, 2.0686, 5.1637,
-        2.0686, 5.1637, 2.2407, 3.242, 2.2407], "elements": ["#/readResults/1/lines/19/words/0"]},
-        {"rowIndex": 6, "columnIndex": 3, "text": "1018", "boundingBox": [5.1637,
-        2.0686, 7.0785, 2.0686, 7.0785, 2.2407, 5.1637, 2.2407], "elements": ["#/readResults/1/lines/20/words/0"]},
-        {"rowIndex": 6, "columnIndex": 4, "text": "32.70%", "boundingBox": [7.0785,
-        2.0686, 7.8359, 2.0686, 7.8359, 2.2407, 7.0785, 2.2407], "elements": ["#/readResults/1/lines/21/words/0"]},
-        {"rowIndex": 7, "columnIndex": 0, "text": "", "boundingBox": [0.9976, 2.2407,
-        1.8322, 2.2407, 1.8322, 2.4128, 0.9976, 2.4128], "elements": []}, {"rowIndex":
-        7, "columnIndex": 2, "text": "NE", "boundingBox": [3.242, 2.2407, 5.1637,
-        2.2407, 5.1637, 2.4197, 3.242, 2.4128], "elements": ["#/readResults/1/lines/22/words/0"]},
-        {"rowIndex": 7, "columnIndex": 3, "text": "916", "boundingBox": [5.1637, 2.2407,
-        7.0785, 2.2407, 7.0785, 2.4197, 5.1637, 2.4197], "elements": ["#/readResults/1/lines/23/words/0"]},
-        {"rowIndex": 7, "columnIndex": 4, "text": "26.40%", "boundingBox": [7.0785,
-        2.2407, 7.8359, 2.2407, 7.8359, 2.4197, 7.0785, 2.4197], "elements": ["#/readResults/1/lines/24/words/0"]},
-        {"rowIndex": 8, "columnIndex": 0, "text": "", "boundingBox": [0.9976, 2.4128,
-        1.8322, 2.4128, 1.8322, 2.5918, 0.9976, 2.5918], "elements": []}, {"rowIndex":
-        8, "columnIndex": 2, "text": "ND, SD", "boundingBox": [3.242, 2.4128, 5.1637,
-        2.4197, 5.1637, 2.5987, 3.242, 2.5987], "elements": ["#/readResults/1/lines/25/words/0",
-        "#/readResults/1/lines/25/words/1"]}, {"rowIndex": 8, "columnIndex": 3, "text":
-        "973", "boundingBox": [5.1637, 2.4197, 7.0785, 2.4197, 7.0785, 2.5987, 5.1637,
-        2.5987], "elements": ["#/readResults/1/lines/26/words/0"]}, {"rowIndex": 8,
+        [1.8392, 1.7105, 3.249, 1.7105, 3.249, 2.5987, 1.8392, 2.5987], "elements":
+        ["#/readResults/1/lines/12/words/0", "#/readResults/1/lines/12/words/1", "#/readResults/1/lines/12/words/2"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 2, "text": "IA, KS, NE",
+        "boundingBox": [3.249, 1.7105, 5.1637, 1.7105, 5.1637, 1.8895, 3.249, 1.8895],
+        "elements": ["#/readResults/1/lines/13/words/0", "#/readResults/1/lines/13/words/1",
+        "#/readResults/1/lines/13/words/2"], "isHeader": false}, {"rowIndex": 4, "columnIndex":
+        3, "text": "996", "boundingBox": [5.1637, 1.7105, 7.0785, 1.7105, 7.0785,
+        1.8895, 5.1637, 1.8895], "elements": ["#/readResults/1/lines/14/words/0"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 4, "text": "32.10%", "boundingBox":
+        [7.0785, 1.7105, 7.8359, 1.7105, 7.8359, 1.8895, 7.0785, 1.8895], "elements":
+        ["#/readResults/1/lines/15/words/0"], "isHeader": false}, {"rowIndex": 5,
+        "columnIndex": 0, "text": "", "boundingBox": [0.9976, 1.8895, 1.8392, 1.8895,
+        1.8392, 2.0617, 0.9976, 2.0617], "elements": [], "isHeader": false}, {"rowIndex":
+        5, "columnIndex": 2, "text": "MN", "boundingBox": [3.249, 1.8895, 5.1637,
+        1.8895, 5.1637, 2.0686, 3.249, 2.0617], "elements": ["#/readResults/1/lines/16/words/0"],
+        "isHeader": false}, {"rowIndex": 5, "columnIndex": 3, "text": "1077", "boundingBox":
+        [5.1637, 1.8895, 7.0785, 1.8895, 7.0785, 2.0686, 5.1637, 2.0686], "elements":
+        ["#/readResults/1/lines/17/words/0"], "isHeader": false}, {"rowIndex": 5,
+        "columnIndex": 4, "text": "12.20%", "boundingBox": [7.0785, 1.8895, 7.8359,
+        1.8895, 7.8359, 2.0686, 7.0785, 2.0686], "elements": ["#/readResults/1/lines/18/words/0"],
+        "isHeader": false}, {"rowIndex": 6, "columnIndex": 0, "text": "", "boundingBox":
+        [0.9976, 2.0617, 1.8392, 2.0617, 1.8392, 2.2476, 0.9976, 2.2476], "elements":
+        [], "isHeader": false}, {"rowIndex": 6, "columnIndex": 2, "text": "MO", "boundingBox":
+        [3.249, 2.0617, 5.1637, 2.0686, 5.1637, 2.2476, 3.249, 2.2476], "elements":
+        ["#/readResults/1/lines/19/words/0"], "isHeader": false}, {"rowIndex": 6,
+        "columnIndex": 3, "text": "1018", "boundingBox": [5.1637, 2.0686, 7.0785,
+        2.0686, 7.0785, 2.2407, 5.1637, 2.2476], "elements": ["#/readResults/1/lines/20/words/0"],
+        "isHeader": false}, {"rowIndex": 6, "columnIndex": 4, "text": "32.70%", "boundingBox":
+        [7.0785, 2.0686, 7.8359, 2.0686, 7.8359, 2.2476, 7.0785, 2.2407], "elements":
+        ["#/readResults/1/lines/21/words/0"], "isHeader": false}, {"rowIndex": 7,
+        "columnIndex": 0, "text": "", "boundingBox": [0.9976, 2.2476, 1.8392, 2.2476,
+        1.8392, 2.4197, 0.9976, 2.4197], "elements": [], "isHeader": false}, {"rowIndex":
+        7, "columnIndex": 2, "text": "NE", "boundingBox": [3.249, 2.2476, 5.1637,
+        2.2476, 5.1637, 2.4197, 3.249, 2.4197], "elements": ["#/readResults/1/lines/22/words/0"],
+        "isHeader": false}, {"rowIndex": 7, "columnIndex": 3, "text": "916", "boundingBox":
+        [5.1637, 2.2476, 7.0785, 2.2407, 7.0785, 2.4197, 5.1637, 2.4197], "elements":
+        ["#/readResults/1/lines/23/words/0"], "isHeader": false}, {"rowIndex": 7,
+        "columnIndex": 4, "text": "26.40%", "boundingBox": [7.0785, 2.2407, 7.8359,
+        2.2476, 7.8359, 2.4197, 7.0785, 2.4197], "elements": ["#/readResults/1/lines/24/words/0"],
+        "isHeader": false}, {"rowIndex": 8, "columnIndex": 0, "text": "", "boundingBox":
+        [0.9976, 2.4197, 1.8392, 2.4197, 1.8392, 2.5987, 0.9976, 2.5987], "elements":
+        [], "isHeader": false}, {"rowIndex": 8, "columnIndex": 2, "text": "ND, SD",
+        "boundingBox": [3.249, 2.4197, 5.1637, 2.4197, 5.1637, 2.5987, 3.249, 2.5987],
+        "elements": ["#/readResults/1/lines/25/words/0", "#/readResults/1/lines/25/words/1"],
+        "isHeader": false}, {"rowIndex": 8, "columnIndex": 3, "text": "973", "boundingBox":
+        [5.1637, 2.4197, 7.0785, 2.4197, 7.0785, 2.5987, 5.1637, 2.5987], "elements":
+        ["#/readResults/1/lines/26/words/0"], "isHeader": false}, {"rowIndex": 8,
         "columnIndex": 4, "text": "16.10%", "boundingBox": [7.0785, 2.4197, 7.8359,
-        2.4197, 7.8359, 2.5987, 7.0785, 2.5987], "elements": ["#/readResults/1/lines/27/words/0"]},
-        {"rowIndex": 9, "columnIndex": 0, "text": "", "boundingBox": [0.9976, 2.5918,
-        1.8322, 2.5918, 1.8322, 2.7778, 0.9976, 2.7778], "elements": []}, {"rowIndex":
-        9, "columnIndex": 1, "text": "Midwest Total", "boundingBox": [1.8322, 2.5918,
-        3.242, 2.5987, 3.242, 2.7778, 1.8322, 2.7778], "elements": ["#/readResults/1/lines/28/words/0",
-        "#/readResults/1/lines/28/words/1"]}, {"rowIndex": 9, "columnIndex": 2, "text":
-        "", "boundingBox": [3.242, 2.5987, 5.1637, 2.5987, 5.1637, 2.7778, 3.242,
-        2.7778], "elements": []}, {"rowIndex": 9, "columnIndex": 3, "text": "11190",
+        2.4197, 7.8359, 2.5987, 7.0785, 2.5987], "elements": ["#/readResults/1/lines/27/words/0"],
+        "isHeader": false}, {"rowIndex": 9, "columnIndex": 0, "text": "", "boundingBox":
+        [0.9976, 2.5987, 1.8392, 2.5987, 1.8392, 2.7778, 0.9976, 2.7778], "elements":
+        [], "isHeader": false}, {"rowIndex": 9, "columnIndex": 1, "text": "Midwest
+        Total", "boundingBox": [1.8392, 2.5987, 3.249, 2.5987, 3.249, 2.7778, 1.8392,
+        2.7778], "elements": ["#/readResults/1/lines/28/words/0", "#/readResults/1/lines/28/words/1"],
+        "isHeader": false}, {"rowIndex": 9, "columnIndex": 2, "text": "", "boundingBox":
+        [3.249, 2.5987, 5.1637, 2.5987, 5.1637, 2.7778, 3.249, 2.7778], "elements":
+        [], "isHeader": false}, {"rowIndex": 9, "columnIndex": 3, "text": "11190",
         "boundingBox": [5.1637, 2.5987, 7.0785, 2.5987, 7.0785, 2.7778, 5.1637, 2.7778],
-        "elements": ["#/readResults/1/lines/29/words/0"]}, {"rowIndex": 9, "columnIndex":
-        4, "text": "22.20%", "boundingBox": [7.0785, 2.5987, 7.8359, 2.5987, 7.8359,
-        2.7778, 7.0785, 2.7778], "elements": ["#/readResults/1/lines/30/words/0"]},
-        {"rowIndex": 10, "columnIndex": 0, "text": "South", "boundingBox": [0.9976,
-        2.7778, 1.8322, 2.7778, 1.8322, 2.9568, 0.9976, 2.9568], "elements": ["#/readResults/1/lines/31/words/0"]},
-        {"rowIndex": 10, "columnIndex": 1, "rowSpan": 4, "text": "South Atlantic",
-        "boundingBox": [1.8322, 2.7778, 3.242, 2.7778, 3.242, 3.487, 1.8392, 3.487],
-        "elements": ["#/readResults/1/lines/32/words/0", "#/readResults/1/lines/32/words/1"]},
-        {"rowIndex": 10, "columnIndex": 2, "text": "DE", "boundingBox": [3.242, 2.7778,
-        5.1637, 2.7778, 5.1637, 2.9568, 3.242, 2.9568], "elements": ["#/readResults/1/lines/33/words/0"]},
-        {"rowIndex": 10, "columnIndex": 3, "text": "1022", "boundingBox": [5.1637,
-        2.7778, 7.0785, 2.7778, 7.0785, 2.9568, 5.1637, 2.9568], "elements": ["#/readResults/1/lines/34/words/0"]},
-        {"rowIndex": 10, "columnIndex": 4, "text": "24.60%", "boundingBox": [7.0785,
-        2.7778, 7.8359, 2.7778, 7.8359, 2.9568, 7.0785, 2.9568], "elements": ["#/readResults/1/lines/35/words/0"]},
-        {"rowIndex": 11, "columnIndex": 0, "rowSpan": 2, "text": "", "boundingBox":
-        [0.9976, 2.9568, 1.8322, 2.9568, 1.8392, 3.3079, 0.9976, 3.3079], "elements":
-        []}, {"rowIndex": 11, "columnIndex": 2, "text": "FL", "boundingBox": [3.242,
-        2.9568, 5.1637, 2.9568, 5.1637, 3.1358, 3.242, 3.1358], "elements": ["#/readResults/1/lines/36/words/0"]},
-        {"rowIndex": 11, "columnIndex": 3, "text": "694", "boundingBox": [5.1637,
-        2.9568, 7.0785, 2.9568, 7.0785, 3.1358, 5.1637, 3.1358], "elements": ["#/readResults/1/lines/37/words/0"]},
-        {"rowIndex": 11, "columnIndex": 4, "text": "9.10%", "boundingBox": [7.0785,
-        2.9568, 7.8359, 2.9568, 7.8359, 3.1358, 7.0785, 3.1358], "elements": ["#/readResults/1/lines/38/words/0"]},
-        {"rowIndex": 12, "columnIndex": 2, "text": "GA, NC, SC", "boundingBox": [3.242,
-        3.1358, 5.1637, 3.1358, 5.1637, 3.3079, 3.242, 3.3079], "elements": ["#/readResults/1/lines/39/words/0",
-        "#/readResults/1/lines/39/words/1", "#/readResults/1/lines/39/words/2"]},
-        {"rowIndex": 12, "columnIndex": 3, "text": "896", "boundingBox": [5.1637,
-        3.1358, 7.0785, 3.1358, 7.0785, 3.3079, 5.1637, 3.3079], "elements": ["#/readResults/1/lines/40/words/0"]},
-        {"rowIndex": 12, "columnIndex": 4, "text": "4.40%", "boundingBox": [7.0785,
-        3.1358, 7.8359, 3.1358, 7.8359, 3.3148, 7.0785, 3.3079], "elements": ["#/readResults/1/lines/41/words/0"]},
-        {"rowIndex": 13, "columnIndex": 0, "text": "", "boundingBox": [0.9976, 3.3079,
-        1.8392, 3.3079, 1.8392, 3.487, 0.9976, 3.4938], "elements": []}, {"rowIndex":
-        13, "columnIndex": 2, "text": "MD, VA, DC, WV", "boundingBox": [3.242, 3.3079,
-        5.1637, 3.3079, 5.1637, 3.487, 3.242, 3.487], "elements": ["#/readResults/1/lines/42/words/0",
-        "#/readResults/1/lines/42/words/1", "#/readResults/1/lines/42/words/2", "#/readResults/1/lines/42/words/3"]},
-        {"rowIndex": 13, "columnIndex": 3, "text": "960", "boundingBox": [5.1637,
-        3.3079, 7.0785, 3.3079, 7.0785, 3.487, 5.1637, 3.487], "elements": ["#/readResults/1/lines/43/words/0"]},
-        {"rowIndex": 13, "columnIndex": 4, "text": "3.10%", "boundingBox": [7.0785,
-        3.3079, 7.8359, 3.3148, 7.8359, 3.487, 7.0785, 3.487], "elements": ["#/readResults/1/lines/44/words/0"]},
-        {"rowIndex": 14, "columnIndex": 0, "text": "", "boundingBox": [0.9976, 3.4938,
-        1.8392, 3.487, 1.8392, 3.6453, 0.9976, 3.6453], "elements": []}, {"rowIndex":
-        14, "columnIndex": 1, "text": "East South Central", "boundingBox": [1.8392,
-        3.487, 3.242, 3.487, 3.242, 3.6729, 1.8392, 3.6453], "elements": ["#/readResults/1/lines/45/words/0",
-        "#/readResults/1/lines/45/words/1", "#/readResults/1/lines/45/words/2"]},
-        {"rowIndex": 14, "columnIndex": 2, "text": "AL, KY, MS, TN", "boundingBox":
-        [3.242, 3.487, 5.1637, 3.487, 5.1637, 3.6729, 3.242, 3.6729], "elements":
-        ["#/readResults/1/lines/46/words/0", "#/readResults/1/lines/46/words/1", "#/readResults/1/lines/46/words/2",
-        "#/readResults/1/lines/46/words/3"]}, {"rowIndex": 14, "columnIndex": 3, "text":
-        "1005", "boundingBox": [5.1637, 3.487, 7.0785, 3.487, 7.0785, 3.6729, 5.1637,
-        3.6729], "elements": ["#/readResults/1/lines/47/words/0"]}, {"rowIndex": 14,
+        "elements": ["#/readResults/1/lines/29/words/0"], "isHeader": false}, {"rowIndex":
+        9, "columnIndex": 4, "text": "22.20%", "boundingBox": [7.0785, 2.5987, 7.8359,
+        2.5987, 7.8359, 2.7846, 7.0785, 2.7778], "elements": ["#/readResults/1/lines/30/words/0"],
+        "isHeader": false}, {"rowIndex": 10, "columnIndex": 0, "text": "South", "boundingBox":
+        [0.9976, 2.7778, 1.8392, 2.7778, 1.8392, 2.9568, 0.9976, 2.9568], "elements":
+        ["#/readResults/1/lines/31/words/0"], "isHeader": false}, {"rowIndex": 10,
+        "columnIndex": 1, "rowSpan": 4, "text": "South Atlantic", "boundingBox": [1.8392,
+        2.7778, 3.249, 2.7778, 3.249, 3.487, 1.8392, 3.487], "elements": ["#/readResults/1/lines/32/words/0",
+        "#/readResults/1/lines/32/words/1"], "isHeader": false}, {"rowIndex": 10,
+        "columnIndex": 2, "text": "DE", "boundingBox": [3.249, 2.7778, 5.1637, 2.7778,
+        5.1637, 2.9568, 3.249, 2.9568], "elements": ["#/readResults/1/lines/33/words/0"],
+        "isHeader": false}, {"rowIndex": 10, "columnIndex": 3, "text": "1022", "boundingBox":
+        [5.1637, 2.7778, 7.0785, 2.7778, 7.0785, 2.9568, 5.1637, 2.9568], "elements":
+        ["#/readResults/1/lines/34/words/0"], "isHeader": false}, {"rowIndex": 10,
+        "columnIndex": 4, "text": "24.60%", "boundingBox": [7.0785, 2.7778, 7.8359,
+        2.7846, 7.8359, 2.9568, 7.0785, 2.9568], "elements": ["#/readResults/1/lines/35/words/0"],
+        "isHeader": false}, {"rowIndex": 11, "columnIndex": 0, "text": "", "boundingBox":
+        [0.9976, 2.9568, 1.8392, 2.9568, 1.8392, 3.1358, 0.9976, 3.1358], "elements":
+        [], "isHeader": false}, {"rowIndex": 11, "columnIndex": 2, "text": "FL", "boundingBox":
+        [3.249, 2.9568, 5.1637, 2.9568, 5.1637, 3.1358, 3.249, 3.1358], "elements":
+        ["#/readResults/1/lines/36/words/0"], "isHeader": false}, {"rowIndex": 11,
+        "columnIndex": 3, "text": "694", "boundingBox": [5.1637, 2.9568, 7.0785, 2.9568,
+        7.0785, 3.1358, 5.1637, 3.1358], "elements": ["#/readResults/1/lines/37/words/0"],
+        "isHeader": false}, {"rowIndex": 11, "columnIndex": 4, "text": "9.10%", "boundingBox":
+        [7.0785, 2.9568, 7.8359, 2.9568, 7.8359, 3.1358, 7.0785, 3.1358], "elements":
+        ["#/readResults/1/lines/38/words/0"], "isHeader": false}, {"rowIndex": 12,
+        "columnIndex": 0, "text": "", "boundingBox": [0.9976, 3.1358, 1.8392, 3.1358,
+        1.8392, 3.3079, 0.9976, 3.3079], "elements": [], "isHeader": false}, {"rowIndex":
+        12, "columnIndex": 2, "text": "GA, NC, SC", "boundingBox": [3.249, 3.1358,
+        5.1637, 3.1358, 5.1637, 3.3079, 3.249, 3.3079], "elements": ["#/readResults/1/lines/39/words/0",
+        "#/readResults/1/lines/39/words/1", "#/readResults/1/lines/39/words/2"], "isHeader":
+        false}, {"rowIndex": 12, "columnIndex": 3, "text": "896", "boundingBox": [5.1637,
+        3.1358, 7.0785, 3.1358, 7.0785, 3.3079, 5.1637, 3.3079], "elements": ["#/readResults/1/lines/40/words/0"],
+        "isHeader": false}, {"rowIndex": 12, "columnIndex": 4, "text": "4.40%", "boundingBox":
+        [7.0785, 3.1358, 7.8359, 3.1358, 7.8359, 3.3079, 7.0785, 3.3079], "elements":
+        ["#/readResults/1/lines/41/words/0"], "isHeader": false}, {"rowIndex": 13,
+        "columnIndex": 0, "text": "", "boundingBox": [0.9976, 3.3079, 1.8392, 3.3079,
+        1.8392, 3.487, 0.9976, 3.487], "elements": [], "isHeader": false}, {"rowIndex":
+        13, "columnIndex": 2, "text": "MD, VA, DC, WV", "boundingBox": [3.249, 3.3079,
+        5.1637, 3.3079, 5.1637, 3.487, 3.249, 3.487], "elements": ["#/readResults/1/lines/42/words/0",
+        "#/readResults/1/lines/42/words/1", "#/readResults/1/lines/42/words/2", "#/readResults/1/lines/42/words/3"],
+        "isHeader": false}, {"rowIndex": 13, "columnIndex": 3, "text": "960", "boundingBox":
+        [5.1637, 3.3079, 7.0785, 3.3079, 7.0785, 3.487, 5.1637, 3.487], "elements":
+        ["#/readResults/1/lines/43/words/0"], "isHeader": false}, {"rowIndex": 13,
+        "columnIndex": 4, "text": "3.10%", "boundingBox": [7.0785, 3.3079, 7.8359,
+        3.3079, 7.8359, 3.487, 7.0785, 3.487], "elements": ["#/readResults/1/lines/44/words/0"],
+        "isHeader": false}, {"rowIndex": 14, "columnIndex": 0, "text": "", "boundingBox":
+        [0.9976, 3.487, 1.8392, 3.487, 1.8392, 3.666, 0.9976, 3.666], "elements":
+        [], "isHeader": false}, {"rowIndex": 14, "columnIndex": 1, "text": "East South
+        Central", "boundingBox": [1.8392, 3.487, 3.249, 3.487, 3.249, 3.666, 1.8392,
+        3.666], "elements": ["#/readResults/1/lines/45/words/0", "#/readResults/1/lines/45/words/1",
+        "#/readResults/1/lines/45/words/2"], "isHeader": false}, {"rowIndex": 14,
+        "columnIndex": 2, "text": "AL, KY, MS, TN", "boundingBox": [3.249, 3.487,
+        5.1637, 3.487, 5.1637, 3.666, 3.249, 3.666], "elements": ["#/readResults/1/lines/46/words/0",
+        "#/readResults/1/lines/46/words/1", "#/readResults/1/lines/46/words/2", "#/readResults/1/lines/46/words/3"],
+        "isHeader": false}, {"rowIndex": 14, "columnIndex": 3, "text": "1005", "boundingBox":
+        [5.1637, 3.487, 7.0785, 3.487, 7.0785, 3.666, 5.1637, 3.666], "elements":
+        ["#/readResults/1/lines/47/words/0"], "isHeader": false}, {"rowIndex": 14,
         "columnIndex": 4, "text": "22.60%", "boundingBox": [7.0785, 3.487, 7.8359,
-        3.487, 7.8359, 3.6729, 7.0785, 3.6729], "elements": ["#/readResults/1/lines/48/words/0"]},
-        {"rowIndex": 15, "columnIndex": 0, "rowSpan": 3, "text": "", "boundingBox":
-        [0.9976, 3.6453, 1.8392, 3.6453, 1.8392, 4.1962, 0.9976, 4.203], "elements":
-        []}, {"rowIndex": 15, "columnIndex": 1, "rowSpan": 2, "text": "West South
-        Central", "boundingBox": [1.8392, 3.6453, 3.242, 3.6729, 3.242, 4.0171, 1.8392,
-        4.0171], "elements": ["#/readResults/1/lines/49/words/0", "#/readResults/1/lines/49/words/1",
-        "#/readResults/1/lines/49/words/2"]}, {"rowIndex": 15, "columnIndex": 2, "text":
-        "AR, OK", "boundingBox": [3.242, 3.6729, 5.1637, 3.6729, 5.1637, 3.845, 3.242,
-        3.8519], "elements": ["#/readResults/1/lines/50/words/0", "#/readResults/1/lines/50/words/1"]},
-        {"rowIndex": 15, "columnIndex": 3, "text": "763", "boundingBox": [5.1637,
-        3.6729, 7.0785, 3.6729, 7.0785, 3.8519, 5.1637, 3.845], "elements": ["#/readResults/1/lines/51/words/0"]},
-        {"rowIndex": 15, "columnIndex": 4, "text": "26.90%", "boundingBox": [7.0785,
-        3.6729, 7.8359, 3.6729, 7.8359, 3.8519, 7.0785, 3.8519], "elements": ["#/readResults/1/lines/52/words/0"]},
-        {"rowIndex": 16, "columnIndex": 2, "text": "LA, TX", "boundingBox": [3.242,
-        3.8519, 5.1637, 3.845, 5.1637, 4.024, 3.242, 4.0171], "elements": ["#/readResults/1/lines/53/words/0",
-        "#/readResults/1/lines/53/words/1"]}, {"rowIndex": 16, "columnIndex": 3, "text":
-        "1040", "boundingBox": [5.1637, 3.845, 7.0785, 3.8519, 7.0785, 4.024, 5.1637,
-        4.024], "elements": ["#/readResults/1/lines/54/words/0"]}, {"rowIndex": 16,
-        "columnIndex": 4, "text": "9.80%", "boundingBox": [7.0785, 3.8519, 7.8359,
-        3.8519, 7.8359, 4.024, 7.0785, 4.024], "elements": ["#/readResults/1/lines/55/words/0"]},
-        {"rowIndex": 17, "columnIndex": 1, "text": "South Total", "boundingBox": [1.8392,
-        4.0171, 3.242, 4.0171, 3.242, 4.1962, 1.8392, 4.1962], "elements": ["#/readResults/1/lines/56/words/0",
-        "#/readResults/1/lines/56/words/1"]}, {"rowIndex": 17, "columnIndex": 2, "text":
-        "", "boundingBox": [3.242, 4.0171, 5.1637, 4.024, 5.1637, 4.1962, 3.242, 4.1962],
-        "elements": []}, {"rowIndex": 17, "columnIndex": 3, "text": "6379", "boundingBox":
-        [5.1637, 4.024, 7.0785, 4.024, 7.0785, 4.1962, 5.1637, 4.1962], "elements":
-        ["#/readResults/1/lines/57/words/0"]}, {"rowIndex": 17, "columnIndex": 4,
-        "text": "13.65%", "boundingBox": [7.0785, 4.024, 7.8359, 4.024, 7.8359, 4.203,
-        7.0785, 4.1962], "elements": ["#/readResults/1/lines/58/words/0"]}, {"rowIndex":
-        18, "columnIndex": 0, "rowSpan": 4, "text": "West", "boundingBox": [0.9976,
-        4.203, 1.8392, 4.1962, 1.8392, 4.8916, 0.9976, 4.8916], "elements": ["#/readResults/1/lines/59/words/0"]},
-        {"rowIndex": 18, "columnIndex": 1, "text": "Mountain", "boundingBox": [1.8392,
-        4.1962, 3.242, 4.1962, 3.242, 4.3821, 1.8392, 4.3752], "elements": ["#/readResults/1/lines/60/words/0"]},
-        {"rowIndex": 18, "columnIndex": 2, "text": "AZ, CO, ID, MT, NV, NM, UT", "boundingBox":
-        [3.242, 4.1962, 5.1637, 4.1962, 5.1637, 4.3821, 3.242, 4.3821], "elements":
+        3.487, 7.8359, 3.666, 7.0785, 3.666], "elements": ["#/readResults/1/lines/48/words/0"],
+        "isHeader": false}, {"rowIndex": 15, "columnIndex": 0, "text": "", "boundingBox":
+        [0.9976, 3.666, 1.8392, 3.666, 1.8392, 3.8519, 0.9976, 3.8519], "elements":
+        [], "isHeader": false}, {"rowIndex": 15, "columnIndex": 1, "text": "West South
+        Central", "boundingBox": [1.8392, 3.666, 3.249, 3.666, 3.249, 3.8519, 1.8392,
+        3.8519], "elements": ["#/readResults/1/lines/49/words/0", "#/readResults/1/lines/49/words/1",
+        "#/readResults/1/lines/49/words/2"], "isHeader": false}, {"rowIndex": 15,
+        "columnIndex": 2, "text": "AR, OK", "boundingBox": [3.249, 3.666, 5.1637,
+        3.666, 5.1637, 3.845, 3.249, 3.8519], "elements": ["#/readResults/1/lines/50/words/0",
+        "#/readResults/1/lines/50/words/1"], "isHeader": false}, {"rowIndex": 15,
+        "columnIndex": 3, "text": "763", "boundingBox": [5.1637, 3.666, 7.0785, 3.666,
+        7.0785, 3.845, 5.1637, 3.845], "elements": ["#/readResults/1/lines/51/words/0"],
+        "isHeader": false}, {"rowIndex": 15, "columnIndex": 4, "text": "26.90%", "boundingBox":
+        [7.0785, 3.666, 7.8359, 3.666, 7.8359, 3.845, 7.0785, 3.845], "elements":
+        ["#/readResults/1/lines/52/words/0"], "isHeader": false}, {"rowIndex": 16,
+        "columnIndex": 0, "text": "", "boundingBox": [0.9976, 3.8519, 1.8392, 3.8519,
+        1.8392, 4.0171, 0.9976, 4.0171], "elements": [], "isHeader": false}, {"rowIndex":
+        16, "columnIndex": 1, "text": "", "boundingBox": [1.8392, 3.8519, 3.249, 3.8519,
+        3.249, 4.0171, 1.8392, 4.0171], "elements": [], "isHeader": false}, {"rowIndex":
+        16, "columnIndex": 2, "text": "LA, TX", "boundingBox": [3.249, 3.8519, 5.1637,
+        3.845, 5.1637, 4.0171, 3.249, 4.0171], "elements": ["#/readResults/1/lines/53/words/0",
+        "#/readResults/1/lines/53/words/1"], "isHeader": false}, {"rowIndex": 16,
+        "columnIndex": 3, "text": "1040", "boundingBox": [5.1637, 3.845, 7.0785, 3.845,
+        7.0785, 4.0171, 5.1637, 4.0171], "elements": ["#/readResults/1/lines/54/words/0"],
+        "isHeader": false}, {"rowIndex": 16, "columnIndex": 4, "text": "9.80%", "boundingBox":
+        [7.0785, 3.845, 7.8359, 3.845, 7.8359, 4.0171, 7.0785, 4.0171], "elements":
+        ["#/readResults/1/lines/55/words/0"], "isHeader": false}, {"rowIndex": 17,
+        "columnIndex": 0, "text": "", "boundingBox": [0.9976, 4.0171, 1.8392, 4.0171,
+        1.8322, 4.1962, 0.9976, 4.1962], "elements": [], "isHeader": false}, {"rowIndex":
+        17, "columnIndex": 1, "text": "South Total", "boundingBox": [1.8392, 4.0171,
+        3.249, 4.0171, 3.249, 4.1962, 1.8322, 4.1962], "elements": ["#/readResults/1/lines/56/words/0",
+        "#/readResults/1/lines/56/words/1"], "isHeader": false}, {"rowIndex": 17,
+        "columnIndex": 2, "text": "", "boundingBox": [3.249, 4.0171, 5.1637, 4.0171,
+        5.1637, 4.1962, 3.249, 4.1962], "elements": [], "isHeader": false}, {"rowIndex":
+        17, "columnIndex": 3, "text": "6379", "boundingBox": [5.1637, 4.0171, 7.0785,
+        4.0171, 7.0785, 4.1962, 5.1637, 4.1962], "elements": ["#/readResults/1/lines/57/words/0"],
+        "isHeader": false}, {"rowIndex": 17, "columnIndex": 4, "text": "13.65%", "boundingBox":
+        [7.0785, 4.0171, 7.8359, 4.0171, 7.8359, 4.203, 7.0785, 4.1962], "elements":
+        ["#/readResults/1/lines/58/words/0"], "isHeader": false}, {"rowIndex": 18,
+        "columnIndex": 0, "rowSpan": 4, "text": "West", "boundingBox": [0.9976, 4.1962,
+        1.8322, 4.1962, 1.8322, 4.8985, 0.9976, 4.8985], "elements": ["#/readResults/1/lines/59/words/0"],
+        "isHeader": false}, {"rowIndex": 18, "columnIndex": 1, "text": "Mountain",
+        "boundingBox": [1.8322, 4.1962, 3.249, 4.1962, 3.249, 4.3752, 1.8322, 4.3752],
+        "elements": ["#/readResults/1/lines/60/words/0"], "isHeader": false}, {"rowIndex":
+        18, "columnIndex": 2, "text": "AZ, CO, ID, MT, NV, NM, UT", "boundingBox":
+        [3.249, 4.1962, 5.1637, 4.1962, 5.1637, 4.3752, 3.249, 4.3752], "elements":
         ["#/readResults/1/lines/61/words/0", "#/readResults/1/lines/61/words/1", "#/readResults/1/lines/61/words/2",
         "#/readResults/1/lines/61/words/3", "#/readResults/1/lines/61/words/4", "#/readResults/1/lines/61/words/5",
-        "#/readResults/1/lines/61/words/6"]}, {"rowIndex": 18, "columnIndex": 3, "text":
-        "1576", "boundingBox": [5.1637, 4.1962, 7.0785, 4.1962, 7.0785, 4.3821, 5.1637,
-        4.3821], "elements": ["#/readResults/1/lines/62/words/0"]}, {"rowIndex": 18,
-        "columnIndex": 4, "text": "23.20%", "boundingBox": [7.0785, 4.1962, 7.8359,
-        4.203, 7.8359, 4.3821, 7.0785, 4.3821], "elements": ["#/readResults/1/lines/63/words/0"]},
-        {"rowIndex": 19, "columnIndex": 1, "rowSpan": 3, "text": "Pacific", "boundingBox":
-        [1.8392, 4.3752, 3.242, 4.3821, 3.242, 4.9054, 1.8392, 4.8916], "elements":
-        ["#/readResults/1/lines/64/words/0"]}, {"rowIndex": 19, "columnIndex": 2,
-        "text": "AK, HI", "boundingBox": [3.242, 4.3821, 5.1637, 4.3821, 5.1637, 4.5542,
-        3.242, 4.5611], "elements": ["#/readResults/1/lines/65/words/0", "#/readResults/1/lines/65/words/1"]},
-        {"rowIndex": 19, "columnIndex": 3, "text": "388", "boundingBox": [5.1637,
-        4.3821, 7.0785, 4.3821, 7.0785, 4.5542, 5.1637, 4.5542], "elements": ["#/readResults/1/lines/66/words/0"]},
-        {"rowIndex": 19, "columnIndex": 4, "text": "16.90%", "boundingBox": [7.0785,
-        4.3821, 7.8359, 4.3821, 7.8359, 4.5611, 7.0785, 4.5542], "elements": ["#/readResults/1/lines/67/words/0"]},
-        {"rowIndex": 20, "columnIndex": 2, "text": "CA", "boundingBox": [3.242, 4.5611,
-        5.1637, 4.5542, 5.1637, 4.7332, 3.242, 4.7332], "elements": ["#/readResults/1/lines/68/words/0"]},
-        {"rowIndex": 20, "columnIndex": 3, "text": "1233", "boundingBox": [5.1637,
-        4.5542, 7.0785, 4.5542, 7.0785, 4.7332, 5.1637, 4.7332], "elements": ["#/readResults/1/lines/69/words/0"]},
-        {"rowIndex": 20, "columnIndex": 4, "text": "24.70%", "boundingBox": [7.0785,
-        4.5542, 7.8359, 4.5611, 7.8359, 4.7332, 7.0785, 4.7332], "elements": ["#/readResults/1/lines/70/words/0"]},
-        {"rowIndex": 21, "columnIndex": 2, "text": "OR, WA", "boundingBox": [3.242,
-        4.7332, 5.1637, 4.7332, 5.1567, 4.9054, 3.242, 4.9054], "elements": ["#/readResults/1/lines/71/words/0",
-        "#/readResults/1/lines/71/words/1"]}, {"rowIndex": 21, "columnIndex": 3, "text":
-        "525", "boundingBox": [5.1637, 4.7332, 7.0785, 4.7332, 7.0785, 4.9122, 5.1567,
-        4.9054], "elements": ["#/readResults/1/lines/72/words/0"]}, {"rowIndex": 21,
-        "columnIndex": 4, "text": "-3.20%", "boundingBox": [7.0785, 4.7332, 7.8359,
-        4.7332, 7.8359, 4.9122, 7.0785, 4.9122], "elements": ["#/readResults/1/lines/73/words/0"]},
-        {"rowIndex": 22, "columnIndex": 0, "text": "", "boundingBox": [0.9976, 4.8916,
-        1.8392, 4.8916, 1.8392, 5.0844, 0.9976, 5.0913], "elements": []}, {"rowIndex":
-        22, "columnIndex": 1, "text": "West Total", "boundingBox": [1.8392, 4.8916,
-        3.242, 4.9054, 3.242, 5.0844, 1.8392, 5.0844], "elements": ["#/readResults/1/lines/74/words/0",
-        "#/readResults/1/lines/74/words/1"]}, {"rowIndex": 22, "columnIndex": 2, "text":
-        "", "boundingBox": [3.242, 4.9054, 5.1567, 4.9054, 5.1567, 5.0844, 3.242,
-        5.0844], "elements": []}, {"rowIndex": 22, "columnIndex": 3, "text": "3722",
-        "boundingBox": [5.1567, 4.9054, 7.0785, 4.9122, 7.0785, 5.0844, 5.1567, 5.0844],
-        "elements": ["#/readResults/1/lines/75/words/0"]}, {"rowIndex": 22, "columnIndex":
-        4, "text": "18.45%", "boundingBox": [7.0785, 4.9122, 7.8359, 4.9122, 7.8359,
-        5.0913, 7.0785, 5.0844], "elements": ["#/readResults/1/lines/76/words/0"]}],
-        "boundingBox": [1.0424, 1.0041, 7.877, 1.0068, 7.8741, 5.1081, 1.037, 5.1044]}]}]}}'
+        "#/readResults/1/lines/61/words/6"], "isHeader": false}, {"rowIndex": 18,
+        "columnIndex": 3, "text": "1576", "boundingBox": [5.1637, 4.1962, 7.0785,
+        4.1962, 7.0785, 4.3752, 5.1637, 4.3752], "elements": ["#/readResults/1/lines/62/words/0"],
+        "isHeader": false}, {"rowIndex": 18, "columnIndex": 4, "text": "23.20%", "boundingBox":
+        [7.0785, 4.1962, 7.8359, 4.203, 7.8359, 4.3752, 7.0785, 4.3752], "elements":
+        ["#/readResults/1/lines/63/words/0"], "isHeader": false}, {"rowIndex": 19,
+        "columnIndex": 1, "rowSpan": 3, "text": "Pacific", "boundingBox": [1.8322,
+        4.3752, 3.249, 4.3752, 3.249, 4.9054, 1.8322, 4.8985], "elements": ["#/readResults/1/lines/64/words/0"],
+        "isHeader": false}, {"rowIndex": 19, "columnIndex": 2, "text": "AK, HI", "boundingBox":
+        [3.249, 4.3752, 5.1637, 4.3752, 5.1637, 4.5542, 3.249, 4.5542], "elements":
+        ["#/readResults/1/lines/65/words/0", "#/readResults/1/lines/65/words/1"],
+        "isHeader": false}, {"rowIndex": 19, "columnIndex": 3, "text": "388", "boundingBox":
+        [5.1637, 4.3752, 7.0785, 4.3752, 7.0785, 4.5542, 5.1637, 4.5542], "elements":
+        ["#/readResults/1/lines/66/words/0"], "isHeader": false}, {"rowIndex": 19,
+        "columnIndex": 4, "text": "16.90%", "boundingBox": [7.0785, 4.3752, 7.8359,
+        4.3752, 7.8359, 4.5542, 7.0785, 4.5542], "elements": ["#/readResults/1/lines/67/words/0"],
+        "isHeader": false}, {"rowIndex": 20, "columnIndex": 2, "text": "CA", "boundingBox":
+        [3.249, 4.5542, 5.1637, 4.5542, 5.1637, 4.7332, 3.249, 4.7332], "elements":
+        ["#/readResults/1/lines/68/words/0"], "isHeader": false}, {"rowIndex": 20,
+        "columnIndex": 3, "text": "1233", "boundingBox": [5.1637, 4.5542, 7.0785,
+        4.5542, 7.0785, 4.7332, 5.1637, 4.7332], "elements": ["#/readResults/1/lines/69/words/0"],
+        "isHeader": false}, {"rowIndex": 20, "columnIndex": 4, "text": "24.70%", "boundingBox":
+        [7.0785, 4.5542, 7.8359, 4.5542, 7.8359, 4.7332, 7.0785, 4.7332], "elements":
+        ["#/readResults/1/lines/70/words/0"], "isHeader": false}, {"rowIndex": 21,
+        "columnIndex": 2, "text": "OR, WA", "boundingBox": [3.249, 4.7332, 5.1637,
+        4.7332, 5.1637, 4.9054, 3.249, 4.9054], "elements": ["#/readResults/1/lines/71/words/0",
+        "#/readResults/1/lines/71/words/1"], "isHeader": false}, {"rowIndex": 21,
+        "columnIndex": 3, "text": "525", "boundingBox": [5.1637, 4.7332, 7.0785, 4.7332,
+        7.0785, 4.9122, 5.1637, 4.9054], "elements": ["#/readResults/1/lines/72/words/0"],
+        "isHeader": false}, {"rowIndex": 21, "columnIndex": 4, "text": "-3.20%", "boundingBox":
+        [7.0785, 4.7332, 7.8359, 4.7332, 7.8359, 4.9122, 7.0785, 4.9122], "elements":
+        ["#/readResults/1/lines/73/words/0"], "isHeader": false}, {"rowIndex": 22,
+        "columnIndex": 0, "text": "", "boundingBox": [0.9976, 4.8985, 1.8322, 4.8985,
+        1.8322, 5.0844, 0.9976, 5.0913], "elements": [], "isHeader": false}, {"rowIndex":
+        22, "columnIndex": 1, "text": "West Total", "boundingBox": [1.8322, 4.8985,
+        3.249, 4.9054, 3.249, 5.0844, 1.8322, 5.0844], "elements": ["#/readResults/1/lines/74/words/0",
+        "#/readResults/1/lines/74/words/1"], "isHeader": false}, {"rowIndex": 22,
+        "columnIndex": 2, "text": "", "boundingBox": [3.249, 4.9054, 5.1637, 4.9054,
+        5.1637, 5.0844, 3.249, 5.0844], "elements": [], "isHeader": false}, {"rowIndex":
+        22, "columnIndex": 3, "text": "3722", "boundingBox": [5.1637, 4.9054, 7.0785,
+        4.9122, 7.0785, 5.0844, 5.1637, 5.0844], "elements": ["#/readResults/1/lines/75/words/0"],
+        "isHeader": false}, {"rowIndex": 22, "columnIndex": 4, "text": "18.45%", "boundingBox":
+        [7.0785, 4.9122, 7.8359, 4.9122, 7.8359, 5.0913, 7.0785, 5.0844], "elements":
+        ["#/readResults/1/lines/76/words/0"], "isHeader": false}], "boundingBox":
+        [1.0424, 1.0041, 7.877, 1.0068, 7.8741, 5.1081, 1.037, 5.1044]}]}]}}'
     headers:
       apim-request-id:
-      - 12ae31a3-f0e3-4801-9775-15c822e9c0a9
+      - 20241de1-92c8-4181-bcdc-d55d14347df3
       content-length:
-      - '105808'
+      - '110204'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 01 Mar 2021 18:47:59 GMT
+      - Tue, 11 May 2021 00:27:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '177'
+      - '97'
     status:
       code: 200
       message: OK

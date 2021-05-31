@@ -39,30 +39,6 @@ class ActionsRequired(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
     RECREATE = "Recreate"
 
-class Architecture(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The OS architecture.
-    """
-
-    AMD64 = "amd64"
-    X86 = "x86"
-    THREE_HUNDRED_EIGHTY_SIX = "386"
-    ARM = "arm"
-    ARM64 = "arm64"
-
-class BaseImageDependencyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the base image dependency.
-    """
-
-    BUILD_TIME = "BuildTime"
-    RUN_TIME = "RunTime"
-
-class BaseImageTriggerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the auto trigger for base image dependency updates.
-    """
-
-    ALL = "All"
-    RUNTIME = "Runtime"
-
 class ConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The private link service connection status.
     """
@@ -71,6 +47,15 @@ class ConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PENDING = "Pending"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 class DefaultAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The default action of allow or deny when no other rules match.
@@ -94,12 +79,21 @@ class ImportMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NO_FORCE = "NoForce"
     FORCE = "Force"
 
-class OS(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The OS of agent machine
+class LastModifiedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that last modified the resource.
     """
 
-    WINDOWS = "Windows"
-    LINUX = "Linux"
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class NetworkRuleBypassOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether to allow trusted Azure services to access a network restricted registry.
+    """
+
+    AZURE_SERVICES = "AzureServices"
+    NONE = "None"
 
 class PasswordName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The password name.
@@ -141,7 +135,7 @@ class PolicyStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISABLED = "disabled"
 
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the resource.
+    """The provisioning state of the pipeline at the time the operation was called.
     """
 
     CREATING = "Creating"
@@ -174,36 +168,6 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
-class RunStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current status of the run.
-    """
-
-    QUEUED = "Queued"
-    STARTED = "Started"
-    RUNNING = "Running"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    ERROR = "Error"
-    TIMEOUT = "Timeout"
-
-class RunType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of run.
-    """
-
-    QUICK_BUILD = "QuickBuild"
-    QUICK_RUN = "QuickRun"
-    AUTO_BUILD = "AutoBuild"
-    AUTO_RUN = "AutoRun"
-
-class SecretObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the secret object which determines how the value of the secret object has to be
-    interpreted.
-    """
-
-    OPAQUE = "Opaque"
-    VAULTSECRET = "Vaultsecret"
-
 class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The SKU name of the container registry. Required for registry creation.
     """
@@ -222,96 +186,18 @@ class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class SourceControlType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of source control service.
-    """
-
-    GITHUB = "Github"
-    VISUAL_STUDIO_TEAM_SERVICE = "VisualStudioTeamService"
-
-class SourceRegistryLoginMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The authentication mode which determines the source registry login scope. The credentials for
-    the source registry
-    will be generated using the given scope. These credentials will be used to login to
-    the source registry during the run.
-    """
-
-    NONE = "None"
-    DEFAULT = "Default"
-
-class SourceTriggerEvent(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    COMMIT = "commit"
-    PULLREQUEST = "pullrequest"
-
-class StepType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the step.
-    """
-
-    DOCKER = "Docker"
-    FILE_TASK = "FileTask"
-    ENCODED_TASK = "EncodedTask"
-
-class TaskStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current status of task.
-    """
-
-    DISABLED = "Disabled"
-    ENABLED = "Enabled"
-
-class TokenCertificateName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    CERTIFICATE1 = "certificate1"
-    CERTIFICATE2 = "certificate2"
-
-class TokenPasswordName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The password name "password1" or "password2"
-    """
-
-    PASSWORD1 = "password1"
-    PASSWORD2 = "password2"
-
-class TokenStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the token example enabled or disabled.
-    """
-
-    ENABLED = "enabled"
-    DISABLED = "disabled"
-
-class TokenType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of Auth token.
-    """
-
-    PAT = "PAT"
-    O_AUTH = "OAuth"
-
 class TriggerStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current status of trigger.
+    """The current status of the source trigger.
     """
 
-    DISABLED = "Disabled"
     ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 class TrustPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of trust policy.
     """
 
     NOTARY = "Notary"
-
-class UpdateTriggerPayloadType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of Payload body for Base image update triggers.
-    """
-
-    DEFAULT = "Default"
-    TOKEN = "Token"
-
-class Variant(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Variant of the CPU.
-    """
-
-    V6 = "v6"
-    V7 = "v7"
-    V8 = "v8"
 
 class WebhookAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

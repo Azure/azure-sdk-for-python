@@ -10,31 +10,31 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '272'
+      - '288'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 60e50365-f4a5-4b5f-9d75-1c37dbddf528
+      - 54d071cc-48ad-4ba5-83b9-5626c2df5fb3
       content-length:
       - '0'
       date:
-      - Fri, 19 Mar 2021 19:35:58 GMT
+      - Tue, 11 May 2021 01:59:53 GMT
       location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/f4adc722-32f7-45c4-ade4-181e5965f2eb
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/dae56773-a48c-4e61-b0e3-c818f23ac650
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '82'
+      - '80'
     status:
       code: 201
       message: Created
@@ -48,14 +48,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/f4adc722-32f7-45c4-ade4-181e5965f2eb?includeKeys=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/dae56773-a48c-4e61-b0e3-c818f23ac650?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "f4adc722-32f7-45c4-ade4-181e5965f2eb", "attributes":
-        {"isComposed": false}, "status": "ready", "createdDateTime": "2021-03-19T19:35:59Z",
-        "lastUpdatedDateTime": "2021-03-19T19:36:02Z"}, "trainResult": {"averageModelAccuracy":
+      string: '{"modelInfo": {"modelId": "dae56773-a48c-4e61-b0e3-c818f23ac650", "attributes":
+        {"isComposed": false}, "status": "ready", "createdDateTime": "2021-05-11T01:59:54Z",
+        "lastUpdatedDateTime": "2021-05-11T01:59:58Z"}, "trainResult": {"averageModelAccuracy":
         0.995, "trainingDocuments": [{"documentName": "CCAuth-1.pdf", "pages": 1,
         "status": "succeeded"}, {"documentName": "CCAuth-2.pdf", "pages": 1, "status":
         "succeeded"}, {"documentName": "CCAuth-3.pdf", "pages": 1, "status": "succeeded"},
@@ -66,19 +66,19 @@ interactions:
         "errors": []}}'
     headers:
       apim-request-id:
-      - df2e7292-e3be-4fe9-9f8b-5b106ea0468f
+      - 41596fdd-e0b6-471f-a062-84b0a94e0d14
       content-length:
       - '771'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 19 Mar 2021 19:36:04 GMT
+      - Tue, 11 May 2021 01:59:59 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '20'
+      - '109'
     status:
       code: 200
       message: OK
@@ -92,31 +92,31 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '214'
+      - '224'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/f4adc722-32f7-45c4-ade4-181e5965f2eb/analyze?includeTextDetails=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/dae56773-a48c-4e61-b0e3-c818f23ac650/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 24ee30e9-9361-4d8e-a16a-87cb153bcb0c
+      - fa53efeb-58d7-4f9f-bf09-f0d78ebdaab8
       content-length:
       - '0'
       date:
-      - Fri, 19 Mar 2021 19:36:04 GMT
+      - Tue, 11 May 2021 01:59:59 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/f4adc722-32f7-45c4-ade4-181e5965f2eb/analyzeresults/17235852-b2aa-4ffc-ae8c-f8fc68f61dab
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/dae56773-a48c-4e61-b0e3-c818f23ac650/analyzeresults/c9f8fd7c-420a-43db-a3fe-fe0e59a13fae
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '64'
+      - '377'
     status:
       code: 202
       message: Accepted
@@ -130,48 +130,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/f4adc722-32f7-45c4-ade4-181e5965f2eb/analyzeresults/17235852-b2aa-4ffc-ae8c-f8fc68f61dab
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/dae56773-a48c-4e61-b0e3-c818f23ac650/analyzeresults/c9f8fd7c-420a-43db-a3fe-fe0e59a13fae
   response:
     body:
-      string: '{"status": "notStarted", "createdDateTime": "2021-03-19T19:36:04Z",
-        "lastUpdatedDateTime": "2021-03-19T19:36:06Z"}'
-    headers:
-      apim-request-id:
-      - 4923ba36-5503-4222-8dce-96f2dfa661bc
-      content-length:
-      - '109'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 19 Mar 2021 19:36:09 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '23'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/f4adc722-32f7-45c4-ade4-181e5965f2eb/analyzeresults/17235852-b2aa-4ffc-ae8c-f8fc68f61dab
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-19T19:36:04Z",
-        "lastUpdatedDateTime": "2021-03-19T19:36:13Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T02:00:00Z",
+        "lastUpdatedDateTime": "2021-05-11T02:00:04Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "lines": [{"boundingBox": [0.5301, 0.697, 2.3829, 0.7018,
         2.3829, 1.3034, 0.5301, 1.2986], "text": "Contoso", "appearance": {"style":
@@ -651,32 +616,33 @@ interactions:
         "confidence": 1, "state": "selected"}, {"boundingBox": [3.0846, 5.4481, 3.2448,
         5.4481, 3.2448, 5.6108, 3.0846, 5.6108], "confidence": 1, "state": "unselected"}]}],
         "pageResults": [{"page": 1, "tables": []}], "documentResults": [{"docType":
-        "custom:f4adc722-32f7-45c4-ade4-181e5965f2eb", "modelId": "f4adc722-32f7-45c4-ade4-181e5965f2eb",
+        "custom:dae56773-a48c-4e61-b0e3-c818f23ac650", "modelId": "dae56773-a48c-4e61-b0e3-c818f23ac650",
         "pageRange": [1, 1], "fields": {"VISA_SELECTION_MARK": {"type": "selectionMark",
-        "text": "unselected", "page": 1, "boundingBox": [1.615, 5.43, 1.775, 5.43,
-        1.775, 5.595, 1.615, 5.595], "confidence": 0.995, "elements": ["#/readResults/0/selectionMarks/0"]},
-        "MASTERCARD_SELECTION_MARK": {"type": "selectionMark", "text": "unselected",
-        "page": 1, "boundingBox": [3.085, 5.45, 3.245, 5.45, 3.245, 5.61, 3.085, 5.61],
-        "confidence": 0.995, "elements": ["#/readResults/0/selectionMarks/2"]}, "AMEX_SELECTION_MARK":
-        {"type": "selectionMark", "text": "selected", "page": 1, "boundingBox": [2.38,
-        5.475, 2.445, 5.475, 2.445, 5.545, 2.38, 5.545], "confidence": 0.995, "elements":
-        ["#/readResults/0/selectionMarks/1"]}}, "docTypeConfidence": 0.92}], "errors":
-        []}}'
+        "valueSelectionMark": "unselected", "page": 1, "boundingBox": [1.615, 5.43,
+        1.775, 5.43, 1.775, 5.595, 1.615, 5.595], "confidence": 0.995, "elements":
+        ["#/readResults/0/selectionMarks/0"]}, "AMEX_SELECTION_MARK": {"type": "selectionMark",
+        "valueSelectionMark": "selected", "page": 1, "boundingBox": [2.38, 5.475,
+        2.445, 5.475, 2.445, 5.545, 2.38, 5.545], "confidence": 0.995, "elements":
+        ["#/readResults/0/selectionMarks/1"]}, "MASTERCARD_SELECTION_MARK": {"type":
+        "selectionMark", "valueSelectionMark": "unselected", "page": 1, "boundingBox":
+        [3.085, 5.45, 3.245, 5.45, 3.245, 5.61, 3.085, 5.61], "confidence": 0.995,
+        "elements": ["#/readResults/0/selectionMarks/2"]}}, "docTypeConfidence": 0.92}],
+        "errors": []}}'
     headers:
       apim-request-id:
-      - 44b81be8-81d3-4cef-bb6c-640721740d4c
+      - c4f94bb9-8d1a-45d6-8ab7-d39646121aaf
       content-length:
-      - '34712'
+      - '34754'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 19 Mar 2021 19:36:14 GMT
+      - Tue, 11 May 2021 02:00:04 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '40'
+      - '152'
     status:
       code: 200
       message: OK

@@ -66,33 +66,35 @@ class AccessControlTests(KeyVaultTestCase):
         # create custom role definition
         role_name = self.get_resource_name("role-name")
         definition_name = self.get_replayable_uuid("definition-name")
-        permissions = [KeyVaultPermission(allowed_data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
+        permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         created_definition = client.set_role_definition(
             role_scope=scope,
-            permissions=permissions,
-            role_name=role_name,
             role_definition_name=definition_name,
-            description="test"
+            role_name=role_name,
+            description="test",
+            permissions=permissions
         )
         assert "/" in created_definition.assignable_scopes
         assert created_definition.role_name == role_name
         assert created_definition.name == definition_name
         assert created_definition.description == "test"
         assert len(created_definition.permissions) == 1
-        assert created_definition.permissions[0].allowed_data_actions == [KeyVaultDataAction.READ_HSM_KEY]
+        assert created_definition.permissions[0].data_actions == [KeyVaultDataAction.READ_HSM_KEY]
+        assert created_definition.assignable_scopes == [KeyVaultRoleScope.GLOBAL]
 
         # update custom role definition
         permissions = [
-            KeyVaultPermission(allowed_data_actions=[], denied_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
+            KeyVaultPermission(data_actions=[], not_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
         ]
         updated_definition = client.set_role_definition(
-            role_scope=scope, permissions=permissions, role_definition_name=definition_name
+            role_scope=scope, role_definition_name=definition_name, permissions=permissions
         )
         assert updated_definition.role_name == ""
         assert updated_definition.description == ""
         assert len(updated_definition.permissions) == 1
-        assert len(updated_definition.permissions[0].allowed_data_actions) == 0
-        assert updated_definition.permissions[0].denied_data_actions == [KeyVaultDataAction.READ_HSM_KEY]
+        assert len(updated_definition.permissions[0].data_actions) == 0
+        assert updated_definition.permissions[0].not_data_actions == [KeyVaultDataAction.READ_HSM_KEY]
+        assert updated_definition.assignable_scopes == [KeyVaultRoleScope.GLOBAL]
 
         # assert that the created role definition isn't duplicated
         matching_definitions = [d for d in client.list_role_definitions(scope) if d.id == updated_definition.id]
@@ -121,16 +123,16 @@ class AccessControlTests(KeyVaultTestCase):
 
         created = client.create_role_assignment(scope, definition.id, principal_id, role_assignment_name=name)
         assert created.name == name
-        assert created.principal_id == principal_id
-        assert created.role_definition_id == definition.id
-        assert created.scope == scope
+        assert created.properties.principal_id == principal_id
+        assert created.properties.role_definition_id == definition.id
+        assert created.properties.scope == scope
 
         # should be able to get the new assignment
         got = client.get_role_assignment(scope, name)
         assert got.name == name
-        assert got.principal_id == principal_id
-        assert got.role_definition_id == definition.id
-        assert got.scope == scope
+        assert got.properties.principal_id == principal_id
+        assert got.properties.role_definition_id == definition.id
+        assert got.properties.scope == scope
 
         # new assignment should be in the list of all assignments
         matching_assignments = [
@@ -142,8 +144,8 @@ class AccessControlTests(KeyVaultTestCase):
         deleted = client.delete_role_assignment(scope, created.name)
         assert deleted.name == created.name
         assert deleted.role_assignment_id == created.role_assignment_id
-        assert deleted.scope == scope
-        assert deleted.role_definition_id == created.role_definition_id
+        assert deleted.properties.scope == scope
+        assert deleted.properties.role_definition_id == created.properties.role_definition_id
 
         assert not any(a.role_assignment_id == created.role_assignment_id for a in client.list_role_assignments(scope))
 
@@ -157,8 +159,8 @@ def assert_role_definitions_equal(d1, d2):
     assert d1.type == d2.type
     assert len(d1.permissions) == len(d2.permissions)
     for i in range(len(d1.permissions)):
-        assert d1.permissions[i].allowed_actions == d2.permissions[i].allowed_actions
-        assert d1.permissions[i].denied_actions == d2.permissions[i].denied_actions
-        assert d1.permissions[i].allowed_data_actions == d2.permissions[i].allowed_data_actions
-        assert d1.permissions[i].denied_data_actions == d2.permissions[i].denied_data_actions
+        assert d1.permissions[i].actions == d2.permissions[i].actions
+        assert d1.permissions[i].not_actions == d2.permissions[i].not_actions
+        assert d1.permissions[i].data_actions == d2.permissions[i].data_actions
+        assert d1.permissions[i].not_data_actions == d2.permissions[i].not_data_actions
     assert d1.assignable_scopes == d2.assignable_scopes

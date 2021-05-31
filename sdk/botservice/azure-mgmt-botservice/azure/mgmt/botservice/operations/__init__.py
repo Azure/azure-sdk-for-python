@@ -11,6 +11,7 @@ from ._channels_operations import ChannelsOperations
 from ._direct_line_operations import DirectLineOperations
 from ._operations import Operations
 from ._bot_connection_operations import BotConnectionOperations
+from ._host_settings_operations import HostSettingsOperations
 
 __all__ = [
     'BotsOperations',
@@ -18,4 +19,5 @@ __all__ = [
     'DirectLineOperations',
     'Operations',
     'BotConnectionOperations',
+    'HostSettingsOperations',
 ]

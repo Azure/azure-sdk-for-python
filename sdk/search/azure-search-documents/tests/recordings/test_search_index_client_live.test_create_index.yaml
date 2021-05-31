@@ -18,29 +18,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchce941332.search.windows.net/indexes?api-version=2020-06-30-Preview
+    uri: https://searchce941332.search.windows.net/indexes?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://searchce941332.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D8EFCA0D7CDA8E\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"normalizers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
+      string: '{"@odata.context":"https://searchce941332.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D91BB0E6735D94\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1020'
+      - '967'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 25 Mar 2021 20:10:35 GMT
+      - Thu, 20 May 2021 17:01:24 GMT
       elapsed-time:
-      - '596'
+      - '624'
       etag:
-      - W/"0x8D8EFCA0D7CDA8E"
+      - W/"0x8D91BB0E6735D94"
       expires:
       - '-1'
       location:
-      - https://searchce941332.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
+      - https://searchce941332.search.windows.net/indexes('hotels')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -48,7 +48,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 28df0442-8da6-11eb-b758-a0481ca055a9
+      - 01699077-b98d-11eb-a70b-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:

@@ -157,7 +157,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise
             except AzureError as err:
-                if self._is_method_retryable(retry_settings, request.http_request):
+                if absolute_timeout > 0 and self._is_method_retryable(retry_settings, request.http_request):
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)

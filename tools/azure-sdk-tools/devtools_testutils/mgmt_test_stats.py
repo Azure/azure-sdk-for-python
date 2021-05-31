@@ -28,12 +28,8 @@ for d in dirs:
                 coverage = "A"
                 with open(join(test_dir, t)) as f:
                     content = f.readlines()
-                    coverage = [
-                        x for x in content if x.startswith("# Coverage %      :")
-                    ]
-                    coverage = (
-                        0 if not coverage else float(coverage[0].split(":").pop())
-                    )
+                    coverage = [x for x in content if x.startswith("# Coverage %      :")]
+                    coverage = 0 if not coverage else float(coverage[0].split(":").pop())
                 has_auto = True
             else:
                 has_manual = True
@@ -45,11 +41,7 @@ for d in dirs:
 
 if exists("../azure-rest-api-specs/specification"):
     pattern = ".+/resource-manager$"
-    dirs = [
-        x[0]
-        for x in walk("../azure-rest-api-specs/specification")
-        if re.match(pattern, x[0])
-    ]
+    dirs = [x[0] for x in walk("../azure-rest-api-specs/specification") if re.match(pattern, x[0])]
     total = 0
     have_python = 0
     packages = []
@@ -69,9 +61,7 @@ if exists("../azure-rest-api-specs/specification"):
         else:
             with open(readme_file, encoding="utf8") as f:
                 content = f.readlines()
-                package_name = [
-                    x for x in content if x.strip().startswith("package-name: ")
-                ]
+                package_name = [x for x in content if x.strip().startswith("package-name: ")]
                 if len(package_name) > 0:
                     have_python += 1
                     package_name = package_name[0].split(": ")[1].rstrip()
@@ -86,9 +76,7 @@ for p in packages:
     print(
         "| {:38} | {:10} |".format(
             p,
-            coverage
-            if coverage in ["- (R)", "- (S)", "-", "A", "M"]
-            else "{:4.2f}".format(coverage),
+            coverage if coverage in ["- (R)", "- (S)", "-", "A", "M"] else "{:4.2f}".format(coverage),
         )
     )
 
@@ -96,20 +84,8 @@ print("| {:38} | {:10} |".format("", ""))
 print("| {:38} | {:10} |".format("**TOTAL RPS**", "**{}**".format(total_rps)))
 print("| {:38} | {:10} |".format("**TOTAL PACKAGES**", "**{}**".format(total_packages)))
 print("| {:38} | {:10} |".format("**MANUAL**", "**{}**".format(manual)))
-print(
-    "| {:38} | {:10} |".format(
-        "**MANUAL %**", "**{:4.2f}**".format(100 * manual / total_packages)
-    )
-)
+print("| {:38} | {:10} |".format("**MANUAL %**", "**{:4.2f}**".format(100 * manual / total_packages)))
 print("| {:38} | {:10} |".format("**AUTO**", "**{}**".format(auto)))
-print(
-    "| {:38} | {:10} |".format(
-        "**AUTO %**", "**{:4.2f}**".format(100 * auto / total_packages)
-    )
-)
+print("| {:38} | {:10} |".format("**AUTO %**", "**{:4.2f}**".format(100 * auto / total_packages)))
 print("| {:38} | {:10} |".format("**NONE**", "**{}**".format(none)))
-print(
-    "| {:38} | {:10} |".format(
-        "**NONE %**", "**{:4.2f}**".format(100 * none / total_packages)
-    )
-)
+print("| {:38} | {:10} |".format("**NONE %**", "**{:4.2f}**".format(100 * none / total_packages)))

@@ -46,7 +46,7 @@ class BotsOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.Bot",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Bot":
         """Creates a Bot Service. Bot Service is a resource group wide resource type.
 
@@ -66,7 +66,7 @@ class BotsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-02"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -97,7 +97,7 @@ class BotsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -122,7 +122,7 @@ class BotsOperations:
         kind: Optional[Union[str, "_models.Kind"]] = None,
         etag: Optional[str] = None,
         properties: Optional["_models.BotProperties"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Bot":
         """Updates a Bot Service.
 
@@ -154,7 +154,7 @@ class BotsOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _parameters = _models.Bot(location=location, tags=tags, sku=sku, kind=kind, etag=etag, properties=properties)
-        api_version = "2020-06-02"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -185,7 +185,7 @@ class BotsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -204,7 +204,7 @@ class BotsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a Bot Service from the resource group.
 
@@ -222,7 +222,7 @@ class BotsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-02"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -248,7 +248,7 @@ class BotsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -260,7 +260,7 @@ class BotsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Bot":
         """Returns a BotService specified by the parameters.
 
@@ -278,7 +278,7 @@ class BotsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-02"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -304,7 +304,7 @@ class BotsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Bot', pipeline_response)
@@ -318,7 +318,7 @@ class BotsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BotResponseList"]:
         """Returns all the resources of a particular type belonging to a resource group.
 
@@ -334,7 +334,7 @@ class BotsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-02"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -375,7 +375,7 @@ class BotsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -388,7 +388,7 @@ class BotsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BotResponseList"]:
         """Returns all the resources of a particular type belonging to a subscription.
 
@@ -402,7 +402,7 @@ class BotsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-02"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -442,7 +442,7 @@ class BotsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -456,7 +456,7 @@ class BotsOperations:
     async def get_check_name_availability(
         self,
         parameters: "_models.CheckNameAvailabilityRequestBody",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityResponseBody":
         """Check whether a bot name is available.
 
@@ -473,7 +473,7 @@ class BotsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-02"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -498,7 +498,7 @@ class BotsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CheckNameAvailabilityResponseBody', pipeline_response)

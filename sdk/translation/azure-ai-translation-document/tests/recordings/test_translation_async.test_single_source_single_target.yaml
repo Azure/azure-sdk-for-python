@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 06 May 2021 21:06:58 GMT
+      - Fri, 21 May 2021 17:02:29 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-08-04'
     method: PUT
-    uri: https://redacted.blob.core.windows.net/src39ce97d8-9e41-4830-a4c7-a3c63d2ff15e?restype=container
+    uri: https://redacted.blob.core.windows.net/srce9e130e6-851d-4db2-9bc7-719f84148b80?restype=container
   response:
     body:
       string: ''
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 06 May 2021 21:06:58 GMT
+      - Fri, 21 May 2021 17:02:29 GMT
       etag:
-      - '"0x8D910D2E30917EC"'
+      - '"0x8D91C7A37E92D4B"'
       last-modified:
-      - Thu, 06 May 2021 21:06:58 GMT
+      - Fri, 21 May 2021 17:02:29 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2020-06-12'
+      - '2020-08-04'
     status:
       code: 201
       message: Created
@@ -53,15 +53,15 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 06 May 2021 21:06:58 GMT
+      - Fri, 21 May 2021 17:02:29 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-08-04'
     method: PUT
-    uri: https://redacted.blob.core.windows.net/src39ce97d8-9e41-4830-a4c7-a3c63d2ff15e/97dfadbe-2c43-4a99-b105-56c13b96cfec.txt
+    uri: https://redacted.blob.core.windows.net/srce9e130e6-851d-4db2-9bc7-719f84148b80/6d4bb6cf-2894-42f5-8d18-8ce0e8cb996c.txt
   response:
     body:
       string: ''
@@ -71,11 +71,11 @@ interactions:
       content-md5:
       - lyFPYyJLwenMTaN3qtznxw==
       date:
-      - Thu, 06 May 2021 21:06:58 GMT
+      - Fri, 21 May 2021 17:02:29 GMT
       etag:
-      - '"0x8D910D2E32CF88E"'
+      - '"0x8D91C7A37F38D68"'
       last-modified:
-      - Thu, 06 May 2021 21:06:59 GMT
+      - Fri, 21 May 2021 17:02:29 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -83,7 +83,7 @@ interactions:
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-08-04'
     status:
       code: 201
       message: Created
@@ -99,13 +99,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 06 May 2021 21:06:59 GMT
+      - Fri, 21 May 2021 17:02:30 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-08-04'
     method: PUT
-    uri: https://redacted.blob.core.windows.net/target1d999034-f653-49d9-a8d8-9a7a5b95be6d?restype=container
+    uri: https://redacted.blob.core.windows.net/target45310752-a572-4d75-a00b-f6dec6c77e74?restype=container
   response:
     body:
       string: ''
@@ -113,50 +113,50 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 06 May 2021 21:06:59 GMT
+      - Fri, 21 May 2021 17:02:29 GMT
       etag:
-      - '"0x8D910D2E3B586E5"'
+      - '"0x8D91C7A38180BD5"'
       last-modified:
-      - Thu, 06 May 2021 21:06:59 GMT
+      - Fri, 21 May 2021 17:02:30 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2020-06-12'
+      - '2020-08-04'
     status:
       code: 201
       message: Created
 - request:
-    body: '{"inputs": [{"source": {"sourceUrl": "https://redacted.blob.core.windows.net/src39ce97d8-9e41-4830-a4c7-a3c63d2ff15e?se=end&sp=rl&sv=2020-06-12&sr=c&sig=fake_token_value",
-      "filter": {}}, "targets": [{"targetUrl": "https://redacted.blob.core.windows.net/target1d999034-f653-49d9-a8d8-9a7a5b95be6d?se=end&sp=rw&sv=2020-06-12&sr=c&sig=fake_token_value",
+    body: '{"inputs": [{"source": {"sourceUrl": "https://redacted.blob.core.windows.net/srce9e130e6-851d-4db2-9bc7-719f84148b80?se=end&sp=rl&sv=2020-08-04&sr=c&sig=fake_token_value",
+      "filter": {}}, "targets": [{"targetUrl": "https://redacted.blob.core.windows.net/target45310752-a572-4d75-a00b-f6dec6c77e74?se=end&sp=rw&sv=2020-08-04&sr=c&sig=fake_token_value",
       "language": "es"}]}]}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '484'
+      - '486'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches
+    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/batches
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 687006fe-a431-4704-aba4-830fc105bab5
+      apim-request-id: edef4394-1cc7-43f4-82bc-eabe4e6de96c
       content-length: '0'
-      date: Thu, 06 May 2021 21:07:00 GMT
-      operation-location: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
-      set-cookie: ARRAffinitySameSite=b85bad1b8326b1376e60e99b410c1da9c99b2e137606973a71315f97deb3a0ce;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
+      date: Fri, 21 May 2021 17:02:30 GMT
+      operation-location: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0/batches/468d8d25-cb18-49f8-b787-7c988d207850
+      set-cookie: ARRAffinitySameSite=0ff46fa6d58b00f2d44b7073721903c0eace480139d8ecfc38f61130af5e1587;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
       x-powered-by: ASP.NET
-      x-requestid: 687006fe-a431-4704-aba4-830fc105bab5
+      x-requestid: edef4394-1cc7-43f4-82bc-eabe4e6de96c
     status:
       code: 202
       message: Accepted
-    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/batches
+    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0/batches
 - request:
     body: null
     headers:
@@ -165,28 +165,32 @@ interactions:
       User-Agent:
       - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
+    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/batches/468d8d25-cb18-49f8-b787-7c988d207850
   response:
     body:
-      string: '{"id":"0f3368f0-93e9-4fa3-9628-1225509f8e76","createdDateTimeUtc":"2021-05-06T21:07:00.3887357Z","lastActionDateTimeUtc":"2021-05-06T21:07:00.388736Z","status":"NotStarted","summary":{"total":0,"failed":0,"success":0,"inProgress":0,"notYetStarted":0,"cancelled":0,"totalCharacterCharged":0}}'
+      string: !!binary |
+        H4sIAAAAAAAEAI2NMY/CMAyF/4tngpLQkpDtdMwIid5wtxk3QKS2kRJ3QKj//ZJK3HyL9fyev+cX
+        hB4cNHvb2163gq7KiuZws+JqrBGGDrb40thWwgYoeWTfH8vowui/mAqrpVZCtkKrThkntdvJbbNT
+        urE/BRkw8wdxiNN/qX3FMiPPudydIl8YU/la3XkcMT3BvYAj4wBObuCGYShplXkm8jmvOkznFO/p
+        vU6Rv/1fVXUIJ/LDG137Ph+YkNinKu5rsiy/RhkMpiMBAAA=
     headers:
-      apim-request-id: 5983fd40-33a2-4f2e-b0c6-687bc5497a85
+      apim-request-id: ed1baea6-47ca-48dd-9d41-bfc211d2e776
       cache-control: public,max-age=1
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 21:07:00 GMT
-      etag: '"575656F9D3C6B1DDC84F2B88AEDA712D03B066EC92D2C8B39800974637BE0666"'
-      set-cookie: ARRAffinitySameSite=52534756bc24481c0848ee2def3c54a057fd0e51707d9dcf782aa603bbaa9f24;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
+      date: Fri, 21 May 2021 17:02:30 GMT
+      etag: '"47F10D5C451CF8C37992D3CC90B385B9EDCC9F235F77819B71B4926C2FD28E85"'
+      set-cookie: ARRAffinitySameSite=20358cd7aa5d6b0695f01ef171fc9a95880154357830e1c6bb513b73834a2e5f;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
       x-powered-by: ASP.NET
-      x-requestid: 5983fd40-33a2-4f2e-b0c6-687bc5497a85
+      x-requestid: ed1baea6-47ca-48dd-9d41-bfc211d2e776
     status:
       code: 200
       message: OK
-    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
+    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0/batches/468d8d25-cb18-49f8-b787-7c988d207850
 - request:
     body: null
     headers:
@@ -195,250 +199,158 @@ interactions:
       User-Agent:
       - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
+    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/batches/468d8d25-cb18-49f8-b787-7c988d207850
   response:
     body:
-      string: '{"id":"0f3368f0-93e9-4fa3-9628-1225509f8e76","createdDateTimeUtc":"2021-05-06T21:07:00.3887357Z","lastActionDateTimeUtc":"2021-05-06T21:07:00.388736Z","status":"NotStarted","summary":{"total":0,"failed":0,"success":0,"inProgress":0,"notYetStarted":0,"cancelled":0,"totalCharacterCharged":0}}'
+      string: !!binary |
+        H4sIAAAAAAAEAI2NMY/CMAyF/4tngpLQkpDtdMwIid5wtxk3QKS2kRJ3QKj//ZJK3HyL9fyev+cX
+        hB4cNHvb2163gq7KiuZws+JqrBGGDrb40thWwgYoeWTfH8vowui/mAqrpVZCtkKrThkntdvJbbNT
+        urE/BRkw8wdxiNN/qX3FMiPPudydIl8YU/la3XkcMT3BvYAj4wBObuCGYShplXkm8jmvOkznFO/p
+        vU6Rv/1fVXUIJ/LDG137Ph+YkNinKu5rsiy/RhkMpiMBAAA=
     headers:
-      apim-request-id: d732bda8-b4c8-415d-8975-19d10135610e
+      apim-request-id: 80951aa3-71f9-4373-ae93-abe91093d3b1
       cache-control: public,max-age=1
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 21:07:00 GMT
-      etag: '"575656F9D3C6B1DDC84F2B88AEDA712D03B066EC92D2C8B39800974637BE0666"'
-      set-cookie: ARRAffinitySameSite=b85bad1b8326b1376e60e99b410c1da9c99b2e137606973a71315f97deb3a0ce;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
+      date: Fri, 21 May 2021 17:02:30 GMT
+      etag: '"47F10D5C451CF8C37992D3CC90B385B9EDCC9F235F77819B71B4926C2FD28E85"'
+      set-cookie: ARRAffinitySameSite=0ff46fa6d58b00f2d44b7073721903c0eace480139d8ecfc38f61130af5e1587;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
       x-powered-by: ASP.NET
-      x-requestid: d732bda8-b4c8-415d-8975-19d10135610e
+      x-requestid: 80951aa3-71f9-4373-ae93-abe91093d3b1
     status:
       code: 200
       message: OK
-    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
+    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0/batches/468d8d25-cb18-49f8-b787-7c988d207850
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
+    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/batches/468d8d25-cb18-49f8-b787-7c988d207850
   response:
     body:
-      string: '{"id":"0f3368f0-93e9-4fa3-9628-1225509f8e76","createdDateTimeUtc":"2021-05-06T21:07:00.3887357Z","lastActionDateTimeUtc":"2021-05-06T21:07:01.2506048Z","status":"NotStarted","summary":{"total":1,"failed":0,"success":0,"inProgress":0,"notYetStarted":1,"cancelled":0,"totalCharacterCharged":0}}'
+      string: !!binary |
+        H4sIAAAAAAAEAIWNMW8DIQyF/4vnEAGBg7BV7VxFajq0m+MjCdLdIYEzVFH+e+GkdO1iPb/n7/kO
+        aYQAZvCjH7UVdFJemP3Zi5PzTjja++ZL562EDVCJyHF8a+OY5vjJ1FgttRLSCq2OygWpw05uzU5p
+        478bMmHlF+KUl/8pOwzaKNuxysi32u7eM38wlva1u7d5xvID4Q6cGScIagNnTFNLg+w5Uax11Wk5
+        lHwpz3XJ/BX/qjpHuFCcnuja93rFgsSxdHFZk8fjF0xXPJwjAQAA
     headers:
-      apim-request-id: adadb9c1-e390-4d7c-8fff-42291cc690bd
+      apim-request-id: 4032d1dc-30a4-4209-8778-5b8ff7e7355f
       cache-control: public,max-age=1
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 21:07:01 GMT
-      etag: '"8DCCD62E005DE1FBD750A2D82FFD416D5D4DA6A02D1706A42D52220F285AA714"'
-      set-cookie: ARRAffinitySameSite=52534756bc24481c0848ee2def3c54a057fd0e51707d9dcf782aa603bbaa9f24;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
+      date: Fri, 21 May 2021 17:02:31 GMT
+      etag: '"237AFBD000E39703E823BD973DEC5708D43998910E958589ECD71344141D1F26"'
+      set-cookie: ARRAffinitySameSite=20358cd7aa5d6b0695f01ef171fc9a95880154357830e1c6bb513b73834a2e5f;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
       x-powered-by: ASP.NET
-      x-requestid: adadb9c1-e390-4d7c-8fff-42291cc690bd
+      x-requestid: 4032d1dc-30a4-4209-8778-5b8ff7e7355f
     status:
       code: 200
       message: OK
-    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
+    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0/batches/468d8d25-cb18-49f8-b787-7c988d207850
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
+    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/batches/468d8d25-cb18-49f8-b787-7c988d207850
   response:
     body:
-      string: '{"id":"0f3368f0-93e9-4fa3-9628-1225509f8e76","createdDateTimeUtc":"2021-05-06T21:07:00.3887357Z","lastActionDateTimeUtc":"2021-05-06T21:07:01.2506048Z","status":"NotStarted","summary":{"total":1,"failed":0,"success":0,"inProgress":0,"notYetStarted":1,"cancelled":0,"totalCharacterCharged":0}}'
+      string: !!binary |
+        H4sIAAAAAAAEAIWPsW7DMAxE/0VzFEi0bCnaivYDijYZko2hFUeALQMSPRRB/r2y0c5ZiOPdPQJ8
+        iNgLL0znetdDK+mqnTSHm5NX66y0dHDVV9a1SuwE5YAc+o86jnEKJ6bKggItVStBH7X1Cnyj9qbR
+        YNylIiMWfiOOc3pFwb6DrjEOVqww8lJq72tJKaZhtZZpwvwj/EPwzDgKr3fihnEM9QO15kShlE3H
+        9JnnIW9rbaWZz4G/GTP/lQkThfEf3e693zEjccirGLbk+fwFyZBIDiABAAA=
     headers:
-      apim-request-id: d08ba663-4538-4c3b-9299-0350ee3b4fd4
+      apim-request-id: 06a08d39-a973-4736-a273-53e5ccf68434
       cache-control: public,max-age=1
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 21:07:02 GMT
-      etag: '"8DCCD62E005DE1FBD750A2D82FFD416D5D4DA6A02D1706A42D52220F285AA714"'
-      set-cookie: ARRAffinitySameSite=b85bad1b8326b1376e60e99b410c1da9c99b2e137606973a71315f97deb3a0ce;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
+      date: Fri, 21 May 2021 17:02:32 GMT
+      etag: '"FA5A15C298BC6EA277D09DBEA25FE7DBC2E55F8CCDEA5DFDABA4E7915A4BFBEB"'
+      set-cookie: ARRAffinitySameSite=0ff46fa6d58b00f2d44b7073721903c0eace480139d8ecfc38f61130af5e1587;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
       x-powered-by: ASP.NET
-      x-requestid: d08ba663-4538-4c3b-9299-0350ee3b4fd4
+      x-requestid: 06a08d39-a973-4736-a273-53e5ccf68434
     status:
       code: 200
       message: OK
-    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
+    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0/batches/468d8d25-cb18-49f8-b787-7c988d207850
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
+    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/batches/468d8d25-cb18-49f8-b787-7c988d207850
   response:
     body:
-      string: '{"id":"0f3368f0-93e9-4fa3-9628-1225509f8e76","createdDateTimeUtc":"2021-05-06T21:07:00.3887357Z","lastActionDateTimeUtc":"2021-05-06T21:07:01.2506048Z","status":"NotStarted","summary":{"total":1,"failed":0,"success":0,"inProgress":0,"notYetStarted":1,"cancelled":0,"totalCharacterCharged":0}}'
+      string: !!binary |
+        H4sIAAAAAAAEAIWPsW7DMAxE/0VzFEi0bCnaivYDijYZko2hFUeALQMSPRRB/r2y0c5ZiOPdPQJ8
+        iNgLL0znetdDK+mqnTSHm5NX66y0dHDVV9a1SuwE5YAc+o86jnEKJ6bKggItVStBH7X1Cnyj9qbR
+        YNylIiMWfiOOc3pFwb6DrjEOVqww8lJq72tJKaZhtZZpwvwj/EPwzDgKr3fihnEM9QO15kShlE3H
+        9JnnIW9rbaWZz4G/GTP/lQkThfEf3e693zEjccirGLbk+fwFyZBIDiABAAA=
     headers:
-      apim-request-id: 5426d732-d65e-4ad4-8736-ca3dfff2ecdc
+      apim-request-id: c2c6ea94-ed1c-438d-bf84-ce608183fd27
       cache-control: public,max-age=1
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 21:07:03 GMT
-      etag: '"8DCCD62E005DE1FBD750A2D82FFD416D5D4DA6A02D1706A42D52220F285AA714"'
-      set-cookie: ARRAffinitySameSite=52534756bc24481c0848ee2def3c54a057fd0e51707d9dcf782aa603bbaa9f24;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
+      date: Fri, 21 May 2021 17:02:33 GMT
+      etag: '"FA5A15C298BC6EA277D09DBEA25FE7DBC2E55F8CCDEA5DFDABA4E7915A4BFBEB"'
+      set-cookie: ARRAffinitySameSite=20358cd7aa5d6b0695f01ef171fc9a95880154357830e1c6bb513b73834a2e5f;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
       x-powered-by: ASP.NET
-      x-requestid: 5426d732-d65e-4ad4-8736-ca3dfff2ecdc
+      x-requestid: c2c6ea94-ed1c-438d-bf84-ce608183fd27
     status:
       code: 200
       message: OK
-    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
+    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0/batches/468d8d25-cb18-49f8-b787-7c988d207850
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
+    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/batches/468d8d25-cb18-49f8-b787-7c988d207850
   response:
     body:
-      string: '{"id":"0f3368f0-93e9-4fa3-9628-1225509f8e76","createdDateTimeUtc":"2021-05-06T21:07:00.3887357Z","lastActionDateTimeUtc":"2021-05-06T21:07:04.7446138Z","status":"Running","summary":{"total":1,"failed":0,"success":0,"inProgress":1,"notYetStarted":0,"cancelled":0,"totalCharacterCharged":0}}'
+      string: !!binary |
+        H4sIAAAAAAAEAIWMy24DIQxF/8XrEAHDDIRd1X5ApaSLducYkiDNQwLPIory74FRu+7Gsu+5xw9I
+        ATyYwQUXdC/orJwwh4sTZ+ussHRwNZfW9RJ2QDkix/BRxylN8YupulpqJWQvtDop66X2ndybTmnj
+        fqoyYuE34rTM/1l6P+ihM043rTDyWmrvuBLFGGJo4TpNmO/gH8AL4whe7eCCaazUy8Zrt5QtTvNn
+        Xq55OyuaF/6OfGTM/FsmnCmOf+r27/2GGYljbsu1EWWfzxdB1QKDIwEAAA==
     headers:
-      apim-request-id: 50144517-3f3b-42b9-88fe-6c2c1b032afb
+      apim-request-id: fdb695b0-5d88-429a-896e-7ed16cde54a7
       cache-control: public,max-age=1
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 21:07:04 GMT
-      etag: '"95E6FD98AC010EA5AE7943FE61513DA0DA11B4D4124107634659EDD297D06184"'
-      set-cookie: ARRAffinitySameSite=b85bad1b8326b1376e60e99b410c1da9c99b2e137606973a71315f97deb3a0ce;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
+      date: Fri, 21 May 2021 17:02:34 GMT
+      etag: '"84CBF72A2547F0E064550498161F3C8840F6699F09E27B9FA70FC5AD00F028A5"'
+      set-cookie: ARRAffinitySameSite=0ff46fa6d58b00f2d44b7073721903c0eace480139d8ecfc38f61130af5e1587;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
       x-powered-by: ASP.NET
-      x-requestid: 50144517-3f3b-42b9-88fe-6c2c1b032afb
+      x-requestid: fdb695b0-5d88-429a-896e-7ed16cde54a7
     status:
       code: 200
       message: OK
-    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
-  response:
-    body:
-      string: '{"id":"0f3368f0-93e9-4fa3-9628-1225509f8e76","createdDateTimeUtc":"2021-05-06T21:07:00.3887357Z","lastActionDateTimeUtc":"2021-05-06T21:07:04.7446138Z","status":"Running","summary":{"total":1,"failed":0,"success":0,"inProgress":1,"notYetStarted":0,"cancelled":0,"totalCharacterCharged":0}}'
-    headers:
-      apim-request-id: 3289fccc-8143-4b22-881f-a87e8484bebd
-      cache-control: public,max-age=1
-      content-encoding: gzip
-      content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 21:07:06 GMT
-      etag: '"95E6FD98AC010EA5AE7943FE61513DA0DA11B4D4124107634659EDD297D06184"'
-      set-cookie: ARRAffinitySameSite=52534756bc24481c0848ee2def3c54a057fd0e51707d9dcf782aa603bbaa9f24;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      vary: Accept-Encoding
-      x-content-type-options: nosniff
-      x-powered-by: ASP.NET
-      x-requestid: 3289fccc-8143-4b22-881f-a87e8484bebd
-    status:
-      code: 200
-      message: OK
-    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
-  response:
-    body:
-      string: '{"id":"0f3368f0-93e9-4fa3-9628-1225509f8e76","createdDateTimeUtc":"2021-05-06T21:07:00.3887357Z","lastActionDateTimeUtc":"2021-05-06T21:07:04.7446138Z","status":"Running","summary":{"total":1,"failed":0,"success":0,"inProgress":1,"notYetStarted":0,"cancelled":0,"totalCharacterCharged":0}}'
-    headers:
-      apim-request-id: a23b46ac-5886-4578-b542-c87c0d2aa90b
-      cache-control: public,max-age=1
-      content-encoding: gzip
-      content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 21:07:07 GMT
-      etag: '"95E6FD98AC010EA5AE7943FE61513DA0DA11B4D4124107634659EDD297D06184"'
-      set-cookie: ARRAffinitySameSite=b85bad1b8326b1376e60e99b410c1da9c99b2e137606973a71315f97deb3a0ce;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      vary: Accept-Encoding
-      x-content-type-options: nosniff
-      x-powered-by: ASP.NET
-      x-requestid: a23b46ac-5886-4578-b542-c87c0d2aa90b
-    status:
-      code: 200
-      message: OK
-    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
-  response:
-    body:
-      string: '{"id":"0f3368f0-93e9-4fa3-9628-1225509f8e76","createdDateTimeUtc":"2021-05-06T21:07:00.3887357Z","lastActionDateTimeUtc":"2021-05-06T21:07:04.7446138Z","status":"Running","summary":{"total":1,"failed":0,"success":0,"inProgress":1,"notYetStarted":0,"cancelled":0,"totalCharacterCharged":0}}'
-    headers:
-      apim-request-id: 15acaab1-1a94-4bee-b37b-b0834d4a535d
-      cache-control: public,max-age=1
-      content-encoding: gzip
-      content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 21:07:08 GMT
-      etag: '"95E6FD98AC010EA5AE7943FE61513DA0DA11B4D4124107634659EDD297D06184"'
-      set-cookie: ARRAffinitySameSite=52534756bc24481c0848ee2def3c54a057fd0e51707d9dcf782aa603bbaa9f24;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      vary: Accept-Encoding
-      x-content-type-options: nosniff
-      x-powered-by: ASP.NET
-      x-requestid: 15acaab1-1a94-4bee-b37b-b0834d4a535d
-    status:
-      code: 200
-      message: OK
-    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
-  response:
-    body:
-      string: '{"id":"0f3368f0-93e9-4fa3-9628-1225509f8e76","createdDateTimeUtc":"2021-05-06T21:07:00.3887357Z","lastActionDateTimeUtc":"2021-05-06T21:07:04.7446138Z","status":"Succeeded","summary":{"total":1,"failed":0,"success":1,"inProgress":0,"notYetStarted":0,"cancelled":0,"totalCharacterCharged":17}}'
-    headers:
-      apim-request-id: 4aa5dfac-8137-4844-b1f3-28c4ab5e3d1b
-      cache-control: public,max-age=1
-      content-encoding: gzip
-      content-type: application/json; charset=utf-8
-      date: Thu, 06 May 2021 21:07:09 GMT
-      etag: '"BC57F6FD71C2A55DD758784F55A04B39B7164B2FAF8193EEF5DA8F723DA9CC41"'
-      set-cookie: ARRAffinitySameSite=b85bad1b8326b1376e60e99b410c1da9c99b2e137606973a71315f97deb3a0ce;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      vary: Accept-Encoding
-      x-content-type-options: nosniff
-      x-powered-by: ASP.NET
-      x-requestid: 4aa5dfac-8137-4844-b1f3-28c4ab5e3d1b
-    status:
-      code: 200
-      message: OK
-    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/batches/0f3368f0-93e9-4fa3-9628-1225509f8e76
+    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0/batches/468d8d25-cb18-49f8-b787-7c988d207850
 version: 1

@@ -16,15 +16,15 @@ import vcr
 
 from .config import TestConfig
 from .const import ENV_TEST_DIAGNOSE
-from .utilities import create_random_name
+from .utilities import create_random_name, _decompress_response_body
 from .decorators import live_only
 
 
 class IntegrationTestBase(unittest.TestCase):
     def __init__(self, method_name):
         super(IntegrationTestBase, self).__init__(method_name)
-        self.diagnose = os.environ.get(ENV_TEST_DIAGNOSE, None) == 'True'
-        self.logger = logging.getLogger('azure_devtools.scenario_tests')
+        self.diagnose = os.environ.get(ENV_TEST_DIAGNOSE, None) == "True"
+        self.logger = logging.getLogger("azure_devtools.scenario_tests")
 
     def create_random_name(self, prefix, length):  # pylint: disable=no-self-use
         return create_random_name(prefix=prefix, length=length)
@@ -35,7 +35,7 @@ class IntegrationTestBase(unittest.TestCase):
         os.close(fd)
         self.addCleanup(lambda: os.remove(path))
 
-        with open(path, mode='r+b') as f:
+        with open(path, mode="r+b") as f:
             if full_random:
                 chunk = os.urandom(1024)
             else:
@@ -70,24 +70,33 @@ class LiveTest(IntegrationTestBase):
 
 class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-attributes
     FILTER_HEADERS = [
-        'authorization',
-        'client-request-id',
-        'retry-after',
-        'x-ms-client-request-id',
-        'x-ms-correlation-request-id',
-        'x-ms-ratelimit-remaining-subscription-reads',
-        'x-ms-request-id',
-        'x-ms-routing-request-id',
-        'x-ms-gateway-service-instanceid',
-        'x-ms-ratelimit-remaining-tenant-reads',
-        'x-ms-served-by',
-        'x-ms-authorization-auxiliary'
+        "authorization",
+        "client-request-id",
+        "retry-after",
+        "x-ms-client-request-id",
+        "x-ms-correlation-request-id",
+        "x-ms-ratelimit-remaining-subscription-reads",
+        "x-ms-request-id",
+        "x-ms-routing-request-id",
+        "x-ms-gateway-service-instanceid",
+        "x-ms-ratelimit-remaining-tenant-reads",
+        "x-ms-served-by",
+        "x-ms-authorization-auxiliary",
     ]
 
-    def __init__(self,  # pylint: disable=too-many-arguments
-                 method_name, config_file=None, recording_dir=None, recording_name=None, recording_processors=None,
-                 replay_processors=None, recording_patches=None, replay_patches=None, match_body=False,
-                 custom_request_matchers=None):
+    def __init__(
+        self,  # pylint: disable=too-many-arguments
+        method_name,
+        config_file=None,
+        recording_dir=None,
+        recording_name=None,
+        recording_processors=None,
+        replay_processors=None,
+        recording_patches=None,
+        replay_patches=None,
+        match_body=False,
+        custom_request_matchers=None,
+    ):
         super(ReplayableTest, self).__init__(method_name)
 
         self.recording_processors = recording_processors or []
@@ -101,7 +110,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
         self.disable_recording = False
 
         test_file_path = inspect.getfile(self.__class__)
-        recording_dir = recording_dir or os.path.join(os.path.dirname(test_file_path), 'recordings')
+        recording_dir = recording_dir or os.path.join(os.path.dirname(test_file_path), "recordings")
         self.is_live = self.config.record_mode
 
         self.vcr = vcr.VCR(
@@ -109,20 +118,17 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
             before_record_request=self._process_request_recording,
             before_record_response=self._process_response_recording,
             decode_compressed_response=True,
-            record_mode='once' if not self.is_live else 'all',
-            filter_headers=self.FILTER_HEADERS
+            record_mode="once" if not self.is_live else "all",
+            filter_headers=self.FILTER_HEADERS,
         )
-        self.vcr.register_matcher('query', self._custom_request_query_matcher)
+        self.vcr.register_matcher("query", self._custom_request_query_matcher)
         if match_body:
-            self.vcr.match_on += ('body',)
+            self.vcr.match_on += ("body",)
         for matcher in custom_request_matchers or []:
             self.vcr.register_matcher(matcher.__name__, matcher)
             self.vcr.match_on += (matcher.__name__,)
 
-        self.recording_file = os.path.join(
-            recording_dir,
-            '{}.yaml'.format(recording_name or method_name)
-        )
+        self.recording_file = os.path.join(recording_dir, "{}.yaml".format(recording_name or method_name))
         if self.is_live and os.path.exists(self.recording_file):
             os.remove(self.recording_file)
 
@@ -133,7 +139,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
     def setUp(self):
         super(ReplayableTest, self).setUp()
 
-        if self.is_live and os.environ.get('AZURE_SKIP_LIVE_RECORDING', '').lower() == 'true':
+        if self.is_live and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "").lower() == "true":
             return
 
         # set up cassette
@@ -152,11 +158,13 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
     def tearDown(self):
         os.environ = self.original_env
         # Autorest.Python 2.x
-        assert not [t for t in threading.enumerate() if t.name.startswith("AzureOperationPoller")], \
-            "You need to call 'result' or 'wait' on all AzureOperationPoller you have created"
+        assert not [
+            t for t in threading.enumerate() if t.name.startswith("AzureOperationPoller")
+        ], "You need to call 'result' or 'wait' on all AzureOperationPoller you have created"
         # Autorest.Python 3.x
-        assert not [t for t in threading.enumerate() if t.name.startswith("LROPoller")], \
-            "You need to call 'result' or 'wait' on all LROPoller you have created"
+        assert not [
+            t for t in threading.enumerate() if t.name.startswith("LROPoller")
+        ], "You need to call 'result' or 'wait' on all LROPoller you have created"
 
     def _process_request_recording(self, request):
         if self.disable_recording:
@@ -177,17 +185,22 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
 
     def _process_response_recording(self, response):
         from .utilities import is_text_payload
+
         if self.in_recording:
             # make header name lower case and filter unwanted headers
             headers = {}
-            for key in response['headers']:
+            for key in response["headers"]:
                 if key.lower() not in self.FILTER_HEADERS:
-                    headers[key.lower()] = response['headers'][key]
-            response['headers'] = headers
+                    headers[key.lower()] = response["headers"][key]
+            response["headers"] = headers
 
-            body = response['body']['string']
+            body = response["body"]["string"]
+            response = _decompress_response_body(response)
             if is_text_payload(response) and body and not isinstance(body, six.string_types):
-                response['body']['string'] = body.decode('utf-8')
+                try:
+                    response["body"]["string"] = body.decode("utf-8")
+                except UnicodeDecodeError:
+                    pass
 
             for processor in self.recording_processors:
                 response = processor.process_response(response)

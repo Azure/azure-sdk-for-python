@@ -47,7 +47,7 @@ class TemplateSpecVersionsOperations:
         template_spec_name: str,
         template_spec_version: str,
         template_spec_version_model: "_models.TemplateSpecVersion",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TemplateSpecVersion":
         """Creates or updates a Template Spec version.
 
@@ -122,7 +122,7 @@ class TemplateSpecVersionsOperations:
         template_spec_name: str,
         template_spec_version: str,
         template_spec_version_update_model: Optional["_models.TemplateSpecVersionUpdateModel"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TemplateSpecVersion":
         """Updates Template Spec Version tags with specified values.
 
@@ -196,7 +196,7 @@ class TemplateSpecVersionsOperations:
         resource_group_name: str,
         template_spec_name: str,
         template_spec_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TemplateSpecVersion":
         """Gets a Template Spec version from a specific Template Spec.
 
@@ -259,7 +259,7 @@ class TemplateSpecVersionsOperations:
         resource_group_name: str,
         template_spec_name: str,
         template_spec_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a specific version from a Template Spec. When operation completes, status code 200
         returned without content.
@@ -319,7 +319,7 @@ class TemplateSpecVersionsOperations:
         self,
         resource_group_name: str,
         template_spec_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TemplateSpecVersionsListResult"]:
         """Lists all the Template Spec versions in the specified Template Spec.
 

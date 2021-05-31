@@ -25,7 +25,7 @@ class AzureReservationAPIOperationsMixin:
         subscription_id: str,
         reserved_resource_type: str,
         location: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.Catalog"]:
         """Get the regions and skus that are available for RI purchase for the specified Azure subscription.
 
@@ -76,7 +76,7 @@ class AzureReservationAPIOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[Catalog]', pipeline_response)
@@ -90,7 +90,7 @@ class AzureReservationAPIOperationsMixin:
     async def get_applied_reservation_list(
         self,
         subscription_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AppliedReservations":
         """Get list of applicable ``Reservation``\ s.
 
@@ -133,7 +133,7 @@ class AzureReservationAPIOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AppliedReservations', pipeline_response)

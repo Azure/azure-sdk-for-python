@@ -23,7 +23,7 @@ Install the Azure Document Translation client library for Python with [pip][pip]
 pip install azure-ai-translation-document --pre
 ```
 
-> Note: This version of the client library defaults to the v1.0-preview.1 version of the service
+> Note: This version of the client library defaults to the v1.0 version of the service
 
 #### Create a Document Translation resource
 Document Translation supports [single-service access][single_service] only.
@@ -84,6 +84,33 @@ from azure.ai.translation.document import DocumentTranslationClient
 endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
 credential = AzureKeyCredential("<api_key>")
 document_translation_client = DocumentTranslationClient(endpoint, credential)
+```
+
+#### Create the client with an Azure Active Directory credential
+
+`AzureKeyCredential` authentication is used in the examples in this getting started guide, but you can also
+authenticate with Azure Active Directory using the [azure-identity][azure_identity] library.
+
+To use the [DefaultAzureCredential][default_azure_credential] type shown below, or other credential types provided
+with the Azure SDK, please install the `azure-identity` package:
+
+```pip install azure-identity```
+
+You will also need to [register a new AAD application and grant access][register_aad_app] to your
+Translator resource by assigning the `"Cognitive Services User"` role to your service principal.
+
+Once completed, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
+`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.ai.translation.document import DocumentTranslationClient
+credential = DefaultAzureCredential()
+
+document_translation_client = DocumentTranslationClient(
+    endpoint="https://<resource-name>.cognitiveservices.azure.com/",
+    credential=credential
+)
 ```
 
 ## Key concepts
@@ -380,6 +407,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
 [azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#get-your-custom-domain-name-and-subscription-key
 [cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#get-your-subscription-key
+[register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+[custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
+[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
 
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 

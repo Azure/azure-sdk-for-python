@@ -1,5 +1,38 @@
 # Release History
 
+## 21.0.0 (2021-05-25)
+
+**Features**
+
+  - Model NetworkInterfaceReference has a new parameter delete_option
+  - Model DataDisk has a new parameter delete_option
+  - Model VirtualMachineScaleSetPublicIPAddressConfiguration has a new parameter sku
+  - Model VirtualMachineScaleSetPublicIPAddressConfiguration has a new parameter delete_option
+  - Model VirtualMachineScaleSetNetworkConfiguration has a new parameter delete_option
+  - Model OSDisk has a new parameter delete_option
+  - Model VirtualMachineScaleSetVM has a new parameter user_data
+  - Model VirtualMachineScaleSetUpdateNetworkProfile has a new parameter network_api_version
+  - Model VirtualMachineScaleSetUpdateVMProfile has a new parameter user_data
+  - Model VirtualMachineScaleSetVMProfile has a new parameter user_data
+  - Model LinuxPatchSettings has a new parameter assessment_mode
+  - Model VirtualMachineScaleSetUpdatePublicIPAddressConfiguration has a new parameter delete_option
+  - Model VirtualMachineUpdate has a new parameter user_data
+  - Model VirtualMachineUpdate has a new parameter scheduled_events_profile
+  - Model NetworkProfile has a new parameter network_api_version
+  - Model NetworkProfile has a new parameter network_interface_configurations
+  - Model VirtualMachine has a new parameter user_data
+  - Model VirtualMachine has a new parameter scheduled_events_profile
+  - Model PatchSettings has a new parameter assessment_mode
+  - Model VirtualMachineScaleSetUpdateNetworkConfiguration has a new parameter delete_option
+  - Model VirtualMachineScaleSetNetworkProfile has a new parameter network_api_version
+  - Added operation group RestorePointCollectionsOperations
+  - Added operation group RestorePointsOperations
+
+**Breaking changes**
+
+  - Operation VirtualMachineScaleSetsOperations.get has a new signature
+  - Model PurchasePlan no longer has parameter promotion_code
+
 ## 20.0.0 (2021-04-06)
 
 **Features**

@@ -46,12 +46,19 @@ class ManagementGroupsOperations:
     def list(
         self,
         cache_control: Optional[str] = "no-cache",
-        **kwargs
+        skiptoken: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagementGroupListResult"]:
         """List management groups for the authenticated user.
 
-        :param cache_control: Indicates that the request shouldn't utilize any caches.
+        :param cache_control: Indicates whether the request should utilize any caches. Populate the
+         header with 'no-cache' value to bypass existing caches.
         :type cache_control: str
+        :param skiptoken: Page continuation token is only used if a previous operation returned a
+         partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a token parameter that specifies a starting point to use for subsequent calls.
+        :type skiptoken: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagementGroupListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.managementgroups.models.ManagementGroupListResult]
@@ -62,7 +69,7 @@ class ManagementGroupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -78,8 +85,8 @@ class ManagementGroupsOperations:
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-                if self._config.skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("self._config.skiptoken", self._config.skiptoken, 'str')
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -102,7 +109,7 @@ class ManagementGroupsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -120,7 +127,7 @@ class ManagementGroupsOperations:
         recurse: Optional[bool] = None,
         filter: Optional[str] = None,
         cache_control: Optional[str] = "no-cache",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementGroup":
         """Get the details of the management group.
 
@@ -128,7 +135,7 @@ class ManagementGroupsOperations:
         :type group_id: str
         :param expand: The $expand=children query string parameter allows clients to request inclusion
          of children in the response payload.  $expand=path includes the path from the root group to the
-         current group.
+         current group.  $expand=ancestors includes the ancestor Ids of the current group.
         :type expand: str or ~azure.mgmt.managementgroups.models.Enum0
         :param recurse: The $recurse=true query string parameter allows clients to request inclusion of
          entire hierarchy in the response payload. Note that  $expand=children must be passed up if
@@ -137,7 +144,8 @@ class ManagementGroupsOperations:
         :param filter: A filter which allows the exclusion of subscriptions from results (i.e.
          '$filter=children.childType ne Subscription').
         :type filter: str
-        :param cache_control: Indicates that the request shouldn't utilize any caches.
+        :param cache_control: Indicates whether the request should utilize any caches. Populate the
+         header with 'no-cache' value to bypass existing caches.
         :type cache_control: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementGroup, or the result of cls(response)
@@ -149,7 +157,7 @@ class ManagementGroupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         # Construct URL
@@ -181,7 +189,7 @@ class ManagementGroupsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementGroup', pipeline_response)
@@ -197,14 +205,14 @@ class ManagementGroupsOperations:
         group_id: str,
         create_management_group_request: "_models.CreateManagementGroupRequest",
         cache_control: Optional[str] = "no-cache",
-        **kwargs
+        **kwargs: Any
     ) -> Union["_models.ManagementGroup", "_models.AzureAsyncOperationResults"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.ManagementGroup", "_models.AzureAsyncOperationResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -235,7 +243,7 @@ class ManagementGroupsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -258,7 +266,7 @@ class ManagementGroupsOperations:
         group_id: str,
         create_management_group_request: "_models.CreateManagementGroupRequest",
         cache_control: Optional[str] = "no-cache",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[Union["_models.ManagementGroup", "_models.AzureAsyncOperationResults"]]:
         """Create or update a management group.
         If a management group is already created and a subsequent create request is issued with
@@ -268,12 +276,13 @@ class ManagementGroupsOperations:
         :type group_id: str
         :param create_management_group_request: Management group creation parameters.
         :type create_management_group_request: ~azure.mgmt.managementgroups.models.CreateManagementGroupRequest
-        :param cache_control: Indicates that the request shouldn't utilize any caches.
+        :param cache_control: Indicates whether the request should utilize any caches. Populate the
+         header with 'no-cache' value to bypass existing caches.
         :type cache_control: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagementGroup or the result of cls(response)
@@ -329,7 +338,7 @@ class ManagementGroupsOperations:
         group_id: str,
         patch_group_request: "_models.PatchManagementGroupRequest",
         cache_control: Optional[str] = "no-cache",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementGroup":
         """Update a management group.
 
@@ -337,7 +346,8 @@ class ManagementGroupsOperations:
         :type group_id: str
         :param patch_group_request: Management group patch parameters.
         :type patch_group_request: ~azure.mgmt.managementgroups.models.PatchManagementGroupRequest
-        :param cache_control: Indicates that the request shouldn't utilize any caches.
+        :param cache_control: Indicates whether the request should utilize any caches. Populate the
+         header with 'no-cache' value to bypass existing caches.
         :type cache_control: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagementGroup, or the result of cls(response)
@@ -349,7 +359,7 @@ class ManagementGroupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -380,7 +390,7 @@ class ManagementGroupsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementGroup', pipeline_response)
@@ -395,14 +405,14 @@ class ManagementGroupsOperations:
         self,
         group_id: str,
         cache_control: Optional[str] = "no-cache",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.AzureAsyncOperationResults"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AzureAsyncOperationResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         # Construct URL
@@ -428,7 +438,7 @@ class ManagementGroupsOperations:
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -448,19 +458,20 @@ class ManagementGroupsOperations:
         self,
         group_id: str,
         cache_control: Optional[str] = "no-cache",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AzureAsyncOperationResults"]:
         """Delete management group.
         If a management group contains child resources, the request will fail.
 
         :param group_id: Management Group ID.
         :type group_id: str
-        :param cache_control: Indicates that the request shouldn't utilize any caches.
+        :param cache_control: Indicates whether the request should utilize any caches. Populate the
+         header with 'no-cache' value to bypass existing caches.
         :type cache_control: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AzureAsyncOperationResults or the result of cls(response)
@@ -517,12 +528,22 @@ class ManagementGroupsOperations:
     def get_descendants(
         self,
         group_id: str,
-        **kwargs
+        skiptoken: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.DescendantListResult"]:
         """List all entities that descend from a management group.
 
         :param group_id: Management Group ID.
         :type group_id: str
+        :param skiptoken: Page continuation token is only used if a previous operation returned a
+         partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a token parameter that specifies a starting point to use for subsequent calls.
+        :type skiptoken: str
+        :param top: Number of elements to return when retrieving results. Passing this in will override
+         $skipToken.
+        :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DescendantListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.managementgroups.models.DescendantListResult]
@@ -533,7 +554,7 @@ class ManagementGroupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -551,10 +572,10 @@ class ManagementGroupsOperations:
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-                if self._config.skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("self._config.skiptoken", self._config.skiptoken, 'str')
-                if self._config.top is not None:
-                    query_parameters['$top'] = self._serialize.query("self._config.top", self._config.top, 'int')
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -577,7 +598,7 @@ class ManagementGroupsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

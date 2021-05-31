@@ -16,7 +16,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -24,13 +24,13 @@ interactions:
       string: '{"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.95}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.89}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","offset":4,"length":10,"confidenceScore":0.87}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
       apim-request-id:
-      - b644499d-0c33-4410-877d-7399bb417e10
+      - 311d7fdb-ec89-4919-8f61-aeff042d81c5
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Tue, 27 Apr 2021 20:10:12 GMT
+      - Tue, 18 May 2021 17:47:56 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2535'
+      - '22'
     status:
       code: 200
       message: OK
@@ -59,7 +59,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -67,13 +67,13 @@ interactions:
       string: '{"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.95}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.89}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.87}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
       apim-request-id:
-      - 76de85c7-20a9-4a3a-85e4-6a156a4263aa
+      - 3862bc31-d6c3-4271-9ae3-402d1daad32f
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Tue, 27 Apr 2021 20:10:12 GMT
+      - Tue, 18 May 2021 17:47:56 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -81,7 +81,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '32'
+      - '25'
     status:
       code: 200
       message: OK
@@ -102,7 +102,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -110,13 +110,13 @@ interactions:
       string: '{"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.95}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.89}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","offset":4,"length":10,"confidenceScore":0.87}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
       apim-request-id:
-      - cfce056a-ebf8-4912-973e-45061e225048
+      - 079472eb-4f2c-440a-a5e8-24c0ea251727
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Tue, 27 Apr 2021 20:10:12 GMT
+      - Tue, 18 May 2021 17:47:56 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

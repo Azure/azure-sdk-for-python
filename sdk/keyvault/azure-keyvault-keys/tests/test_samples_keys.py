@@ -12,6 +12,7 @@ from _test_case import client_setup, get_decorator, KeysTestCase
 
 
 all_api_versions = get_decorator(vault_only=True)
+hsm_only = get_decorator(hsm_only=True)
 
 
 def print(*args):
@@ -122,6 +123,19 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         # if you want to block until deletion is complete, call wait() on the poller
         deleted_key_poller.wait()
         # [END delete_key]
+
+    @hsm_only()
+    @client_setup
+    def test_example_create_oct_key(self, key_client, **kwargs):
+        key_name = self.get_resource_name("key")
+
+        # [START create_oct_key]
+        key = key_client.create_oct_key(key_name, size=256, hardware_protected=True)
+
+        print(key.id)
+        print(key.name)
+        print(key.key_type)
+        # [END create_oct_key]
 
     @all_api_versions()
     @client_setup

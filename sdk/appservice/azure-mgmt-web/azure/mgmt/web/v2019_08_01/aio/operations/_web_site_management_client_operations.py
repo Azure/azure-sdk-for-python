@@ -23,7 +23,7 @@ class WebSiteManagementClientOperationsMixin:
 
     async def get_publishing_user(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.User":
         """Gets publishing user.
 
@@ -59,7 +59,7 @@ class WebSiteManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('User', pipeline_response)
@@ -73,7 +73,7 @@ class WebSiteManagementClientOperationsMixin:
     async def update_publishing_user(
         self,
         user_details: "_models.User",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.User":
         """Updates publishing user.
 
@@ -116,7 +116,7 @@ class WebSiteManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('User', pipeline_response)
@@ -129,7 +129,7 @@ class WebSiteManagementClientOperationsMixin:
 
     def list_source_controls(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SourceControlCollection"]:
         """Gets the source controls available for Azure websites.
 
@@ -181,7 +181,7 @@ class WebSiteManagementClientOperationsMixin:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -195,7 +195,7 @@ class WebSiteManagementClientOperationsMixin:
     async def get_source_control(
         self,
         source_control_type: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SourceControl":
         """Gets source control token.
 
@@ -237,7 +237,7 @@ class WebSiteManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SourceControl', pipeline_response)
@@ -252,7 +252,7 @@ class WebSiteManagementClientOperationsMixin:
         self,
         source_control_type: str,
         request_message: "_models.SourceControl",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SourceControl":
         """Updates source control token.
 
@@ -301,7 +301,7 @@ class WebSiteManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SourceControl', pipeline_response)
@@ -316,7 +316,7 @@ class WebSiteManagementClientOperationsMixin:
         self,
         billing_location: Optional[str] = None,
         os_type: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingMeterCollection"]:
         """Gets a list of meters for a given location.
 
@@ -380,7 +380,7 @@ class WebSiteManagementClientOperationsMixin:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -396,7 +396,7 @@ class WebSiteManagementClientOperationsMixin:
         name: str,
         type: Union[str, "_models.CheckNameResourceTypes"],
         is_fqdn: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceNameAvailability":
         """Check if a resource name is available.
 
@@ -449,7 +449,7 @@ class WebSiteManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ResourceNameAvailability', pipeline_response)
@@ -462,7 +462,7 @@ class WebSiteManagementClientOperationsMixin:
 
     async def get_subscription_deployment_locations(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentLocations":
         """Gets list of available geo regions plus ministamps.
 
@@ -502,7 +502,7 @@ class WebSiteManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DeploymentLocations', pipeline_response)
@@ -519,7 +519,7 @@ class WebSiteManagementClientOperationsMixin:
         linux_workers_enabled: Optional[bool] = None,
         xenon_workers_enabled: Optional[bool] = None,
         linux_dynamic_workers_enabled: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.GeoRegionCollection"]:
         """Get a list of available geographical regions.
 
@@ -594,7 +594,7 @@ class WebSiteManagementClientOperationsMixin:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -608,7 +608,7 @@ class WebSiteManagementClientOperationsMixin:
     def list_site_identifiers_assigned_to_host_name(
         self,
         name_identifier: "_models.NameIdentifier",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IdentifierCollection"]:
         """List all apps that are assigned to a hostname.
 
@@ -674,7 +674,7 @@ class WebSiteManagementClientOperationsMixin:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -687,7 +687,7 @@ class WebSiteManagementClientOperationsMixin:
 
     def list_premier_add_on_offers(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PremierAddOnOfferCollection"]:
         """List all premier add-on offers.
 
@@ -743,7 +743,7 @@ class WebSiteManagementClientOperationsMixin:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -756,7 +756,7 @@ class WebSiteManagementClientOperationsMixin:
 
     async def list_skus(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SkuInfos":
         """List all SKUs.
 
@@ -796,7 +796,7 @@ class WebSiteManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SkuInfos', pipeline_response)
@@ -810,7 +810,7 @@ class WebSiteManagementClientOperationsMixin:
     async def verify_hosting_environment_vnet(
         self,
         parameters: "_models.VnetParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VnetValidationFailureDetails":
         """Verifies if this VNET is compatible with an App Service Environment by analyzing the Network Security Group rules.
 
@@ -858,7 +858,7 @@ class WebSiteManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetValidationFailureDetails', pipeline_response)
@@ -873,7 +873,7 @@ class WebSiteManagementClientOperationsMixin:
         self,
         resource_group_name: str,
         move_resource_envelope: "_models.CsmMoveResourceEnvelope",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Move resources between resource groups.
 
@@ -923,7 +923,7 @@ class WebSiteManagementClientOperationsMixin:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -935,7 +935,7 @@ class WebSiteManagementClientOperationsMixin:
         self,
         resource_group_name: str,
         validate_request: "_models.ValidateRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ValidateResponse":
         """Validate if a resource can be created.
 
@@ -985,7 +985,7 @@ class WebSiteManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ValidateResponse', pipeline_response)
@@ -1000,7 +1000,7 @@ class WebSiteManagementClientOperationsMixin:
         self,
         resource_group_name: str,
         move_resource_envelope: "_models.CsmMoveResourceEnvelope",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Validate whether a resource can be moved.
 
@@ -1050,7 +1050,7 @@ class WebSiteManagementClientOperationsMixin:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

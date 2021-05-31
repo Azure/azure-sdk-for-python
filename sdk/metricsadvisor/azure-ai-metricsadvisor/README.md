@@ -120,7 +120,7 @@ import os
 import datetime
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
 from azure.ai.metricsadvisor.models import (
-        SQLServerDataFeedSource,
+        SqlServerDataFeedSource,
         DataFeedSchema,
         DataFeedMetric,
         DataFeedDimension,
@@ -142,7 +142,7 @@ client = MetricsAdvisorAdministrationClient(
 
 data_feed = client.create_data_feed(
     name="My data feed",
-    source=SQLServerDataFeedSource(
+    source=SqlServerDataFeedSource(
         connection_string=sql_server_connection_string,
         query=query,
     ),

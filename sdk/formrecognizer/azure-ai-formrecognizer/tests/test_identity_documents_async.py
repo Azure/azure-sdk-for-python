@@ -197,7 +197,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
             self.assertEqual(passport["DateOfBirth"].value, date(1985,1,1))
             self.assertEqual(passport["DateOfExpiration"].value, date(2023,1,14))
             self.assertEqual(passport["Sex"].value, "F")
-            self.assertEqual(passport["Country"].value, "CAN")
+            self.assertEqual(passport["CountryRegion"].value, "CAN")
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -215,13 +215,12 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
 
         self.assertEqual(id_document.fields.get("LastName").value, "TALBOT")
         self.assertEqual(id_document.fields.get("FirstName").value, "LIAM R.")
-        # FIXME: service error when reading the license number returns 'LICWDLACD5DG'
-        # self.assertEqual(id_document.fields.get("DocumentNumber").value, "WDLABCD456DG")
+        self.assertEqual(id_document.fields.get("DocumentNumber").value, "WDLABCD456DG")
         self.assertEqual(id_document.fields.get("DateOfBirth").value, date(1958,1,6))
         self.assertEqual(id_document.fields.get("DateOfExpiration").value, date(2020,8,12))
         self.assertEqual(id_document.fields.get("Sex").value, "M")
         self.assertEqual(id_document.fields.get("Address").value, "123 STREET ADDRESS YOUR CITY WA 99999-1234")
-        self.assertEqual(id_document.fields.get("Country").value, "USA")
+        self.assertEqual(id_document.fields.get("CountryRegion").value, "USA")
         self.assertEqual(id_document.fields.get("Region").value, "Washington")
 
     @FormRecognizerPreparer()
@@ -239,7 +238,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         self.assertFormPagesHasValues(id_document.pages)
 
         for field in id_document.fields.values():
-            if field.name == "Country":
+            if field.name == "CountryRegion":
                 self.assertEqual(field.value, "USA")
                 continue
             elif field.name == "Region":
@@ -269,7 +268,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_recognize_identity_documents(id_document)
-        assert "Method 'begin_recognize_identity_documents' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+        assert "Method 'begin_recognize_identity_documents' is only available for API version V2_1 and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
