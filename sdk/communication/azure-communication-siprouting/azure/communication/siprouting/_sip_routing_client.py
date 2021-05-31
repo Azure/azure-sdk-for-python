@@ -111,8 +111,7 @@ class SIPRoutingClient(object):
         if not online_pstn_routing_settings:
             raise ValueError("Online PSTN routing setting can not be null")
 
-        updated_sip_configuration = SipConfiguration(
-            trunks = online_pstn_gateways, routes = online_pstn_routing_settings)
+        updated_sip_configuration = SipConfiguration(trunks=online_pstn_gateways, routes=online_pstn_routing_settings)
         return self._rest_service.patch_sip_configuration(body=updated_sip_configuration, **kwargs)
 
     @distributed_trace
