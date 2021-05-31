@@ -22,7 +22,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         ):
         # type: (...) -> None
 
-        super(HMACCredentialsPolicy, self).__init__() # pylint: disable=R1725
+        super(HMACCredentialsPolicy, self).__init__()
 
         if host.startswith("https://"):
             self._host = host.replace("https://", "")

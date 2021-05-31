@@ -39,7 +39,7 @@ class SIPRoutingClient(object):
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string") # pylint: disable=W0707
+            raise ValueError("Host URL must be a string")
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
