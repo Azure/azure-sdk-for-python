@@ -4,20 +4,18 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import unittest
+import aiounittest
 import json
+import pytest
 
-from azure.communication.siprouting import SIPRoutingClient
+from azure.communication.siprouting.aio import SIPRoutingClient
 from azure.core.credentials import AccessToken
 from azure.communication.siprouting._generated.models import Trunk, TrunkRoute
 
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock  # type: ignore
+from unittest.mock import Mock, patch, AsyncMock
 
 
-class TestSIPRoutingClient(unittest.TestCase):
+class TestSIPRoutingClientAsync(aiounittest.AsyncTestCase):
     @classmethod
     def mock_response(self, status_code=200, headers=None, json_payload=None):
         response = Mock(status_code=status_code, headers=headers or {})
@@ -56,74 +54,106 @@ class TestSIPRoutingClient(unittest.TestCase):
         self.response = self.mock_response(
             status_code=200, json_payload=self.payload)
 
-    def test_get_sip_configuration(self):
-        def mock_send(*_, **__):
+    @pytest.mark.asyncio
+    async def test_get_sip_configuration(self):
+        async def mock_send(*_, **__):
             return self.response
 
         test_client = SIPRoutingClient(
-            "https://endpoint", AccessToken("Fake Token", 0), transport=Mock(send=mock_send))
+            "https://endpoint", AccessToken("Fake Token", 0), transport=AsyncMock(send=mock_send))
 
-        response = test_client.get_sip_configuration()
+        response = await test_client.get_sip_configuration()
 
         self.assertEqual(response.trunks, self.test_trunks)
         self.assertEqual(response.routes, self.test_routes)
 
-    def test_update_sip_trunk_configuration(self):
-        mock = Mock(send=Mock(return_value=self.response))
+    @pytest.mark.asyncio
+    async def test_update_sip_trunk_configuration(self):
+        mock = AsyncMock(send=AsyncMock(return_value=self.response))
         test_client = SIPRoutingClient(
             "https://endpoint", AccessToken("Fake Token", 0), transport=mock)
 
-        test_client.update_sip_trunk_configuration(
+        await test_client.update_sip_trunk_configuration(
             self.test_trunks, self.test_routes)
 
         self.assertEqual(
             json.loads(mock.send.call_args.args[0].body), self.payload)
-
-    def test_update_pstn_gateways(self):
+    
+    @pytest.mark.asyncio
+    async def test_update_pstn_gateways(self):
         expected_request_body = {"trunks": {
             "trunk_1": {"sipSignalingPort": 4001}}}
-        mock = Mock(send=Mock(return_value=self.response))
+        mock = AsyncMock(send=AsyncMock(return_value=self.response))
         test_client = SIPRoutingClient(
             "https://endpoint", AccessToken("Fake Token", 0), transport=mock)
 
-        test_client.update_pstn_gateways(self.test_trunks)
+        await test_client.update_pstn_gateways(self.test_trunks)
 
         self.assertEqual(
             json.loads(mock.send.call_args.args[0].body), expected_request_body)
 
-    def test_update_routing_settings(self):
+    @pytest.mark.asyncio
+    async def test_update_routing_settings(self):
         expected_request_body = {"routes": [
             {"name": "route_1", "numberPattern": "x", "trunks": ["trunk_1"]}]}
 
-        mock = Mock(send=Mock(return_value=self.response))
+        mock = AsyncMock(send=AsyncMock(return_value=self.response))
         test_client = SIPRoutingClient(
             "https://endpoint", AccessToken("Fake Token", 0), transport=mock)
 
-        test_client.update_routing_settings(self.test_routes)
+        await test_client.update_routing_settings(self.test_routes)
 
         self.assertEqual(
             json.loads(mock.send.call_args.args[0].body), expected_request_body)
 
-    def test_update_sip_trunk_configuration_no_online_pstn_gateways_raises_value_error(self):
+    @pytest.mark.asyncio
+    async def test_update_sip_trunk_configuration_no_online_pstn_gateways_raises_value_error(self):
         test_client = self.get_simple_test_client()
 
-        with self.assertRaises(ValueError):
-            test_client.update_sip_trunk_configuration(None, self.test_routes)
+        try:
+            await test_client.update_sip_trunk_configuration(None, self.test_routes)
+            raised = False
+        except ValueError:
+            raised = True
 
-    def test_update_sip_trunk_configuration_no_online_pstn_routing_settings_raises_value_error(self):
+        self.assertTrue(raised)
+
+    @pytest.mark.asyncio
+    async def test_update_sip_trunk_configuration_no_online_pstn_routing_settings_raises_value_error(self):
         test_client = self.get_simple_test_client()
 
-        with self.assertRaises(ValueError):
-            test_client.update_sip_trunk_configuration(self.test_trunks, None)
+        try:
+            await test_client.update_sip_trunk_configuration(self.test_trunks, None)
+            raised = False
+        except ValueError:
+            raised = True
 
-    def test_update_pstn_gateways_no_gateways_raises_value_error(self):
+        self.assertTrue(raised)
+
+    @pytest.mark.asyncio
+    async def test_update_pstn_gateways_no_gateways_raises_value_error(self):
         test_client = self.get_simple_test_client()
 
-        with self.assertRaises(ValueError):
-            test_client.update_pstn_gateways(None)
+        try:
+            await test_client.update_pstn_gateways(None)
+        except ValueError:
+            raised = True
 
-    def test_update_routing_settings_no_routting_raises_value_error(self):
-        test_client = self.get_simple_test_client()
+        self.assertTrue(raised)
 
-        with self.assertRaises(ValueError):
-            test_client.update_routing_settings(None)
+    @pytest.mark.asyncio
+    async def test_update_routing_settings_no_routting_raises_value_error(self):
+        # test_client = self.get_simple_test_client()
+        test_client = SIPRoutingClient("https://endpoint", AccessToken("Fake Token", 0))
+
+        try:
+            await test_client.update_routing_settings(None)
+        except ValueError:
+            raised = True
+
+        self.assertTrue(raised)
+
+#test_client = TestSIPRoutingClient()
+
+#test_client.setUp()
+#res = asyncio.run( test_client.test_update_sip_trunk_configuration_no_online_pstn_gateways_raises_value_error())

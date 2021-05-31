@@ -17,7 +17,7 @@ from .._shared.user_credential import CommunicationTokenCredential
 
 
 class SIPRoutingClient(object):
-    """A client to interact with the AzureCommunicationService SIP routing gateway.
+    """A client to interact with the AzureCommunicationService SIP routing gateway asynchronously.
 
     This client provides operations to retrieve and update SIP routing configuration.
     :param endpoint: The endpoint url for Azure Communication Service resource.
