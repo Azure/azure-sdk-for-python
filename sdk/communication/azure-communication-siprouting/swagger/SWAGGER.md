@@ -5,7 +5,7 @@ This is the AutoRest configuration file for the API-NAME.
 
 ---
 ## Getting Started
-To build the SDK for API-NAME, simply [Install AutoRest](https://aka.ms/autorest/install) and in this folder, run:
+To build the SDK for API-NAME, simply Install AutoRest and in this folder, run:
 
 > `autorest`
 

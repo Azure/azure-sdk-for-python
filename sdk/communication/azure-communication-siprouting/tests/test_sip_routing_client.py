@@ -70,12 +70,12 @@ class TestSIPRoutingClient(unittest.TestCase):
         test_client.update_sip_trunk_configuration(
             self.test_trunks, self.test_routes)
 
-        payload_string = str(self.payload)
         self.assertEqual(
-            mock.send.call_args.args[0].body, payload_string.replace("\'", "\""))
+            json.loads(mock.send.call_args.args[0].body), self.payload)
 
     def test_update_pstn_gateways(self):
-        expected_request_body = r'{"trunks": {"trunk_1": {"sipSignalingPort": 4001}}}'
+        expected_request_body = {"trunks": {
+            "trunk_1": {"sipSignalingPort": 4001}}}
         mock = Mock(send=Mock(return_value=self.response))
         test_client = SIPRoutingClient(
             "https://endpoint", AccessToken("Fake Token", 0), transport=mock)
@@ -83,10 +83,11 @@ class TestSIPRoutingClient(unittest.TestCase):
         test_client.update_pstn_gateways(self.test_trunks)
 
         self.assertEqual(
-            mock.send.call_args.args[0].body, expected_request_body)
+            json.loads(mock.send.call_args.args[0].body), expected_request_body)
 
     def test_update_routing_settings(self):
-        expected_request_body = r'{"routes": [{"name": "route_1", "numberPattern": "x", "trunks": ["trunk_1"]}]}'
+        expected_request_body = {"routes": [
+            {"name": "route_1", "numberPattern": "x", "trunks": ["trunk_1"]}]}
 
         mock = Mock(send=Mock(return_value=self.response))
         test_client = SIPRoutingClient(
@@ -95,7 +96,7 @@ class TestSIPRoutingClient(unittest.TestCase):
         test_client.update_routing_settings(self.test_routes)
 
         self.assertEqual(
-            mock.send.call_args.args[0].body, expected_request_body)
+            json.loads(mock.send.call_args.args[0].body), expected_request_body)
 
     def test_update_sip_trunk_configuration_no_online_pstn_gateways_raises_value_error(self):
         test_client = self.get_simple_test_client()

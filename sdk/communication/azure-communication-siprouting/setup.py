@@ -58,14 +58,17 @@ setup(
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure'
+        'azure.communication'
     ]),
     install_requires=[
-        #'msrest>=0.5.0',
-        #'msrestazure>=0.4.32,<2.0.0',
-        #'azure-common~=1.1',
+        'azure-core<2.0.0,>=1.11.0',
+        'msrest>=0.6.0',
+        'six>=1.11.0'
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
+        ":python_version<'3.0'": ['azure-communication-nspkg'],
+        ":python_version<'3.5'": ["typing"],
+        ":python_version<'3.8'": ["typing-extensions"]
     },
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',

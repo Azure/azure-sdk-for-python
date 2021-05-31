@@ -10,10 +10,10 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
 
 from azure.core.tracing.decorator import distributed_trace
-from ._generated._azure_communication_sip_routing_service import AzureCommunicationSIPRoutingService
-from ._shared.utils import parse_connection_str
-from ._generated.models import SipConfiguration, Trunk, TrunkRoute
-from ._shared.user_credential import CommunicationTokenCredential
+from .._generated.aio._azure_communication_sip_routing_service import AzureCommunicationSIPRoutingService
+from .._shared.utils import parse_connection_str
+from .._generated.models import SipConfiguration, Trunk, TrunkRoute
+from .._shared.user_credential import CommunicationTokenCredential
 
 
 class SIPRoutingClient(object):
@@ -70,7 +70,7 @@ class SIPRoutingClient(object):
         return cls(endpoint, credential, **kwargs)
 
     @distributed_trace
-    def get_sip_configuration(
+    async def get_sip_configuration(
             self,
             **kwargs  # type: any
     ):  # type: (...) -> SipConfiguration
@@ -80,13 +80,13 @@ class SIPRoutingClient(object):
         : rtype: ~SipConfiguration
         """
 
-        acs_resource_calling_configuration = self._rest_service.get_sip_configuration(
+        acs_resource_calling_configuration = await self._rest_service.get_sip_configuration(
             **kwargs)
 
         return acs_resource_calling_configuration
 
     @distributed_trace
-    def update_sip_trunk_configuration(
+    async def update_sip_trunk_configuration(
             self,
             online_pstn_gateways,  # type: dict[str,Trunk]
             online_pstn_routing_settings,  # type: list[TrunkRoute]
@@ -112,11 +112,11 @@ class SIPRoutingClient(object):
             raise ValueError("Online PSTN routing setting can not be null")
 
         updated_sip_configuration = SipConfiguration(
-            trunks = online_pstn_gateways, routes = online_pstn_routing_settings)
-        return self._rest_service.patch_sip_configuration(body=updated_sip_configuration, **kwargs)
+            trunks=online_pstn_gateways, routes=online_pstn_routing_settings)
+        return await self._rest_service.patch_sip_configuration(body=updated_sip_configuration, **kwargs)
 
     @distributed_trace
-    def update_pstn_gateways(
+    async def update_pstn_gateways(
             self,
             online_pstn_gateways,  # type: dict[str,Trunk]
             **kwargs  # type: any
@@ -135,10 +135,10 @@ class SIPRoutingClient(object):
 
         updated_sip_configuration = SipConfiguration(
             trunks=online_pstn_gateways)
-        return self._rest_service.patch_sip_configuration(body=updated_sip_configuration, **kwargs)
+        return await  self._rest_service.patch_sip_configuration(body=updated_sip_configuration, **kwargs)
 
     @distributed_trace
-    def update_routing_settings(
+    async def update_routing_settings(
             self,
             online_pstn_routing_settings,  # type: list[TrunkRoute]
             **kwargs  # type: any
@@ -157,4 +157,4 @@ class SIPRoutingClient(object):
 
         updated_sip_configuration = SipConfiguration(
             routes=online_pstn_routing_settings)
-        return self._rest_service.patch_sip_configuration(body=updated_sip_configuration, **kwargs)
+        return await self._rest_service.patch_sip_configuration(body=updated_sip_configuration, **kwargs)
