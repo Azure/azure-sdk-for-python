@@ -150,6 +150,4 @@ class TestTableUnitTest(TableTestCase):
     @pytest.mark.asyncio
     async def test_retention_no_days_async(self):
         # Assert
-        pytest.raises(ValueError,
-                          RetentionPolicy,
-                          True, None)
+        pytest.raises(ValueError, RetentionPolicy, True, None)
