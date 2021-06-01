@@ -22,10 +22,11 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         table_name = self._get_table_reference()
 
         # Act
-        created = await ts.create_table(table_name=table_name)
+        table = ts.get_table_client(table_name)
+        created = await table.create_table()
 
         # Assert
-        assert created.table_name == table_name
+        assert created.name == table_name
 
         await ts.delete_table(table_name=table_name)
 
