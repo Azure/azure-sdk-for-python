@@ -601,8 +601,8 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result()
 
-        document_results = list(result)
-        assert len(document_results) == len(docs)
+        pages = list(result)
+        assert len(pages) == len(docs)
         action_order = [
             _AnalyzeActionsType.RECOGNIZE_ENTITIES,
             _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
@@ -612,8 +612,8 @@ class TestAnalyze(TextAnalyticsTest):
         ]
         action_type_to_document_results = defaultdict(list)
 
-        for doc_idx, document_result in enumerate(document_results):
-            for action_idx, document_result in enumerate(document_result):
+        for doc_idx, page in enumerate(pages):
+            for action_idx, document_result in enumerate(page):
                 self.assertEqual(document_result.id, str(doc_idx))
                 action_type = self.document_result_to_action_type(document_result)
                 self.assertEqual(action_type, action_order[action_idx])
