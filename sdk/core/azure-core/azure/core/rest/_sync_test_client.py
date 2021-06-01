@@ -58,7 +58,7 @@ class TestRestClient(object):
         from .._pipeline_client import PipelineClient
         self._config = TestRestClientConfiguration(**kwargs)
         self._client = PipelineClient(
-            base_url="http://127.0.0.1:5000/",
+            base_url="http://localhost:5000/",
             config=self._config,
             **kwargs
         )

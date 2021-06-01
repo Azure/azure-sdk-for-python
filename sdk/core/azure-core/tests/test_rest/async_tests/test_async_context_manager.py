@@ -17,7 +17,7 @@ async def test_normal_call(client):
         await response.read()
         assert response.text == "Hello, world!"
         assert response.is_closed
-    request = HttpRequest("GET", url="http://127.0.0.1:5000/basic/string")
+    request = HttpRequest("GET", url="http://localhost:5000/basic/string")
     response = await client.send_request(request)
     await _raise_and_get_text(response)
     assert response.is_closed
@@ -39,7 +39,7 @@ async def test_stream_call(client):
         await response.read()
         assert response.text == "Hello, world!"
         assert response.is_closed
-    request = HttpRequest("GET", url="http://127.0.0.1:5000/streams/basic")
+    request = HttpRequest("GET", url="http://localhost:5000/streams/basic")
     response = await client.send_request(request, stream=True)
     await _raise_and_get_text(response)
     assert response.is_closed
@@ -54,7 +54,7 @@ async def test_stream_call(client):
 
 @pytest.mark.asyncio
 async def test_stream_with_error(client):
-    request = HttpRequest("GET", url="http://127.0.0.1:5000/streams/error")
+    request = HttpRequest("GET", url="http://localhost:5000/streams/error")
     async with client.send_request(request, stream=True) as response:
         assert not response.is_closed
         with pytest.raises(HttpResponseError) as e:

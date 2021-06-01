@@ -10,17 +10,18 @@ import sys
 import pytest
 import signal
 import subprocess
-from pathlib import Path
 from azure.core.rest import TestRestClient
 
 def start_testserver():
-    cmd = "{} FLASK_APP=core.testserver.app.py && flask run"
+    os.environ["FLASK_APP"] = "core.testserver.app.py"
+    cmd = "flask run"
     if os.name == 'nt': #On windows, subprocess creation works without being in the shell
         return subprocess.Popen(cmd.format("set"))
 
     return subprocess.Popen(cmd.format("export"), shell=True, preexec_fn=os.setsid) #On linux, have to set shell=True
 
 def terminate_testserver(process):
+    os.environ["FLASK_APP"] = ""
     if os.name == 'nt':
         process.kill()
     else:

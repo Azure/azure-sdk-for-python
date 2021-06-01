@@ -17,7 +17,7 @@ def test_normal_call(client):
         response.raise_for_status()
         assert response.text == "Hello, world!"
         assert response.is_closed
-    request = HttpRequest("GET", url="http://127.0.0.1:5000/basic/string")
+    request = HttpRequest("GET", url="http://localhost:5000/basic/string")
     response = client.send_request(request)
     _raise_and_get_text(response)
     assert response.is_closed
@@ -38,7 +38,7 @@ def test_stream_call(client):
         response.read()
         assert response.text == "Hello, world!"
         assert response.is_closed
-    request = HttpRequest("GET", url="http://127.0.0.1:5000/streams/basic")
+    request = HttpRequest("GET", url="http://localhost:5000/streams/basic")
     response = client.send_request(request, stream=True)
     _raise_and_get_text(response)
     assert response.is_closed
@@ -52,7 +52,7 @@ def test_stream_call(client):
         _raise_and_get_text(response)
 
 def test_stream_with_error(client):
-    request = HttpRequest("GET", url="http://127.0.0.1:5000/streams/error")
+    request = HttpRequest("GET", url="http://localhost:5000/streams/error")
     with client.send_request(request, stream=True) as response:
         assert not response.is_closed
         with pytest.raises(HttpResponseError) as e:

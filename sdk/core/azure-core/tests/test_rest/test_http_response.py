@@ -22,18 +22,18 @@ def send_request(client):
 
 def test_response(send_request):
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/basic/string"),
+        request=HttpRequest("GET", "http://localhost:5000/basic/string"),
     )
     assert response.status_code == 200
     assert response.reason == "OK"
     assert response.text == "Hello, world!"
     assert response.request.method == "GET"
-    assert response.request.url == "http://127.0.0.1:5000/basic/string"
+    assert response.request.url == "http://localhost:5000/basic/string"
 
 
 def test_response_content(send_request):
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/basic/bytes"),
+        request=HttpRequest("GET", "http://localhost:5000/basic/bytes"),
     )
     assert response.status_code == 200
     assert response.reason == "OK"
@@ -42,7 +42,7 @@ def test_response_content(send_request):
 
 def test_response_text(send_request):
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/basic/text"),
+        request=HttpRequest("GET", "http://localhost:5000/basic/text"),
     )
     assert response.status_code == 200
     assert response.reason == "OK"
@@ -53,7 +53,7 @@ def test_response_text(send_request):
 
 def test_response_html(send_request):
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/basic/html"),
+        request=HttpRequest("GET", "http://localhost:5000/basic/html"),
     )
     assert response.status_code == 200
     assert response.reason == "OK"
@@ -61,19 +61,19 @@ def test_response_html(send_request):
 
 def test_raise_for_status(client):
     response = client.send_request(
-        HttpRequest("GET", "http://127.0.0.1:5000/basic/text"),
+        HttpRequest("GET", "http://localhost:5000/basic/text"),
     )
     response.raise_for_status()
 
     response = client.send_request(
-        HttpRequest("GET", "http://127.0.0.1:5000/errors/403"),
+        HttpRequest("GET", "http://localhost:5000/errors/403"),
     )
     assert response.status_code == 403
     with pytest.raises(HttpResponseError):
         response.raise_for_status()
 
     response = client.send_request(
-        HttpRequest("GET", "http://127.0.0.1:5000/errors/500"),
+        HttpRequest("GET", "http://localhost:5000/errors/500"),
         retry_total=0,  # takes too long with retires on 500
     )
     assert response.status_code == 500
@@ -82,7 +82,7 @@ def test_raise_for_status(client):
 
 def test_response_repr(send_request):
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/basic/text")
+        request=HttpRequest("GET", "http://localhost:5000/basic/text")
     )
     assert repr(response) == "<HttpResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
 
@@ -91,7 +91,7 @@ def test_response_content_type_encoding(send_request):
     Use the charset encoding in the Content-Type header if possible.
     """
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/encoding/latin-1")
+        request=HttpRequest("GET", "http://localhost:5000/encoding/latin-1")
     )
     assert response.content_type == "text/plain; charset=latin-1"
     assert response.text == u"Latin 1: ÿ"
@@ -103,7 +103,7 @@ def test_response_autodetect_encoding(send_request):
     Autodetect encoding if there is no Content-Type header.
     """
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/encoding/latin-1")
+        request=HttpRequest("GET", "http://localhost:5000/encoding/latin-1")
     )
 
     assert response.text == u'Latin 1: ÿ'
@@ -114,7 +114,7 @@ def test_response_fallback_to_autodetect(send_request):
     Fallback to autodetection if we get an invalid charset in the Content-Type header.
     """
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/encoding/invalid-codec-name")
+        request=HttpRequest("GET", "http://localhost:5000/encoding/invalid-codec-name")
     )
 
     assert response.headers["Content-Type"] == "text/plain; charset=invalid-codec-name"
@@ -128,7 +128,7 @@ def test_response_no_charset_with_ascii_content(send_request):
     even with no charset specified.
     """
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/encoding/no-charset"),
+        request=HttpRequest("GET", "http://localhost:5000/encoding/no-charset"),
     )
 
     assert response.headers["Content-Type"] == "text/plain"
@@ -143,7 +143,7 @@ def test_response_no_charset_with_iso_8859_1_content(send_request):
     even with no charset specified.
     """
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/encoding/iso-8859-1"),
+        request=HttpRequest("GET", "http://localhost:5000/encoding/iso-8859-1"),
     )
     assert response.text == u"Accented: Österreich"
     assert response.encoding is None
@@ -151,7 +151,7 @@ def test_response_no_charset_with_iso_8859_1_content(send_request):
 def test_response_set_explicit_encoding(send_request):
     # Deliberately incorrect charset
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/encoding/latin-1-with-utf-8"),
+        request=HttpRequest("GET", "http://localhost:5000/encoding/latin-1-with-utf-8"),
     )
     assert response.headers["Content-Type"] == "text/plain; charset=utf-8"
     response.encoding = "latin-1"
@@ -160,33 +160,33 @@ def test_response_set_explicit_encoding(send_request):
 
 def test_json(send_request):
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/basic/json"),
+        request=HttpRequest("GET", "http://localhost:5000/basic/json"),
     )
     assert response.json() == {"greeting": "hello", "recipient": "world"}
     assert response.encoding is None
 
 def test_json_with_specified_encoding(send_request):
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/encoding/json"),
+        request=HttpRequest("GET", "http://localhost:5000/encoding/json"),
     )
     assert response.json() == {"greeting": "hello", "recipient": "world"}
     assert response.encoding == "utf-16"
 
 def test_emoji(send_request):
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/encoding/emoji"),
+        request=HttpRequest("GET", "http://localhost:5000/encoding/emoji"),
     )
     assert response.text == u"👩"
 
 def test_emoji_family_with_skin_tone_modifier(send_request):
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/encoding/emoji-family-skin-tone-modifier"),
+        request=HttpRequest("GET", "http://localhost:5000/encoding/emoji-family-skin-tone-modifier"),
     )
     assert response.text == u"👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
 
 def test_korean_nfc(send_request):
     response = send_request(
-        request=HttpRequest("GET", "http://127.0.0.1:5000/encoding/korean"),
+        request=HttpRequest("GET", "http://localhost:5000/encoding/korean"),
     )
     assert response.text == u"아가"
 
@@ -194,7 +194,7 @@ def test_urlencoded_content(send_request):
     send_request(
         request=HttpRequest(
             "POST",
-            "http://127.0.0.1:5000/urlencoded/pet/add/1",
+            "http://localhost:5000/urlencoded/pet/add/1",
             data={ "pet_type": "dog", "pet_food": "meat", "name": "Fido", "pet_age": 42 }
         ),
     )
@@ -202,7 +202,7 @@ def test_urlencoded_content(send_request):
 def test_multipart_files_content(send_request):
     request = HttpRequest(
         "POST",
-        "http://127.0.0.1:5000/multipart/basic",
+        "http://localhost:5000/multipart/basic",
         files={"fileContent": io.BytesIO(b"<file content>")},
     )
     send_request(request)
@@ -210,7 +210,7 @@ def test_multipart_files_content(send_request):
 def test_multipart_data_and_files_content(send_request):
     request = HttpRequest(
         "POST",
-        "http://127.0.0.1:5000/multipart/data-and-files",
+        "http://localhost:5000/multipart/data-and-files",
         data={"message": "Hello, world!"},
         files={"fileContent": io.BytesIO(b"<file content>")},
     )
@@ -237,7 +237,7 @@ def test_multipart_encode_non_seekable_filelike(send_request):
     files = {"file": fileobj}
     request = HttpRequest(
         "POST",
-        "http://127.0.0.1:5000/multipart/non-seekable-filelike",
+        "http://localhost:5000/multipart/non-seekable-filelike",
         files=files,
     )
     send_request(request)

@@ -54,7 +54,7 @@ class AsyncTestRestClient(object):
         self._config = TestRestClientConfiguration(**kwargs)
         from .._pipeline_client_async import AsyncPipelineClient
         self._client = AsyncPipelineClient(
-            base_url="http://localhost:3000",
+            base_url="http://localhost:5000",
             config=self._config,
             **kwargs
         )
