@@ -12,7 +12,7 @@ from azure.containerregistry import (
     ArtifactManifestProperties,
     ManifestOrder,
     ArtifactTagProperties,
-    TagOrder
+    TagOrder,
 )
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.async_paging import AsyncItemPaged
@@ -210,7 +210,9 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        async for artifact in client.list_manifest_properties(BUSYBOX, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
+        async for artifact in client.list_manifest_properties(
+            BUSYBOX, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING
+        ):
             if prev_last_updated_on:
                 assert artifact.last_updated_on < prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -234,7 +236,9 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        async for artifact in client.list_manifest_properties(BUSYBOX, order_by=ManifestOrder.LAST_UPDATE_TIME_ASCENDING):
+        async for artifact in client.list_manifest_properties(
+            BUSYBOX, order_by=ManifestOrder.LAST_UPDATE_TIME_ASCENDING
+        ):
             if prev_last_updated_on:
                 assert artifact.last_updated_on > prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
