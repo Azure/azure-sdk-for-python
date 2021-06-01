@@ -51,9 +51,6 @@ from ._policies import (
 )
 from ._sdk_moniker import SDK_MONIKER
 
-if TYPE_CHECKING:
-    from azure.core.pipeline.policies import SansIOHTTPPolicy
-    from azure.core.credentials import AzureSasCredential
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07"]
 

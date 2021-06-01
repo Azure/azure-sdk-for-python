@@ -16,7 +16,7 @@ from ._common_conversion import (
 from ._constants import DEFAULT_X_MS_VERSION
 
 if TYPE_CHECKING:
-    from datetime import datetime
+    from datetime import datetime  # pylint: ignore=ungrouped-imports
     from ._models import AccountSasPermissions, ResourceTypes, SASProtocol
 
 

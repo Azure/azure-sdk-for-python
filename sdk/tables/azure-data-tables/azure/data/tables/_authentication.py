@@ -35,10 +35,8 @@ from ._error import (
 )
 
 if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineRequest
+    from azure.core.pipeline import PipelineRequest  # pylint: ignore=ungrouped-imports
 
-if sys.version_info > (3, 5):
-    from typing import Awaitable  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger(__name__)
 
