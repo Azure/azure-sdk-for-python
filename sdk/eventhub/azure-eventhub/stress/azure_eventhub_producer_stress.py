@@ -243,7 +243,7 @@ class StressTestRunner(object):
 
     def run_test_method(self, test_method, worker, logger, process_monitor):
         deadline = time.time() + self.args.duration
-        azure_monitor_metric = AzureMonitorMetric("Sync EventHubProducerClient", "Sync EventHubProducerClient")
+        azure_monitor_metric = AzureMonitorMetric("Sync EventHubProducerClient")
         with worker:
             total_processed = 0
             iter_processed = 0
@@ -341,7 +341,7 @@ class StressTestRunner(object):
 
     async def run_test_method_async(self, test_method, worker, logger, process_monitor):
         deadline = time.time() + self.args.duration
-        azure_monitor_metric = AzureMonitorMetric("ASync EventHubProducerClient", "ASync EventHubProducerClient")
+        azure_monitor_metric = AzureMonitorMetric("Async EventHubProducerClient")
         async with worker:
             total_processed = 0
             iter_processed = 0

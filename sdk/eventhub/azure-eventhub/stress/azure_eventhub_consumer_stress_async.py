@@ -91,7 +91,7 @@ recv_cnt_map = defaultdict(int)
 recv_cnt_iteration_map = defaultdict(int)
 recv_time_map = dict()
 
-azure_metric_monitor = AzureMonitorMetric("ASync EventHubConsumerClient", "ASync EventHubConsumerClient")
+azure_metric_monitor = AzureMonitorMetric("Async EventHubConsumerClient")
 
 
 class EventHubConsumerClientTest(EventHubConsumerClient):

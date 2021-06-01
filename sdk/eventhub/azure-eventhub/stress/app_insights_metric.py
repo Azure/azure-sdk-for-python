@@ -15,9 +15,9 @@ from logger import get_azure_logger
 
 
 class AzureMonitorMetric:
-    def __init__(self, test_name, test_description):
+    def __init__(self, test_name, test_description=None):
         self.exporter = metrics_exporter.new_metrics_exporter(
-            connection_string=os.environ['APP_INSIGHTS_CONN_STR']
+            connection_string=os.environ['APPLICATIONINSIGHTS_CONNECTION_STRING']
         )
         self.stats = stats_module.stats
         self.view_manager = self.stats.view_manager
@@ -27,13 +27,13 @@ class AzureMonitorMetric:
         self.desc = test_description
 
         events_measure_name = "The number of events handled by " + self.name
-        events_measure_desc = "The number of events handled by " + self.desc
+        events_measure_desc = "The number of events handled by " + self.desc if self.desc else None
         memory_measure_name = "memory usage percentage for " + self.name
-        memory_measure_desc = "memory usage percentage for " + self.desc
+        memory_measure_desc = "memory usage percentage for " + self.desc if self.desc else None
         cpu_measure_name = "cpu usage percentage for " + self.name
-        cpu_measure_desc = "cpu usage percentage for " + self.desc
+        cpu_measure_desc = "cpu usage percentage for " + self.desc if self.desc else None
         error_measure_name = "error count for " + self.name
-        error_measure_desc = "The number of errors happened while running the test for " + self.desc
+        error_measure_desc = "The number of errors happened while running the test for " + self.desc if self.desc else None
 
         self.events_measure = measure_module.MeasureInt(events_measure_name, events_measure_desc, "events")
         self.memory_measure = measure_module.MeasureFloat(memory_measure_name, memory_measure_desc)
