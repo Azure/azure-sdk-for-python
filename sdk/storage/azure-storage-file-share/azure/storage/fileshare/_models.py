@@ -549,6 +549,8 @@ class DirectoryProperties(DictMixin):
     :vartype creation_time: str or ~datetime.datetime
     :ivar last_write_time: Last write time for the file.
     :vartype last_write_time: str or ~datetime.datetime
+    :ivar last_access_time: Last access time for the file.
+    :vartype last_access_time: ~datetime.datetime
     :ivar file_attributes:
         The file system attributes for files and directories.
     :vartype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
@@ -576,15 +578,21 @@ class DirectoryProperties(DictMixin):
         self.permission_key = kwargs.get('x-ms-file-permission-key')
         self.file_id = kwargs.get('x-ms-file-id')
         self.parent_id = kwargs.get('x-ms-file-parent-id')
+        self.is_directory = True
 
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
         props.name = generated.name
+        props.file_id = generated.file_id
+        props.file_attributes = generated.attributes
         props.last_modified = generated.properties.last_modified
+        props.creation_time = generated.properties.creation_time
+        props.last_access_time = generated.properties.last_access_time
+        props.last_write_time = generated.properties.last_write_time
+        props.change_time = generated.properties.change_time
         props.etag = generated.properties.etag
-        props.server_encrypted = generated.properties.server_encrypted
-        props.metadata = generated.metadata
+        props.permission_key = generated.permission_key
         return props
 
 
@@ -643,8 +651,8 @@ class DirectoryPropertiesPaged(PageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [_wrap_item(i) for i in self._response.segment.directory_items]
-        self.current_page.extend([_wrap_item(i) for i in self._response.segment.file_items])
+        self.current_page = [DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items]
+        self.current_page.extend([FileProperties._from_generated(i) for i in self._response.segment.file_items])
         return self._response.next_marker or None, self.current_page
 
 
@@ -707,14 +715,22 @@ class FileProperties(DictMixin):
         self.permission_key = kwargs.get('x-ms-file-permission-key')
         self.file_id = kwargs.get('x-ms-file-id')
         self.parent_id = kwargs.get('x-ms-file-parent-id')
+        self.is_directory = False
 
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
         props.name = generated.name
-        props.content_length = generated.properties.content_length
-        props.metadata = generated.properties.metadata
-        props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
+        props.file_id = generated.file_id
+        props.etag = generated.properties.etag
+        props.file_attributes = generated.attributes
+        props.last_modified = generated.properties.last_modified
+        props.creation_time = generated.properties.creation_time
+        props.last_access_time = generated.properties.last_access_time
+        props.last_write_time = generated.properties.last_write_time
+        props.change_time = generated.properties.change_time
+        props.size = generated.properties.content_length
+        props.permission_key = generated.permission_key
         return props
 
 
