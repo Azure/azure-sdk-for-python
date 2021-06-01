@@ -76,8 +76,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         try:
             self._client.container_registry.delete_repository(repository, **kwargs)
-        except ResourceNotFoundError:
-            pass
+        except ResourceNotFoundError as exc:
+            if "NAME_UNKNOWN" in exc.internal_response.text:
+                return
+            raise
 
     @distributed_trace
     def list_repository_names(self, **kwargs):
@@ -347,8 +349,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         try:
             self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
-        except ResourceNotFoundError:
-            pass
+        except ResourceNotFoundError as exc:
+            if "NAME_UNKNOWN" in exc.internal_response.text:
+                return
+            raise
 
     @distributed_trace
     def delete_tag(self, repository, tag, **kwargs):
@@ -374,8 +378,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         try:
             self._client.container_registry.delete_tag(repository, tag, **kwargs)
-        except ResourceNotFoundError:
-            pass
+        except ResourceNotFoundError as exc:
+            if "NAME_UNKNOWN" in exc.internal_response.text:
+                return
+            raise
 
     @distributed_trace
     def get_manifest_properties(self, repository, tag_or_digest, **kwargs):

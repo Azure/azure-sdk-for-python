@@ -75,8 +75,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         try:
             await self._client.container_registry.delete_repository(repository, **kwargs)
-        except ResourceNotFoundError:
-            pass
+        except ResourceNotFoundError as exc:
+            if "NAME_UNKNOWN" in exc.internal_response.text:
+                return
+            raise
 
     @distributed_trace
     def list_repository_names(self, **kwargs: Any) -> AsyncItemPaged[str]:
@@ -340,8 +342,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
         try:
             await self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
-        except ResourceNotFoundError:
-            pass
+        except ResourceNotFoundError as exc:
+            if "NAME_UNKNOWN" in exc.internal_response.text:
+                return
+            raise
 
     @distributed_trace_async
     async def delete_tag(self, repository: str, tag: str, **kwargs: Any) -> None:
@@ -366,8 +370,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         try:
             await self._client.container_registry.delete_tag(repository, tag, **kwargs)
-        except ResourceNotFoundError:
-            pass
+        except ResourceNotFoundError as exc:
+            if "NAME_UNKNOWN" in exc.internal_response.text:
+                return
+            raise
 
     @distributed_trace_async
     async def get_manifest_properties(
