@@ -16,9 +16,8 @@ from logger import get_azure_logger
 
 class AzureMonitorMetric:
     def __init__(self, test_name, test_description=None):
-        self.exporter = metrics_exporter.new_metrics_exporter(
-            connection_string=os.environ['APPLICATIONINSIGHTS_CONNECTION_STRING']
-        )
+        # oc will automatically search for the ENV VAR 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+        self.exporter = metrics_exporter.new_metrics_exporter()
         self.stats = stats_module.stats
         self.view_manager = self.stats.view_manager
         self.stats_recorder = self.stats.stats_recorder

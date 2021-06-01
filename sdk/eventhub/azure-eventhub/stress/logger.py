@@ -84,7 +84,6 @@ def get_logger(log_filename, logger_name, level=logging.INFO, print_console=Fals
 def get_azure_logger(logger_name, level=logging.INFO):
     logger = logging.getLogger("azure_logger_" + logger_name)
     logger.setLevel(level)
-    logger.addHandler(AzureLogHandler(
-        connection_string=os.environ['APP_INSIGHTS_CONN_STR'])
-    )
+    # oc will automatically search for the ENV VAR 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+    logger.addHandler(AzureLogHandler())
     return logger
