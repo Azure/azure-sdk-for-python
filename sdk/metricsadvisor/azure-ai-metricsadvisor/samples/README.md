@@ -36,7 +36,7 @@ The async versions of the samples require Python 3.5 or later.
 1. Install the Azure Metrics Advisor client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-metricsadvisor
+pip install azure-ai-metricsadvisor --pre
 ```
 
 2. Clone or download this sample repository

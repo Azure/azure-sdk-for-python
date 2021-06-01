@@ -969,7 +969,7 @@ class DataFeedSource(dict):
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
     :paramtype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
-    :keyword str credential_id: The credential entity id.
+    :keyword str credential_id: The datasource credential id.
     """
     def __init__(self, data_source_type, **kwargs):
         # type: (str, **Any) -> None
@@ -981,10 +981,20 @@ class DataFeedSource(dict):
 class AzureApplicationInsightsDataFeedSource(DataFeedSource):
     """AzureApplicationInsightsDataFeedSource.
 
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :keyword str credential_id: The datasource credential id.
     :param str query: Required. Query.
-    :param str azure_cloud: Azure cloud environment.
-    :param str application_id: Azure Application Insights ID.
-    :param str api_key: API Key.
+    :keyword str azure_cloud: Azure cloud environment.
+    :keyword str application_id: Azure Application Insights ID.
+    :keyword str api_key: API Key.
     """
 
     def __init__(self, query, **kwargs):
@@ -1039,6 +1049,16 @@ class AzureApplicationInsightsDataFeedSource(DataFeedSource):
 class AzureBlobDataFeedSource(DataFeedSource):
     """AzureBlobDataFeedSource.
 
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :keyword str credential_id: The datasource credential id.
     :param container: Required. Container.
     :type container: str
     :param blob_template: Required. Blob Template.
@@ -1098,6 +1118,16 @@ class AzureBlobDataFeedSource(DataFeedSource):
 class AzureCosmosDbDataFeedSource(DataFeedSource):
     """AzureCosmosDbDataFeedSource.
 
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :keyword str credential_id: The datasource credential id.
     :param sql_query: Required. Query script.
     :type sql_query: str
     :param database: Required. Database name.
@@ -1165,6 +1195,16 @@ class AzureCosmosDbDataFeedSource(DataFeedSource):
 class AzureDataExplorerDataFeedSource(DataFeedSource):
     """AzureDataExplorerDataFeedSource.
 
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :keyword str credential_id: The datasource credential id.
     :param query: Required. Query script.
     :type query: str
     :keyword str connection_string: Database connection string.
@@ -1227,6 +1267,16 @@ class AzureDataExplorerDataFeedSource(DataFeedSource):
 class AzureTableDataFeedSource(DataFeedSource):
     """AzureTableDataFeedSource.
 
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :keyword str credential_id: The datasource credential id.
     :param str query: Required. Query script.
     :param str table: Required. Table name.
     :keyword str connection_string: Azure Table connection string.
@@ -1279,6 +1329,16 @@ class AzureTableDataFeedSource(DataFeedSource):
 class AzureEventHubsDataFeedSource(DataFeedSource):
     """AzureEventHubsDataFeedSource.
 
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: The connection string of this Azure Event Hubs.
     :param str consumer_group: Required. The consumer group to be used in this data feed.
     """
@@ -1325,6 +1385,16 @@ class AzureEventHubsDataFeedSource(DataFeedSource):
 class InfluxDbDataFeedSource(DataFeedSource):
     """InfluxDbDataFeedSource.
 
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: InfluxDB connection string.
     :keyword str database: Database name.
     :keyword str user_name: Database access user.
@@ -1389,6 +1459,16 @@ class InfluxDbDataFeedSource(DataFeedSource):
 class MySqlDataFeedSource(DataFeedSource):
     """MySqlDataFeedSource.
 
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: Database connection string.
     :param str query: Required. Query script.
     """
@@ -1435,6 +1515,16 @@ class MySqlDataFeedSource(DataFeedSource):
 class PostgreSqlDataFeedSource(DataFeedSource):
     """PostgreSqlDataFeedSource.
 
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: Database connection string.
     :param str query: Required. Query script.
     """
@@ -1481,6 +1571,16 @@ class PostgreSqlDataFeedSource(DataFeedSource):
 class SqlServerDataFeedSource(DataFeedSource):
     """SqlServerDataFeedSource.
 
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :keyword str credential_id: The datasource credential id.
     :param str query: Required. Query script.
     :keyword str connection_string: Database connection string.
     :keyword bool msi: If using managed identity authentication.
@@ -1547,6 +1647,16 @@ class SqlServerDataFeedSource(DataFeedSource):
 class AzureDataLakeStorageGen2DataFeedSource(DataFeedSource):
     """AzureDataLakeStorageGen2DataFeedSource.
 
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :keyword str credential_id: The datasource credential id.
     :keyword str account_name: Account name.
     :keyword str account_key: Account key.
     :param str file_system_name: Required. File system name (Container).
@@ -1638,6 +1748,16 @@ class AzureDataLakeStorageGen2DataFeedSource(DataFeedSource):
 class AzureLogAnalyticsDataFeedSource(DataFeedSource):
     """AzureLogAnalyticsDataFeedSource.
 
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :keyword str credential_id: The datasource credential id.
     :keyword str tenant_id: The tenant id of service principal that have access to this Log
      Analytics.
     :keyword str client_id: The client id of service principal that have access to this Log
@@ -1705,6 +1825,16 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource):
 class MongoDbDataFeedSource(DataFeedSource):
     """MongoDbDataFeedSource.
 
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: MongoDb connection string.
     :keyword str database: Database name.
     :param str command: Required. Query script.

@@ -52,7 +52,6 @@ from ..models import (
     DataFeedIngestionSettings,
     NotificationHook,
     MetricDetectionCondition,
-    DatasourceCredential,
 )
 from .._metrics_advisor_administration_client import (
     DATA_FEED,
@@ -63,12 +62,6 @@ from .._metrics_advisor_administration_client import (
 if TYPE_CHECKING:
     from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from ..models import (
-        DatasourceSqlConnectionString,
-        DatasourceDataLakeGen2SharedKey,
-        DatasourceServicePrincipal,
-        DatasourceServicePrincipalInKeyVault
-    )
 
 class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-public-methods
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
