@@ -289,8 +289,8 @@ class TableClient(AsyncTablesBaseClient):
         :type entity: Union[TableEntity, Mapping[str, str]]
         :keyword str etag: Etag of the entity
         :keyword match_condition: The condition under which to perform the operation.
-         Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
-         The default value is Unconditionally.
+            Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
+            The default value is Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
@@ -402,8 +402,8 @@ class TableClient(AsyncTablesBaseClient):
         :type mode: :class:`~azure.data.tables.UpdateMode`
         :keyword str etag: Etag of the entity
         :keyword match_condition: The condition under which to perform the operation.
-         Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
-         The default value is Unconditionally.
+            Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
+            The default value is Unconditionally.
         :paramtype match_condition: ~azure.core.MatchCondition
         :return: Dictionary of operation metadata returned from service
         :rtype: Dict[str,str]
