@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Optional, Any, List, Mapping, TYPE_CHECKING, Union
+from typing import Dict, Optional, Any, List, Mapping, Union
 from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse

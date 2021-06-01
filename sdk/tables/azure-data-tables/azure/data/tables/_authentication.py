@@ -5,8 +5,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-import sys
-from typing import Union, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 try:
     from urllib.parse import urlparse
@@ -35,7 +34,7 @@ from ._error import (
 )
 
 if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineRequest  # pylint: ignore=ungrouped-imports
+    from azure.core.pipeline import PipelineRequest  # pylint: disable=ungrouped-imports
 
 
 logger = logging.getLogger(__name__)
