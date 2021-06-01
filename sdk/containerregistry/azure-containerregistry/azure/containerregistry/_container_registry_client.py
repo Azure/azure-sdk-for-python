@@ -77,7 +77,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         try:
             self._client.container_registry.delete_repository(repository, **kwargs)
         except ResourceNotFoundError as exc:
-            if "NAME_UNKNOWN" in exc.internal_response.text:
+            if "Not Found" in exc.reason:
                 return
             raise
 
@@ -350,7 +350,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         try:
             self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
         except ResourceNotFoundError as exc:
-            if "NAME_UNKNOWN" in exc.internal_response.text:
+            if "Not Found" in exc.reason:
                 return
             raise
 
@@ -379,7 +379,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         try:
             self._client.container_registry.delete_tag(repository, tag, **kwargs)
         except ResourceNotFoundError as exc:
-            if "NAME_UNKNOWN" in exc.internal_response.text:
+            if "Not Found" in exc.reason:
                 return
             raise
 
