@@ -25,10 +25,10 @@ from .models import (
     CommentFeedback,
     PeriodFeedback,
     DataFeedRollupType,
-    SqlConnectionStringCredentialEntity,
-    DataLakeGen2SharedKeyCredentialEntity,
-    ServicePrincipalCredentialEntity,
-    ServicePrincipalInKeyVaultCredentialEntity
+    DatasourceSqlConnectionString,
+    DatasourceDataLakeGen2SharedKey,
+    DatasourceServicePrincipal,
+    DatasourceServicePrincipalInKeyVault
 )
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
@@ -226,11 +226,11 @@ def get_authentication_policy(credential):
 
     return authentication_policy
 
-def convert_to_credential_entity(credential_entity):
-    if credential_entity.data_source_credential_type == "AzureSQLConnectionString":
-        return SqlConnectionStringCredentialEntity._from_generated(credential_entity)
-    if credential_entity.data_source_credential_type == "DataLakeGen2SharedKey":
-        return DataLakeGen2SharedKeyCredentialEntity._from_generated(credential_entity)
-    if credential_entity.data_source_credential_type == "ServicePrincipal":
-        return ServicePrincipalCredentialEntity._from_generated(credential_entity)
-    return ServicePrincipalInKeyVaultCredentialEntity._from_generated(credential_entity)
+def convert_to_datasource_credential(datasource_credential):
+    if datasource_credential.data_source_credential_type == "AzureSQLConnectionString":
+        return DatasourceSqlConnectionString._from_generated(datasource_credential)
+    if datasource_credential.data_source_credential_type == "DataLakeGen2SharedKey":
+        return DatasourceDataLakeGen2SharedKey._from_generated(datasource_credential)
+    if datasource_credential.data_source_credential_type == "ServicePrincipal":
+        return DatasourceServicePrincipal._from_generated(datasource_credential)
+    return DatasourceServicePrincipalInKeyVault._from_generated(datasource_credential)
