@@ -220,7 +220,6 @@ async def test_imds_url_override():
 
     transport = async_validating_transport(
         requests=[
-            Request(base_url=url),
             Request(
                 base_url=url,
                 method="GET",
@@ -229,7 +228,6 @@ async def test_imds_url_override():
             ),
         ],
         responses=[
-            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
             mock_response(
                 json_payload={
                     "access_token": expected_token,
@@ -244,8 +242,8 @@ async def test_imds_url_override():
         ],
     )
 
-    credential = ImdsCredential(transport=transport)
     with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IMDS_TOKEN_URL: url}, clear=True):
+        credential = ImdsCredential(transport=transport)
         token = await credential.get_token(scope)
 
     assert token.token == expected_token
