@@ -39,7 +39,6 @@ class AnalyzeSampleAsync(object):
             RecognizePiiEntitiesAction,
             ExtractKeyPhrasesAction,
             AnalyzeSentimentAction,
-            _AnalyzeActionsType
         )
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
