@@ -121,11 +121,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert page_count == 2
         assert table_count == 3
 
-        for i in range(5):
-            ts.delete_table(table_name + str(i))
-
-        if self.is_live:
-            self.sleep(10) # wait for tables to be deleted before proceeding
+        self._delete_all_tables(ts)
 
     @tables_decorator
     def test_create_table_if_exists(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -170,10 +166,8 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert tables is not None
         assert len(tables) >=  1
         assert tables[0] is not None
-        ts.delete_table(t.table_name)
 
-        if self.is_live:
-            self.sleep(10) # wait for tables to be deleted before proceeding
+        self._delete_all_tables(ts)
 
     @tables_decorator
     def test_query_tables_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -195,9 +189,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         ts.delete_table(t.table_name)
 
         self._delete_all_tables(ts)
-
-        if self.is_live:
-            self.sleep(10) # wait for tables to be deleted before proceeding
 
     @tables_decorator
     def test_query_tables_with_num_results(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -225,9 +216,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         self._delete_all_tables(ts)
 
-        if self.is_live:
-            self.sleep(10) # wait for tables to be deleted before proceeding
-
     @tables_decorator
     def test_query_tables_with_marker(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -254,9 +242,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert tables1 != tables2
 
         self._delete_all_tables(ts)
-
-        if self.is_live:
-            self.sleep(10) # wait for tables to be deleted before proceeding
 
     @tables_decorator
     def test_delete_table_with_existing_table(self, tables_storage_account_name, tables_primary_storage_account_key):

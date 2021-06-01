@@ -18,7 +18,7 @@ from azure.ai.metricsadvisor import (
     MetricsAdvisorClient,
 )
 from azure.ai.metricsadvisor.models import (
-    SQLServerDataFeedSource,
+    SqlServerDataFeedSource,
     DataFeedSchema,
     DataFeedMetric,
     DataFeedDimension,
@@ -156,7 +156,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
         name = create_random_name(name)
         return self.admin_client.create_data_feed(
             name=name,
-            source=SQLServerDataFeedSource(
+            source=SqlServerDataFeedSource(
                 connection_string=self.sql_server_connection_string,
                 query="select * from adsample2 where Timestamp = @StartTime"
             ),
@@ -198,7 +198,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
         data_feed_name = create_random_name(name)
         return self.admin_client.create_data_feed(
             name=data_feed_name,
-            source=SQLServerDataFeedSource(
+            source=SqlServerDataFeedSource(
                 connection_string=self.sql_server_connection_string,
                 query=u"select * from adsample2 where Timestamp = @StartTime"
             ),

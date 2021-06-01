@@ -556,7 +556,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         try:
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True, read=True, update=True, delete=True),
