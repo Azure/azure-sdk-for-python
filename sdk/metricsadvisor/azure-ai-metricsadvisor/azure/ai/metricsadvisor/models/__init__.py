@@ -114,10 +114,12 @@ from ._models import (
     DataFeedRollupType,
     IncidentRootCause,
     MetricEnrichedSeriesData,
-    SqlConnectionStringCredentialEntity,
-    DataLakeGen2SharedKeyCredentialEntity,
-    ServicePrincipalCredentialEntity,
-    ServicePrincipalInKeyVaultCredentialEntity,
+    DatasourceSqlConnectionString,
+    DatasourceDataLakeGen2SharedKey,
+    DatasourceServicePrincipal,
+    DatasourceServicePrincipalInKeyVault,
+    DatasourceCredential,
+    DataFeedSource,
 )
 
 
@@ -203,10 +205,12 @@ __all__ = (
     "IncidentRootCause",
     "SeverityFilterCondition",
     "MetricEnrichedSeriesData",
-    "SqlConnectionStringCredentialEntity",
-    "DataLakeGen2SharedKeyCredentialEntity",
-    "ServicePrincipalCredentialEntity",
-    "ServicePrincipalInKeyVaultCredentialEntity",
+    "DatasourceSqlConnectionString",
+    "DatasourceDataLakeGen2SharedKey",
+    "DatasourceServicePrincipal",
+    "DatasourceServicePrincipalInKeyVault",
     "DataSourceCredentialType",
-    "DataSourceAuthenticationType"
+    "DataSourceAuthenticationType",
+    "DatasourceCredential",
+    "DataFeedSource",
 )

@@ -8,180 +8,180 @@
 import pytest
 
 from azure.ai.metricsadvisor.models import (
-    SqlConnectionStringCredentialEntity,
-    DataLakeGen2SharedKeyCredentialEntity,
-    ServicePrincipalCredentialEntity,
-    ServicePrincipalInKeyVaultCredentialEntity
+    DatasourceSqlConnectionString,
+    DatasourceDataLakeGen2SharedKey,
+    DatasourceServicePrincipal,
+    DatasourceServicePrincipalInKeyVault
 )
 from base_testcase import TestMetricsAdvisorAdministrationClientBase
 
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
 
-    def test_create_sql_connection_string_credential_entity(self):
-        credential_entity_name = self.create_random_name("testsqlcredential")
+    def test_create_datasource_sql_connection_string(self):
+        credential_name = self.create_random_name("testsqlcredential")
         try:
-            credential_entity = self.admin_client.create_credential_entity(
-                credential_entity=SqlConnectionStringCredentialEntity(
-                    name=credential_entity_name,
+            credential = self.admin_client.create_datasource_credential(
+                datasource_credential=DatasourceSqlConnectionString(
+                    name=credential_name,
                     connection_string=self.sql_server_connection_string,
-                    description="my credential entity",
+                    description="my credential",
                 )
             )
-            self.assertIsNotNone(credential_entity.id)
-            self.assertEqual(credential_entity.name, credential_entity_name)
-            self.assertEqual(credential_entity.credential_entity_type, 'AzureSQLConnectionString')
+            self.assertIsNotNone(credential.id)
+            self.assertEqual(credential.name, credential_name)
+            self.assertEqual(credential.credential_type, 'AzureSQLConnectionString')
         finally:
-            self.admin_client.delete_credential_entity(credential_entity.id)
+            self.admin_client.delete_datasource_credential(credential.id)
 
-    def test_datalake_gen2_shared_key_credential_entity(self):
-        credential_entity_name = self.create_random_name("testdatalakecredential")
+    def test_datasource_datalake_gen2_shared_key(self):
+        credential_name = self.create_random_name("testdatalakecredential")
         try:
-            credential_entity = self.admin_client.create_credential_entity(
-                credential_entity=DataLakeGen2SharedKeyCredentialEntity(
-                    name=credential_entity_name,
+            credential = self.admin_client.create_datasource_credential(
+                datasource_credential=DatasourceDataLakeGen2SharedKey(
+                    name=credential_name,
                     account_key=self.azure_datalake_account_key,
-                    description="my credential entity",
+                    description="my credential",
                 )
             )
-            self.assertIsNotNone(credential_entity.id)
-            self.assertEqual(credential_entity.name, credential_entity_name)
-            self.assertEqual(credential_entity.credential_entity_type, 'DataLakeGen2SharedKey')
+            self.assertIsNotNone(credential.id)
+            self.assertEqual(credential.name, credential_name)
+            self.assertEqual(credential.credential_type, 'DataLakeGen2SharedKey')
         finally:
-            self.admin_client.delete_credential_entity(credential_entity.id)
+            self.admin_client.delete_datasource_credential(credential.id)
 
-    def test_service_principal_credential_entity(self):
-        credential_entity_name = self.create_random_name("testserviceprincipalcredential")
+    def test_datasource_service_principal(self):
+        credential_name = self.create_random_name("testserviceprincipalcredential")
         try:
-            credential_entity = self.admin_client.create_credential_entity(
-                credential_entity=ServicePrincipalCredentialEntity(
-                    name=credential_entity_name,
+            credential = self.admin_client.create_datasource_credential(
+                datasource_credential=DatasourceServicePrincipal(
+                    name=credential_name,
                     client_id="client_id",
                     client_secret="client_secret",
                     tenant_id="tenant_id",
-                    description="my credential entity",
+                    description="my credential",
                 )
             )
-            self.assertIsNotNone(credential_entity.id)
-            self.assertEqual(credential_entity.name, credential_entity_name)
-            self.assertEqual(credential_entity.credential_entity_type, 'ServicePrincipal')
+            self.assertIsNotNone(credential.id)
+            self.assertEqual(credential.name, credential_name)
+            self.assertEqual(credential.credential_type, 'ServicePrincipal')
         finally:
-            self.admin_client.delete_credential_entity(credential_entity.id)
+            self.admin_client.delete_datasource_credential(credential.id)
 
-    def test_service_principal_in_kv_credential_entity(self):
-        credential_entity_name = self.create_random_name("testserviceprincipalcredential")
+    def test_datasource_service_principal_in_kv(self):
+        credential_name = self.create_random_name("testserviceprincipalcredential")
         try:
-            credential_entity = self.admin_client.create_credential_entity(
-                credential_entity=ServicePrincipalInKeyVaultCredentialEntity(
-                    name=credential_entity_name,
+            credential = self.admin_client.create_datasource_credential(
+                datasource_credential=DatasourceServicePrincipalInKeyVault(
+                    name=credential_name,
                     key_vault_endpoint="key_vault_endpoint",
                     key_vault_client_id="key_vault_client_id",
                     key_vault_client_secret="key_vault_client_secret",
                     service_principal_id_name_in_kv="service_principal_id_name_in_kv",
                     service_principal_secret_name_in_kv="service_principal_secret_name_in_kv",
                     tenant_id="tenant_id",
-                    description="my credential entity",
+                    description="my credential",
                 )
             )
-            self.assertIsNotNone(credential_entity.id)
-            self.assertEqual(credential_entity.name, credential_entity_name)
-            self.assertEqual(credential_entity.credential_entity_type, 'ServicePrincipalInKV')
+            self.assertIsNotNone(credential.id)
+            self.assertEqual(credential.name, credential_name)
+            self.assertEqual(credential.credential_type, 'ServicePrincipalInKV')
         finally:
-            self.admin_client.delete_credential_entity(credential_entity.id)
+            self.admin_client.delete_datasource_credential(credential.id)
 
-    def test_list_credential_entities(self):
-        credential_entity_name = self.create_random_name("testsqlcredential")
+    def test_list_datasource_credentials(self):
+        credential_name = self.create_random_name("testsqlcredential")
         try:
-            credential_entity = self.admin_client.create_credential_entity(
-                credential_entity=SqlConnectionStringCredentialEntity(
-                    name=credential_entity_name,
+            credential = self.admin_client.create_datasource_credential(
+                datasource_credential=DatasourceSqlConnectionString(
+                    name=credential_name,
                     connection_string=self.sql_server_connection_string,
-                    description="my credential entity",
+                    description="my credential",
                 )
             )
-            credential_entities = self.admin_client.list_credential_entities()
-            assert len(list(credential_entities)) > 0
+            credentials = self.admin_client.list_datasource_credentials()
+            assert len(list(credentials)) > 0
         finally:
-            self.admin_client.delete_credential_entity(credential_entity.id)
+            self.admin_client.delete_datasource_credential(credential.id)
 
-    def test_update_sql_connection_string_credential_entity(self):
-        credential_entity_name = self.create_random_name("testsqlcredential")
+    def test_update_datasource_sql_connection_string(self):
+        credential_name = self.create_random_name("testsqlcredential")
         try:
-            credential_entity = self.admin_client.create_credential_entity(
-                credential_entity=SqlConnectionStringCredentialEntity(
-                    name=credential_entity_name,
+            credential = self.admin_client.create_datasource_credential(
+                datasource_credential=DatasourceSqlConnectionString(
+                    name=credential_name,
                     connection_string=self.sql_server_connection_string,
-                    description="my credential entity",
+                    description="my credential",
                 )
             )
-            credential_entity.connection_string = "update"
-            credential_entity.description = "update"
-            credential_entity_updated = self.admin_client.update_credential_entity(credential_entity)
-            self.assertEqual(credential_entity_updated.description, "update")
+            credential.connection_string = "update"
+            credential.description = "update"
+            credential_updated = self.admin_client.update_datasource_credential(credential)
+            self.assertEqual(credential_updated.description, "update")
         finally:
-            self.admin_client.delete_credential_entity(credential_entity.id)
+            self.admin_client.delete_datasource_credential(credential.id)
 
-    def test_update_datalake_gen2_shared_key_credential_entity(self):
-        credential_entity_name = self.create_random_name("testdatalakecredential")
+    def test_update_datasource_datalake_gen2_shared_key(self):
+        credential_name = self.create_random_name("testdatalakecredential")
         try:
-            credential_entity = self.admin_client.create_credential_entity(
-                credential_entity=DataLakeGen2SharedKeyCredentialEntity(
-                    name=credential_entity_name,
+            credential = self.admin_client.create_datasource_credential(
+                datasource_credential=DatasourceDataLakeGen2SharedKey(
+                    name=credential_name,
                     account_key=self.azure_datalake_account_key,
-                    description="my credential entity",
+                    description="my credential",
                 )
             )
-            credential_entity.account_key = "update"
-            credential_entity.description = "update"
-            credential_entity_updated = self.admin_client.update_credential_entity(credential_entity)
-            self.assertEqual(credential_entity_updated.description, "update")
+            credential.account_key = "update"
+            credential.description = "update"
+            credential_updated = self.admin_client.update_datasource_credential(credential)
+            self.assertEqual(credential_updated.description, "update")
         finally:
-            self.admin_client.delete_credential_entity(credential_entity.id)
+            self.admin_client.delete_datasource_credential(credential.id)
 
-    def test_update_service_principal_credential_entity(self):
-        credential_entity_name = self.create_random_name("testserviceprincipalcredential")
+    def test_update_datasource_service_principal(self):
+        credential_name = self.create_random_name("testserviceprincipalcredential")
         try:
-            credential_entity = self.admin_client.create_credential_entity(
-                credential_entity=ServicePrincipalCredentialEntity(
-                    name=credential_entity_name,
+            credential = self.admin_client.create_datasource_credential(
+                datasource_credential=DatasourceServicePrincipal(
+                    name=credential_name,
                     client_id="client_id",
                     client_secret="client_secret",
                     tenant_id="tenant_id",
-                    description="my credential entity",
+                    description="my credential",
                 )
             )
-            credential_entity.client_id = "update"
-            credential_entity.client_secret = "update"
-            credential_entity.tenant_id = "update"
-            credential_entity.description = "update"
-            credential_entity_updated = self.admin_client.update_credential_entity(credential_entity)
-            self.assertEqual(credential_entity_updated.description, "update")
+            credential.client_id = "update"
+            credential.client_secret = "update"
+            credential.tenant_id = "update"
+            credential.description = "update"
+            credential_updated = self.admin_client.update_datasource_credential(credential)
+            self.assertEqual(credential_updated.description, "update")
         finally:
-            self.admin_client.delete_credential_entity(credential_entity.id)
+            self.admin_client.delete_datasource_credential(credential.id)
 
-    def test_update_service_principal_in_kv_credential_entity(self):
-        credential_entity_name = self.create_random_name("testserviceprincipalcredential")
+    def test_update_datasource_service_principal_in_kv(self):
+        credential_name = self.create_random_name("testserviceprincipalcredential")
         try:
-            credential_entity = self.admin_client.create_credential_entity(
-                credential_entity=ServicePrincipalInKeyVaultCredentialEntity(
-                    name=credential_entity_name,
+            credential = self.admin_client.create_datasource_credential(
+                datasource_credential=DatasourceServicePrincipalInKeyVault(
+                    name=credential_name,
                     key_vault_endpoint="key_vault_endpoint",
                     key_vault_client_id="key_vault_client_id",
                     key_vault_client_secret="key_vault_client_secret",
                     service_principal_id_name_in_kv="service_principal_id_name_in_kv",
                     service_principal_secret_name_in_kv="service_principal_secret_name_in_kv",
                     tenant_id="tenant_id",
-                    description="my credential entity",
+                    description="my credential",
                 )
             )
-            credential_entity.key_vault_endpoint = "update"
-            credential_entity.key_vault_client_id = "update"
-            credential_entity.key_vault_client_secret = "update"
-            credential_entity.service_principal_id_name_in_kv = "update"
-            credential_entity.service_principal_secret_name_in_kv = "update"
-            credential_entity.tenant_id = "update"
-            credential_entity.description = "update"
-            credential_entity_updated = self.admin_client.update_credential_entity(credential_entity)
-            self.assertEqual(credential_entity_updated.description, "update")
+            credential.key_vault_endpoint = "update"
+            credential.key_vault_client_id = "update"
+            credential.key_vault_client_secret = "update"
+            credential.service_principal_id_name_in_kv = "update"
+            credential.service_principal_secret_name_in_kv = "update"
+            credential.tenant_id = "update"
+            credential.description = "update"
+            credential_updated = self.admin_client.update_datasource_credential(credential)
+            self.assertEqual(credential_updated.description, "update")
         finally:
-            self.admin_client.delete_credential_entity(credential_entity.id)
+            self.admin_client.delete_datasource_credential(credential.id)
