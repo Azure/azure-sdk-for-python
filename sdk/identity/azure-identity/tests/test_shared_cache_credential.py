@@ -642,32 +642,6 @@ def test_auth_record_multiple_accounts_for_username():
     assert token.token == expected_access_token
 
 
-@patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
-@patch("azure.identity._internal.persistent_cache.msal_extensions")
-def test_allow_unencrypted_cache(mock_extensions):
-    """The credential should use an unencrypted cache when encryption is unavailable and the user explicitly allows it.
-
-    This test was written when Linux was the only platform on which encryption may not be available.
-    """
-
-    # the credential should prefer an encrypted cache even when the user allows an unencrypted one
-    SharedTokenCacheCredential(allow_unencrypted_cache=True)
-    assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
-    mock_extensions.PersistedTokenCache.reset_mock()
-
-    # (when LibsecretPersistence's dependencies aren't available, constructing it raises ImportError)
-    mock_extensions.LibsecretPersistence = Mock(side_effect=ImportError)
-
-    # encryption unavailable, no opt in to unencrypted cache -> credential should be unavailable
-    with pytest.raises(CredentialUnavailableError):
-        SharedTokenCacheCredential().get_token("scope")
-    assert mock_extensions.PersistedTokenCache.call_count == 0
-
-    # still no encryption, but now we allow the unencrypted fallback
-    SharedTokenCacheCredential(allow_unencrypted_cache=True)
-    assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
-
-
 def test_writes_to_cache():
     """the credential should write tokens it acquires to the cache"""
 
@@ -724,56 +698,17 @@ def test_writes_to_cache():
     assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN)) == 1
 
 
-def test_access_token_caching():
-    """'get_token' shouldn't return other users' access tokens"""
-
-    scope = "scope"
-    forbidden_access_token = "don't use me"
-    expected_access_token = "access token"
-    my_refresh_token = "my refresh token"
-    your_refresh_token = "your refresh token"
-
-    me = "me"
-    uid = "uidme"
-    utid = "utidme"
-    cache = TokenCache()
-    cache.add(
-        get_account_event(
-            username=me,
-            uid=uid,
-            utid=utid,
-            refresh_token=my_refresh_token,
-            access_token=forbidden_access_token,
-            scopes=[scope],
-        )
-    )
-
-    you = "you"
-    uid = "uidyou"
-    utid = "utidyou"
-    cache.add(
-        get_account_event(
-            username=you,
-            uid=uid,
-            utid=utid,
-            refresh_token=your_refresh_token,
-            access_token=expected_access_token,
-            scopes=[scope],
-        )
-    )
-
-
 def test_initialization():
     """the credential should attempt to load the cache only once, when it's first needed"""
 
-    with patch("azure.identity._internal.persistent_cache._load_persistent_cache") as mock_cache_loader:
+    with patch("azure.identity._internal.shared_token_cache._load_persistent_cache") as mock_cache_loader:
         mock_cache_loader.side_effect = Exception("it didn't work")
 
         credential = SharedTokenCacheCredential()
         assert mock_cache_loader.call_count == 0
 
         for _ in range(2):
-            with pytest.raises(CredentialUnavailableError):
+            with pytest.raises(CredentialUnavailableError, match="Shared token cache unavailable"):
                 credential.get_token("scope")
             assert mock_cache_loader.call_count == 1
 
@@ -801,11 +736,13 @@ def test_authentication_record_authenticating_tenant():
 
 
 def test_client_capabilities():
-    """the credential should configure MSAL for capability CP1 (ability to handle claims challenges)"""
+    """the credential should configure MSAL for capability CP1 unless AZURE_IDENTITY_DISABLE_CP1 is set"""
 
     record = AuthenticationRecord("tenant-id", "client_id", "authority", "home_account_id", "username")
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
-    credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
+    credential = SharedTokenCacheCredential(
+        transport=transport, authentication_record=record, _cache=TokenCache()
+    )
 
     with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication") as PublicClientApplication:
         credential._initialize()
@@ -813,6 +750,17 @@ def test_client_capabilities():
     assert PublicClientApplication.call_count == 1
     _, kwargs = PublicClientApplication.call_args
     assert kwargs["client_capabilities"] == ["CP1"]
+
+    credential = SharedTokenCacheCredential(
+        transport=transport, authentication_record=record, _cache=TokenCache()
+    )
+    with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication") as PublicClientApplication:
+        with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
+            credential._initialize()
+
+    assert PublicClientApplication.call_count == 1
+    _, kwargs = PublicClientApplication.call_args
+    assert kwargs["client_capabilities"] is None
 
 
 def test_claims_challenge():
@@ -829,7 +777,9 @@ def test_claims_challenge():
     )
 
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
-    credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
+    credential = SharedTokenCacheCredential(
+        transport=transport, authentication_record=record, _cache=TokenCache()
+    )
     with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication", lambda *_, **__: msal_app):
         credential.get_token("scope", claims=expected_claims)
 

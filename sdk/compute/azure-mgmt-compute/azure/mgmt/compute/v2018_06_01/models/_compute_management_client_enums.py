@@ -262,9 +262,8 @@ class StatusLevelTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ERROR = "Error"
 
 class StorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the storage account type for the managed disk. Managed OS disk storage account type
-    can only be set when you create the scale set. NOTE: UltraSSD_LRS can only be used with data
-    disks, it cannot be used with OS Disk.
+    """Specifies the storage account type for the managed disk. NOTE: UltraSSD_LRS can only be used
+    with data disks, it cannot be used with OS Disk.
     """
 
     STANDARD_LRS = "Standard_LRS"
@@ -326,8 +325,8 @@ class VirtualMachineScaleSetSkuScaleType(with_metaclass(_CaseInsensitiveEnumMeta
 
 class VirtualMachineSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
-    see `Sizes for virtual machines <https://docs.microsoft.com/azure/virtual-machines/virtual-
-    machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+    see `Sizes for virtual machines
+    <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
     :code:`<br>`:code:`<br>` The available VM sizes depend on region and availability set. For a
     list of available sizes use these APIs:  :code:`<br>`:code:`<br>` `List all available virtual
     machine sizes in an availability set

@@ -26,7 +26,7 @@ class VirtualNetworkPreparer(AzureMgmtPreparer):
             resource_group_name = kwargs['resource_group'].name
             location_name = kwargs['location']
 
-            registration_network = self.test_class_instance.network_client.virtual_networks.create_or_update(
+            registration_network = self.test_class_instance.network_client.virtual_networks.begin_create_or_update(
                 resource_group_name,
                 registration_virtual_network_name,
                 {
@@ -43,7 +43,7 @@ class VirtualNetworkPreparer(AzureMgmtPreparer):
                 }
             ).result()
 
-            resolution_network = self.test_class_instance.network_client.virtual_networks.create_or_update(
+            resolution_network = self.test_class_instance.network_client.virtual_networks.begin_create_or_update(
                 resource_group_name,
                 resolution_virtual_network_name,
                 {
@@ -173,12 +173,13 @@ class MgmtDnsTest(AzureMgmtTestCase):
             'A'
         )
 
-        async_delete = self.dns_client.zones.delete(
+        async_delete = self.dns_client.zones.begin_delete(
             resource_group.name,
             zone.name
         )
         async_delete.wait()
-
+    
+    @unittest.skip("using this API is no longer allowed")
     @ResourceGroupPreparer()
     @VirtualNetworkPreparer()
     def test_private_zone(self, resource_group, location, registration_virtual_network, resolution_virtual_network):
@@ -275,7 +276,7 @@ class MgmtDnsTest(AzureMgmtTestCase):
             'A'
         )
 
-        async_delete = self.dns_client.zones.delete(
+        async_delete = self.dns_client.zones.begin_delete(
             resource_group.name,
             zone.name
         )

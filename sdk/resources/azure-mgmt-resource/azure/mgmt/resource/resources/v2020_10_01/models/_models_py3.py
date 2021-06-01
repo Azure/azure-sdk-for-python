@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import msrest.serialization
 
@@ -336,7 +336,7 @@ class DeploymentExportResult(msrest.serialization.Model):
     """The deployment export result.
 
     :param template: The template content.
-    :type template: object
+    :type template: any
     """
 
     _attribute_map = {
@@ -346,7 +346,7 @@ class DeploymentExportResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        template: Optional[object] = None,
+        template: Optional[Any] = None,
         **kwargs
     ):
         super(DeploymentExportResult, self).__init__(**kwargs)
@@ -609,7 +609,7 @@ class DeploymentProperties(msrest.serialization.Model):
      syntax directly in the request rather than link to an existing template. It can be a JObject or
      well-formed JSON string. Use either the templateLink property or the template property, but not
      both.
-    :type template: object
+    :type template: any
     :param template_link: The URI of the template. Use either the templateLink property or the
      template property, but not both.
     :type template_link: ~azure.mgmt.resource.resources.v2020_10_01.models.TemplateLink
@@ -617,7 +617,7 @@ class DeploymentProperties(msrest.serialization.Model):
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
-    :type parameters: object
+    :type parameters: any
     :param parameters_link: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
@@ -659,9 +659,9 @@ class DeploymentProperties(msrest.serialization.Model):
         self,
         *,
         mode: Union[str, "DeploymentMode"],
-        template: Optional[object] = None,
+        template: Optional[Any] = None,
         template_link: Optional["TemplateLink"] = None,
-        parameters: Optional[object] = None,
+        parameters: Optional[Any] = None,
         parameters_link: Optional["ParametersLink"] = None,
         debug_setting: Optional["DebugSetting"] = None,
         on_error_deployment: Optional["OnErrorDeployment"] = None,
@@ -696,7 +696,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :ivar duration: The duration of the template deployment.
     :vartype duration: str
     :ivar outputs: Key/value pairs that represent deployment output.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar providers: The list of resource providers needed for the deployment.
     :vartype providers: list[~azure.mgmt.resource.resources.v2020_10_01.models.Provider]
     :ivar dependencies: The list of deployment dependencies.
@@ -704,7 +704,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :ivar template_link: The URI referencing the template.
     :vartype template_link: ~azure.mgmt.resource.resources.v2020_10_01.models.TemplateLink
     :ivar parameters: Deployment parameters.
-    :vartype parameters: object
+    :vartype parameters: any
     :ivar parameters_link: The URI referencing the parameters.
     :vartype parameters_link: ~azure.mgmt.resource.resources.v2020_10_01.models.ParametersLink
     :ivar mode: The deployment mode. Possible values are Incremental and Complete. Possible values
@@ -864,7 +864,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
      syntax directly in the request rather than link to an existing template. It can be a JObject or
      well-formed JSON string. Use either the templateLink property or the template property, but not
      both.
-    :type template: object
+    :type template: any
     :param template_link: The URI of the template. Use either the templateLink property or the
      template property, but not both.
     :type template_link: ~azure.mgmt.resource.resources.v2020_10_01.models.TemplateLink
@@ -872,7 +872,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
-    :type parameters: object
+    :type parameters: any
     :param parameters_link: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
@@ -918,9 +918,9 @@ class DeploymentWhatIfProperties(DeploymentProperties):
         self,
         *,
         mode: Union[str, "DeploymentMode"],
-        template: Optional[object] = None,
+        template: Optional[Any] = None,
         template_link: Optional["TemplateLink"] = None,
-        parameters: Optional[object] = None,
+        parameters: Optional[Any] = None,
         parameters_link: Optional["ParametersLink"] = None,
         debug_setting: Optional["DebugSetting"] = None,
         on_error_deployment: Optional["OnErrorDeployment"] = None,
@@ -963,7 +963,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -1147,7 +1147,7 @@ class GenericResource(Resource):
     :param plan: The plan of the resource.
     :type plan: ~azure.mgmt.resource.resources.v2020_10_01.models.Plan
     :param properties: The resource properties.
-    :type properties: object
+    :type properties: any
     :param kind: The kind of the resource.
     :type kind: str
     :param managed_by: ID of the resource that manages this resource.
@@ -1162,7 +1162,6 @@ class GenericResource(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'pattern': r'^[-\w\._,\(\)]+$'},
     }
 
     _attribute_map = {
@@ -1185,7 +1184,7 @@ class GenericResource(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         plan: Optional["Plan"] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         kind: Optional[str] = None,
         managed_by: Optional[str] = None,
         sku: Optional["Sku"] = None,
@@ -1219,7 +1218,7 @@ class GenericResourceExpanded(GenericResource):
     :param plan: The plan of the resource.
     :type plan: ~azure.mgmt.resource.resources.v2020_10_01.models.Plan
     :param properties: The resource properties.
-    :type properties: object
+    :type properties: any
     :param kind: The kind of the resource.
     :type kind: str
     :param managed_by: ID of the resource that manages this resource.
@@ -1243,7 +1242,6 @@ class GenericResourceExpanded(GenericResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'pattern': r'^[-\w\._,\(\)]+$'},
         'created_time': {'readonly': True},
         'changed_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -1272,7 +1270,7 @@ class GenericResourceExpanded(GenericResource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         plan: Optional["Plan"] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         kind: Optional[str] = None,
         managed_by: Optional[str] = None,
         sku: Optional["Sku"] = None,
@@ -1320,7 +1318,7 @@ class HttpMessage(msrest.serialization.Model):
     """HTTP message.
 
     :param content: HTTP message content.
-    :type content: object
+    :type content: any
     """
 
     _attribute_map = {
@@ -1330,7 +1328,7 @@ class HttpMessage(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        content: Optional[object] = None,
+        content: Optional[Any] = None,
         **kwargs
     ):
         super(HttpMessage, self).__init__(**kwargs)
@@ -1764,6 +1762,8 @@ class ProviderResourceType(msrest.serialization.Model):
     :type api_versions: list[str]
     :ivar default_api_version: The default API version.
     :vartype default_api_version: str
+    :param zone_mappings:
+    :type zone_mappings: list[~azure.mgmt.resource.resources.v2020_10_01.models.ZoneMapping]
     :ivar api_profiles: The API profiles for the resource provider.
     :vartype api_profiles: list[~azure.mgmt.resource.resources.v2020_10_01.models.ApiProfile]
     :param capabilities: The additional capabilities offered by this resource type.
@@ -1784,6 +1784,7 @@ class ProviderResourceType(msrest.serialization.Model):
         'aliases': {'key': 'aliases', 'type': '[Alias]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
         'default_api_version': {'key': 'defaultApiVersion', 'type': 'str'},
+        'zone_mappings': {'key': 'zoneMappings', 'type': '[ZoneMapping]'},
         'api_profiles': {'key': 'apiProfiles', 'type': '[ApiProfile]'},
         'capabilities': {'key': 'capabilities', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},
@@ -1797,6 +1798,7 @@ class ProviderResourceType(msrest.serialization.Model):
         location_mappings: Optional[List["ProviderExtendedLocation"]] = None,
         aliases: Optional[List["Alias"]] = None,
         api_versions: Optional[List[str]] = None,
+        zone_mappings: Optional[List["ZoneMapping"]] = None,
         capabilities: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
         **kwargs
@@ -1808,6 +1810,7 @@ class ProviderResourceType(msrest.serialization.Model):
         self.aliases = aliases
         self.api_versions = api_versions
         self.default_api_version = None
+        self.zone_mappings = zone_mappings
         self.api_profiles = None
         self.capabilities = capabilities
         self.properties = properties
@@ -1908,7 +1911,7 @@ class ResourceGroupExportResult(msrest.serialization.Model):
     """Resource group export result.
 
     :param template: The template content.
-    :type template: object
+    :type template: any
     :param error: The template export error.
     :type error: ~azure.mgmt.resource.resources.v2020_10_01.models.ErrorResponse
     """
@@ -1921,7 +1924,7 @@ class ResourceGroupExportResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        template: Optional[object] = None,
+        template: Optional[Any] = None,
         error: Optional["ErrorResponse"] = None,
         **kwargs
     ):
@@ -2676,9 +2679,9 @@ class WhatIfChange(msrest.serialization.Model):
      "NoChange", "Modify".
     :type change_type: str or ~azure.mgmt.resource.resources.v2020_10_01.models.ChangeType
     :param before: The snapshot of the resource before the deployment is executed.
-    :type before: object
+    :type before: any
     :param after: The predicted snapshot of the resource after the deployment is executed.
-    :type after: object
+    :type after: any
     :param delta: The predicted changes to resource properties.
     :type delta: list[~azure.mgmt.resource.resources.v2020_10_01.models.WhatIfPropertyChange]
     """
@@ -2701,8 +2704,8 @@ class WhatIfChange(msrest.serialization.Model):
         *,
         resource_id: str,
         change_type: Union[str, "ChangeType"],
-        before: Optional[object] = None,
-        after: Optional[object] = None,
+        before: Optional[Any] = None,
+        after: Optional[Any] = None,
         delta: Optional[List["WhatIfPropertyChange"]] = None,
         **kwargs
     ):
@@ -2757,9 +2760,9 @@ class WhatIfPropertyChange(msrest.serialization.Model):
     :type property_change_type: str or
      ~azure.mgmt.resource.resources.v2020_10_01.models.PropertyChangeType
     :param before: The value of the property before the deployment is executed.
-    :type before: object
+    :type before: any
     :param after: The value of the property after the deployment is executed.
-    :type after: object
+    :type after: any
     :param children: Nested property changes.
     :type children: list[~azure.mgmt.resource.resources.v2020_10_01.models.WhatIfPropertyChange]
     """
@@ -2782,8 +2785,8 @@ class WhatIfPropertyChange(msrest.serialization.Model):
         *,
         path: str,
         property_change_type: Union[str, "PropertyChangeType"],
-        before: Optional[object] = None,
-        after: Optional[object] = None,
+        before: Optional[Any] = None,
+        after: Optional[Any] = None,
         children: Optional[List["WhatIfPropertyChange"]] = None,
         **kwargs
     ):
@@ -2793,3 +2796,29 @@ class WhatIfPropertyChange(msrest.serialization.Model):
         self.before = before
         self.after = after
         self.children = children
+
+
+class ZoneMapping(msrest.serialization.Model):
+    """ZoneMapping.
+
+    :param location: The location of the zone mapping.
+    :type location: str
+    :param zones:
+    :type zones: list[str]
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        zones: Optional[List[str]] = None,
+        **kwargs
+    ):
+        super(ZoneMapping, self).__init__(**kwargs)
+        self.location = location
+        self.zones = zones

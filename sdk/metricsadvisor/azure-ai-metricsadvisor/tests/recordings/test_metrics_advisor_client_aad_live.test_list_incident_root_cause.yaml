@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/incident_id/rootCause
   response:
@@ -19,21 +19,21 @@ interactions:
         the most to current incident."}]}'
     headers:
       apim-request-id:
-      - 47f466d4-2842-4a41-bd00-5ddc2cb22d5d
+      - 375cea49-19be-4917-ac68-0d399cb7051d
       content-length:
       - '259'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 22 Jan 2021 01:01:38 GMT
+      - Fri, 21 May 2021 20:52:00 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '187'
+      - '243'
       x-request-id:
-      - 47f466d4-2842-4a41-bd00-5ddc2cb22d5d
+      - 375cea49-19be-4917-ac68-0d399cb7051d
     status:
       code: 200
       message: OK

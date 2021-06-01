@@ -26,9 +26,11 @@
 from __future__ import absolute_import
 import logging
 from typing import Iterator, Optional, Any, Union, TypeVar
-import time
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
+from urllib3.exceptions import (
+    DecodeError, ReadTimeoutError, ProtocolError
+)
 import requests
 
 from azure.core.configuration import ConnectionConfiguration
@@ -49,6 +51,25 @@ PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
+def _read_raw_stream(response, chunk_size=1):
+    # Special case for urllib3.
+    if hasattr(response.raw, 'stream'):
+        try:
+            for chunk in response.raw.stream(chunk_size, decode_content=False):
+                yield chunk
+        except ProtocolError as e:
+            raise requests.exceptions.ChunkedEncodingError(e)
+        except DecodeError as e:
+            raise requests.exceptions.ContentDecodingError(e)
+        except ReadTimeoutError as e:
+            raise requests.exceptions.ConnectionError(e)
+    else:
+        # Standard file-like object.
+        while True:
+            chunk = response.raw.read(chunk_size)
+            if not chunk:
+                break
+            yield chunk
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
@@ -99,15 +120,22 @@ class StreamDownloadGenerator(object):
 
     :param pipeline: The pipeline object
     :param response: The response object.
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
+        on the *content-encoding* header.
     """
-    def __init__(self, pipeline, response):
+    def __init__(self, pipeline, response, **kwargs):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
+        decompress = kwargs.pop("decompress", True)
+        if len(kwargs) > 0:
+            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+        if decompress:
+            self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
+        else:
+            self.iter_content_func = _read_raw_stream(self.response.internal_response, self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
-        self.downloaded = 0
 
     def __len__(self):
         return self.content_length
@@ -116,52 +144,30 @@ class StreamDownloadGenerator(object):
         return self
 
     def __next__(self):
-        retry_active = True
-        retry_total = 3
-        retry_interval = 1  # 1 second
-        while retry_active:
-            try:
-                chunk = next(self.iter_content_func)
-                if not chunk:
-                    raise StopIteration()
-                self.downloaded += self.block_size
-                return chunk
-            except StopIteration:
-                self.response.internal_response.close()
+        try:
+            chunk = next(self.iter_content_func)
+            if not chunk:
                 raise StopIteration()
-            except (requests.exceptions.ChunkedEncodingError,
-                    requests.exceptions.ConnectionError):
-                retry_total -= 1
-                if retry_total <= 0:
-                    retry_active = False
-                else:
-                    time.sleep(retry_interval)
-                    headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
-                    resp = self.pipeline.run(self.request, stream=True, headers=headers)
-                    if resp.http_response.status_code == 416:
-                        raise
-                    chunk = next(self.iter_content_func)
-                    if not chunk:
-                        raise StopIteration()
-                    self.downloaded += len(chunk)
-                    return chunk
-                continue
-            except requests.exceptions.StreamConsumedError:
-                raise
-            except Exception as err:
-                _LOGGER.warning("Unable to stream download: %s", err)
-                self.response.internal_response.close()
-                raise
+            return chunk
+        except StopIteration:
+            self.response.internal_response.close()
+            raise StopIteration()
+        except requests.exceptions.StreamConsumedError:
+            raise
+        except Exception as err:
+            _LOGGER.warning("Unable to stream download: %s", err)
+            self.response.internal_response.close()
+            raise
     next = __next__  # Python 2 compatibility.
 
 
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
-    def stream_download(self, pipeline):
-        # type: (PipelineType) -> Iterator[bytes]
+    def stream_download(self, pipeline, **kwargs):
+        # type: (PipelineType, **Any) -> Iterator[bytes]
         """Generator for streaming request body data."""
-        return StreamDownloadGenerator(pipeline, self)
+        return StreamDownloadGenerator(pipeline, self, **kwargs)
 
 
 class RequestsTransport(HttpTransport):

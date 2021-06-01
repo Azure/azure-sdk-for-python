@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: 'b''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
+    body: 'b''{"source": "container_sas_url", "sourceFilter": {"prefix": "", "includeSubFolders":
       false}, "useLabelFile": true}'''
     headers:
       Accept:
@@ -10,63 +10,63 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 1fbfa8b8-0b05-498a-a9fb-2788b4772806
+      apim-request-id: 3bf3ba60-3cd6-45e8-bc62-3a0e201ae0ad
       content-length: '0'
-      date: Fri, 30 Oct 2020 17:50:33 GMT
-      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/ed8dfdd8-b362-4f36-8e85-75f08e94a890
+      date: Tue, 11 May 2021 03:28:25 GMT
+      location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/7f09747f-f451-4984-93d5-0fa7980357f8
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '44'
+      x-envoy-upstream-service-time: '132'
     status:
       code: 201
       message: Created
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/custom/models
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/ed8dfdd8-b362-4f36-8e85-75f08e94a890?includeKeys=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/7f09747f-f451-4984-93d5-0fa7980357f8?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "ed8dfdd8-b362-4f36-8e85-75f08e94a890", "attributes":
-        {"isComposed": false}, "status": "ready", "createdDateTime": "2020-10-30T17:50:33Z",
-        "lastUpdatedDateTime": "2020-10-30T17:50:35Z"}, "trainResult": {"averageModelAccuracy":
+      string: '{"modelInfo": {"modelId": "7f09747f-f451-4984-93d5-0fa7980357f8", "attributes":
+        {"isComposed": false}, "status": "ready", "createdDateTime": "2021-05-11T03:28:25Z",
+        "lastUpdatedDateTime": "2021-05-11T03:28:29Z"}, "trainResult": {"averageModelAccuracy":
         0.889, "trainingDocuments": [{"documentName": "multipage_invoice1.pdf", "pages":
         3, "status": "succeeded"}, {"documentName": "multipage_invoice2.pdf", "pages":
         3, "status": "succeeded"}, {"documentName": "multipage_invoice3.pdf", "pages":
         3, "status": "succeeded"}, {"documentName": "multipage_invoice4.pdf", "pages":
         3, "status": "succeeded"}, {"documentName": "multipage_invoice5.pdf", "pages":
         3, "status": "succeeded"}], "fields": [{"fieldName": "Customer2", "accuracy":
-        1.0}, {"fieldName": "CustomerAddress", "accuracy": 1.0}, {"fieldName": "CustomerName",
-        "accuracy": 1.0}, {"fieldName": "CustomerPhoneNumber", "accuracy": 1.0}, {"fieldName":
-        "FirstItem", "accuracy": 1.0}, {"fieldName": "FirstPrice", "accuracy": 1.0},
-        {"fieldName": "FirstQuantity", "accuracy": 1.0}, {"fieldName": "Merchant",
-        "accuracy": 0.0}, {"fieldName": "Merchant2", "accuracy": 0.0}, {"fieldName":
-        "MerchantAddress", "accuracy": 1.0}, {"fieldName": "MerchantPhoneNumber",
-        "accuracy": 1.0}, {"fieldName": "Signature", "accuracy": 1.0}, {"fieldName":
-        "Signature2", "accuracy": 1.0}, {"fieldName": "Subtotal", "accuracy": 1.0},
-        {"fieldName": "Tax", "accuracy": 1.0}, {"fieldName": "Tip", "accuracy": 1.0},
-        {"fieldName": "Total", "accuracy": 1.0}, {"fieldName": "Total2", "accuracy":
-        1.0}], "errors": []}}'
+        0.995}, {"fieldName": "CustomerAddress", "accuracy": 0.995}, {"fieldName":
+        "CustomerName", "accuracy": 0.995}, {"fieldName": "CustomerPhoneNumber", "accuracy":
+        0.995}, {"fieldName": "FirstItem", "accuracy": 0.995}, {"fieldName": "FirstPrice",
+        "accuracy": 0.995}, {"fieldName": "FirstQuantity", "accuracy": 0.995}, {"fieldName":
+        "Merchant", "accuracy": 0.0}, {"fieldName": "Merchant2", "accuracy": 0.0},
+        {"fieldName": "MerchantAddress", "accuracy": 0.995}, {"fieldName": "MerchantPhoneNumber",
+        "accuracy": 0.995}, {"fieldName": "Signature", "accuracy": 0.995}, {"fieldName":
+        "Signature2", "accuracy": 0.995}, {"fieldName": "Subtotal", "accuracy": 0.995},
+        {"fieldName": "Tax", "accuracy": 0.995}, {"fieldName": "Tip", "accuracy":
+        0.995}, {"fieldName": "Total", "accuracy": 0.995}, {"fieldName": "Total2",
+        "accuracy": 0.995}], "errors": []}}'
     headers:
-      apim-request-id: 2b39296f-141e-4b29-ba7b-f95028d56c43
+      apim-request-id: 0ce85efa-3815-44d3-984b-9120d111b169
+      content-length: '1446'
       content-type: application/json; charset=utf-8
-      date: Fri, 30 Oct 2020 17:50:38 GMT
+      date: Tue, 11 May 2021 03:28:30 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '16'
+      x-envoy-upstream-service-time: '138'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/ed8dfdd8-b362-4f36-8e85-75f08e94a890?includeKeys=true
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/7f09747f-f451-4984-93d5-0fa7980357f8?includeKeys=true
 version: 1

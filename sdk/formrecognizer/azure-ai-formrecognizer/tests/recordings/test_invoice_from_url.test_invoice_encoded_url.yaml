@@ -13,29 +13,26 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "InvalidImage", "innerError": {"requestId": "a12a35f1-5636-4b4a-9c6a-9c709e970933"},
-        "message": "The input data is not a valid image or password protected."}}'
+      string: '{"error": {"code": "Timeout", "message": "The operation was timeout."}}'
     headers:
       apim-request-id:
-      - a12a35f1-5636-4b4a-9c6a-9c709e970933
+      - 540fb882-7141-4882-afd2-2d2e4c884b02
       content-length:
-      - '170'
+      - '75'
       content-type:
-      - application/json; charset=utf-8
+      - application/json
       date:
-      - Fri, 30 Oct 2020 01:12:23 GMT
+      - Tue, 11 May 2021 02:32:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
-      x-envoy-upstream-service-time:
-      - '1123'
     status:
-      code: 400
-      message: Bad Request
+      code: 408
+      message: Timeout
 version: 1

@@ -12,7 +12,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) EG_ACCESS_KEY - The access key of your eventgrid account.
     2) EG_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
-    "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
     3) EVENTGRID_SAS - The shared access signature that is to be used to authenticate the client.
 """
 # [START client_auth_with_key_cred_async]

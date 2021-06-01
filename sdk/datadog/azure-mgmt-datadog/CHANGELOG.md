@@ -1,5 +1,25 @@
 # Release History
 
+## 2.0.0 (2021-05-26)
+
+**Features**
+
+  - Model DatadogMonitorResourceUpdateParameters has a new parameter sku
+  - Added operation MonitorsOperations.begin_update
+
+**Breaking changes**
+
+  - Removed operation MonitorsOperations.update
+
+## 1.0.0 (2021-03-22)
+
+**Features**
+
+  - Model DatadogAgreementResource has a new parameter system_data
+  - Model MonitoringTagRules has a new parameter system_data
+  - Model DatadogSingleSignOnResource has a new parameter system_data
+  - Model DatadogMonitorResource has a new parameter system_data
+
 ## 1.0.0b3 (2021-03-02)
 
 **Features**

@@ -10,7 +10,6 @@ import msal
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from .get_token_mixin import GetTokenMixin
-from .persistent_cache import load_service_principal_cache
 
 from . import wrap_exceptions
 from .msal_credentials import MsalCredential
@@ -21,14 +20,6 @@ if TYPE_CHECKING:
 
 class ClientCredentialBase(MsalCredential, GetTokenMixin):
     """Base class for credentials authenticating a service principal with a certificate or secret"""
-
-    def __init__(self, **kwargs):
-        if kwargs.pop("enable_persistent_cache", False):
-            allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
-            cache = load_service_principal_cache(allow_unencrypted)
-        else:
-            cache = msal.TokenCache()
-        super(ClientCredentialBase, self).__init__(_cache=cache, **kwargs)
 
     @wrap_exceptions
     def _acquire_token_silently(self, *scopes, **kwargs):

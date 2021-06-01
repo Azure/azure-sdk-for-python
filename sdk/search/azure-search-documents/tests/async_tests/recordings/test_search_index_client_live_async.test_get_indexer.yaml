@@ -12,7 +12,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search366f1552.search.windows.net/datasources?api-version=2020-06-30
+    uri: https://search366f1552.search.windows.net/datasources?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search366f1552.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D83F249FC5F01D\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
@@ -24,7 +24,7 @@ interactions:
       elapsed-time: '72'
       etag: W/"0x8D83F249FC5F01D"
       expires: '-1'
-      location: https://search366f1552.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+      location: https://search366f1552.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -33,7 +33,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://search366f1552.search.windows.net/datasources?api-version=2020-06-30
+    url: https://search366f1552.search.windows.net/datasources?api-version=2020-06-30-Preview
 - request:
     body: '{"name": "hotels", "fields": [{"name": "hotelId", "type": "Edm.String",
       "key": true, "retrievable": true, "searchable": false}]}'
@@ -47,7 +47,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search366f1552.search.windows.net/indexes?api-version=2020-06-30
+    uri: https://search366f1552.search.windows.net/indexes?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search366f1552.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D83F24A041C667\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
@@ -59,7 +59,7 @@ interactions:
       elapsed-time: '663'
       etag: W/"0x8D83F24A041C667"
       expires: '-1'
-      location: https://search366f1552.search.windows.net/indexes('hotels')?api-version=2020-06-30
+      location: https://search366f1552.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -68,7 +68,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://search366f1552.search.windows.net/indexes?api-version=2020-06-30
+    url: https://search366f1552.search.windows.net/indexes?api-version=2020-06-30-Preview
 - request:
     body: '{"name": "sample-indexer", "dataSourceName": "sample-datasource", "targetIndexName":
       "hotels", "disabled": false}'
@@ -82,7 +82,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search366f1552.search.windows.net/indexers?api-version=2020-06-30
+    uri: https://search366f1552.search.windows.net/indexers?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"error":{"code":"","message":"Error with data source: Credentials
@@ -111,5 +111,5 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://search366f1552.search.windows.net/indexers?api-version=2020-06-30
+    url: https://search366f1552.search.windows.net/indexers?api-version=2020-06-30-Preview
 version: 1

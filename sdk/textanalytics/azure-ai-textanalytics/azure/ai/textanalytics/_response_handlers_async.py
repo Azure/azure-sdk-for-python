@@ -9,7 +9,7 @@ import functools
 from urllib.parse import urlparse, parse_qsl
 
 from azure.core.async_paging import AsyncList
-from ._models import RequestStatistics, TextDocumentBatchStatistics
+from ._models import RequestStatistics
 from ._async_paging import (
     AnalyzeHealthcareEntitiesResultAsync,
     AnalyzeResultAsync
@@ -35,6 +35,8 @@ async def lro_get_next_page_async(lro_status_callback, first_page, continuation_
     parsed_url = urlparse(continuation_token)
     job_id = parsed_url.path.split("/")[-1]
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
+    if "showStats" in query_params:
+        query_params.pop("showStats")
     query_params["show_stats"] = show_stats
 
     return await lro_status_callback(job_id, **query_params)
@@ -58,6 +60,4 @@ def analyze_paged_result(
     return AnalyzeResultAsync(
         functools.partial(lro_get_next_page_async, analyze_status_callback, obj),
         functools.partial(analyze_extract_page_data_async, doc_id_order, task_order, response_headers),
-        statistics=TextDocumentBatchStatistics._from_generated(obj.statistics) \
-            if show_stats and obj.statistics is not None else None # pylint: disable=protected-access
     )

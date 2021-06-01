@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -16,6 +17,11 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import ComputeManagementClientConfiguration
+from .operations import DisksOperations
+from .operations import SnapshotsOperations
+from .operations import DiskEncryptionSetsOperations
+from .operations import DiskAccessesOperations
+from .operations import DiskRestorePointOperations
 from .operations import Operations
 from .operations import AvailabilitySetsOperations
 from .operations import ProximityPlacementGroupsOperations
@@ -44,6 +50,16 @@ from .. import models
 class ComputeManagementClient(object):
     """Compute Client.
 
+    :ivar disks: DisksOperations operations
+    :vartype disks: azure.mgmt.compute.v2020_12_01.aio.operations.DisksOperations
+    :ivar snapshots: SnapshotsOperations operations
+    :vartype snapshots: azure.mgmt.compute.v2020_12_01.aio.operations.SnapshotsOperations
+    :ivar disk_encryption_sets: DiskEncryptionSetsOperations operations
+    :vartype disk_encryption_sets: azure.mgmt.compute.v2020_12_01.aio.operations.DiskEncryptionSetsOperations
+    :ivar disk_accesses: DiskAccessesOperations operations
+    :vartype disk_accesses: azure.mgmt.compute.v2020_12_01.aio.operations.DiskAccessesOperations
+    :ivar disk_restore_point: DiskRestorePointOperations operations
+    :vartype disk_restore_point: azure.mgmt.compute.v2020_12_01.aio.operations.DiskRestorePointOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.compute.v2020_12_01.aio.operations.Operations
     :ivar availability_sets: AvailabilitySetsOperations operations
@@ -110,8 +126,19 @@ class ComputeManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.disks = DisksOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.snapshots = SnapshotsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.disk_encryption_sets = DiskEncryptionSetsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.disk_accesses = DiskAccessesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.disk_restore_point = DiskRestorePointOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.availability_sets = AvailabilitySetsOperations(
@@ -156,6 +183,23 @@ class ComputeManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()

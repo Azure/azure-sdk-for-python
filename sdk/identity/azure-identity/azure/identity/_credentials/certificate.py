@@ -23,6 +23,9 @@ class CertificateCredential(ClientCredentialBase):
 
     The certificate must have an RSA private key, because this credential signs assertions using RS256.
 
+    See Azure Active Directory documentation for more information on configuring certificate authentication:
+    https://docs.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials#register-your-certificate-with-microsoft-identity-platform
+
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str client_id: the service principal's client ID
     :param str certificate_path: path to a PEM-encoded certificate file including the private key. If not provided,
@@ -38,10 +41,9 @@ class CertificateCredential(ClientCredentialBase):
     :keyword bool send_certificate_chain: if True, the credential will send the public certificate chain in the x5c
           header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults
           to False.
-    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache. Defaults to
-          False.
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
-          is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
+    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+          will cache tokens in memory.
+    :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
     def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):
@@ -73,10 +75,12 @@ def get_client_credential(certificate_path, password=None, certificate_data=None
     """Load a certificate from a filesystem path or bytes, return it as a dict suitable for msal.ClientApplication"""
 
     if certificate_path:
+        if certificate_data:
+            raise ValueError('Please specify either "certificate_path" or "certificate_data", not both')
         with open(certificate_path, "rb") as f:
             certificate_data = f.read()
     elif not certificate_data:
-        raise ValueError('CertificateCredential requires a value for "certificate_path" or "certificate_data"')
+        raise ValueError('CertificateCredential requires a value for either "certificate_path" or "certificate_data"')
 
     if isinstance(password, six.text_type):
         password = password.encode(encoding="utf-8")

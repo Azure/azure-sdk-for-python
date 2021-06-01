@@ -206,7 +206,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         self.assertEqual(target["modelId"], copy.model_id)
         self.assertNotEqual(target["modelId"], model.model_id)
         self.assertIsNotNone(copied_model)
-        # self.assertEqual(copied_model.model_name, "mymodel")  # FIXME: still is not returned for unlabeled
+        self.assertEqual(copied_model.model_name, "mymodel")
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

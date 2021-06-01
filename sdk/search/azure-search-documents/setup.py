@@ -48,6 +48,7 @@ if not version:
 setup(
     name=PACKAGE_NAME,
     version=version,
+    include_package_data=True,
     description='Microsoft {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=open('README.md', 'r').read(),
     long_description_content_type='text/markdown',
@@ -56,7 +57,7 @@ setup(
     author_email='ascl@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents',
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -77,8 +78,9 @@ setup(
         'azure.search',
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.4.0",
-        "msrest>=0.6.10",
+        "azure-core<2.0.0,>=1.14.0",
+        "msrest>=0.6.21",
+        "azure-common~=1.1",
         "typing-extensions"
     ],
     extras_require={

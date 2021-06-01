@@ -1,5 +1,69 @@
 # Release History
 
+## 21.0.0 (2021-05-25)
+
+**Features**
+
+  - Model NetworkInterfaceReference has a new parameter delete_option
+  - Model DataDisk has a new parameter delete_option
+  - Model VirtualMachineScaleSetPublicIPAddressConfiguration has a new parameter sku
+  - Model VirtualMachineScaleSetPublicIPAddressConfiguration has a new parameter delete_option
+  - Model VirtualMachineScaleSetNetworkConfiguration has a new parameter delete_option
+  - Model OSDisk has a new parameter delete_option
+  - Model VirtualMachineScaleSetVM has a new parameter user_data
+  - Model VirtualMachineScaleSetUpdateNetworkProfile has a new parameter network_api_version
+  - Model VirtualMachineScaleSetUpdateVMProfile has a new parameter user_data
+  - Model VirtualMachineScaleSetVMProfile has a new parameter user_data
+  - Model LinuxPatchSettings has a new parameter assessment_mode
+  - Model VirtualMachineScaleSetUpdatePublicIPAddressConfiguration has a new parameter delete_option
+  - Model VirtualMachineUpdate has a new parameter user_data
+  - Model VirtualMachineUpdate has a new parameter scheduled_events_profile
+  - Model NetworkProfile has a new parameter network_api_version
+  - Model NetworkProfile has a new parameter network_interface_configurations
+  - Model VirtualMachine has a new parameter user_data
+  - Model VirtualMachine has a new parameter scheduled_events_profile
+  - Model PatchSettings has a new parameter assessment_mode
+  - Model VirtualMachineScaleSetUpdateNetworkConfiguration has a new parameter delete_option
+  - Model VirtualMachineScaleSetNetworkProfile has a new parameter network_api_version
+  - Added operation group RestorePointCollectionsOperations
+  - Added operation group RestorePointsOperations
+
+**Breaking changes**
+
+  - Operation VirtualMachineScaleSetsOperations.get has a new signature
+  - Model PurchasePlan no longer has parameter promotion_code
+
+## 20.0.0 (2021-04-06)
+
+**Features**
+
+  - Model PurchasePlan has a new parameter promotion_code
+  - Model DiskUpdate has a new parameter supports_hibernation
+  - Model DiskUpdate has a new parameter property_updates_in_progress
+  - Model SnapshotUpdate has a new parameter supports_hibernation
+  - Model DiskRestorePoint has a new parameter supports_hibernation
+  - Model DiskEncryptionSetUpdate has a new parameter identity
+  - Model DiskEncryptionSetUpdate has a new parameter rotation_to_latest_key_version_enabled
+  - Model CloudServiceProperties has a new parameter allow_model_override
+  - Model LoadBalancerConfiguration has a new parameter id
+  - Model CloudServiceInstanceView has a new parameter private_ids
+  - Model Snapshot has a new parameter supports_hibernation
+  - Model DiskEncryptionSet has a new parameter last_key_rotation_timestamp
+  - Model DiskEncryptionSet has a new parameter rotation_to_latest_key_version_enabled
+  - Model Disk has a new parameter security_profile
+  - Model Disk has a new parameter supports_hibernation
+  - Model Disk has a new parameter property_updates_in_progress
+  - Added operation group CloudServiceOperatingSystemsOperations
+
+**Breaking changes**
+
+  - Parameter name of model LoadBalancerConfiguration is now required
+  - Parameter properties of model LoadBalancerConfiguration is now required
+  - Parameter frontend_ip_configurations of model LoadBalancerConfigurationProperties is now required
+  - Parameter name of model LoadBalancerFrontendIPConfiguration is now required
+  - Parameter properties of model LoadBalancerFrontendIPConfiguration is now required
+
+
 ## 19.0.0 (2021-02-20)
 
 **Features**

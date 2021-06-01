@@ -10,6 +10,7 @@ from ._constants import AzureAuthorityHosts, KnownAuthorities
 from ._credentials import (
     AzureCliCredential,
     AuthorizationCodeCredential,
+    AzurePowerShellCredential,
     CertificateCredential,
     ChainedTokenCredential,
     ClientSecretCredential,
@@ -22,6 +23,7 @@ from ._credentials import (
     UsernamePasswordCredential,
     VisualStudioCodeCredential,
 )
+from ._persistent_cache import TokenCachePersistenceOptions
 
 
 __all__ = [
@@ -30,6 +32,7 @@ __all__ = [
     "AuthorizationCodeCredential",
     "AzureAuthorityHosts",
     "AzureCliCredential",
+    "AzurePowerShellCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
     "ClientSecretCredential",
@@ -41,6 +44,7 @@ __all__ = [
     "KnownAuthorities",
     "ManagedIdentityCredential",
     "SharedTokenCacheCredential",
+    "TokenCachePersistenceOptions",
     "UsernamePasswordCredential",
     "VisualStudioCodeCredential",
 ]

@@ -26,7 +26,7 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class AnomalyAlertingConfigurationCrossMetricsOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AnomalyAlertingConfigurationLogicType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """cross metrics operator
     
     should be specified when setting up multiple metric alerting configurations
@@ -36,13 +36,14 @@ class AnomalyAlertingConfigurationCrossMetricsOperator(with_metaclass(_CaseInsen
     OR_ENUM = "OR"
     XOR = "XOR"
 
-class AnomalyAlertingConfigurationPatchCrossMetricsOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """cross metrics operator
+class AnomalyDetectionConfigurationLogicType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """condition operator
+    
+    should be specified when combining multiple detection conditions
     """
 
     AND_ENUM = "AND"
     OR_ENUM = "OR"
-    XOR = "XOR"
 
 class AnomalyDetectorDirection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """detection direction
@@ -52,15 +53,6 @@ class AnomalyDetectorDirection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     DOWN = "Down"
     UP = "Up"
 
-class AnomalyPropertyAnomalyStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """anomaly status
-    
-    only return for alerting anomaly result
-    """
-
-    ACTIVE = "Active"
-    RESOLVED = "Resolved"
-
 class AnomalyScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Anomaly scope
     """
@@ -69,11 +61,31 @@ class AnomalyScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DIMENSION = "Dimension"
     TOP_N = "TopN"
 
+class AnomalyStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """anomaly status
+    
+    only return for alerting anomaly result
+    """
+
+    ACTIVE = "Active"
+    RESOLVED = "Resolved"
+
 class AnomalyValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     AUTO_DETECT = "AutoDetect"
     ANOMALY = "Anomaly"
     NOT_ANOMALY = "NotAnomaly"
+
+class AuthenticationTypeEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """authentication type for corresponding data source
+    """
+
+    BASIC = "Basic"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    AZURE_SQL_CONNECTION_STRING = "AzureSQLConnectionString"
+    DATA_LAKE_GEN2_SHARED_KEY = "DataLakeGen2SharedKey"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SERVICE_PRINCIPAL_IN_KV = "ServicePrincipalInKV"
 
 class ChangePointValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -81,7 +93,16 @@ class ChangePointValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CHANGE_POINT = "ChangePoint"
     NOT_CHANGE_POINT = "NotChangePoint"
 
-class DataFeedDetailPatchDataSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DataSourceCredentialType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of data source credential
+    """
+
+    AZURE_SQL_CONNECTION_STRING = "AzureSQLConnectionString"
+    DATA_LAKE_GEN2_SHARED_KEY = "DataLakeGen2SharedKey"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SERVICE_PRINCIPAL_IN_KV = "ServicePrincipalInKV"
+
+class DataSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """data source type
     """
 
@@ -90,99 +111,14 @@ class DataFeedDetailPatchDataSourceType(with_metaclass(_CaseInsensitiveEnumMeta,
     AZURE_COSMOS_DB = "AzureCosmosDB"
     AZURE_DATA_EXPLORER = "AzureDataExplorer"
     AZURE_DATA_LAKE_STORAGE_GEN2 = "AzureDataLakeStorageGen2"
+    AZURE_EVENT_HUBS = "AzureEventHubs"
+    AZURE_LOG_ANALYTICS = "AzureLogAnalytics"
     AZURE_TABLE = "AzureTable"
-    ELASTICSEARCH = "Elasticsearch"
-    HTTP_REQUEST = "HttpRequest"
     INFLUX_DB = "InfluxDB"
     MONGO_DB = "MongoDB"
     MY_SQL = "MySql"
     POSTGRE_SQL = "PostgreSql"
     SQL_SERVER = "SqlServer"
-
-class DataFeedDetailPatchFillMissingPointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """the type of fill missing point for anomaly detection
-    """
-
-    SMART_FILLING = "SmartFilling"
-    PREVIOUS_VALUE = "PreviousValue"
-    CUSTOM_VALUE = "CustomValue"
-    NO_FILLING = "NoFilling"
-
-class DataFeedDetailPatchNeedRollup(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """mark if the data feed need rollup
-    """
-
-    NO_ROLLUP = "NoRollup"
-    NEED_ROLLUP = "NeedRollup"
-    ALREADY_ROLLUP = "AlreadyRollup"
-
-class DataFeedDetailPatchRollUpMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """roll up method
-    """
-
-    NONE = "None"
-    SUM = "Sum"
-    MAX = "Max"
-    MIN = "Min"
-    AVG = "Avg"
-    COUNT = "Count"
-
-class DataFeedDetailPatchStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """data feed status
-    """
-
-    ACTIVE = "Active"
-    PAUSED = "Paused"
-
-class DataFeedDetailPatchViewMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """data feed access mode, default is Private
-    """
-
-    PRIVATE = "Private"
-    PUBLIC = "Public"
-
-class DataFeedDetailRollUpMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """roll up method
-    """
-
-    NONE = "None"
-    SUM = "Sum"
-    MAX = "Max"
-    MIN = "Min"
-    AVG = "Avg"
-    COUNT = "Count"
-
-class DataFeedDetailStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """data feed status
-    """
-
-    ACTIVE = "Active"
-    PAUSED = "Paused"
-
-class DataSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    AZURE_APPLICATION_INSIGHTS = "AzureApplicationInsights"
-    AZURE_BLOB = "AzureBlob"
-    AZURE_COSMOS_DB = "AzureCosmosDB"
-    AZURE_DATA_EXPLORER = "AzureDataExplorer"
-    AZURE_DATA_LAKE_STORAGE_GEN2 = "AzureDataLakeStorageGen2"
-    AZURE_TABLE = "AzureTable"
-    ELASTICSEARCH = "Elasticsearch"
-    HTTP_REQUEST = "HttpRequest"
-    INFLUX_DB = "InfluxDB"
-    MONGO_DB = "MongoDB"
-    MY_SQL = "MySql"
-    POSTGRE_SQL = "PostgreSql"
-    SQL_SERVER = "SqlServer"
-
-class DimensionGroupConfigurationConditionOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """condition operator
-    
-    should be specified when combining multiple detection conditions
-    """
-
-    AND_ENUM = "AND"
-    OR_ENUM = "OR"
 
 class Direction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """value filter direction
@@ -193,6 +129,8 @@ class Direction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UP = "Up"
 
 class EntityStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """data feed status
+    """
 
     ACTIVE = "Active"
     PAUSED = "Paused"
@@ -223,6 +161,8 @@ class FillMissingPointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NO_FILLING = "NoFilling"
 
 class Granularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """granularity of the time series
+    """
 
     YEARLY = "Yearly"
     MONTHLY = "Monthly"
@@ -233,13 +173,6 @@ class Granularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SECONDLY = "Secondly"
     CUSTOM = "Custom"
 
-class HookInfoPatchHookType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """hook type
-    """
-
-    WEBHOOK = "Webhook"
-    EMAIL = "Email"
-
 class HookType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """hook type
     """
@@ -247,7 +180,7 @@ class HookType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WEBHOOK = "Webhook"
     EMAIL = "Email"
 
-class IncidentPropertyIncidentStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IncidentStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """incident status
     
     only return for alerting incident result
@@ -284,14 +217,16 @@ class PeriodType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AUTO_DETECT = "AutoDetect"
     ASSIGN_VALUE = "AssignValue"
 
-class SeriesConfigurationConditionOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """condition operator
-    
-    should be specified when combining multiple detection conditions
+class RollUpMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """roll up method
     """
 
-    AND_ENUM = "AND"
-    OR_ENUM = "OR"
+    NONE = "None"
+    SUM = "Sum"
+    MAX = "Max"
+    MIN = "Min"
+    AVG = "Avg"
+    COUNT = "Count"
 
 class Severity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """min alert severity
@@ -316,18 +251,16 @@ class TimeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CREATED_TIME = "CreatedTime"
     MODIFIED_TIME = "ModifiedTime"
 
+class ValueType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """data used to implement value filter
+    """
+
+    VALUE = "Value"
+    MEAN = "Mean"
+
 class ViewMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """data feed access mode, default is Private
     """
 
     PRIVATE = "Private"
     PUBLIC = "Public"
-
-class WholeMetricConfigurationConditionOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """condition operator
-    
-    should be specified when combining multiple detection conditions
-    """
-
-    AND_ENUM = "AND"
-    OR_ENUM = "OR"

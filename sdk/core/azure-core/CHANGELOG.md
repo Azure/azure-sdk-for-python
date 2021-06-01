@@ -1,15 +1,52 @@
 # Release History
 
+## 1.15.0 (2021-06-04)
+
+### New Features
+
+- Added `BearerTokenCredentialPolicy.on_challenge` and `.authorize_request` to allow subclasses to optionally handle authentication challenges
+
+### Bug Fixes
+
+- Retry policies don't sleep after operations time out
+
+
+## 1.14.0 (2021-05-13)
+
+### New Features
+
+- Added `azure.core.credentials.AzureNamedKeyCredential` credential #17548.
+- Added `decompress` parameter for `stream_download` method. If it is set to `False`, will not do decompression upon the stream.    #17920
+
+## 1.13.0 (2021-04-02)
+
+Azure core requires Python 2.7 or Python 3.6+ since this release.
+
+### New Features
+
+- Added `azure.core.utils.parse_connection_string` function to parse connection strings across SDKs, with common validation and support for case insensitive keys.
+- Supported adding custom policies  #16519
+- Added `~azure.core.tracing.Link` that should be used while passing `Links` to  `AbstractSpan`.
+- `AbstractSpan` constructor can now take in additional keyword only args.
+
+### Bug fixes
+
+- Make NetworkTraceLoggingPolicy show the auth token in plain text. #14191
+- Fixed RetryPolicy overriding default connection timeout with an extreme value #17481
+
 ## 1.12.0 (2021-03-08)
+
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
 
 ### Features
 
 - Added `azure.core.messaging.CloudEvent` model that follows the cloud event spec.
 - Added `azure.core.serialization.NULL` sentinel value
+- Improve `repr`s for `HttpRequest` and `HttpResponse`s  #16972
 
 ### Bug Fixes
 
-- Improve `repr`s for `HttpRequest` and `HttpResponse`s  #16972
+- Disable retry in stream downloading. (thanks to @jochen-ott-by @hoffmann for the contribution)  #16723
 
 ## 1.11.0 (2021-02-08)
 

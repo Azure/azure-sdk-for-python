@@ -1,12 +1,16 @@
 # Release History
 
-## 4.2.1 (Unreleased)
+## 4.3.0b1 (Unreleased)
 ### Fixed
 - Correct typing for async paging methods
 
+### Changed
+- Key Vault API version 7.2 is now the default
+- Updated minimum `msrest` version to 0.6.21
+
 ### Added
-- Added method `parse_key_vault_secret_id` that parses out a full ID returned by Key Vault, so users can easily
-access the secret's `name`, `vault_url`, and `version`.
+- Added class `KeyVaultSecretIdentifier` that parses out a full ID returned by Key Vault,
+  so users can easily access the secret's `name`, `vault_url`, and `version`.
 
 ## 4.2.0 (2020-08-11)
 ### Fixed

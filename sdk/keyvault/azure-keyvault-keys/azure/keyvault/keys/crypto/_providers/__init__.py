@@ -11,19 +11,19 @@ from .symmetric import SymmetricCryptographyProvider
 from ... import KeyType
 
 if TYPE_CHECKING:
-    from ... import KeyVaultKey
+    from ... import JsonWebKey
 
 
 def get_local_cryptography_provider(key):
-    # type: (KeyVaultKey) -> LocalCryptographyProvider
-    if key.key_type in (KeyType.ec, KeyType.ec_hsm):
+    # type: (JsonWebKey) -> LocalCryptographyProvider
+    if key.kty in (KeyType.ec, KeyType.ec_hsm):
         return EllipticCurveCryptographyProvider(key)
-    if key.key_type in (KeyType.rsa, KeyType.rsa_hsm):
+    if key.kty in (KeyType.rsa, KeyType.rsa_hsm):
         return RsaCryptographyProvider(key)
-    if key.key_type in (KeyType.oct, KeyType.oct_hsm):
+    if key.kty in (KeyType.oct, KeyType.oct_hsm):
         return SymmetricCryptographyProvider(key)
 
-    raise ValueError('Unsupported key type "{}"'.format(key.key_type))
+    raise ValueError('Unsupported key type "{}"'.format(key.kty))
 
 
 class NoLocalCryptography(LocalCryptographyProvider):

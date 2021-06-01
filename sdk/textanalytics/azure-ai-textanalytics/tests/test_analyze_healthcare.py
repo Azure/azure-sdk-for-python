@@ -26,7 +26,6 @@ from azure.ai.textanalytics import (
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
-
 class TestHealth(TextAnalyticsTest):
     def _interval(self):
         return 5 if self.is_live else 0
@@ -134,7 +133,7 @@ class TestHealth(TextAnalyticsTest):
             polling_interval=self._interval()
         ).result()
 
-        self.assertEqual("2021-01-11", response.model_version)
+        assert response.model_version  # commenting out bc of service error, always uses latest https://github.com/Azure/azure-sdk-for-python/issues/17160
         self.assertEqual(response.statistics.documents_count, 5)
         self.assertEqual(response.statistics.transactions_count, 4)
         self.assertEqual(response.statistics.valid_documents_count, 4)
@@ -384,11 +383,37 @@ class TestHealth(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result())
 
-        # currently just testing it has that attribute.
-        # have an issue to update https://github.com/Azure/azure-sdk-for-python/issues/17072
-
         assert all([
             e for e in result[0].entities if hasattr(e, "normalized_text")
         ])
+
         histologically_entity = list(filter(lambda x: x.text == "histologically", result[0].entities))[0]
         assert histologically_entity.normalized_text == "Histology Procedure"
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_healthcare_assertion(self, client):
+        result = list(client.begin_analyze_healthcare_entities(
+            documents=["Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."],
+            polling_interval=self._interval(),
+        ).result())
+
+        # currently can only test certainty
+        # have an issue to update https://github.com/Azure/azure-sdk-for-python/issues/17088
+        meningitis_entity = next(e for e in result[0].entities if e.text == "Meningitis")
+        assert meningitis_entity.assertion.certainty == "negativePossible"
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_disable_service_logs(self, client):
+        def callback(resp):
+            # this is called for both the initial post
+            # and the gets. Only care about the initial post
+            if resp.http_request.method == "POST":
+                assert resp.http_request.query['loggingOptOut']
+        client.begin_analyze_healthcare_entities(
+            documents=["Test for logging disable"],
+            polling_interval=self._interval(),
+            disable_service_logs=True,
+            raw_response_hook=callback,
+        ).result()

@@ -35,7 +35,7 @@ from ._enum_meta import CaseInsensitiveEnumMeta
 __all__ = [
     "PipelineClient",
     "MatchConditions",
-    "CaseInsensitiveEnumMeta"
+    "CaseInsensitiveEnumMeta",
 ]
 
 try:

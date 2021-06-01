@@ -14,22 +14,21 @@ parameters:
   - name: BuildDocs
     type: boolean
     default: true
+  - name: Artifacts
+    type: object
+    default: []
 
 steps:
-  - ${{if eq(parameters.TestPipeline, 'true')}}:
-    - task: PowerShell@2
-      displayName: Prep template pipeline for release
-      condition: succeeded()
-      inputs:
-        pwsh: true
-        workingDirectory: $(Build.SourcesDirectory)
-        filePath: eng/scripts/SetTestPipelineVersion.ps1
-        arguments: '-BuildID $(Build.BuildId)'
-
+  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+    parameters:
+      PackageName: "azure-template"
+      ServiceDirectory: "template"
+      TestPipeline: ${{ parameters.TestPipeline }}
+  - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
     displayName: 'Tag scheduled builds'
-    condition: and(eq(variables['Build.SourceBranchName'],'master'),eq(variables['Build.Reason'],'Schedule'))
+    condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
   - task: UsePythonVersion@0
     displayName: 'Use Python 2.7'
@@ -83,13 +82,13 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - publish: $(Build.ArtifactStagingDirectory)
-    artifact: packages 
-    condition: succeededOrFailed()
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'packages'
 
-  - task: PublishBuildArtifacts@1
-    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
-    displayName: 'Publish Artifacts'
-    inputs:
-      artifactName: 'documentation'
-      pathtoPublish: '$(Build.SourcesDirectory)/_docs'
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/_docs'
+      CustomCondition: ${{ parameters.BuildDocs }}
+      ArtifactName: 'documentation'

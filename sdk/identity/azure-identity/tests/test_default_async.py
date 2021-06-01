@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 from azure.core.credentials import AccessToken
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import (
+    AzurePowerShellCredential,
     AzureCliCredential,
     DefaultAzureCredential,
     ManagedIdentityCredential,
@@ -121,6 +122,8 @@ def test_exclude_options():
     credential = DefaultAzureCredential(exclude_visual_studio_code_credential=True)
     assert_credentials_not_present(credential, VisualStudioCodeCredential)
 
+    credential = DefaultAzureCredential(exclude_powershell_credential=True)
+    assert_credentials_not_present(credential, AzurePowerShellCredential)
 
 @pytest.mark.asyncio
 async def test_shared_cache_tenant_id():

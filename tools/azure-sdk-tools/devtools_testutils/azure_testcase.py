@@ -16,6 +16,11 @@ try:
 except ImportError:
     from inspect import getargspec as get_arg_spec
 
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib2 import quote  # type: ignore
+
 import pytest
 from dotenv import load_dotenv, find_dotenv
 
@@ -113,9 +118,7 @@ class AzureTestCase(ReplayableTest):
         self.qualified_test_name = get_qualified_method_name(self, method_name)
         self._fake_settings, self._real_settings = self._load_settings()
         self.scrubber = GeneralNameReplacer()
-        config_file = config_file or os.path.join(
-            self.working_folder, TEST_SETTING_FILENAME
-        )
+        config_file = config_file or os.path.join(self.working_folder, TEST_SETTING_FILENAME)
         if not os.path.exists(config_file):
             config_file = None
         load_dotenv(find_dotenv())
@@ -124,8 +127,7 @@ class AzureTestCase(ReplayableTest):
             config_file=config_file,
             recording_dir=recording_dir,
             recording_name=recording_name or self.qualified_test_name,
-            recording_processors=recording_processors
-            or self._get_recording_processors(),
+            recording_processors=recording_processors or self._get_recording_processors(),
             replay_processors=replay_processors or self._get_replay_processors(),
             recording_patches=recording_patches,
             replay_patches=replay_patches,
@@ -138,9 +140,7 @@ class AzureTestCase(ReplayableTest):
             if self._real_settings:
                 return self._real_settings
             else:
-                raise AzureTestError(
-                    "Need a mgmt_settings_real.py file to run tests live."
-                )
+                raise AzureTestError("Need a mgmt_settings_real.py file to run tests live.")
         else:
             return self._fake_settings
 
@@ -169,11 +169,7 @@ class AzureTestCase(ReplayableTest):
     def get_settings_value(self, key):
         key_value = os.environ.get("AZURE_" + key, None)
 
-        if (
-            key_value
-            and self._real_settings
-            and getattr(self._real_settings, key) != key_value
-        ):
+        if key_value and self._real_settings and getattr(self._real_settings, key) != key_value:
             raise ValueError(
                 "You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to different values".format(
                     key=key
@@ -219,15 +215,9 @@ class AzureTestCase(ReplayableTest):
 
     def get_credential(self, client_class, **kwargs):
 
-        tenant_id = os.environ.get(
-            "AZURE_TENANT_ID", getattr(self._real_settings, "TENANT_ID", None)
-        )
-        client_id = os.environ.get(
-            "AZURE_CLIENT_ID", getattr(self._real_settings, "CLIENT_ID", None)
-        )
-        secret = os.environ.get(
-            "AZURE_CLIENT_SECRET", getattr(self._real_settings, "CLIENT_SECRET", None)
-        )
+        tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(self._real_settings, "TENANT_ID", None))
+        client_id = os.environ.get("AZURE_CLIENT_ID", getattr(self._real_settings, "CLIENT_ID", None))
+        secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(self._real_settings, "CLIENT_SECRET", None))
         is_async = kwargs.pop("is_async", False)
 
         if tenant_id and client_id and secret and self.is_live:
@@ -237,18 +227,14 @@ class AzureTestCase(ReplayableTest):
 
                 if is_async:
                     from azure.identity.aio import ClientSecretCredential
-                return ClientSecretCredential(
-                    tenant_id=tenant_id, client_id=client_id, client_secret=secret
-                )
+                return ClientSecretCredential(tenant_id=tenant_id, client_id=client_id, client_secret=secret)
             else:
                 # Create msrestazure class
                 from msrestazure.azure_active_directory import (
                     ServicePrincipalCredentials,
                 )
 
-                return ServicePrincipalCredentials(
-                    tenant=tenant_id, client_id=client_id, secret=secret
-                )
+                return ServicePrincipalCredentials(tenant=tenant_id, client_id=client_id, secret=secret)
         else:
             if _is_autorest_v3(client_class):
                 if is_async:
@@ -276,9 +262,7 @@ class AzureTestCase(ReplayableTest):
 
         if self.is_playback():
             try:
-                client._config.polling_interval = (
-                    0  # FIXME in azure-mgmt-core, make this a kwargs
-                )
+                client._config.polling_interval = 0  # FIXME in azure-mgmt-core, make this a kwargs
             except AttributeError:
                 pass
 
@@ -318,9 +302,7 @@ class AzureTestCase(ReplayableTest):
 
         If prefix is a blank string, use the fully qualified test name instead.
         This is what legacy tests do for resource groups."""
-        return self.get_resource_name(
-            prefix or self.qualified_test_name.replace(".", "_")
-        )
+        return self.get_resource_name(prefix or self.qualified_test_name.replace(".", "_"))
 
     @staticmethod
     def await_prepared_test(test_fn):
@@ -348,3 +330,44 @@ class AzureTestCase(ReplayableTest):
     def sleep(self, seconds):
         if self.is_live:
             time.sleep(seconds)
+
+    def generate_sas(self, *args, **kwargs):
+        sas_func = args[0]
+        sas_func_pos_args = args[1:]
+
+        fake_value = kwargs.pop("fake_value", "fake_token_value")
+        token = sas_func(*sas_func_pos_args, **kwargs)
+
+        fake_token = self._create_fake_token(token, fake_value)
+
+        self._register_encodings(token, fake_token)
+
+        if self.is_live:
+            return token
+        return fake_token
+
+    def _register_encodings(self, token, fake_token):
+        self.scrubber.register_name_pair(token, fake_token)
+        url_safe_token = token.replace("/", u"%2F")
+        self.scrubber.register_name_pair(url_safe_token, fake_token)
+        async_token = token.replace(u"%3A", ":")
+        self.scrubber.register_name_pair(async_token, fake_token)
+
+    def _create_fake_token(self, token, fake_value):
+        parts = token.split("&")
+
+        for idx, part in enumerate(parts):
+            if part.startswith("sig"):
+                key = part.split("=")
+                key[1] = fake_value
+                parts[idx] = "=".join(key)
+            elif part.startswith("st"):
+                key = part.split("=")
+                key[1] = "start"
+                parts[idx] = "=".join(key)
+            elif part.startswith("se"):
+                key = part.split("=")
+                key[1] = "end"
+                parts[idx] = "=".join(key)
+
+        return "&".join(parts)

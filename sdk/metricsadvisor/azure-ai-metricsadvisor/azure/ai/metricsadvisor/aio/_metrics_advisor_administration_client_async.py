@@ -11,14 +11,14 @@ from typing import (
     Any,
     List,
     Union,
-    cast
+    cast,
+    TYPE_CHECKING,
 )
 import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from .._generated.aio import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
 from .._generated.models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
@@ -28,15 +28,15 @@ from .._generated.models import (
     IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
 )
 from .._version import SDK_MONIKER
-from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
-from .._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from .._helpers import (
     convert_to_generated_data_feed_type,
     construct_alert_config_dict,
     construct_detection_config_dict,
     construct_hook_dict,
     construct_data_feed_dict,
-    convert_datetime
+    convert_datetime,
+    get_authentication_policy,
+    convert_to_credential_entity,
 )
 from ..models import (
     DataFeed,
@@ -51,14 +51,23 @@ from ..models import (
     DataFeedSchema,
     DataFeedIngestionSettings,
     NotificationHook,
-    MetricDetectionCondition
+    MetricDetectionCondition,
 )
 from .._metrics_advisor_administration_client import (
     DATA_FEED,
     DATA_FEED_PATCH,
-    DataFeedSourceUnion
+    DataFeedSourceUnion,
+    CredentialEntityUnion
 )
-
+if TYPE_CHECKING:
+    from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
+    from azure.core.credentials_async import AsyncTokenCredential
+    from ..models import (
+        SqlConnectionStringCredentialEntity,
+        DataLakeGen2SharedKeyCredentialEntity,
+        ServicePrincipalCredentialEntity,
+        ServicePrincipalInKeyVaultCredentialEntity
+    )
 
 class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-public-methods
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
@@ -79,39 +88,23 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             :dedent: 4
             :caption: Authenticate MetricsAdvisorAdministrationClient with a MetricsAdvisorKeyCredential
     """
-    def __init__(self, endpoint: str, credential: MetricsAdvisorKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, endpoint, credential, **kwargs):
+        # type: (str, Union[MetricsAdvisorKeyCredential, AsyncTokenCredential], **Any) -> None
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
             raise ValueError("Base URL must be a string.")
 
-        if not credential:
-            raise ValueError("Missing credential")
-
         self._endpoint = endpoint
-
-        if isinstance(credential, MetricsAdvisorKeyCredential):
-            self._client = _ClientAsync(
-                endpoint=endpoint,
-                sdk_moniker=SDK_MONIKER,
-                authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
-                **kwargs
-            )
-        else:
-            if hasattr(credential, "get_token"):
-                credential_scopes = kwargs.pop('credential_scopes',
-                                               ['https://cognitiveservices.azure.com/.default'])
-                credential_policy = AsyncBearerTokenCredentialPolicy(credential, *credential_scopes)
-            else:
-                raise TypeError("Please provide an instance from azure-identity "
-                                "or a class that implement the 'get_token protocol")
-            self._client = _ClientAsync(
-                endpoint=endpoint,
-                sdk_moniker=SDK_MONIKER,
-                authentication_policy=credential_policy,
-                **kwargs
-            )
+        authentication_policy = get_authentication_policy(credential)
+        self._client = _ClientAsync(
+            endpoint=endpoint,
+            credential=credential,  # type: ignore
+            sdk_moniker=SDK_MONIKER,
+            authentication_policy=authentication_policy,
+            **kwargs
+        )
 
     def __repr__(self):
         # type: () -> str
@@ -194,10 +187,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         :param str name: Name for the data feed.
         :param source: The source of the data feed
-        :type source: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-            AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
-            InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-            ElasticsearchDataFeed]
+        :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
+            AzureCosmosDbDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SqlServerDataFeedSource, MongoDbDataFeedSource, AzureEventHubsDataFeedSource]
         :param granularity: Granularity type. If using custom granularity, you must instantiate a DataFeedGranularity.
         :type granularity: Union[str, ~azure.ai.metricsadvisor.models.DataFeedGranularityType,
             ~azure.ai.metricsadvisor.models.DataFeedGranularity]
@@ -617,7 +610,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     async def update_data_feed(
             self, data_feed: Union[str, DataFeed],
             **kwargs: Any
-    ) -> None:
+    ) -> DataFeed:
         """Update a data feed. Either pass the entire DataFeed object with the chosen updates
         or the ID to your data feed with updates passed via keyword arguments. If you pass both
         the DataFeed object and keyword arguments, the keyword arguments will take precedence.
@@ -659,11 +652,11 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword status: Data feed status. Possible values include: "Active", "Paused".
         :paramtype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
         :keyword source: The source of the data feed for update
-        :paramtype source: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-            AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
-            InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-            ElasticsearchDataFeed]
-        :rtype: None
+        :paramtype source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
+            AzureCosmosDbDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SqlServerDataFeedSource, MongoDbDataFeedSource, AzureEventHubsDataFeedSource]
+        :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -710,14 +703,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             data_feed_patch_type = DATA_FEED_PATCH[data_feed.source.data_source_type]
             data_feed_patch = data_feed._to_generated_patch(data_feed_patch_type, update)
 
-        return await self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
+        data_feed_detail = await self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
+        return DataFeed._from_generated(data_feed_detail)
 
     @distributed_trace_async
     async def update_alert_configuration(
         self,
         alert_configuration: Union[str, AnomalyAlertConfiguration],
         **kwargs: Any
-    ) -> None:
+    ) -> AnomalyAlertConfiguration:
         """Update anomaly alerting configuration. Either pass the entire AnomalyAlertConfiguration object
         with the chosen updates or the ID to your alert configuration with updates passed via keyword arguments.
         If you pass both the AnomalyAlertConfiguration object and keyword arguments, the keyword arguments
@@ -734,7 +728,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :paramtype cross_metrics_operator: str or
             ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
         :keyword str description: Anomaly alert configuration description.
-        :rtype: None
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -769,19 +763,20 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 cross_metrics_operator=update.pop("crossMetricsOperator", None),
                 description=update.pop("description", None),
             )
-
-        return await self._client.update_anomaly_alerting_configuration(
+        alerting_config = await self._client.update_anomaly_alerting_configuration(
             alert_configuration_id,
             alert_configuration_patch,
             **kwargs
         )
+
+        return AnomalyAlertConfiguration._from_generated(alerting_config)
 
     @distributed_trace_async
     async def update_detection_configuration(
         self,
         detection_configuration: Union[str, AnomalyDetectionConfiguration],
         **kwargs: Any
-    ) -> None:
+    ) -> AnomalyDetectionConfiguration:
         """Update anomaly metric detection configuration. Either pass the entire AnomalyDetectionConfiguration object
         with the chosen updates or the ID to your detection configuration with updates passed via keyword arguments.
         If you pass both the AnomalyDetectionConfiguration object and keyword arguments, the keyword arguments
@@ -838,19 +833,20 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 series_group_detection_conditions=update.pop("dimensionGroupOverrideConfigurations", None),
                 series_detection_conditions=update.pop("seriesOverrideConfigurations", None)
             )
-
-        return await self._client.update_anomaly_detection_configuration(
+        detection_config = await self._client.update_anomaly_detection_configuration(
             detection_configuration_id,
             detection_config_patch,
             **kwargs
         )
+
+        return AnomalyDetectionConfiguration._from_generated(detection_config)
 
     @distributed_trace_async
     async def update_hook(
         self,
         hook: Union[str, EmailNotificationHook, WebNotificationHook],
         **kwargs: Any
-    ) -> None:
+    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         """Update a hook. Either pass the entire EmailNotificationHook or WebNotificationHook object with the
         chosen updates, or the ID to your hook configuration with the updates passed via keyword arguments.
         If you pass both the hook object and keyword arguments, the keyword arguments will take precedence.
@@ -871,7 +867,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword str certificate_key: client certificate. Only should be passed to update WebNotificationHook.
         :keyword str certificate_password: client certificate password. Only should be passed to update
             WebNotificationHook.
-        :rtype: None
+        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
+            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
+            ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -930,11 +928,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                     certificate_password=update.pop("certificatePassword", None)
                 )
 
-        return await self._client.update_hook(
+        updated_hook = await self._client.update_hook(
             hook_id,
             hook_patch,
             **kwargs
         )
+        if updated_hook.hook_type == "Email":
+            return EmailNotificationHook._from_generated(updated_hook)
+        return WebNotificationHook._from_generated(updated_hook)
 
     @distributed_trace
     def list_hooks(
@@ -1128,3 +1129,176 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             skip=skip,
             **kwargs
         )
+
+    @distributed_trace_async
+    async def get_credential_entity(
+        self,
+        credential_entity_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> CredentialEntityUnion
+        """Get a data source credential entity
+
+        :param credential_entity_id: Data source credential entity unique ID.
+        :type credential_entity_id: str
+        :return: The credential entity
+        :rtype: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_credential_entities_async.py
+                :start-after: [START get_credential_entity_async]
+                :end-before: [END get_credential_entity_async]
+                :language: python
+                :dedent: 4
+                :caption: Get a credential entity by its ID
+        """
+
+        credential_entity = await self._client.get_credential(credential_entity_id, **kwargs)
+        return convert_to_credential_entity(credential_entity)
+
+    @distributed_trace_async
+    async def create_credential_entity(
+            self, credential_entity,        # type: CredentialEntityUnion
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> CredentialEntityUnion
+        """Create a new data source credential entity.
+
+        :param credential_entity: The data source credential entity to create
+        :type credential_entity: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :return: The created data source credential entity
+        :rtype: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_credential_entities_async.py
+                :start-after: [START create_credential_entity_async]
+                :end-before: [END create_credential_entity_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a credential entity
+        """
+
+        credential_entity_request = None
+        if credential_entity.credential_entity_type in ["AzureSQLConnectionString",
+            "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
+            credential_entity_request = credential_entity._to_generated()
+
+        response_headers = await self._client.create_credential(  # type: ignore
+            credential_entity_request,  # type: ignore
+            cls=lambda pipeline_response, _, response_headers: response_headers,
+            **kwargs
+        )
+        credential_entity_id = response_headers["Location"].split("credentials/")[1]    # type: ignore
+        return await self.get_credential_entity(credential_entity_id)
+
+    @distributed_trace
+    def list_credential_entities(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[CredentialEntityUnion]
+        """List all credential entities.
+
+        :param skip: for paging, skipped number.
+        :type skip: int
+        :return: Pageable containing credential entities
+        :rtype: ~azure.core.paging.AsyncItemPaged[Union[
+            ~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_credential_entities_async.py
+                :start-after: [START list_credential_entities_async]
+                :end-before: [END list_credential_entities_async]
+                :language: python
+                :dedent: 4
+                :caption: List all of the credential entities under the account
+        """
+        return self._client.list_credentials(  # type: ignore
+            cls=kwargs.pop(
+                "cls",
+                lambda credentials: [convert_to_credential_entity(credential) for credential in credentials]),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def update_credential_entity(
+        self,
+        credential_entity,    # type: CredentialEntityUnion
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> CredentialEntityUnion
+        """Update a credential entity.
+
+        :param credential_entity: The new credential entity object
+        :type credential_entity: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :rtype: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_credential_entities_async.py
+                :start-after: [START update_credential_entity_async]
+                :end-before: [END update_credential_entity_async]
+                :language: python
+                :dedent: 4
+                :caption: Update an existing credential entity
+        """
+
+        if credential_entity.credential_entity_type in ["AzureSQLConnectionString",
+            "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
+            credential_entity_request = credential_entity._to_generated_patch()
+
+        updated_credential_entity = await self._client.update_credential(
+            credential_entity.id,
+            credential_entity_request,
+            **kwargs
+        )
+
+        return convert_to_credential_entity(updated_credential_entity)
+
+    @distributed_trace_async
+    async def delete_credential_entity(self, credential_entity_id, **kwargs):
+        # type: (str, Any) -> None
+        """Delete a credential entity by its ID.
+
+        ::param credential_entity_id: Credential entity unique ID.
+        :type credential_entity_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_credential_entities_async.py
+                :start-after: [START delete_credential_entity_async]
+                :end-before: [END delete_credential_entity_async]
+                :language: python
+                :dedent: 4
+                :caption: Delete a credential entity by its ID
+        """
+
+        await self._client.delete_credential(credential_id=credential_entity_id, **kwargs)

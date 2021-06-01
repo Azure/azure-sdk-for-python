@@ -1,5 +1,18 @@
 # Release History
 
+## 1.0.0 (2021-05-20)
+
+**Features**
+
+  - Model ReservationToPurchaseExchange has a new parameter reservation_id
+  - Model ReservationToPurchaseExchange has a new parameter properties
+  - Model ReservationToPurchaseCalculateExchange has a new parameter properties
+
+**Breaking changes**
+
+  - Removed operation ReservationOrderOperations.change_directory
+  - Removed operation group AutoQuotaIncreaseOperations
+
 ## 1.0.0b1 (2020-12-09)
 
 This is beta preview version.

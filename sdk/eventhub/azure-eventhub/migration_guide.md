@@ -23,7 +23,7 @@ A natural question to ask when considering whether or not to adopt a new version
 
 There were several areas of consistent feedback expressed across the Azure client library ecosystem. One of the most important is that the client libraries for different Azure services have not had a consistent approach to organization, naming, and API structure. Additionally, many developers have felt that the learning curve was difficult, and the APIs did not offer a good, approachable, and consistent onboarding story for those learning Azure or exploring a specific Azure service.
 
-To try and improve the development experience across Azure services, a set of uniform [design guidelines](https://azure.github.io/azure-sdk/general_introduction.html) was created for all languages to drive a consistent experience with established API patterns for all services. A set of [Python-specific guidelines](https://azure.github.io/azure-sdk/python_introduction.html) was also introduced to ensure that Python clients have a natural and idiomatic feel with respect to the Python ecosystem. Further details are available in the guidelines for those interested.
+To try and improve the development experience across Azure services, a set of uniform [design guidelines](https://azure.github.io/azure-sdk/general_introduction.html) was created for all languages to drive a consistent experience with established API patterns for all services. A set of [Python-specific guidelines](https://azure.github.io/azure-sdk/python/guidelines/index.html) was also introduced to ensure that Python clients have a natural and idiomatic feel with respect to the Python ecosystem. Further details are available in the guidelines for those interested.
 
 ### Cross Service SDK improvements
 
@@ -46,7 +46,7 @@ Refer to the [changelog](https://github.com/Azure/azure-sdk-for-python/blob/feat
 ### Client hierarchy
 
 In the interest of simplifying the API surface, we've made two distinct clients: the `EventHubProducerClient` for sending events and the `EventHubConsumerClient` for receiving events. This is in contrast to the single `EventHubClient` that was used to create senders and receivers.
-We've also merged the functionality from `EventProcessorHost` into `EventHubConsumerClient`. 
+We've also merged the functionality from `EventProcessorHost` into `EventHubConsumerClient`.
 
 #### Approachability
 By having a single entry point for sending, the `EventHubProducerClient` helps with the discoverability of the API
@@ -63,8 +63,8 @@ This provides consistency and predictability on the various features of the libr
 ### Client constructors
 
 While we continue to support connection strings when constructing a client, below are the differences in the two versions:
-- In v5, we now support the use of Azure Active Directory for authentication. 
-The new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library allows us 
+- In v5, we now support the use of Azure Active Directory for authentication.
+The new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library allows us
 to share a single authentication solution between clients of different Azure services.
 - The option to construct a client using an address of the form `amqps://<SAS-policy-name>:<SAS-key>@<fully-qualified-namespace>/<eventhub-name>` is no longer supported in v5. This address is not readily available in the Azure portal or in any tooling and so was subject to human error. We instead recommend using the connection string if you want to use a SAS policy.
 
@@ -74,7 +74,7 @@ In v1:
 eventhub_client = EventHubClient(address)
 
 # Authenticate with connection string
-eventhub_client = EventHubClient.from_connection_string(conn_str) 
+eventhub_client = EventHubClient.from_connection_string(conn_str)
 
 # Authenticate the EventProcessorHost and StorageCheckpointLeaseManager
 eh_config = EventHubConfig(eh_namespace, eventhub_name, user, key, consumer_group="$default")
@@ -86,8 +86,8 @@ In v5:
 # Address is no longer used for authentication.
 
 # Authenticate with connection string
-producer_client = EventHubProducerClient.from_connection_string(conn_str) 
-consumer_client = EventHubConsumerClient.from_connection_string(conn_str) 
+producer_client = EventHubProducerClient.from_connection_string(conn_str)
+consumer_client = EventHubConsumerClient.from_connection_string(conn_str)
 checkpoint_store = BlobCheckpointStore.from_connection_string(storage_conn_str, container_name)
 consumer_client_with_checkpoint_store = EventHubConsumerClient.from_connection_string(conn_str, consumer_group='$Default', checkpoint_store=checkpoint_store)
 
@@ -130,12 +130,12 @@ event_data_batch.add(EventData('Single message'))
 producer.send_batch(event_data_batch)
 ```
 
-### Receiving events 
+### Receiving events
 
 - The `run` and `stop` methods were previously used since the single `EventHubClient` controlled the lifecycle for all senders and receivers. In v5, the `run` and `stop` methods are deprecated since the `EventHubConsumerClient` controls its own lifecycle.
 - The `add_receiver` method is no longer used to create receiver clients. Instead, the `EventHubConsumerClient` is used for receiving events.
 - In v1, the `receive` method returned a list of `EventData`. You would call this method repeatedly every time you want receive a set of events. In v5, the new `receive` method takes user callback to process events and any resulting errors. This way, you call the method once and it continues to process incoming events until you stop it.
-- Additionally, we have a method `receive_batch` which behaves the same as `receive`, but calls the user callback with a batch of events instead of single events. 
+- Additionally, we have a method `receive_batch` which behaves the same as `receive`, but calls the user callback with a batch of events instead of single events.
 - The same methods can be used whether you want to receive from a single partition or from all partitions.
 
 In v1:
@@ -160,25 +160,18 @@ with consumer_client:
 # Receive batch
 def on_event_batch(partition_context, event_batch):
     print("Partition {}, Received count: {}".format(partition_context.partition_id, len(event_batch)))
-    
+
 consumer_client = EventHubConsumerClient.from_connection_string(conn_str, consumer_group, eventhub_name=eh_name)
 with consumer_client:
     consumer_client.receive_batch(on_event_batch=on_event_batch, partition_id=partition_id)
 ```
 ### Migrating code from `EventProcessorHost` to `EventHubConsumerClient` for receiving events
 
-In V1, `EventProcessorHost` allowed you to balance the load between multiple instances of 
+In V1, `EventProcessorHost` allowed you to balance the load between multiple instances of
 your program when receiving events.
 
 In V5, `EventHubConsumerClient` allows you to do the same with the `receive()` method if you
 pass a `CheckpointStore` to the constructor.
-
-> **Note:** V1 checkpoints are not compatible with V5 checkpoints.
-If pointed at the same blob, consumption will begin at the first message.
-V1 checkpoint json in the respective blobs can be manually converted (per-partition) if needed.
-In V1 checkpoints (sequence_number and offset) are stored in the format of json along with ownership information
-as the content of the blob, while in V5, checkpoints are kept in the metadata of a blob and the metadata is composed of name-value pairs.
-Please check [update_checkpoint](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_blobstoragecs.py#L231-L250) in V5 for implementation detail.
 
 So in v1:
 ```python
@@ -284,6 +277,82 @@ async def main():
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
+```
+
+> **Note:** V1 checkpoints are not compatible with V5 checkpoints.
+If pointed at the same blob, consumption will begin at the first message.
+V1 checkpoint json in the respective blobs can be manually converted (per-partition) if needed.
+In V1 checkpoints (sequence_number and offset) are stored in the format of json along with ownership information
+as the content of the blob, while in V5, checkpoints are kept in the metadata of a blob and the metadata is composed of name-value pairs.
+Please check [update_checkpoint](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_blobstoragecs.py#L231-L250) in V5 for implementation detail.
+
+The following code snippet can be used to migrate checkpoint data from the legacy format. This snippet assumes that the default prefix configuration for the `EventProcessorHost` was used. If a custom prefix was configured, this code will need to be adjusted to account for the difference in format.
+```python
+import os
+import json
+from azure.storage.blob import BlobServiceClient, ContainerClient
+
+EVENT_HUB_HOSTNAME = os.environ["EVENT_HUB_HOSTNAME"]  # <your-eventhub-namespace>.servicebus.windows.net
+EVENT_HUB_NAME = os.environ["EVENT_HUB_NAME"]
+EVENT_HUB_CONSUMER_GROUP = "$Default"  # Name of Event Hub consumer group
+
+STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
+BLOB_CONTAINER_NAME = "your-blob-container-name"  # Blob container to upload updated checkpoint information to.
+LEGACY_BLOB_CONTAINER_NAME = "your-legacy-blob-container-name" # Please make sure the legacy blob container resource exists.
+
+
+def readLegacyCheckpoints(
+    storage_connection_str, legacy_blob_container_name, consumer_group
+):
+    container_client = ContainerClient.from_connection_string(
+        storage_connection_str, legacy_blob_container_name
+    )
+    legacy_checkpoints = []
+
+    # Read and process legacy checkpoints in blobs in container.
+    for blob in container_client.list_blobs():
+        blob_client = container_client.get_blob_client(blob)
+        stream = blob_client.download_blob()
+        for chunk in stream.chunks():
+            legacy_checkpoints.append(json.loads(chunk.decode("UTF-8")))
+    return legacy_checkpoints
+
+
+if __name__ == "__main__":
+    legacy_checkpoints = readLegacyCheckpoints(
+        STORAGE_CONNECTION_STR, LEGACY_BLOB_CONTAINER_NAME, EVENT_HUB_CONSUMER_GROUP
+    )
+
+    # The checkpoint blobs require a specific naming scheme to be valid for use with the
+    # V5 CheckpointStore.
+    prefix = "{}/{}/{}/checkpoint/".format(
+        EVENT_HUB_FULLY_QUALIFIED_NAMESPACE.lower(),
+        EVENT_HUB_NAME.lower(),
+        EVENT_HUB_CONSUMER_GROUP.lower(),
+    )
+
+    # Create the storage client to write the migrated checkpoints.  This example
+    # assumes that the connection string grants the appropriate permissions to create a
+    # container in the storage account.
+    blob_service_client = BlobServiceClient.from_connection_string(
+        STORAGE_CONNECTION_STR
+    )
+    container_client = blob_service_client.get_container_client(BLOB_CONTAINER_NAME)
+    try:
+        # Create container if it doesn't already exist.
+        container_client.create_container()
+    except:
+        pass
+
+    # Translate each legacy checkpoint, storing offset and sequence data into correct
+    # blob to align with V5 BlobCheckpointStore.
+    for checkpoint in legacy_checkpoints:
+        metadata = {
+            "offset": str(checkpoint["offset"]),
+            "sequencenumber": str(checkpoint["sequence_number"]),
+        }
+        name = "{}{}".format(prefix, checkpoint["partition_id"])
+        container_client.upload_blob(name, data="", metadata=metadata)
 ```
 
 ## Additional samples

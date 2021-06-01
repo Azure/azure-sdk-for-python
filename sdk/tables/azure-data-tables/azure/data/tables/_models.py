@@ -4,8 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
+from typing import TYPE_CHECKING, Any, Dict
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
+# from azure.core import CaseInsensitiveEnumMeta
+# from six import with_metaclass
 
 from ._generated.models import TableServiceStats as GenTableServiceStats
 from ._generated.models import AccessPolicy as GenAccessPolicy
@@ -21,6 +25,9 @@ from ._deserialize import (
 )
 from ._error import _process_table_error
 from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
+
+if TYPE_CHECKING:
+    from ._generated.models import TableQueryResponse
 
 
 class TableServiceStats(GenTableServiceStats):
@@ -133,7 +140,7 @@ class Metrics(GeneratedMetrics):
 
     :keyword str version: The version of Storage Analytics to configure.
     :keyword bool enabled: Required. Indicates whether metrics are enabled for the service.
-    :keyword bool include_ap_is: Indicates whether metrics should generate summary
+    :keyword bool include_apis: Indicates whether metrics should generate summary
         statistics for called API operations.
     :keyword ~azure.data.tables.RetentionPolicy retention_policy: Required.
         The retention policy for the metrics.
@@ -150,7 +157,7 @@ class Metrics(GeneratedMetrics):
 
     @classmethod
     def _from_generated(cls, generated):
-        # type: (...) -> cls
+        # type: (...) -> Metrics
         """A summary of request statistics grouped by API in hour or minute aggregates.
 
         :param Metrics generated: generated Metrics
@@ -194,7 +201,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
-        # type: (...) -> cls
+        # type: (GeneratedRetentionPolicy, Dict[str, Any]) -> RetentionPolicy
         """The retention policy which determines how long the associated data should
         persist.
 
@@ -272,10 +279,7 @@ class TablePropertiesPaged(PageIterator):
     :param callable command: Function to retrieve the next page of items.
     :keyword int results_per_page: The maximum number of results retrieved per API call.
     :keyword str filter: The filter to apply to results.
-    :keyword str select: The select filter to apply to results.
     :keyword str continuation_token: An opaque continuation token.
-    :keyword str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
     """
 
     def __init__(self, command, **kwargs):
@@ -289,25 +293,22 @@ class TablePropertiesPaged(PageIterator):
         self._response = None
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
-        self.select = kwargs.get("select")
-        self.location_mode = None
+        self._location_mode = None
 
     def _get_next_cb(self, continuation_token, **kwargs):
-        query_options = QueryOptions(
-            top=self.results_per_page, select=self.select, filter=self.filter
-        )
+        query_options = QueryOptions(top=self.results_per_page, filter=self.filter)
         try:
             return self._command(
                 query_options=query_options,
                 next_table_name=continuation_token or None,
                 cls=kwargs.pop("cls", None) or _return_context_and_deserialized,
-                use_location=self.location_mode,
+                use_location=self._location_mode,
             )
         except HttpResponseError as error:
             _process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
-        self.location_mode, self._response, self._headers = get_next_return
+        self._location_mode, self._response, self._headers = get_next_return
         props_list = [
             TableItem._from_generated(t, **self._headers) for t in self._response.value  # pylint: disable=protected-access
         ]
@@ -323,8 +324,6 @@ class TableEntityPropertiesPaged(PageIterator):
     :keyword str filter: The filter to apply to results.
     :keyword str select: The select filter to apply to results.
     :keyword str continuation_token: An opaque continuation token.
-    :keyword str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
     """
 
     def __init__(self, command, table, **kwargs):
@@ -340,7 +339,7 @@ class TableEntityPropertiesPaged(PageIterator):
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
         self.select = kwargs.get("select")
-        self.location_mode = None
+        self._location_mode = None
 
     def _get_next_cb(self, continuation_token, **kwargs):
         next_partition_key, next_row_key = _extract_continuation_token(
@@ -356,13 +355,13 @@ class TableEntityPropertiesPaged(PageIterator):
                 next_partition_key=next_partition_key,
                 table=self.table,
                 cls=kwargs.pop("cls", None) or _return_context_and_deserialized,
-                use_location=self.location_mode,
+                use_location=self._location_mode,
             )
         except HttpResponseError as error:
             _process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
-        self.location_mode, self._response, self._headers = get_next_return
+        self._location_mode, self._response, self._headers = get_next_return
         props_list = [_convert_to_entity(t) for t in self._response.value]
         next_entity = {}
         if self._headers[NEXT_PARTITION_KEY] or self._headers[NEXT_ROW_KEY]:
@@ -400,12 +399,15 @@ class TableSasPermissions(object):
         self.delete = kwargs.pop("delete", None) or ("d" in _str)
 
     def __or__(self, other):
+        # type: (TableSasPermissions) -> TableSasPermissions
         return TableSasPermissions(_str=str(self) + str(other))
 
     def __add__(self, other):
+        # type: (TableSasPermissions) -> TableSasPermissions
         return TableSasPermissions(_str=str(self) + str(other))
 
     def __str__(self):
+        # type: () -> TableSasPermissions
         return (
             ("r" if self.read else "")
             + ("a" if self.add else "")
@@ -416,9 +418,10 @@ class TableSasPermissions(object):
     @classmethod
     def from_string(
         cls,
-        permission,  # type: str
+        permission,
         **kwargs
     ):
+        # Type: (str, Dict[str, Any]) -> AccountSasPermissions
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
@@ -428,8 +431,8 @@ class TableSasPermissions(object):
         :param str permission: Specify permissions in
             the string with the first letter of the word.
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: A AccountSasPermissions object
-        :rtype: ~azure.data.tables.AccountSasPermissions
+        :return: An AccountSasPermissions object
+        :rtype: :class:`~azure.data.tables.AccountSasPermissions`
         """
         p_read = "r" in permission
         p_add = "a" in permission
@@ -477,23 +480,22 @@ def service_properties_deserialize(generated):
 
 class TableItem(object):
     """
-    Represents an Azure TableItem. Returned by TableServiceClient.list_tables
-    and TableServiceClient.query_tables.
+    Represents an Azure TableItem.
+    Returned by TableServiceClient.list_tables and TableServiceClient.query_tables.
 
-    :param str table_name: The name of the table.
-    :ivar str api_version: The API version included in the service call
-    :ivar str date: The date the service call was made
+    :ivar str name: The name of the table.
     """
 
-    def __init__(self, table_name, **kwargs):
-        # type: (str, **Any) -> None
-        self.table_name = table_name
-        self.api_version = kwargs.get("version")
-        self.date = kwargs.get("date") or kwargs.get("Date")
+    def __init__(self, name, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, Dict[str, Any]) -> None
+        """
+        :param str name: Name of the Table
+        """
+        self.name = name
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
-        # type: (obj, **Any) -> cls
+        # type: (TableQueryResponse, Dict[str, Any]) -> TableItem
         return cls(generated.table_name, **kwargs)
 
 
@@ -518,74 +520,19 @@ class UpdateMode(str, Enum):
     MERGE = "merge"
 
 
+class TransactionOperation(str, Enum):
+    CREATE = "create"
+    UPSERT = "upsert"
+    UPDATE = "update"
+    DELETE = "delete"
+
+
 class SASProtocol(str, Enum):
     HTTPS = "https"
     HTTP = "http"
 
 
-class PartialBatchErrorException(HttpResponseError):
-    """There is a partial failure in batch operations.
-
-    :param str message: The message of the exception.
-    :param response: Server response to be deserialized.
-    :param list parts: A list of the parts in multipart response.
-    """
-
-    def __init__(self, message, response, parts):
-        self.parts = parts
-        super(PartialBatchErrorException, self).__init__(
-            message=message, response=response
-        )
-
-
-class BatchErrorException(HttpResponseError):
-    """There is a failure in batch operations.
-
-    :param str message: The message of the exception.
-    :param response: Server response to be deserialized.
-    :param list parts: A list of the parts in multipart response.
-    """
-
-    def __init__(self, message, response, parts, *args, **kwargs):
-        self.parts = parts
-        super(BatchErrorException, self).__init__(
-            message=message, response=response, *args, **kwargs
-        )
-
-
-class BatchTransactionResult(object):
-    """The result of a successful batch operation, can be used by a user to
-    recreate a request in the case of BatchErrorException
-
-    :param List[HttpRequest] requests: The requests of the batch
-    :param List[HttpResponse] results: The HTTP response of each request
-    """
-
-    def __init__(self, requests, results, entities):
-        self.requests = requests
-        self.results = results
-        self.entities = entities
-
-    def get_entity(self, row_key):
-        for entity in self.entities:
-            if entity["RowKey"] == row_key:
-                return entity
-        return None
-
-    def get_request(self, row_key):
-        for i, entity in enumerate(self.entities):
-            if entity["RowKey"] == row_key:
-                return self.requests[i]
-        return None
-
-    def get_result(self, row_key):
-        for i, entity in enumerate(self.entities):
-            if entity["RowKey"] == row_key:
-                return self.results[i]
-        return None
-
-
-class LocationMode(object):
+class LocationMode(str, Enum):
     """
     Specifies the location the request should be sent to. This mode only applies
     for RA-GRS accounts which allow secondary read access. All other account types
@@ -604,15 +551,13 @@ class ResourceTypes(object):
 
     :param bool service:
         Access to service-level APIs (e.g., Get/Set Service Properties,
-        Get Service Stats, List Containers/Queues/Shares)
+        Get Service Stats, List Tables)
     :param bool object:
-        Access to object-level APIs for blobs, queue messages, and
-        files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
+        Access to object-level APIs for tables (e.g. Get/Create/Query Entity etc.)
     """
 
-    def __init__(
-        self, service=False, object=False
-    ):  # pylint: disable=redefined-builtin
+    def __init__(self, service=False, object=False):  # pylint: disable=redefined-builtin
+        # type: (bool, bool) -> None
         self.service = service
         self.object = object
         self._str = ("s" if self.service else "") + ("o" if self.object else "")
@@ -622,6 +567,7 @@ class ResourceTypes(object):
 
     @classmethod
     def from_string(cls, string):
+        # type: (str) -> ResourceTypes
         """Create a ResourceTypes from a string.
 
         To specify service, container, or object you need only to
@@ -631,7 +577,7 @@ class ResourceTypes(object):
         :param str string: Specify service, container, or object in
             in the string with the first letter of the word.
         :return: A ResourceTypes object
-        :rtype: ~azure.data.tables.ResourceTypes
+        :rtype: :class:`~azure.data.tables.ResourceTypes`
         """
         res_service = "s" in string
         res_object = "o" in string
@@ -697,17 +643,18 @@ class AccountSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission, **kwargs):
+        # type: (str, Dict[str]) -> AccountSasPermissions
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
         include the first letter of the word in the string. E.g. for read and write
         permissions you would provide a string "rw".
 
-        :param str permission: Specify permissions in
-            the string with the first letter of the word.
+        :param permission: Specify permissions in the string with the first letter of the word.
+        :type permission: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: A AccountSasPermissions object
-        :rtype: ~azure.data.tables.AccountSasPermissions
+        :return: An AccountSasPermissions object
+        :rtype: :class:`~azure.data.tables.AccountSasPermissions`
         """
         p_read = "r" in permission
         p_write = "w" in permission

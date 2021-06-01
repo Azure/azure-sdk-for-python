@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 class ClientSecretCredential(ClientCredentialBase):
-    """Authenticates as a service principal using a client ID and client secret.
+    """Authenticates as a service principal using a client secret.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str client_id: the service principal's client ID
@@ -21,10 +21,9 @@ class ClientSecretCredential(ClientCredentialBase):
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
-    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache. Defaults to
-          False.
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
-          is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
+    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+          will cache tokens in memory.
+    :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
     def __init__(self, tenant_id, client_id, client_secret, **kwargs):

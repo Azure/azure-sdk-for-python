@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
 import time
 
 from msal.application import PublicClientApplication
@@ -42,8 +43,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         tokens for multiple identities.
     :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
         :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
-        is unavailable. Defaults to False.
+    :keyword cache_persistence_options: configuration for persistent token caching. If not provided, the credential
+        will use the persistent cache shared by Microsoft development applications
+    :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
     def __init__(self, username=None, **kwargs):
@@ -118,12 +120,16 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
         self._load_cache()
         if self._cache:
+            if "AZURE_IDENTITY_DISABLE_CP1" in os.environ:
+                capabilities = None
+            else:
+                capabilities = ["CP1"]  # able to handle CAE claims challenges
             self._app = PublicClientApplication(
                 client_id=self._auth_record.client_id,
                 authority="https://{}/{}".format(self._auth_record.authority, self._tenant_id),
                 token_cache=self._cache,
                 http_client=MsalClient(**self._client_kwargs),
-                client_capabilities=["CP1"]
+                client_capabilities=capabilities
             )
 
         self._initialized = True

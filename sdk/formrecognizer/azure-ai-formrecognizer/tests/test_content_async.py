@@ -183,7 +183,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
         self.assertEqual(layout.tables[0].row_count, 3)
-        self.assertEqual(layout.tables[0].column_count, 6)
+        self.assertEqual(layout.tables[0].column_count, 5)
         self.assertEqual(layout.tables[0].page_number, 1)
 
     @FormRecognizerPreparer()
@@ -225,7 +225,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
         self.assertEqual(layout.tables[0].row_count, 5)
-        self.assertEqual(layout.tables[0].column_count, 5)
+        self.assertEqual(layout.tables[0].column_count, 4)
         self.assertEqual(layout.tables[1].row_count, 4)
         self.assertEqual(layout.tables[1].column_count, 2)
         self.assertEqual(layout.tables[0].page_number, 1)
@@ -386,13 +386,27 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
+    async def test_content_reading_order(self, client):
+        with open(self.invoice_pdf, "rb") as fd:
+            myform = fd.read()
+
+        async with client:
+            poller = await client.begin_recognize_content(myform, reading_order="natural")
+
+            assert 'natural' == poller._polling_method._initial_response.http_response.request.query['readingOrder']
+            result = await poller.result()
+            assert result
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
     async def test_content_language_specified(self, client):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
         async with client:
             poller = await client.begin_recognize_content(myfile, language="de")
             assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
-            await poller.wait()
+            result = await poller.result()
+            assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -412,4 +426,4 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         async with client:
             with pytest.raises(ValueError) as e:
                 await client.begin_recognize_content(myfile, language="en")
-            assert "'language' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+            assert "'language' is only available for API version V2_1 and up" in str(e.value)

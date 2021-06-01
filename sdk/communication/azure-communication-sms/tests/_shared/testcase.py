@@ -47,7 +47,7 @@ class BodyReplacerProcessor(RecordingProcessor):
 
     def process_response(self, response):
         if is_text_payload(response) and response['body']['string']:
-            response['body'] = self._replace_keys(response['body']['string'])
+            response['body']['string'] = self._replace_keys(response['body']['string'])
 
         return response
 
@@ -83,9 +83,9 @@ class CommunicationTestCase(AzureTestCase):
         super(CommunicationTestCase, self).setUp()
 
         if self.is_playback():
-            self.connection_str = "endpoint=https://sanitized/;accesskey=fake==="
+            self.connection_str = "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
         else:
-            self.connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+            self.connection_str = os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
             endpoint, _ = parse_connection_str(self.connection_str)
             self._resource_name = endpoint.split(".")[0]
             self.scrubber.register_name_pair(self._resource_name, "sanitized")

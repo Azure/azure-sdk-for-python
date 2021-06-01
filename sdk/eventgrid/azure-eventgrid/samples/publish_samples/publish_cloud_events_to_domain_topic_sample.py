@@ -13,7 +13,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) DOMAIN_ACCESS_KEY - The access key of your eventgrid account.
     2) DOMAIN_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
-    "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
     3) DOMAIN_NAME - the name of the topic
 """
 import sys

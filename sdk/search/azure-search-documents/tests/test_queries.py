@@ -10,13 +10,13 @@ try:
 except ImportError:
     import mock
 
-from azure.search.documents._internal._generated.models import (
+from azure.search.documents._generated.models import (
     AutocompleteRequest,
     SearchRequest,
     SuggestRequest,
 )
 
-from azure.search.documents._internal._queries import AutocompleteQuery, SuggestQuery, SearchQuery
+from azure.search.documents._queries import AutocompleteQuery, SuggestQuery, SearchQuery
 
 
 class TestAutocompleteQuery(object):
@@ -25,7 +25,7 @@ class TestAutocompleteQuery(object):
         assert type(query.request) is AutocompleteRequest
         assert query.request.filter is None
 
-    @mock.patch("azure.search.documents._internal._queries.AutocompleteQuery._request_type")
+    @mock.patch("azure.search.documents._queries.AutocompleteQuery._request_type")
     def test_kwargs_forwarded(self, mock_request):
         mock_request.return_value = None
         AutocompleteQuery(foo=10, bar=20)
@@ -62,7 +62,7 @@ class TestSearchQuery(object):
         assert query.request.order_by is None
         assert query.request.select is None
 
-    @mock.patch("azure.search.documents._internal._queries.SearchQuery._request_type")
+    @mock.patch("azure.search.documents._queries.SearchQuery._request_type")
     def test_kwargs_forwarded(self, mock_request):
         mock_request.return_value = None
         SearchQuery(foo=10, bar=20)
@@ -129,6 +129,10 @@ class TestSearchQuery(object):
         query.select("f3", "f4")
         assert query.request.select == "f3,f4"
 
+        str = ["f1", "f2"]
+        query.select(str)
+        assert query.request.select == "f1,f2"
+
         with pytest.raises(ValueError) as e:
             query.select()
             assert str(e) == "At least one field must be provided"
@@ -140,7 +144,7 @@ class TestSuggestQuery(object):
         assert type(query.request) is SuggestRequest
         assert query.request.filter is None
 
-    @mock.patch("azure.search.documents._internal._queries.SuggestQuery._request_type")
+    @mock.patch("azure.search.documents._queries.SuggestQuery._request_type")
     def test_kwargs_forwarded(self, mock_request):
         mock_request.return_value = None
         SuggestQuery(foo=10, bar=20)

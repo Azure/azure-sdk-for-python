@@ -61,7 +61,6 @@ def _set_trace_message(event_datas, parent_span=None):
     # type: (Iterable[EventData], Optional[AbstractSpan]) -> Iterable[EventData]
     for ed in iter(event_datas):
         trace_message(ed, parent_span)
-        add_link_to_send(ed, parent_span)
         yield ed
 
 

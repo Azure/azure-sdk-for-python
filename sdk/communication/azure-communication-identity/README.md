@@ -1,5 +1,3 @@
-[![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=master)
-
 # Azure Communication Identity Package client library for Python
 
 Azure Communication Identity client package is intended to be used to setup the basics for opening a way to use Azure Communication Service offerings. This package helps to create identity user tokens to be used by other client packages such as chat, calling, sms.
@@ -9,7 +7,7 @@ Azure Communication Identity client package is intended to be used to setup the 
 
 # Getting started
 ### Prerequisites
-- Python 2.7, or 3.5 or later is required to use this package.
+- Python 2.7, or 3.6 or later is required to use this package.
 - You must have an [Azure subscription](https://azure.microsoft.com/free/)
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 ### Install the package
@@ -34,8 +32,8 @@ import os
 from azure.communication.identity import CommunicationIdentityClient
 from azure.identity import DefaultAzureCredential
 
-connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
+connection_str = "endpoint=ENDPOINT;accessKey=KEY"
+endpoint = "https://<RESOURCE_NAME>.communication.azure.com"
 
 # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
 # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
@@ -49,12 +47,18 @@ identity_client = CommunicationIdentityClient.from_connection_string(connection_
 ## Examples
 The following section provides several code snippets covering some of the most common Azure Communication Services tasks, including:
 
+- [Creating a new user](#creating-a-new-user)
+- [Issuing or Refreshing an access token for a user](#issuing-or-refreshing-an-access-token-for-a-user)
+- [Creating a user and a token in a single request](#creating-a-user-and-a-token-in-a-single-request)
+- [Revoking a user's access tokens](#revoking-a-users-access-tokens)
+- [Deleting a user](#deleting-a-user)
+
 ### Creating a new user
 
 Use the `create_user` method to create a new user.
 ```python
 user = identity_client.create_user()
-print("User created with id:" + user.identifier)
+print("User created with id:" + user.properties['id'])
 ```
 
 ### Issuing or Refreshing an access token for a user
@@ -73,7 +77,7 @@ For convenience, use `create_user_and_token` to create a new user and issue a to
 
 ```python
 user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
-print("User id:" + user.identifier)
+print("User id:" + user.properties['id'])
 print("Token issued with value: " + tokenresponse.token)
 ```
 

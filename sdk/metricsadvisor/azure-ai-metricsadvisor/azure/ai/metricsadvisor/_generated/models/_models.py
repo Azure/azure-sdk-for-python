@@ -89,16 +89,18 @@ class AlertResult(msrest.serialization.Model):
 class AlertResultList(msrest.serialization.Model):
     """AlertResultList.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
-    :param next_link: Required.
-    :type next_link: str
+    :ivar next_link:
+    :vartype next_link: str
     :param value: Required.
     :type value: list[~azure.ai.metricsadvisor.models.AlertResult]
     """
 
     _validation = {
-        'next_link': {'required': True},
+        'next_link': {'readonly': True},
         'value': {'required': True},
     }
 
@@ -112,7 +114,7 @@ class AlertResultList(msrest.serialization.Model):
         **kwargs
     ):
         super(AlertResultList, self).__init__(**kwargs)
-        self.next_link = kwargs['next_link']
+        self.next_link = None
         self.value = kwargs['value']
 
 
@@ -169,7 +171,9 @@ class AnomalyAlertingConfiguration(msrest.serialization.Model):
      should be specified when setting up multiple metric alerting configurations. Possible values
      include: "AND", "OR", "XOR".
     :type cross_metrics_operator: str or
-     ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationCrossMetricsOperator
+     ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationLogicType
+    :param split_alert_by_dimensions: dimensions used to split alert.
+    :type split_alert_by_dimensions: list[str]
     :param hook_ids: Required. hook unique ids.
     :type hook_ids: list[str]
     :param metric_alerting_configurations: Required. Anomaly alerting configurations.
@@ -180,6 +184,7 @@ class AnomalyAlertingConfiguration(msrest.serialization.Model):
     _validation = {
         'anomaly_alerting_configuration_id': {'readonly': True},
         'name': {'required': True},
+        'split_alert_by_dimensions': {'unique': True},
         'hook_ids': {'required': True, 'unique': True},
         'metric_alerting_configurations': {'required': True, 'unique': True},
     }
@@ -189,6 +194,7 @@ class AnomalyAlertingConfiguration(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'cross_metrics_operator': {'key': 'crossMetricsOperator', 'type': 'str'},
+        'split_alert_by_dimensions': {'key': 'splitAlertByDimensions', 'type': '[str]'},
         'hook_ids': {'key': 'hookIds', 'type': '[str]'},
         'metric_alerting_configurations': {'key': 'metricAlertingConfigurations', 'type': '[MetricAlertingConfiguration]'},
     }
@@ -200,8 +206,9 @@ class AnomalyAlertingConfiguration(msrest.serialization.Model):
         super(AnomalyAlertingConfiguration, self).__init__(**kwargs)
         self.anomaly_alerting_configuration_id = None
         self.name = kwargs['name']
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get('description', "")
         self.cross_metrics_operator = kwargs.get('cross_metrics_operator', None)
+        self.split_alert_by_dimensions = kwargs.get('split_alert_by_dimensions', None)
         self.hook_ids = kwargs['hook_ids']
         self.metric_alerting_configurations = kwargs['metric_alerting_configurations']
 
@@ -209,18 +216,22 @@ class AnomalyAlertingConfiguration(msrest.serialization.Model):
 class AnomalyAlertingConfigurationList(msrest.serialization.Model):
     """AnomalyAlertingConfigurationList.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: Required.
-    :type value: list[~azure.ai.metricsadvisor.models.AnomalyAlertingConfiguration]
+    :ivar value:
+    :vartype value: list[~azure.ai.metricsadvisor.models.AnomalyAlertingConfiguration]
+    :ivar next_link:
+    :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[AnomalyAlertingConfiguration]'},
+        'next_link': {'key': '@nextLink', 'type': 'str'},
     }
 
     def __init__(
@@ -228,7 +239,8 @@ class AnomalyAlertingConfigurationList(msrest.serialization.Model):
         **kwargs
     ):
         super(AnomalyAlertingConfigurationList, self).__init__(**kwargs)
-        self.value = kwargs['value']
+        self.value = None
+        self.next_link = None
 
 
 class AnomalyAlertingConfigurationPatch(msrest.serialization.Model):
@@ -241,7 +253,9 @@ class AnomalyAlertingConfigurationPatch(msrest.serialization.Model):
     :param cross_metrics_operator: cross metrics operator. Possible values include: "AND", "OR",
      "XOR".
     :type cross_metrics_operator: str or
-     ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationPatchCrossMetricsOperator
+     ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationLogicType
+    :param split_alert_by_dimensions: dimensions used to split alert.
+    :type split_alert_by_dimensions: list[str]
     :param hook_ids: hook unique ids.
     :type hook_ids: list[str]
     :param metric_alerting_configurations: Anomaly alerting configurations.
@@ -250,6 +264,7 @@ class AnomalyAlertingConfigurationPatch(msrest.serialization.Model):
     """
 
     _validation = {
+        'split_alert_by_dimensions': {'unique': True},
         'hook_ids': {'unique': True},
         'metric_alerting_configurations': {'unique': True},
     }
@@ -258,6 +273,7 @@ class AnomalyAlertingConfigurationPatch(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'cross_metrics_operator': {'key': 'crossMetricsOperator', 'type': 'str'},
+        'split_alert_by_dimensions': {'key': 'splitAlertByDimensions', 'type': '[str]'},
         'hook_ids': {'key': 'hookIds', 'type': '[str]'},
         'metric_alerting_configurations': {'key': 'metricAlertingConfigurations', 'type': '[MetricAlertingConfiguration]'},
     }
@@ -268,8 +284,9 @@ class AnomalyAlertingConfigurationPatch(msrest.serialization.Model):
     ):
         super(AnomalyAlertingConfigurationPatch, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get('description', "")
         self.cross_metrics_operator = kwargs.get('cross_metrics_operator', None)
+        self.split_alert_by_dimensions = kwargs.get('split_alert_by_dimensions', None)
         self.hook_ids = kwargs.get('hook_ids', None)
         self.metric_alerting_configurations = kwargs.get('metric_alerting_configurations', None)
 
@@ -324,7 +341,7 @@ class AnomalyDetectionConfiguration(msrest.serialization.Model):
         super(AnomalyDetectionConfiguration, self).__init__(**kwargs)
         self.anomaly_detection_configuration_id = None
         self.name = kwargs['name']
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get('description', "")
         self.metric_id = kwargs['metric_id']
         self.whole_metric_configuration = kwargs['whole_metric_configuration']
         self.dimension_group_override_configurations = kwargs.get('dimension_group_override_configurations', None)
@@ -334,18 +351,22 @@ class AnomalyDetectionConfiguration(msrest.serialization.Model):
 class AnomalyDetectionConfigurationList(msrest.serialization.Model):
     """AnomalyDetectionConfigurationList.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: Required.
-    :type value: list[~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration]
+    :ivar value:
+    :vartype value: list[~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration]
+    :ivar next_link:
+    :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[AnomalyDetectionConfiguration]'},
+        'next_link': {'key': '@nextLink', 'type': 'str'},
     }
 
     def __init__(
@@ -353,7 +374,8 @@ class AnomalyDetectionConfigurationList(msrest.serialization.Model):
         **kwargs
     ):
         super(AnomalyDetectionConfigurationList, self).__init__(**kwargs)
-        self.value = kwargs['value']
+        self.value = None
+        self.next_link = None
 
 
 class AnomalyDetectionConfigurationPatch(msrest.serialization.Model):
@@ -364,7 +386,7 @@ class AnomalyDetectionConfigurationPatch(msrest.serialization.Model):
     :param description: anomaly detection configuration description.
     :type description: str
     :param whole_metric_configuration:
-    :type whole_metric_configuration: ~azure.ai.metricsadvisor.models.WholeMetricConfiguration
+    :type whole_metric_configuration: ~azure.ai.metricsadvisor.models.WholeMetricConfigurationPatch
     :param dimension_group_override_configurations: detection configuration for series group.
     :type dimension_group_override_configurations:
      list[~azure.ai.metricsadvisor.models.DimensionGroupConfiguration]
@@ -380,7 +402,7 @@ class AnomalyDetectionConfigurationPatch(msrest.serialization.Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
-        'whole_metric_configuration': {'key': 'wholeMetricConfiguration', 'type': 'WholeMetricConfiguration'},
+        'whole_metric_configuration': {'key': 'wholeMetricConfiguration', 'type': 'WholeMetricConfigurationPatch'},
         'dimension_group_override_configurations': {'key': 'dimensionGroupOverrideConfigurations', 'type': '[DimensionGroupConfiguration]'},
         'series_override_configurations': {'key': 'seriesOverrideConfigurations', 'type': '[SeriesConfiguration]'},
     }
@@ -391,7 +413,7 @@ class AnomalyDetectionConfigurationPatch(msrest.serialization.Model):
     ):
         super(AnomalyDetectionConfigurationPatch, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
+        self.description = kwargs.get('description', "")
         self.whole_metric_configuration = kwargs.get('whole_metric_configuration', None)
         self.dimension_group_override_configurations = kwargs.get('dimension_group_override_configurations', None)
         self.series_override_configurations = kwargs.get('series_override_configurations', None)
@@ -400,16 +422,18 @@ class AnomalyDetectionConfigurationPatch(msrest.serialization.Model):
 class AnomalyDimensionList(msrest.serialization.Model):
     """AnomalyDimensionList.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
-    :param next_link: Required.
-    :type next_link: str
+    :ivar next_link:
+    :vartype next_link: str
     :param value: Required.
     :type value: list[str]
     """
 
     _validation = {
-        'next_link': {'required': True},
+        'next_link': {'readonly': True},
         'value': {'required': True},
     }
 
@@ -423,7 +447,7 @@ class AnomalyDimensionList(msrest.serialization.Model):
         **kwargs
     ):
         super(AnomalyDimensionList, self).__init__(**kwargs)
-        self.next_link = kwargs['next_link']
+        self.next_link = None
         self.value = kwargs['value']
 
 
@@ -546,9 +570,9 @@ class AnomalyFeedback(MetricFeedback):
     :type metric_id: str
     :param dimension_filter: Required.
     :type dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
-    :param start_time: Required. the start timestamp of feedback timerange.
+    :param start_time: Required. the start timestamp of feedback time range.
     :type start_time: ~datetime.datetime
-    :param end_time: Required. the end timestamp of feedback timerange, when equals to startTime
+    :param end_time: Required. the end timestamp of feedback time range, when equals to startTime
      means only one timestamp.
     :type end_time: ~datetime.datetime
     :param value: Required.
@@ -639,17 +663,25 @@ class AnomalyProperty(msrest.serialization.Model):
     :ivar anomaly_status: anomaly status
     
      only return for alerting anomaly result. Possible values include: "Active", "Resolved".
-    :vartype anomaly_status: str or ~azure.ai.metricsadvisor.models.AnomalyPropertyAnomalyStatus
+    :vartype anomaly_status: str or ~azure.ai.metricsadvisor.models.AnomalyStatus
+    :ivar value: value of the anomaly.
+    :vartype value: float
+    :ivar expected_value: expected value of the anomaly given by smart detector.
+    :vartype expected_value: float
     """
 
     _validation = {
         'anomaly_severity': {'required': True},
         'anomaly_status': {'readonly': True},
+        'value': {'readonly': True},
+        'expected_value': {'readonly': True},
     }
 
     _attribute_map = {
         'anomaly_severity': {'key': 'anomalySeverity', 'type': 'str'},
         'anomaly_status': {'key': 'anomalyStatus', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'float'},
+        'expected_value': {'key': 'expectedValue', 'type': 'float'},
     }
 
     def __init__(
@@ -659,6 +691,8 @@ class AnomalyProperty(msrest.serialization.Model):
         super(AnomalyProperty, self).__init__(**kwargs)
         self.anomaly_severity = kwargs['anomaly_severity']
         self.anomaly_status = None
+        self.value = None
+        self.expected_value = None
 
 
 class AnomalyResult(msrest.serialization.Model):
@@ -668,6 +702,10 @@ class AnomalyResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar data_feed_id: data feed unique id
+    
+     only return for alerting anomaly result.
+    :vartype data_feed_id: str
     :ivar metric_id: metric unique id
     
      only return for alerting anomaly result.
@@ -693,6 +731,7 @@ class AnomalyResult(msrest.serialization.Model):
     """
 
     _validation = {
+        'data_feed_id': {'readonly': True},
         'metric_id': {'readonly': True},
         'anomaly_detection_configuration_id': {'readonly': True},
         'timestamp': {'required': True},
@@ -703,6 +742,7 @@ class AnomalyResult(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
         'metric_id': {'key': 'metricId', 'type': 'str'},
         'anomaly_detection_configuration_id': {'key': 'anomalyDetectionConfigurationId', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
@@ -717,6 +757,7 @@ class AnomalyResult(msrest.serialization.Model):
         **kwargs
     ):
         super(AnomalyResult, self).__init__(**kwargs)
+        self.data_feed_id = None
         self.metric_id = None
         self.anomaly_detection_configuration_id = None
         self.timestamp = kwargs['timestamp']
@@ -729,16 +770,18 @@ class AnomalyResult(msrest.serialization.Model):
 class AnomalyResultList(msrest.serialization.Model):
     """AnomalyResultList.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
-    :param next_link: Required.
-    :type next_link: str
+    :ivar next_link:
+    :vartype next_link: str
     :param value: Required.
     :type value: list[~azure.ai.metricsadvisor.models.AnomalyResult]
     """
 
     _validation = {
-        'next_link': {'required': True},
+        'next_link': {'readonly': True},
         'value': {'required': True},
     }
 
@@ -752,7 +795,7 @@ class AnomalyResultList(msrest.serialization.Model):
         **kwargs
     ):
         super(AnomalyResultList, self).__init__(**kwargs)
-        self.next_link = kwargs['next_link']
+        self.next_link = None
         self.value = kwargs['value']
 
 
@@ -760,7 +803,7 @@ class DataFeedDetail(msrest.serialization.Model):
     """DataFeedDetail.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed, AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, ElasticsearchDataFeed, HttpRequestDataFeed, InfluxDBDataFeed, MongoDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed.
+    sub-classes are: AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed, AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureEventHubsDataFeed, AzureLogAnalyticsDataFeed, AzureTableDataFeed, InfluxDBDataFeed, MongoDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -768,7 +811,7 @@ class DataFeedDetail(msrest.serialization.Model):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
     :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :ivar data_feed_id: data feed unique id.
@@ -803,23 +846,22 @@ class DataFeedDetail(msrest.serialization.Model):
      schedule time in seconds.
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
+     "NeedRollup", "AlreadyRollup".
     :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
     :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
+     "Private", "Public".
     :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
@@ -829,13 +871,18 @@ class DataFeedDetail(msrest.serialization.Model):
     :vartype is_admin: bool
     :ivar creator: data feed creator.
     :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :ivar created_time: data feed created time.
     :vartype created_time: ~datetime.datetime
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     """
 
     _validation = {
@@ -884,10 +931,12 @@ class DataFeedDetail(msrest.serialization.Model):
         'status': {'key': 'status', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
     }
 
     _subtype_map = {
-        'data_source_type': {'AzureApplicationInsights': 'AzureApplicationInsightsDataFeed', 'AzureBlob': 'AzureBlobDataFeed', 'AzureCosmosDB': 'AzureCosmosDBDataFeed', 'AzureDataExplorer': 'AzureDataExplorerDataFeed', 'AzureDataLakeStorageGen2': 'AzureDataLakeStorageGen2DataFeed', 'AzureTable': 'AzureTableDataFeed', 'Elasticsearch': 'ElasticsearchDataFeed', 'HttpRequest': 'HttpRequestDataFeed', 'InfluxDB': 'InfluxDBDataFeed', 'MongoDB': 'MongoDBDataFeed', 'MySql': 'MySqlDataFeed', 'PostgreSql': 'PostgreSqlDataFeed', 'SqlServer': 'SQLServerDataFeed'}
+        'data_source_type': {'AzureApplicationInsights': 'AzureApplicationInsightsDataFeed', 'AzureBlob': 'AzureBlobDataFeed', 'AzureCosmosDB': 'AzureCosmosDBDataFeed', 'AzureDataExplorer': 'AzureDataExplorerDataFeed', 'AzureDataLakeStorageGen2': 'AzureDataLakeStorageGen2DataFeed', 'AzureEventHubs': 'AzureEventHubsDataFeed', 'AzureLogAnalytics': 'AzureLogAnalyticsDataFeed', 'AzureTable': 'AzureTableDataFeed', 'InfluxDB': 'InfluxDBDataFeed', 'MongoDB': 'MongoDBDataFeed', 'MySql': 'MySqlDataFeed', 'PostgreSql': 'PostgreSqlDataFeed', 'SqlServer': 'SQLServerDataFeed'}
     }
 
     def __init__(
@@ -898,31 +947,33 @@ class DataFeedDetail(msrest.serialization.Model):
         self.data_source_type = None  # type: Optional[str]
         self.data_feed_id = None
         self.data_feed_name = kwargs['data_feed_name']
-        self.data_feed_description = kwargs.get('data_feed_description', None)
+        self.data_feed_description = kwargs.get('data_feed_description', "")
         self.granularity_name = kwargs['granularity_name']
         self.granularity_amount = kwargs.get('granularity_amount', None)
         self.metrics = kwargs['metrics']
         self.dimension = kwargs.get('dimension', None)
-        self.timestamp_column = kwargs.get('timestamp_column', None)
+        self.timestamp_column = kwargs.get('timestamp_column', "")
         self.data_start_from = kwargs['data_start_from']
         self.start_offset_in_seconds = kwargs.get('start_offset_in_seconds', 0)
         self.max_concurrency = kwargs.get('max_concurrency', -1)
         self.min_retry_interval_in_seconds = kwargs.get('min_retry_interval_in_seconds', -1)
         self.stop_retry_after_in_seconds = kwargs.get('stop_retry_after_in_seconds', -1)
-        self.need_rollup = kwargs.get('need_rollup', "NeedRollup")
+        self.need_rollup = kwargs.get('need_rollup', None)
         self.roll_up_method = kwargs.get('roll_up_method', None)
         self.roll_up_columns = kwargs.get('roll_up_columns', None)
         self.all_up_identification = kwargs.get('all_up_identification', None)
-        self.fill_missing_point_type = kwargs.get('fill_missing_point_type', "SmartFilling")
+        self.fill_missing_point_type = kwargs.get('fill_missing_point_type', None)
         self.fill_missing_point_value = kwargs.get('fill_missing_point_value', None)
-        self.view_mode = kwargs.get('view_mode', "Private")
+        self.view_mode = kwargs.get('view_mode', None)
         self.admins = kwargs.get('admins', None)
         self.viewers = kwargs.get('viewers', None)
         self.is_admin = None
         self.creator = None
         self.status = None
         self.created_time = None
-        self.action_link_template = kwargs.get('action_link_template', None)
+        self.action_link_template = kwargs.get('action_link_template', "")
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.credential_id = kwargs.get('credential_id', None)
 
 
 class AzureApplicationInsightsDataFeed(DataFeedDetail):
@@ -934,7 +985,7 @@ class AzureApplicationInsightsDataFeed(DataFeedDetail):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
     :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :ivar data_feed_id: data feed unique id.
@@ -969,23 +1020,22 @@ class AzureApplicationInsightsDataFeed(DataFeedDetail):
      schedule time in seconds.
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
+     "NeedRollup", "AlreadyRollup".
     :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
     :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
+     "Private", "Public".
     :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
@@ -995,13 +1045,18 @@ class AzureApplicationInsightsDataFeed(DataFeedDetail):
     :vartype is_admin: bool
     :ivar creator: data feed creator.
     :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :ivar created_time: data feed created time.
     :vartype created_time: ~datetime.datetime
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter: Required.
     :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureApplicationInsightsParameter
     """
@@ -1053,6 +1108,8 @@ class AzureApplicationInsightsDataFeed(DataFeedDetail):
         'status': {'key': 'status', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
         'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureApplicationInsightsParameter'},
     }
 
@@ -1069,16 +1126,15 @@ class DataFeedDetailPatch(msrest.serialization.Model):
     """DataFeedDetailPatch.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureApplicationInsightsDataFeedPatch, AzureBlobDataFeedPatch, AzureCosmosDBDataFeedPatch, AzureDataExplorerDataFeedPatch, AzureDataLakeStorageGen2DataFeedPatch, AzureTableDataFeedPatch, ElasticsearchDataFeedPatch, HttpRequestDataFeedPatch, InfluxDBDataFeedPatch, MongoDBDataFeedPatch, MySqlDataFeedPatch, PostgreSqlDataFeedPatch, SQLServerDataFeedPatch.
+    sub-classes are: AzureApplicationInsightsDataFeedPatch, AzureBlobDataFeedPatch, AzureCosmosDBDataFeedPatch, AzureDataExplorerDataFeedPatch, AzureDataLakeStorageGen2DataFeedPatch, AzureEventHubsDataFeedPatch, AzureLogAnalyticsDataFeedPatch, AzureTableDataFeedPatch, InfluxDBDataFeedPatch, MongoDBDataFeedPatch, MySqlDataFeedPatch, PostgreSqlDataFeedPatch, SQLServerDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :param data_feed_name: data feed name.
     :type data_feed_name: str
     :param data_feed_description: data feed description.
@@ -1101,31 +1157,36 @@ class DataFeedDetailPatch(msrest.serialization.Model):
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
      "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
      values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
      "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
     :param viewers: data feed viewer.
     :type viewers: list[str]
     :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     """
 
     _validation = {
@@ -1156,10 +1217,12 @@ class DataFeedDetailPatch(msrest.serialization.Model):
         'viewers': {'key': 'viewers', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
     }
 
     _subtype_map = {
-        'data_source_type': {'AzureApplicationInsights': 'AzureApplicationInsightsDataFeedPatch', 'AzureBlob': 'AzureBlobDataFeedPatch', 'AzureCosmosDB': 'AzureCosmosDBDataFeedPatch', 'AzureDataExplorer': 'AzureDataExplorerDataFeedPatch', 'AzureDataLakeStorageGen2': 'AzureDataLakeStorageGen2DataFeedPatch', 'AzureTable': 'AzureTableDataFeedPatch', 'Elasticsearch': 'ElasticsearchDataFeedPatch', 'HttpRequest': 'HttpRequestDataFeedPatch', 'InfluxDB': 'InfluxDBDataFeedPatch', 'MongoDB': 'MongoDBDataFeedPatch', 'MySql': 'MySqlDataFeedPatch', 'PostgreSql': 'PostgreSqlDataFeedPatch', 'SqlServer': 'SQLServerDataFeedPatch'}
+        'data_source_type': {'AzureApplicationInsights': 'AzureApplicationInsightsDataFeedPatch', 'AzureBlob': 'AzureBlobDataFeedPatch', 'AzureCosmosDB': 'AzureCosmosDBDataFeedPatch', 'AzureDataExplorer': 'AzureDataExplorerDataFeedPatch', 'AzureDataLakeStorageGen2': 'AzureDataLakeStorageGen2DataFeedPatch', 'AzureEventHubs': 'AzureEventHubsDataFeedPatch', 'AzureLogAnalytics': 'AzureLogAnalyticsDataFeedPatch', 'AzureTable': 'AzureTableDataFeedPatch', 'InfluxDB': 'InfluxDBDataFeedPatch', 'MongoDB': 'MongoDBDataFeedPatch', 'MySql': 'MySqlDataFeedPatch', 'PostgreSql': 'PostgreSqlDataFeedPatch', 'SqlServer': 'SQLServerDataFeedPatch'}
     }
 
     def __init__(
@@ -1187,6 +1250,8 @@ class DataFeedDetailPatch(msrest.serialization.Model):
         self.viewers = kwargs.get('viewers', None)
         self.status = kwargs.get('status', None)
         self.action_link_template = kwargs.get('action_link_template', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.credential_id = kwargs.get('credential_id', None)
 
 
 class AzureApplicationInsightsDataFeedPatch(DataFeedDetailPatch):
@@ -1196,10 +1261,9 @@ class AzureApplicationInsightsDataFeedPatch(DataFeedDetailPatch):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :param data_feed_name: data feed name.
     :type data_feed_name: str
     :param data_feed_description: data feed description.
@@ -1222,33 +1286,39 @@ class AzureApplicationInsightsDataFeedPatch(DataFeedDetailPatch):
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
      "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
      values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
      "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
     :param viewers: data feed viewer.
     :type viewers: list[str]
     :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter:
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureApplicationInsightsParameter
+    :type data_source_parameter:
+     ~azure.ai.metricsadvisor.models.AzureApplicationInsightsParameterPatch
     """
 
     _validation = {
@@ -1279,7 +1349,9 @@ class AzureApplicationInsightsDataFeedPatch(DataFeedDetailPatch):
         'viewers': {'key': 'viewers', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureApplicationInsightsParameter'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureApplicationInsightsParameterPatch'},
     }
 
     def __init__(
@@ -1296,20 +1368,17 @@ class AzureApplicationInsightsParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param azure_cloud: Required. Azure cloud environment.
+    :param azure_cloud: The Azure cloud that this Azure Application Insights in.
     :type azure_cloud: str
-    :param application_id: Required. Azure Application Insights ID.
+    :param application_id: The application id of this Azure Application Insights.
     :type application_id: str
-    :param api_key: Required. API Key.
+    :param api_key: The API Key that can access this Azure Application Insights.
     :type api_key: str
-    :param query: Required. Query.
+    :param query: Required. The statement to query this Azure Application Insights.
     :type query: str
     """
 
     _validation = {
-        'azure_cloud': {'required': True},
-        'application_id': {'required': True},
-        'api_key': {'required': True},
         'query': {'required': True},
     }
 
@@ -1325,10 +1394,41 @@ class AzureApplicationInsightsParameter(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureApplicationInsightsParameter, self).__init__(**kwargs)
-        self.azure_cloud = kwargs['azure_cloud']
-        self.application_id = kwargs['application_id']
-        self.api_key = kwargs['api_key']
+        self.azure_cloud = kwargs.get('azure_cloud', None)
+        self.application_id = kwargs.get('application_id', None)
+        self.api_key = kwargs.get('api_key', None)
         self.query = kwargs['query']
+
+
+class AzureApplicationInsightsParameterPatch(msrest.serialization.Model):
+    """AzureApplicationInsightsParameterPatch.
+
+    :param azure_cloud: The Azure cloud that this Azure Application Insights in.
+    :type azure_cloud: str
+    :param application_id: The application id of this Azure Application Insights.
+    :type application_id: str
+    :param api_key: The API Key that can access this Azure Application Insights.
+    :type api_key: str
+    :param query: The statement to query this Azure Application Insights.
+    :type query: str
+    """
+
+    _attribute_map = {
+        'azure_cloud': {'key': 'azureCloud', 'type': 'str'},
+        'application_id': {'key': 'applicationId', 'type': 'str'},
+        'api_key': {'key': 'apiKey', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureApplicationInsightsParameterPatch, self).__init__(**kwargs)
+        self.azure_cloud = kwargs.get('azure_cloud', None)
+        self.application_id = kwargs.get('application_id', None)
+        self.api_key = kwargs.get('api_key', None)
+        self.query = kwargs.get('query', None)
 
 
 class AzureBlobDataFeed(DataFeedDetail):
@@ -1340,7 +1440,7 @@ class AzureBlobDataFeed(DataFeedDetail):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
     :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :ivar data_feed_id: data feed unique id.
@@ -1375,23 +1475,22 @@ class AzureBlobDataFeed(DataFeedDetail):
      schedule time in seconds.
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
+     "NeedRollup", "AlreadyRollup".
     :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
     :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
+     "Private", "Public".
     :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
@@ -1401,13 +1500,18 @@ class AzureBlobDataFeed(DataFeedDetail):
     :vartype is_admin: bool
     :ivar creator: data feed creator.
     :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :ivar created_time: data feed created time.
     :vartype created_time: ~datetime.datetime
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter: Required.
     :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureBlobParameter
     """
@@ -1459,6 +1563,8 @@ class AzureBlobDataFeed(DataFeedDetail):
         'status': {'key': 'status', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
         'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureBlobParameter'},
     }
 
@@ -1478,10 +1584,9 @@ class AzureBlobDataFeedPatch(DataFeedDetailPatch):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :param data_feed_name: data feed name.
     :type data_feed_name: str
     :param data_feed_description: data feed description.
@@ -1504,33 +1609,38 @@ class AzureBlobDataFeedPatch(DataFeedDetailPatch):
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
      "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
      values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
      "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
     :param viewers: data feed viewer.
     :type viewers: list[str]
     :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter:
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureBlobParameter
+    :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureBlobParameterPatch
     """
 
     _validation = {
@@ -1561,7 +1671,9 @@ class AzureBlobDataFeedPatch(DataFeedDetailPatch):
         'viewers': {'key': 'viewers', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureBlobParameter'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureBlobParameterPatch'},
     }
 
     def __init__(
@@ -1578,16 +1690,15 @@ class AzureBlobParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param connection_string: Required. Azure Blob connection string.
+    :param connection_string: The connection string of this Azure Blob.
     :type connection_string: str
-    :param container: Required. Container.
+    :param container: Required. The container name in this Azure Blob.
     :type container: str
-    :param blob_template: Required. Blob Template.
+    :param blob_template: Required. The path template in this container.
     :type blob_template: str
     """
 
     _validation = {
-        'connection_string': {'required': True},
         'container': {'required': True},
         'blob_template': {'required': True},
     }
@@ -1603,9 +1714,36 @@ class AzureBlobParameter(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureBlobParameter, self).__init__(**kwargs)
-        self.connection_string = kwargs['connection_string']
+        self.connection_string = kwargs.get('connection_string', None)
         self.container = kwargs['container']
         self.blob_template = kwargs['blob_template']
+
+
+class AzureBlobParameterPatch(msrest.serialization.Model):
+    """AzureBlobParameterPatch.
+
+    :param connection_string: The connection string of this Azure Blob.
+    :type connection_string: str
+    :param container: The container name in this Azure Blob.
+    :type container: str
+    :param blob_template: The path template in this container.
+    :type blob_template: str
+    """
+
+    _attribute_map = {
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        'container': {'key': 'container', 'type': 'str'},
+        'blob_template': {'key': 'blobTemplate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureBlobParameterPatch, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.container = kwargs.get('container', None)
+        self.blob_template = kwargs.get('blob_template', None)
 
 
 class AzureCosmosDBDataFeed(DataFeedDetail):
@@ -1617,7 +1755,7 @@ class AzureCosmosDBDataFeed(DataFeedDetail):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
     :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :ivar data_feed_id: data feed unique id.
@@ -1652,23 +1790,22 @@ class AzureCosmosDBDataFeed(DataFeedDetail):
      schedule time in seconds.
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
+     "NeedRollup", "AlreadyRollup".
     :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
     :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
+     "Private", "Public".
     :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
@@ -1678,13 +1815,18 @@ class AzureCosmosDBDataFeed(DataFeedDetail):
     :vartype is_admin: bool
     :ivar creator: data feed creator.
     :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :ivar created_time: data feed created time.
     :vartype created_time: ~datetime.datetime
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter: Required.
     :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureCosmosDBParameter
     """
@@ -1736,6 +1878,8 @@ class AzureCosmosDBDataFeed(DataFeedDetail):
         'status': {'key': 'status', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
         'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureCosmosDBParameter'},
     }
 
@@ -1755,10 +1899,9 @@ class AzureCosmosDBDataFeedPatch(DataFeedDetailPatch):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :param data_feed_name: data feed name.
     :type data_feed_name: str
     :param data_feed_description: data feed description.
@@ -1781,33 +1924,38 @@ class AzureCosmosDBDataFeedPatch(DataFeedDetailPatch):
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
      "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
      values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
      "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
     :param viewers: data feed viewer.
     :type viewers: list[str]
     :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter:
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureCosmosDBParameter
+    :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureCosmosDBParameterPatch
     """
 
     _validation = {
@@ -1838,7 +1986,9 @@ class AzureCosmosDBDataFeedPatch(DataFeedDetailPatch):
         'viewers': {'key': 'viewers', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureCosmosDBParameter'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureCosmosDBParameterPatch'},
     }
 
     def __init__(
@@ -1855,18 +2005,17 @@ class AzureCosmosDBParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param connection_string: Required. Azure CosmosDB connection string.
+    :param connection_string: The connection string of this Azure CosmosDB.
     :type connection_string: str
-    :param sql_query: Required. Query script.
+    :param sql_query: Required. The statement to query this collection.
     :type sql_query: str
-    :param database: Required. Database name.
+    :param database: Required. A database name in this Azure CosmosDB.
     :type database: str
-    :param collection_id: Required. Collection id.
+    :param collection_id: Required. A collection id in this database.
     :type collection_id: str
     """
 
     _validation = {
-        'connection_string': {'required': True},
         'sql_query': {'required': True},
         'database': {'required': True},
         'collection_id': {'required': True},
@@ -1884,10 +2033,41 @@ class AzureCosmosDBParameter(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureCosmosDBParameter, self).__init__(**kwargs)
-        self.connection_string = kwargs['connection_string']
+        self.connection_string = kwargs.get('connection_string', None)
         self.sql_query = kwargs['sql_query']
         self.database = kwargs['database']
         self.collection_id = kwargs['collection_id']
+
+
+class AzureCosmosDBParameterPatch(msrest.serialization.Model):
+    """AzureCosmosDBParameterPatch.
+
+    :param connection_string: The connection string of this Azure CosmosDB.
+    :type connection_string: str
+    :param sql_query: The statement to query this collection.
+    :type sql_query: str
+    :param database: A database name in this Azure CosmosDB.
+    :type database: str
+    :param collection_id: A collection id in this database.
+    :type collection_id: str
+    """
+
+    _attribute_map = {
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        'sql_query': {'key': 'sqlQuery', 'type': 'str'},
+        'database': {'key': 'database', 'type': 'str'},
+        'collection_id': {'key': 'collectionId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureCosmosDBParameterPatch, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.sql_query = kwargs.get('sql_query', None)
+        self.database = kwargs.get('database', None)
+        self.collection_id = kwargs.get('collection_id', None)
 
 
 class AzureDataExplorerDataFeed(DataFeedDetail):
@@ -1899,7 +2079,7 @@ class AzureDataExplorerDataFeed(DataFeedDetail):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
     :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :ivar data_feed_id: data feed unique id.
@@ -1934,23 +2114,22 @@ class AzureDataExplorerDataFeed(DataFeedDetail):
      schedule time in seconds.
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
+     "NeedRollup", "AlreadyRollup".
     :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
     :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
+     "Private", "Public".
     :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
@@ -1960,13 +2139,18 @@ class AzureDataExplorerDataFeed(DataFeedDetail):
     :vartype is_admin: bool
     :ivar creator: data feed creator.
     :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :ivar created_time: data feed created time.
     :vartype created_time: ~datetime.datetime
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter: Required.
     :type data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
     """
@@ -2018,6 +2202,8 @@ class AzureDataExplorerDataFeed(DataFeedDetail):
         'status': {'key': 'status', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
         'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SqlSourceParameter'},
     }
 
@@ -2037,10 +2223,9 @@ class AzureDataExplorerDataFeedPatch(DataFeedDetailPatch):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :param data_feed_name: data feed name.
     :type data_feed_name: str
     :param data_feed_description: data feed description.
@@ -2063,33 +2248,38 @@ class AzureDataExplorerDataFeedPatch(DataFeedDetailPatch):
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
      "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
      values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
      "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
     :param viewers: data feed viewer.
     :type viewers: list[str]
     :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter:
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
+    :type data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
     """
 
     _validation = {
@@ -2120,7 +2310,9 @@ class AzureDataExplorerDataFeedPatch(DataFeedDetailPatch):
         'viewers': {'key': 'viewers', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SqlSourceParameter'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SQLSourceParameterPatch'},
     }
 
     def __init__(
@@ -2141,7 +2333,7 @@ class AzureDataLakeStorageGen2DataFeed(DataFeedDetail):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
     :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :ivar data_feed_id: data feed unique id.
@@ -2176,23 +2368,22 @@ class AzureDataLakeStorageGen2DataFeed(DataFeedDetail):
      schedule time in seconds.
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
+     "NeedRollup", "AlreadyRollup".
     :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
     :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
+     "Private", "Public".
     :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
@@ -2202,13 +2393,18 @@ class AzureDataLakeStorageGen2DataFeed(DataFeedDetail):
     :vartype is_admin: bool
     :ivar creator: data feed creator.
     :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :ivar created_time: data feed created time.
     :vartype created_time: ~datetime.datetime
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter: Required.
     :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureDataLakeStorageGen2Parameter
     """
@@ -2260,6 +2456,8 @@ class AzureDataLakeStorageGen2DataFeed(DataFeedDetail):
         'status': {'key': 'status', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
         'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureDataLakeStorageGen2Parameter'},
     }
 
@@ -2279,10 +2477,9 @@ class AzureDataLakeStorageGen2DataFeedPatch(DataFeedDetailPatch):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :param data_feed_name: data feed name.
     :type data_feed_name: str
     :param data_feed_description: data feed description.
@@ -2305,33 +2502,39 @@ class AzureDataLakeStorageGen2DataFeedPatch(DataFeedDetailPatch):
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
      "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
      values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
      "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
     :param viewers: data feed viewer.
     :type viewers: list[str]
     :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter:
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureDataLakeStorageGen2Parameter
+    :type data_source_parameter:
+     ~azure.ai.metricsadvisor.models.AzureDataLakeStorageGen2ParameterPatch
     """
 
     _validation = {
@@ -2362,7 +2565,9 @@ class AzureDataLakeStorageGen2DataFeedPatch(DataFeedDetailPatch):
         'viewers': {'key': 'viewers', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureDataLakeStorageGen2Parameter'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureDataLakeStorageGen2ParameterPatch'},
     }
 
     def __init__(
@@ -2379,21 +2584,19 @@ class AzureDataLakeStorageGen2Parameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param account_name: Required. Account name.
+    :param account_name: The account name of this Azure Data Lake.
     :type account_name: str
-    :param account_key: Required. Account key.
+    :param account_key: The account key that can access this Azure Data Lake.
     :type account_key: str
-    :param file_system_name: Required. File system name (Container).
+    :param file_system_name: Required. The file system (container) name in this Azure Data Lake.
     :type file_system_name: str
-    :param directory_template: Required. Directory template.
+    :param directory_template: Required. The directory template under this file system.
     :type directory_template: str
-    :param file_template: Required. File template.
+    :param file_template: Required. The file template.
     :type file_template: str
     """
 
     _validation = {
-        'account_name': {'required': True},
-        'account_key': {'required': True},
         'file_system_name': {'required': True},
         'directory_template': {'required': True},
         'file_template': {'required': True},
@@ -2412,15 +2615,50 @@ class AzureDataLakeStorageGen2Parameter(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureDataLakeStorageGen2Parameter, self).__init__(**kwargs)
-        self.account_name = kwargs['account_name']
-        self.account_key = kwargs['account_key']
+        self.account_name = kwargs.get('account_name', None)
+        self.account_key = kwargs.get('account_key', None)
         self.file_system_name = kwargs['file_system_name']
         self.directory_template = kwargs['directory_template']
         self.file_template = kwargs['file_template']
 
 
-class AzureTableDataFeed(DataFeedDetail):
-    """AzureTableDataFeed.
+class AzureDataLakeStorageGen2ParameterPatch(msrest.serialization.Model):
+    """AzureDataLakeStorageGen2ParameterPatch.
+
+    :param account_name: The account name of this Azure Data Lake.
+    :type account_name: str
+    :param account_key: The account key that can access this Azure Data Lake.
+    :type account_key: str
+    :param file_system_name: The file system (container) name in this Azure Data Lake.
+    :type file_system_name: str
+    :param directory_template: The directory template under this file system.
+    :type directory_template: str
+    :param file_template: The file template.
+    :type file_template: str
+    """
+
+    _attribute_map = {
+        'account_name': {'key': 'accountName', 'type': 'str'},
+        'account_key': {'key': 'accountKey', 'type': 'str'},
+        'file_system_name': {'key': 'fileSystemName', 'type': 'str'},
+        'directory_template': {'key': 'directoryTemplate', 'type': 'str'},
+        'file_template': {'key': 'fileTemplate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureDataLakeStorageGen2ParameterPatch, self).__init__(**kwargs)
+        self.account_name = kwargs.get('account_name', None)
+        self.account_key = kwargs.get('account_key', None)
+        self.file_system_name = kwargs.get('file_system_name', None)
+        self.directory_template = kwargs.get('directory_template', None)
+        self.file_template = kwargs.get('file_template', None)
+
+
+class AzureEventHubsDataFeed(DataFeedDetail):
+    """AzureEventHubsDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2428,7 +2666,7 @@ class AzureTableDataFeed(DataFeedDetail):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
     :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :ivar data_feed_id: data feed unique id.
@@ -2463,23 +2701,22 @@ class AzureTableDataFeed(DataFeedDetail):
      schedule time in seconds.
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
+     "NeedRollup", "AlreadyRollup".
     :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
     :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
+     "Private", "Public".
     :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
@@ -2489,13 +2726,880 @@ class AzureTableDataFeed(DataFeedDetail):
     :vartype is_admin: bool
     :ivar creator: data feed creator.
     :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :ivar created_time: data feed created time.
     :vartype created_time: ~datetime.datetime
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
+    :param data_source_parameter: Required.
+    :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureEventHubsParameter
+    """
+
+    _validation = {
+        'data_source_type': {'required': True},
+        'data_feed_id': {'readonly': True},
+        'data_feed_name': {'required': True},
+        'granularity_name': {'required': True},
+        'metrics': {'required': True, 'unique': True},
+        'dimension': {'unique': True},
+        'data_start_from': {'required': True},
+        'roll_up_columns': {'unique': True},
+        'admins': {'unique': True},
+        'viewers': {'unique': True},
+        'is_admin': {'readonly': True},
+        'creator': {'readonly': True},
+        'status': {'readonly': True},
+        'created_time': {'readonly': True},
+        'data_source_parameter': {'required': True},
+    }
+
+    _attribute_map = {
+        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
+        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
+        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
+        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
+        'granularity_name': {'key': 'granularityName', 'type': 'str'},
+        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
+        'metrics': {'key': 'metrics', 'type': '[Metric]'},
+        'dimension': {'key': 'dimension', 'type': '[Dimension]'},
+        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
+        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
+        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
+        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
+        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
+        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
+        'need_rollup': {'key': 'needRollup', 'type': 'str'},
+        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
+        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
+        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
+        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
+        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
+        'view_mode': {'key': 'viewMode', 'type': 'str'},
+        'admins': {'key': 'admins', 'type': '[str]'},
+        'viewers': {'key': 'viewers', 'type': '[str]'},
+        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
+        'creator': {'key': 'creator', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
+        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureEventHubsParameter'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureEventHubsDataFeed, self).__init__(**kwargs)
+        self.data_source_type = 'AzureEventHubs'  # type: str
+        self.data_source_parameter = kwargs['data_source_parameter']
+
+
+class AzureEventHubsDataFeedPatch(DataFeedDetailPatch):
+    """AzureEventHubsDataFeedPatch.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :param data_feed_name: data feed name.
+    :type data_feed_name: str
+    :param data_feed_description: data feed description.
+    :type data_feed_description: str
+    :param timestamp_column: user-defined timestamp column. if timestampColumn is null, start time
+     of every time slice will be used as default value.
+    :type timestamp_column: str
+    :param data_start_from: ingestion start time.
+    :type data_start_from: ~datetime.datetime
+    :param start_offset_in_seconds: the time that the beginning of data ingestion task will delay
+     for every data slice according to this offset.
+    :type start_offset_in_seconds: long
+    :param max_concurrency: the max concurrency of data ingestion queries against user data source.
+     0 means no limitation.
+    :type max_concurrency: int
+    :param min_retry_interval_in_seconds: the min retry interval for failed data ingestion tasks.
+    :type min_retry_interval_in_seconds: long
+    :param stop_retry_after_in_seconds: stop retry data ingestion after the data slice first
+     schedule time in seconds.
+    :type stop_retry_after_in_seconds: long
+    :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
+     "NeedRollup", "AlreadyRollup".
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+    :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
+     "Avg", "Count".
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
+    :param roll_up_columns: roll up columns.
+    :type roll_up_columns: list[str]
+    :param all_up_identification: the identification value for the row of calculated all-up value.
+    :type all_up_identification: str
+    :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
+    :param fill_missing_point_value: the value of fill missing point for anomaly detection.
+    :type fill_missing_point_value: float
+    :param view_mode: data feed access mode, default is Private. Possible values include:
+     "Private", "Public".
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
+    :param admins: data feed administrator.
+    :type admins: list[str]
+    :param viewers: data feed viewer.
+    :type viewers: list[str]
+    :param status: data feed status. Possible values include: "Active", "Paused".
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
+    :param action_link_template: action link for alert.
+    :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
+    :param data_source_parameter:
+    :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureEventHubsParameterPatch
+    """
+
+    _validation = {
+        'data_source_type': {'required': True},
+        'roll_up_columns': {'unique': True},
+        'admins': {'unique': True},
+        'viewers': {'unique': True},
+    }
+
+    _attribute_map = {
+        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
+        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
+        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
+        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
+        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
+        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
+        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
+        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
+        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
+        'need_rollup': {'key': 'needRollup', 'type': 'str'},
+        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
+        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
+        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
+        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
+        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
+        'view_mode': {'key': 'viewMode', 'type': 'str'},
+        'admins': {'key': 'admins', 'type': '[str]'},
+        'viewers': {'key': 'viewers', 'type': '[str]'},
+        'status': {'key': 'status', 'type': 'str'},
+        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureEventHubsParameterPatch'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureEventHubsDataFeedPatch, self).__init__(**kwargs)
+        self.data_source_type = 'AzureEventHubs'  # type: str
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
+
+
+class AzureEventHubsParameter(msrest.serialization.Model):
+    """AzureEventHubsParameter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param connection_string: The connection string of this Azure Event Hubs.
+    :type connection_string: str
+    :param consumer_group: Required. The consumer group to be used in this data feed.
+    :type consumer_group: str
+    """
+
+    _validation = {
+        'consumer_group': {'required': True},
+    }
+
+    _attribute_map = {
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        'consumer_group': {'key': 'consumerGroup', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureEventHubsParameter, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.consumer_group = kwargs['consumer_group']
+
+
+class AzureEventHubsParameterPatch(msrest.serialization.Model):
+    """AzureEventHubsParameterPatch.
+
+    :param connection_string: The connection string of this Azure Event Hubs.
+    :type connection_string: str
+    :param consumer_group: The consumer group to be used in this data feed.
+    :type consumer_group: str
+    """
+
+    _attribute_map = {
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        'consumer_group': {'key': 'consumerGroup', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureEventHubsParameterPatch, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.consumer_group = kwargs.get('consumer_group', None)
+
+
+class AzureLogAnalyticsDataFeed(DataFeedDetail):
+    """AzureLogAnalyticsDataFeed.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar data_feed_id: data feed unique id.
+    :vartype data_feed_id: str
+    :param data_feed_name: Required. data feed name.
+    :type data_feed_name: str
+    :param data_feed_description: data feed description.
+    :type data_feed_description: str
+    :param granularity_name: Required. granularity of the time series. Possible values include:
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+    :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
+    :param granularity_amount: if granularity is custom,it is required.
+    :type granularity_amount: int
+    :param metrics: Required. measure list.
+    :type metrics: list[~azure.ai.metricsadvisor.models.Metric]
+    :param dimension: dimension list.
+    :type dimension: list[~azure.ai.metricsadvisor.models.Dimension]
+    :param timestamp_column: user-defined timestamp column. if timestampColumn is null, start time
+     of every time slice will be used as default value.
+    :type timestamp_column: str
+    :param data_start_from: Required. ingestion start time.
+    :type data_start_from: ~datetime.datetime
+    :param start_offset_in_seconds: the time that the beginning of data ingestion task will delay
+     for every data slice according to this offset.
+    :type start_offset_in_seconds: long
+    :param max_concurrency: the max concurrency of data ingestion queries against user data source.
+     0 means no limitation.
+    :type max_concurrency: int
+    :param min_retry_interval_in_seconds: the min retry interval for failed data ingestion tasks.
+    :type min_retry_interval_in_seconds: long
+    :param stop_retry_after_in_seconds: stop retry data ingestion after the data slice first
+     schedule time in seconds.
+    :type stop_retry_after_in_seconds: long
+    :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
+     "NeedRollup", "AlreadyRollup".
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+    :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
+     "Avg", "Count".
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
+    :param roll_up_columns: roll up columns.
+    :type roll_up_columns: list[str]
+    :param all_up_identification: the identification value for the row of calculated all-up value.
+    :type all_up_identification: str
+    :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
+    :param fill_missing_point_value: the value of fill missing point for anomaly detection.
+    :type fill_missing_point_value: float
+    :param view_mode: data feed access mode, default is Private. Possible values include:
+     "Private", "Public".
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
+    :param admins: data feed administrator.
+    :type admins: list[str]
+    :param viewers: data feed viewer.
+    :type viewers: list[str]
+    :ivar is_admin: the query user is one of data feed administrator or not.
+    :vartype is_admin: bool
+    :ivar creator: data feed creator.
+    :vartype creator: str
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
+    :ivar created_time: data feed created time.
+    :vartype created_time: ~datetime.datetime
+    :param action_link_template: action link for alert.
+    :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
+    :param data_source_parameter: Required.
+    :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureLogAnalyticsParameter
+    """
+
+    _validation = {
+        'data_source_type': {'required': True},
+        'data_feed_id': {'readonly': True},
+        'data_feed_name': {'required': True},
+        'granularity_name': {'required': True},
+        'metrics': {'required': True, 'unique': True},
+        'dimension': {'unique': True},
+        'data_start_from': {'required': True},
+        'roll_up_columns': {'unique': True},
+        'admins': {'unique': True},
+        'viewers': {'unique': True},
+        'is_admin': {'readonly': True},
+        'creator': {'readonly': True},
+        'status': {'readonly': True},
+        'created_time': {'readonly': True},
+        'data_source_parameter': {'required': True},
+    }
+
+    _attribute_map = {
+        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
+        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
+        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
+        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
+        'granularity_name': {'key': 'granularityName', 'type': 'str'},
+        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
+        'metrics': {'key': 'metrics', 'type': '[Metric]'},
+        'dimension': {'key': 'dimension', 'type': '[Dimension]'},
+        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
+        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
+        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
+        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
+        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
+        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
+        'need_rollup': {'key': 'needRollup', 'type': 'str'},
+        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
+        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
+        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
+        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
+        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
+        'view_mode': {'key': 'viewMode', 'type': 'str'},
+        'admins': {'key': 'admins', 'type': '[str]'},
+        'viewers': {'key': 'viewers', 'type': '[str]'},
+        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
+        'creator': {'key': 'creator', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
+        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureLogAnalyticsParameter'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureLogAnalyticsDataFeed, self).__init__(**kwargs)
+        self.data_source_type = 'AzureLogAnalytics'  # type: str
+        self.data_source_parameter = kwargs['data_source_parameter']
+
+
+class AzureLogAnalyticsDataFeedPatch(DataFeedDetailPatch):
+    """AzureLogAnalyticsDataFeedPatch.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :param data_feed_name: data feed name.
+    :type data_feed_name: str
+    :param data_feed_description: data feed description.
+    :type data_feed_description: str
+    :param timestamp_column: user-defined timestamp column. if timestampColumn is null, start time
+     of every time slice will be used as default value.
+    :type timestamp_column: str
+    :param data_start_from: ingestion start time.
+    :type data_start_from: ~datetime.datetime
+    :param start_offset_in_seconds: the time that the beginning of data ingestion task will delay
+     for every data slice according to this offset.
+    :type start_offset_in_seconds: long
+    :param max_concurrency: the max concurrency of data ingestion queries against user data source.
+     0 means no limitation.
+    :type max_concurrency: int
+    :param min_retry_interval_in_seconds: the min retry interval for failed data ingestion tasks.
+    :type min_retry_interval_in_seconds: long
+    :param stop_retry_after_in_seconds: stop retry data ingestion after the data slice first
+     schedule time in seconds.
+    :type stop_retry_after_in_seconds: long
+    :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
+     "NeedRollup", "AlreadyRollup".
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+    :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
+     "Avg", "Count".
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
+    :param roll_up_columns: roll up columns.
+    :type roll_up_columns: list[str]
+    :param all_up_identification: the identification value for the row of calculated all-up value.
+    :type all_up_identification: str
+    :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
+    :param fill_missing_point_value: the value of fill missing point for anomaly detection.
+    :type fill_missing_point_value: float
+    :param view_mode: data feed access mode, default is Private. Possible values include:
+     "Private", "Public".
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
+    :param admins: data feed administrator.
+    :type admins: list[str]
+    :param viewers: data feed viewer.
+    :type viewers: list[str]
+    :param status: data feed status. Possible values include: "Active", "Paused".
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
+    :param action_link_template: action link for alert.
+    :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
+    :param data_source_parameter:
+    :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureLogAnalyticsParameterPatch
+    """
+
+    _validation = {
+        'data_source_type': {'required': True},
+        'roll_up_columns': {'unique': True},
+        'admins': {'unique': True},
+        'viewers': {'unique': True},
+    }
+
+    _attribute_map = {
+        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
+        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
+        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
+        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
+        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
+        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
+        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
+        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
+        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
+        'need_rollup': {'key': 'needRollup', 'type': 'str'},
+        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
+        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
+        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
+        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
+        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
+        'view_mode': {'key': 'viewMode', 'type': 'str'},
+        'admins': {'key': 'admins', 'type': '[str]'},
+        'viewers': {'key': 'viewers', 'type': '[str]'},
+        'status': {'key': 'status', 'type': 'str'},
+        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureLogAnalyticsParameterPatch'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureLogAnalyticsDataFeedPatch, self).__init__(**kwargs)
+        self.data_source_type = 'AzureLogAnalytics'  # type: str
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
+
+
+class AzureLogAnalyticsParameter(msrest.serialization.Model):
+    """AzureLogAnalyticsParameter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param tenant_id: The tenant id of service principal that have access to this Log Analytics.
+    :type tenant_id: str
+    :param client_id: The client id of service principal that have access to this Log Analytics.
+    :type client_id: str
+    :param client_secret: The client secret of service principal that have access to this Log
+     Analytics.
+    :type client_secret: str
+    :param workspace_id: Required. The workspace id of this Log Analytics.
+    :type workspace_id: str
+    :param query: Required. The KQL (Kusto Query Language) query to fetch data from this Log
+     Analytics.
+    :type query: str
+    """
+
+    _validation = {
+        'workspace_id': {'required': True},
+        'query': {'required': True},
+    }
+
+    _attribute_map = {
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'client_secret': {'key': 'clientSecret', 'type': 'str'},
+        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureLogAnalyticsParameter, self).__init__(**kwargs)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.workspace_id = kwargs['workspace_id']
+        self.query = kwargs['query']
+
+
+class AzureLogAnalyticsParameterPatch(msrest.serialization.Model):
+    """AzureLogAnalyticsParameterPatch.
+
+    :param tenant_id: The tenant id of service principal that have access to this Log Analytics.
+    :type tenant_id: str
+    :param client_id: The client id of service principal that have access to this Log Analytics.
+    :type client_id: str
+    :param client_secret: The client secret of service principal that have access to this Log
+     Analytics.
+    :type client_secret: str
+    :param workspace_id: The workspace id of this Log Analytics.
+    :type workspace_id: str
+    :param query: The KQL (Kusto Query Language) query to fetch data from this Log Analytics.
+    :type query: str
+    """
+
+    _attribute_map = {
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'client_secret': {'key': 'clientSecret', 'type': 'str'},
+        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureLogAnalyticsParameterPatch, self).__init__(**kwargs)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.workspace_id = kwargs.get('workspace_id', None)
+        self.query = kwargs.get('query', None)
+
+
+class DataSourceCredential(msrest.serialization.Model):
+    """DataSourceCredential.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureSQLConnectionStringCredential, DataLakeGen2SharedKeyCredential, ServicePrincipalCredential, ServicePrincipalInKVCredential.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+     server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type data_source_credential_type: str or
+     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+    :ivar data_source_credential_id: Unique id of data source credential.
+    :vartype data_source_credential_id: str
+    :param data_source_credential_name: Required. Name of data source credential.
+    :type data_source_credential_name: str
+    :param data_source_credential_description: Description of data source credential.
+    :type data_source_credential_description: str
+    """
+
+    _validation = {
+        'data_source_credential_type': {'required': True},
+        'data_source_credential_id': {'readonly': True},
+        'data_source_credential_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
+        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
+        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
+        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'data_source_credential_type': {'AzureSQLConnectionString': 'AzureSQLConnectionStringCredential', 'DataLakeGen2SharedKey': 'DataLakeGen2SharedKeyCredential', 'ServicePrincipal': 'ServicePrincipalCredential', 'ServicePrincipalInKV': 'ServicePrincipalInKVCredential'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataSourceCredential, self).__init__(**kwargs)
+        self.data_source_credential_type = None  # type: Optional[str]
+        self.data_source_credential_id = None
+        self.data_source_credential_name = kwargs['data_source_credential_name']
+        self.data_source_credential_description = kwargs.get('data_source_credential_description', None)
+
+
+class AzureSQLConnectionStringCredential(DataSourceCredential):
+    """AzureSQLConnectionStringCredential.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+     server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type data_source_credential_type: str or
+     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+    :ivar data_source_credential_id: Unique id of data source credential.
+    :vartype data_source_credential_id: str
+    :param data_source_credential_name: Required. Name of data source credential.
+    :type data_source_credential_name: str
+    :param data_source_credential_description: Description of data source credential.
+    :type data_source_credential_description: str
+    :param parameters: Required.
+    :type parameters: ~azure.ai.metricsadvisor.models.AzureSQLConnectionStringParam
+    """
+
+    _validation = {
+        'data_source_credential_type': {'required': True},
+        'data_source_credential_id': {'readonly': True},
+        'data_source_credential_name': {'required': True},
+        'parameters': {'required': True},
+    }
+
+    _attribute_map = {
+        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
+        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
+        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
+        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'AzureSQLConnectionStringParam'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureSQLConnectionStringCredential, self).__init__(**kwargs)
+        self.data_source_credential_type = 'AzureSQLConnectionString'  # type: str
+        self.parameters = kwargs['parameters']
+
+
+class DataSourceCredentialPatch(msrest.serialization.Model):
+    """DataSourceCredentialPatch.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureSQLConnectionStringCredentialPatch, DataLakeGen2SharedKeyCredentialPatch, ServicePrincipalCredentialPatch, ServicePrincipalInKVCredentialPatch.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+     server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type data_source_credential_type: str or
+     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+    :param data_source_credential_name: Name of data source credential.
+    :type data_source_credential_name: str
+    :param data_source_credential_description: Description of data source credential.
+    :type data_source_credential_description: str
+    """
+
+    _validation = {
+        'data_source_credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
+        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
+        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'data_source_credential_type': {'AzureSQLConnectionString': 'AzureSQLConnectionStringCredentialPatch', 'DataLakeGen2SharedKey': 'DataLakeGen2SharedKeyCredentialPatch', 'ServicePrincipal': 'ServicePrincipalCredentialPatch', 'ServicePrincipalInKV': 'ServicePrincipalInKVCredentialPatch'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataSourceCredentialPatch, self).__init__(**kwargs)
+        self.data_source_credential_type = None  # type: Optional[str]
+        self.data_source_credential_name = kwargs.get('data_source_credential_name', None)
+        self.data_source_credential_description = kwargs.get('data_source_credential_description', None)
+
+
+class AzureSQLConnectionStringCredentialPatch(DataSourceCredentialPatch):
+    """AzureSQLConnectionStringCredentialPatch.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+     server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type data_source_credential_type: str or
+     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+    :param data_source_credential_name: Name of data source credential.
+    :type data_source_credential_name: str
+    :param data_source_credential_description: Description of data source credential.
+    :type data_source_credential_description: str
+    :param parameters:
+    :type parameters: ~azure.ai.metricsadvisor.models.AzureSQLConnectionStringParamPatch
+    """
+
+    _validation = {
+        'data_source_credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
+        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
+        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'AzureSQLConnectionStringParamPatch'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureSQLConnectionStringCredentialPatch, self).__init__(**kwargs)
+        self.data_source_credential_type = 'AzureSQLConnectionString'  # type: str
+        self.parameters = kwargs.get('parameters', None)
+
+
+class AzureSQLConnectionStringParam(msrest.serialization.Model):
+    """AzureSQLConnectionStringParam.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param connection_string: Required. The connection string to access the Azure SQL.
+    :type connection_string: str
+    """
+
+    _validation = {
+        'connection_string': {'required': True},
+    }
+
+    _attribute_map = {
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureSQLConnectionStringParam, self).__init__(**kwargs)
+        self.connection_string = kwargs['connection_string']
+
+
+class AzureSQLConnectionStringParamPatch(msrest.serialization.Model):
+    """AzureSQLConnectionStringParamPatch.
+
+    :param connection_string: The connection string to access the Azure SQL.
+    :type connection_string: str
+    """
+
+    _attribute_map = {
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureSQLConnectionStringParamPatch, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+
+
+class AzureTableDataFeed(DataFeedDetail):
+    """AzureTableDataFeed.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :ivar data_feed_id: data feed unique id.
+    :vartype data_feed_id: str
+    :param data_feed_name: Required. data feed name.
+    :type data_feed_name: str
+    :param data_feed_description: data feed description.
+    :type data_feed_description: str
+    :param granularity_name: Required. granularity of the time series. Possible values include:
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+    :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
+    :param granularity_amount: if granularity is custom,it is required.
+    :type granularity_amount: int
+    :param metrics: Required. measure list.
+    :type metrics: list[~azure.ai.metricsadvisor.models.Metric]
+    :param dimension: dimension list.
+    :type dimension: list[~azure.ai.metricsadvisor.models.Dimension]
+    :param timestamp_column: user-defined timestamp column. if timestampColumn is null, start time
+     of every time slice will be used as default value.
+    :type timestamp_column: str
+    :param data_start_from: Required. ingestion start time.
+    :type data_start_from: ~datetime.datetime
+    :param start_offset_in_seconds: the time that the beginning of data ingestion task will delay
+     for every data slice according to this offset.
+    :type start_offset_in_seconds: long
+    :param max_concurrency: the max concurrency of data ingestion queries against user data source.
+     0 means no limitation.
+    :type max_concurrency: int
+    :param min_retry_interval_in_seconds: the min retry interval for failed data ingestion tasks.
+    :type min_retry_interval_in_seconds: long
+    :param stop_retry_after_in_seconds: stop retry data ingestion after the data slice first
+     schedule time in seconds.
+    :type stop_retry_after_in_seconds: long
+    :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
+     "NeedRollup", "AlreadyRollup".
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+    :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
+     "Avg", "Count".
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
+    :param roll_up_columns: roll up columns.
+    :type roll_up_columns: list[str]
+    :param all_up_identification: the identification value for the row of calculated all-up value.
+    :type all_up_identification: str
+    :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
+    :param fill_missing_point_value: the value of fill missing point for anomaly detection.
+    :type fill_missing_point_value: float
+    :param view_mode: data feed access mode, default is Private. Possible values include:
+     "Private", "Public".
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
+    :param admins: data feed administrator.
+    :type admins: list[str]
+    :param viewers: data feed viewer.
+    :type viewers: list[str]
+    :ivar is_admin: the query user is one of data feed administrator or not.
+    :vartype is_admin: bool
+    :ivar creator: data feed creator.
+    :vartype creator: str
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
+    :ivar created_time: data feed created time.
+    :vartype created_time: ~datetime.datetime
+    :param action_link_template: action link for alert.
+    :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter: Required.
     :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureTableParameter
     """
@@ -2547,6 +3651,8 @@ class AzureTableDataFeed(DataFeedDetail):
         'status': {'key': 'status', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
         'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureTableParameter'},
     }
 
@@ -2566,10 +3672,9 @@ class AzureTableDataFeedPatch(DataFeedDetailPatch):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :param data_feed_name: data feed name.
     :type data_feed_name: str
     :param data_feed_description: data feed description.
@@ -2592,33 +3697,38 @@ class AzureTableDataFeedPatch(DataFeedDetailPatch):
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
      "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
      values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
      "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
     :param viewers: data feed viewer.
     :type viewers: list[str]
     :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter:
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureTableParameter
+    :type data_source_parameter: ~azure.ai.metricsadvisor.models.AzureTableParameterPatch
     """
 
     _validation = {
@@ -2649,7 +3759,9 @@ class AzureTableDataFeedPatch(DataFeedDetailPatch):
         'viewers': {'key': 'viewers', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureTableParameter'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureTableParameterPatch'},
     }
 
     def __init__(
@@ -2666,16 +3778,16 @@ class AzureTableParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param connection_string: Required. Azure Table connection string.
+    :param connection_string: The connection string of this Azure Table.
     :type connection_string: str
-    :param table: Required. Table name.
+    :param table: Required. A table name in this Azure Table.
     :type table: str
-    :param query: Required. Query script.
+    :param query: Required. The statement to query this table. Please find syntax and details from
+     Azure Table documents.
     :type query: str
     """
 
     _validation = {
-        'connection_string': {'required': True},
         'table': {'required': True},
         'query': {'required': True},
     }
@@ -2691,9 +3803,37 @@ class AzureTableParameter(msrest.serialization.Model):
         **kwargs
     ):
         super(AzureTableParameter, self).__init__(**kwargs)
-        self.connection_string = kwargs['connection_string']
+        self.connection_string = kwargs.get('connection_string', None)
         self.table = kwargs['table']
         self.query = kwargs['query']
+
+
+class AzureTableParameterPatch(msrest.serialization.Model):
+    """AzureTableParameterPatch.
+
+    :param connection_string: The connection string of this Azure Table.
+    :type connection_string: str
+    :param table: A table name in this Azure Table.
+    :type table: str
+    :param query: The statement to query this table. Please find syntax and details from Azure
+     Table documents.
+    :type query: str
+    """
+
+    _attribute_map = {
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        'table': {'key': 'table', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureTableParameterPatch, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.table = kwargs.get('table', None)
+        self.query = kwargs.get('query', None)
 
 
 class ChangePointFeedback(MetricFeedback):
@@ -2716,9 +3856,9 @@ class ChangePointFeedback(MetricFeedback):
     :type metric_id: str
     :param dimension_filter: Required.
     :type dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
-    :param start_time: Required. the start timestamp of feedback timerange.
+    :param start_time: Required. the start timestamp of feedback time range.
     :type start_time: ~datetime.datetime
-    :param end_time: Required. the end timestamp of feedback timerange, when equals to startTime
+    :param end_time: Required. the end timestamp of feedback time range, when equals to startTime
      means only one timestamp.
     :type end_time: ~datetime.datetime
     :param value: Required.
@@ -2835,6 +3975,45 @@ class ChangeThresholdCondition(msrest.serialization.Model):
         self.suppress_condition = kwargs['suppress_condition']
 
 
+class ChangeThresholdConditionPatch(msrest.serialization.Model):
+    """ChangeThresholdConditionPatch.
+
+    :param change_percentage: change percentage, value range : [0, +∞).
+    :type change_percentage: float
+    :param shift_point: shift point, value range : [1, +∞).
+    :type shift_point: int
+    :param within_range: if the withinRange = true, detected data is abnormal when the value falls
+     in the range, in this case anomalyDetectorDirection must be Both
+     if the withinRange = false, detected data is abnormal when the value falls out of the range.
+    :type within_range: bool
+    :param anomaly_detector_direction: detection direction. Possible values include: "Both",
+     "Down", "Up".
+    :type anomaly_detector_direction: str or
+     ~azure.ai.metricsadvisor.models.AnomalyDetectorDirection
+    :param suppress_condition:
+    :type suppress_condition: ~azure.ai.metricsadvisor.models.SuppressConditionPatch
+    """
+
+    _attribute_map = {
+        'change_percentage': {'key': 'changePercentage', 'type': 'float'},
+        'shift_point': {'key': 'shiftPoint', 'type': 'int'},
+        'within_range': {'key': 'withinRange', 'type': 'bool'},
+        'anomaly_detector_direction': {'key': 'anomalyDetectorDirection', 'type': 'str'},
+        'suppress_condition': {'key': 'suppressCondition', 'type': 'SuppressConditionPatch'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ChangeThresholdConditionPatch, self).__init__(**kwargs)
+        self.change_percentage = kwargs.get('change_percentage', None)
+        self.shift_point = kwargs.get('shift_point', None)
+        self.within_range = kwargs.get('within_range', None)
+        self.anomaly_detector_direction = kwargs.get('anomaly_detector_direction', None)
+        self.suppress_condition = kwargs.get('suppress_condition', None)
+
+
 class CommentFeedback(MetricFeedback):
     """CommentFeedback.
 
@@ -2855,9 +4034,9 @@ class CommentFeedback(MetricFeedback):
     :type metric_id: str
     :param dimension_filter: Required.
     :type dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
-    :param start_time: the start timestamp of feedback timerange.
+    :param start_time: the start timestamp of feedback time range.
     :type start_time: ~datetime.datetime
-    :param end_time: the end timestamp of feedback timerange, when equals to startTime means only
+    :param end_time: the end timestamp of feedback time range, when equals to startTime means only
      one timestamp.
     :type end_time: ~datetime.datetime
     :param value: Required.
@@ -2927,10 +4106,10 @@ class DataFeedIngestionProgress(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar latest_success_timestamp: the timestamp of lastest success ingestion job.
+    :ivar latest_success_timestamp: the timestamp of latest success ingestion job.
      null indicates not available.
     :vartype latest_success_timestamp: ~datetime.datetime
-    :ivar latest_active_timestamp: the timestamp of lastest ingestion job with status update.
+    :ivar latest_active_timestamp: the timestamp of latest ingestion job with status update.
      null indicates not available.
     :vartype latest_active_timestamp: ~datetime.datetime
     """
@@ -2980,6 +4159,164 @@ class DataFeedList(msrest.serialization.Model):
         **kwargs
     ):
         super(DataFeedList, self).__init__(**kwargs)
+        self.next_link = None
+        self.value = None
+
+
+class DataLakeGen2SharedKeyCredential(DataSourceCredential):
+    """DataLakeGen2SharedKeyCredential.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+     server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type data_source_credential_type: str or
+     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+    :ivar data_source_credential_id: Unique id of data source credential.
+    :vartype data_source_credential_id: str
+    :param data_source_credential_name: Required. Name of data source credential.
+    :type data_source_credential_name: str
+    :param data_source_credential_description: Description of data source credential.
+    :type data_source_credential_description: str
+    :param parameters: Required.
+    :type parameters: ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyParam
+    """
+
+    _validation = {
+        'data_source_credential_type': {'required': True},
+        'data_source_credential_id': {'readonly': True},
+        'data_source_credential_name': {'required': True},
+        'parameters': {'required': True},
+    }
+
+    _attribute_map = {
+        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
+        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
+        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
+        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'DataLakeGen2SharedKeyParam'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataLakeGen2SharedKeyCredential, self).__init__(**kwargs)
+        self.data_source_credential_type = 'DataLakeGen2SharedKey'  # type: str
+        self.parameters = kwargs['parameters']
+
+
+class DataLakeGen2SharedKeyCredentialPatch(DataSourceCredentialPatch):
+    """DataLakeGen2SharedKeyCredentialPatch.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+     server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type data_source_credential_type: str or
+     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+    :param data_source_credential_name: Name of data source credential.
+    :type data_source_credential_name: str
+    :param data_source_credential_description: Description of data source credential.
+    :type data_source_credential_description: str
+    :param parameters:
+    :type parameters: ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyParamPatch
+    """
+
+    _validation = {
+        'data_source_credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
+        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
+        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'DataLakeGen2SharedKeyParamPatch'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataLakeGen2SharedKeyCredentialPatch, self).__init__(**kwargs)
+        self.data_source_credential_type = 'DataLakeGen2SharedKey'  # type: str
+        self.parameters = kwargs.get('parameters', None)
+
+
+class DataLakeGen2SharedKeyParam(msrest.serialization.Model):
+    """DataLakeGen2SharedKeyParam.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param account_key: Required. The account key to access the Azure Data Lake Storage Gen2.
+    :type account_key: str
+    """
+
+    _validation = {
+        'account_key': {'required': True},
+    }
+
+    _attribute_map = {
+        'account_key': {'key': 'accountKey', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataLakeGen2SharedKeyParam, self).__init__(**kwargs)
+        self.account_key = kwargs['account_key']
+
+
+class DataLakeGen2SharedKeyParamPatch(msrest.serialization.Model):
+    """DataLakeGen2SharedKeyParamPatch.
+
+    :param account_key: The account key to access the Azure Data Lake Storage Gen2.
+    :type account_key: str
+    """
+
+    _attribute_map = {
+        'account_key': {'key': 'accountKey', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataLakeGen2SharedKeyParamPatch, self).__init__(**kwargs)
+        self.account_key = kwargs.get('account_key', None)
+
+
+class DataSourceCredentialList(msrest.serialization.Model):
+    """DataSourceCredentialList.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar next_link:
+    :vartype next_link: str
+    :ivar value:
+    :vartype value: list[~azure.ai.metricsadvisor.models.DataSourceCredential]
+    """
+
+    _validation = {
+        'next_link': {'readonly': True},
+        'value': {'readonly': True, 'unique': True},
+    }
+
+    _attribute_map = {
+        'next_link': {'key': '@nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[DataSourceCredential]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataSourceCredentialList, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
@@ -3107,11 +4444,14 @@ class DetectionSeriesQuery(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_time: Required. start time.
+    :param start_time: Required. This is inclusive. The maximum number of data points (series
+     number * time range) is 10000.
     :type start_time: ~datetime.datetime
-    :param end_time: Required. end time.
+    :param end_time: Required. This is exclusive. The maximum number of data points (series number
+     * time range) is 10000.
     :type end_time: ~datetime.datetime
-    :param series: Required. series.
+    :param series: Required. The series to be queried. The identity must be able to define one
+     single time series instead of a group of time series. The maximum number of series is 100.
     :type series: list[~azure.ai.metricsadvisor.models.SeriesIdentity]
     """
 
@@ -3179,7 +4519,7 @@ class DimensionGroupConfiguration(msrest.serialization.Model):
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
     :type condition_operator: str or
-     ~azure.ai.metricsadvisor.models.DimensionGroupConfigurationConditionOperator
+     ~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationLogicType
     :param smart_detection_condition:
     :type smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :param hard_threshold_condition:
@@ -3237,288 +4577,6 @@ class DimensionGroupIdentity(msrest.serialization.Model):
         self.dimension = kwargs['dimension']
 
 
-class ElasticsearchDataFeed(DataFeedDetail):
-    """ElasticsearchDataFeed.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param data_source_type: Required. data source type.Constant filled by server.  Possible values
-     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
-     "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
-    :ivar data_feed_id: data feed unique id.
-    :vartype data_feed_id: str
-    :param data_feed_name: Required. data feed name.
-    :type data_feed_name: str
-    :param data_feed_description: data feed description.
-    :type data_feed_description: str
-    :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
-    :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
-    :param granularity_amount: if granularity is custom,it is required.
-    :type granularity_amount: int
-    :param metrics: Required. measure list.
-    :type metrics: list[~azure.ai.metricsadvisor.models.Metric]
-    :param dimension: dimension list.
-    :type dimension: list[~azure.ai.metricsadvisor.models.Dimension]
-    :param timestamp_column: user-defined timestamp column. if timestampColumn is null, start time
-     of every time slice will be used as default value.
-    :type timestamp_column: str
-    :param data_start_from: Required. ingestion start time.
-    :type data_start_from: ~datetime.datetime
-    :param start_offset_in_seconds: the time that the beginning of data ingestion task will delay
-     for every data slice according to this offset.
-    :type start_offset_in_seconds: long
-    :param max_concurrency: the max concurrency of data ingestion queries against user data source.
-     0 means no limitation.
-    :type max_concurrency: int
-    :param min_retry_interval_in_seconds: the min retry interval for failed data ingestion tasks.
-    :type min_retry_interval_in_seconds: long
-    :param stop_retry_after_in_seconds: stop retry data ingestion after the data slice first
-     schedule time in seconds.
-    :type stop_retry_after_in_seconds: long
-    :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
-    :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
-     "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
-    :param roll_up_columns: roll up columns.
-    :type roll_up_columns: list[str]
-    :param all_up_identification: the identification value for the row of calculated all-up value.
-    :type all_up_identification: str
-    :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
-    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
-    :param fill_missing_point_value: the value of fill missing point for anomaly detection.
-    :type fill_missing_point_value: float
-    :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
-    :param admins: data feed administrator.
-    :type admins: list[str]
-    :param viewers: data feed viewer.
-    :type viewers: list[str]
-    :ivar is_admin: the query user is one of data feed administrator or not.
-    :vartype is_admin: bool
-    :ivar creator: data feed creator.
-    :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
-    :ivar created_time: data feed created time.
-    :vartype created_time: ~datetime.datetime
-    :param action_link_template: action link for alert.
-    :type action_link_template: str
-    :param data_source_parameter: Required.
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.ElasticsearchParameter
-    """
-
-    _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
-    }
-
-    _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[Metric]'},
-        'dimension': {'key': 'dimension', 'type': '[Dimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'ElasticsearchParameter'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ElasticsearchDataFeed, self).__init__(**kwargs)
-        self.data_source_type = 'Elasticsearch'  # type: str
-        self.data_source_parameter = kwargs['data_source_parameter']
-
-
-class ElasticsearchDataFeedPatch(DataFeedDetailPatch):
-    """ElasticsearchDataFeedPatch.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param data_source_type: Required. data source type.Constant filled by server.  Possible values
-     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
-     "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
-    :param data_feed_name: data feed name.
-    :type data_feed_name: str
-    :param data_feed_description: data feed description.
-    :type data_feed_description: str
-    :param timestamp_column: user-defined timestamp column. if timestampColumn is null, start time
-     of every time slice will be used as default value.
-    :type timestamp_column: str
-    :param data_start_from: ingestion start time.
-    :type data_start_from: ~datetime.datetime
-    :param start_offset_in_seconds: the time that the beginning of data ingestion task will delay
-     for every data slice according to this offset.
-    :type start_offset_in_seconds: long
-    :param max_concurrency: the max concurrency of data ingestion queries against user data source.
-     0 means no limitation.
-    :type max_concurrency: int
-    :param min_retry_interval_in_seconds: the min retry interval for failed data ingestion tasks.
-    :type min_retry_interval_in_seconds: long
-    :param stop_retry_after_in_seconds: stop retry data ingestion after the data slice first
-     schedule time in seconds.
-    :type stop_retry_after_in_seconds: long
-    :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
-    :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
-     "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
-    :param roll_up_columns: roll up columns.
-    :type roll_up_columns: list[str]
-    :param all_up_identification: the identification value for the row of calculated all-up value.
-    :type all_up_identification: str
-    :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
-    :param fill_missing_point_value: the value of fill missing point for anomaly detection.
-    :type fill_missing_point_value: float
-    :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
-    :param admins: data feed administrator.
-    :type admins: list[str]
-    :param viewers: data feed viewer.
-    :type viewers: list[str]
-    :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
-    :param action_link_template: action link for alert.
-    :type action_link_template: str
-    :param data_source_parameter:
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.ElasticsearchParameter
-    """
-
-    _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-    }
-
-    _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'ElasticsearchParameter'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ElasticsearchDataFeedPatch, self).__init__(**kwargs)
-        self.data_source_type = 'Elasticsearch'  # type: str
-        self.data_source_parameter = kwargs.get('data_source_parameter', None)
-
-
-class ElasticsearchParameter(msrest.serialization.Model):
-    """ElasticsearchParameter.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param host: Required. Host.
-    :type host: str
-    :param port: Required. Port.
-    :type port: str
-    :param auth_header: Required. Authorization header.
-    :type auth_header: str
-    :param query: Required. Query.
-    :type query: str
-    """
-
-    _validation = {
-        'host': {'required': True},
-        'port': {'required': True},
-        'auth_header': {'required': True},
-        'query': {'required': True},
-    }
-
-    _attribute_map = {
-        'host': {'key': 'host', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'str'},
-        'auth_header': {'key': 'authHeader', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ElasticsearchParameter, self).__init__(**kwargs)
-        self.host = kwargs['host']
-        self.port = kwargs['port']
-        self.auth_header = kwargs['auth_header']
-        self.query = kwargs['query']
-
-
 class HookInfo(msrest.serialization.Model):
     """HookInfo.
 
@@ -3572,8 +4630,8 @@ class HookInfo(msrest.serialization.Model):
         self.hook_type = None  # type: Optional[str]
         self.hook_id = None
         self.hook_name = kwargs['hook_name']
-        self.description = kwargs.get('description', None)
-        self.external_link = kwargs.get('external_link', None)
+        self.description = kwargs.get('description', "")
+        self.external_link = kwargs.get('external_link', "")
         self.admins = None
 
 
@@ -3640,7 +4698,7 @@ class HookInfoPatch(msrest.serialization.Model):
 
     :param hook_type: Required. hook type.Constant filled by server.  Possible values include:
      "Webhook", "Email".
-    :type hook_type: str or ~azure.ai.metricsadvisor.models.HookInfoPatchHookType
+    :type hook_type: str or ~azure.ai.metricsadvisor.models.HookType
     :param hook_name: hook unique name.
     :type hook_name: str
     :param description: hook description.
@@ -3689,7 +4747,7 @@ class EmailHookInfoPatch(HookInfoPatch):
 
     :param hook_type: Required. hook type.Constant filled by server.  Possible values include:
      "Webhook", "Email".
-    :type hook_type: str or ~azure.ai.metricsadvisor.models.HookInfoPatchHookType
+    :type hook_type: str or ~azure.ai.metricsadvisor.models.HookType
     :param hook_name: hook unique name.
     :type hook_name: str
     :param description: hook description.
@@ -3699,7 +4757,7 @@ class EmailHookInfoPatch(HookInfoPatch):
     :ivar admins: hook administrators.
     :vartype admins: list[str]
     :param hook_parameter:
-    :type hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameter
+    :type hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameterPatch
     """
 
     _validation = {
@@ -3713,7 +4771,7 @@ class EmailHookInfoPatch(HookInfoPatch):
         'description': {'key': 'description', 'type': 'str'},
         'external_link': {'key': 'externalLink', 'type': 'str'},
         'admins': {'key': 'admins', 'type': '[str]'},
-        'hook_parameter': {'key': 'hookParameter', 'type': 'EmailHookParameter'},
+        'hook_parameter': {'key': 'hookParameter', 'type': 'EmailHookParameterPatch'},
     }
 
     def __init__(
@@ -3748,6 +4806,29 @@ class EmailHookParameter(msrest.serialization.Model):
     ):
         super(EmailHookParameter, self).__init__(**kwargs)
         self.to_list = kwargs['to_list']
+
+
+class EmailHookParameterPatch(msrest.serialization.Model):
+    """EmailHookParameterPatch.
+
+    :param to_list: Email TO: list.
+    :type to_list: list[str]
+    """
+
+    _validation = {
+        'to_list': {'unique': True},
+    }
+
+    _attribute_map = {
+        'to_list': {'key': 'toList', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EmailHookParameterPatch, self).__init__(**kwargs)
+        self.to_list = kwargs.get('to_list', None)
 
 
 class EnrichmentStatus(msrest.serialization.Model):
@@ -3937,6 +5018,43 @@ class HardThresholdCondition(msrest.serialization.Model):
         self.suppress_condition = kwargs['suppress_condition']
 
 
+class HardThresholdConditionPatch(msrest.serialization.Model):
+    """HardThresholdConditionPatch.
+
+    :param lower_bound: lower bound
+    
+     should be specified when anomalyDetectorDirection is Both or Down.
+    :type lower_bound: float
+    :param upper_bound: upper bound
+    
+     should be specified when anomalyDetectorDirection is Both or Up.
+    :type upper_bound: float
+    :param anomaly_detector_direction: detection direction. Possible values include: "Both",
+     "Down", "Up".
+    :type anomaly_detector_direction: str or
+     ~azure.ai.metricsadvisor.models.AnomalyDetectorDirection
+    :param suppress_condition:
+    :type suppress_condition: ~azure.ai.metricsadvisor.models.SuppressConditionPatch
+    """
+
+    _attribute_map = {
+        'lower_bound': {'key': 'lowerBound', 'type': 'float'},
+        'upper_bound': {'key': 'upperBound', 'type': 'float'},
+        'anomaly_detector_direction': {'key': 'anomalyDetectorDirection', 'type': 'str'},
+        'suppress_condition': {'key': 'suppressCondition', 'type': 'SuppressConditionPatch'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HardThresholdConditionPatch, self).__init__(**kwargs)
+        self.lower_bound = kwargs.get('lower_bound', None)
+        self.upper_bound = kwargs.get('upper_bound', None)
+        self.anomaly_detector_direction = kwargs.get('anomaly_detector_direction', None)
+        self.suppress_condition = kwargs.get('suppress_condition', None)
+
+
 class HookList(msrest.serialization.Model):
     """HookList.
 
@@ -3967,288 +5085,6 @@ class HookList(msrest.serialization.Model):
         self.value = None
 
 
-class HttpRequestDataFeed(DataFeedDetail):
-    """HttpRequestDataFeed.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param data_source_type: Required. data source type.Constant filled by server.  Possible values
-     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
-     "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
-    :ivar data_feed_id: data feed unique id.
-    :vartype data_feed_id: str
-    :param data_feed_name: Required. data feed name.
-    :type data_feed_name: str
-    :param data_feed_description: data feed description.
-    :type data_feed_description: str
-    :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
-    :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
-    :param granularity_amount: if granularity is custom,it is required.
-    :type granularity_amount: int
-    :param metrics: Required. measure list.
-    :type metrics: list[~azure.ai.metricsadvisor.models.Metric]
-    :param dimension: dimension list.
-    :type dimension: list[~azure.ai.metricsadvisor.models.Dimension]
-    :param timestamp_column: user-defined timestamp column. if timestampColumn is null, start time
-     of every time slice will be used as default value.
-    :type timestamp_column: str
-    :param data_start_from: Required. ingestion start time.
-    :type data_start_from: ~datetime.datetime
-    :param start_offset_in_seconds: the time that the beginning of data ingestion task will delay
-     for every data slice according to this offset.
-    :type start_offset_in_seconds: long
-    :param max_concurrency: the max concurrency of data ingestion queries against user data source.
-     0 means no limitation.
-    :type max_concurrency: int
-    :param min_retry_interval_in_seconds: the min retry interval for failed data ingestion tasks.
-    :type min_retry_interval_in_seconds: long
-    :param stop_retry_after_in_seconds: stop retry data ingestion after the data slice first
-     schedule time in seconds.
-    :type stop_retry_after_in_seconds: long
-    :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
-    :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
-     "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
-    :param roll_up_columns: roll up columns.
-    :type roll_up_columns: list[str]
-    :param all_up_identification: the identification value for the row of calculated all-up value.
-    :type all_up_identification: str
-    :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
-    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
-    :param fill_missing_point_value: the value of fill missing point for anomaly detection.
-    :type fill_missing_point_value: float
-    :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
-    :param admins: data feed administrator.
-    :type admins: list[str]
-    :param viewers: data feed viewer.
-    :type viewers: list[str]
-    :ivar is_admin: the query user is one of data feed administrator or not.
-    :vartype is_admin: bool
-    :ivar creator: data feed creator.
-    :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
-    :ivar created_time: data feed created time.
-    :vartype created_time: ~datetime.datetime
-    :param action_link_template: action link for alert.
-    :type action_link_template: str
-    :param data_source_parameter: Required.
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.HttpRequestParameter
-    """
-
-    _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
-    }
-
-    _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[Metric]'},
-        'dimension': {'key': 'dimension', 'type': '[Dimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'HttpRequestParameter'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(HttpRequestDataFeed, self).__init__(**kwargs)
-        self.data_source_type = 'HttpRequest'  # type: str
-        self.data_source_parameter = kwargs['data_source_parameter']
-
-
-class HttpRequestDataFeedPatch(DataFeedDetailPatch):
-    """HttpRequestDataFeedPatch.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param data_source_type: Required. data source type.Constant filled by server.  Possible values
-     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
-     "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
-    :param data_feed_name: data feed name.
-    :type data_feed_name: str
-    :param data_feed_description: data feed description.
-    :type data_feed_description: str
-    :param timestamp_column: user-defined timestamp column. if timestampColumn is null, start time
-     of every time slice will be used as default value.
-    :type timestamp_column: str
-    :param data_start_from: ingestion start time.
-    :type data_start_from: ~datetime.datetime
-    :param start_offset_in_seconds: the time that the beginning of data ingestion task will delay
-     for every data slice according to this offset.
-    :type start_offset_in_seconds: long
-    :param max_concurrency: the max concurrency of data ingestion queries against user data source.
-     0 means no limitation.
-    :type max_concurrency: int
-    :param min_retry_interval_in_seconds: the min retry interval for failed data ingestion tasks.
-    :type min_retry_interval_in_seconds: long
-    :param stop_retry_after_in_seconds: stop retry data ingestion after the data slice first
-     schedule time in seconds.
-    :type stop_retry_after_in_seconds: long
-    :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
-    :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
-     "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
-    :param roll_up_columns: roll up columns.
-    :type roll_up_columns: list[str]
-    :param all_up_identification: the identification value for the row of calculated all-up value.
-    :type all_up_identification: str
-    :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
-    :param fill_missing_point_value: the value of fill missing point for anomaly detection.
-    :type fill_missing_point_value: float
-    :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
-    :param admins: data feed administrator.
-    :type admins: list[str]
-    :param viewers: data feed viewer.
-    :type viewers: list[str]
-    :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
-    :param action_link_template: action link for alert.
-    :type action_link_template: str
-    :param data_source_parameter:
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.HttpRequestParameter
-    """
-
-    _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-    }
-
-    _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'HttpRequestParameter'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(HttpRequestDataFeedPatch, self).__init__(**kwargs)
-        self.data_source_type = 'HttpRequest'  # type: str
-        self.data_source_parameter = kwargs.get('data_source_parameter', None)
-
-
-class HttpRequestParameter(msrest.serialization.Model):
-    """HttpRequestParameter.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param url: Required. HTTP URL.
-    :type url: str
-    :param http_header: Required. HTTP header.
-    :type http_header: str
-    :param http_method: Required. HTTP method.
-    :type http_method: str
-    :param payload: Required. HTTP reuqest body.
-    :type payload: str
-    """
-
-    _validation = {
-        'url': {'required': True},
-        'http_header': {'required': True},
-        'http_method': {'required': True},
-        'payload': {'required': True},
-    }
-
-    _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
-        'http_header': {'key': 'httpHeader', 'type': 'str'},
-        'http_method': {'key': 'httpMethod', 'type': 'str'},
-        'payload': {'key': 'payload', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(HttpRequestParameter, self).__init__(**kwargs)
-        self.url = kwargs['url']
-        self.http_header = kwargs['http_header']
-        self.http_method = kwargs['http_method']
-        self.payload = kwargs['payload']
-
-
 class IncidentProperty(msrest.serialization.Model):
     """IncidentProperty.
 
@@ -4262,17 +5098,25 @@ class IncidentProperty(msrest.serialization.Model):
     :ivar incident_status: incident status
     
      only return for alerting incident result. Possible values include: "Active", "Resolved".
-    :vartype incident_status: str or ~azure.ai.metricsadvisor.models.IncidentPropertyIncidentStatus
+    :vartype incident_status: str or ~azure.ai.metricsadvisor.models.IncidentStatus
+    :ivar value_of_root_node: value of the root node.
+    :vartype value_of_root_node: float
+    :ivar expected_value_of_root_node: expected value of the root node given by smart detector.
+    :vartype expected_value_of_root_node: float
     """
 
     _validation = {
         'max_severity': {'required': True},
         'incident_status': {'readonly': True},
+        'value_of_root_node': {'readonly': True},
+        'expected_value_of_root_node': {'readonly': True},
     }
 
     _attribute_map = {
         'max_severity': {'key': 'maxSeverity', 'type': 'str'},
         'incident_status': {'key': 'incidentStatus', 'type': 'str'},
+        'value_of_root_node': {'key': 'valueOfRootNode', 'type': 'float'},
+        'expected_value_of_root_node': {'key': 'expectedValueOfRootNode', 'type': 'float'},
     }
 
     def __init__(
@@ -4282,6 +5126,8 @@ class IncidentProperty(msrest.serialization.Model):
         super(IncidentProperty, self).__init__(**kwargs)
         self.max_severity = kwargs['max_severity']
         self.incident_status = None
+        self.value_of_root_node = None
+        self.expected_value_of_root_node = None
 
 
 class IncidentResult(msrest.serialization.Model):
@@ -4291,6 +5137,10 @@ class IncidentResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar data_feed_id: data feed unique id
+    
+     only return for alerting anomaly result.
+    :vartype data_feed_id: str
     :ivar metric_id: metric unique id
     
      only return for alerting incident result.
@@ -4312,6 +5162,7 @@ class IncidentResult(msrest.serialization.Model):
     """
 
     _validation = {
+        'data_feed_id': {'readonly': True},
         'metric_id': {'readonly': True},
         'anomaly_detection_configuration_id': {'readonly': True},
         'incident_id': {'required': True},
@@ -4322,6 +5173,7 @@ class IncidentResult(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
         'metric_id': {'key': 'metricId', 'type': 'str'},
         'anomaly_detection_configuration_id': {'key': 'anomalyDetectionConfigurationId', 'type': 'str'},
         'incident_id': {'key': 'incidentId', 'type': 'str'},
@@ -4336,6 +5188,7 @@ class IncidentResult(msrest.serialization.Model):
         **kwargs
     ):
         super(IncidentResult, self).__init__(**kwargs)
+        self.data_feed_id = None
         self.metric_id = None
         self.anomaly_detection_configuration_id = None
         self.incident_id = kwargs['incident_id']
@@ -4348,16 +5201,18 @@ class IncidentResult(msrest.serialization.Model):
 class IncidentResultList(msrest.serialization.Model):
     """IncidentResultList.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
-    :param next_link: Required.
-    :type next_link: str
+    :ivar next_link:
+    :vartype next_link: str
     :param value: Required.
     :type value: list[~azure.ai.metricsadvisor.models.IncidentResult]
     """
 
     _validation = {
-        'next_link': {'required': True},
+        'next_link': {'readonly': True},
         'value': {'required': True},
     }
 
@@ -4371,7 +5226,7 @@ class IncidentResultList(msrest.serialization.Model):
         **kwargs
     ):
         super(IncidentResultList, self).__init__(**kwargs)
-        self.next_link = kwargs['next_link']
+        self.next_link = None
         self.value = kwargs['value']
 
 
@@ -4384,7 +5239,7 @@ class InfluxDBDataFeed(DataFeedDetail):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
     :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :ivar data_feed_id: data feed unique id.
@@ -4419,23 +5274,22 @@ class InfluxDBDataFeed(DataFeedDetail):
      schedule time in seconds.
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
+     "NeedRollup", "AlreadyRollup".
     :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
     :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
+     "Private", "Public".
     :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
@@ -4445,13 +5299,18 @@ class InfluxDBDataFeed(DataFeedDetail):
     :vartype is_admin: bool
     :ivar creator: data feed creator.
     :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :ivar created_time: data feed created time.
     :vartype created_time: ~datetime.datetime
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter: Required.
     :type data_source_parameter: ~azure.ai.metricsadvisor.models.InfluxDBParameter
     """
@@ -4503,6 +5362,8 @@ class InfluxDBDataFeed(DataFeedDetail):
         'status': {'key': 'status', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
         'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'InfluxDBParameter'},
     }
 
@@ -4522,10 +5383,9 @@ class InfluxDBDataFeedPatch(DataFeedDetailPatch):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :param data_feed_name: data feed name.
     :type data_feed_name: str
     :param data_feed_description: data feed description.
@@ -4548,33 +5408,38 @@ class InfluxDBDataFeedPatch(DataFeedDetailPatch):
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
      "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
      values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
      "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
     :param viewers: data feed viewer.
     :type viewers: list[str]
     :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter:
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.InfluxDBParameter
+    :type data_source_parameter: ~azure.ai.metricsadvisor.models.InfluxDBParameterPatch
     """
 
     _validation = {
@@ -4605,7 +5470,9 @@ class InfluxDBDataFeedPatch(DataFeedDetailPatch):
         'viewers': {'key': 'viewers', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'InfluxDBParameter'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'InfluxDBParameterPatch'},
     }
 
     def __init__(
@@ -4622,23 +5489,19 @@ class InfluxDBParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param connection_string: Required. InfluxDB connection string.
+    :param connection_string: The connection string of this InfluxDB.
     :type connection_string: str
-    :param database: Required. Database name.
+    :param database: A database name.
     :type database: str
-    :param user_name: Required. Database access user.
+    :param user_name: The user name of the account that can access this database.
     :type user_name: str
-    :param password: Required. Database access password.
+    :param password: The password of the account that can access this database.
     :type password: str
-    :param query: Required. Query script.
+    :param query: Required. The script to query this database.
     :type query: str
     """
 
     _validation = {
-        'connection_string': {'required': True},
-        'database': {'required': True},
-        'user_name': {'required': True},
-        'password': {'required': True},
         'query': {'required': True},
     }
 
@@ -4655,11 +5518,46 @@ class InfluxDBParameter(msrest.serialization.Model):
         **kwargs
     ):
         super(InfluxDBParameter, self).__init__(**kwargs)
-        self.connection_string = kwargs['connection_string']
-        self.database = kwargs['database']
-        self.user_name = kwargs['user_name']
-        self.password = kwargs['password']
+        self.connection_string = kwargs.get('connection_string', None)
+        self.database = kwargs.get('database', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
         self.query = kwargs['query']
+
+
+class InfluxDBParameterPatch(msrest.serialization.Model):
+    """InfluxDBParameterPatch.
+
+    :param connection_string: The connection string of this InfluxDB.
+    :type connection_string: str
+    :param database: A database name.
+    :type database: str
+    :param user_name: The user name of the account that can access this database.
+    :type user_name: str
+    :param password: The password of the account that can access this database.
+    :type password: str
+    :param query: The script to query this database.
+    :type query: str
+    """
+
+    _attribute_map = {
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        'database': {'key': 'database', 'type': 'str'},
+        'user_name': {'key': 'userName', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(InfluxDBParameterPatch, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.database = kwargs.get('database', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
+        self.query = kwargs.get('query', None)
 
 
 class IngestionProgressResetOptions(msrest.serialization.Model):
@@ -4876,7 +5774,7 @@ class MetricAlertingConfiguration(msrest.serialization.Model):
         super(MetricAlertingConfiguration, self).__init__(**kwargs)
         self.anomaly_detection_configuration_id = kwargs['anomaly_detection_configuration_id']
         self.anomaly_scope_type = kwargs['anomaly_scope_type']
-        self.negation_operation = kwargs.get('negation_operation', None)
+        self.negation_operation = kwargs.get('negation_operation', False)
         self.dimension_anomaly_scope = kwargs.get('dimension_anomaly_scope', None)
         self.top_n_anomaly_scope = kwargs.get('top_n_anomaly_scope', None)
         self.severity_filter = kwargs.get('severity_filter', None)
@@ -4948,13 +5846,13 @@ class MetricDataQueryOptions(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_time: Required. start time of query a time series data, and format should be yyyy-
-     MM-ddThh:mm:ssZ.
+    :param start_time: Required. start time of query a time series data, and format should be
+     yyyy-MM-ddThh:mm:ssZ. The maximum number of data points (series number * time range) is 10000.
     :type start_time: ~datetime.datetime
-    :param end_time: Required. start time of query a time series data, and format should be yyyy-
-     MM-ddThh:mm:ssZ.
+    :param end_time: Required. start time of query a time series data, and format should be
+     yyyy-MM-ddThh:mm:ssZ. The maximum number of data points (series number * time range) is 10000.
     :type end_time: ~datetime.datetime
-    :param series: Required. query specific series.
+    :param series: Required. query specific series. The maximum number of series is 100.
     :type series: list[dict[str, str]]
     """
 
@@ -5184,7 +6082,7 @@ class MetricSeriesQueryOptions(msrest.serialization.Model):
     :param active_since: Required. query series ingested after this time, the format should be
      yyyy-MM-ddTHH:mm:ssZ.
     :type active_since: ~datetime.datetime
-    :param dimension_filter: filter specfic dimension name and values.
+    :param dimension_filter: filter specific dimension name and values.
     :type dimension_filter: dict[str, list[str]]
     """
 
@@ -5215,7 +6113,7 @@ class MongoDBDataFeed(DataFeedDetail):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
     :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :ivar data_feed_id: data feed unique id.
@@ -5250,23 +6148,22 @@ class MongoDBDataFeed(DataFeedDetail):
      schedule time in seconds.
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
+     "NeedRollup", "AlreadyRollup".
     :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
     :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
+     "Private", "Public".
     :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
@@ -5276,13 +6173,18 @@ class MongoDBDataFeed(DataFeedDetail):
     :vartype is_admin: bool
     :ivar creator: data feed creator.
     :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :ivar created_time: data feed created time.
     :vartype created_time: ~datetime.datetime
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter: Required.
     :type data_source_parameter: ~azure.ai.metricsadvisor.models.MongoDBParameter
     """
@@ -5334,6 +6236,8 @@ class MongoDBDataFeed(DataFeedDetail):
         'status': {'key': 'status', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
         'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'MongoDBParameter'},
     }
 
@@ -5353,10 +6257,9 @@ class MongoDBDataFeedPatch(DataFeedDetailPatch):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :param data_feed_name: data feed name.
     :type data_feed_name: str
     :param data_feed_description: data feed description.
@@ -5379,33 +6282,38 @@ class MongoDBDataFeedPatch(DataFeedDetailPatch):
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
      "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
      values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
      "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
     :param viewers: data feed viewer.
     :type viewers: list[str]
     :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter:
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.MongoDBParameter
+    :type data_source_parameter: ~azure.ai.metricsadvisor.models.MongoDBParameterPatch
     """
 
     _validation = {
@@ -5436,7 +6344,9 @@ class MongoDBDataFeedPatch(DataFeedDetailPatch):
         'viewers': {'key': 'viewers', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'MongoDBParameter'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'MongoDBParameterPatch'},
     }
 
     def __init__(
@@ -5453,17 +6363,15 @@ class MongoDBParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param connection_string: Required. MongoDB connection string.
+    :param connection_string: The connection string of this MongoDB.
     :type connection_string: str
-    :param database: Required. Database name.
+    :param database: A database name in this MongoDB.
     :type database: str
-    :param command: Required. Query script.
+    :param command: Required. The script to query this database.
     :type command: str
     """
 
     _validation = {
-        'connection_string': {'required': True},
-        'database': {'required': True},
         'command': {'required': True},
     }
 
@@ -5478,9 +6386,36 @@ class MongoDBParameter(msrest.serialization.Model):
         **kwargs
     ):
         super(MongoDBParameter, self).__init__(**kwargs)
-        self.connection_string = kwargs['connection_string']
-        self.database = kwargs['database']
+        self.connection_string = kwargs.get('connection_string', None)
+        self.database = kwargs.get('database', None)
         self.command = kwargs['command']
+
+
+class MongoDBParameterPatch(msrest.serialization.Model):
+    """MongoDBParameterPatch.
+
+    :param connection_string: The connection string of this MongoDB.
+    :type connection_string: str
+    :param database: A database name in this MongoDB.
+    :type database: str
+    :param command: The script to query this database.
+    :type command: str
+    """
+
+    _attribute_map = {
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        'database': {'key': 'database', 'type': 'str'},
+        'command': {'key': 'command', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MongoDBParameterPatch, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.database = kwargs.get('database', None)
+        self.command = kwargs.get('command', None)
 
 
 class MySqlDataFeed(DataFeedDetail):
@@ -5492,7 +6427,7 @@ class MySqlDataFeed(DataFeedDetail):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
     :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :ivar data_feed_id: data feed unique id.
@@ -5527,23 +6462,22 @@ class MySqlDataFeed(DataFeedDetail):
      schedule time in seconds.
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
+     "NeedRollup", "AlreadyRollup".
     :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
     :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
+     "Private", "Public".
     :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
@@ -5553,13 +6487,18 @@ class MySqlDataFeed(DataFeedDetail):
     :vartype is_admin: bool
     :ivar creator: data feed creator.
     :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :ivar created_time: data feed created time.
     :vartype created_time: ~datetime.datetime
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter: Required.
     :type data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
     """
@@ -5611,6 +6550,8 @@ class MySqlDataFeed(DataFeedDetail):
         'status': {'key': 'status', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
         'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SqlSourceParameter'},
     }
 
@@ -5630,10 +6571,9 @@ class MySqlDataFeedPatch(DataFeedDetailPatch):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :param data_feed_name: data feed name.
     :type data_feed_name: str
     :param data_feed_description: data feed description.
@@ -5656,33 +6596,38 @@ class MySqlDataFeedPatch(DataFeedDetailPatch):
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
      "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
      values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
      "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
     :param viewers: data feed viewer.
     :type viewers: list[str]
     :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter:
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
+    :type data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
     """
 
     _validation = {
@@ -5713,7 +6658,9 @@ class MySqlDataFeedPatch(DataFeedDetailPatch):
         'viewers': {'key': 'viewers', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SqlSourceParameter'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SQLSourceParameterPatch'},
     }
 
     def __init__(
@@ -5819,7 +6766,7 @@ class PostgreSqlDataFeed(DataFeedDetail):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
     :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :ivar data_feed_id: data feed unique id.
@@ -5854,23 +6801,22 @@ class PostgreSqlDataFeed(DataFeedDetail):
      schedule time in seconds.
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
+     "NeedRollup", "AlreadyRollup".
     :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
     :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
+     "Private", "Public".
     :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
@@ -5880,13 +6826,18 @@ class PostgreSqlDataFeed(DataFeedDetail):
     :vartype is_admin: bool
     :ivar creator: data feed creator.
     :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :ivar created_time: data feed created time.
     :vartype created_time: ~datetime.datetime
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter: Required.
     :type data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
     """
@@ -5938,6 +6889,8 @@ class PostgreSqlDataFeed(DataFeedDetail):
         'status': {'key': 'status', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
         'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SqlSourceParameter'},
     }
 
@@ -5957,10 +6910,9 @@ class PostgreSqlDataFeedPatch(DataFeedDetailPatch):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :param data_feed_name: data feed name.
     :type data_feed_name: str
     :param data_feed_description: data feed description.
@@ -5983,33 +6935,38 @@ class PostgreSqlDataFeedPatch(DataFeedDetailPatch):
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
      "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
      values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
      "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
     :param viewers: data feed viewer.
     :type viewers: list[str]
     :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter:
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
+    :type data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
     """
 
     _validation = {
@@ -6040,7 +6997,9 @@ class PostgreSqlDataFeedPatch(DataFeedDetailPatch):
         'viewers': {'key': 'viewers', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SqlSourceParameter'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SQLSourceParameterPatch'},
     }
 
     def __init__(
@@ -6061,9 +7020,9 @@ class RootCause(msrest.serialization.Model):
     :type root_cause: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
     :param path: Required. drilling down path from query anomaly to root cause.
     :type path: list[str]
-    :param score: Required. score.
+    :param score: Required. score of the root cause.
     :type score: float
-    :param description: Required. description.
+    :param description: Required. description of the root cause.
     :type description: str
     """
 
@@ -6129,7 +7088,7 @@ class SeriesConfiguration(msrest.serialization.Model):
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
     :type condition_operator: str or
-     ~azure.ai.metricsadvisor.models.SeriesConfigurationConditionOperator
+     ~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationLogicType
     :param smart_detection_condition:
     :type smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :param hard_threshold_condition:
@@ -6274,6 +7233,329 @@ class SeriesResultList(msrest.serialization.Model):
         self.value = kwargs['value']
 
 
+class ServicePrincipalCredential(DataSourceCredential):
+    """ServicePrincipalCredential.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+     server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type data_source_credential_type: str or
+     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+    :ivar data_source_credential_id: Unique id of data source credential.
+    :vartype data_source_credential_id: str
+    :param data_source_credential_name: Required. Name of data source credential.
+    :type data_source_credential_name: str
+    :param data_source_credential_description: Description of data source credential.
+    :type data_source_credential_description: str
+    :param parameters: Required.
+    :type parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalParam
+    """
+
+    _validation = {
+        'data_source_credential_type': {'required': True},
+        'data_source_credential_id': {'readonly': True},
+        'data_source_credential_name': {'required': True},
+        'parameters': {'required': True},
+    }
+
+    _attribute_map = {
+        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
+        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
+        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
+        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'ServicePrincipalParam'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServicePrincipalCredential, self).__init__(**kwargs)
+        self.data_source_credential_type = 'ServicePrincipal'  # type: str
+        self.parameters = kwargs['parameters']
+
+
+class ServicePrincipalCredentialPatch(DataSourceCredentialPatch):
+    """ServicePrincipalCredentialPatch.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+     server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type data_source_credential_type: str or
+     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+    :param data_source_credential_name: Name of data source credential.
+    :type data_source_credential_name: str
+    :param data_source_credential_description: Description of data source credential.
+    :type data_source_credential_description: str
+    :param parameters:
+    :type parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalParamPatch
+    """
+
+    _validation = {
+        'data_source_credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
+        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
+        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'ServicePrincipalParamPatch'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServicePrincipalCredentialPatch, self).__init__(**kwargs)
+        self.data_source_credential_type = 'ServicePrincipal'  # type: str
+        self.parameters = kwargs.get('parameters', None)
+
+
+class ServicePrincipalInKVCredential(DataSourceCredential):
+    """ServicePrincipalInKVCredential.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+     server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type data_source_credential_type: str or
+     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+    :ivar data_source_credential_id: Unique id of data source credential.
+    :vartype data_source_credential_id: str
+    :param data_source_credential_name: Required. Name of data source credential.
+    :type data_source_credential_name: str
+    :param data_source_credential_description: Description of data source credential.
+    :type data_source_credential_description: str
+    :param parameters: Required.
+    :type parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalInKVParam
+    """
+
+    _validation = {
+        'data_source_credential_type': {'required': True},
+        'data_source_credential_id': {'readonly': True},
+        'data_source_credential_name': {'required': True},
+        'parameters': {'required': True},
+    }
+
+    _attribute_map = {
+        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
+        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
+        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
+        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'ServicePrincipalInKVParam'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServicePrincipalInKVCredential, self).__init__(**kwargs)
+        self.data_source_credential_type = 'ServicePrincipalInKV'  # type: str
+        self.parameters = kwargs['parameters']
+
+
+class ServicePrincipalInKVCredentialPatch(DataSourceCredentialPatch):
+    """ServicePrincipalInKVCredentialPatch.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_source_credential_type: Required. Type of data source credential.Constant filled by
+     server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type data_source_credential_type: str or
+     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+    :param data_source_credential_name: Name of data source credential.
+    :type data_source_credential_name: str
+    :param data_source_credential_description: Description of data source credential.
+    :type data_source_credential_description: str
+    :param parameters:
+    :type parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalInKVParamPatch
+    """
+
+    _validation = {
+        'data_source_credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
+        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
+        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'ServicePrincipalInKVParamPatch'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServicePrincipalInKVCredentialPatch, self).__init__(**kwargs)
+        self.data_source_credential_type = 'ServicePrincipalInKV'  # type: str
+        self.parameters = kwargs.get('parameters', None)
+
+
+class ServicePrincipalInKVParam(msrest.serialization.Model):
+    """ServicePrincipalInKVParam.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_vault_endpoint: Required. The Key Vault endpoint that storing the service principal.
+    :type key_vault_endpoint: str
+    :param key_vault_client_id: Required. The Client Id to access the Key Vault.
+    :type key_vault_client_id: str
+    :param key_vault_client_secret: Required. The Client Secret to access the Key Vault.
+    :type key_vault_client_secret: str
+    :param service_principal_id_name_in_kv: Required. The secret name of the service principal's
+     client Id in the Key Vault.
+    :type service_principal_id_name_in_kv: str
+    :param service_principal_secret_name_in_kv: Required. The secret name of the service
+     principal's client secret in the Key Vault.
+    :type service_principal_secret_name_in_kv: str
+    :param tenant_id: Required. The tenant id of your service principal.
+    :type tenant_id: str
+    """
+
+    _validation = {
+        'key_vault_endpoint': {'required': True},
+        'key_vault_client_id': {'required': True},
+        'key_vault_client_secret': {'required': True},
+        'service_principal_id_name_in_kv': {'required': True},
+        'service_principal_secret_name_in_kv': {'required': True},
+        'tenant_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'key_vault_endpoint': {'key': 'keyVaultEndpoint', 'type': 'str'},
+        'key_vault_client_id': {'key': 'keyVaultClientId', 'type': 'str'},
+        'key_vault_client_secret': {'key': 'keyVaultClientSecret', 'type': 'str'},
+        'service_principal_id_name_in_kv': {'key': 'servicePrincipalIdNameInKV', 'type': 'str'},
+        'service_principal_secret_name_in_kv': {'key': 'servicePrincipalSecretNameInKV', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServicePrincipalInKVParam, self).__init__(**kwargs)
+        self.key_vault_endpoint = kwargs['key_vault_endpoint']
+        self.key_vault_client_id = kwargs['key_vault_client_id']
+        self.key_vault_client_secret = kwargs['key_vault_client_secret']
+        self.service_principal_id_name_in_kv = kwargs['service_principal_id_name_in_kv']
+        self.service_principal_secret_name_in_kv = kwargs['service_principal_secret_name_in_kv']
+        self.tenant_id = kwargs['tenant_id']
+
+
+class ServicePrincipalInKVParamPatch(msrest.serialization.Model):
+    """ServicePrincipalInKVParamPatch.
+
+    :param key_vault_endpoint: The Key Vault endpoint that storing the service principal.
+    :type key_vault_endpoint: str
+    :param key_vault_client_id: The Client Id to access the Key Vault.
+    :type key_vault_client_id: str
+    :param key_vault_client_secret: The Client Secret to access the Key Vault.
+    :type key_vault_client_secret: str
+    :param service_principal_id_name_in_kv: The secret name of the service principal's client Id in
+     the Key Vault.
+    :type service_principal_id_name_in_kv: str
+    :param service_principal_secret_name_in_kv: The secret name of the service principal's client
+     secret in the Key Vault.
+    :type service_principal_secret_name_in_kv: str
+    :param tenant_id: The tenant id of your service principal.
+    :type tenant_id: str
+    """
+
+    _attribute_map = {
+        'key_vault_endpoint': {'key': 'keyVaultEndpoint', 'type': 'str'},
+        'key_vault_client_id': {'key': 'keyVaultClientId', 'type': 'str'},
+        'key_vault_client_secret': {'key': 'keyVaultClientSecret', 'type': 'str'},
+        'service_principal_id_name_in_kv': {'key': 'servicePrincipalIdNameInKV', 'type': 'str'},
+        'service_principal_secret_name_in_kv': {'key': 'servicePrincipalSecretNameInKV', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServicePrincipalInKVParamPatch, self).__init__(**kwargs)
+        self.key_vault_endpoint = kwargs.get('key_vault_endpoint', None)
+        self.key_vault_client_id = kwargs.get('key_vault_client_id', None)
+        self.key_vault_client_secret = kwargs.get('key_vault_client_secret', None)
+        self.service_principal_id_name_in_kv = kwargs.get('service_principal_id_name_in_kv', None)
+        self.service_principal_secret_name_in_kv = kwargs.get('service_principal_secret_name_in_kv', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+
+
+class ServicePrincipalParam(msrest.serialization.Model):
+    """ServicePrincipalParam.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param client_id: Required. The client id of the service principal.
+    :type client_id: str
+    :param client_secret: Required. The client secret of the service principal.
+    :type client_secret: str
+    :param tenant_id: Required. The tenant id of the service principal.
+    :type tenant_id: str
+    """
+
+    _validation = {
+        'client_id': {'required': True},
+        'client_secret': {'required': True},
+        'tenant_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'client_secret': {'key': 'clientSecret', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServicePrincipalParam, self).__init__(**kwargs)
+        self.client_id = kwargs['client_id']
+        self.client_secret = kwargs['client_secret']
+        self.tenant_id = kwargs['tenant_id']
+
+
+class ServicePrincipalParamPatch(msrest.serialization.Model):
+    """ServicePrincipalParamPatch.
+
+    :param client_id: The client id of the service principal.
+    :type client_id: str
+    :param client_secret: The client secret of the service principal.
+    :type client_secret: str
+    :param tenant_id: The tenant id of the service principal.
+    :type tenant_id: str
+    """
+
+    _attribute_map = {
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'client_secret': {'key': 'clientSecret', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServicePrincipalParamPatch, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+
+
 class SeverityCondition(msrest.serialization.Model):
     """SeverityCondition.
 
@@ -6373,6 +7655,35 @@ class SmartDetectionCondition(msrest.serialization.Model):
         self.suppress_condition = kwargs['suppress_condition']
 
 
+class SmartDetectionConditionPatch(msrest.serialization.Model):
+    """SmartDetectionConditionPatch.
+
+    :param sensitivity: sensitivity, value range : (0, 100].
+    :type sensitivity: float
+    :param anomaly_detector_direction: detection direction. Possible values include: "Both",
+     "Down", "Up".
+    :type anomaly_detector_direction: str or
+     ~azure.ai.metricsadvisor.models.AnomalyDetectorDirection
+    :param suppress_condition:
+    :type suppress_condition: ~azure.ai.metricsadvisor.models.SuppressConditionPatch
+    """
+
+    _attribute_map = {
+        'sensitivity': {'key': 'sensitivity', 'type': 'float'},
+        'anomaly_detector_direction': {'key': 'anomalyDetectorDirection', 'type': 'str'},
+        'suppress_condition': {'key': 'suppressCondition', 'type': 'SuppressConditionPatch'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SmartDetectionConditionPatch, self).__init__(**kwargs)
+        self.sensitivity = kwargs.get('sensitivity', None)
+        self.anomaly_detector_direction = kwargs.get('anomaly_detector_direction', None)
+        self.suppress_condition = kwargs.get('suppress_condition', None)
+
+
 class SQLServerDataFeed(DataFeedDetail):
     """SQLServerDataFeed.
 
@@ -6382,7 +7693,7 @@ class SQLServerDataFeed(DataFeedDetail):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
     :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :ivar data_feed_id: data feed unique id.
@@ -6417,23 +7728,22 @@ class SQLServerDataFeed(DataFeedDetail):
      schedule time in seconds.
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup". Default value: "NeedRollup".
+     "NeedRollup", "AlreadyRollup".
     :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
-     "SmartFilling".
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
     :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public". Default value: "Private".
+     "Private", "Public".
     :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
@@ -6443,13 +7753,18 @@ class SQLServerDataFeed(DataFeedDetail):
     :vartype is_admin: bool
     :ivar creator: data feed creator.
     :vartype creator: str
-    :ivar status: data feed status. Possible values include: "Active", "Paused". Default value:
-     "Active".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailStatus
+    :ivar status: data feed status. Possible values include: "Active", "Paused".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :ivar created_time: data feed created time.
     :vartype created_time: ~datetime.datetime
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter: Required.
     :type data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
     """
@@ -6501,6 +7816,8 @@ class SQLServerDataFeed(DataFeedDetail):
         'status': {'key': 'status', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
         'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SqlSourceParameter'},
     }
 
@@ -6520,10 +7837,9 @@ class SQLServerDataFeedPatch(DataFeedDetailPatch):
 
     :param data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureTable", "Elasticsearch", "HttpRequest", "InfluxDB",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchDataSourceType
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
     :param data_feed_name: data feed name.
     :type data_feed_name: str
     :param data_feed_description: data feed description.
@@ -6546,33 +7862,38 @@ class SQLServerDataFeedPatch(DataFeedDetailPatch):
     :type stop_retry_after_in_seconds: long
     :param need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
      "NeedRollup", "AlreadyRollup".
-    :type need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchNeedRollup
+    :type need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
     :param roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
-    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchRollUpMethod
+    :type roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
     :param roll_up_columns: roll up columns.
     :type roll_up_columns: list[str]
     :param all_up_identification: the identification value for the row of calculated all-up value.
     :type all_up_identification: str
     :param fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
      values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :type fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DataFeedDetailPatchFillMissingPointType
+    :type fill_missing_point_type: str or ~azure.ai.metricsadvisor.models.FillMissingPointType
     :param fill_missing_point_value: the value of fill missing point for anomaly detection.
     :type fill_missing_point_value: float
     :param view_mode: data feed access mode, default is Private. Possible values include:
      "Private", "Public".
-    :type view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchViewMode
+    :type view_mode: str or ~azure.ai.metricsadvisor.models.ViewMode
     :param admins: data feed administrator.
     :type admins: list[str]
     :param viewers: data feed viewer.
     :type viewers: list[str]
     :param status: data feed status. Possible values include: "Active", "Paused".
-    :type status: str or ~azure.ai.metricsadvisor.models.DataFeedDetailPatchStatus
+    :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
     :param action_link_template: action link for alert.
     :type action_link_template: str
+    :param authentication_type: authentication type for corresponding data source. Possible values
+     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+     "ServicePrincipal", "ServicePrincipalInKV".
+    :type authentication_type: str or ~azure.ai.metricsadvisor.models.AuthenticationTypeEnum
+    :param credential_id: The credential entity id.
+    :type credential_id: str
     :param data_source_parameter:
-    :type data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
+    :type data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
     """
 
     _validation = {
@@ -6603,7 +7924,9 @@ class SQLServerDataFeedPatch(DataFeedDetailPatch):
         'viewers': {'key': 'viewers', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SqlSourceParameter'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SQLSourceParameterPatch'},
     }
 
     def __init__(
@@ -6620,14 +7943,13 @@ class SqlSourceParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param connection_string: Required. Database connection string.
+    :param connection_string: The connection string of this database.
     :type connection_string: str
-    :param query: Required. Query script.
+    :param query: Required. The script to query this database.
     :type query: str
     """
 
     _validation = {
-        'connection_string': {'required': True},
         'query': {'required': True},
     }
 
@@ -6641,8 +7963,31 @@ class SqlSourceParameter(msrest.serialization.Model):
         **kwargs
     ):
         super(SqlSourceParameter, self).__init__(**kwargs)
-        self.connection_string = kwargs['connection_string']
+        self.connection_string = kwargs.get('connection_string', None)
         self.query = kwargs['query']
+
+
+class SQLSourceParameterPatch(msrest.serialization.Model):
+    """SQLSourceParameterPatch.
+
+    :param connection_string: The connection string of this database.
+    :type connection_string: str
+    :param query: The script to query this database.
+    :type query: str
+    """
+
+    _attribute_map = {
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SQLSourceParameterPatch, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.query = kwargs.get('query', None)
 
 
 class SuppressCondition(msrest.serialization.Model):
@@ -6673,6 +8018,29 @@ class SuppressCondition(msrest.serialization.Model):
         super(SuppressCondition, self).__init__(**kwargs)
         self.min_number = kwargs['min_number']
         self.min_ratio = kwargs['min_ratio']
+
+
+class SuppressConditionPatch(msrest.serialization.Model):
+    """SuppressConditionPatch.
+
+    :param min_number: min point number, value range : [1, +∞).
+    :type min_number: int
+    :param min_ratio: min point ratio, value range : (0, 100].
+    :type min_ratio: float
+    """
+
+    _attribute_map = {
+        'min_number': {'key': 'minNumber', 'type': 'int'},
+        'min_ratio': {'key': 'minRatio', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SuppressConditionPatch, self).__init__(**kwargs)
+        self.min_number = kwargs.get('min_number', None)
+        self.min_ratio = kwargs.get('min_ratio', None)
 
 
 class TopNGroupScope(msrest.serialization.Model):
@@ -6725,8 +8093,8 @@ class UsageStats(msrest.serialization.Model):
     :vartype all_series_count: int
     :ivar metrics_count: The metrics count under non deleted data feed.
     :vartype metrics_count: int
-    :ivar datafeed_count: The count of non deleted data feed.
-    :vartype datafeed_count: int
+    :ivar data_feed_count: The count of non deleted data feed.
+    :vartype data_feed_count: int
     """
 
     _validation = {
@@ -6734,7 +8102,7 @@ class UsageStats(msrest.serialization.Model):
         'active_series_count': {'readonly': True},
         'all_series_count': {'readonly': True},
         'metrics_count': {'readonly': True},
-        'datafeed_count': {'readonly': True},
+        'data_feed_count': {'readonly': True},
     }
 
     _attribute_map = {
@@ -6742,7 +8110,7 @@ class UsageStats(msrest.serialization.Model):
         'active_series_count': {'key': 'activeSeriesCount', 'type': 'int'},
         'all_series_count': {'key': 'allSeriesCount', 'type': 'int'},
         'metrics_count': {'key': 'metricsCount', 'type': 'int'},
-        'datafeed_count': {'key': 'datafeedCount', 'type': 'int'},
+        'data_feed_count': {'key': 'dataFeedCount', 'type': 'int'},
     }
 
     def __init__(
@@ -6754,7 +8122,7 @@ class UsageStats(msrest.serialization.Model):
         self.active_series_count = None
         self.all_series_count = None
         self.metrics_count = None
-        self.datafeed_count = None
+        self.data_feed_count = None
 
 
 class ValueCondition(msrest.serialization.Model):
@@ -6773,6 +8141,9 @@ class ValueCondition(msrest.serialization.Model):
     :param direction: Required. value filter direction. Possible values include: "Both", "Down",
      "Up".
     :type direction: str or ~azure.ai.metricsadvisor.models.Direction
+    :param type: data used to implement value filter. Possible values include: "Value", "Mean".
+     Default value: "Value".
+    :type type: str or ~azure.ai.metricsadvisor.models.ValueType
     :param metric_id: the other metric unique id used for value filter.
     :type metric_id: str
     :param trigger_for_missing: trigger alert when the corresponding point is missing in the other
@@ -6790,6 +8161,7 @@ class ValueCondition(msrest.serialization.Model):
         'lower': {'key': 'lower', 'type': 'float'},
         'upper': {'key': 'upper', 'type': 'float'},
         'direction': {'key': 'direction', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'metric_id': {'key': 'metricId', 'type': 'str'},
         'trigger_for_missing': {'key': 'triggerForMissing', 'type': 'bool'},
     }
@@ -6802,6 +8174,7 @@ class ValueCondition(msrest.serialization.Model):
         self.lower = kwargs.get('lower', None)
         self.upper = kwargs.get('upper', None)
         self.direction = kwargs['direction']
+        self.type = kwargs.get('type', "Value")
         self.metric_id = kwargs.get('metric_id', None)
         self.trigger_for_missing = kwargs.get('trigger_for_missing', None)
 
@@ -6866,7 +8239,7 @@ class WebhookHookInfoPatch(HookInfoPatch):
 
     :param hook_type: Required. hook type.Constant filled by server.  Possible values include:
      "Webhook", "Email".
-    :type hook_type: str or ~azure.ai.metricsadvisor.models.HookInfoPatchHookType
+    :type hook_type: str or ~azure.ai.metricsadvisor.models.HookType
     :param hook_name: hook unique name.
     :type hook_name: str
     :param description: hook description.
@@ -6876,7 +8249,7 @@ class WebhookHookInfoPatch(HookInfoPatch):
     :ivar admins: hook administrators.
     :vartype admins: list[str]
     :param hook_parameter:
-    :type hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameter
+    :type hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameterPatch
     """
 
     _validation = {
@@ -6890,7 +8263,7 @@ class WebhookHookInfoPatch(HookInfoPatch):
         'description': {'key': 'description', 'type': 'str'},
         'external_link': {'key': 'externalLink', 'type': 'str'},
         'admins': {'key': 'admins', 'type': '[str]'},
-        'hook_parameter': {'key': 'hookParameter', 'type': 'WebhookHookParameter'},
+        'hook_parameter': {'key': 'hookParameter', 'type': 'WebhookHookParameterPatch'},
     }
 
     def __init__(
@@ -6905,20 +8278,62 @@ class WebhookHookInfoPatch(HookInfoPatch):
 class WebhookHookParameter(msrest.serialization.Model):
     """WebhookHookParameter.
 
+    :param endpoint: API address, will be called when alert is triggered, only support POST method
+     via SSL.
+    :type endpoint: str
+    :param username: (Deprecated) The username, if using basic authentication.
+    :type username: str
+    :param password: (Deprecated) The password, if using basic authentication.
+    :type password: str
+    :param headers: custom headers in api call.
+    :type headers: dict[str, str]
+    :param certificate_key: The certificate key/URL, if using client certificate, please read
+     documents for more informations.
+    :type certificate_key: str
+    :param certificate_password: The certificate password, if using client certificate, please read
+     documents for more informations.
+    :type certificate_password: str
+    """
+
+    _attribute_map = {
+        'endpoint': {'key': 'endpoint', 'type': 'str'},
+        'username': {'key': 'username', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+        'headers': {'key': 'headers', 'type': '{str}'},
+        'certificate_key': {'key': 'certificateKey', 'type': 'str'},
+        'certificate_password': {'key': 'certificatePassword', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WebhookHookParameter, self).__init__(**kwargs)
+        self.endpoint = kwargs.get('endpoint', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.headers = kwargs.get('headers', None)
+        self.certificate_key = kwargs.get('certificate_key', None)
+        self.certificate_password = kwargs.get('certificate_password', None)
+
+
+class WebhookHookParameterPatch(msrest.serialization.Model):
+    """WebhookHookParameterPatch.
+
     All required parameters must be populated in order to send to Azure.
 
     :param endpoint: Required. API address, will be called when alert is triggered, only support
      POST method via SSL.
     :type endpoint: str
-    :param username: basic authentication.
+    :param username: (Deprecated) The username, if using basic authentication.
     :type username: str
-    :param password: basic authentication.
+    :param password: (Deprecated) The password, if using basic authentication.
     :type password: str
     :param headers: custom headers in api call.
     :type headers: dict[str, str]
-    :param certificate_key: client certificate.
+    :param certificate_key: The certificate key, if using client certificate.
     :type certificate_key: str
-    :param certificate_password: client certificate password.
+    :param certificate_password: The certificate password, if using client certificate.
     :type certificate_password: str
     """
 
@@ -6939,7 +8354,7 @@ class WebhookHookParameter(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(WebhookHookParameter, self).__init__(**kwargs)
+        super(WebhookHookParameterPatch, self).__init__(**kwargs)
         self.endpoint = kwargs['endpoint']
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
@@ -6956,7 +8371,7 @@ class WholeMetricConfiguration(msrest.serialization.Model):
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
     :type condition_operator: str or
-     ~azure.ai.metricsadvisor.models.WholeMetricConfigurationConditionOperator
+     ~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationLogicType
     :param smart_detection_condition:
     :type smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :param hard_threshold_condition:
@@ -6977,6 +8392,41 @@ class WholeMetricConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         super(WholeMetricConfiguration, self).__init__(**kwargs)
+        self.condition_operator = kwargs.get('condition_operator', None)
+        self.smart_detection_condition = kwargs.get('smart_detection_condition', None)
+        self.hard_threshold_condition = kwargs.get('hard_threshold_condition', None)
+        self.change_threshold_condition = kwargs.get('change_threshold_condition', None)
+
+
+class WholeMetricConfigurationPatch(msrest.serialization.Model):
+    """WholeMetricConfigurationPatch.
+
+    :param condition_operator: condition operator
+    
+     should be specified when combining multiple detection conditions. Possible values include:
+     "AND", "OR".
+    :type condition_operator: str or
+     ~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationLogicType
+    :param smart_detection_condition:
+    :type smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionConditionPatch
+    :param hard_threshold_condition:
+    :type hard_threshold_condition: ~azure.ai.metricsadvisor.models.HardThresholdConditionPatch
+    :param change_threshold_condition:
+    :type change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdConditionPatch
+    """
+
+    _attribute_map = {
+        'condition_operator': {'key': 'conditionOperator', 'type': 'str'},
+        'smart_detection_condition': {'key': 'smartDetectionCondition', 'type': 'SmartDetectionConditionPatch'},
+        'hard_threshold_condition': {'key': 'hardThresholdCondition', 'type': 'HardThresholdConditionPatch'},
+        'change_threshold_condition': {'key': 'changeThresholdCondition', 'type': 'ChangeThresholdConditionPatch'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WholeMetricConfigurationPatch, self).__init__(**kwargs)
         self.condition_operator = kwargs.get('condition_operator', None)
         self.smart_detection_condition = kwargs.get('smart_detection_condition', None)
         self.hard_threshold_condition = kwargs.get('hard_threshold_condition', None)

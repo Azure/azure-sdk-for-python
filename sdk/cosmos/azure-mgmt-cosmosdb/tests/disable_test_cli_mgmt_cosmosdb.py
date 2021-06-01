@@ -85,6 +85,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
 
         return subnet_info
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_cosmosdb(self, resource_group):
 

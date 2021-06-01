@@ -11,6 +11,9 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--search_path', required=True, help='The scope of the search')
     args = parser.parse_args()
 
-    for p in glob.glob(args.search_path, recursive=True):
-        if os.path.basename(os.path.dirname(p)) != 'azure-mgmt' and os.path.basename(os.path.dirname(p)) != 'azure' and os.path.basename(os.path.dirname(p)) != 'azure-storage':
-            print(get_package_properties(os.path.dirname(p)))
+    for root, dirs, files in os.walk(args.search_path):
+        for filename in files:
+            if os.path.basename(filename) == "setup.py":
+                if os.path.basename(root) != 'azure-mgmt' and os.path.basename(root) != 'azure' and os.path.basename(root) != 'azure-storage' and os.path.basename(root) != 'tests':
+                    pkgName, version, is_new_sdk, setup_py_path = get_package_properties(root)
+                    print("{0} {1} {2} {3}".format(pkgName, version, is_new_sdk, setup_py_path))

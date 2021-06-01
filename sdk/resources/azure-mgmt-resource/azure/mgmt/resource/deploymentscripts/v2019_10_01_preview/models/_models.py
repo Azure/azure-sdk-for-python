@@ -162,7 +162,7 @@ class AzureCliScript(DeploymentScript):
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, object]
+    :vartype outputs: dict[str, any]
     :param primary_script_uri: Uri for the script. This is the entry point for the external script.
     :type primary_script_uri: str
     :param supporting_script_uris: Supporting files for the external script.
@@ -180,7 +180,7 @@ class AzureCliScript(DeploymentScript):
     :type force_update_tag: str
     :param retention_interval: Required. Interval for which the service retains the script resource
      after it reaches a terminal state. Resource will be deleted when this duration expires.
-     Duration is based on ISO 8601 pattern (for example P7D means one week).
+     Duration is based on ISO 8601 pattern (for example P1D means one day).
     :type retention_interval: ~datetime.timedelta
     :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
      value is P1D.
@@ -276,7 +276,7 @@ class ScriptConfigurationBase(msrest.serialization.Model):
     :type force_update_tag: str
     :param retention_interval: Required. Interval for which the service retains the script resource
      after it reaches a terminal state. Resource will be deleted when this duration expires.
-     Duration is based on ISO 8601 pattern (for example P7D means one week).
+     Duration is based on ISO 8601 pattern (for example P1D means one day).
     :type retention_interval: ~datetime.timedelta
     :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
      value is P1D.
@@ -338,7 +338,7 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, object]
+    :vartype outputs: dict[str, any]
     """
 
     _validation = {
@@ -393,7 +393,7 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
     :type force_update_tag: str
     :param retention_interval: Required. Interval for which the service retains the script resource
      after it reaches a terminal state. Resource will be deleted when this duration expires.
-     Duration is based on ISO 8601 pattern (for example P7D means one week).
+     Duration is based on ISO 8601 pattern (for example P1D means one day).
     :type retention_interval: ~datetime.timedelta
     :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
      value is P1D.
@@ -417,7 +417,7 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, object]
+    :vartype outputs: dict[str, any]
     :param az_cli_version: Required. Azure CLI module version to be used.
     :type az_cli_version: str
     """
@@ -519,7 +519,7 @@ class AzurePowerShellScript(DeploymentScript):
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, object]
+    :vartype outputs: dict[str, any]
     :param primary_script_uri: Uri for the script. This is the entry point for the external script.
     :type primary_script_uri: str
     :param supporting_script_uris: Supporting files for the external script.
@@ -537,7 +537,7 @@ class AzurePowerShellScript(DeploymentScript):
     :type force_update_tag: str
     :param retention_interval: Required. Interval for which the service retains the script resource
      after it reaches a terminal state. Resource will be deleted when this duration expires.
-     Duration is based on ISO 8601 pattern (for example P7D means one week).
+     Duration is based on ISO 8601 pattern (for example P1D means one day).
     :type retention_interval: ~datetime.timedelta
     :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
      value is P1D.
@@ -635,7 +635,7 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
     :type force_update_tag: str
     :param retention_interval: Required. Interval for which the service retains the script resource
      after it reaches a terminal state. Resource will be deleted when this duration expires.
-     Duration is based on ISO 8601 pattern (for example P7D means one week).
+     Duration is based on ISO 8601 pattern (for example P1D means one day).
     :type retention_interval: ~datetime.timedelta
     :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
      value is P1D.
@@ -659,7 +659,7 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, object]
+    :vartype outputs: dict[str, any]
     :param az_power_shell_version: Required. Azure PowerShell module version to be used.
     :type az_power_shell_version: str
     """
@@ -873,7 +873,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -945,16 +945,22 @@ class ErrorResponse(msrest.serialization.Model):
 class ManagedServiceIdentity(msrest.serialization.Model):
     """Managed identity generic object.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :param type: Type of the managed identity. Possible values include: "UserAssigned".
     :type type: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ManagedServiceIdentityType
-    :param tenant_id: ID of the Azure Active Directory.
-    :type tenant_id: str
+    :ivar tenant_id: ID of the Azure Active Directory.
+    :vartype tenant_id: str
     :param user_assigned_identities: The list of user-assigned managed identities associated with
      the resource. Key is the Azure resource Id of the managed identity.
     :type user_assigned_identities: dict[str,
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.UserAssignedIdentity]
     """
+
+    _validation = {
+        'tenant_id': {'readonly': True},
+    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
@@ -968,7 +974,7 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     ):
         super(ManagedServiceIdentity, self).__init__(**kwargs)
         self.type = kwargs.get('type', None)
-        self.tenant_id = kwargs.get('tenant_id', None)
+        self.tenant_id = None
         self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 

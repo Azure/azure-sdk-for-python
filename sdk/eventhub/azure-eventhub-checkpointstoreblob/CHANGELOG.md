@@ -1,6 +1,15 @@
 # Release History
 
-## 1.1.3 (Unreleased)
+## 1.1.4 (2021-04-07)
+
+This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
+
+**New features**
+- Updated `list_ownership`, `claim_ownership`, `update_checkpoint`, `list_checkpoints` on `BlobCheckpointStore` to support taking `**kwargs`.
+
+## 1.1.3 (2021-03-09)
+
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
 
 **Bug fixes**
 - Updated vendor azure-storage-blob dependency to v12.7.1.

@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._application_client import ApplicationClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['ApplicationClient']
 
 try:

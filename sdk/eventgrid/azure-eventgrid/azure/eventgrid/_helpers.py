@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from typing import TYPE_CHECKING, Any
+import json
 import hashlib
 import hmac
 import base64
@@ -13,6 +14,8 @@ try:
 except ImportError:
     from urllib2 import quote  # type: ignore
 
+from msrest import Serializer
+from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from ._signature_credential_policy import EventGridSasCredentialPolicy
@@ -46,11 +49,8 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
             :dedent: 0
             :caption: Generate a shared access signature.
     """
-
-    full_endpoint = _get_full_endpoint(endpoint)
-
     full_endpoint = "{}?apiVersion={}".format(
-        full_endpoint, kwargs.get("api_version", None) or constants.DEFAULT_API_VERSION
+        endpoint, kwargs.get("api_version", constants.DEFAULT_API_VERSION)
     )
     encoded_resource = quote(full_endpoint, safe=constants.SAFE_ENCODE)
     encoded_expiration_utc = quote(str(expiration_date_utc), safe=constants.SAFE_ENCODE)
@@ -61,29 +61,6 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     )
     signed_sas = "{}&s={}".format(unsigned_sas, signature)
     return signed_sas
-
-
-def _get_endpoint_only_fqdn(endpoint):
-    if endpoint.startswith("http://"):
-        raise ValueError("HTTP is not supported. Only HTTPS is supported.")
-    if endpoint.startswith("https://"):
-        endpoint = endpoint.replace("https://", "")
-    if endpoint.endswith("/api/events"):
-        endpoint = endpoint.replace("/api/events", "")
-
-    return endpoint
-
-
-def _get_full_endpoint(endpoint):
-    if endpoint.startswith("http://"):
-        raise ValueError("HTTP is not supported. Only HTTPS is supported.")
-    if not endpoint.startswith("https://"):
-        endpoint = "https://{}".format(endpoint)
-    if not endpoint.endswith("/api/events"):
-        endpoint = "{}/api/events".format(endpoint)
-
-    return endpoint
-
 
 def _generate_hmac(key, message):
     decoded_key = base64.b64decode(key)
@@ -160,3 +137,27 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         additional_properties=cloud_event.extensions,
         **kwargs
     )
+
+def _build_request(endpoint, content_type, events):
+    serialize = Serializer()
+    header_parameters = {}  # type: Dict[str, Any]
+    header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
+
+    query_parameters = {}  # type: Dict[str, Any]
+    query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
+
+    body = serialize.body(events, '[object]')
+    if body is None:
+        data = None
+    else:
+        data = json.dumps(body)
+        header_parameters['Content-Length'] = str(len(data))
+
+    request = HttpRequest(
+        method="POST",
+        url=endpoint,
+        headers=header_parameters,
+        data=data
+    )
+    request.format_parameters(query_parameters)
+    return request

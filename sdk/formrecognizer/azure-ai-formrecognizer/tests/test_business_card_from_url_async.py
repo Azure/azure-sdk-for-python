@@ -20,7 +20,6 @@ from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
-@pytest.mark.skip
 class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
@@ -211,15 +210,15 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
-        # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
-        # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
+        # The phone number values are not getting normalized to a phone number type. Just assert on text.
+        self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
+        self.assertEqual(business_card.fields.get("MobilePhones").value[0].value_data.text, "+44 (0) 7911 123456")
 
-        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
-        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("WorkPhones").value), 1)
+        self.assertEqual(business_card.fields.get("WorkPhones").value[0].value_data.text, "+44 (0) 20 9876 5432")
 
-        # self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
-        # self.assertEqual(business_card.fields.get("Faxes").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
+        self.assertEqual(business_card.fields.get("Faxes").value[0].value_data.text, "+44 (0) 20 6789 2345")
 
         self.assertEqual(len(business_card.fields.get("Addresses").value), 1)
         self.assertEqual(business_card.fields.get("Addresses").value[0].value, "2 Kingdom Street Paddington, London, W2 6BD")
@@ -251,9 +250,8 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com")
 
-        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
-        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
-        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
+        self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "+14257793479")
 
         business_card = result[1]
         self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
@@ -273,15 +271,15 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
-        # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
-        # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
+        # The phone number values are not getting normalized to a phone number type. Just assert on text.
+        self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
+        self.assertEqual(business_card.fields.get("MobilePhones").value[0].value_data.text, "+44 (0) 7911 123456")
 
-        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
-        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("WorkPhones").value), 1)
+        self.assertEqual(business_card.fields.get("WorkPhones").value[0].value_data.text, "+44 (0) 20 9876 5432")
 
-        # self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
-        # self.assertEqual(business_card.fields.get("Faxes").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
+        self.assertEqual(business_card.fields.get("Faxes").value[0].value_data.text, "+44 (0) 20 6789 2345")
 
         self.assertEqual(len(business_card.fields.get("Addresses").value), 1)
         self.assertEqual(business_card.fields.get("Addresses").value[0].value, "2 Kingdom Street Paddington, London, W2 6BD")
@@ -323,15 +321,15 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
-        # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
-        # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
+        # The phone number values are not getting normalized to a phone number type. Just assert on text.
+        self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
+        self.assertEqual(business_card.fields.get("MobilePhones").value[0].value_data.text, "+44 (0) 7911 123456")
 
-        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
-        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("WorkPhones").value), 1)
+        self.assertEqual(business_card.fields.get("WorkPhones").value[0].value_data.text, "+44 (0) 20 9876 5432")
 
-        # self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
-        # self.assertEqual(business_card.fields.get("Faxes").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
+        self.assertEqual(business_card.fields.get("Faxes").value[0].value_data.text, "+44 (0) 20 6789 2345")
 
         self.assertEqual(len(business_card.fields.get("Addresses").value), 1)
         self.assertEqual(business_card.fields.get("Addresses").value[0].value, "2 Kingdom Street Paddington, London, W2 6BD")
@@ -357,7 +355,7 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
-        assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+        assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1 and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -365,7 +363,8 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, locale="en-IN")
             assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
-            await poller.wait()
+            result = await poller.result()
+            assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -374,3 +373,12 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
             async with client:
                 await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, locale="not a locale")
         assert "locale" in e.value.error.message
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    async def test_pages_kwarg_specified(self, client):
+        async with client:
+            poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, pages=["1"])
+            assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+            result = await poller.result()
+            assert result

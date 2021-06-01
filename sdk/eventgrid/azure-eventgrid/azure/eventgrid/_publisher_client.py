@@ -25,11 +25,11 @@ from azure.core.messaging import CloudEvent
 
 from ._models import EventGridEvent
 from ._helpers import (
-    _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
     _is_eventgrid_event,
     _eventgrid_data_typecheck,
+    _build_request,
     _cloud_event_to_generated,
 )
 from ._generated._event_grid_publisher_client import (
@@ -83,8 +83,6 @@ class EventGridPublisherClient(object):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, AzureSasCredential], Any) -> None
-        endpoint = _get_endpoint_only_fqdn(endpoint)
-
         self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
@@ -171,8 +169,8 @@ class EventGridPublisherClient(object):
         a list of events.
 
         :param events: A single instance or a list of dictionaries/CloudEvent/EventGridEvent to be sent.
-        :type events: ~azure.core.messaging.CloudEvent, ~azure.eventgrid.EventGridEvent, Dict,
-         list[~azure.core.messaging.CloudEvent], list[~azure.eventgrid.EventGridEvent] or list[Dict]
+        :type events: ~azure.core.messaging.CloudEvent or ~azure.eventgrid.EventGridEvent or dict or
+         List[~azure.core.messaging.CloudEvent] or List[~azure.eventgrid.EventGridEvent] or List[dict]
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
          with "cloudevents-batch+json" for CloudEvents
@@ -180,6 +178,7 @@ class EventGridPublisherClient(object):
         """
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
+        content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
 
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
@@ -188,15 +187,13 @@ class EventGridPublisherClient(object):
                 ]
             except AttributeError:
                 pass  # means it's a dictionary
-            kwargs.setdefault(
-                "content_type", "application/cloudevents-batch+json; charset=utf-8"
-            )
+            content_type = "application/cloudevents-batch+json; charset=utf-8"
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
-            kwargs.setdefault("content_type", "application/json; charset=utf-8")
             for event in events:
                 _eventgrid_data_typecheck(event)
-        return self._client.publish_custom_event_events(
-            self._endpoint, cast(List, events), **kwargs
+        self._client._send_request( # pylint: disable=protected-access
+            _build_request(self._endpoint, content_type, events),
+            **kwargs
         )
 
     def close(self):

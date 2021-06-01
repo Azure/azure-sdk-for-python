@@ -12,9 +12,8 @@ import msrest.serialization
 class AccountEncryption(msrest.serialization.Model):
     """Encryption settings.
 
-    :param key_source: Encryption Key Source. Possible values are: 'Microsoft.NetApp'. Possible
-     values include: "Microsoft.NetApp".
-    :type key_source: str or ~azure.mgmt.netapp.models.KeySource
+    :param key_source: Encryption Key Source. Possible values are: 'Microsoft.NetApp'.
+    :type key_source: str
     """
 
     _attribute_map = {
@@ -82,6 +81,9 @@ class ActiveDirectory(msrest.serialization.Model):
     :type security_operators: list[str]
     :param ldap_over_tls: Specifies whether or not the LDAP traffic needs to be secured via TLS.
     :type ldap_over_tls: bool
+    :param allow_local_nfs_users_with_ldap: If enabled, NFS client local users can also (in
+     addition to LDAP users) access the NFS volumes.
+    :type allow_local_nfs_users_with_ldap: bool
     """
 
     _validation = {
@@ -112,6 +114,7 @@ class ActiveDirectory(msrest.serialization.Model):
         'ldap_signing': {'key': 'ldapSigning', 'type': 'bool'},
         'security_operators': {'key': 'securityOperators', 'type': '[str]'},
         'ldap_over_tls': {'key': 'ldapOverTLS', 'type': 'bool'},
+        'allow_local_nfs_users_with_ldap': {'key': 'allowLocalNfsUsersWithLdap', 'type': 'bool'},
     }
 
     def __init__(
@@ -137,6 +140,7 @@ class ActiveDirectory(msrest.serialization.Model):
         self.ldap_signing = kwargs.get('ldap_signing', None)
         self.security_operators = kwargs.get('security_operators', None)
         self.ldap_over_tls = kwargs.get('ldap_over_tls', None)
+        self.allow_local_nfs_users_with_ldap = kwargs.get('allow_local_nfs_users_with_ldap', None)
 
 
 class AuthorizeRequest(msrest.serialization.Model):
@@ -183,10 +187,16 @@ class Backup(msrest.serialization.Model):
     :vartype size: long
     :param label: Label for backup.
     :type label: str
-    :ivar backup_type: Type of backup adhoc or scheduled.
-    :vartype backup_type: str
+    :ivar backup_type: Type of backup Manual or Scheduled. Possible values include: "Manual",
+     "Scheduled".
+    :vartype backup_type: str or ~azure.mgmt.netapp.models.BackupType
     :ivar failure_reason: Failure reason.
     :vartype failure_reason: str
+    :ivar volume_name: Volume name.
+    :vartype volume_name: str
+    :param use_existing_snapshot: Manual backup an already existing snapshot. This will always be
+     false for scheduled backups and true/false for manual backups.
+    :type use_existing_snapshot: bool
     """
 
     _validation = {
@@ -200,6 +210,7 @@ class Backup(msrest.serialization.Model):
         'size': {'readonly': True},
         'backup_type': {'readonly': True},
         'failure_reason': {'readonly': True},
+        'volume_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -214,6 +225,8 @@ class Backup(msrest.serialization.Model):
         'label': {'key': 'properties.label', 'type': 'str'},
         'backup_type': {'key': 'properties.backupType', 'type': 'str'},
         'failure_reason': {'key': 'properties.failureReason', 'type': 'str'},
+        'volume_name': {'key': 'properties.volumeName', 'type': 'str'},
+        'use_existing_snapshot': {'key': 'properties.useExistingSnapshot', 'type': 'bool'},
     }
 
     def __init__(
@@ -232,6 +245,8 @@ class Backup(msrest.serialization.Model):
         self.label = kwargs.get('label', None)
         self.backup_type = None
         self.failure_reason = None
+        self.volume_name = None
+        self.use_existing_snapshot = kwargs.get('use_existing_snapshot', False)
 
 
 class BackupPatch(msrest.serialization.Model):
@@ -251,10 +266,16 @@ class BackupPatch(msrest.serialization.Model):
     :vartype size: long
     :param label: Label for backup.
     :type label: str
-    :ivar backup_type: Type of backup adhoc or scheduled.
-    :vartype backup_type: str
+    :ivar backup_type: Type of backup Manual or Scheduled. Possible values include: "Manual",
+     "Scheduled".
+    :vartype backup_type: str or ~azure.mgmt.netapp.models.BackupType
     :ivar failure_reason: Failure reason.
     :vartype failure_reason: str
+    :ivar volume_name: Volume name.
+    :vartype volume_name: str
+    :param use_existing_snapshot: Manual backup an already existing snapshot. This will always be
+     false for scheduled backups and true/false for manual backups.
+    :type use_existing_snapshot: bool
     """
 
     _validation = {
@@ -264,6 +285,7 @@ class BackupPatch(msrest.serialization.Model):
         'size': {'readonly': True},
         'backup_type': {'readonly': True},
         'failure_reason': {'readonly': True},
+        'volume_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -275,6 +297,8 @@ class BackupPatch(msrest.serialization.Model):
         'label': {'key': 'properties.label', 'type': 'str'},
         'backup_type': {'key': 'properties.backupType', 'type': 'str'},
         'failure_reason': {'key': 'properties.failureReason', 'type': 'str'},
+        'volume_name': {'key': 'properties.volumeName', 'type': 'str'},
+        'use_existing_snapshot': {'key': 'properties.useExistingSnapshot', 'type': 'bool'},
     }
 
     def __init__(
@@ -290,6 +314,8 @@ class BackupPatch(msrest.serialization.Model):
         self.label = kwargs.get('label', None)
         self.backup_type = None
         self.failure_reason = None
+        self.volume_name = None
+        self.use_existing_snapshot = kwargs.get('use_existing_snapshot', False)
 
 
 class BackupPoliciesList(msrest.serialization.Model):
@@ -574,6 +600,53 @@ class BackupsList(msrest.serialization.Model):
     ):
         super(BackupsList, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+
+
+class BackupStatus(msrest.serialization.Model):
+    """Backup status.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar healthy: Backup health status.
+    :vartype healthy: bool
+    :ivar relationship_status: Status of the backup mirror relationship. Possible values include:
+     "Idle", "Transferring".
+    :vartype relationship_status: str or ~azure.mgmt.netapp.models.RelationshipStatus
+    :ivar mirror_state: The status of the backup. Possible values include: "Uninitialized",
+     "Mirrored", "Broken".
+    :vartype mirror_state: str or ~azure.mgmt.netapp.models.MirrorState
+    :ivar unhealthy_reason: Reason for the unhealthy backup relationship.
+    :vartype unhealthy_reason: str
+    :ivar error_message: Displays error message if the backup is in an error state.
+    :vartype error_message: str
+    """
+
+    _validation = {
+        'healthy': {'readonly': True},
+        'relationship_status': {'readonly': True},
+        'mirror_state': {'readonly': True},
+        'unhealthy_reason': {'readonly': True},
+        'error_message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'healthy': {'key': 'healthy', 'type': 'bool'},
+        'relationship_status': {'key': 'relationshipStatus', 'type': 'str'},
+        'mirror_state': {'key': 'mirrorState', 'type': 'str'},
+        'unhealthy_reason': {'key': 'unhealthyReason', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BackupStatus, self).__init__(**kwargs)
+        self.healthy = None
+        self.relationship_status = None
+        self.mirror_state = None
+        self.unhealthy_reason = None
+        self.error_message = None
 
 
 class BreakReplicationRequest(msrest.serialization.Model):
@@ -1533,6 +1606,40 @@ class ReplicationStatus(msrest.serialization.Model):
         self.error_message = kwargs.get('error_message', None)
 
 
+class ResourceIdentity(msrest.serialization.Model):
+    """Identity for the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: Object id of the identity resource.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id of the resource.
+    :vartype tenant_id: str
+    :param type: Type of Identity. Supported values are: 'None', 'SystemAssigned'.
+    :type type: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourceIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = kwargs.get('type', None)
+
+
 class ResourceNameAvailabilityRequest(msrest.serialization.Model):
     """Resource name availability request content.
 
@@ -1683,8 +1790,6 @@ class SnapshotPolicy(msrest.serialization.Model):
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :ivar name_properties_name: Snapshot policy name.
-    :vartype name_properties_name: str
     :param hourly_schedule: Schedule for hourly snapshots.
     :type hourly_schedule: ~azure.mgmt.netapp.models.HourlySchedule
     :param daily_schedule: Schedule for daily snapshots.
@@ -1704,7 +1809,6 @@ class SnapshotPolicy(msrest.serialization.Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'name_properties_name': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -1714,7 +1818,6 @@ class SnapshotPolicy(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
         'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'HourlySchedule'},
         'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'DailySchedule'},
         'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'WeeklySchedule'},
@@ -1733,7 +1836,6 @@ class SnapshotPolicy(msrest.serialization.Model):
         self.name = None
         self.type = None
         self.tags = kwargs.get('tags', None)
-        self.name_properties_name = None
         self.hourly_schedule = kwargs.get('hourly_schedule', None)
         self.daily_schedule = kwargs.get('daily_schedule', None)
         self.weekly_schedule = kwargs.get('weekly_schedule', None)
@@ -1757,8 +1859,6 @@ class SnapshotPolicyDetails(msrest.serialization.Model):
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :ivar name_properties_name: Snapshot policy name.
-    :vartype name_properties_name: str
     :param hourly_schedule: Schedule for hourly snapshots.
     :type hourly_schedule: ~azure.mgmt.netapp.models.HourlySchedule
     :param daily_schedule: Schedule for daily snapshots.
@@ -1777,7 +1877,6 @@ class SnapshotPolicyDetails(msrest.serialization.Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'name_properties_name': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -1787,7 +1886,6 @@ class SnapshotPolicyDetails(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
         'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'HourlySchedule'},
         'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'DailySchedule'},
         'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'WeeklySchedule'},
@@ -1806,7 +1904,6 @@ class SnapshotPolicyDetails(msrest.serialization.Model):
         self.name = None
         self.type = None
         self.tags = kwargs.get('tags', None)
-        self.name_properties_name = None
         self.hourly_schedule = kwargs.get('hourly_schedule', None)
         self.daily_schedule = kwargs.get('daily_schedule', None)
         self.weekly_schedule = kwargs.get('weekly_schedule', None)
@@ -1830,8 +1927,6 @@ class SnapshotPolicyPatch(msrest.serialization.Model):
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :ivar name_properties_name: Snapshot policy name.
-    :vartype name_properties_name: str
     :param hourly_schedule: Schedule for hourly snapshots.
     :type hourly_schedule: ~azure.mgmt.netapp.models.HourlySchedule
     :param daily_schedule: Schedule for daily snapshots.
@@ -1850,7 +1945,6 @@ class SnapshotPolicyPatch(msrest.serialization.Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'name_properties_name': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -1860,7 +1954,6 @@ class SnapshotPolicyPatch(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
         'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'HourlySchedule'},
         'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'DailySchedule'},
         'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'WeeklySchedule'},
@@ -1879,7 +1972,6 @@ class SnapshotPolicyPatch(msrest.serialization.Model):
         self.name = None
         self.type = None
         self.tags = kwargs.get('tags', None)
-        self.name_properties_name = None
         self.hourly_schedule = kwargs.get('hourly_schedule', None)
         self.daily_schedule = kwargs.get('daily_schedule', None)
         self.weekly_schedule = kwargs.get('weekly_schedule', None)
@@ -1892,7 +1984,7 @@ class SnapshotPolicyVolumeList(msrest.serialization.Model):
     """Volumes associated with snapshot policy.
 
     :param value: List of volumes.
-    :type value: list[object]
+    :type value: list[any]
     """
 
     _attribute_map = {
@@ -1941,7 +2033,7 @@ class SystemData(msrest.serialization.Model):
     :param last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
     :type last_modified_by_type: str or ~azure.mgmt.netapp.models.CreatedByType
-    :param last_modified_at: The type of identity that last modified the resource.
+    :param last_modified_at: The timestamp of resource last modification (UTC).
     :type last_modified_at: ~datetime.datetime
     """
 
@@ -2051,8 +2143,6 @@ class Volume(msrest.serialization.Model):
     :type tags: dict[str, str]
     :ivar file_system_id: Unique FileSystem Identifier.
     :vartype file_system_id: str
-    :ivar name_properties_name: Resource name.
-    :vartype name_properties_name: str
     :param creation_token: Required. A unique file path for the volume. Used when creating mount
      targets.
     :type creation_token: str
@@ -2065,7 +2155,7 @@ class Volume(msrest.serialization.Model):
     :type usage_threshold: long
     :param export_policy: Set of export policy rules.
     :type export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
-    :param protocol_types: Set of protocol types, default NFSv3, CIFS fro SMB protocol.
+    :param protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
     :type protocol_types: list[str]
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
@@ -2106,6 +2196,8 @@ class Volume(msrest.serialization.Model):
     :type throughput_mibps: float
     :param encryption_key_source: Encryption Key Source. Possible values are: 'Microsoft.NetApp'.
     :type encryption_key_source: str
+    :param ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
+    :type ldap_enabled: bool
     """
 
     _validation = {
@@ -2114,7 +2206,6 @@ class Volume(msrest.serialization.Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'file_system_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'name_properties_name': {'readonly': True},
         'creation_token': {'required': True, 'max_length': 80, 'min_length': 1, 'pattern': r'^[a-zA-Z][a-zA-Z0-9\-]{0,79}$'},
         'usage_threshold': {'required': True, 'maximum': 109951162777600, 'minimum': 107374182400},
         'provisioning_state': {'readonly': True},
@@ -2123,7 +2214,7 @@ class Volume(msrest.serialization.Model):
         'baremetal_tenant_id': {'readonly': True},
         'subnet_id': {'required': True},
         'mount_targets': {'readonly': True},
-        'throughput_mibps': {'maximum': 4500, 'minimum': 0, 'multiple': 0.001},
+        'throughput_mibps': {'maximum': 4500, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -2133,7 +2224,6 @@ class Volume(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
         'creation_token': {'key': 'properties.creationToken', 'type': 'str'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'usage_threshold': {'key': 'properties.usageThreshold', 'type': 'long'},
@@ -2155,6 +2245,7 @@ class Volume(msrest.serialization.Model):
         'smb_continuously_available': {'key': 'properties.smbContinuouslyAvailable', 'type': 'bool'},
         'throughput_mibps': {'key': 'properties.throughputMibps', 'type': 'float'},
         'encryption_key_source': {'key': 'properties.encryptionKeySource', 'type': 'str'},
+        'ldap_enabled': {'key': 'properties.ldapEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -2168,7 +2259,6 @@ class Volume(msrest.serialization.Model):
         self.type = None
         self.tags = kwargs.get('tags', None)
         self.file_system_id = None
-        self.name_properties_name = None
         self.creation_token = kwargs['creation_token']
         self.service_level = kwargs.get('service_level', None)
         self.usage_threshold = kwargs.get('usage_threshold', 107374182400)
@@ -2190,6 +2280,7 @@ class Volume(msrest.serialization.Model):
         self.smb_continuously_available = kwargs.get('smb_continuously_available', False)
         self.throughput_mibps = kwargs.get('throughput_mibps', 0)
         self.encryption_key_source = kwargs.get('encryption_key_source', None)
+        self.ldap_enabled = kwargs.get('ldap_enabled', False)
 
 
 class VolumeBackupProperties(msrest.serialization.Model):
@@ -2309,7 +2400,7 @@ class VolumePatch(msrest.serialization.Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'usage_threshold': {'maximum': 109951162777600, 'minimum': 107374182400},
-        'throughput_mibps': {'maximum': 4500, 'minimum': 1, 'multiple': 0.001},
+        'throughput_mibps': {'maximum': 4500, 'minimum': 1},
     }
 
     _attribute_map = {
@@ -2347,10 +2438,13 @@ class VolumePatchPropertiesDataProtection(msrest.serialization.Model):
 
     :param backup: Backup Properties.
     :type backup: ~azure.mgmt.netapp.models.VolumeBackupProperties
+    :param snapshot: Snapshot properties.
+    :type snapshot: ~azure.mgmt.netapp.models.VolumeSnapshotProperties
     """
 
     _attribute_map = {
         'backup': {'key': 'backup', 'type': 'VolumeBackupProperties'},
+        'snapshot': {'key': 'snapshot', 'type': 'VolumeSnapshotProperties'},
     }
 
     def __init__(
@@ -2359,6 +2453,7 @@ class VolumePatchPropertiesDataProtection(msrest.serialization.Model):
     ):
         super(VolumePatchPropertiesDataProtection, self).__init__(**kwargs)
         self.backup = kwargs.get('backup', None)
+        self.snapshot = kwargs.get('snapshot', None)
 
 
 class VolumePatchPropertiesExportPolicy(msrest.serialization.Model):

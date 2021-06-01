@@ -36,16 +36,27 @@ from ._models import (
     HealthcareEntity,
     HealthcareEntityDataSource,
     RecognizeEntitiesAction,
+    RecognizeLinkedEntitiesAction,
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
-    AnalyzeBatchActionsResult,
+    AnalyzeActionsResult,
     RequestStatistics,
-    AnalyzeBatchActionsType,
-    AnalyzeBatchActionsError,
+    AnalyzeActionsType,
+    AnalyzeActionsError,
     HealthcareEntityRelationRoleType,
+    HealthcareRelation,
+    HealthcareRelationRole,
+    HealthcareEntityAssertion,
+    AnalyzeSentimentAction
 )
 from ._paging import AnalyzeHealthcareEntitiesResult
-from ._generated.v3_1_preview_4.models import RelationType as HealthcareEntityRelationType
+from ._generated.v3_1_preview_5.models import (
+    PiiCategory as PiiEntityCategoryType,
+    RelationType as HealthcareEntityRelationType,
+    Conditionality as EntityConditionality,
+    Certainty as EntityCertainty,
+    Association as EntityAssociation
+)
 
 __all__ = [
     'TextAnalyticsApiVersion',
@@ -79,14 +90,23 @@ __all__ = [
     'HealthcareEntity',
     'HealthcareEntityDataSource',
     'RecognizeEntitiesAction',
+    'RecognizeLinkedEntitiesAction',
     'RecognizePiiEntitiesAction',
     'ExtractKeyPhrasesAction',
-    'AnalyzeBatchActionsResult',
+    'AnalyzeActionsResult',
     'RequestStatistics',
-    'AnalyzeBatchActionsType',
-    "AnalyzeBatchActionsError",
+    'AnalyzeActionsType',
+    "AnalyzeActionsError",
+    "PiiEntityCategoryType",
     "HealthcareEntityRelationType",
     "HealthcareEntityRelationRoleType",
+    "HealthcareRelation",
+    "HealthcareRelationRole",
+    "HealthcareEntityAssertion",
+    "EntityConditionality",
+    "EntityCertainty",
+    "EntityAssociation",
+    "AnalyzeSentimentAction"
 ]
 
 __version__ = VERSION

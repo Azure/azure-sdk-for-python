@@ -3,19 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import logging
+import uuid
 from typing import (  # pylint: disable=unused-import
-    Union,
     Optional,
     Any,
-    Iterable,
-    Dict,
-    List,
-    Type,
     Tuple,
-    TYPE_CHECKING,
 )
-import logging
 
 try:
     from urllib.parse import parse_qs, quote
@@ -45,6 +39,7 @@ from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOU
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
+from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .policies import (
     StorageHeadersPolicy,
     StorageContentValidation,
@@ -61,10 +56,10 @@ from .response_handlers import process_storage_error, PartialBatchErrorException
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
-    "blob": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
-    "queue": {"primary": "QueueEndpoint", "secondary": "QueueSecondaryEndpoint"},
-    "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
-    "dfs": {"primary": "BlobEndpoint", "secondary": "BlobEndpoint"},
+    "blob": {"primary": "BLOBENDPOINT", "secondary": "BLOBSECONDARYENDPOINT"},
+    "queue": {"primary": "QUEUEENDPOINT", "secondary": "QUEUESECONDARYENDPOINT"},
+    "file": {"primary": "FILEENDPOINT", "secondary": "FILESECONDARYENDPOINT"},
+    "dfs": {"primary": "BLOBENDPOINT", "secondary": "BLOBENDPOINT"},
 }
 
 
@@ -270,6 +265,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
+        batch_id = str(uuid.uuid1())
+
         request = self._client._client.post(  # pylint: disable=protected-access
             url='{}://{}/{}?{}comp=batch{}{}'.format(
                 self.scheme,
@@ -280,7 +277,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 kwargs.pop('timeout', "")
             ),
             headers={
-                'x-ms-version': self.api_version
+                'x-ms-version': self.api_version,
+                "Content-Type": "multipart/mixed; boundary=" + _get_batch_request_delimiter(batch_id, False, False)
             }
         )
 
@@ -294,10 +292,17 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             enforce_https=False
         )
 
+        Pipeline._prepare_multipart_mixed_request(request) # pylint: disable=protected-access
+        body = serialize_batch_body(request.multipart_mixed_info[0], batch_id)
+        request.set_bytes_body(body)
+
+        temp = request.multipart_mixed_info
+        request.multipart_mixed_info = None
         pipeline_response = self._pipeline.run(
             request, **kwargs
         )
         response = pipeline_response.http_response
+        request.multipart_mixed_info = temp
 
         try:
             if response.status_code not in [202]:
@@ -359,15 +364,15 @@ def parse_connection_str(conn_str, credential, service):
     conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings):
         raise ValueError("Connection string is either blank or malformed.")
-    conn_settings = dict(conn_settings)
+    conn_settings = dict((key.upper(), val) for key, val in conn_settings)
     endpoints = _SERVICE_PARAMS[service]
     primary = None
     secondary = None
     if not credential:
         try:
-            credential = {"account_name": conn_settings["AccountName"], "account_key": conn_settings["AccountKey"]}
+            credential = {"account_name": conn_settings["ACCOUNTNAME"], "account_key": conn_settings["ACCOUNTKEY"]}
         except KeyError:
-            credential = conn_settings.get("SharedAccessSignature")
+            credential = conn_settings.get("SHAREDACCESSSIGNATURE")
     if endpoints["primary"] in conn_settings:
         primary = conn_settings[endpoints["primary"]]
         if endpoints["secondary"] in conn_settings:
@@ -377,13 +382,13 @@ def parse_connection_str(conn_str, credential, service):
             raise ValueError("Connection string specifies only secondary endpoint.")
         try:
             primary = "{}://{}.{}.{}".format(
-                conn_settings["DefaultEndpointsProtocol"],
-                conn_settings["AccountName"],
+                conn_settings["DEFAULTENDPOINTSPROTOCOL"],
+                conn_settings["ACCOUNTNAME"],
                 service,
-                conn_settings["EndpointSuffix"],
+                conn_settings["ENDPOINTSUFFIX"],
             )
             secondary = "{}-secondary.{}.{}".format(
-                conn_settings["AccountName"], service, conn_settings["EndpointSuffix"]
+                conn_settings["ACCOUNTNAME"], service, conn_settings["ENDPOINTSUFFIX"]
             )
         except KeyError:
             pass
@@ -391,7 +396,7 @@ def parse_connection_str(conn_str, credential, service):
     if not primary:
         try:
             primary = "https://{}.{}.{}".format(
-                conn_settings["AccountName"], service, conn_settings.get("EndpointSuffix", SERVICE_HOST_BASE)
+                conn_settings["ACCOUNTNAME"], service, conn_settings.get("ENDPOINTSUFFIX", SERVICE_HOST_BASE)
             )
         except KeyError:
             raise ValueError("Connection string missing required connection details.")
@@ -419,6 +424,9 @@ def create_configuration(**kwargs):
 
     # Page blob uploads
     config.max_page_size = kwargs.get("max_page_size", 4 * 1024 * 1024)
+
+    # Datalake file uploads
+    config.min_large_chunk_upload_threshold = kwargs.get("min_large_chunk_upload_threshold", 100 * 1024 * 1024 + 1)
 
     # Blob downloads
     config.max_single_get_size = kwargs.get("max_single_get_size", 32 * 1024 * 1024)

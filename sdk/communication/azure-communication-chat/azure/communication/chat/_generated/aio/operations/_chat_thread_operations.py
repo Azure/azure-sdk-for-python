@@ -46,7 +46,7 @@ class ChatThreadOperations:
         chat_thread_id: str,
         max_page_size: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ChatMessageReadReceiptsCollection"]:
         """Gets chat message read receipts for a thread.
 
@@ -73,7 +73,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-07"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -137,7 +137,7 @@ class ChatThreadOperations:
         self,
         chat_thread_id: str,
         send_read_receipt_request: "_models.SendReadReceiptRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sends a read receipt event to a thread, on behalf of a user.
 
@@ -162,7 +162,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-07"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -203,7 +203,7 @@ class ChatThreadOperations:
         self,
         chat_thread_id: str,
         send_chat_message_request: "_models.SendChatMessageRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SendChatMessageResult":
         """Sends a message to a thread.
 
@@ -228,7 +228,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-07"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -273,7 +273,7 @@ class ChatThreadOperations:
         chat_thread_id: str,
         max_page_size: Optional[int] = None,
         start_time: Optional[datetime.datetime] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ChatMessagesCollection"]:
         """Gets a list of messages from a thread.
 
@@ -301,7 +301,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-07"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -365,7 +365,7 @@ class ChatThreadOperations:
         self,
         chat_thread_id: str,
         chat_message_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ChatMessage":
         """Gets a message by id.
 
@@ -390,7 +390,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-07"
         accept = "application/json"
 
         # Construct URL
@@ -431,7 +431,7 @@ class ChatThreadOperations:
         chat_thread_id: str,
         chat_message_id: str,
         update_chat_message_request: "_models.UpdateChatMessageRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Updates a message.
 
@@ -458,7 +458,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-07"
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         accept = "application/json"
 
@@ -500,7 +500,7 @@ class ChatThreadOperations:
         self,
         chat_thread_id: str,
         chat_message_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a message.
 
@@ -525,7 +525,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-07"
         accept = "application/json"
 
         # Construct URL
@@ -561,7 +561,7 @@ class ChatThreadOperations:
     async def send_typing_notification(
         self,
         chat_thread_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Posts a typing event to a thread, on behalf of a user.
 
@@ -584,7 +584,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-07"
         accept = "application/json"
 
         # Construct URL
@@ -621,7 +621,7 @@ class ChatThreadOperations:
         chat_thread_id: str,
         max_page_size: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ChatParticipantsCollection"]:
         """Gets the participants of a thread.
 
@@ -648,7 +648,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-07"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -712,7 +712,7 @@ class ChatThreadOperations:
         self,
         chat_thread_id: str,
         participant_communication_identifier: "_models.CommunicationIdentifierModel",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Remove a participant from a thread.
 
@@ -738,7 +738,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-07"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -779,7 +779,7 @@ class ChatThreadOperations:
         self,
         chat_thread_id: str,
         add_chat_participants_request: "_models.AddChatParticipantsRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AddChatParticipantsResult":
         """Adds thread participants to a thread. If participants already exist, no change occurs.
 
@@ -804,7 +804,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-07"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -844,11 +844,11 @@ class ChatThreadOperations:
         return deserialized
     add_chat_participants.metadata = {'url': '/chat/threads/{chatThreadId}/participants/:add'}  # type: ignore
 
-    async def update_chat_thread(
+    async def update_chat_thread_properties(
         self,
         chat_thread_id: str,
         update_chat_thread_request: "_models.UpdateChatThreadRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Updates a thread's properties.
 
@@ -873,12 +873,12 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-07"
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         accept = "application/json"
 
         # Construct URL
-        url = self.update_chat_thread.metadata['url']  # type: ignore
+        url = self.update_chat_thread_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
@@ -908,4 +908,65 @@ class ChatThreadOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    update_chat_thread.metadata = {'url': '/chat/threads/{chatThreadId}'}  # type: ignore
+    update_chat_thread_properties.metadata = {'url': '/chat/threads/{chatThreadId}'}  # type: ignore
+
+    async def get_chat_thread_properties(
+        self,
+        chat_thread_id: str,
+        **kwargs: Any
+    ) -> "_models.ChatThreadProperties":
+        """Gets a chat thread's properties.
+
+        Gets a chat thread's properties.
+
+        :param chat_thread_id: Id of the thread.
+        :type chat_thread_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ChatThreadProperties, or the result of cls(response)
+        :rtype: ~azure.communication.chat.models.ChatThreadProperties
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChatThreadProperties"]
+        error_map = {
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-07"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_chat_thread_properties.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('ChatThreadProperties', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_chat_thread_properties.metadata = {'url': '/chat/threads/{chatThreadId}'}  # type: ignore

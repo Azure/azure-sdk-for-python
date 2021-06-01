@@ -24,12 +24,21 @@
 #
 # --------------------------------------------------------------------------
 
-from .._internal._generated.models import IndexAction, IndexingResult
-from .._internal._search_client import odata
+from .._generated.models import (
+    AutocompleteMode,
+    IndexAction,
+    IndexingResult,
+    QueryType,
+    SearchMode,
+)
+from .._search_client import odata
 
 
 __all__ = (
+    "AutocompleteMode",
     "IndexAction",
     "IndexingResult",
     "odata",
+    "QueryType",
+    "SearchMode",
 )

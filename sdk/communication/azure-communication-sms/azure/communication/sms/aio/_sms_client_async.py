@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 from uuid import uuid4
-from datetime import datetime
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.sms._generated.models import (
     SendMessageRequest,
@@ -15,7 +14,7 @@ from azure.communication.sms._generated.models import (
 from azure.communication.sms._models import SmsSendResult
 
 from .._generated.aio._azure_communication_sms_service import AzureCommunicationSMSService
-from .._shared.utils import parse_connection_str, get_authentication_policy
+from .._shared.utils import parse_connection_str, get_authentication_policy, get_current_utc_time
 from .._version import SDK_MONIKER
 
 class SmsClient(object):
@@ -25,13 +24,12 @@ class SmsClient(object):
 
    :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param str credential:
-        The credentials with which to authenticate. The value is an account
-        shared access key
+    :param AsyncTokenCredential credential:
+        The AsyncTokenCredential we use to authenticate against the service.
     """
     def __init__(
             self, endpoint,  # type: str
-            credential,  # type: str
+            credential,  # type: AsyncTokenCredential
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -115,7 +113,7 @@ class SmsClient(object):
                 SmsRecipient(
                     to=p,
                     repeatability_request_id=str(uuid4()),
-                    repeatability_first_sent=datetime.utcnow()
+                    repeatability_first_sent=get_current_utc_time()
                 ) for p in to
             ],
             message=message,
@@ -144,6 +142,6 @@ class SmsClient(object):
 
     async def close(self) -> None:
         """Close the :class:
-        `~azure.communication.administration.aio.SMSClient` session.
+        `~azure.communication.sms.aio.SmsClient` session.
         """
         await self._sms_service_client.__aexit__()

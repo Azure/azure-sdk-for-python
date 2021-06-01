@@ -57,7 +57,7 @@ class Operations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-30"
+        api_version = "2021-01-11"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -93,7 +93,7 @@ class Operations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorDetails, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

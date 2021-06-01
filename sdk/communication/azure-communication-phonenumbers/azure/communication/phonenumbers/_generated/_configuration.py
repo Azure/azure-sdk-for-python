@@ -17,13 +17,13 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class PhoneNumberAdministrationServiceConfiguration(Configuration):
-    """Configuration for PhoneNumberAdministrationService.
+class PhoneNumbersClientConfiguration(Configuration):
+    """Configuration for PhoneNumbersClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The endpoint of the Azure Communication resource.
+    :param endpoint: The communication resource, for example https://resourcename.communication.azure.com.
     :type endpoint: str
     """
 
@@ -35,11 +35,11 @@ class PhoneNumberAdministrationServiceConfiguration(Configuration):
         # type: (...) -> None
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(PhoneNumberAdministrationServiceConfiguration, self).__init__(**kwargs)
+        super(PhoneNumbersClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        self.api_version = "2020-07-20-preview1"
-        kwargs.setdefault('sdk_moniker', 'phonenumberadministrationservice/{}'.format(VERSION))
+        self.api_version = "2021-03-07"
+        kwargs.setdefault('sdk_moniker', 'phonenumbersclient/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

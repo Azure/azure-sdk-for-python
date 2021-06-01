@@ -31,11 +31,10 @@ from ._models import (
     RecognizePiiEntitiesResult,
     PiiEntity,
     AnalyzeHealthcareEntitiesResultItem,
-    AnalyzeBatchActionsResult,
+    AnalyzeActionsResult,
     RequestStatistics,
-    AnalyzeBatchActionsType,
-    AnalyzeBatchActionsError,
-    TextDocumentBatchStatistics,
+    AnalyzeActionsType,
+    AnalyzeActionsError,
     _get_indices,
 )
 from ._paging import AnalyzeHealthcareEntitiesResult, AnalyzeResult
@@ -200,32 +199,46 @@ def healthcare_extract_page_data(doc_id_order, obj, response_headers, health_job
         healthcare_result(doc_id_order, health_job_state.results, response_headers, lro=True))
 
 def _get_deserialization_callback_from_task_type(task_type):
-    if task_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES:
+    if task_type == AnalyzeActionsType.RECOGNIZE_ENTITIES:
         return entities_result
-    if task_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES:
+    if task_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
         return pii_entities_result
+    if task_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES:
+        return linked_entities_result
+    if task_type == AnalyzeActionsType.ANALYZE_SENTIMENT:
+        return sentiment_result
     return key_phrases_result
 
 def _get_property_name_from_task_type(task_type):
-    if task_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES:
+    if task_type == AnalyzeActionsType.RECOGNIZE_ENTITIES:
         return "entity_recognition_tasks"
-    if task_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES:
+    if task_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
         return "entity_recognition_pii_tasks"
+    if task_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES:
+        return "entity_linking_tasks"
+    if task_type == AnalyzeActionsType.ANALYZE_SENTIMENT:
+        return "sentiment_analysis_tasks"
     return "key_phrase_extraction_tasks"
 
 def _num_tasks_in_current_page(returned_tasks_object):
     return (
         len(returned_tasks_object.entity_recognition_tasks or []) +
         len(returned_tasks_object.entity_recognition_pii_tasks or []) +
-        len(returned_tasks_object.key_phrase_extraction_tasks or [])
+        len(returned_tasks_object.key_phrase_extraction_tasks or []) +
+        len(returned_tasks_object.entity_linking_tasks or []) +
+        len(returned_tasks_object.sentiment_analysis_tasks or [])
     )
 
 def _get_task_type_from_error(error):
     if "pii" in error.target.lower():
-        return AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
-    if "entity" in error.target.lower():
-        return AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
-    return AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
+        return AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
+    if "entityrecognition" in error.target.lower():
+        return AnalyzeActionsType.RECOGNIZE_ENTITIES
+    if "entitylinking" in error.target.lower():
+        return AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+    if "sentiment" in error.target.lower():
+        return AnalyzeActionsType.ANALYZE_SENTIMENT
+    return AnalyzeActionsType.EXTRACT_KEY_PHRASES
 
 def _get_mapped_errors(analyze_job_state):
     """
@@ -247,8 +260,11 @@ def _get_good_result(current_task_type, index_of_task_result, doc_id_order, resp
     document_results = deserialization_callback(
         doc_id_order, response_task_to_deserialize.results, response_headers, lro=True
     )
-    return AnalyzeBatchActionsResult(
+    return AnalyzeActionsResult(
         document_results=document_results,
+        statistics=RequestStatistics._from_generated( # pylint: disable=protected-access
+            response_task_to_deserialize.results.statistics
+        ) if response_task_to_deserialize.results.statistics else None,
         action_type=current_task_type,
         completed_on=response_task_to_deserialize.last_update_date_time,
     )
@@ -268,7 +284,7 @@ def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state
 
             current_task_type_errors = mapped_errors[current_task_type]
             error = next(err for err in current_task_type_errors if err[0] == index_of_task_result)
-            result = AnalyzeBatchActionsError._from_generated(error[1])  # pylint: disable=protected-access
+            result = AnalyzeActionsError._from_generated(error[1])  # pylint: disable=protected-access
         except StopIteration:
             result = _get_good_result(
                 current_task_type, index_of_task_result, doc_id_order, response_headers, returned_tasks_object
@@ -296,6 +312,8 @@ def lro_get_next_page(lro_status_callback, first_page, continuation_token, show_
     parsed_url = urlparse(continuation_token)
     job_id = parsed_url.path.split("/")[-1]
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
+    if "showStats" in query_params:
+        query_params.pop("showStats")
     query_params["show_stats"] = show_stats
 
     return lro_status_callback(job_id, **query_params)
@@ -312,11 +330,9 @@ def healthcare_paged_result(doc_id_order, health_status_callback, _, obj, respon
 def analyze_paged_result(doc_id_order, task_order, analyze_status_callback, _, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
     return AnalyzeResult(
         functools.partial(lro_get_next_page, analyze_status_callback, obj, show_stats=show_stats),
-        functools.partial(analyze_extract_page_data, doc_id_order, task_order, response_headers),
-        statistics=TextDocumentBatchStatistics._from_generated(obj.statistics) \
-            if (show_stats and obj.statistics) else None # pylint: disable=protected-access
+        functools.partial(analyze_extract_page_data, doc_id_order, task_order, response_headers)
     )
 
 def _get_deserialize():
-    from ._generated.v3_1_preview_4 import TextAnalyticsClient
+    from ._generated.v3_1_preview_5 import TextAnalyticsClient
     return TextAnalyticsClient("dummy", "dummy")._deserialize  # pylint: disable=protected-access

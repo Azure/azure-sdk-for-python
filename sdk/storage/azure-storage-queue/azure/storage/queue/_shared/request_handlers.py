@@ -20,6 +20,10 @@ from azure.core.exceptions import raise_with_traceback
 
 _LOGGER = logging.getLogger(__name__)
 
+_REQUEST_DELIMITER_PREFIX = "batch_"
+_HTTP1_1_IDENTIFIER = "HTTP/1.1"
+_HTTP_LINE_ENDING = "\r\n"
+
 
 def serialize_iso(attr):
     """Serialize Datetime object into ISO-8601 formatted string.
@@ -145,3 +149,125 @@ def add_metadata_headers(metadata=None):
         for key, value in metadata.items():
             headers['x-ms-meta-{}'.format(key.strip())] = value.strip() if value else value
     return headers
+
+
+def serialize_batch_body(requests, batch_id):
+    """
+    --<delimiter>
+    <subrequest>
+    --<delimiter>
+    <subrequest>    (repeated as needed)
+    --<delimiter>--
+
+    Serializes the requests in this batch to a single HTTP mixed/multipart body.
+
+    :param list[~azure.core.pipeline.transport.HttpRequest] requests:
+        a list of sub-request for the batch request
+    :param str batch_id:
+        to be embedded in batch sub-request delimiter
+    :return: The body bytes for this batch.
+    """
+
+    if requests is None or len(requests) == 0:
+        raise ValueError('Please provide sub-request(s) for this batch request')
+
+    delimiter_bytes = (_get_batch_request_delimiter(batch_id, True, False) + _HTTP_LINE_ENDING).encode('utf-8')
+    newline_bytes = _HTTP_LINE_ENDING.encode('utf-8')
+    batch_body = list()
+
+    content_index = 0
+    for request in requests:
+        request.headers.update({
+            "Content-ID": str(content_index),
+            "Content-Length": str(0)
+        })
+        batch_body.append(delimiter_bytes)
+        batch_body.append(_make_body_from_sub_request(request))
+        batch_body.append(newline_bytes)
+        content_index += 1
+
+    batch_body.append(_get_batch_request_delimiter(batch_id, True, True).encode('utf-8'))
+    # final line of body MUST have \r\n at the end, or it will not be properly read by the service
+    batch_body.append(newline_bytes)
+
+    return bytes().join(batch_body)
+
+
+def _get_batch_request_delimiter(batch_id, is_prepend_dashes=False, is_append_dashes=False):
+    """
+    Gets the delimiter used for this batch request's mixed/multipart HTTP format.
+
+    :param str batch_id:
+        Randomly generated id
+    :param bool is_prepend_dashes:
+        Whether to include the starting dashes. Used in the body, but non on defining the delimiter.
+    :param bool is_append_dashes:
+        Whether to include the ending dashes. Used in the body on the closing delimiter only.
+    :return: The delimiter, WITHOUT a trailing newline.
+    """
+
+    prepend_dashes = '--' if is_prepend_dashes else ''
+    append_dashes = '--' if is_append_dashes else ''
+
+    return prepend_dashes + _REQUEST_DELIMITER_PREFIX + batch_id + append_dashes
+
+
+def _make_body_from_sub_request(sub_request):
+    """
+     Content-Type: application/http
+     Content-ID: <sequential int ID>
+     Content-Transfer-Encoding: <value> (if present)
+
+     <verb> <path><query> HTTP/<version>
+     <header key>: <header value> (repeated as necessary)
+     Content-Length: <value>
+     (newline if content length > 0)
+     <body> (if content length > 0)
+
+     Serializes an http request.
+
+     :param ~azure.core.pipeline.transport.HttpRequest sub_request:
+        Request to serialize.
+     :return: The serialized sub-request in bytes
+     """
+
+    # put the sub-request's headers into a list for efficient str concatenation
+    sub_request_body = list()
+
+    # get headers for ease of manipulation; remove headers as they are used
+    headers = sub_request.headers
+
+    # append opening headers
+    sub_request_body.append("Content-Type: application/http")
+    sub_request_body.append(_HTTP_LINE_ENDING)
+
+    sub_request_body.append("Content-ID: ")
+    sub_request_body.append(headers.pop("Content-ID", ""))
+    sub_request_body.append(_HTTP_LINE_ENDING)
+
+    sub_request_body.append("Content-Transfer-Encoding: binary")
+    sub_request_body.append(_HTTP_LINE_ENDING)
+
+    # append blank line
+    sub_request_body.append(_HTTP_LINE_ENDING)
+
+    # append HTTP verb and path and query and HTTP version
+    sub_request_body.append(sub_request.method)
+    sub_request_body.append(' ')
+    sub_request_body.append(sub_request.url)
+    sub_request_body.append(' ')
+    sub_request_body.append(_HTTP1_1_IDENTIFIER)
+    sub_request_body.append(_HTTP_LINE_ENDING)
+
+    # append remaining headers (this will set the Content-Length, as it was set on `sub-request`)
+    for header_name, header_value in headers.items():
+        if header_value is not None:
+            sub_request_body.append(header_name)
+            sub_request_body.append(": ")
+            sub_request_body.append(header_value)
+            sub_request_body.append(_HTTP_LINE_ENDING)
+
+    # append blank line
+    sub_request_body.append(_HTTP_LINE_ENDING)
+
+    return ''.join(sub_request_body).encode()

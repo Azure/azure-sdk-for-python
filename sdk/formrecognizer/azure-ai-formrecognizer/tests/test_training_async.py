@@ -11,13 +11,13 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer._generated.models import Model
 from azure.ai.formrecognizer._models import CustomFormModel
 from azure.ai.formrecognizer.aio import FormTrainingClient
+from azure.ai.formrecognizer import _models
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
-
 
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
@@ -70,7 +70,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             model = await poller.result()
 
         self.assertIsNotNone(model.model_id)
-        # self.assertEqual(model.model_name, "my unlabeled model")  # FIXME: bug in service
+        self.assertEqual(model.model_name, "my unlabeled model")
         self.assertIsNotNone(model.training_started_on)
         self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])
@@ -131,6 +131,12 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         raw_model = raw_response[0]
         custom_model = raw_response[1]
         self.assertModelTransformCorrect(custom_model, raw_model, unlabeled=True)
+
+        custom_model_dict = custom_model.to_dict()
+        
+        custom_model_from_dict = _models.CustomFormModel.from_dict(custom_model_dict)
+        self.assertEqual(custom_model_from_dict.model_name, custom_model.model_name)
+        self.assertModelTransformCorrect(custom_model_from_dict, raw_model, unlabeled=True)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -278,4 +284,4 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         with pytest.raises(ValueError) as excinfo:
             poller = await client.begin_training(training_files_url="url", use_training_labels=True, model_name="not supported in v2.0")
             result = await poller.result()
-        assert "'model_name' is only available for API version V2_1_PREVIEW and up" in str(excinfo.value)
+        assert "'model_name' is only available for API version V2_1 and up" in str(excinfo.value)

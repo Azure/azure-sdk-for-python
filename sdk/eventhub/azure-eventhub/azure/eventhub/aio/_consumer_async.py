@@ -165,7 +165,6 @@ class EventHubConsumer(
         # pylint:disable=protected-access
         message = self._message_buffer.pop()
         event_data = EventData._from_message(message)
-        trace_link_message(event_data)
         self._last_received_event = event_data
         return event_data
 

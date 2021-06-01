@@ -25,11 +25,19 @@
 # --------------------------------------------------------------------------
 
 import logging
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
 from .configuration import Configuration
 from .pipeline import Pipeline
 from .pipeline.transport._base import PipelineClientBase
 from .pipeline.policies import (
-    ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
+    ContentDecodePolicy,
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
+    RequestIdPolicy,
+    RetryPolicy,
 )
 from .pipeline.transport import RequestsTransport
 
@@ -64,6 +72,10 @@ class PipelineClient(PipelineClientBase):
     :keyword ~azure.core.configuration.Configuration config: If omitted, the standard configuration is used.
     :keyword Pipeline pipeline: If omitted, a Pipeline object is created and returned.
     :keyword list[HTTPPolicy] policies: If omitted, the standard policies of the configuration object is used.
+    :keyword per_call_policies: If specified, the policies will be added into the policy list before RetryPolicy
+    :paramtype per_call_policies: Union[HTTPPolicy, SansIOHTTPPolicy, list[HTTPPolicy], list[SansIOHTTPPolicy]]
+    :keyword per_retry_policies: If specified, the policies will be added into the policy list after RetryPolicy
+    :paramtype per_retry_policies: Union[HTTPPolicy, SansIOHTTPPolicy, list[HTTPPolicy], list[SansIOHTTPPolicy]]
     :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
     :return: A pipeline object.
     :rtype: ~azure.core.pipeline.Pipeline
@@ -100,6 +112,8 @@ class PipelineClient(PipelineClientBase):
     def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
+        per_call_policies = kwargs.get('per_call_policies', [])
+        per_retry_policies = kwargs.get('per_retry_policies', [])
 
         if policies is None:  # [] is a valid policy list
             policies = [
@@ -107,15 +121,50 @@ class PipelineClient(PipelineClientBase):
                 config.headers_policy,
                 config.user_agent_policy,
                 config.proxy_policy,
-                ContentDecodePolicy(**kwargs),
-                config.redirect_policy,
-                config.retry_policy,
-                config.authentication_policy,
-                config.custom_hook_policy,
-                config.logging_policy,
-                DistributedTracingPolicy(**kwargs),
-                config.http_logging_policy or HttpLoggingPolicy(**kwargs)
+                ContentDecodePolicy(**kwargs)
             ]
+            if isinstance(per_call_policies, Iterable):
+                policies.extend(per_call_policies)
+            else:
+                policies.append(per_call_policies)
+
+            policies.extend([config.redirect_policy,
+                             config.retry_policy,
+                             config.authentication_policy,
+                             config.custom_hook_policy])
+            if isinstance(per_retry_policies, Iterable):
+                policies.extend(per_retry_policies)
+            else:
+                policies.append(per_retry_policies)
+
+            policies.extend([config.logging_policy,
+                             DistributedTracingPolicy(**kwargs),
+                             config.http_logging_policy or HttpLoggingPolicy(**kwargs)])
+        else:
+            if isinstance(per_call_policies, Iterable):
+                per_call_policies_list = list(per_call_policies)
+            else:
+                per_call_policies_list = [per_call_policies]
+            per_call_policies_list.extend(policies)
+            policies = per_call_policies_list
+
+            if isinstance(per_retry_policies, Iterable):
+                per_retry_policies_list = list(per_retry_policies)
+            else:
+                per_retry_policies_list = [per_retry_policies]
+            if len(per_retry_policies_list) > 0:
+                index_of_retry = -1
+                for index, policy in enumerate(policies):
+                    if isinstance(policy, RetryPolicy):
+                        index_of_retry = index
+                if index_of_retry == -1:
+                    raise ValueError("Failed to add per_retry_policies; "
+                                     "no RetryPolicy found in the supplied list of policies. ")
+                policies_1 = policies[:index_of_retry+1]
+                policies_2 = policies[index_of_retry+1:]
+                policies_1.extend(per_retry_policies_list)
+                policies_1.extend(policies_2)
+                policies = policies_1
 
         if not transport:
             transport = RequestsTransport(**kwargs)

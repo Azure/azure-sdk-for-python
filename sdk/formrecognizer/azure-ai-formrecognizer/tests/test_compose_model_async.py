@@ -15,7 +15,6 @@ from asynctestcase import AsyncFormRecognizerTest
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
-
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
@@ -33,6 +32,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             composed_model = await poller.result()
             self.assertEqual(composed_model.model_name, "my composed model")
             self.assertComposedModelHasValues(composed_model, model_1, model_2)
+
+            composed_model_dict = composed_model.to_dict()
+            self.assertEqual(composed_model_dict.get("model_name"), "my composed model")
+            self.assertIsNotNone(composed_model_dict.get("model_id"))
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -93,4 +96,4 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             with pytest.raises(ValueError) as excinfo:
                 poller = await client.begin_create_composed_model(["00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000"])
                 result = await poller.result()
-            assert "Method 'begin_create_composed_model' is only available for API version V2_1_PREVIEW and up" in str(excinfo.value)
+            assert "Method 'begin_create_composed_model' is only available for API version V2_1 and up" in str(excinfo.value)

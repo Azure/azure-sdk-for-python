@@ -18,6 +18,7 @@ from azure.ai.textanalytics import (
     VERSION,
     TextAnalyticsApiVersion,
     PiiEntityDomainType,
+    PiiEntityCategoryType
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -597,6 +598,38 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         self.assertEqual(microsoft.category, "Organization")
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_categories_filter(self, client):
+        result = client.recognize_pii_entities(
+            ["My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333."],
+        )
+
+        self.assertEqual(len(result[0].entities), 3)
+
+        result = client.recognize_pii_entities(
+            ["My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333."],
+            categories_filter=[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]
+        )
+
+        self.assertEqual(len(result[0].entities), 1)
+        entity = result[0].entities[0]
+        self.assertEqual(entity.category, PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_categories_filter_with_domain_filter(self, client):
+        # Currently there seems to be no effective difference with or without the PHI domain filter.
+        result = client.recognize_pii_entities(
+            ["My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333."],
+            categories_filter=[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER],
+            domain_filter=PiiEntityDomainType.PROTECTED_HEALTH_INFORMATION
+        )
+
+        self.assertEqual(len(result[0].entities), 1)
+        entity = result[0].entities[0]
+        self.assertEqual(entity.category, PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     def test_string_index_type_explicit_fails_v3(self, client):
         with pytest.raises(ValueError) as excinfo:
@@ -624,4 +657,15 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             documents=["Hello world"],
             string_index_type="TextElements_v8",
             raw_response_hook=callback
+        )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_disable_service_logs(self, client):
+        def callback(resp):
+            assert resp.http_request.query['loggingOptOut']
+        client.recognize_pii_entities(
+            documents=["Test for logging disable"],
+            disable_service_logs=True,
+            raw_response_hook=callback,
         )

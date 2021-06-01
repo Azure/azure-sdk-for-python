@@ -8,6 +8,7 @@ import sys
 import threading
 import warnings
 from io import BytesIO
+from typing import Iterator
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.common import with_current_context
@@ -171,8 +172,9 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 class _ChunkIterator(object):
     """Async iterator for chunks in blob download stream."""
 
-    def __init__(self, size, content, downloader):
+    def __init__(self, size, content, downloader, chunk_size):
         self.size = size
+        self._chunk_size = chunk_size
         self._current_content = content
         self._iter_downloader = downloader
         self._iter_chunks = None
@@ -189,20 +191,36 @@ class _ChunkIterator(object):
         if self._complete:
             raise StopIteration("Download complete")
         if not self._iter_downloader:
-            # If no iterator was supplied, the download completed with
-            # the initial GET, so we just return that data
+            # cut the data obtained from initial GET into chunks
+            if len(self._current_content) > self._chunk_size:
+                return self._get_chunk_data()
             self._complete = True
             return self._current_content
 
         if not self._iter_chunks:
             self._iter_chunks = self._iter_downloader.get_chunk_offsets()
-        else:
-            chunk = next(self._iter_chunks)
-            self._current_content = self._iter_downloader.yield_chunk(chunk)
 
-        return self._current_content
+        # initial GET result still has more than _chunk_size bytes of data
+        if len(self._current_content) >= self._chunk_size:
+            return self._get_chunk_data()
+
+        try:
+            chunk = next(self._iter_chunks)
+            self._current_content += self._iter_downloader.yield_chunk(chunk)
+        except StopIteration as e:
+            self._complete = True
+            if self._current_content:
+                return self._current_content
+            raise e
+
+        return self._get_chunk_data()
 
     next = __next__  # Python 2 compatibility.
+
+    def _get_chunk_data(self):
+        chunk_data = self._current_content[: self._chunk_size]
+        self._current_content = self._current_content[self._chunk_size:]
+        return chunk_data
 
 
 class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
@@ -371,6 +389,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return response
 
     def chunks(self):
+        # type: () -> Iterator[bytes]
+        """Iterate over chunks in the download stream.
+
+        :rtype: Iterator[bytes]
+        """
         if self.size == 0 or self._download_complete:
             iter_downloader = None
         else:
@@ -395,7 +418,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return _ChunkIterator(
             size=self.size,
             content=self._current_content,
-            downloader=iter_downloader)
+            downloader=iter_downloader,
+            chunk_size=self._config.max_chunk_get_size)
 
     def readall(self):
         """Download the contents of this file.
@@ -493,11 +517,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         )
         if parallel:
             import concurrent.futures
-            executor = concurrent.futures.ThreadPoolExecutor(self._max_concurrency)
-            list(executor.map(
-                    with_current_context(downloader.process_chunk),
-                    downloader.get_chunk_offsets()
-                ))
+            with concurrent.futures.ThreadPoolExecutor(self._max_concurrency) as executor:
+                list(executor.map(
+                        with_current_context(downloader.process_chunk),
+                        downloader.get_chunk_offsets()
+                    ))
         else:
             for chunk in downloader.get_chunk_offsets():
                 downloader.process_chunk(chunk)

@@ -8,7 +8,7 @@ import pytest
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer import FormContentType
+from azure.ai.formrecognizer import FormContentType, _models
 from azure.ai.formrecognizer.aio import FormRecognizerClient, FormTrainingClient
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
@@ -93,52 +93,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
                         b"\x25\x50\x44\x46\x55\x55\x55",
                     )
                     result = await poller.result()
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_custom_form_unlabeled_blank_page(self, client, formrecognizer_storage_container_sas_url):
-        fr_client = client.get_form_recognizer_client()
-        with open(self.blank_pdf, "rb") as fd:
-            blank = fd.read()
-
-        async with client:
-            poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
-            model = await poller.result()
-
-            async with fr_client:
-                poller = await fr_client.begin_recognize_custom_forms(
-                    model.model_id,
-                    blank
-                )
-                form = await poller.result()
-
-        self.assertEqual(len(form), 1)
-        self.assertEqual(form[0].page_range.first_page_number, 1)
-        self.assertEqual(form[0].page_range.last_page_number, 1)
-        self.assertIsNotNone(form[0].pages)
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_custom_form_labeled_blank_page(self, client, formrecognizer_storage_container_sas_url):
-        fr_client = client.get_form_recognizer_client()
-        with open(self.blank_pdf, "rb") as fd:
-            blank = fd.read()
-
-        async with client:
-            poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=True)
-            model = await poller.result()
-
-            async with fr_client:
-                poller = await fr_client.begin_recognize_custom_forms(
-                    model.model_id,
-                    blank
-                )
-                form = await poller.result()
-
-        self.assertEqual(len(form), 1)
-        self.assertEqual(form[0].page_range.first_page_number, 1)
-        self.assertEqual(form[0].page_range.last_page_number, 1)
-        self.assertIsNotNone(form[0].pages)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -270,6 +224,20 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         self.assertIsNotNone(recognized_form[0].model_id)
         self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
+        recognized_form_dict = [v.to_dict() for v in recognized_form]
+        self.assertIsNone(recognized_form_dict[0].get("form_type_confidence"))
+        self.assertIsNotNone(recognized_form_dict[0].get("model_id"))
+        self.assertEqual(recognized_form_dict[0].get("form_type"), "form-0")
+
+        recognized_form = _models.RecognizedForm.from_dict(recognized_form_dict[0])
+
+        self.assertFormPagesTransformCorrect(recognized_form.pages, read_results, page_results)
+        self.assertEqual(recognized_form.page_range.first_page_number, page_results[0].page)
+        self.assertEqual(recognized_form.page_range.last_page_number, page_results[0].page)
+        self.assertIsNone(recognized_form.form_type_confidence)
+        self.assertIsNotNone(recognized_form.model_id)
+        self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form.fields, actual_fields, read_results)
+
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_custom_forms_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
@@ -351,7 +319,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
         self.assertEqual(recognized_form[0].page_range.first_page_number, page_results[0].page)
         self.assertEqual(recognized_form[0].page_range.last_page_number, page_results[0].page)
-        self.assertEqual(recognized_form[0].form_type_confidence, 1.0)
+        self.assertIsNotNone(recognized_form[0].form_type_confidence)
         self.assertIsNotNone(recognized_form[0].model_id)
         self.assertFormFieldsTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
@@ -395,7 +363,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertEqual(form.form_type_confidence, 1.0)
+            self.assertIsNotNone(form.form_type_confidence)
             self.assertEqual(form.model_id, model.model_id)
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
@@ -507,7 +475,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertEqual(form.form_type_confidence, 1.0)
+            self.assertIsNotNone(form.form_type_confidence)
             self.assertEqual(form.model_id, model.model_id)
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
@@ -545,3 +513,21 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         actual_fields = actual.analyze_result.document_results[0].fields
 
         self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    async def test_pages_kwarg_specified(self, client, formrecognizer_storage_container_sas_url):
+        fr_client = client.get_form_recognizer_client()
+
+        with open(self.form_jpg, "rb") as fd:
+            myfile = fd.read()
+
+        async with client:
+            training_poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
+            model = await training_poller.result()
+
+            async with fr_client:
+                poller = await fr_client.begin_recognize_custom_forms(model.model_id, myfile, pages=["1"])
+                assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+                result = await poller.result()
+                assert result

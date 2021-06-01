@@ -149,11 +149,11 @@ def test_authenticate():
 
 
 def test_client_capabilities():
-    """the credential should configure MSAL for capability CP1 (ability to handle claims challenges)"""
+    """the credential should configure MSAL for capability CP1 unless AZURE_IDENTITY_DISABLE_CP1 is set"""
 
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
-    credential = UsernamePasswordCredential("client-id", "username", "password", transport=transport)
 
+    credential = UsernamePasswordCredential("client-id", "username", "password", transport=transport)
     with patch("msal.PublicClientApplication") as PublicClientApplication:
         credential._get_app()
 
@@ -161,9 +161,18 @@ def test_client_capabilities():
     _, kwargs = PublicClientApplication.call_args
     assert kwargs["client_capabilities"] == ["CP1"]
 
+    credential = UsernamePasswordCredential("client-id", "username", "password", transport=transport)
+    with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
+        with patch("msal.PublicClientApplication") as PublicClientApplication:
+            credential._get_app()
+
+    assert PublicClientApplication.call_count == 1
+    _, kwargs = PublicClientApplication.call_args
+    assert kwargs["client_capabilities"] is None
+
 
 def test_claims_challenge():
-    """get_token should pass any claims challenge to MSAL token acquisition APIs"""
+    """get_token should and authenticate pass any claims challenge to MSAL token acquisition APIs"""
 
     msal_acquire_token_result = dict(
         build_aad_response(access_token="**", id_token=build_id_token()),
@@ -176,9 +185,15 @@ def test_claims_challenge():
     with patch.object(UsernamePasswordCredential, "_get_app") as get_mock_app:
         msal_app = get_mock_app()
         msal_app.acquire_token_by_username_password.return_value = msal_acquire_token_result
+
+        credential.authenticate(scopes=["scope"], claims=expected_claims)
+        assert msal_app.acquire_token_by_username_password.call_count == 1
+        args, kwargs = msal_app.acquire_token_by_username_password.call_args
+        assert kwargs["claims_challenge"] == expected_claims
+
         credential.get_token("scope", claims=expected_claims)
 
-        assert msal_app.acquire_token_by_username_password.call_count == 1
+        assert msal_app.acquire_token_by_username_password.call_count == 2
         args, kwargs = msal_app.acquire_token_by_username_password.call_args
         assert kwargs["claims_challenge"] == expected_claims
 

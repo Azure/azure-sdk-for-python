@@ -1,5 +1,39 @@
 # Release History
 
+## 3.0.0 (2021-05-21)
+
+**Features**
+
+  - Model Backup has a new parameter use_existing_snapshot
+  - Model VolumePatchPropertiesDataProtection has a new parameter snapshot
+  - Model BackupPatch has a new parameter use_existing_snapshot
+  - Added operation BackupPoliciesOperations.begin_update
+  - Added operation BackupsOperations.get_status
+
+**Breaking changes**
+
+  - Removed operation BackupPoliciesOperations.update
+  - Removed operation group VolumeBackupStatusOperations
+
+## 2.0.0 (2021-03-16)
+
+**Features**
+
+  - Model Volume has a new parameter ldap_enabled
+  - Model Backup has a new parameter volume_name
+  - Model ActiveDirectory has a new parameter allow_local_nfs_users_with_ldap
+  - Model BackupPatch has a new parameter volume_name
+  - Added operation BackupsOperations.begin_update
+  - Added operation group VolumeBackupStatusOperations
+
+**Breaking changes**
+
+  - Model SnapshotPolicyDetails no longer has parameter name_properties_name
+  - Model SnapshotPolicyPatch no longer has parameter name_properties_name
+  - Model Volume no longer has parameter name_properties_name
+  - Model SnapshotPolicy no longer has parameter name_properties_name
+  - Removed operation BackupsOperations.update
+
 ## 1.0.0 (2021-02-04)
 
 **Features**

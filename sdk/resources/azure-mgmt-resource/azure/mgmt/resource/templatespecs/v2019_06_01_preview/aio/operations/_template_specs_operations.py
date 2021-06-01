@@ -46,7 +46,7 @@ class TemplateSpecsOperations:
         resource_group_name: str,
         template_spec_name: str,
         template_spec: "_models.TemplateSpec",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TemplateSpec":
         """Creates or updates a Template Spec.
 
@@ -97,7 +97,7 @@ class TemplateSpecsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.TemplateSpecsError, response)
+            error = self._deserialize.failsafe_deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -117,7 +117,7 @@ class TemplateSpecsOperations:
         resource_group_name: str,
         template_spec_name: str,
         template_spec: Optional["_models.TemplateSpecUpdateModel"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TemplateSpec":
         """Updates Template Spec tags with specified values.
 
@@ -171,7 +171,7 @@ class TemplateSpecsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.TemplateSpecsError, response)
+            error = self._deserialize.failsafe_deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('TemplateSpec', pipeline_response)
@@ -187,7 +187,7 @@ class TemplateSpecsOperations:
         resource_group_name: str,
         template_spec_name: str,
         expand: Optional[Union[str, "_models.TemplateSpecExpandKind"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TemplateSpec":
         """Gets a Template Spec with a given name.
 
@@ -236,7 +236,7 @@ class TemplateSpecsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.TemplateSpecsError, response)
+            error = self._deserialize.failsafe_deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('TemplateSpec', pipeline_response)
@@ -251,7 +251,7 @@ class TemplateSpecsOperations:
         self,
         resource_group_name: str,
         template_spec_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a Template Spec by name. When operation completes, status code 200 returned without
         content.
@@ -296,7 +296,7 @@ class TemplateSpecsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.TemplateSpecsError, response)
+            error = self._deserialize.failsafe_deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -307,7 +307,7 @@ class TemplateSpecsOperations:
     def list_by_subscription(
         self,
         expand: Optional[Union[str, "_models.TemplateSpecExpandKind"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TemplateSpecsListResult"]:
         """Lists all the Template Specs within the specified subscriptions.
 
@@ -366,7 +366,7 @@ class TemplateSpecsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.TemplateSpecsError, response)
+                error = self._deserialize.failsafe_deserialize(_models.TemplateSpecsError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -381,7 +381,7 @@ class TemplateSpecsOperations:
         self,
         resource_group_name: str,
         expand: Optional[Union[str, "_models.TemplateSpecExpandKind"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TemplateSpecsListResult"]:
         """Lists all the Template Specs within the specified resource group.
 
@@ -443,7 +443,7 @@ class TemplateSpecsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.TemplateSpecsError, response)
+                error = self._deserialize.failsafe_deserialize(_models.TemplateSpecsError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

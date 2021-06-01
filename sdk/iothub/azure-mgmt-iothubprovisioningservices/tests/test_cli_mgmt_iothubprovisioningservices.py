@@ -31,6 +31,7 @@ class MgmtIotDpsClientTest(AzureMgmtTestCase):
             azure.mgmt.iothubprovisioningservices.IotDpsClient
         )
     
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_iothubprovisioningservices(self, resource_group):
 

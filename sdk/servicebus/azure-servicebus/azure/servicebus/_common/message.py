@@ -5,11 +5,12 @@
 # -------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 
+import time
 import datetime
 import uuid
 import logging
 import copy
-from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any
+from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
 
 import six
 
@@ -34,6 +35,8 @@ from .constants import (
     ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
     ANNOTATION_SYMBOL_KEY_MAP,
     MESSAGE_PROPERTY_MAX_LENGTH,
+    MAX_ABSOLUTE_EXPIRY_TIME,
+    MAX_DURATION_VALUE
 )
 
 from ..exceptions import MessageSizeExceededError
@@ -127,6 +130,62 @@ class ServiceBusMessage(
 
     def __str__(self):
         return str(self.message)
+
+    def __repr__(self):
+        # type: () -> str
+        # pylint: disable=bare-except
+        message_repr = "body={}".format(
+            str(self.message)
+        )
+        try:
+            message_repr += ", application_properties={}".format(self.application_properties)
+        except:
+            message_repr += ", application_properties=<read-error>"
+        try:
+            message_repr += ", session_id={}".format(self.session_id)
+        except:
+            message_repr += ", session_id=<read-error>"
+        try:
+            message_repr += ", message_id={}".format(self.message_id)
+        except:
+            message_repr += ", message_id=<read-error>"
+        try:
+            message_repr += ", content_type={}".format(self.content_type)
+        except:
+            message_repr += ", content_type=<read-error>"
+        try:
+            message_repr += ", correlation_id={}".format(self.correlation_id)
+        except:
+            message_repr += ", correlation_id=<read-error>"
+        try:
+            message_repr += ", to={}".format(self.to)
+        except:
+            message_repr += ", to=<read-error>"
+        try:
+            message_repr += ", reply_to={}".format(self.reply_to)
+        except:
+            message_repr += ", reply_to=<read-error>"
+        try:
+            message_repr += ", reply_to_session_id={}".format(self.reply_to_session_id)
+        except:
+            message_repr += ", reply_to_session_id=<read-error>"
+        try:
+            message_repr += ", subject={}".format(self.subject)
+        except:
+            message_repr += ", subject=<read-error>"
+        try:
+            message_repr += ", time_to_live={}".format(self.time_to_live)
+        except:
+            message_repr += ", time_to_live=<read-error>"
+        try:
+            message_repr += ", partition_key={}".format(self.partition_key)
+        except:
+            message_repr += ", partition_key=<read-error>"
+        try:
+            message_repr += ", scheduled_enqueue_time_utc={}".format(self.scheduled_enqueue_time_utc)
+        except:
+            message_repr += ", scheduled_enqueue_time_utc=<read-error>"
+        return "ServiceBusMessage({})".format(message_repr)[:1024]
 
     def _build_message(self, body):
         if not (
@@ -277,10 +336,19 @@ class ServiceBusMessage(
             self._amqp_header = uamqp.message.MessageHeader()
         if value is None:
             self._amqp_header.time_to_live = value
+            if self._amqp_properties.absolute_expiry_time:
+                self._amqp_properties.absolute_expiry_time = value
         elif isinstance(value, datetime.timedelta):
             self._amqp_header.time_to_live = value.seconds * 1000
         else:
             self._amqp_header.time_to_live = int(value) * 1000
+
+        if self._amqp_header.time_to_live and self._amqp_header.time_to_live != MAX_DURATION_VALUE:
+            self._amqp_properties.creation_time = int(time.mktime(utc_now().timetuple()))
+            self._amqp_properties.absolute_expiry_time = min(
+                MAX_ABSOLUTE_EXPIRY_TIME,
+                self._amqp_properties.creation_time + self._amqp_header.time_to_live
+            )
 
     @property
     def scheduled_enqueue_time_utc(self):
@@ -537,15 +605,8 @@ class ServiceBusMessageBatch(object):
 
     def _from_list(self, messages, parent_span=None):
         # type: (Iterable[ServiceBusMessage], AbstractSpan) -> None
-        for each in messages:
-            if not isinstance(each, (ServiceBusMessage, dict)):
-                raise TypeError(
-                    "Only ServiceBusMessage or an iterable object containing ServiceBusMessage "
-                    "objects are accepted. Received instead: {}".format(
-                        each.__class__.__name__
-                    )
-                )
-            self._add(each, parent_span)
+        for message in messages:
+            self._add(message, parent_span)
 
     @property
     def max_size_in_bytes(self):
@@ -566,7 +627,7 @@ class ServiceBusMessageBatch(object):
         return self._size
 
     def add_message(self, message):
-        # type: (ServiceBusMessage) -> None
+        # type: (Union[ServiceBusMessage, Mapping[str, Any]]) -> None
         """Try to add a single Message to the batch.
 
         The total size of an added message is the sum of its body, properties, etc.
@@ -581,12 +642,12 @@ class ServiceBusMessageBatch(object):
 
         return self._add(message)
 
-    def _add(self, message, parent_span=None):
-        # type: (ServiceBusMessage, AbstractSpan) -> None
+    def _add(self, add_message, parent_span=None):
+        # type: (Union[ServiceBusMessage, Mapping[str, Any]], AbstractSpan) -> None
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
-
-        message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)  # type: ignore
+        message = create_messages_from_dicts_if_needed(add_message, ServiceBusMessage)
         message = transform_messages_to_sendable_if_needed(message)
+        message = cast(ServiceBusMessage, message)
         trace_message(
             message, parent_span
         )  # parent_span is e.g. if built as part of a send operation.
@@ -697,6 +758,106 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             time_to_live=self.time_to_live,
             to=self.to,
         )
+
+    def __repr__(self): # pylint: disable=too-many-branches,too-many-statements
+        # type: () -> str
+        # pylint: disable=bare-except
+        message_repr = "body={}".format(
+            str(self.message)
+        )
+        try:
+            message_repr += ", application_properties={}".format(self.application_properties)
+        except:
+            message_repr += ", application_properties=<read-error>"
+        try:
+            message_repr += ", session_id={}".format(self.session_id)
+        except:
+            message_repr += ", session_id=<read-error>"
+        try:
+            message_repr += ", message_id={}".format(self.message_id)
+        except:
+            message_repr += ", message_id=<read-error>"
+        try:
+            message_repr += ", content_type={}".format(self.content_type)
+        except:
+            message_repr += ", content_type=<read-error>"
+        try:
+            message_repr += ", correlation_id={}".format(self.correlation_id)
+        except:
+            message_repr += ", correlation_id=<read-error>"
+        try:
+            message_repr += ", to={}".format(self.to)
+        except:
+            message_repr += ", to=<read-error>"
+        try:
+            message_repr += ", reply_to={}".format(self.reply_to)
+        except:
+            message_repr += ", reply_to=<read-error>"
+        try:
+            message_repr += ", reply_to_session_id={}".format(self.reply_to_session_id)
+        except:
+            message_repr += ", reply_to_session_id=<read-error>"
+        try:
+            message_repr += ", subject={}".format(self.subject)
+        except:
+            message_repr += ", subject=<read-error>"
+        try:
+            message_repr += ", time_to_live={}".format(self.time_to_live)
+        except:
+            message_repr += ", time_to_live=<read-error>"
+        try:
+            message_repr += ", partition_key={}".format(self.partition_key)
+        except:
+            message_repr += ", partition_key=<read-error>"
+        try:
+            message_repr += ", scheduled_enqueue_time_utc={}".format(self.scheduled_enqueue_time_utc)
+        except:
+            message_repr += ", scheduled_enqueue_time_utc=<read-error>"
+        try:
+            message_repr += ", auto_renew_error={}".format(self.auto_renew_error)
+        except:
+            message_repr += ", auto_renew_error=<read-error>"
+        try:
+            message_repr += ", dead_letter_error_description={}".format(self.dead_letter_error_description)
+        except:
+            message_repr += ", dead_letter_error_description=<read-error>"
+        try:
+            message_repr += ", dead_letter_reason={}".format(self.dead_letter_reason)
+        except:
+            message_repr += ", dead_letter_reason=<read-error>"
+        try:
+            message_repr += ", dead_letter_source={}".format(self.dead_letter_source)
+        except:
+            message_repr += ", dead_letter_source=<read-error>"
+        try:
+            message_repr += ", delivery_count={}".format(self.delivery_count)
+        except:
+            message_repr += ", delivery_count=<read-error>"
+        try:
+            message_repr += ", enqueued_sequence_number={}".format(self.enqueued_sequence_number)
+        except:
+            message_repr += ", enqueued_sequence_number=<read-error>"
+        try:
+            message_repr += ", enqueued_time_utc={}".format(self.enqueued_time_utc)
+        except:
+            message_repr += ", enqueued_time_utc=<read-error>"
+        try:
+            message_repr += ", expires_at_utc={}".format(self.expires_at_utc)
+        except:
+            message_repr += ", expires_at_utc=<read-error>"
+        try:
+            message_repr += ", sequence_number={}".format(self.sequence_number)
+        except:
+            message_repr += ", sequence_number=<read-error>"
+        try:
+            message_repr += ", lock_token={}".format(self.lock_token)
+        except:
+            message_repr += ", lock_token=<read-error>"
+        try:
+            message_repr += ", locked_until_utc={}".format(self.locked_until_utc)
+        except:
+            message_repr += ", locked_until_utc=<read-error>"
+        return "ServiceBusReceivedMessage({})".format(message_repr)[:1024]
 
     @property
     def dead_letter_error_description(self):

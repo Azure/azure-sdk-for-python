@@ -2,9 +2,21 @@ import asyncio
 from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
+from azure_devtools.scenario_tests.patches import mock_in_unit_test
 from devtools_testutils import AzureMgmtTestCase
 
+
+def skip_sleep(unit_test):
+    async def immediate_return(_):
+        return
+
+    return mock_in_unit_test(unit_test, "asyncio.sleep", immediate_return)
+
+
 class AzureMgmtAsyncTestCase(AzureMgmtTestCase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.replay_patches.append(skip_sleep)
 
     def setUp(self):
         super(AzureMgmtAsyncTestCase, self).setUp()

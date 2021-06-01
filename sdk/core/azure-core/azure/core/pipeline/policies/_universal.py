@@ -280,8 +280,6 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                 _LOGGER.debug("Request method: %r", http_request.method)
                 _LOGGER.debug("Request headers:")
                 for header, value in http_request.headers.items():
-                    if header.lower() == 'authorization':
-                        value = '*****'
                     _LOGGER.debug("    %r: %r", header, value)
                 _LOGGER.debug("Request body:")
 
@@ -339,7 +337,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                     if response.context.options.get('stream', False):
                         _LOGGER.debug("Body is streamable")
                     else:
-                        _LOGGER.debug(response.http_response.text())
+                        _LOGGER.debug(http_response.text())
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.debug("Failed to log response: %s", repr(err))
 

@@ -18,6 +18,37 @@ class Gender(str, Enum):
     female = "Female"
 
 
+class ComputerVisionErrorCodes(str, Enum):
+
+    invalid_request = "InvalidRequest"
+    invalid_argument = "InvalidArgument"
+    internal_server_error = "InternalServerError"
+    service_unavailable = "ServiceUnavailable"
+
+
+class ComputerVisionInnerErrorCodeValue(str, Enum):
+
+    invalid_image_format = "InvalidImageFormat"
+    unsupported_media_type = "UnsupportedMediaType"
+    invalid_image_url = "InvalidImageUrl"
+    not_supported_feature = "NotSupportedFeature"
+    not_supported_image = "NotSupportedImage"
+    timeout = "Timeout"
+    internal_server_error = "InternalServerError"
+    invalid_image_size = "InvalidImageSize"
+    bad_argument = "BadArgument"
+    detect_face_error = "DetectFaceError"
+    not_supported_language = "NotSupportedLanguage"
+    invalid_thumbnail_size = "InvalidThumbnailSize"
+    invalid_details = "InvalidDetails"
+    invalid_model = "InvalidModel"
+    cancelled_request = "CancelledRequest"
+    not_supported_visual_feature = "NotSupportedVisualFeature"
+    failed_to_process = "FailedToProcess"
+    unspecified = "Unspecified"
+    storage_exception = "StorageException"
+
+
 class OperationStatusCodes(str, Enum):
 
     not_started = "notStarted"
@@ -30,6 +61,12 @@ class TextRecognitionResultDimensionUnit(str, Enum):
 
     pixel = "pixel"
     inch = "inch"
+
+
+class TextStyle(str, Enum):
+
+    other = "other"
+    handwriting = "handwriting"
 
 
 class DescriptionExclude(str, Enum):
@@ -84,13 +121,79 @@ class VisualFeatureTypes(str, Enum):
 
 class OcrDetectionLanguage(str, Enum):
 
+    af = "af"
+    ast = "ast"
+    bi = "bi"
+    br = "br"
+    ca = "ca"
+    ceb = "ceb"
+    ch = "ch"
+    co = "co"
+    crh = "crh"
+    cs = "cs"
+    csb = "csb"
+    da = "da"
+    de = "de"
     en = "en"
     es = "es"
+    et = "et"
+    eu = "eu"
+    fi = "fi"
+    fil = "fil"
+    fj = "fj"
     fr = "fr"
-    de = "de"
+    fur = "fur"
+    fy = "fy"
+    ga = "ga"
+    gd = "gd"
+    gil = "gil"
+    gl = "gl"
+    gv = "gv"
+    hni = "hni"
+    hsb = "hsb"
+    ht = "ht"
+    hu = "hu"
+    ia = "ia"
+    id = "id"
     it = "it"
+    iu = "iu"
+    ja = "ja"
+    jv = "jv"
+    kaa = "kaa"
+    kac = "kac"
+    kea = "kea"
+    kha = "kha"
+    kl = "kl"
+    ko = "ko"
+    ku = "ku"
+    kw = "kw"
+    lb = "lb"
+    ms = "ms"
+    mww = "mww"
+    nap = "nap"
     nl = "nl"
+    no = "no"
+    oc = "oc"
+    pl = "pl"
     pt = "pt"
+    quc = "quc"
+    rm = "rm"
+    sco = "sco"
+    sl = "sl"
+    sq = "sq"
+    sv = "sv"
+    sw = "sw"
+    tet = "tet"
+    tr = "tr"
+    tt = "tt"
+    uz = "uz"
+    vo = "vo"
+    wae = "wae"
+    yua = "yua"
+    za = "za"
+    zh_hans = "zh-Hans"
+    zh_hant = "zh-Hant"
+    zu = "zu"
 
 
 class Details(str, Enum):

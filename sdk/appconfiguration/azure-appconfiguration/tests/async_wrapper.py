@@ -102,6 +102,7 @@ def app_config_decorator(func, **kwargs):
         trimmed_kwargs = {k:v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
 
+
         func(*args, **trimmed_kwargs)
 
         # do tearDown on client

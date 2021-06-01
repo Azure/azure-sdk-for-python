@@ -47,9 +47,6 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 120
-  - name: TestSamples
-    type: boolean
-    default: false
   - name: Location
     type: string
     default: ''
@@ -86,6 +83,9 @@ parameters:
   - name: MatrixFilters
     type: object
     default: []
+  - name: MatrixReplace
+    type: object
+    default: []
   - name: PlatformPreSteps
     type: object
     default: []
@@ -103,8 +103,9 @@ stages:
       - stage: ${{ cloud.key }}_${{ parameters.JobName }}
         dependsOn: []
         jobs:
-        - template: /eng/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+        - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
           parameters:
+            JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
             AdditionalParameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               PreSteps:
@@ -125,7 +126,6 @@ stages:
               AllocateResourceGroup: ${{ parameters.AllocateResourceGroup }}
               DeployArmTemplate: ${{ parameters.DeployArmTemplate }}
               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-              TestSamples: ${{ parameters.TestSamples }}
             MatrixConfigs:
               # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
               - ${{ each config in parameters.MatrixConfigs }}:
@@ -136,8 +136,13 @@ stages:
               - ${{ each cloudFilter in cloud.value.MatrixFilters }}:
                 - ${{ cloudFilter }}
               - ${{ parameters.MatrixFilters }}
+            MatrixReplace:
+              - ${{ each cloudReplace in cloud.value.MatrixReplace }}:
+                - ${{ cloudReplace }}
+              - ${{ parameters.MatrixReplace }}
             CloudConfig:
               SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
+              SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
               Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
               Cloud: ${{ cloud.key }}
 

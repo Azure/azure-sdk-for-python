@@ -27,6 +27,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtComputeTest, self).setUp()
+        self.re_replacer.register_pattern_pair('"value":".{88}"', '"value":"FakeValue"')
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
@@ -101,6 +102,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 container_name="foo",
                 blob_name="default"
             )
+            self.scrubber.register_name_pair(container_client.url, "fakeuri")
             return container_client.url
             # container_client.create_container()
             # return container_client.url + "?" + sas_token

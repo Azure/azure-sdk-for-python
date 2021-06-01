@@ -5,24 +5,29 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search9691925.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search9691925.search.windows.net/$metadata#Microsoft.Azure.Search.V2020_06_30.IndexStatistics","documentCount":0,"storageSize":0}'
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
+        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns4ffvpw9+He/bH8Nb4qlrPqqhkv8/bu77bI2wwv//gX
+        xbSumuq8HR//YF3n49fS+Cf3dvZ2fv+dT3//ezvjs+Usf/e6zdqiaYtp89Hoo1k1XS/yZXtSrZfU
+        787oo6at6uwif138IKe/f8n/A1bsFAScAAAA
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-length: '255'
       content-type: application/json; odata.metadata=minimal
-      date: Fri, 28 Aug 2020 21:50:22 GMT
-      elapsed-time: '31'
+      date: Thu, 20 May 2021 17:27:39 GMT
+      elapsed-time: '41'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 78b4a61c-e978-11ea-ae59-5cf37071153c
+      request-id: ace9300a-b990-11eb-898f-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

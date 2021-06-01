@@ -24,8 +24,8 @@
 #
 # --------------------------------------------------------------------------
 
-from .._internal.aio._search_client_async import AsyncSearchItemPaged, SearchClient
-from .._internal.aio._search_indexing_buffered_sender_async import SearchIndexingBufferedSender
+from ._search_client_async import AsyncSearchItemPaged, SearchClient
+from ._search_indexing_buffered_sender_async import SearchIndexingBufferedSender
 
 __all__ = (
     "AsyncSearchItemPaged",

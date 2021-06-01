@@ -11,16 +11,14 @@ import json
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.secrets import SecretClient
-from azure.keyvault.secrets._shared import HttpChallengeCache
-from devtools_testutils import PowerShellPreparer
 
 from _shared.test_case import KeyVaultTestCase
+from _test_case import client_setup, get_decorator, SecretsTestCase
 
-KeyVaultPreparer = functools.partial(
-    PowerShellPreparer,
-    "keyvault",
-    azure_keyvault_url="https://vaultname.vault.azure.net"
-)
+
+all_api_versions = get_decorator()
+logging_enabled = get_decorator(logging_enable=True)
+logging_disabled = get_decorator(logging_enable=False)
 
 
 # used for logging tests
@@ -33,16 +31,7 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 
-class SecretClientTests(KeyVaultTestCase):
-    def tearDown(self):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        super(SecretClientTests, self).tearDown()
-
-    def create_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(SecretClient)
-        return self.create_client_from_credential(SecretClient, credential=credential, vault_url=vault_uri, **kwargs)
-
+class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
     def _assert_secret_attributes_equal(self, s1, s2):
         self.assertEqual(s1.name, s2.name)
         self.assertEqual(s1.vault_url, s2.vault_url)
@@ -77,10 +66,9 @@ class SecretClientTests(KeyVaultTestCase):
                 del expected[secret.name]
         self.assertEqual(len(expected), 0)
 
-    @KeyVaultPreparer()
-    def test_secret_crud_operations(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
-
+    @all_api_versions()
+    @client_setup
+    def test_secret_crud_operations(self, client, **kwargs):
         secret_name = self.get_resource_name("crud-secret")
         secret_value = "crud_secret_value"
 
@@ -146,10 +134,9 @@ class SecretClientTests(KeyVaultTestCase):
         deleted = client.begin_delete_secret(updated.name).result()
         self.assertIsNotNone(deleted)
 
-    @KeyVaultPreparer()
-    def test_secret_list(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
-
+    @all_api_versions()
+    @client_setup
+    def test_secret_list(self, client, **kwargs):
         max_secrets = self.list_test_size
         expected = {}
 
@@ -166,10 +153,9 @@ class SecretClientTests(KeyVaultTestCase):
         result = list(client.list_properties_of_secrets(max_page_size=max_secrets - 1))
         self._validate_secret_list(result, expected)
 
-    @KeyVaultPreparer()
-    def test_list_versions(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
-
+    @all_api_versions()
+    @client_setup
+    def test_list_versions(self, client, **kwargs):
         secret_name = self.get_resource_name("secVer")
         secret_value = "secVal"
 
@@ -193,10 +179,9 @@ class SecretClientTests(KeyVaultTestCase):
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
         self.assertEqual(len(expected), 0)
 
-    @KeyVaultPreparer()
-    def test_list_deleted_secrets(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
-
+    @all_api_versions()
+    @client_setup
+    def test_list_deleted_secrets(self, client, **kwargs):
         expected = {}
 
         # create secrets
@@ -218,10 +203,9 @@ class SecretClientTests(KeyVaultTestCase):
                 expected_secret = expected[deleted_secret.name]
                 self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
-    @KeyVaultPreparer()
-    def test_backup_restore(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
-
+    @all_api_versions()
+    @client_setup
+    def test_backup_restore(self, client, **kwargs):
         secret_name = self.get_resource_name("secbak")
         secret_value = "secVal"
 
@@ -243,10 +227,9 @@ class SecretClientTests(KeyVaultTestCase):
         restored_secret = self._poll_until_no_exception(restore_function, ResourceExistsError)
         self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
 
-    @KeyVaultPreparer()
-    def test_recover(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
-
+    @all_api_versions()
+    @client_setup
+    def test_recover(self, client, **kwargs):
         secrets = {}
 
         # create secrets to recover
@@ -272,10 +255,9 @@ class SecretClientTests(KeyVaultTestCase):
             secret = client.get_secret(name=secret_name)
             self._assert_secret_attributes_equal(secret.properties, secrets[secret.name].properties)
 
-    @KeyVaultPreparer()
-    def test_purge(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
-
+    @all_api_versions()
+    @client_setup
+    def test_purge(self, client, **kwargs):
         secrets = {}
 
         # create secrets to purge
@@ -301,9 +283,9 @@ class SecretClientTests(KeyVaultTestCase):
         deleted = [s.name for s in client.list_deleted_secrets()]
         self.assertTrue(not any(s in deleted for s in secrets.keys()))
 
-    @KeyVaultPreparer()
-    def test_logging_enabled(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url, logging_enable=True)
+    @logging_enabled()
+    @client_setup
+    def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -325,9 +307,9 @@ class SecretClientTests(KeyVaultTestCase):
 
         assert False, "Expected request body wasn't logged"
 
-    @KeyVaultPreparer()
-    def test_logging_disabled(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url, logging_enable=False)
+    @logging_disabled()
+    @client_setup
+    def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")

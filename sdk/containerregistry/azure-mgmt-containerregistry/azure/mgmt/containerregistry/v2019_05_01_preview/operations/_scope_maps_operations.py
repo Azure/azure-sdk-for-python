@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ScopeMapsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -54,7 +54,7 @@ class ScopeMapsOperations(object):
         scope_map_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ScopeMap"
+        # type: (...) -> "_models.ScopeMap"
         """Gets the properties of the specified scope map.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -69,7 +69,7 @@ class ScopeMapsOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMap
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScopeMap"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScopeMap"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -116,11 +116,11 @@ class ScopeMapsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         scope_map_name,  # type: str
-        scope_map_create_parameters,  # type: "models.ScopeMap"
+        scope_map_create_parameters,  # type: "_models.ScopeMap"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ScopeMap"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScopeMap"]
+        # type: (...) -> "_models.ScopeMap"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScopeMap"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -176,10 +176,10 @@ class ScopeMapsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         scope_map_name,  # type: str
-        scope_map_create_parameters,  # type: "models.ScopeMap"
+        scope_map_create_parameters,  # type: "_models.ScopeMap"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ScopeMap"]
+        # type: (...) -> LROPoller["_models.ScopeMap"]
         """Creates a scope map for a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -193,8 +193,8 @@ class ScopeMapsOperations(object):
         :type scope_map_create_parameters: ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMap
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either ScopeMap or the result of cls(response)
@@ -202,7 +202,7 @@ class ScopeMapsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScopeMap"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScopeMap"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -228,7 +228,14 @@ class ScopeMapsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'scopeMapName': self._serialize.url("scope_map_name", scope_map_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-_]*$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -306,8 +313,8 @@ class ScopeMapsOperations(object):
         :type scope_map_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -337,7 +344,14 @@ class ScopeMapsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'scopeMapName': self._serialize.url("scope_map_name", scope_map_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-_]*$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -356,11 +370,11 @@ class ScopeMapsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         scope_map_name,  # type: str
-        scope_map_update_parameters,  # type: "models.ScopeMapUpdateParameters"
+        scope_map_update_parameters,  # type: "_models.ScopeMapUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ScopeMap"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScopeMap"]
+        # type: (...) -> "_models.ScopeMap"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScopeMap"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -416,10 +430,10 @@ class ScopeMapsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         scope_map_name,  # type: str
-        scope_map_update_parameters,  # type: "models.ScopeMapUpdateParameters"
+        scope_map_update_parameters,  # type: "_models.ScopeMapUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ScopeMap"]
+        # type: (...) -> LROPoller["_models.ScopeMap"]
         """Updates a scope map with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -433,8 +447,8 @@ class ScopeMapsOperations(object):
         :type scope_map_update_parameters: ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMapUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either ScopeMap or the result of cls(response)
@@ -442,7 +456,7 @@ class ScopeMapsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScopeMap"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScopeMap"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -468,7 +482,14 @@ class ScopeMapsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'scopeMapName': self._serialize.url("scope_map_name", scope_map_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-_]*$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -488,7 +509,7 @@ class ScopeMapsOperations(object):
         registry_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ScopeMapListResult"]
+        # type: (...) -> Iterable["_models.ScopeMapListResult"]
         """Lists all the scope maps for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -501,7 +522,7 @@ class ScopeMapsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMapListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScopeMapListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScopeMapListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

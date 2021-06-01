@@ -14,6 +14,9 @@ DESCRIPTION:
     to a target Form Recognizer resource. The resource id and the resource region can be found
     in the azure portal.
 
+    The model used in this sample can be created in the sample_train_model_with_labels.py using the
+    training files in https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
+
 USAGE:
     python sample_copy_model.py
 
@@ -23,6 +26,9 @@ USAGE:
     3) AZURE_FORM_RECOGNIZER_TARGET_ENDPOINT - the endpoint to your target Form Recognizer resource.
     4) AZURE_FORM_RECOGNIZER_TARGET_KEY - your target Form Recognizer API key
     5) AZURE_SOURCE_MODEL_ID - the model ID from the source resource to be copied over to the target resource.
+        - OR -
+       CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your forms.
+       A model will be trained and used to run the sample.
     6) AZURE_FORM_RECOGNIZER_TARGET_REGION - the region the target resource was created in
     7) AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID - the entire resource ID to the target resource
 """
@@ -32,7 +38,7 @@ import os
 
 class CopyModelSample(object):
 
-    def copy_model(self):
+    def copy_model(self, custom_model_id):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormTrainingClient
 
@@ -40,7 +46,7 @@ class CopyModelSample(object):
         source_key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
         target_endpoint = os.environ["AZURE_FORM_RECOGNIZER_TARGET_ENDPOINT"]
         target_key = os.environ["AZURE_FORM_RECOGNIZER_TARGET_KEY"]
-        source_model_id = os.environ["AZURE_SOURCE_MODEL_ID"]
+        source_model_id = os.getenv("AZURE_SOURCE_MODEL_ID", custom_model_id)
         target_region = os.environ["AZURE_FORM_RECOGNIZER_TARGET_REGION"]
         target_resource_id = os.environ["AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID"]
 
@@ -71,4 +77,22 @@ class CopyModelSample(object):
 
 if __name__ == '__main__':
     sample = CopyModelSample()
-    sample.copy_model()
+    model_id = None
+    if os.getenv("CONTAINER_SAS_URL"):
+
+        from azure.core.credentials import AzureKeyCredential
+        from azure.ai.formrecognizer import FormTrainingClient
+
+        endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT")
+        key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
+
+        if not endpoint or not key:
+            raise ValueError("Please provide endpoint and API key to run the samples.")
+
+        form_training_client = FormTrainingClient(
+            endpoint=endpoint, credential=AzureKeyCredential(key)
+        )
+        model = form_training_client.begin_training(os.getenv("CONTAINER_SAS_URL"), use_training_labels=True).result()
+        model_id = model.model_id
+
+    sample.copy_model(model_id)
