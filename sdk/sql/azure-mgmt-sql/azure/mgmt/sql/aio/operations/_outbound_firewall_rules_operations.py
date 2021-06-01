@@ -48,7 +48,7 @@ class OutboundFirewallRulesOperations:
         resource_group_name: str,
         server_name: str,
         outbound_rule_fqdn: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OutboundFirewallRule":
         """Gets an outbound firewall rule.
 
@@ -112,7 +112,7 @@ class OutboundFirewallRulesOperations:
         server_name: str,
         outbound_rule_fqdn: str,
         parameters: "_models.OutboundFirewallRule",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OutboundFirewallRule"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OutboundFirewallRule"]]
         error_map = {
@@ -172,7 +172,7 @@ class OutboundFirewallRulesOperations:
         server_name: str,
         outbound_rule_fqdn: str,
         parameters: "_models.OutboundFirewallRule",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OutboundFirewallRule"]:
         """Create a outbound firewall rule with a given name.
 
@@ -187,8 +187,8 @@ class OutboundFirewallRulesOperations:
         :type parameters: ~azure.mgmt.sql.models.OutboundFirewallRule
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OutboundFirewallRule or the result of cls(response)
@@ -248,7 +248,7 @@ class OutboundFirewallRulesOperations:
         resource_group_name: str,
         server_name: str,
         outbound_rule_fqdn: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -292,7 +292,7 @@ class OutboundFirewallRulesOperations:
         resource_group_name: str,
         server_name: str,
         outbound_rule_fqdn: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a outbound firewall rule with a given name.
 
@@ -305,8 +305,8 @@ class OutboundFirewallRulesOperations:
         :type outbound_rule_fqdn: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -361,7 +361,7 @@ class OutboundFirewallRulesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OutboundFirewallRuleListResult"]:
         """Gets all outbound firewall rules on a server.
 

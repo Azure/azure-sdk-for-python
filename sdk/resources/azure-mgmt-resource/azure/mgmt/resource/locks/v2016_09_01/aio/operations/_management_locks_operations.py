@@ -46,7 +46,7 @@ class ManagementLocksOperations:
         resource_group_name: str,
         lock_name: str,
         parameters: "_models.ManagementLockObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementLockObject":
         """Creates or updates a management lock at the resource group level.
 
@@ -121,7 +121,7 @@ class ManagementLocksOperations:
         self,
         resource_group_name: str,
         lock_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a management lock at the resource group level.
 
@@ -178,7 +178,7 @@ class ManagementLocksOperations:
         self,
         resource_group_name: str,
         lock_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementLockObject":
         """Gets a management lock at the resource group level.
 
@@ -237,7 +237,7 @@ class ManagementLocksOperations:
         scope: str,
         lock_name: str,
         parameters: "_models.ManagementLockObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementLockObject":
         """Create or update a management lock by scope.
 
@@ -309,7 +309,7 @@ class ManagementLocksOperations:
         self,
         scope: str,
         lock_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a management lock by scope.
 
@@ -361,7 +361,7 @@ class ManagementLocksOperations:
         self,
         scope: str,
         lock_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementLockObject":
         """Get a management lock by scope.
 
@@ -423,7 +423,7 @@ class ManagementLocksOperations:
         resource_name: str,
         lock_name: str,
         parameters: "_models.ManagementLockObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementLockObject":
         """Creates or updates a management lock at the resource level or any level below the resource.
 
@@ -514,7 +514,7 @@ class ManagementLocksOperations:
         resource_type: str,
         resource_name: str,
         lock_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the management lock of a resource or any level below the resource.
 
@@ -589,7 +589,7 @@ class ManagementLocksOperations:
         resource_type: str,
         resource_name: str,
         lock_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementLockObject":
         """Get the management lock of a resource or any level below resource.
 
@@ -660,7 +660,7 @@ class ManagementLocksOperations:
         self,
         lock_name: str,
         parameters: "_models.ManagementLockObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementLockObject":
         """Creates or updates a management lock at the subscription level.
 
@@ -731,7 +731,7 @@ class ManagementLocksOperations:
     async def delete_at_subscription_level(
         self,
         lock_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the management lock at the subscription level.
 
@@ -784,7 +784,7 @@ class ManagementLocksOperations:
     async def get_at_subscription_level(
         self,
         lock_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementLockObject":
         """Gets a management lock at the subscription level.
 
@@ -839,7 +839,7 @@ class ManagementLocksOperations:
         self,
         resource_group_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagementLockListResult"]:
         """Gets all the management locks for a resource group.
 
@@ -918,7 +918,7 @@ class ManagementLocksOperations:
         resource_type: str,
         resource_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagementLockListResult"]:
         """Gets all the management locks for a resource or any level below resource.
 
@@ -1005,7 +1005,7 @@ class ManagementLocksOperations:
     def list_at_subscription_level(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagementLockListResult"]:
         """Gets all the management locks for a subscription.
 
@@ -1077,7 +1077,7 @@ class ManagementLocksOperations:
         self,
         scope: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagementLockListResult"]:
         """Gets all the management locks for a scope.
 

@@ -383,12 +383,8 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @pytest.mark.live_test_only
     @tables_decorator
     def test_account_sas(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-
-        # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
         tsc = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
@@ -404,7 +400,8 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             entity['RowKey'] = u'test2'
             table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
-            token = generate_account_sas(
+            token = self.generate_sas(
+                generate_account_sas,
                 tables_primary_storage_account_key,
                 resource_types=ResourceTypes(object=True),
                 permission=AccountSasPermissions(read=True),
@@ -471,13 +468,3 @@ class TestTablesUnitTest(TableTestCase):
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
-
-    def test_azurite_url(self):
-        account_url = "https://127.0.0.1:10002/my_account"
-        tsc = TableServiceClient(account_url, credential=self.credential)
-
-        assert tsc.account_name == "my_account"
-        assert tsc.url == "https://127.0.0.1:10002/my_account"
-        assert tsc._location_mode == "primary"
-        assert tsc.credential.named_key.key == self.credential.named_key.key
-        assert tsc.credential.named_key.name == self.credential.named_key.name

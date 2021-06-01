@@ -480,12 +480,12 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            entity = {'RowKey': 'rk'}
+            entity = {'RowKey': u'rk'}
 
             # Act
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError) as error:
                 resp = self.table.create_entity(entity=entity)
-            # Assert
+                assert str(error).contains("PartitionKey must be present in an entity")
         finally:
             self._tear_down()
 
@@ -508,11 +508,12 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            entity = {'PartitionKey': 'pk'}
+            entity = {'PartitionKey': u'pk'}
 
             # Act
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError) as error:
                 resp = self.table.create_entity(entity=entity)
+                assert str(error).contains("RowKey must be present in an entity")
 
         finally:
             self._tear_down()
@@ -1270,15 +1271,15 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Assert
             assert resp is not None
-            assert resp['EmptyByte'].value ==  b''
+            assert resp['EmptyByte'] ==  b''
             assert resp['EmptyUnicode'] ==  u''
-            assert resp['SpacesOnlyByte'].value ==  b'   '
+            assert resp['SpacesOnlyByte'] ==  b'   '
             assert resp['SpacesOnlyUnicode'] ==  u'   '
-            assert resp['SpacesBeforeByte'].value ==  b'   Text'
+            assert resp['SpacesBeforeByte'] ==  b'   Text'
             assert resp['SpacesBeforeUnicode'] ==  u'   Text'
-            assert resp['SpacesAfterByte'].value ==  b'Text   '
+            assert resp['SpacesAfterByte'] ==  b'Text   '
             assert resp['SpacesAfterUnicode'] ==  u'Text   '
-            assert resp['SpacesBeforeAndAfterByte'].value ==  b'   Text   '
+            assert resp['SpacesBeforeAndAfterByte'] ==  b'   Text   '
             assert resp['SpacesBeforeAndAfterUnicode'] ==  u'   Text   '
         finally:
             self._tear_down()
@@ -1316,7 +1317,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Assert
             assert resp is not None
-            assert resp['binary'].value ==  binary_data
+            assert resp['binary'] ==  binary_data
         finally:
             self._tear_down()
 
@@ -1607,7 +1608,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_query(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
 
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1640,7 +1640,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_add(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1673,7 +1672,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_add_inside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1705,7 +1703,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_add_outside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1736,7 +1733,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_update(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1767,7 +1763,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1797,7 +1792,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_upper_case_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1838,7 +1832,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:

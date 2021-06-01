@@ -34,7 +34,7 @@ A quick description of the five commands above:
 
 ### Troubleshooting tox errors
 
-- Tox will complain if there are no tests. Add a dummy test in case you need to bypass this
+- Tox will complain if there are no tests. Add an empty test in case you need to bypass this
 - Make sure there is an `__init__.py` file inside of every directory inside of `azure` (Example: `azure/media` should have an __init__.py file)
 - Follow the ReadMe guidelines outlined here: https://review.docs.microsoft.com/help/contribute-ref/contribute-ref-how-to-document-sdk?branch=master#readme. ReadMe titles are case SENSITIVE and use sentence casing.
 - Make sure MANIFEST.in includes all required folders. (Most likely the required folders will be tests, samples, and the generated folder) 

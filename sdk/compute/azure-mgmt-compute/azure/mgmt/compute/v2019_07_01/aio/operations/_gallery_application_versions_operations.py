@@ -50,7 +50,7 @@ class GalleryApplicationVersionsOperations:
         gallery_application_name: str,
         gallery_application_version_name: str,
         gallery_application_version: "_models.GalleryApplicationVersion",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GalleryApplicationVersion":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryApplicationVersion"]
         error_map = {
@@ -114,7 +114,7 @@ class GalleryApplicationVersionsOperations:
         gallery_application_name: str,
         gallery_application_version_name: str,
         gallery_application_version: "_models.GalleryApplicationVersion",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.GalleryApplicationVersion"]:
         """Create or update a gallery Application Version.
 
@@ -136,8 +136,8 @@ class GalleryApplicationVersionsOperations:
         :type gallery_application_version: ~azure.mgmt.compute.v2019_07_01.models.GalleryApplicationVersion
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either GalleryApplicationVersion or the result of cls(response)
@@ -201,7 +201,7 @@ class GalleryApplicationVersionsOperations:
         gallery_application_name: str,
         gallery_application_version_name: str,
         gallery_application_version: "_models.GalleryApplicationVersionUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GalleryApplicationVersion":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryApplicationVersion"]
         error_map = {
@@ -258,7 +258,7 @@ class GalleryApplicationVersionsOperations:
         gallery_application_name: str,
         gallery_application_version_name: str,
         gallery_application_version: "_models.GalleryApplicationVersionUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.GalleryApplicationVersion"]:
         """Update a gallery Application Version.
 
@@ -280,8 +280,8 @@ class GalleryApplicationVersionsOperations:
         :type gallery_application_version: ~azure.mgmt.compute.v2019_07_01.models.GalleryApplicationVersionUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either GalleryApplicationVersion or the result of cls(response)
@@ -345,7 +345,7 @@ class GalleryApplicationVersionsOperations:
         gallery_application_name: str,
         gallery_application_version_name: str,
         expand: Optional[Union[str, "_models.ReplicationStatusTypes"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GalleryApplicationVersion":
         """Retrieves information about a gallery Application Version.
 
@@ -418,7 +418,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -466,7 +466,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a gallery Application Version.
 
@@ -483,8 +483,8 @@ class GalleryApplicationVersionsOperations:
         :type gallery_application_version_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -542,7 +542,7 @@ class GalleryApplicationVersionsOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_application_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.GalleryApplicationVersionList"]:
         """List gallery Application Versions in a gallery Application Definition.
 

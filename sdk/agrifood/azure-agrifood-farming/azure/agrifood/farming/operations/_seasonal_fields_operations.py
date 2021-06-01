@@ -78,7 +78,7 @@ class SeasonalFieldsOperations(object):
         # type: (...) -> Iterable["_models.SeasonalFieldListResponse"]
         """Returns a paginated list of seasonal field resources under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
         :param farm_ids: Farm Ids of the resource.
         :type farm_ids: list[str]
@@ -443,9 +443,9 @@ class SeasonalFieldsOperations(object):
         # type: (...) -> "_models.SeasonalField"
         """Gets a specified seasonal field resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
-        :param seasonal_field_id: Id of the seasonal field.
+        :param seasonal_field_id: ID of the seasonal field.
         :type seasonal_field_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SeasonalField, or the result of cls(response)
@@ -498,18 +498,18 @@ class SeasonalFieldsOperations(object):
         self,
         farmer_id,  # type: str
         seasonal_field_id,  # type: str
-        body=None,  # type: Optional["_models.SeasonalField"]
+        seasonal_field=None,  # type: Optional["_models.SeasonalField"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.SeasonalField"
         """Creates or Updates a seasonal field resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer resource.
+        :param farmer_id: ID of the associated farmer resource.
         :type farmer_id: str
-        :param seasonal_field_id: Id of the seasonal field resource.
+        :param seasonal_field_id: ID of the seasonal field resource.
         :type seasonal_field_id: str
-        :param body: Seasonal field resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.SeasonalField
+        :param seasonal_field: Seasonal field resource payload to create or update.
+        :type seasonal_field: ~azure.agrifood.farming.models.SeasonalField
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SeasonalField, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.SeasonalField
@@ -543,8 +543,8 @@ class SeasonalFieldsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'SeasonalField')
+        if seasonal_field is not None:
+            body_content = self._serialize.body(seasonal_field, 'SeasonalField')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -578,9 +578,9 @@ class SeasonalFieldsOperations(object):
         # type: (...) -> None
         """Deletes a specified seasonal-field resource under a particular farmer.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: ID of the farmer.
         :type farmer_id: str
-        :param seasonal_field_id: Id of the seasonal field.
+        :param seasonal_field_id: ID of the seasonal field.
         :type seasonal_field_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -634,7 +634,7 @@ class SeasonalFieldsOperations(object):
         # type: (...) -> "_models.CascadeDeleteJob"
         """Get cascade delete job for specified seasonal field.
 
-        :param job_id: Id of the job.
+        :param job_id: ID of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CascadeDeleteJob, or the result of cls(response)

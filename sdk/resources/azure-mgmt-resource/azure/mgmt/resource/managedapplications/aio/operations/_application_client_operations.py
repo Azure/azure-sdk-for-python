@@ -23,7 +23,7 @@ class ApplicationClientOperationsMixin:
 
     def list_operations(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OperationListResult"]:
         """Lists all of the available Microsoft.Solutions REST API operations.
 

@@ -15,7 +15,7 @@ import sys
 from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import (
     ResourceNotFoundError,
     ClientAuthenticationError
@@ -518,14 +518,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_new_invalid_key(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Arrange
-        invalid_key = tables_primary_storage_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
-        key_list = list(tables_primary_storage_account_key)
-
-        key_list[-6:] = list("0000==")
-        invalid_key = ''.join(key_list)
-
-        self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), invalid_key)
+        invalid_key = tables_primary_storage_account_key.named_key.key[0:-6] + "==" # cut off a bit from the end to invalidate
+        tables_primary_storage_account_key = AzureNamedKeyCredential(tables_storage_account_name, invalid_key)
+        credential = AzureNamedKeyCredential(name=tables_storage_account_name, key=tables_primary_storage_account_key.named_key.key)
+        self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential)
         self.table_name = self.get_resource_name('uttable')
         self.table = self.ts.get_table_client(self.table_name)
 
@@ -555,8 +551,8 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,

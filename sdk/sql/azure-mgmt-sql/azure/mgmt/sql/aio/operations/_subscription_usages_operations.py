@@ -44,7 +44,7 @@ class SubscriptionUsagesOperations:
     def list_by_location(
         self,
         location_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SubscriptionUsageListResult"]:
         """Gets all subscription usage metrics in a given location.
 
@@ -115,7 +115,7 @@ class SubscriptionUsagesOperations:
         self,
         location_name: str,
         usage_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SubscriptionUsage":
         """Gets a subscription usage metric.
 

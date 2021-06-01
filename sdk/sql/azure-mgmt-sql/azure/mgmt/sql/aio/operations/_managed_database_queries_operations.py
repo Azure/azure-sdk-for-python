@@ -47,7 +47,7 @@ class ManagedDatabaseQueriesOperations:
         managed_instance_name: str,
         database_name: str,
         query_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedInstanceQuery":
         """Get query by query id.
 
@@ -117,7 +117,7 @@ class ManagedDatabaseQueriesOperations:
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         interval: Optional[Union[str, "_models.QueryTimeGrainType"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceQueryStatistics"]:
         """Get query execution statistics by query id.
 

@@ -3,6 +3,7 @@ import tempfile
 
 import pytest
 
+
 @pytest.mark.skip(reason="test for SDK team that should be manually activated")
 def test_build_package_from_pr_number(github_token):
     from pathlib import Path
@@ -15,7 +16,7 @@ def test_build_package_from_pr_number(github_token):
         files = set(file.relative_to(temp_dir) for file in temp_dir_path.iterdir())
         assert files == {
             Path("azure_mgmt_iothubprovisioningservices-0.2.0-py2.py3-none-any.whl"),
-            Path("azure-mgmt-iothubprovisioningservices-0.2.0.zip")
+            Path("azure-mgmt-iothubprovisioningservices-0.2.0.zip"),
         }
 
     # This PR is broken and can't be built: 2040

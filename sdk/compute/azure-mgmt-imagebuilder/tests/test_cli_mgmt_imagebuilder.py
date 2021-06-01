@@ -37,6 +37,7 @@ class MgmtImageBuilderClientTest(AzureMgmtTestCase):
             azure.mgmt.imagebuilder.ImageBuilderClient
         )
     
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_imagebuilder(self, resource_group):
 

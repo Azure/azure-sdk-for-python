@@ -47,7 +47,7 @@ class LedgerDigestUploadsOperations:
         server_name: str,
         database_name: str,
         ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LedgerDigestUploads":
         """Gets the current ledger digest upload configuration for a database.
 
@@ -115,7 +115,7 @@ class LedgerDigestUploadsOperations:
         database_name: str,
         ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
         parameters: "_models.LedgerDigestUploads",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LedgerDigestUploads"]:
         """Enables upload ledger digests to an Azure Storage account or an Azure Confidential Ledger
         instance.
@@ -191,7 +191,7 @@ class LedgerDigestUploadsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LedgerDigestUploadsListResult"]:
         """Gets all ledger digest upload settings on a database.
 
@@ -271,7 +271,7 @@ class LedgerDigestUploadsOperations:
         server_name: str,
         database_name: str,
         ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LedgerDigestUploads"]:
         """Disables uploading ledger digests to an Azure Storage account or an Azure Confidential Ledger
         instance.

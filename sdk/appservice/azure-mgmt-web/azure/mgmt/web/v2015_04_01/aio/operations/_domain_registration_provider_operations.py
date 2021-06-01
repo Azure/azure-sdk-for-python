@@ -43,7 +43,7 @@ class DomainRegistrationProviderOperations:
 
     def list_operations(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CsmOperationCollection"]:
         """Implements Csm operations Api to exposes the list of available Csm Apis under the resource provider.
 

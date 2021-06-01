@@ -70,7 +70,7 @@ class AnalyzeResults(Model):
 
     _validation = {
         'version': {'required': True},
-        'model_version': {'required': True},
+        'model_version': {'required': True, 'pattern': r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$'},
         'read_results': {'required': True},
     }
 

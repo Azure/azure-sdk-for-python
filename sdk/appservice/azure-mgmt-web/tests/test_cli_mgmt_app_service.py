@@ -24,6 +24,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
             azure.mgmt.web.WebSiteManagementClient
         )
 
+    @unittest.skip('skip temporarily')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_app_service_plan(self, resource_group):
 

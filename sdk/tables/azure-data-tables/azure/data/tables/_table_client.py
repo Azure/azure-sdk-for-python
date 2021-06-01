@@ -12,13 +12,18 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import unquote  # type: ignore
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
-from ._error import _process_table_error, _validate_table_name
+from ._error import (
+    _process_table_error,
+    _validate_table_name,
+    _reraise_error,
+    _decode_error
+)
 from ._generated.models import (
     SignedIdentifier,
     TableProperties,
@@ -147,6 +152,8 @@ class TableClient(TablesBaseClient):
             parsed_url.query,
         )
         table_name = unquote(table_path[-1])
+        if table_name.lower().startswith("tables('"):
+            table_name = table_name[8:-2]
         if not table_name:
             raise ValueError(
                 "Invalid URL. Please provide a URL with a valid table name"
@@ -379,10 +386,7 @@ class TableClient(TablesBaseClient):
                 :dedent: 12
                 :caption: Creating and adding an entity to a Table
         """
-        if "PartitionKey" in entity and "RowKey" in entity:
-            entity = _add_entity_properties(entity)
-        else:
-            raise ValueError("PartitionKey and RowKey were not provided in entity")
+        entity = _add_entity_properties(entity)
         try:
             metadata, _ = self._client.table.insert_entity(
                 table=self.table_name,
@@ -391,8 +395,14 @@ class TableClient(TablesBaseClient):
                 **kwargs
             )
             return _trim_service_metadata(metadata)
-        except ResourceNotFoundError as error:
-            _process_table_error(error)
+        except HttpResponseError as error:
+            decoded = _decode_error(error.response, error.message)
+            if decoded.error_code == "PropertiesNeedValue":
+                if entity.get("PartitionKey") is None:
+                    raise ValueError("PartitionKey must be present in an entity")
+                if entity.get("RowKey") is None:
+                    raise ValueError("RowKey must be present in an entity")
+            _reraise_error(error)
 
     @distributed_trace
     def update_entity(
@@ -697,6 +707,7 @@ class TableClient(TablesBaseClient):
             self._client._deserialize,  # pylint: disable=protected-access
             self._client._config,  # pylint: disable=protected-access
             self.table_name,
+            is_cosmos_endpoint=self._cosmos_endpoint,
             **kwargs
         )
         for operation in operations:

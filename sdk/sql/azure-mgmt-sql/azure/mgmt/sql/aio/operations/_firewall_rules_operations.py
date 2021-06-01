@@ -46,7 +46,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         server_name: str,
         firewall_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FirewallRule":
         """Gets a firewall rule.
 
@@ -110,7 +110,7 @@ class FirewallRulesOperations:
         server_name: str,
         firewall_rule_name: str,
         parameters: "_models.FirewallRule",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FirewallRule":
         """Creates or updates a firewall rule.
 
@@ -184,7 +184,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         server_name: str,
         firewall_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a firewall rule.
 
@@ -241,7 +241,7 @@ class FirewallRulesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FirewallRuleListResult"]:
         """Gets a list of firewall rules.
 
@@ -317,7 +317,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.FirewallRuleList",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.FirewallRule"]:
         """Replaces all firewall rules on the server.
 
