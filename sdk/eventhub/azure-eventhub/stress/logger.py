@@ -3,9 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import os
 import sys
 import logging
 from logging.handlers import RotatingFileHandler
+
+from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 
 def get_base_logger(log_filename, logger_name, level=logging.INFO, print_console=False, log_format=None,
@@ -76,3 +79,11 @@ def get_logger(log_filename, logger_name, level=logging.INFO, print_console=Fals
         stress_logger.addHandler(stress_file_handler)
 
     return stress_logger
+
+
+def get_azure_logger(logger_name, level=logging.INFO):
+    logger = logging.getLogger("azure_logger_" + logger_name)
+    logger.setLevel(level)
+    # oc will automatically search for the ENV VAR 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+    logger.addHandler(AzureLogHandler())
+    return logger
