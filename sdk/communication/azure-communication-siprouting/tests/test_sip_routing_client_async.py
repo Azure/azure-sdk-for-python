@@ -7,13 +7,15 @@
 import aiounittest
 import json
 import pytest
-import asyncio
 
 from azure.communication.siprouting.aio import SIPRoutingClient
 from azure.core.credentials import AccessToken
 from azure.communication.siprouting._generated.models import Trunk, TrunkRoute
 
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock, patch
+except ImportError:  # python < 3.3
+    from mock import Mock, patch  # type: ignore
 
 
 class TestSIPRoutingClientAsync(aiounittest.AsyncTestCase):
@@ -54,7 +56,8 @@ class TestSIPRoutingClientAsync(aiounittest.AsyncTestCase):
 
         self.response = self.mock_response(
             status_code=200, json_payload=self.payload)
-
+    
+    @pytest.mark.asyncio
     @patch("azure.communication.siprouting._generated.aio._azure_communication_sip_routing_service.AzureCommunicationSIPRoutingServiceOperationsMixin.get_sip_configuration",
            return_value={"trunks": {"trunk_1": Trunk(sip_signaling_port=4001)}, "routes": [TrunkRoute(
                name= "route_1",
@@ -69,6 +72,7 @@ class TestSIPRoutingClientAsync(aiounittest.AsyncTestCase):
         self.assertEqual(response['trunks'], self.test_trunks)
         self.assertEqual(response['routes'], self.test_routes)
 
+    @pytest.mark.asyncio
     @patch("azure.communication.siprouting._generated.aio._azure_communication_sip_routing_service.AzureCommunicationSIPRoutingService.patch_sip_configuration")
     async def test_update_sip_trunk_configuration(self, mock):
         test_client = self.get_simple_test_client()
@@ -79,6 +83,7 @@ class TestSIPRoutingClientAsync(aiounittest.AsyncTestCase):
         self.assertEqual(mock.call_args[1]['body'].trunks, self.test_trunks)
         self.assertEqual(mock.call_args[1]['body'].routes, self.test_routes)
 
+    @pytest.mark.asyncio
     @patch("azure.communication.siprouting._generated.aio._azure_communication_sip_routing_service.AzureCommunicationSIPRoutingService.patch_sip_configuration")
     async def test_update_pstn_gateways(self, mock):
         test_client = self.get_simple_test_client()
@@ -87,6 +92,7 @@ class TestSIPRoutingClientAsync(aiounittest.AsyncTestCase):
 
         self.assertEqual(mock.call_args[1]['body'].trunks, self.test_trunks)
 
+    @pytest.mark.asyncio
     @patch("azure.communication.siprouting._generated.aio._azure_communication_sip_routing_service.AzureCommunicationSIPRoutingService.patch_sip_configuration")
     async def test_update_routing_settings(self, mock):
         test_client = self.get_simple_test_client()

@@ -76,8 +76,9 @@ class TestSIPRoutingClient(unittest.TestCase):
         test_client.update_sip_trunk_configuration(
             self.test_trunks, self.test_routes)
 
+        captured_request = mock.send.call_args[0][0]
         self.assertEqual(
-            json.loads(mock.send.call_args.args[0].body), self.payload)
+            json.loads(captured_request.body), self.payload)
 
     def test_update_pstn_gateways(self):
         expected_request_body = {"trunks": {
@@ -88,8 +89,9 @@ class TestSIPRoutingClient(unittest.TestCase):
 
         test_client.update_pstn_gateways(self.test_trunks)
 
+        captured_request = mock.send.call_args[0][0]
         self.assertEqual(
-            json.loads(mock.send.call_args.args[0].body), expected_request_body)
+            json.loads(captured_request.body), expected_request_body)
 
     def test_update_routing_settings(self):
         expected_request_body = {"routes": [
@@ -101,8 +103,9 @@ class TestSIPRoutingClient(unittest.TestCase):
 
         test_client.update_routing_settings(self.test_routes)
 
+        captured_request = mock.send.call_args[0][0]
         self.assertEqual(
-            json.loads(mock.send.call_args.args[0].body), expected_request_body)
+            json.loads(captured_request.body), expected_request_body)
 
     def test_update_sip_trunk_configuration_no_online_pstn_gateways_raises_value_error(self):
         test_client = self.get_simple_test_client()
