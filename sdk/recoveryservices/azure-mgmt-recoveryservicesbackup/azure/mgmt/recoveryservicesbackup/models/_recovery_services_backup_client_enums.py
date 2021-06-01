@@ -177,6 +177,23 @@ class RestorePointType(str, Enum):
     incremental = "Incremental"
 
 
+class RecoveryPointTierType(str, Enum):
+
+    invalid = "Invalid"
+    instant_rp = "InstantRP"
+    hardened_rp = "HardenedRP"
+    archived_rp = "ArchivedRP"
+
+
+class RecoveryPointTierStatus(str, Enum):
+
+    invalid = "Invalid"
+    valid = "Valid"
+    disabled = "Disabled"
+    deleted = "Deleted"
+    rehydrated = "Rehydrated"
+
+
 class OverwriteOptions(str, Enum):
 
     invalid = "Invalid"
@@ -216,21 +233,6 @@ class RetentionDurationType(str, Enum):
     weeks = "Weeks"
     months = "Months"
     years = "Years"
-
-
-class RecoveryPointTierType(str, Enum):
-
-    invalid = "Invalid"
-    instant_rp = "InstantRP"
-    hardened_rp = "HardenedRP"
-
-
-class RecoveryPointTierStatus(str, Enum):
-
-    invalid = "Invalid"
-    valid = "Valid"
-    disabled = "Disabled"
-    deleted = "Deleted"
 
 
 class BackupManagementType(str, Enum):
@@ -563,13 +565,10 @@ class OperationStatusValues(str, Enum):
     canceled = "Canceled"
 
 
-class SupportStatus(str, Enum):
+class RehydrationPriority(str, Enum):
 
-    invalid = "Invalid"
-    supported = "Supported"
-    default_off = "DefaultOFF"
-    default_on = "DefaultON"
-    not_supported = "NotSupported"
+    standard = "Standard"
+    high = "High"
 
 
 class UsagesUnit(str, Enum):
@@ -582,17 +581,26 @@ class UsagesUnit(str, Enum):
     bytes_per_second = "BytesPerSecond"
 
 
-class FabricName(str, Enum):
-
-    invalid = "Invalid"
-    azure = "Azure"
-
-
 class Type(str, Enum):
 
     invalid = "Invalid"
     backup_protected_item_count_summary = "BackupProtectedItemCountSummary"
     backup_protection_container_count_summary = "BackupProtectionContainerCountSummary"
+
+
+class SupportStatus(str, Enum):
+
+    invalid = "Invalid"
+    supported = "Supported"
+    default_off = "DefaultOFF"
+    default_on = "DefaultON"
+    not_supported = "NotSupported"
+
+
+class FabricName(str, Enum):
+
+    invalid = "Invalid"
+    azure = "Azure"
 
 
 class ValidationStatus(str, Enum):

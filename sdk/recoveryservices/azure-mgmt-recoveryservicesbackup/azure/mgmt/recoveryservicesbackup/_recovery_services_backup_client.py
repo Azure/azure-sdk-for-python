@@ -49,6 +49,8 @@ from .operations import ProtectionPolicyOperationStatusesOperations
 from .operations import BackupProtectableItemsOperations
 from .operations import BackupProtectionContainersOperations
 from .operations import SecurityPINsOperations
+from .operations import RecoveryPointsRecommendedForMoveOperations
+from .operations import BackupUsageSummariesCRROperations
 from .operations import AadPropertiesOperations
 from .operations import CrossRegionRestoreOperations
 from .operations import BackupCrrJobDetailsOperations
@@ -143,6 +145,10 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
     :vartype backup_protection_containers: azure.mgmt.recoveryservicesbackup.operations.BackupProtectionContainersOperations
     :ivar security_pi_ns: SecurityPINs operations
     :vartype security_pi_ns: azure.mgmt.recoveryservicesbackup.operations.SecurityPINsOperations
+    :ivar recovery_points_recommended_for_move: RecoveryPointsRecommendedForMove operations
+    :vartype recovery_points_recommended_for_move: azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsRecommendedForMoveOperations
+    :ivar backup_usage_summaries_crr: BackupUsageSummariesCRR operations
+    :vartype backup_usage_summaries_crr: azure.mgmt.recoveryservicesbackup.operations.BackupUsageSummariesCRROperations
     :ivar aad_properties: AadProperties operations
     :vartype aad_properties: azure.mgmt.recoveryservicesbackup.operations.AadPropertiesOperations
     :ivar cross_region_restore: CrossRegionRestore operations
@@ -261,6 +267,10 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
         self.backup_protection_containers = BackupProtectionContainersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.security_pi_ns = SecurityPINsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.recovery_points_recommended_for_move = RecoveryPointsRecommendedForMoveOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_usage_summaries_crr = BackupUsageSummariesCRROperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.aad_properties = AadPropertiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
