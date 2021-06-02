@@ -113,11 +113,13 @@ class _VSCodeCredentialBase(ABC):
 class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
     """Authenticates as the Azure user signed in to Visual Studio Code.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
-          defines authorities for other clouds.
-    :keyword str tenant_id: ID of the tenant the credential should authenticate in. Defaults to the "organizations"
-        tenant, which supports only Azure Active Directory work or school accounts.
+    :keyword str authority: authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com".
+        This argument is required for a custom cloud and usually unnecessary otherwise. Defaults to the authority
+        matching the "Azure: Cloud" setting in VS Code's user settings or, when that setting has no value, the
+        authority for Azure Public Cloud.
+    :keyword str tenant_id: ID of the tenant the credential should authenticate in. Defaults to the "Azure: Tenant"
+        setting in VS Code's user settings or, when that setting has no value, the "organizations" tenant, which
+        supports only Azure Active Directory work or school accounts.
     """
 
     def get_token(self, *scopes, **kwargs):
