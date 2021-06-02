@@ -268,10 +268,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [azure_cli_link]: https://pypi.org/project/azure-cli/
 [python-query-src]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-query/
-[python-query-pypi]: https://pypi.org/project/azure-monitor-query
-[python-query-product-docs]: https://docs.microsoft.com/azure/monitor/query/overview
-[python-query-ref-docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-monitor-query/latest/index.html
-[publisher-service-doc]: https://docs.microsoft.com/azure/monitor/query/concepts
+[python-query-pypi]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-query/
+[python-query-product-docs]: https://docs.microsoft.com/rest/api/monitor/metrics
+[python-query-ref-docs]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-query/
 [python-query-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/monitor/azure-monitor-query/samples
 [python-query-changelog]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/monitor/azure-monitor-query/CHANGELOG.md
 [pip]: https://pypi.org/project/pip/
