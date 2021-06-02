@@ -494,7 +494,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
             or self.missing_data_point_fill_settings.custom_fill_value
             if self.missing_data_point_fill_settings else None,
             viewers=kwargs.pop("viewers", None)
-            or self.viewer_emails ,
+            or self.viewer_emails,
             view_mode=kwargs.pop("viewMode", None)
             or self.access_mode,
             admins=kwargs.pop("admins", None)
