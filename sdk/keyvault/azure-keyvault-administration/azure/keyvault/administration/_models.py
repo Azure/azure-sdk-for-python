@@ -5,7 +5,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import ODataV4Format
 
 if TYPE_CHECKING:
     from typing import Any, Optional
@@ -256,7 +256,7 @@ class _Operation(object):
         if error is None or error.code is None:
             self._error = None
         else:
-            self._error = AzureError("Error: {}".format(error.message or self._status_details), error=error)
+            self._error = ODataV4Format(vars(error))
 
     @property
     def status(self):
@@ -272,7 +272,7 @@ class _Operation(object):
 
     @property
     def error(self):
-        # type: () -> Optional[AzureError]
+        # type: () -> Optional[ODataV4Format]
         """Error encountered, if any, during the operation"""
         return self._error
 
