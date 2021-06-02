@@ -13,13 +13,9 @@ from azure.storage.blob import (
     BlobClient,
     ExponentialRetry
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, ResponseCallback
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
-from _shared.testcase import (
-    StorageTestCase,
-    ResponseCallback,
-    GlobalStorageAccountPreparer
-)
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 # test constants
 PUT_BLOCK_SIZE = 4 * 1024

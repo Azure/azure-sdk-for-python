@@ -14,11 +14,11 @@ from azure.storage.blob.aio import (
     ContainerClient,
     BlobClient,
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, ResponseCallback
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from _shared.testcase import ResponseCallback, GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer
 from _shared.asynctestcase import AsyncStorageTestCase
 
 # test constants

@@ -15,7 +15,7 @@ from azure.core.exceptions import (
 from azure.core.pipeline.transport import(
     RequestsTransport
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, RetryCounter, ResponseCallback
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
@@ -27,8 +27,6 @@ from azure.storage.blob import (
 
 from _shared.testcase import (
     StorageTestCase,
-    ResponseCallback,
-    RetryCounter,
     GlobalStorageAccountPreparer
 )
 
@@ -37,7 +35,7 @@ class RetryRequestTransport(RequestsTransport):
     def __init__(self, *args, **kwargs):
         super(RetryRequestTransport, self).__init__(*args, **kwargs)
         self.count = 0
-    
+
     def send(self, request, **kwargs):
         self.count += 1
         response = super(RetryRequestTransport, self).send(request, **kwargs)

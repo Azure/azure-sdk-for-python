@@ -15,8 +15,8 @@
 * [`CachedStorageAccountPreparer`](cached_storage_account_preparer):
 * [`KeyVaultPreparer`](kv_preparer):
 * [`PowerShellPreparer`](powershell_preparer):
-* [`RetryCounter`](retry_counter): Object for counting retries on a request
-* [`ResponseCallback`](response_callback): Object for mocking response callbacks
+* [`RetryCounter`](retry_counter): Object for counting retries on a request. (Used by Storage)
+* [`ResponseCallback`](response_callback): Object for mocking response callbacks. (Used by Storage)
 
 
 <!-- LINKS -->
