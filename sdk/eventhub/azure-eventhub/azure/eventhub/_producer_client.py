@@ -290,8 +290,8 @@ class EventHubProducerClient(ClientBase):
 
         If you're sending a finite list of `EventData` and you know it's within the event hub
         frame size limit, you can send them with a `send_batch` call. Otherwise, use :meth:`create_batch`
-        to create `EventDataBatch` and add `EventData` into the batch one by one until the size limit,
-        and then call this method to send out the batch.
+        to create `EventDataBatch` and add either `EventData` or `AMQPAnnotatedMessage` into the batch one by one
+        until the size limit, and then call this method to send out the batch.
 
         :param event_data_batch: The `EventDataBatch` object to be sent or a list of `EventData` to be sent
          in a batch. All `EventData` in the list or `EventDataBatch` will land on the same partition.
