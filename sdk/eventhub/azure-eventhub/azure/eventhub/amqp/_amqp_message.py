@@ -84,10 +84,10 @@ class AmqpAnnotatedMessage(object):
     http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format
     for more information on the message format.
     :keyword data_body: The body consists of one or more data sections and each section contains opaque binary data.
-    :paramtype data_body: Optional[Union[str, bytes, List[Union[str, bytes]]]]
+    :paramtype data_body: Union[str, bytes, List[Union[str, bytes]]]
     :keyword sequence_body: The body consists of one or more sequence sections and
      each section contains an arbitrary number of structured data elements.
-    :paramtype sequence_body: Optional[List[Any]]
+    :paramtype sequence_body: List[Any]
     :keyword value_body: The body consists of one amqp-value section and the section contains a single AMQP value.
     :paramtype value_body: Any
     :keyword header: The amqp message header.
