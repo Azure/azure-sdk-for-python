@@ -370,7 +370,7 @@ class TableClient(AsyncTablesBaseClient):
         """
         entity = _add_entity_properties(entity)
         try:
-            metadata, content = await self._client.table.insert_entity(
+            metadata, content = await self._client.table.insert_entity(  # type: ignore
                 table=self.table_name,
                 table_entity_properties=entity,  # type: ignore
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
@@ -621,7 +621,7 @@ class TableClient(AsyncTablesBaseClient):
             metadata = None
             content = None
             if mode is UpdateMode.MERGE:
-                metadata, content = await self._client.table.merge_entity(
+                metadata, content = await self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -630,7 +630,7 @@ class TableClient(AsyncTablesBaseClient):
                     **kwargs
                 )
             elif mode is UpdateMode.REPLACE:
-                metadata, content = await self._client.table.update_entity(
+                metadata, content = await self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
