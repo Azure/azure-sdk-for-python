@@ -110,12 +110,12 @@ class DocumentTranslationClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_check_document_statuses_async.py
-                :start-after: [START create_translation_job_async]
-                :end-before: [END create_translation_job_async]
+            .. literalinclude:: ../samples/async_samples/sample_begin_translation_async.py
+                :start-after: [START begin_translation_async]
+                :end-before: [END begin_translation_async]
                 :language: python
                 :dedent: 4
-                :caption: Create a translation job.
+                :caption: Translate the documents in your storage container.
         """
 
         def deserialization_callback(
@@ -150,7 +150,6 @@ class DocumentTranslationClient(object):
             continuation_token=continuation_token,
             **kwargs
         )
-
 
     @distributed_trace_async
     async def get_job_status(self, job_id, **kwargs):
@@ -265,12 +264,12 @@ class DocumentTranslationClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_create_translation_job_async.py
+            .. literalinclude:: ../samples/async_samples/sample_check_document_statuses_async.py
                 :start-after: [START list_all_document_statuses_async]
                 :end-before: [END list_all_document_statuses_async]
                 :language: python
                 :dedent: 8
-                :caption: List all the document statuses under the translation job.
+                :caption: List all the document statuses as they are being translated.
         """
         translated_after = kwargs.pop("translated_after", None)
         translated_before = kwargs.pop("translated_before", None)

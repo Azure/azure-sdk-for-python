@@ -5,17 +5,16 @@
 # ------------------------------------
 
 """
-FILE: sample_create_translation_job.py
+FILE: sample_begin_translation.py
 
 DESCRIPTION:
-    This sample demonstrates how to create a translation job for documents in your Azure Blob
-    Storage container and wait until the job is completed.
+    This sample demonstrates how to translate documents in your Azure Blob Storage container.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
 
 USAGE:
-    python sample_create_translation_job.py
+    python sample_begin_translation.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Document Translation resource.
@@ -28,8 +27,8 @@ USAGE:
 
 
 def sample_translation():
+    # [START begin_translation]
     import os
-    # [START wait_until_done]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (
         DocumentTranslationClient,
@@ -44,7 +43,7 @@ def sample_translation():
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
-    job = client.create_translation_job(inputs=[
+    poller = client.begin_translation(inputs=[
             DocumentTranslationInput(
                 source_url=source_container_url,
                 targets=[
@@ -55,23 +54,19 @@ def sample_translation():
                 ]
             )
         ]
-    )  # type: JobStatusResult
+    )
+    result = poller.result()
 
-    job_result = client.wait_until_done(job.id)  # type: JobStatusResult
-
-    print("Job status: {}".format(job_result.status))
-    print("Job created on: {}".format(job_result.created_on))
-    print("Job last updated on: {}".format(job_result.last_updated_on))
-    print("Total number of translations on documents: {}".format(job_result.documents_total_count))
+    print("Status: {}".format(poller.status()))
+    print("Created on: {}".format(poller.details.created_on))
+    print("Last updated on: {}".format(poller.details.last_updated_on))
+    print("Total number of translations on documents: {}".format(poller.details.documents_total_count))
 
     print("\nOf total documents...")
-    print("{} failed".format(job_result.documents_failed_count))
-    print("{} succeeded".format(job_result.documents_succeeded_count))
-    # [END wait_until_done]
+    print("{} failed".format(poller.details.documents_failed_count))
+    print("{} succeeded".format(poller.details.documents_succeeded_count))
 
-    # [START list_all_document_statuses]
-    doc_results = client.list_all_document_statuses(job_result.id)  # type: ItemPaged[DocumentStatusResult]
-    for document in doc_results:
+    for document in result:
         print("Document ID: {}".format(document.id))
         print("Document status: {}".format(document.status))
         if document.status == "Succeeded":
@@ -80,7 +75,8 @@ def sample_translation():
             print("Translated to language: {}\n".format(document.translate_to))
         else:
             print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
-    # [END list_all_document_statuses]
+    # [END begin_translation]
+
 
 if __name__ == '__main__':
     sample_translation()

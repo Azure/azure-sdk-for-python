@@ -153,7 +153,6 @@ class DocumentTranslationTest(AzureTestCase):
         ids = kwargs.pop("ids", None)
         # specific assertions
         self.assertIn(doc_details.status, status)
-        self.assertEqual(doc_details.has_completed, True)
         if target_language:
             self.assertEqual(doc_details.translate_to, target_language)
         # generic assertions

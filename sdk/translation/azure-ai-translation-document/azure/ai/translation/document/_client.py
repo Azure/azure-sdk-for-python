@@ -110,12 +110,12 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_check_document_statuses.py
-                :start-after: [START create_translation_job]
-                :end-before: [END create_translation_job]
+            .. literalinclude:: ../samples/sample_begin_translation.py
+                :start-after: [START begin_translation]
+                :end-before: [END begin_translation]
                 :language: python
                 :dedent: 4
-                :caption: Create a translation job.
+                :caption: Translate the documents in your storage container.
         """
 
         def deserialization_callback(
@@ -263,12 +263,12 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_create_translation_job.py
+            .. literalinclude:: ../samples/sample_check_document_statuses.py
                 :start-after: [START list_all_document_statuses]
                 :end-before: [END list_all_document_statuses]
                 :language: python
-                :dedent: 4
-                :caption: List all the document statuses under the translation job.
+                :dedent: 8
+                :caption: List all the document statuses as they are being translated.
         """
         translated_after = kwargs.pop("translated_after", None)
         translated_before = kwargs.pop("translated_before", None)
