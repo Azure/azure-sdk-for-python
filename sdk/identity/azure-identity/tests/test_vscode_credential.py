@@ -198,27 +198,21 @@ def test_no_obtain_token_if_cached():
     assert token.expires_on == expected_token.expires_on
 
 
-@pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
-def test_segfault():
-    from azure.identity._internal.linux_vscode_adapter import _get_refresh_token
+def test_native_adapter():
+    """Exercise the native adapter for the current OS"""
 
-    _get_refresh_token("test", "test")
+    if sys.platform.startswith("darwin"):
+        from azure.identity._internal.macos_vscode_adapter import get_refresh_token
+    elif sys.platform.startswith("linux"):
+        from azure.identity._internal.linux_vscode_adapter import get_refresh_token
+    elif sys.platform.startswith("win"):
+        from azure.identity._internal.win_vscode_adapter import get_refresh_token
+    else:
+        pytest.skip('unsupported platform "{}"'.format(sys.platform))
 
-
-@pytest.mark.skipif(not sys.platform.startswith("darwin"), reason="This test only runs on MacOS")
-def test_mac_keychain_valid_value():
-    with mock.patch("msal_extensions.osx.Keychain.get_generic_password", return_value="VALUE"):
-        assert get_credentials() == "VALUE"
-
-
-@pytest.mark.skipif(not sys.platform.startswith("darwin"), reason="This test only runs on MacOS")
-def test_mac_keychain_error():
-    from msal_extensions.osx import Keychain, KeychainError
-
-    with mock.patch.object(Keychain, "get_generic_password", side_effect=KeychainError(-1)):
-        credential = get_credential()
-        with pytest.raises(CredentialUnavailableError):
-            token = credential.get_token("scope")
+    # the return value (None in CI, possibly something else on a dev machine) is irrelevant
+    # because the goal is simply to expose a native interop problem like a segfault
+    get_refresh_token("AzureCloud")
 
 
 def test_adfs():
