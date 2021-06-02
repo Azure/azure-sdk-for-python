@@ -342,12 +342,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
 
-        try:
-            self._client.container_registry.delete_manifest(repository, tag_or_digest, cls=_delete_callback, **kwargs)
-        except ResourceNotFoundError as exc:
-            if "Not Found" in exc.reason:
-                return
-            raise
+        self._client.container_registry.delete_manifest(repository, tag_or_digest, cls=_delete_callback, **kwargs)
 
     @distributed_trace
     def delete_tag(self, repository, tag, **kwargs):
@@ -371,12 +366,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             for artifact in client.list_tag_properties():
                 client.delete_tag(tag.name)
         """
-        try:
-            self._client.container_registry.delete_tag(repository, tag, cls=_delete_callback, **kwargs)
-        except ResourceNotFoundError as exc:
-            if "Not Found" in exc.reason:
-                return
-            raise
+        self._client.container_registry.delete_tag(repository, tag, cls=_delete_callback, **kwargs)
 
     @distributed_trace
     def get_manifest_properties(self, repository, tag_or_digest, **kwargs):
