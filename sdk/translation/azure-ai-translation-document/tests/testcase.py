@@ -232,7 +232,7 @@ class DocumentTranslationTest(AzureTestCase):
 
 
     # client helpers
-    def _begin_and_validate_translation(self, client, translation_inputs, total_docs_count=None, language=None):
+    def _begin_and_validate_translation(self, client, translation_inputs, total_docs_count, language=None):
         # submit job
         poller = client.begin_translation(translation_inputs)
         self.assertIsNotNone(poller.id)
