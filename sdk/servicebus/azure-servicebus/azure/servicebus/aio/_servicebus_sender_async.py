@@ -26,8 +26,7 @@ from .._common.constants import (
 )
 from .._common import mgmt_handlers
 from .._common.utils import (
-    transform_messages_to_sendable_if_needed,
-    create_messages_from_dicts_if_needed,
+    transform_messages_if_needed,
     send_trace_context_manager,
     trace_message,
 )
@@ -230,7 +229,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # pylint: disable=protected-access
 
         self._check_live()
-        obj_messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)
+        obj_messages = transform_messages_if_needed(messages, ServiceBusMessage)
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -338,10 +337,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             if isinstance(message, ServiceBusMessageBatch):
                 obj_message = message  # type: MessageObjTypes
             else:
-                obj_message = create_messages_from_dicts_if_needed(  # type: ignore
+                obj_message = transform_messages_if_needed(  # type: ignore
                     message, ServiceBusMessage
                 )
-                obj_message = transform_messages_to_sendable_if_needed(obj_message)
                 try:
                     batch = await self.create_message_batch()
                     batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access

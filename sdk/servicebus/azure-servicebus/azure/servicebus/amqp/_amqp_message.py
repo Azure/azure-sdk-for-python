@@ -267,6 +267,10 @@ class AmqpAnnotatedMessage(object):
             footer=self.footer
         )
 
+    def _to_outgoing_message(self, message_type):
+        # convert to an outgoing ServiceBusMessage
+        return message_type(body=None, message=self._to_outgoing_amqp_message(), raw_amqp_message=self)
+
     @property
     def body(self):
         # type: () -> Any

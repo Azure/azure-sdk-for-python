@@ -24,8 +24,7 @@ from .exceptions import (
 )
 from ._common.utils import (
     create_authentication,
-    transform_messages_to_sendable_if_needed,
-    create_messages_from_dicts_if_needed,
+    transform_messages_if_needed,
     send_trace_context_manager,
     trace_message,
 )
@@ -102,7 +101,7 @@ class SenderMixin(object):
                     )
                 )
             message.scheduled_enqueue_time_utc = schedule_time_utc
-            message = transform_messages_to_sendable_if_needed(message)
+            message = transform_messages_if_needed(message, ServiceBusMessage)
             trace_message(message, send_span)
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
@@ -290,7 +289,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # pylint: disable=protected-access
 
         self._check_live()
-        obj_messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)
+        obj_messages = transform_messages_if_needed(messages, ServiceBusMessage)
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -396,11 +395,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             if isinstance(message, ServiceBusMessageBatch):
                 obj_message = message  # type: MessageObjTypes
             else:
-                obj_message = create_messages_from_dicts_if_needed(  # type: ignore
+                obj_message = transform_messages_if_needed(  # type: ignore
                     message, ServiceBusMessage
                 )
-                # Ensure message is sendable (not a ReceivedMessage), and if needed (a list) is batched. Adds tracing.
-                obj_message = transform_messages_to_sendable_if_needed(obj_message)
                 try:
                     batch = self.create_message_batch()
                     batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access

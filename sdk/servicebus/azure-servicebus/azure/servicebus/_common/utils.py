@@ -205,38 +205,16 @@ def generate_dead_letter_entity_name(
     return entity_name
 
 
-def transform_messages_to_sendable_if_needed(messages):
-    """
-    This method is to convert single/multiple received messages
-    to sendable messages to enable message resending.
-    """
-    # pylint: disable=protected-access
-    try:
-        msgs_to_return = []
-        for each in messages:
-            try:
-                msgs_to_return.append(each._to_outgoing_message())
-            except AttributeError:
-                msgs_to_return.append(each)
-        return msgs_to_return
-    except TypeError:
-        try:
-            return messages._to_outgoing_message()
-        except AttributeError:
-            return messages
-
-
 def _convert_to_single_service_bus_message(message, message_type):
     # type: (SingleMessageType, Type[ServiceBusMessage]) -> ServiceBusMessage
     # pylint: disable=protected-access
-    if isinstance(message, AmqpAnnotatedMessage):
-        message = message_type(
-            body=None,
-            message=message._to_outgoing_amqp_message()
-        )
-
-    if isinstance(message, message_type):
+    try:
+        return message._to_outgoing_message(message_type)
+    except TypeError:
         return message._to_outgoing_message()
+    except AttributeError:
+        pass
+
     try:
         return message_type(**cast(Mapping[str, Any], message))._to_outgoing_message()
     except TypeError:
@@ -246,11 +224,14 @@ def _convert_to_single_service_bus_message(message, message_type):
         )
 
 
-def create_messages_from_dicts_if_needed(messages, message_type):
+def transform_messages_if_needed(messages, message_type):
     # type: (MessagesType, Type[ServiceBusMessage]) -> Union[ServiceBusMessage, List[ServiceBusMessage]]
     """
-    This method is used to convert dict representations of one or more messages to
-    one or more ServiceBusMessage objects.
+    This method serves multiple goal:
+    1. convert dict representations of one or more messages to
+    one or more ServiceBusMessage objects if needed
+    2. update the messages to be sendable in the case that input messages are received or already-sent
+    3. transform the AmqpAnnotatedMessage to be ServiceBusMessage
 
     :param Messages messages: A list or single instance of messages of type ServiceBusMessage or
         dict representations of type ServiceBusMessage.

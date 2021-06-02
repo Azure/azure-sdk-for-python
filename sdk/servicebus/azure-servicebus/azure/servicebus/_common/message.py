@@ -15,7 +15,6 @@ import six
 
 import uamqp.errors
 import uamqp.message
-from uamqp.constants import MessageState
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
@@ -47,9 +46,8 @@ from ..exceptions import MessageSizeExceededError
 from .utils import (
     utc_from_timestamp,
     utc_now,
-    transform_messages_to_sendable_if_needed,
     trace_message,
-    create_messages_from_dicts_if_needed,
+    transform_messages_if_needed,
 )
 
 if TYPE_CHECKING:
@@ -100,7 +98,11 @@ class ServiceBusMessage(
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", "UTF-8")
 
-        if "message" in kwargs:
+        if "raw_amqp_message" in kwargs and "message" in kwargs:
+            # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
+            self.message = kwargs["message"]
+            self._raw_amqp_message = kwargs["raw_amqp_message"]
+        elif "message" in kwargs:
             # Note: This cannot be renamed until UAMQP no longer relies on this specific name.
             self.message = kwargs["message"]
             self._raw_amqp_message = AmqpAnnotatedMessage(message=self.message)
@@ -217,8 +219,6 @@ class ServiceBusMessage(
         # type: () -> ServiceBusMessage
         # pylint: disable=protected-access
         self.message = self.raw_amqp_message._to_outgoing_amqp_message()
-        self.message.state = MessageState.WaitingToBeSent
-        self.message._response = None
         return self
 
     @property
@@ -662,8 +662,7 @@ class ServiceBusMessageBatch(object):
     def _add(self, add_message, parent_span=None):
         # type: (Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage], AbstractSpan) -> None
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
-        message = create_messages_from_dicts_if_needed(add_message, ServiceBusMessage)
-        message = transform_messages_to_sendable_if_needed(message)
+        message = transform_messages_if_needed(add_message, ServiceBusMessage)
         message = cast(ServiceBusMessage, message)
         trace_message(
             message, parent_span
