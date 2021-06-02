@@ -59,7 +59,7 @@ async def sample_translation_async():
                 )
             ]
         )
-        result = poller.result()
+        result = await poller.result()
 
         print("Status: {}".format(poller.status()))
         print("Created on: {}".format(poller.details.created_on))
