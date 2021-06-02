@@ -144,6 +144,18 @@ def send_context_manager():
         yield None
 
 
+def add_link_to_send(event, send_span):
+    """Add Diagnostic-Id from event to span as link.
+    """
+    try:
+        if send_span and event.properties:
+            traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
+            if traceparent:
+                send_span.link(traceparent)
+    except Exception as exp:  # pylint:disable=broad-except
+        _LOGGER.warning("add_link_to_send had an exception %r", exp)
+
+
 def trace_message(event, parent_span=None):
     # type: (EventData, Optional[AbstractSpan]) -> None
     """Add tracing information to this event.

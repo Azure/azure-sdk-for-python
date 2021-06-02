@@ -486,7 +486,7 @@ class EventDataBatch(object):
             event_data._raw_amqp_message.annotations[PRODUCER_ID_SYMBOL] = types.AMQPLong(int(MAX_LONG))
             event_data._raw_amqp_message.annotations[PRODUCER_SEQUENCE_NUMBER_SYMBOL] = types.AMQPInt(int(MAX_INT))
 
-        event_data_size = event_data.message.get_message_encoded_size()
+        event_data_size = event_data.raw_amqp_message._message.get_message_encoded_size()   # pylint: disable=protected-access
 
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
         # message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
