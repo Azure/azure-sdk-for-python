@@ -1763,6 +1763,8 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource):
     :keyword str client_id: The client id of service principal that have access to this Log
      Analytics.
     :keyword str client_secret: The client secret of service principal that have access to this Log Analytics.
+    :keyword str datasource_service_principal_id: Datasource service principal unique id.
+    :keyword str datasource_service_principal_in_kv_id: Datasource service principal in key vault unique id.
     :param str workspace_id: Required. The workspace id of this Log Analytics.
     :param str query: Required. The KQL (Kusto Query Language) query to fetch data from this Log
      Analytics.
@@ -1772,11 +1774,20 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource):
         # type: (str, str, **Any) -> None
         super(AzureLogAnalyticsDataFeedSource, self).__init__(
             data_source_type='AzureLogAnalytics',
-            authentication_type="Basic",
             **kwargs)
-        self.tenant_id = kwargs.get("tenant_id", None)
-        self.client_id = kwargs.get("client_id", None)
-        self.client_secret = kwargs.get("client_secret", None)
+        datasource_service_principal_id = kwargs.get("datasource_service_principal_id", False)
+        datasource_service_principal_in_kv_id = kwargs.get("datasource_service_principal_in_kv_id", False)
+        if datasource_service_principal_id:
+            self.authentication_type = "ServicePrincipal"
+            self.credential_id = datasource_service_principal_id
+        elif datasource_service_principal_in_kv_id:
+            self.authentication_type = "ServicePrincipalInKV"
+            self.credential_id = datasource_service_principal_in_kv_id
+        else:
+            self.authentication_type = "Basic"
+            self.tenant_id = kwargs.get("tenant_id", None)
+            self.client_id = kwargs.get("client_id", None)
+            self.client_secret = kwargs.get("client_secret", None)
         self.workspace_id = workspace_id
         self.query = query
 
