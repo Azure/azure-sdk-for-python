@@ -143,7 +143,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
         key = await self._create_ec_key(key_client, self.get_resource_name("eckey"), hardware_protected=is_hsm)
 
-        crypto_client = self.create_crypto_client(key.id, is_async=True)
+        crypto_client = self.create_crypto_client(key.id, is_async=True, api_version=key_client.api_version)
         await crypto_client._initialize()
         assert crypto_client.key_id == key.id
 
@@ -158,7 +158,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
         key = await self._create_rsa_key(key_client, self.get_resource_name("rsakey"), hardware_protected=is_hsm)
 
-        crypto_client = self.create_crypto_client(key.id, is_async=True)
+        crypto_client = self.create_crypto_client(key.id, is_async=True, api_version=key_client.api_version)
         await crypto_client._initialize()
         assert crypto_client.key_id == key.id
 
@@ -175,7 +175,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = await self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
-        crypto_client = self.create_crypto_client(imported_key.id, is_async=True)
+        crypto_client = self.create_crypto_client(imported_key.id, is_async=True, api_version=key_client.api_version)
 
         result = await crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, self.plaintext)
         self.assertEqual(result.key_id, imported_key.id)
@@ -195,7 +195,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         digest = md.digest()
 
         imported_key = await self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
-        crypto_client = self.create_crypto_client(imported_key.id, is_async=True)
+        crypto_client = self.create_crypto_client(imported_key.id, is_async=True, api_version=key_client.api_version)
 
         result = await crypto_client.sign(SignatureAlgorithm.rs256, digest)
         self.assertEqual(result.key_id, imported_key.id)
@@ -212,7 +212,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
 
         created_key = await self._create_rsa_key(key_client, key_name, hardware_protected=is_hsm)
         self.assertIsNotNone(created_key)
-        crypto_client = self.create_crypto_client(created_key.id, is_async=True)
+        crypto_client = self.create_crypto_client(created_key.id, is_async=True, api_version=key_client.api_version)
 
         # Wrap a key with the created key, then unwrap it. The wrapped key's bytes should round-trip.
         key_bytes = self.plaintext
@@ -230,7 +230,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
 
         imported_key = await self._import_symmetric_test_key(key_client, key_name)
         assert imported_key is not None
-        crypto_client = self.create_crypto_client(imported_key, is_async=True)
+        crypto_client = self.create_crypto_client(imported_key, is_async=True, api_version=key_client.api_version)
         # Use 256-bit AES algorithms for the 256-bit key
         symmetric_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("A256")]
 
@@ -272,7 +272,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
 
         imported_key = await self._import_symmetric_test_key(key_client, key_name)
         assert imported_key is not None
-        crypto_client = self.create_crypto_client(imported_key.id, is_async=True)
+        crypto_client = self.create_crypto_client(imported_key.id, is_async=True, api_version=key_client.api_version)
 
         result = await crypto_client.wrap_key(KeyWrapAlgorithm.aes_256, self.plaintext)
         assert result.key_id == imported_key.id
@@ -286,7 +286,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         """Encrypt locally, decrypt with Key Vault"""
         key_name = self.get_resource_name("encrypt-local")
         key = await self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
-        crypto_client = self.create_crypto_client(key, is_async=True)
+        crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
 
         rsa_encrypt_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("RSA")]
         for encrypt_algorithm in rsa_encrypt_algorithms:
@@ -302,7 +302,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         """Encrypt locally, decrypt with Key Vault"""
         key_name = self.get_resource_name("encrypt-local")
         key = await self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
-        crypto_client = self.create_crypto_client(key, is_async=True)
+        crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
         local_client = CryptographyClient.from_jwk(key.key)
 
         rsa_encrypt_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("RSA")]
@@ -321,7 +321,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
 
         imported_key = await self._import_symmetric_test_key(key_client, key_name)
         assert imported_key is not None
-        crypto_client = self.create_crypto_client(imported_key, is_async=True)
+        crypto_client = self.create_crypto_client(imported_key, is_async=True, api_version=key_client.api_version)
         # Use 256-bit AES-CBCPAD for the 256-bit key (only AES-CBCPAD is implemented locally)
         algorithm = EncryptionAlgorithm.a256_cbcpad
 
@@ -350,7 +350,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
 
         imported_key = await self._import_symmetric_test_key(key_client, key_name)
         assert imported_key is not None
-        crypto_client = self.create_crypto_client(imported_key, is_async=True)
+        crypto_client = self.create_crypto_client(imported_key, is_async=True, api_version=key_client.api_version)
         # Use 256-bit AES-CBCPAD for the 256-bit key (only AES-CBCPAD is implemented locally)
         algorithm = EncryptionAlgorithm.a256_cbcpad
 
@@ -378,7 +378,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         """Wrap locally, unwrap with Key Vault"""
         key_name = self.get_resource_name("wrap-local")
         key = await self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
-        crypto_client = self.create_crypto_client(key, is_async=True)
+        crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
 
         for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")):
             result = await crypto_client.wrap_key(wrap_algorithm, self.plaintext)
@@ -393,7 +393,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         """Wrap locally, unwrap with Key Vault"""
         key_name = self.get_resource_name("wrap-local")
         key = await self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
-        crypto_client = self.create_crypto_client(key, is_async=True)
+        crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
         local_client = CryptographyClient.from_jwk(key.key)
 
         for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")):
@@ -410,7 +410,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         for size in (2048, 3072, 4096):
             key_name = self.get_resource_name("rsa-verify-{}".format(size))
             key = await self._create_rsa_key(key_client, key_name, size=size, hardware_protected=is_hsm)
-            crypto_client = self.create_crypto_client(key, is_async=True)
+            crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
             for signature_algorithm, hash_function in (
                 (SignatureAlgorithm.ps256, hashlib.sha256),
                 (SignatureAlgorithm.ps384, hashlib.sha384),
@@ -434,7 +434,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         for size in (2048, 3072, 4096):
             key_name = self.get_resource_name("rsa-verify-{}".format(size))
             key = await self._create_rsa_key(key_client, key_name, size=size, hardware_protected=is_hsm)
-            crypto_client = self.create_crypto_client(key, is_async=True)
+            crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
             local_client = CryptographyClient.from_jwk(key.key)
             for signature_algorithm, hash_function in (
                     (SignatureAlgorithm.ps256, hashlib.sha256),
@@ -466,7 +466,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
             key_name = self.get_resource_name("ec-verify-{}".format(curve.value))
             key = await self._create_ec_key(key_client, key_name, curve=curve, hardware_protected=is_hsm)
-            crypto_client = self.create_crypto_client(key, is_async=True)
+            crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
 
             digest = hash_function(self.plaintext).digest()
 
@@ -490,7 +490,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
             key_name = self.get_resource_name("ec-verify-{}".format(curve.value))
             key = await self._create_ec_key(key_client, key_name, curve=curve, hardware_protected=is_hsm)
-            crypto_client = self.create_crypto_client(key, is_async=True)
+            crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
             local_client = CryptographyClient.from_jwk(key.key)
 
             digest = hash_function(self.plaintext).digest()
@@ -506,7 +506,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
     async def test_local_validity_period_enforcement(self, key_client, is_hsm, **kwargs):
         """Local crypto operations should respect a key's nbf and exp properties"""
         async def test_operations(key, expected_error_substrings, encrypt_algorithms, wrap_algorithms):
-            crypto_client = self.create_crypto_client(key, is_async=True)
+            crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
             for algorithm in encrypt_algorithms:
                 with pytest.raises(ValueError) as ex:
                     await crypto_client.encrypt(algorithm, self.plaintext)
