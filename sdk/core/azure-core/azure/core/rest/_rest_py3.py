@@ -61,8 +61,8 @@ ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 class _AsyncContextManager(collections.abc.Awaitable):
 
-    def __init__(self, wrapped: collections.abc.Awaitable, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, wrapped: collections.abc.Awaitable):
+        super().__init__()
         self.wrapped = wrapped
         self.response = None
 
