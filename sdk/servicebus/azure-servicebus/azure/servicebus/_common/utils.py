@@ -54,7 +54,7 @@ from .constants import (
     SPAN_ENQUEUED_TIME_PROPERTY,
     SPAN_NAME_RECEIVE,
 )
-from ..amqp import AMQPAnnotatedMessage
+from ..amqp import AmqpAnnotatedMessage
 
 if TYPE_CHECKING:
     from .message import (
@@ -69,12 +69,12 @@ if TYPE_CHECKING:
     MessagesType = Union[
         Mapping[str, Any],
         ServiceBusMessage,
-        AMQPAnnotatedMessage,
-        List[Union[Mapping[str, Any], ServiceBusMessage, AMQPAnnotatedMessage]],
+        AmqpAnnotatedMessage,
+        List[Union[Mapping[str, Any], ServiceBusMessage, AmqpAnnotatedMessage]],
     ]
 
     SingleMessageType = Union[
-        Mapping[str, Any], ServiceBusMessage, AMQPAnnotatedMessage
+        Mapping[str, Any], ServiceBusMessage, AmqpAnnotatedMessage
     ]
 
 _log = logging.getLogger(__name__)
@@ -229,7 +229,7 @@ def transform_messages_to_sendable_if_needed(messages):
 def _convert_to_single_service_bus_message(message, message_type):
     # type: (SingleMessageType, Type[ServiceBusMessage]) -> ServiceBusMessage
     # pylint: disable=protected-access
-    if isinstance(message, AMQPAnnotatedMessage):
+    if isinstance(message, AmqpAnnotatedMessage):
         message = message_type(
             body=None,
             message=message._to_outgoing_amqp_message()

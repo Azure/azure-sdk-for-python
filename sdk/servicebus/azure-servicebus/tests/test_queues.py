@@ -28,10 +28,10 @@ from azure.servicebus import (
     ServiceBusSubQueue,
 )
 from azure.servicebus.amqp import (
-    AMQPMessageHeader,
-    AMQPMessageBodyType,
-    AMQPAnnotatedMessage,
-    AMQPMessageProperties,
+    AmqpMessageHeader,
+    AmqpMessageBodyType,
+    AmqpAnnotatedMessage,
+    AmqpMessageProperties,
 )
 from azure.servicebus._common.constants import (
     _X_OPT_LOCK_TOKEN,
@@ -2428,7 +2428,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             prop = {"subject": "sequence"}
             seq_app_prop = {"body_type": "sequence"}
 
-            sequence_message = AMQPAnnotatedMessage(
+            sequence_message = AmqpAnnotatedMessage(
                 sequence_body=sequence_body,
                 footer=footer,
                 properties=prop,
@@ -2440,7 +2440,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             anno = {"ann_key": "ann_value"}
             value_app_prop = {"body_type": "value"}
 
-            value_message = AMQPAnnotatedMessage(
+            value_message = AmqpAnnotatedMessage(
                 value_body=value_body,
                 header=header,
                 annotations=anno,
@@ -2450,16 +2450,16 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             data_body = [b'aa', b'bb', b'cc']
             data_app_prop = {"body_type": "data"}
             del_anno = {"delann_key": "delann_value"}
-            data_message = AMQPAnnotatedMessage(
+            data_message = AmqpAnnotatedMessage(
                 data_body=data_body,
                 delivery_annotations=del_anno,
                 application_properties=data_app_prop
             )
 
             with pytest.raises(ValueError):
-                AMQPAnnotatedMessage(data_body=data_body, value_body=value_body)
+                AmqpAnnotatedMessage(data_body=data_body, value_body=value_body)
             with pytest.raises(ValueError):
-                AMQPAnnotatedMessage()
+                AmqpAnnotatedMessage()
 
             content = "normalmessage"
             dict_message = {"body": content}
@@ -2483,7 +2483,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
                     for message in receiver:
                         raw_amqp_message = message.raw_amqp_message
-                        if raw_amqp_message.body_type == AMQPMessageBodyType.DATA:
+                        if raw_amqp_message.body_type == AmqpMessageBodyType.DATA:
                             if raw_amqp_message.application_properties and raw_amqp_message.application_properties.get(b'body_type') == b'data':
                                 body = [data for data in raw_amqp_message.body]
                                 assert data_body == body
@@ -2493,14 +2493,14 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             else:
                                 assert str(message) == content
                                 normal_msg += 1
-                        elif raw_amqp_message.body_type == AMQPMessageBodyType.SEQUENCE:
+                        elif raw_amqp_message.body_type == AmqpMessageBodyType.SEQUENCE:
                             body = [sequence for sequence in raw_amqp_message.body]
                             assert [sequence_body] == body
                             assert raw_amqp_message.footer[b'footer_key'] == b'footer_value'
                             assert raw_amqp_message.properties.subject == b'sequence'
                             assert raw_amqp_message.application_properties[b'body_type'] == b'sequence'
                             recv_sequence_msg += 1
-                        elif raw_amqp_message.body_type == AMQPMessageBodyType.VALUE:
+                        elif raw_amqp_message.body_type == AmqpMessageBodyType.VALUE:
                             assert raw_amqp_message.body == value_body
                             assert raw_amqp_message.header.priority == 10
                             assert raw_amqp_message.annotations[b'ann_key'] == b'ann_value'

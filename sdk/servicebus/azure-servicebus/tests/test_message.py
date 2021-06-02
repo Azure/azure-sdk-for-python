@@ -7,10 +7,10 @@ from azure.servicebus._common.constants import (
     _X_OPT_SCHEDULED_ENQUEUE_TIME
 )
 from azure.servicebus.amqp import (
-    AMQPAnnotatedMessage,
-    AMQPMessageBodyType,
-    AMQPMessageProperties,
-    AMQPMessageHeader
+    AmqpAnnotatedMessage,
+    AmqpMessageBodyType,
+    AmqpMessageProperties,
+    AmqpMessageHeader
 )
 
 
@@ -87,36 +87,36 @@ def test_servicebus_received_message_repr_with_props():
 
 def test_amqp_message():
     sb_message = ServiceBusMessage(body=None)
-    assert sb_message.body_type == AMQPMessageBodyType.VALUE
+    assert sb_message.body_type == AmqpMessageBodyType.VALUE
     assert not sb_message.body
 
-    amqp_annotated_message = AMQPAnnotatedMessage(data_body=b"data")
-    assert amqp_annotated_message.body_type == AMQPMessageBodyType.DATA
+    amqp_annotated_message = AmqpAnnotatedMessage(data_body=b"data")
+    assert amqp_annotated_message.body_type == AmqpMessageBodyType.DATA
     body = [data for data in amqp_annotated_message.body]
     assert len(body) == 1
     assert body[0] == b"data"
 
-    amqp_annotated_message = AMQPAnnotatedMessage(value_body={b"key": b"value"})
-    assert amqp_annotated_message.body_type == AMQPMessageBodyType.VALUE
+    amqp_annotated_message = AmqpAnnotatedMessage(value_body={b"key": b"value"})
+    assert amqp_annotated_message.body_type == AmqpMessageBodyType.VALUE
     assert amqp_annotated_message.body == {b"key": b"value"}
 
-    amqp_annotated_message = AMQPAnnotatedMessage(sequence_body=[1, 2, 3])
+    amqp_annotated_message = AmqpAnnotatedMessage(sequence_body=[1, 2, 3])
     body = [sequence for sequence in amqp_annotated_message.body]
-    assert amqp_annotated_message.body_type == AMQPMessageBodyType.SEQUENCE
+    assert amqp_annotated_message.body_type == AmqpMessageBodyType.SEQUENCE
     assert len(body) == 1
     assert body[0] == [1, 2, 3]
 
-    amqp_annotated_message = AMQPAnnotatedMessage(
+    amqp_annotated_message = AmqpAnnotatedMessage(
         value_body=None,
-        header=AMQPMessageHeader(priority=1, delivery_count=1, time_to_live=1, first_acquirer=True, durable=True),
-        properties=AMQPMessageProperties(message_id='id', user_id='id', to='to', subject='sub', correlation_id='cid', content_type='ctype', content_encoding='cencoding', creation_time=1, absolute_expiry_time=1, group_id='id', group_sequence=1, reply_to_group_id='id'),
+        header=AmqpMessageHeader(priority=1, delivery_count=1, time_to_live=1, first_acquirer=True, durable=True),
+        properties=AmqpMessageProperties(message_id='id', user_id='id', to='to', subject='sub', correlation_id='cid', content_type='ctype', content_encoding='cencoding', creation_time=1, absolute_expiry_time=1, group_id='id', group_sequence=1, reply_to_group_id='id'),
         footer={"key": "value"},
         delivery_annotations={"key": "value"},
         annotations={"key": "value"},
         application_properties={"key": "value"}
     )
 
-    assert amqp_annotated_message.body_type == AMQPMessageBodyType.VALUE
+    assert amqp_annotated_message.body_type == AmqpMessageBodyType.VALUE
     assert amqp_annotated_message.header.priority == 1
     assert amqp_annotated_message.header.delivery_count == 1
     assert amqp_annotated_message.header.time_to_live == 1
@@ -141,7 +141,7 @@ def test_amqp_message():
     assert amqp_annotated_message.properties.group_sequence == 1
     assert amqp_annotated_message.properties.reply_to_group_id == 'id'
 
-    amqp_annotated_message = AMQPAnnotatedMessage(
+    amqp_annotated_message = AmqpAnnotatedMessage(
         value_body=None,
         header={"priority": 1, "delivery_count": 1, "time_to_live": 1, "first_acquirer": True, "durable": True},
         properties={
@@ -164,7 +164,7 @@ def test_amqp_message():
         application_properties={"key": "value"}
     )
 
-    assert amqp_annotated_message.body_type == AMQPMessageBodyType.VALUE
+    assert amqp_annotated_message.body_type == AmqpMessageBodyType.VALUE
     assert amqp_annotated_message.header.priority == 1
     assert amqp_annotated_message.header.delivery_count == 1
     assert amqp_annotated_message.header.time_to_live == 1

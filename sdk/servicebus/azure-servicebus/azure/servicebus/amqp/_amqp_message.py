@@ -8,7 +8,7 @@ from typing import Optional, Any, cast, Mapping
 
 import uamqp
 
-from ._constants import AMQP_MESSAGE_BODY_TYPE_MAP, AMQPMessageBodyType
+from ._constants import AMQP_MESSAGE_BODY_TYPE_MAP, AmqpMessageBodyType
 
 
 class DictMixin(object):
@@ -75,11 +75,13 @@ class DictMixin(object):
         return default
 
 
-class AMQPAnnotatedMessage(object):
+class AmqpAnnotatedMessage(object):
     # pylint: disable=too-many-instance-attributes
     """
     The AMQP Annotated Message for advanced sending and receiving scenarios which allows you to
-    access to low-level AMQP message sections.
+    access to low-level AMQP message sections. There should be one and only one of either data_body, sequence_body
+    or value_body being set as the body of the AmqpAnnotatedMessage; if more than one body is set, `ValueError` will
+    be raised.
     Please refer to the AMQP spec:
     http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format
     for more information on the message format.
@@ -92,17 +94,19 @@ class AMQPAnnotatedMessage(object):
     :keyword value_body: The body consists of one amqp-value section and the section contains a single AMQP value.
     :paramtype value_body: Any
     :keyword header: The amqp message header.
-    :paramtype header: Optional[~azure.servicebus.amqp.AMQPMessageHeader]
+    :paramtype header: Optional[~azure.servicebus.amqp.AmqpMessageHeader]
     :keyword footer: The amqp message footer.
     :paramtype footer: Optional[dict]
     :keyword properties: Properties to add to the amqp message.
-    :paramtype properties: Optional[~azure.servicebus.amqp.AMQPMessageProperties]
+    :paramtype properties: Optional[~azure.servicebus.amqp.AmqpMessageProperties]
     :keyword application_properties: Service specific application properties.
     :paramtype application_properties: Optional[dict]
     :keyword annotations: Service specific message annotations.
     :paramtype annotations: Optional[dict]
     :keyword delivery_annotations: Service specific delivery annotations.
     :paramtype delivery_annotations: Optional[dict]
+
+    :raises: :class:`ValueError`
     """
 
     def __init__(self, **kwargs):
@@ -120,7 +124,7 @@ class AMQPAnnotatedMessage(object):
         if input_count_validation != 1:
             raise ValueError(
                 "There should be one and only one of either data_body, sequence_body "
-                "or value_body being set as the body of the AMQPAnnotatedMessage."
+                "or value_body being set as the body of the AmqpAnnotatedMessage."
             )
 
         self._body = None
@@ -137,10 +141,10 @@ class AMQPAnnotatedMessage(object):
 
         self._message = uamqp.message.Message(body=self._body, body_type=self._body_type)
         header_dict = cast(Mapping, kwargs.get("header"))
-        self._header = AMQPMessageHeader(**header_dict) if "header" in kwargs else None
+        self._header = AmqpMessageHeader(**header_dict) if "header" in kwargs else None
         self._footer = kwargs.get("footer")
         properties_dict = cast(Mapping, kwargs.get("properties"))
-        self._properties = AMQPMessageProperties(**properties_dict) if "properties" in kwargs else None
+        self._properties = AmqpMessageProperties(**properties_dict) if "properties" in kwargs else None
         self._application_properties = kwargs.get("application_properties")
         self._annotations = kwargs.get("annotations")
         self._delivery_annotations = kwargs.get("delivery_annotations")
@@ -179,11 +183,11 @@ class AMQPAnnotatedMessage(object):
             message_repr += ", annotations={}".format(self.annotations)
         except:
             message_repr += ", annotations=<read-error>"
-        return "AMQPAnnotatedMessage({})".format(message_repr)[:1024]
+        return "AmqpAnnotatedMessage({})".format(message_repr)[:1024]
 
     def _from_amqp_message(self, message):
         # populate the properties from an uamqp message
-        self._properties = AMQPMessageProperties(
+        self._properties = AmqpMessageProperties(
             message_id=message.properties.message_id,
             user_id=message.properties.user_id,
             to=message.properties.to,
@@ -198,7 +202,7 @@ class AMQPAnnotatedMessage(object):
             group_sequence=message.properties.group_sequence,
             reply_to_group_id=message.properties.reply_to_group_id,
         ) if message.properties else None
-        self._header = AMQPMessageHeader(
+        self._header = AmqpMessageHeader(
             delivery_count=message.header.delivery_count,
             time_to_live=message.header.time_to_live,
             first_acquirer=message.header.first_acquirer,
@@ -267,9 +271,9 @@ class AMQPAnnotatedMessage(object):
     def body(self):
         # type: () -> Any
         """The body of the Message. The format may vary depending on the body type:
-        For ~azure.servicebus.AMQPMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
-        For ~azure.servicebus.AMQPMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
-        For ~azure.servicebus.AMQPMessageBodyType.VALUE, the body could be any type.
+        For ~azure.servicebus.AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
+        For ~azure.servicebus.AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
+        For ~azure.servicebus.AmqpMessageBodyType.VALUE, the body could be any type.
 
         :rtype: Any
         """
@@ -277,28 +281,28 @@ class AMQPAnnotatedMessage(object):
 
     @property
     def body_type(self):
-        # type: () -> AMQPMessageBodyType
+        # type: () -> AmqpMessageBodyType
         """The body type of the underlying AMQP message.
 
-        rtype: ~azure.servicebus.amqp.AMQPMessageBodyType
+        rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
         """
         return AMQP_MESSAGE_BODY_TYPE_MAP.get(
-            self._message._body.type, AMQPMessageBodyType.VALUE  # pylint: disable=protected-access
+            self._message._body.type, AmqpMessageBodyType.VALUE  # pylint: disable=protected-access
         )
 
     @property
     def properties(self):
-        # type: () -> Optional[AMQPMessageProperties]
+        # type: () -> Optional[AmqpMessageProperties]
         """
         Properties to add to the message.
 
-        :rtype: Optional[~azure.servicebus.amqp.AMQPMessageProperties]
+        :rtype: Optional[~azure.servicebus.amqp.AmqpMessageProperties]
         """
         return self._properties
 
     @properties.setter
     def properties(self, value):
-        # type: (AMQPMessageProperties) -> None
+        # type: (AmqpMessageProperties) -> None
         self._properties = value
 
     @property
@@ -349,17 +353,17 @@ class AMQPAnnotatedMessage(object):
 
     @property
     def header(self):
-        # type: () -> Optional[AMQPMessageHeader]
+        # type: () -> Optional[AmqpMessageHeader]
         """
         The message header.
 
-        :rtype: Optional[~azure.servicebus.amqp.AMQPMessageHeader]
+        :rtype: Optional[~azure.servicebus.amqp.AmqpMessageHeader]
         """
         return self._header
 
     @header.setter
     def header(self, value):
-        # type: (AMQPMessageHeader) -> None
+        # type: (AmqpMessageHeader) -> None
         self._header = value
 
     @property
@@ -379,7 +383,7 @@ class AMQPAnnotatedMessage(object):
         # self._message.footer = value
 
 
-class AMQPMessageHeader(DictMixin):
+class AmqpMessageHeader(DictMixin):
     """The Message header.
     The Message header. This is only used on received message, and not
     set on messages being sent. The properties set on any given message
@@ -453,7 +457,7 @@ class AMQPMessageHeader(DictMixin):
         self.priority = kwargs.get("priority")
 
 
-class AMQPMessageProperties(DictMixin):
+class AmqpMessageProperties(DictMixin):
     # pylint: disable=too-many-instance-attributes
     """Message properties.
     The properties that are actually used will depend on the service implementation.

@@ -8,14 +8,14 @@ from enum import Enum
 from uamqp import MessageBodyType
 
 
-class AMQPMessageBodyType(str, Enum):
+class AmqpMessageBodyType(str, Enum):
     DATA = "data"
     SEQUENCE = "sequence"
     VALUE = "value"
 
 
 AMQP_MESSAGE_BODY_TYPE_MAP = {
-    MessageBodyType.Data.value: AMQPMessageBodyType.DATA,
-    MessageBodyType.Sequence.value: AMQPMessageBodyType.SEQUENCE,
-    MessageBodyType.Value.value: AMQPMessageBodyType.VALUE,
+    MessageBodyType.Data.value: AmqpMessageBodyType.DATA,
+    MessageBodyType.Sequence.value: AmqpMessageBodyType.SEQUENCE,
+    MessageBodyType.Value.value: AmqpMessageBodyType.VALUE,
 }

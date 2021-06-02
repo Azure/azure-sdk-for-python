@@ -13,7 +13,7 @@ Example to show sending, receiving and parsing amqp annotated message(s) to a Se
 
 import os
 from azure.servicebus import ServiceBusClient
-from azure.servicebus.amqp import AMQPAnnotatedMessage, AMQPMessageBodyType
+from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
 
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
@@ -24,7 +24,7 @@ def send_data_message(sender):
     data_body = [b'aa', b'bb', b'cc']
     application_properties = {"body_type": "data"}
     delivery_annotations = {"delivery_annotation_key": "value"}
-    data_message = AMQPAnnotatedMessage(
+    data_message = AmqpAnnotatedMessage(
         data_body=data_body,
         delivery_annotations=delivery_annotations,
         application_properties=application_properties
@@ -38,7 +38,7 @@ def send_sequence_message(sender):
     footer = {'footer_key': 'footer_value'}
     properties = {"subject": "sequence"}
     application_properties = {"body_type": "sequence"}
-    sequence_message = AMQPAnnotatedMessage(
+    sequence_message = AmqpAnnotatedMessage(
         sequence_body=sequence_body,
         footer=footer,
         properties=properties,
@@ -53,7 +53,7 @@ def send_value_message(sender):
     header = {"priority": 10}
     annotations = {"annotation_key": "value"}
     application_properties = {"body_type": "value"}
-    value_message = AMQPAnnotatedMessage(
+    value_message = AmqpAnnotatedMessage(
         value_body=value_body,
         header=header,
         annotations=annotations,
@@ -66,15 +66,15 @@ def send_value_message(sender):
 def receive_and_parse_message(receiver):
     for message in receiver:
         raw_amqp_message = message.raw_amqp_message
-        if raw_amqp_message.body_type == AMQPMessageBodyType.DATA:
+        if raw_amqp_message.body_type == AmqpMessageBodyType.DATA:
             print("Message of data body received. Body is:")
             for data_section in raw_amqp_message.body:
                 print(data_section)
-        elif raw_amqp_message.body_type == AMQPMessageBodyType.SEQUENCE:
+        elif raw_amqp_message.body_type == AmqpMessageBodyType.SEQUENCE:
             print("Message of sequence body received. Body is:")
             for sequence_section in raw_amqp_message.body:
                 print(sequence_section)
-        elif raw_amqp_message.body_type == AMQPMessageBodyType.VALUE:
+        elif raw_amqp_message.body_type == AmqpMessageBodyType.VALUE:
             print("Message of value body received. Body is:")
             print(raw_amqp_message.body)
         receiver.complete_message(message)

@@ -38,10 +38,10 @@ from .constants import (
     MAX_DURATION_VALUE,
 )
 from ..amqp import (
-    AMQPAnnotatedMessage,
-    AMQPMessageBodyType,
-    AMQPMessageHeader,
-    AMQPMessageProperties
+    AmqpAnnotatedMessage,
+    AmqpMessageBodyType,
+    AmqpMessageHeader,
+    AmqpMessageProperties
 )
 from ..exceptions import MessageSizeExceededError
 from .utils import (
@@ -103,7 +103,7 @@ class ServiceBusMessage(
         if "message" in kwargs:
             # Note: This cannot be renamed until UAMQP no longer relies on this specific name.
             self.message = kwargs["message"]
-            self._raw_amqp_message = AMQPAnnotatedMessage(message=self.message)
+            self._raw_amqp_message = AmqpAnnotatedMessage(message=self.message)
         else:
             self._build_message(body)
             self.application_properties = kwargs.pop("application_properties", None)
@@ -190,10 +190,10 @@ class ServiceBusMessage(
                 )
             )
 
-        self._raw_amqp_message = AMQPAnnotatedMessage(value_body=None, encoding=self._encoding) \
-            if body is None else AMQPAnnotatedMessage(data_body=body, encoding=self._encoding)
-        self._raw_amqp_message.header = AMQPMessageHeader()
-        self._raw_amqp_message.properties = AMQPMessageProperties()
+        self._raw_amqp_message = AmqpAnnotatedMessage(value_body=None, encoding=self._encoding) \
+            if body is None else AmqpAnnotatedMessage(data_body=body, encoding=self._encoding)
+        self._raw_amqp_message.header = AmqpMessageHeader()
+        self._raw_amqp_message.properties = AmqpMessageProperties()
 
     def _set_message_annotations(self, key, value):
         if not self._raw_amqp_message.annotations:
@@ -223,7 +223,7 @@ class ServiceBusMessage(
 
     @property
     def raw_amqp_message(self):
-        # type: () -> AMQPAnnotatedMessage
+        # type: () -> AmqpAnnotatedMessage
         """Advanced usage only. The internal AMQP message payload that is sent or received."""
         return self._raw_amqp_message
 
@@ -258,7 +258,7 @@ class ServiceBusMessage(
             )
 
         if not self._raw_amqp_message.properties:
-            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._raw_amqp_message.properties = AmqpMessageProperties()
 
         self._raw_amqp_message.properties.group_id = value
 
@@ -340,7 +340,7 @@ class ServiceBusMessage(
     def time_to_live(self, value):
         # type: (datetime.timedelta) -> None
         if not self._raw_amqp_message.header:
-            self._raw_amqp_message.header = AMQPMessageHeader()
+            self._raw_amqp_message.header = AmqpMessageHeader()
         if value is None:
             self._raw_amqp_message.header.time_to_live = value
             if self._raw_amqp_message.properties.absolute_expiry_time:
@@ -353,7 +353,7 @@ class ServiceBusMessage(
         if self._raw_amqp_message.header.time_to_live and \
                 self._raw_amqp_message.header.time_to_live != MAX_DURATION_VALUE:
             if not self._raw_amqp_message.properties:
-                self._raw_amqp_message.properties = AMQPMessageProperties()
+                self._raw_amqp_message.properties = AmqpMessageProperties()
             self._raw_amqp_message.properties.creation_time = int(time.mktime(utc_now().timetuple()))
             self._raw_amqp_message.properties.absolute_expiry_time = min(
                 MAX_ABSOLUTE_EXPIRY_TIME,
@@ -388,7 +388,7 @@ class ServiceBusMessage(
     def scheduled_enqueue_time_utc(self, value):
         # type: (datetime.datetime) -> None
         if not self._raw_amqp_message.properties:
-            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._raw_amqp_message.properties = AmqpMessageProperties()
         if not self._raw_amqp_message.properties.message_id:
             self._raw_amqp_message.properties.message_id = str(uuid.uuid4())
         self._set_message_annotations(_X_OPT_SCHEDULED_ENQUEUE_TIME, value)
@@ -397,9 +397,9 @@ class ServiceBusMessage(
     def body(self):
         # type: () -> Any
         """The body of the Message. The format may vary depending on the body type:
-        For ~azure.servicebus.AMQPMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
-        For ~azure.servicebus.AMQPMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
-        For ~azure.servicebus.AMQPMessageBodyType.VALUE, the body could be any type.
+        For ~azure.servicebus.AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
+        For ~azure.servicebus.AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
+        For ~azure.servicebus.AmqpMessageBodyType.VALUE, the body could be any type.
 
         :rtype: Any
         """
@@ -407,10 +407,10 @@ class ServiceBusMessage(
 
     @property
     def body_type(self):
-        # type: () -> AMQPMessageBodyType
+        # type: () -> AmqpMessageBodyType
         """The body type of the underlying AMQP message.
 
-        rtype: ~azure.servicebus.amqp.AMQPMessageBodyType
+        rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
         """
         return self._raw_amqp_message.body_type
 
@@ -435,7 +435,7 @@ class ServiceBusMessage(
     def content_type(self, value):
         # type: (str) -> None
         if not self._raw_amqp_message.properties:
-            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.content_type = value
 
     @property
@@ -463,7 +463,7 @@ class ServiceBusMessage(
     def correlation_id(self, value):
         # type: (str) -> None
         if not self._raw_amqp_message.properties:
-            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.correlation_id = value
 
     @property
@@ -487,7 +487,7 @@ class ServiceBusMessage(
     def subject(self, value):
         # type: (str) -> None
         if not self._raw_amqp_message.properties:
-            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.subject = value
 
     @property
@@ -520,7 +520,7 @@ class ServiceBusMessage(
                 )
             )
         if not self._raw_amqp_message.properties:
-            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.message_id = value
 
     @property
@@ -549,7 +549,7 @@ class ServiceBusMessage(
     def reply_to(self, value):
         # type: (str) -> None
         if not self._raw_amqp_message.properties:
-            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.reply_to = value
 
     @property
@@ -584,7 +584,7 @@ class ServiceBusMessage(
             )
 
         if not self._raw_amqp_message.properties:
-            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.reply_to_group_id = value
 
     @property
@@ -611,7 +611,7 @@ class ServiceBusMessage(
     def to(self, value):
         # type: (str) -> None
         if not self._raw_amqp_message.properties:
-            self._raw_amqp_message.properties = AMQPMessageProperties()
+            self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.to = value
 
 
@@ -660,7 +660,7 @@ class ServiceBusMessageBatch(object):
             self._add(message, parent_span)
 
     def _add(self, add_message, parent_span=None):
-        # type: (Union[ServiceBusMessage, Mapping[str, Any], AMQPAnnotatedMessage], AbstractSpan) -> None
+        # type: (Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage], AbstractSpan) -> None
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         message = create_messages_from_dicts_if_needed(add_message, ServiceBusMessage)
         message = transform_messages_to_sendable_if_needed(message)
@@ -711,7 +711,7 @@ class ServiceBusMessageBatch(object):
         return self._size
 
     def add_message(self, message):
-        # type: (Union[ServiceBusMessage, AMQPAnnotatedMessage, Mapping[str, Any]]) -> None
+        # type: (Union[ServiceBusMessage, AmqpAnnotatedMessage, Mapping[str, Any]]) -> None
         """Try to add a single Message to the batch.
 
         The total size of an added message is the sum of its body, properties, etc.
@@ -719,7 +719,7 @@ class ServiceBusMessageBatch(object):
         be raised.
 
         :param message: The Message to be added to the batch.
-        :type message: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.amqp.AMQPAnnotatedMessage]
+        :type message: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.amqp.AmqpAnnotatedMessage]
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageSizeExceededError, when exceeding the size limit.
         """
@@ -732,7 +732,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
     A Service Bus Message received from service side.
 
     :ivar raw_amqp_message: Advanced usage only. The internal AMQP message payload that is sent or received.
-    :vartype raw_amqp_message: ~azure.servicebus.amqp.AMQPAnnotatedMessage
+    :vartype raw_amqp_message: ~azure.servicebus.amqp.AmqpAnnotatedMessage
     :ivar auto_renew_error: Error when AutoLockRenewer is used and it fails to renew the message lock.
     :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
 

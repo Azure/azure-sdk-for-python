@@ -15,7 +15,7 @@ from .._common.message import (
     ServiceBusMessage,
     ServiceBusMessageBatch,
 )
-from ..amqp import AMQPAnnotatedMessage
+from ..amqp import AmqpAnnotatedMessage
 from .._servicebus_sender import SenderMixin
 from ._base_handler_async import BaseHandler
 from .._common.constants import (
@@ -40,14 +40,14 @@ if TYPE_CHECKING:
 MessageTypes = Union[
     Mapping[str, Any],
     ServiceBusMessage,
-    AMQPAnnotatedMessage,
-    List[Union[Mapping[str, Any], ServiceBusMessage, AMQPAnnotatedMessage]],
+    AmqpAnnotatedMessage,
+    List[Union[Mapping[str, Any], ServiceBusMessage, AmqpAnnotatedMessage]],
 ]
 MessageObjTypes = Union[
     ServiceBusMessage,
     ServiceBusMessageBatch,
-    AMQPAnnotatedMessage,
-    List[Union[ServiceBusMessage, AMQPAnnotatedMessage]],
+    AmqpAnnotatedMessage,
+    List[Union[ServiceBusMessage, AmqpAnnotatedMessage]],
 ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -210,8 +210,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         Returns a list of the sequence numbers of the enqueued messages.
 
         :param messages: The message or list of messages to schedule.
-        :type messages: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.amqp.AMQPAnnotatedMessage,
-         List[Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.amqp.AMQPAnnotatedMessage]]]
+        :type messages: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.amqp.AmqpAnnotatedMessage,
+         List[Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.amqp.AmqpAnnotatedMessage]]]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
@@ -305,8 +305,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         :param message: The ServiceBus message to be sent.
         :type message: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.ServiceBusMessageBatch,
-         ~azure.servicebus.amqp.AMQPAnnotatedMessage, List[Union[~azure.servicebus.ServiceBusMessage,
-         ~azure.servicebus.amqp.AMQPAnnotatedMessage]]]
+         ~azure.servicebus.amqp.AmqpAnnotatedMessage, List[Union[~azure.servicebus.ServiceBusMessage,
+         ~azure.servicebus.amqp.AmqpAnnotatedMessage]]]
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
