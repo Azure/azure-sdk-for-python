@@ -14,7 +14,7 @@
 * [`StorageAccountPreparer`](storage_account_preparer):
 * [`CachedStorageAccountPreparer`](cached_storage_account_preparer):
 * [`KeyVaultPreparer`](kv_preparer):
-* [`PowerShellPreparer`](powershell_preparer):
+* [`PowerShellPreparer`](powershell_preparer): Abstract preparer for delivering secrets from environment variables to individual tests
 * [`RetryCounter`](retry_counter): Object for counting retries on a request. (Used by Storage)
 * [`ResponseCallback`](response_callback): Object for mocking response callbacks. (Used by Storage)
 
@@ -34,5 +34,5 @@
 [cached_storage_account_preparer]: https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/storage_testcase.py#L140
 [kv_preparer]: https://github.com/Azure/azure-sdk-for-python/blob/520ea7175e10a971eae9d3e6cd0735efd80447b1/tools/azure-sdk-tools/devtools_testutils/keyvault_preparer.py#L49
 [powershell_preparer]: https://github.com/Azure/azure-sdk-for-python/blob/520ea7175e10a971eae9d3e6cd0735efd80447b1/tools/azure-sdk-tools/devtools_testutils/powershell_preparer.py#L14
-[retry_counter]: ./helpers.py
-[response_callback]: ./helpers.py
+[retry_counter]: https://github.com/Azure/azure-sdk-for-python/blob/ab7e7f1a7b2a6d7255abdc77a40e2d6a86c9de0a/tools/azure-sdk-tools/devtools_testutils/helpers.py#L6
+[response_callback]: https://github.com/Azure/azure-sdk-for-python/blob/ab7e7f1a7b2a6d7255abdc77a40e2d6a86c9de0a/tools/azure-sdk-tools/devtools_testutils/helpers.py#L14
