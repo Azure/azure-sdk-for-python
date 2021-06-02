@@ -209,17 +209,20 @@ def _convert_to_single_service_bus_message(message, message_type):
     # type: (SingleMessageType, Type[ServiceBusMessage]) -> ServiceBusMessage
     # pylint: disable=protected-access
     try:
-        return message._to_outgoing_message(message_type)
+        # AmqpAnnotatedMessage
+        return message._to_outgoing_message(message_type)  # type: ignore
     except TypeError:
-        return message._to_outgoing_message()
+        # ServiceBusMessage/ServiceBusReceivedMessage
+        return message._to_outgoing_message()  # type: ignore
     except AttributeError:
+        # Mapping representing
         pass
 
     try:
         return message_type(**cast(Mapping[str, Any], message))._to_outgoing_message()
     except TypeError:
         raise TypeError(
-            "Only ServiceBusMessage instances or Mappings representing messages are supported. "
+            "Only AmqpAnnotatedMessage, ServiceBusMessage instances or Mappings representing messages are supported. "
             "Received instead: {}".format(message.__class__.__name__)
         )
 
@@ -227,7 +230,7 @@ def _convert_to_single_service_bus_message(message, message_type):
 def transform_messages_if_needed(messages, message_type):
     # type: (MessagesType, Type[ServiceBusMessage]) -> Union[ServiceBusMessage, List[ServiceBusMessage]]
     """
-    This method serves multiple goal:
+    This method serves multiple goals:
     1. convert dict representations of one or more messages to
     one or more ServiceBusMessage objects if needed
     2. update the messages to be sendable in the case that input messages are received or already-sent
