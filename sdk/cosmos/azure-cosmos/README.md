@@ -129,7 +129,6 @@ Typically you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos D
 
 A possible workaround is to use managed identities to [programmatically](https://docs.microsoft.com/azure/cosmos-db/managed-identity-based-authentication) get the keys.
 
-
 ## Consistency Level
 
 Please be aware that this SDK has "Session" as the default consistency level, and it **overrides** your Cosmos DB database account default option. Click [here](https://docs.microsoft.com/azure/cosmos-db/consistency-levels#eventual-consistency) to learn more about Cosmos DB consistency levels.
@@ -150,6 +149,12 @@ Cosmos DB SQL language allows you to [get subitems by using the FROM clause](htt
 
 * For SQL queries using the `query_items` method, this SDK demands that you specify the `partition_key` or use the `enable_cross_partition_query` flag. 
 * If you are getting subitems and specifying the `partition_key`, please make sure that your partition key is included in the subitems, which is not true for most of the cases.
+
+## Max Item Count
+
+This is a parameter of the `query_items` method, an integer indicating the maximum number of items to be returned per page. In other SDKs, the `-1` value can be specified to let the service determine the optimal item count. This is the recommended configuration value, and the default behavior in cases when it is not informed. 
+
+However, in this version of this SDK, 4.x, if you want to force default behavior, you should use `None` instead of `-1`. Please be aware that previous versions of this SDK had different behavior. We may change this situation in future versions.
 
 ## Examples
 
