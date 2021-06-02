@@ -4,4 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.0-alpha.20210601.1"
+VERSION = "1.0.1"
+
+SDK_MONIKER = "communication-siprouting/{}".format(VERSION)  # type: str
