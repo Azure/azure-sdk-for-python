@@ -42,7 +42,7 @@ def test_response_content(send_request):
 
 def test_response_text(send_request):
     response = send_request(
-        request=HttpRequest("GET", "http://localhost:5000/basic/text"),
+        request=HttpRequest("GET", "http://localhost:5000/basic/string"),
     )
     assert response.status_code == 200
     assert response.reason == "OK"
@@ -61,7 +61,7 @@ def test_response_html(send_request):
 
 def test_raise_for_status(client):
     response = client.send_request(
-        HttpRequest("GET", "http://localhost:5000/basic/text"),
+        HttpRequest("GET", "http://localhost:5000/basic/string"),
     )
     response.raise_for_status()
 
@@ -82,7 +82,7 @@ def test_raise_for_status(client):
 
 def test_response_repr(send_request):
     response = send_request(
-        request=HttpRequest("GET", "http://localhost:5000/basic/text")
+        request=HttpRequest("GET", "http://localhost:5000/basic/string")
     )
     assert repr(response) == "<HttpResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
 

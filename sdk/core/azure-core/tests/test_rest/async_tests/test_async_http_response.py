@@ -46,7 +46,7 @@ async def test_response_content(send_request):
 @pytest.mark.asyncio
 async def test_response_text(send_request):
     response = await send_request(
-        request=HttpRequest("GET", "http://localhost:5000/basic/text"),
+        request=HttpRequest("GET", "http://localhost:5000/basic/string"),
     )
     assert response.status_code == 200
     assert response.reason == "OK"
@@ -70,7 +70,7 @@ async def test_response_html(send_request):
 @pytest.mark.asyncio
 async def test_raise_for_status(client):
     response = await client.send_request(
-        HttpRequest("GET", "http://localhost:5000/basic/text"),
+        HttpRequest("GET", "http://localhost:5000/basic/string"),
     )
     response.raise_for_status()
 
@@ -92,7 +92,7 @@ async def test_raise_for_status(client):
 @pytest.mark.asyncio
 async def test_response_repr(send_request):
     response = await send_request(
-        HttpRequest("GET", "http://localhost:5000/basic/text")
+        HttpRequest("GET", "http://localhost:5000/basic/string")
     )
     assert repr(response) == "<AsyncHttpResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
 
