@@ -46,7 +46,7 @@ class QueryTextsOperations:
         resource_group_name: str,
         server_name: str,
         query_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.QueryText":
         """Retrieve the Query-Store query texts for the queryId.
 
@@ -108,7 +108,7 @@ class QueryTextsOperations:
         resource_group_name: str,
         server_name: str,
         query_ids: List[str],
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.QueryTextsResultList"]:
         """Retrieve the Query-Store query texts for specified queryIds.
 
