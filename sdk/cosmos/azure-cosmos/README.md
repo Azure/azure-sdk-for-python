@@ -83,7 +83,7 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 ## Limitations
 
-Currently the features below are **not supported**. For some options, check the [Workarounds](#workarounds "Workarounds") section.
+Currently the features below are **not supported**. For alternatives options, check the **Workarounds** section below.
 
 ### Data Plane Limitations:
 
