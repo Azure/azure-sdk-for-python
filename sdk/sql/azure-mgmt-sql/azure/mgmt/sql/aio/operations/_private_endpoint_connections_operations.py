@@ -48,7 +48,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         server_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         """Gets a private endpoint connection.
 
@@ -112,7 +112,7 @@ class PrivateEndpointConnectionsOperations:
         server_name: str,
         private_endpoint_connection_name: str,
         parameters: "_models.PrivateEndpointConnection",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PrivateEndpointConnection"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PrivateEndpointConnection"]]
         error_map = {
@@ -169,7 +169,7 @@ class PrivateEndpointConnectionsOperations:
         server_name: str,
         private_endpoint_connection_name: str,
         parameters: "_models.PrivateEndpointConnection",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PrivateEndpointConnection"]:
         """Approve or reject a private endpoint connection with a given name.
 
@@ -184,8 +184,8 @@ class PrivateEndpointConnectionsOperations:
         :type parameters: ~azure.mgmt.sql.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)
@@ -245,7 +245,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         server_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -289,7 +289,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         server_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a private endpoint connection with a given name.
 
@@ -302,8 +302,8 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -358,7 +358,7 @@ class PrivateEndpointConnectionsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateEndpointConnectionListResult"]:
         """Gets all private endpoint connections on a server.
 

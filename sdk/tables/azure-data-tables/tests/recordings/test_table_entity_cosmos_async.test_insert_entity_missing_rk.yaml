@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 23 Apr 2021 17:58:10 GMT
+      - Wed, 26 May 2021 22:35:13 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 23 Apr 2021 17:58:10 GMT
+      - Wed, 26 May 2021 22:35:13 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -25,8 +25,8 @@ interactions:
       string: '{"TableName":"uttablef9e71907","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Fri, 23 Apr 2021 17:58:11 GMT
-      etag: W/"datetime'2021-04-23T17%3A58%3A11.4013192Z'"
+      date: Wed, 26 May 2021 22:35:13 GMT
+      etag: W/"datetime'2021-05-26T22%3A35%3A13.6277512Z'"
       location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttablef9e71907')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -46,25 +46,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 23 Apr 2021 17:58:11 GMT
+      - Wed, 26 May 2021 22:35:14 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 23 Apr 2021 17:58:11 GMT
+      - Wed, 26 May 2021 22:35:14 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://fake_cosmos_account.table.cosmos.azure.com/uttablef9e71907
   response:
     body:
-      string: "{\"odata.error\":{\"code\":\"PropertiesNeedValue\",\"message\":{\"\
-        lang\":\"en-us\",\"value\":\"PartitionKey/RowKey cannot be empty\\r\\nActivityId:\
-        \ 780a148d-a45d-11eb-9bcb-002b67128e4c, documentdb-dotnet-sdk/2.11.0 Host/64-bit\
-        \ MicrosoftWindowsNT/6.2.9200.0\\nRequestID:780a148d-a45d-11eb-9bcb-002b67128e4c\\\
-        n\"}}}\r\n"
+      string: "{\"odata.error\":{\"code\":\"PropertiesNeedValue\",\"message\":{\"lang\":\"en-us\",\"value\":\"PartitionKey/RowKey
+        cannot be empty\\r\\nActivityId: a355f792-be72-11eb-ae94-b831b5891408, documentdb-dotnet-sdk/2.11.0
+        Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:a355f792-be72-11eb-ae94-b831b5891408\\n\"}}}\r\n"
     headers:
       content-type: application/json;odata=fullmetadata
-      date: Fri, 23 Apr 2021 17:58:11 GMT
+      date: Wed, 26 May 2021 22:35:13 GMT
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
@@ -75,13 +73,42 @@ interactions:
     body: null
     headers:
       Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 26 May 2021 22:35:14 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 26 May 2021 22:35:14 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"value":[{"TableName":"uttablef9e71907"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Wed, 26 May 2021 22:35:13 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables
+- request:
+    body: null
+    headers:
+      Accept:
       - application/json
       Date:
-      - Fri, 23 Apr 2021 17:58:11 GMT
+      - Wed, 26 May 2021 22:35:14 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 23 Apr 2021 17:58:11 GMT
+      - Wed, 26 May 2021 22:35:14 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -91,7 +118,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Apr 2021 17:58:11 GMT
+      date: Wed, 26 May 2021 22:35:13 GMT
       server: Microsoft-HTTPAPI/2.0
     status:
       code: 204

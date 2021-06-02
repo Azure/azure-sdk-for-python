@@ -1,23 +1,34 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b4 (2021-06-07)
+
+**New Features**
+- Added `AzureLogAnalyticsDataFeedSource` and `AzureEventHubsDataFeedSource`
+- Update method now returns the updated object
+- Added DatasourceCredentials and DatasourceCredential operations
+- Added authentication type support for data feed
 
 **Breaking Changes**
 
+- Delete methods now take positional only argument as id.
+- `update_subscription_key` and `update_api_key` are merged into one method `update_key`
+
+- Deprecated:
+    - `HttpRequestDataFeed`
+    - `ElasticsearchDataFeed`
+
 - Renamed
-    - AzureApplicationInsightsDataFeed -> AzureApplicationInsightsDataFeedSource
-    - AzureBlobDataFeed -> AzureBlobDataFeedSource
-    - AzureCosmosDBDataFeed -> AzureCosmosDBDataFeedSource
-    - AzureDataExplorerDataFeed -> AzureDataExplorerDataFeedSource
-    - AzureTableDataFeed -> AzureTableDataFeedSource
-    - HttpRequestDataFeed -> HttpRequestDataFeedSource
-    - InfluxDBDataFeed -> InfluxDBDataFeedSource
-    - MySqlDataFeed -> MySqlDataFeedSource
-    - PostgreSqlDataFeed -> PostgreSqlDataFeedSource
-    - SQLServerDataFeed -> SQLServerDataFeedSource
-    - MongoDBDataFeed -> MongoDBDataFeedSource
-    - AzureDataLakeStorageGen2DataFeed -> AzureDataLakeStorageGen2DataFeedSource
-    - ElasticsearchDataFeed -> ElasticsearchDataFeedSource
+    - `AzureApplicationInsightsDataFeed` -> `AzureApplicationInsightsDataFeedSource`
+    - `AzureBlobDataFeed` -> `AzureBlobDataFeedSource`
+    - `AzureCosmosDBDataFeed` -> `AzureCosmosDbDataFeedSource`
+    - `AzureDataExplorerDataFeed` -> `AzureDataExplorerDataFeedSource`
+    - `AzureTableDataFeed` -> `AzureTableDataFeedSource`
+    - `InfluxDBDataFeed` -> `InfluxDbDataFeedSource`
+    - `MySqlDataFeed` -> `MySqlDataFeedSource`
+    - `PostgreSqlDataFeed` -> `PostgreSqlDataFeedSource`
+    - `SQLServerDataFeed` -> `SqlServerDataFeedSource`
+    - `MongoDBDataFeed` -> `MongoDbDataFeedSource`
+    - `AzureDataLakeStorageGen2DataFeed` -> `AzureDataLakeStorageGen2DataFeedSource`
 
 **Dependency Updates**
 

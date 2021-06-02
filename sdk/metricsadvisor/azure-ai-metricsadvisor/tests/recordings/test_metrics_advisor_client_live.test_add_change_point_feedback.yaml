@@ -15,7 +15,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
   response:
@@ -23,21 +23,21 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 3b993c58-a04c-4662-b637-7c177102feac
+      - 86b527d0-54b7-41df-9fed-60b02cfecec0
       content-length:
       - '0'
       date:
-      - Fri, 22 Jan 2021 01:02:00 GMT
+      - Fri, 21 May 2021 20:52:40 GMT
       location:
-      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/b4a8c6e6-1f2e-4309-bc5f-616f0a11125a
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/281cba84-f591-4c9d-9419-0dac5b9682ab
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '302'
+      - '354'
       x-request-id:
-      - 3b993c58-a04c-4662-b637-7c177102feac
+      - 86b527d0-54b7-41df-9fed-60b02cfecec0
     status:
       code: 201
       message: Created

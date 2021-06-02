@@ -8,11 +8,16 @@ stages:
       JobName: identity
       ServiceDirectory: communication
       DeployArmTemplate: true
-      TestSamples: true
+      MatrixReplace:
+        - TestSamples=.*/true
       CloudConfig:
         Public:
           SubscriptionConfigurations:
             - $(sub-config-azure-cloud-test-resources)
             - $(sub-config-communication-services-cloud-test-resources-common)
             - $(sub-config-communication-services-cloud-test-resources-python)
-      Clouds: Public 
+        Int:
+            SubscriptionConfigurations:
+              - $(sub-config-communication-int-test-resources-common)
+              - $(sub-config-communication-int-test-resources-python)
+      Clouds: Public,Int

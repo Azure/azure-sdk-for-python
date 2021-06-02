@@ -99,8 +99,10 @@ class TableTestCase(object):
         return table
 
     def _delete_all_tables(self, ts):
-        for table in ts.list_tables():
-            ts.delete_table(table.name)
+        if self.is_live:
+            for table in ts.list_tables():
+                ts.delete_table(table.name)
+            self.sleep(10)
 
     def _create_pk_rk(self, pk, rk):
         try:
@@ -137,6 +139,7 @@ class TableTestCase(object):
             "optional": None,
             "ratio": 3.1,
             "evenratio": 3.0,
+            "double": (5, EdmType.DOUBLE),
             "large": 933311100,
             "Birthday": datetime(1973, 10, 4, tzinfo=tzutc()),
             "birthday": datetime(1970, 10, 4, tzinfo=tzutc()),
@@ -173,14 +176,16 @@ class TableTestCase(object):
         assert not "optional" in entity
         assert entity["ratio"] == 3.1
         assert entity["evenratio"] == 3.0
+        assert entity["double"] == 5.0
         assert entity["large"] == 933311100
         assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
         assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=tzutc())
         assert entity["binary"] == b"binary"
         assert entity["other"] == 20
         assert entity["clsid"] == uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
-        assert entity.metadata["etag"]
-        assert entity.metadata["timestamp"]
+        assert entity.metadata.pop("etag", None)
+        assert isinstance(entity.metadata.pop("timestamp", None), datetime)
+        assert not entity.metadata, "Found metadata: {}".format(entity.metadata)
 
     def _assert_default_entity_json_full_metadata(self, entity, headers=None):
         """
@@ -194,14 +199,16 @@ class TableTestCase(object):
         assert not "aquarius" in entity
         assert entity["ratio"] == 3.1
         assert entity["evenratio"] == 3.0
+        assert entity["double"] == 5.0
         assert entity["large"] == 933311100
         assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
         assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=tzutc())
         assert entity["binary"] == b"binary"
         assert entity["other"] == 20
         assert entity["clsid"] == uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
-        assert entity.metadata["etag"]
-        assert entity.metadata["timestamp"]
+        assert entity.metadata.pop("etag", None)
+        assert isinstance(entity.metadata.pop("timestamp", None), datetime)
+        assert sorted(list(entity.metadata.keys())) == ['editLink', 'id', 'type'], "Found metadata: {}".format(entity.metadata)
 
     def _assert_default_entity_json_no_metadata(self, entity, headers=None):
         """
@@ -215,6 +222,7 @@ class TableTestCase(object):
         assert not "aquarius" in entity
         assert entity["ratio"] == 3.1
         assert entity["evenratio"] == 3.0
+        assert entity["double"] == 5.0
         assert entity["large"] == 933311100
         assert entity["Birthday"].startswith("1973-10-04T00:00:00")
         assert entity["birthday"].startswith("1970-10-04T00:00:00")
@@ -223,8 +231,9 @@ class TableTestCase(object):
         assert entity["binary"] == b64encode(b"binary").decode("utf-8")
         assert entity["other"] == 20
         assert entity["clsid"] == "c9da6455-213d-42c9-9a79-3e9149a57833"
-        assert entity.metadata["etag"]
-        assert entity.metadata["timestamp"]
+        assert entity.metadata.pop("etag", None)
+        assert isinstance(entity.metadata.pop("timestamp", None), datetime)
+        assert not entity.metadata
 
     def _assert_updated_entity(self, entity):
         """
@@ -238,6 +247,7 @@ class TableTestCase(object):
         assert not "optional" in entity
         assert not "ratio" in entity
         assert not "evenratio" in entity
+        assert not "double" in entity
         assert not "large" in entity
         assert not "Birthday" in entity
         assert entity["birthday"] == datetime(1991, 10, 4, tzinfo=tzutc())
@@ -258,6 +268,7 @@ class TableTestCase(object):
         assert entity["deceased"] == False
         assert entity["ratio"] == 3.1
         assert entity["evenratio"] == 3.0
+        assert entity["double"] == 5.0
         assert entity["large"] == 933311100
         assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
         assert entity["birthday"] == datetime(1991, 10, 4, tzinfo=tzutc())
@@ -354,8 +365,6 @@ class TableTestCase(object):
         if is_live():
             self._delete_all_tables(self.ts)
             self.test_tables = []
-            if self.ts._cosmos_endpoint:
-                self.sleep(SLEEP_DELAY)
             self.ts.close()
 
     def _create_query_table(self, entity_count):

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ConsumerGroupsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,10 +51,10 @@ class ConsumerGroupsOperations(object):
         namespace_name,  # type: str
         event_hub_name,  # type: str
         consumer_group_name,  # type: str
-        parameters,  # type: "models.ConsumerGroupCreateOrUpdateParameters"
+        parameters,  # type: "_models.ConsumerGroupCreateOrUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ConsumerGroupResource"
+        # type: (...) -> "_models.ConsumerGroupResource"
         """Creates or updates an Event Hubs consumer group as a nested resource within a Namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -72,7 +72,7 @@ class ConsumerGroupsOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.ConsumerGroupResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConsumerGroupResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConsumerGroupResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -190,7 +190,7 @@ class ConsumerGroupsOperations(object):
         consumer_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ConsumerGroupResource"
+        # type: (...) -> "_models.ConsumerGroupResource"
         """Gets a description for the specified consumer group.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -206,7 +206,7 @@ class ConsumerGroupsOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.ConsumerGroupResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConsumerGroupResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConsumerGroupResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -256,7 +256,7 @@ class ConsumerGroupsOperations(object):
         event_hub_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ConsumerGroupListResult"]
+        # type: (...) -> Iterable["_models.ConsumerGroupListResult"]
         """Gets all the consumer groups in a Namespace. An empty feed is returned if no consumer group
         exists in the Namespace.
 
@@ -271,7 +271,7 @@ class ConsumerGroupsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventhub.v2015_08_01.models.ConsumerGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConsumerGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConsumerGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

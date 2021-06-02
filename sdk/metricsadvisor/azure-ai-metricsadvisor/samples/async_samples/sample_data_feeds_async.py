@@ -35,7 +35,7 @@ async def sample_create_data_feed_async():
     from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
     from azure.ai.metricsadvisor.aio import MetricsAdvisorAdministrationClient
     from azure.ai.metricsadvisor.models import (
-        SQLServerDataFeedSource,
+        SqlServerDataFeedSource,
         DataFeedSchema,
         DataFeedMetric,
         DataFeedDimension,
@@ -55,7 +55,7 @@ async def sample_create_data_feed_async():
     async with client:
         data_feed = await client.create_data_feed(
             name="My data feed",
-            source=SQLServerDataFeedSource(
+            source=SqlServerDataFeedSource(
                 connection_string=sql_server_connection_string,
                 query=query,
             ),
@@ -175,19 +175,18 @@ async def sample_update_data_feed_async(data_feed):
     data_feed.options.data_feed_description = "updated description for data feed"
 
     async with client:
-        await client.update_data_feed(
+        updated = await client.update_data_feed(
             data_feed,
             access_mode="Public",
             fill_type="CustomValue",
             custom_fill_value=1
         )
-        updated_data_feed = await client.get_data_feed(data_feed.id)
-        print("Updated name: {}".format(updated_data_feed.name))
-        print("Updated description: {}".format(updated_data_feed.options.data_feed_description))
-        print("Updated access mode: {}".format(updated_data_feed.options.access_mode))
+        print("Updated name: {}".format(updated.name))
+        print("Updated description: {}".format(updated.options.data_feed_description))
+        print("Updated access mode: {}".format(updated.options.access_mode))
         print("Updated fill setting, value: {}, {}".format(
-            updated_data_feed.options.missing_data_point_fill_settings.fill_type,
-            updated_data_feed.options.missing_data_point_fill_settings.custom_fill_value,
+            updated.options.missing_data_point_fill_settings.fill_type,
+            updated.options.missing_data_point_fill_settings.custom_fill_value,
         ))
     # [END update_data_feed_async]
 

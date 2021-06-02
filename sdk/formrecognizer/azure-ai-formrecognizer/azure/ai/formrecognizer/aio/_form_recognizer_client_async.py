@@ -24,9 +24,10 @@ from .._models import FormPage, RecognizedForm
 
 class FormRecognizerClient(FormRecognizerClientBaseAsync):
     """FormRecognizerClient extracts information from forms and images into structured data.
-    It is the interface to use for analyzing receipts, business cards, invoices, recognizing
-    content/layout from forms, and analyzing custom forms from trained models. It provides
-    different methods based on inputs from a URL and inputs from a stream.
+    It is the interface to use for analyzing with prebuilt models (receipts, business cards,
+    invoices, identity documents), recognizing content/layout from forms, and analyzing
+    custom forms from trained models. It provides different methods based on inputs from a
+    URL and inputs from a stream.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).

@@ -14,26 +14,28 @@ if TYPE_CHECKING:
 class KeyVaultPermission(object):
     """Role definition permissions.
 
-    :ivar list[str] allowed_actions:
-    :ivar list[str] denied_actions:
-    :ivar list[str] allowed_data_actions:
-    :ivar list[str] denied_data_actions:
+    :ivar list[str] actions: Action permissions that are granted.
+    :ivar list[str] not_actions: Action permissions that are excluded but not denied. They may be granted by other role
+     definitions assigned to a principal.
+    :ivar list[str] data_actions: Data action permissions that are granted.
+    :ivar list[str] not_data_actions: Data action permissions that are excluded but not denied. They may be granted by
+     other role definitions assigned to a principal.
     """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self.allowed_actions = kwargs.get("allowed_actions")
-        self.denied_actions = kwargs.get("denied_actions")
-        self.allowed_data_actions = kwargs.get("allowed_data_actions")
-        self.denied_data_actions = kwargs.get("denied_data_actions")
+        self.actions = kwargs.get("actions")
+        self.not_actions = kwargs.get("not_actions")
+        self.data_actions = kwargs.get("data_actions")
+        self.not_data_actions = kwargs.get("not_data_actions")
 
     @classmethod
     def _from_generated(cls, permissions):
         return cls(
-            allowed_actions=permissions.actions,
-            denied_actions=permissions.not_actions,
-            allowed_data_actions=permissions.data_actions,
-            denied_data_actions=permissions.not_data_actions,
+            actions=permissions.actions,
+            not_actions=permissions.not_actions,
+            data_actions=permissions.data_actions,
+            not_data_actions=permissions.not_data_actions,
         )
 
 
@@ -54,40 +56,25 @@ class KeyVaultRoleAssignment(object):
     @property
     def role_assignment_id(self):
         # type: () -> str
-        """unique identifier for this assignment"""
+        """Unique identifier for this assignment"""
         return self._role_assignment_id
 
     @property
     def name(self):
         # type: () -> str
-        """name of the assignment"""
+        """Name of the assignment"""
         return self._name
 
     @property
-    def principal_id(self):
-        # type: () -> str
-        """ID of the principal this assignment applies to.
-
-        This maps to the ID inside the Active Directory. It can point to a user, service principal, or security group.
-        """
-        return self._properties.principal_id
-
-    @property
-    def role_definition_id(self):
-        # type: () -> str
-        """ID of the role's definition"""
-        return self._properties.role_definition_id
-
-    @property
-    def scope(self):
-        # type: () -> str
-        """scope of the assignment"""
-        return self._properties.scope
+    def properties(self):
+        # type: () -> KeyVaultRoleAssignmentProperties
+        """Properties of the assignment"""
+        return self._properties
 
     @property
     def type(self):
         # type: () -> str
-        """the type of this assignment"""
+        """The type of this assignment"""
         return self._type
 
     @classmethod
@@ -101,11 +88,34 @@ class KeyVaultRoleAssignment(object):
 
 
 class KeyVaultRoleAssignmentProperties(object):
+    """Properties of a role assignment."""
+
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self.principal_id = kwargs.get("principal_id")
-        self.role_definition_id = kwargs.get("role_definition_id")
-        self.scope = kwargs.get("scope")
+        self._principal_id = kwargs.get("principal_id")
+        self._role_definition_id = kwargs.get("role_definition_id")
+        self._scope = kwargs.get("scope")
+
+    @property
+    def principal_id(self):
+        # type: () -> str
+        """ID of the principal this assignment applies to.
+
+        This maps to the ID inside the Active Directory. It can point to a user, service principal, or security group.
+        """
+        return self._principal_id
+
+    @property
+    def role_definition_id(self):
+        # type: () -> str
+        """ID of the role's definition"""
+        return self._role_definition_id
+
+    @property
+    def scope(self):
+        # type: () -> str
+        """Scope of the assignment"""
+        return self._scope
 
     def __repr__(self):
         # type: () -> str
@@ -145,49 +155,49 @@ class KeyVaultRoleDefinition(object):
     @property
     def id(self):
         # type: () -> str
-        """unique identifier for this role definition"""
+        """Unique identifier for this role definition"""
         return self._id
 
     @property
     def name(self):
         # type: () -> str
-        """name of the role definition"""
+        """Name of the role definition"""
         return self._name
 
     @property
     def role_name(self):
         # type: () -> str
-        """name of the role"""
+        """Name of the role"""
         return self._role_name
 
     @property
     def description(self):
         # type: () -> str
-        """description of the role definition"""
+        """Description of the role definition"""
         return self._description
 
     @property
     def role_type(self):
         # type: () -> str
-        """type of the role"""
+        """Type of the role"""
         return self._role_type
 
     @property
     def type(self):
         # type: () -> str
-        """type of the role definition"""
+        """Type of the role definition"""
         return self._type
 
     @property
     def permissions(self):
         # type: () -> list[KeyVaultPermission]
-        """permissions defined for the role"""
+        """Permissions defined for the role"""
         return self._permissions
 
     @property
     def assignable_scopes(self):
         # type: () -> list[str]
-        """scopes that can be assigned to the role"""
+        """Scopes that can be assigned to the role"""
         return self._assignable_scopes
 
     @classmethod
@@ -218,7 +228,7 @@ class _Operation(object):
         return cls(**deserialized_operation.__dict__)
 
 
-class BackupOperation(_Operation):
+class KeyVaultBackupOperation(_Operation):
     """A Key Vault full backup operation.
 
     :ivar str status: status of the backup operation
@@ -233,10 +243,10 @@ class BackupOperation(_Operation):
 
     def __init__(self, **kwargs):
         self.folder_url = kwargs.pop("azure_storage_blob_container_uri", None)
-        super(BackupOperation, self).__init__(**kwargs)
+        super(KeyVaultBackupOperation, self).__init__(**kwargs)
 
 
-class RestoreOperation(_Operation):
+class KeyVaultRestoreOperation(_Operation):
     """A Key Vault restore operation.
 
     :ivar str status: status of the operation
@@ -249,7 +259,7 @@ class RestoreOperation(_Operation):
     """
 
 
-class SelectiveKeyRestoreOperation(_Operation):
+class KeyVaultSelectiveKeyRestoreOperation(_Operation):
     """A Key Vault operation restoring a single key.
 
     :ivar str status: status of the operation

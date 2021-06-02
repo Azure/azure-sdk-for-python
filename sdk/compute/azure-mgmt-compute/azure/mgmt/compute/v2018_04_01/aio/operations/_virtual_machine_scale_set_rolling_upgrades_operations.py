@@ -46,7 +46,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -88,7 +88,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Cancels the current virtual machine scale set rolling upgrade.
 
@@ -98,8 +98,8 @@ class VirtualMachineScaleSetRollingUpgradesOperations:
         :type vm_scale_set_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -152,7 +152,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -194,7 +194,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Starts a rolling upgrade to move all virtual machine scale set instances to the latest
         available Platform Image OS version. Instances which are already running the latest available
@@ -206,8 +206,8 @@ class VirtualMachineScaleSetRollingUpgradesOperations:
         :type vm_scale_set_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -260,7 +260,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations:
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RollingUpgradeStatusInfo":
         """Gets the status of the latest virtual machine scale set rolling upgrade.
 

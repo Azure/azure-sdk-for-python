@@ -51,15 +51,9 @@ class PowerShellPreparer(AzureMgmtPreparer):
 
     def _set_mgmt_settings_real_values(self):
         if self.is_live:
-            os.environ["AZURE_TENANT_ID"] = os.environ[
-                "{}_TENANT_ID".format(self.directory.upper())
-            ]
-            os.environ["AZURE_CLIENT_ID"] = os.environ[
-                "{}_CLIENT_ID".format(self.directory.upper())
-            ]
-            os.environ["AZURE_CLIENT_SECRET"] = os.environ[
-                "{}_CLIENT_SECRET".format(self.directory.upper())
-            ]
+            os.environ["AZURE_TENANT_ID"] = os.environ["{}_TENANT_ID".format(self.directory.upper())]
+            os.environ["AZURE_CLIENT_ID"] = os.environ["{}_CLIENT_ID".format(self.directory.upper())]
+            os.environ["AZURE_CLIENT_SECRET"] = os.environ["{}_CLIENT_SECRET".format(self.directory.upper())]
 
     def create_resource(self, name, **kwargs):
 
@@ -86,15 +80,11 @@ class PowerShellPreparer(AzureMgmtPreparer):
                 self.real_values = {}
                 create_kwargs = {}
                 for preparer in self._backup_preparers:
-                    resource_name, vals = preparer._prepare_create_resource(
-                        self.test_class_instance, **create_kwargs
-                    )
+                    resource_name, vals = preparer._prepare_create_resource(self.test_class_instance, **create_kwargs)
                     # vals = preparer.create_resource(name, **create_kwargs)
                     self.real_values.update(vals)
                     if "resource_group" in self.real_values.keys():
-                        create_kwargs["resource_group"] = self.real_values[
-                            "resource_group"
-                        ]
+                        create_kwargs["resource_group"] = self.real_values["resource_group"]
 
             return self.real_values
 

@@ -46,7 +46,7 @@ class PhoneNumbersOperations:
         self,
         country_code: str,
         body: "_models.PhoneNumberSearchRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PhoneNumberSearchResult":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PhoneNumberSearchResult"]
         error_map = {
@@ -103,7 +103,7 @@ class PhoneNumbersOperations:
         self,
         country_code: str,
         body: "_models.PhoneNumberSearchRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PhoneNumberSearchResult"]:
         """Search for available phone numbers to purchase.
 
@@ -115,15 +115,15 @@ class PhoneNumbersOperations:
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberSearchRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PhoneNumberSearchResult or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PhoneNumberSearchResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -176,7 +176,7 @@ class PhoneNumbersOperations:
     async def get_search_result(
         self,
         search_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PhoneNumberSearchResult":
         """Gets a phone number search result by search id.
 
@@ -233,7 +233,7 @@ class PhoneNumbersOperations:
     async def _purchase_phone_numbers_initial(
         self,
         search_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -287,7 +287,7 @@ class PhoneNumbersOperations:
     async def begin_purchase_phone_numbers(
         self,
         search_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Purchases phone numbers.
 
@@ -297,15 +297,15 @@ class PhoneNumbersOperations:
         :type search_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -347,7 +347,7 @@ class PhoneNumbersOperations:
     async def get_operation(
         self,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PhoneNumberOperation":
         """Gets an operation by its id.
 
@@ -406,7 +406,7 @@ class PhoneNumbersOperations:
     async def cancel_operation(
         self,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels an operation by its id.
 
@@ -462,7 +462,7 @@ class PhoneNumbersOperations:
         phone_number: str,
         calling: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
         sms: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PurchasedPhoneNumber":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PurchasedPhoneNumber"]
         error_map = {
@@ -525,7 +525,7 @@ class PhoneNumbersOperations:
         phone_number: str,
         calling: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
         sms: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PurchasedPhoneNumber"]:
         """Updates the capabilities of a phone number.
 
@@ -540,15 +540,15 @@ class PhoneNumbersOperations:
         :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PurchasedPhoneNumber or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PurchasedPhoneNumber"]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -602,7 +602,7 @@ class PhoneNumbersOperations:
     async def get_by_number(
         self,
         phone_number: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PurchasedPhoneNumber":
         """Gets the details of the given purchased phone number.
 
@@ -660,7 +660,7 @@ class PhoneNumbersOperations:
     async def _release_phone_number_initial(
         self,
         phone_number: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -708,7 +708,7 @@ class PhoneNumbersOperations:
     async def begin_release_phone_number(
         self,
         phone_number: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Releases a purchased phone number.
 
@@ -718,15 +718,15 @@ class PhoneNumbersOperations:
         :type phone_number: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -770,7 +770,7 @@ class PhoneNumbersOperations:
         self,
         skip: Optional[int] = 0,
         top: Optional[int] = 100,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PurchasedPhoneNumbers"]:
         """Gets the list of all purchased phone numbers.
 

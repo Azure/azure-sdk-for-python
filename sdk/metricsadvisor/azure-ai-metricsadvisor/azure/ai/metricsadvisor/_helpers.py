@@ -24,7 +24,11 @@ from .models import (
     ChangePointFeedback,
     CommentFeedback,
     PeriodFeedback,
-    DataFeedRollupType
+    DataFeedRollupType,
+    DatasourceSqlConnectionString,
+    DatasourceDataLakeGen2SharedKey,
+    DatasourceServicePrincipal,
+    DatasourceServicePrincipalInKeyVault
 )
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
@@ -46,7 +50,7 @@ def construct_alert_config_dict(update_kwargs):
 def construct_detection_config_dict(update_kwargs):
 
     if "wholeMetricConfiguration" in update_kwargs:
-        update_kwargs["wholeMetricConfiguration"] = update_kwargs["wholeMetricConfiguration"]._to_generated() \
+        update_kwargs["wholeMetricConfiguration"] = update_kwargs["wholeMetricConfiguration"]._to_generated_patch() \
             if update_kwargs["wholeMetricConfiguration"] else None
     if "dimensionGroupOverrideConfigurations" in update_kwargs:
         update_kwargs["dimensionGroupOverrideConfigurations"] = [
@@ -91,6 +95,8 @@ def construct_data_feed_dict(update_kwargs):
         update_kwargs["dataStartFrom"] = Serializer.serialize_iso(update_kwargs["dataStartFrom"])
 
     if "dataSourceParameter" in update_kwargs:
+        update_kwargs["authenticationType"] = update_kwargs["dataSourceParameter"].authentication_type
+        update_kwargs["credentialId"] = update_kwargs["dataSourceParameter"].credential_id
         update_kwargs["dataSourceParameter"] = update_kwargs["dataSourceParameter"]._to_generated_patch()
     return update_kwargs
 
@@ -108,15 +114,15 @@ def convert_to_generated_data_feed_type(
 
     :param generated_feed_type: generated model type of data feed
     :type generated_feed_type: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
+        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, AzureLogAnalyticsDataFeed,
         InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-        ElasticsearchDataFeed]
+        AzureEventHubsDataFeed]
     :param str name: Name for the data feed.
     :param source: The exposed model source of the data feed
-    :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDBDataFeedSource,
+    :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDbDataFeedSource,
         AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource, AzureTableDataFeedSource,
-        HttpRequestDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
-        SQLServerDataFeedSource, MongoDBDataFeedSource, ElasticsearchDataFeedSource]
+        AzureLogAnalyticsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
+        SqlServerDataFeedSource, MongoDbDataFeedSource, AzureEventHubsDataFeedSource]
     :param granularity: Granularity type and amount if using custom.
     :type granularity: ~azure.ai.metricsadvisor.models.DataFeedGranularity
     :param schema: Data feed schema
@@ -126,9 +132,9 @@ def convert_to_generated_data_feed_type(
     :param options: Data feed options.
     :type options: ~azure.ai.metricsadvisor.models.DataFeedOptions
     :rtype: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
+        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, AzureLogAnalyticsDataFeed,
         InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-        ElasticsearchDataFeed]
+        AzureEventHubsDataFeed]
     :return: The generated model for the data source type
     """
 
@@ -148,7 +154,9 @@ def convert_to_generated_data_feed_type(
         )
 
     return generated_feed_type(
-        data_source_parameter=source.__dict__,
+        data_source_parameter=source._to_generated(),
+        authentication_type=source.authentication_type,
+        credential_id=source.credential_id,
         data_feed_name=name,
         granularity_name=granularity.granularity_type,
         granularity_amount=granularity.custom_granularity_value,
@@ -217,3 +225,12 @@ def get_authentication_policy(credential):
         )
 
     return authentication_policy
+
+def convert_to_datasource_credential(datasource_credential):
+    if datasource_credential.data_source_credential_type == "AzureSQLConnectionString":
+        return DatasourceSqlConnectionString._from_generated(datasource_credential)
+    if datasource_credential.data_source_credential_type == "DataLakeGen2SharedKey":
+        return DatasourceDataLakeGen2SharedKey._from_generated(datasource_credential)
+    if datasource_credential.data_source_credential_type == "ServicePrincipal":
+        return DatasourceServicePrincipal._from_generated(datasource_credential)
+    return DatasourceServicePrincipalInKeyVault._from_generated(datasource_credential)

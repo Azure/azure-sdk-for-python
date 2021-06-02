@@ -15,13 +15,23 @@ Example PR build:
  - `Analyze` tox envs run during the `Analyze job.
  - `Test <platform>_<pyversion>` runs PR/Nightly tox envs, depending on context.
 
+
+## Targeting a specific package at build time
+
+In both `public` and `internal` projects, all builds allow a filter to be introduced at build time to narrow the set of packages build/tested.
+
+1. Click `Run New` on your target build.
+2. Before clicking `run` against `master` or your target commit, click `Variables` and add a variable. Add variable `BuildTargetingString` with value of a valid glob string.
+   1. For example, setting filter string `azure-mgmt-*` will filter a build to only management packages. A value of `azure-keyvault-secrets` will result in only building THAT specific package.
+3. Once it's set, run the build!
+
 ## Skipping a tox test environment at queue time
 
 All build definitions allow choice at queue time as to which `tox` environments actually run during the test phase.
 
 1. Find your target service `internal` build.
-2. Click `Run New`
-3. Before clicking `run` against `master` or your target commit, click `Variables` and add a variable. The value should be a comma separated list of tox environments that you want to run in the test phase.
+2. Click `Run New`.
+3. Before clicking `run` against `master` or your target commit, click `Variables` and add a variable of name `Run.ToxCustomEnvs`. The value should be a comma separated list of tox environments that you want to run in the test phase.
 4. Once it's set, run the build!
 
 This is an example setting of that narrows the default set from `whl, sdist, depends, latestdependency, minimumdependency`.

@@ -46,7 +46,7 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:
         managed_instance_name: str,
         database_name: str,
         parameters: "_models.RecommendedSensitivityLabelUpdateList",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Update recommended sensitivity labels states of a given database using an operations batch.
 
