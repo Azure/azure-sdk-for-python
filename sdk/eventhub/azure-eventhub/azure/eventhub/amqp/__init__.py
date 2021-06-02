@@ -5,16 +5,16 @@
 # -------------------------------------------------------------------------
 
 from ._amqp_message import (
-    AMQPAnnotatedMessage,
-    AMQPMessageBodyType,
-    AMQPMessageProperties,
-    AMQPMessageHeader,
+    AmqpAnnotatedMessage,
+    AmqpMessageBodyType,
+    AmqpMessageProperties,
+    AmqpMessageHeader,
 )
 
 
 __all__ = [
-    "AMQPAnnotatedMessage",
-    "AMQPMessageBodyType",
-    "AMQPMessageProperties",
-    "AMQPMessageHeader",
+    "AmqpAnnotatedMessage",
+    "AmqpMessageBodyType",
+    "AmqpMessageProperties",
+    "AmqpMessageHeader",
 ]

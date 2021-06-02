@@ -50,10 +50,10 @@ from ._constants import (
     MAX_LONG
 )
 from .amqp import (
-    AMQPAnnotatedMessage,
-    AMQPMessageBodyType,
-    AMQPMessageHeader,
-    AMQPMessageProperties
+    AmqpAnnotatedMessage,
+    AmqpMessageBodyType,
+    AmqpMessageHeader,
+    AmqpMessageProperties
 )
 
 if TYPE_CHECKING:
@@ -104,9 +104,9 @@ class EventData(object):
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
         if body is None:
             raise ValueError("EventData cannot be None.")
-        self._raw_amqp_message = AMQPAnnotatedMessage(data_body=body, application_properties={}, annotations={})
-        self._raw_amqp_message.header = AMQPMessageHeader()
-        self._raw_amqp_message.properties = AMQPMessageProperties()
+        self._raw_amqp_message = AmqpAnnotatedMessage(data_body=body, application_properties={}, annotations={})
+        self._raw_amqp_message.header = AmqpMessageHeader()
+        self._raw_amqp_message.properties = AmqpMessageProperties()
         self._published_sequence_number = None
         self._pending_published_sequence_number = None
 
@@ -173,7 +173,7 @@ class EventData(object):
         :rtype: ~azure.eventhub.EventData
         """
         event_data = cls(body="")
-        event_data._raw_amqp_message = AMQPAnnotatedMessage(message=message)
+        event_data._raw_amqp_message = AmqpAnnotatedMessage(message=message)
         return event_data
 
     def _encode_message(self):
@@ -182,7 +182,7 @@ class EventData(object):
 
     @property
     def raw_amqp_message(self):
-        # type: () -> AMQPAnnotatedMessage
+        # type: () -> AmqpAnnotatedMessage
         """Advanced usage only. The internal AMQP message payload that is sent or received."""
         return self._raw_amqp_message
 
@@ -305,9 +305,9 @@ class EventData(object):
     def body(self):
         # type: () -> Any
         """The body of the Message. The format may vary depending on the body type:
-        For ~azure.eventhub.AMQPMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
-        For ~azure.eventhub.AMQPMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
-        For ~azure.eventhub.AMQPMessageBodyType.VALUE, the body could be any type.
+        For ~azure.eventhub.AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
+        For ~azure.eventhub.AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
+        For ~azure.eventhub.AmqpMessageBodyType.VALUE, the body could be any type.
         :rtype: Any
         """
         return self._raw_amqp_message.body
@@ -421,7 +421,7 @@ class EventDataBatch(object):
             try:
                 self.add(event_data)
             except ValueError:
-                raise ValueError("The combined size of EventData and AMQPAnnotatedMessage collection exceeds "
+                raise ValueError("The combined size of EventData and AmqpAnnotatedMessage collection exceeds "
                                  "the Event Hub frame size limit. Please send a smaller collection of EventData "
                                  "or use EventDataBatch, which is guaranteed to be under the frame size limit")
 
@@ -448,7 +448,7 @@ class EventDataBatch(object):
         return self._starting_published_sequence_number
 
     def add(self, event_data):
-        # type: (Union[EventData, AMQPAnnotatedMessage]) -> None
+        # type: (Union[EventData, AmqpAnnotatedMessage]) -> None
         """Try to add an EventData to the batch.
 
         The total size of an added event is the sum of its body, properties, etc.
@@ -456,11 +456,11 @@ class EventDataBatch(object):
         be raised.
 
         :param event_data: The EventData to add to the batch.
-        :type event_data: Union[~azure.eventhub.EventData, ~azure.eventhub.amqp.AMQPAnnotatedMessage]
+        :type event_data: Union[~azure.eventhub.EventData, ~azure.eventhub.amqp.AmqpAnnotatedMessage]
         :rtype: None
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
-        if isinstance(event_data, AMQPAnnotatedMessage):
+        if isinstance(event_data, AmqpAnnotatedMessage):
             event_data = EventData._from_message(event_data._to_outgoing_amqp_message())    # pylint: disable=protected-access
 
         if self._partition_key:
