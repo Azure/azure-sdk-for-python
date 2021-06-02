@@ -20,7 +20,7 @@ pip install azure-ai-metricsadvisor --pre
 
 ### Prerequisites
 
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 2.7, or 3.6 or later is required to use this package.
 * You need an [Azure subscription][azure_sub], and a [Metrics Advisor serivce][ma_service] to use this package.
 
 ### Authenticate the client
@@ -460,7 +460,7 @@ hook = client.create_hook(
 
 ### Async APIs
 
-This library includes a complete async API supported on Python 3.5+. To use it, you must
+This library includes a complete async API supported on Python 3.6+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
 [azure-core documentation][azure_core_docs]
