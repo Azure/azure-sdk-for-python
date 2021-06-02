@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union, List, Tuple, Dict, Mapping, Iterable, overload
+from typing import Optional, Any, TYPE_CHECKING, Union, List, Tuple, Dict, Mapping, Iterable, overload
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -46,6 +46,9 @@ from ._models import (
 EntityType = Union[TableEntity, Mapping[str, Any]]
 OperationType = Union[TransactionOperation, str]
 TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
+
+if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
 
 class TableClient(TablesBaseClient):
@@ -184,7 +187,7 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
+        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}  # type: ignore
 
     @distributed_trace
     def set_table_access_policy(
@@ -210,13 +213,13 @@ class TableClient(TablesBaseClient):
         signed_identifiers = identifiers  # type: ignore
         try:
             self._client.table.set_access_policy(
-                table=self.table_name, table_acl=signed_identifiers or None, **kwargs
+                table=self.table_name, table_acl=signed_identifiers or None, **kwargs  # type: ignore
             )
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
             except HttpResponseError as table_error:
-                if (table_error.error_code == 'InvalidXmlDocument'
+                if (table_error.error_code == 'InvalidXmlDocument'  # type: ignore
                 and len(signed_identifiers) > 5):
                     raise ValueError(
                         'Too many access policies provided. The server does not support setting '
@@ -228,7 +231,7 @@ class TableClient(TablesBaseClient):
     def create_table(
         self, **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str,str]
+        # type: (...) -> TableItem
         """Creates a new table under the current account.
 
         :return: A TableItem representing the created table.
@@ -247,9 +250,9 @@ class TableClient(TablesBaseClient):
         table_properties = TableProperties(table_name=self.table_name)
         try:
             result = self._client.table.create(table_properties, **kwargs)
-            return TableItem(name=result.table_name)
         except HttpResponseError as error:
             _process_table_error(error)
+        return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace
     def delete_table(
@@ -382,13 +385,12 @@ class TableClient(TablesBaseClient):
         """
         entity = _add_entity_properties(entity)
         try:
-            metadata, content = self._client.table.insert_entity(
+            metadata, content = self._client.table.insert_entity(  # type: ignore
                 table=self.table_name,
-                table_entity_properties=entity,
+                table_entity_properties=entity,  # type: ignore
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
                 **kwargs
             )
-            return _trim_service_metadata(metadata, content=content)
         except HttpResponseError as error:
             decoded = _decode_error(error.response, error.message)
             if decoded.error_code == "PropertiesNeedValue":
@@ -397,6 +399,7 @@ class TableClient(TablesBaseClient):
                 if entity.get("RowKey") is None:
                     raise ValueError("RowKey must be present in an entity")
             _reraise_error(error)
+        return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
     def update_entity(
@@ -434,7 +437,7 @@ class TableClient(TablesBaseClient):
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             try:
-                etag = entity.metadata.get("etag", None)
+                etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
         if_match = _get_match_headers(
@@ -449,30 +452,30 @@ class TableClient(TablesBaseClient):
             metadata = None
             content = None
             if mode is UpdateMode.REPLACE:
-                metadata, content = self._client.table.update_entity(
+                metadata, content = self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=entity,
+                    table_entity_properties=entity,  # type: ignore
                     if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
             elif mode is UpdateMode.MERGE:
-                metadata, content = self._client.table.merge_entity(
+                metadata, content = self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     if_match=if_match,
-                    table_entity_properties=entity,
+                    table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
             else:
                 raise ValueError("Mode type is not supported")
-            return _trim_service_metadata(metadata, content=content)
         except HttpResponseError as error:
             _process_table_error(error)
+        return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
     def list_entities(
@@ -541,12 +544,12 @@ class TableClient(TablesBaseClient):
         """
         parameters = kwargs.pop("parameters", None)
         query_filter = _parameter_filter_substitution(
-            parameters, query_filter
+            parameters, query_filter  # type: ignore
         )
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
-            user_select = ",".join(user_select)
+            user_select = ",".join(user_select)  # type: ignore
 
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return ItemPaged(
@@ -598,10 +601,9 @@ class TableClient(TablesBaseClient):
                 query_options=QueryOptions(select=user_select),
                 **kwargs
             )
-            properties = _convert_to_entity(entity)
-            return properties
         except HttpResponseError as error:
             _process_table_error(error)
+        return _convert_to_entity(entity)
 
     @distributed_trace
     def upsert_entity(
@@ -638,20 +640,20 @@ class TableClient(TablesBaseClient):
             metadata = None
             content = None
             if mode is UpdateMode.MERGE:
-                metadata, content = self._client.table.merge_entity(
+                metadata, content = self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=entity,
+                    table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
             elif mode is UpdateMode.REPLACE:
-                metadata, content = self._client.table.update_entity(
+                metadata, content = self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=entity,
+                    table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
@@ -662,9 +664,9 @@ class TableClient(TablesBaseClient):
                         mode
                     )
                 )
-            return _trim_service_metadata(metadata, content=content)
         except HttpResponseError as error:
             _process_table_error(error)
+        return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     def submit_transaction(
         self,
@@ -704,11 +706,11 @@ class TableClient(TablesBaseClient):
         )
         for operation in operations:
             try:
-                operation_kwargs = operation[2]
+                operation_kwargs = operation[2]  # type: ignore
             except IndexError:
                 operation_kwargs = {}
             try:
                 getattr(batched_requests, operation[0].lower())(operation[1], **operation_kwargs)
             except AttributeError:
                 raise ValueError("Unrecognized operation: {}".format(operation[0]))
-        return self._batch_send(*batched_requests.requests, **kwargs)
+        return self._batch_send(*batched_requests.requests, **kwargs)  # type: ignore
