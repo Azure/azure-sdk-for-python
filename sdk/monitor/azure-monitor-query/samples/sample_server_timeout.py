@@ -3,7 +3,6 @@
 
 import os
 import pandas as pd
-from datetime import timedelta
 from azure.monitor.query import LogsClient
 from azure.identity import ClientSecretCredential
 
@@ -18,10 +17,8 @@ client = LogsClient(credential)
 
 response = client.query(
     os.environ['LOG_WORKSPACE_ID'],
-    "Perf | summarize count() by bin(TimeGenerated, 4h) | render barchart title='24H Perf events'",
-    server_timeout=10,
-    include_statistics=True,
-    include_render=True
+    "range x from 1 to 10000000000 step 1 | count",
+    server_timeout=1,
     )
 
 for table in response.tables:

@@ -35,7 +35,7 @@ requests = [
             "Content-Type": "application/json"
         },
         "body": {
-            "query": "ApplicationInsights | limit 10",
+            "query": "AzureActivity | summarize count()",
             "timespan": "PT1H"
         },
         "method": "POST",

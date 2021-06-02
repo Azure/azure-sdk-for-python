@@ -12,11 +12,10 @@ from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest
 from .._helpers import get_authentication_policy, process_error
-from .._models import LogsQueryResults, LogsQueryRequest, LogsQueryBody
+from .._models import LogsQueryResults, LogsQueryRequest, LogsQueryBody, LogsBatchResults
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from .._models import LogsBatchResponse
 
 
 class LogsClient(object):
@@ -94,12 +93,12 @@ class LogsClient(object):
         )
 
         try:
-            return await self._query_op.execute(
+            return await LogsQueryResults._from_generated(self._query_op.execute(
                 workspace_id=workspace_id,
                 body=body,
                 prefer=prefer,
                 **kwargs
-            )
+            ))
         except HttpResponseError as e:
             process_error(e)
 
@@ -107,7 +106,7 @@ class LogsClient(object):
         self,
         queries: Union[Sequence[Dict], Sequence[LogsQueryRequest]],
         **kwargs: Any
-        ) -> LogsBatchResponse:
+        ) -> LogsBatchResults:
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -115,7 +114,7 @@ class LogsClient(object):
         :param queries: The list of queries that should be processed
         :type queries: list[dict] or list[~azure.monitor.query.LogsQueryRequest]
         :return: BatchResponse, or the result of cls(response)
-        :rtype: ~azure.monitor.query.LogsBatchResponse
+        :rtype: ~azure.monitor.query.LogsBatchResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
@@ -123,7 +122,7 @@ class LogsClient(object):
         except (KeyError, TypeError):
             pass
         batch = BatchRequest(requests=queries)
-        return await self._query_op.batch(batch, **kwargs)
+        return await LogsBatchResults._from_generated(self._query_op.batch(batch, **kwargs))
 
     async def __aenter__(self) -> "LogsClient":
         await self._client.__aenter__()

@@ -5,25 +5,21 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from logging import error
 import uuid
-from typing import Any, Optional, Dict
+from typing import Any, Optional, Dict, List
 
 from ._generated.models import (
-    QueryResults as InternalQueryResults,
-    Table as InternalTable,
     Column as InternalColumn,
-    Response as InternalResponse,
     QueryBody as InternalQueryBody,
     BatchResponse as InternalBatchResponse,
-    BatchResponseError as InternalBatchResponseError,
     LogQueryRequest as InternalLogQueryRequest,
     MetricNamespace as InternalMetricNamespace,
-    MetricDefinition as InternalMetricDefinition,
-
+    ErrorDetails as InternalErrorDetails
 )
 
 
-class LogsQueryResultTable(InternalTable):
+class LogsQueryResultTable(object):
     """Contains the columns and rows for one table in a query response.
 
     All required parameters must be populated in order to send to Azure.
@@ -35,25 +31,21 @@ class LogsQueryResultTable(InternalTable):
     :keyword rows: Required. The resulting rows from this query.
     :paramtype rows: list[list[str]]
     """
-
-    _validation = {
-        "name": {"required": True},
-        "columns": {"required": True},
-        "rows": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "columns": {"key": "columns", "type": "[Column]"},
-        "rows": {"key": "rows", "type": "[[str]]"},
-    }
-
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        super(LogsQueryResultTable, self).__init__(**kwargs)
-        self.name = kwargs["name"]
-        self.columns = kwargs["columns"]
-        self.rows = kwargs["rows"]
+    def __init__(self, name, columns, rows):
+        # type: (str, List[LogsQueryResultColumn], List[List[str]]) -> None
+        self.name = name
+        self.columns = columns
+        self.rows = rows
+    
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            name=generated.name,
+            columns=[LogsQueryResultColumn(name=col.name, type=col.type) for col in generated.columns],
+            rows=generated.rows
+        )
 
 
 class LogsQueryResultColumn(InternalColumn):
@@ -77,28 +69,40 @@ class LogsQueryResultColumn(InternalColumn):
         self.type = kwargs.get("type", None)
 
 
-class LogsQueryResults(InternalQueryResults):
+class LogsQueryResults(object):
     """Contains the tables, columns & rows resulting from a query.
 
     :keyword tables: The list of tables, columns and rows.
-    :paramtype tables: list[~monitor_query_client.models.Table]
+    :paramtype tables: list[~azure.monitor.query.LogsQueryResultTable]
     :keyword errors:
-    :paramtype errors: ~monitor_query_client.models.ErrorDetails
+    :paramtype errors: ~azure.monitor.query.LogsErrorDetails
     """
-
-    _attribute_map = {
-        "tables": {"key": "tables", "type": "[Table]"},
-        "errors": {"key": "errors", "type": "ErrorDetails"},
-    }
-
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        super(LogsQueryResults, self).__init__(**kwargs)
         self.tables = kwargs.get("tables", None)
         self.errors = kwargs.get("errors", None)
+    
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        error = None
+        tables = None
+        if generated.errors is not None:
+            error = LogsErrorDetails(
+                code=generated.errors.code,
+                message=generated.errors.message,
+                target=generated.errors.target
+                )
+        if generated.tables is not None:
+            tables=[LogsQueryResultTable._from_generated(table) for table in generated.tables]
+        return cls(
+            tables=tables,
+            error=error
+        )
 
 
-class MetricsResult(InternalResponse):
+class MetricsResult(object):
     """The response to a metrics query.
 
     All required parameters must be populated in order to send to Azure.
@@ -117,35 +121,30 @@ class MetricsResult(InternalResponse):
     :paramtype namespace: str
     :keyword resourceregion: The region of the resource been queried for metrics.
     :paramtype resourceregion: str
-    :keyword value: Required. the value of the collection.
-    :paramtype value: list[~monitor_query_client.models.Metric]
+    :keyword metrics: Required. the value of the collection.
+    :paramtype metrics: list[~monitor_query_client.models.Metric]
     """
-
-    _validation = {
-        "cost": {"minimum": 0},
-        "timespan": {"required": True},
-        "value": {"required": True},
-    }
-
-    _attribute_map = {
-        "cost": {"key": "cost", "type": "int"},
-        "timespan": {"key": "timespan", "type": "str"},
-        "interval": {"key": "interval", "type": "duration"},
-        "namespace": {"key": "namespace", "type": "str"},
-        "resourceregion": {"key": "resourceregion", "type": "str"},
-        "value": {"key": "value", "type": "[Metric]"},
-    }
-
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        super(MetricsResult, self).__init__(**kwargs)
         self.cost = kwargs.get("cost", None)
         self.timespan = kwargs["timespan"]
         self.interval = kwargs.get("interval", None)
         self.namespace = kwargs.get("namespace", None)
         self.resourceregion = kwargs.get("resourceregion", None)
-        self.value = kwargs["value"]
+        self.metrics = kwargs["metrics"]
 
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            cost=generated.cost,
+            timespan=generated.timespan,
+            interval=generated.interval,
+            namespace=generated.namespace,
+            resourceregion=generated.resourceregion,
+            metrics=[Metric._from_generated(m) for m in generated.value]
+        )
 
 class LogsQueryRequest(InternalLogQueryRequest):
     """An single request in a batch.
@@ -209,51 +208,109 @@ class LogsQueryBody(InternalQueryBody):
         self.workspace_ids = kwargs.get("workspace_ids", None)
         self.azure_resource_ids = kwargs.get("azure_resource_ids", None)
 
+class LogsQueryResult(object):
+    """The LogsQueryResult.
 
-class LogsBatchResponse(InternalBatchResponse):
+    :param id:
+    :type id: str
+    :param status:
+    :type status: int
+    :param body: Contains the tables, columns & rows resulting from a query.
+    :type body: ~azure.monitor.query.LogsQueryResults
+    """
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.id = kwargs.get('id', None)
+        self.status = kwargs.get('status', None)
+        self.body = kwargs.get('body', None)
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            id=generated.id,
+            status=generated.status,
+            body=LogsQueryResults._from_generated(generated.body)
+        )
+
+class LogsBatchResults(InternalBatchResponse):
     """Response to a batch.
 
     :keyword responses: An array of responses corresponding to each individual request in a batch.
-    :paramtype responses: list[~monitor_query_client.models.LogQueryResponse]
+    :paramtype responses: list[azure.monitor.query.LogsQueryResult]
     :keyword error: Error response for a batch request.
-    :paramtype error: ~azure.monitor.query.LogsBatchResponseError
+    :paramtype error: ~azure.monitor.query.LogsBatchResultError
     """
-
-    _attribute_map = {
-        "responses": {"key": "responses", "type": "[LogQueryResponse]"},
-        "error": {"key": "error", "type": "LogsBatchResponseError"},
-    }
-
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        super(LogsBatchResponse, self).__init__(**kwargs)
         self.responses = kwargs.get("responses", None)
         self.error = kwargs.get("error", None)
 
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            responses=[LogsQueryResult._from_generated(resp) for resp in generated.responses],
+            error=LogsBatchResultError._from_generated(generated.error)
+        )
 
-class LogsBatchResponseError(InternalBatchResponseError):
+
+class LogsBatchResultError(object):
     """Error response for a batch request.
 
     :param message: The error message describing the cause of the error.
     :type message: str
     :param code: The error code.
     :type code: str
-    :param inner_error:
-    :type inner_error: ~monitor_query_client.models.BatchResponseErrorInnerError
+    :param details: The details of the error.
+    :type inner_error: list[~azure.monitor.query.ErrorDetails]
+    """
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
+        self.message = kwargs.get("message", None)
+        self.code = kwargs.get("code", None)
+        self.details = kwargs.get("details", None)
+    
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            message=generated.inner_error.message,
+            code=generated.code,
+            details=generated.inner_error.details
+        )
+
+class LogsErrorDetails(InternalErrorDetails):
+    """ErrorDetails.
+
+    :param code:
+    :type code: str
+    :param message:
+    :type message: str
+    :param target:
+    :type target: str
     """
 
     _attribute_map = {
-        "message": {"key": "message", "type": "str"},
-        "code": {"key": "code", "type": "str"},
-        "inner_error": {"key": "innerError", "type": "BatchResponseErrorInnerError"},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        super(LogsBatchResponseError, self).__init__(**kwargs)
-        self.message = kwargs.get("message", None)
-        self.code = kwargs.get("code", None)
-        self.inner_error = kwargs.get("inner_error", None)
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LogsErrorDetails, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+
 
 class MetricNamespace(InternalMetricNamespace):
     """Metric namespace class specifies the metadata for a metric namespace.
@@ -285,62 +342,236 @@ class MetricNamespace(InternalMetricNamespace):
         self.name = kwargs.get('name', None)
         self.properties = kwargs.get('properties', None)
 
-class MetricDefinition(InternalMetricDefinition):
+class MetricDefinition(object):
     """Metric definition class specifies the metadata for a metric.
 
-    :param is_dimension_required: Flag to indicate whether the dimension is required.
-    :type is_dimension_required: bool
-    :param resource_id: the resource identifier of the resource that emitted the metric.
-    :type resource_id: str
-    :param namespace: the namespace the metric belongs to.
-    :type namespace: str
-    :param name: the name and the display name of the metric, i.e. it is a localizable string.
-    :type name: ~monitor_query_client.models.LocalizableString
-    :param unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+    :keyword is_dimension_required: Flag to indicate whether the dimension is required.
+    :paramtype is_dimension_required: bool
+    :keyword resource_id: the resource identifier of the resource that emitted the metric.
+    :paramtype resource_id: str
+    :keyword namespace: the namespace the metric belongs to.
+    :paramtype namespace: str
+    :keyword name: the name and the display name of the metric, i.e. it is a localizable string.
+    :paramtype name: str
+    :keyword unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
      "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
-    :type unit: str or ~monitor_query_client.models.Unit
-    :param primary_aggregation_type: the primary aggregation type value defining how to use the
+    :paramtype unit: str or ~monitor_query_client.models.Unit
+    :keyword primary_aggregation_type: the primary aggregation type value defining how to use the
      values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
      "Total".
-    :type primary_aggregation_type: str or ~monitor_query_client.models.AggregationType
-    :param supported_aggregation_types: the collection of what aggregation types are supported.
-    :type supported_aggregation_types: list[str or ~monitor_query_client.models.AggregationType]
-    :param metric_availabilities: the collection of what aggregation intervals are available to be
+    :paramtype primary_aggregation_type: str or ~monitor_query_client.models.AggregationType
+    :keyword supported_aggregation_types: the collection of what aggregation types are supported.
+    :paramtype supported_aggregation_types: list[str or ~monitor_query_client.models.AggregationType]
+    :keyword metric_availabilities: the collection of what aggregation intervals are available to be
      queried.
-    :type metric_availabilities: list[~monitor_query_client.models.MetricAvailability]
-    :param id: the resource identifier of the metric definition.
-    :type id: str
-    :param dimensions: the name and the display name of the dimension, i.e. it is a localizable
+    :paramtype metric_availabilities: list[~monitor_query_client.models.MetricAvailability]
+    :keyword id: the resource identifier of the metric definition.
+    :paramtype id: str
+    :keyword dimensions: the name and the display name of the dimension, i.e. it is a localizable
      string.
-    :type dimensions: list[~monitor_query_client.models.LocalizableString]
+    :paramtype dimensions: list[str]
+    """
+    def __init__(
+        self,
+        **kwargs
+    ):
+        # type: (Any) -> None
+        self.is_dimension_required = kwargs.get('is_dimension_required', None) # type: Optional[bool]
+        self.resource_id = kwargs.get('resource_id', None) # type: Optional[str]
+        self.namespace = kwargs.get('namespace', None) # type: Optional[str]
+        self.name = kwargs.get('name', None) # type: Optional[str]
+        self.unit = kwargs.get('unit', None) # type: Optional[str]
+        self.primary_aggregation_type = kwargs.get('primary_aggregation_type', None) # type: Optional[str]
+        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None) # type: Optional[str]
+        self.metric_availabilities = kwargs.get('metric_availabilities', None) # type: List[MetricAvailability]
+        self.id = kwargs.get('id', None) # type: Optional[str]
+        self.dimensions = kwargs.get('dimensions', None) # type: Optional[List[str]]
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            is_dimension_required=generated.is_dimension_required,
+            resource_id=generated.resource_id,
+            namespace=generated.namespace,
+            name=generated.name.value,
+            unit=generated.unit,
+            primary_aggregation_type=generated.primary_aggregation_type,
+            supported_aggregation_types=generated.supported_aggregation_types,
+            metric_availabilities=[MetricAvailability._from_generated(val) for val in generated.metric_availabilities],
+            id=generated.id,
+            dimensions=[d.value for d in generated.dimensions]
+        )
+
+class MetricValue(object):
+    """Represents a metric value.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :keyword time_stamp: Required. the timestamp for the metric value in ISO 8601 format.
+    :paramtype time_stamp: ~datetime.datetime
+    :keyword average: the average value in the time range.
+    :paramtype average: float
+    :keyword minimum: the least value in the time range.
+    :paramtype minimum: float
+    :keyword maximum: the greatest value in the time range.
+    :paramtype maximum: float
+    :keyword total: the sum of all of the values in the time range.
+    :paramtype total: float
+    :keyword count: the number of samples in the time range. Can be used to determine the number of
+     values that contributed to the average value.
+    :paramtype count: float
+    """
+    def __init__(
+        self,
+        **kwargs
+    ):
+        # type: (Any) -> None
+        self.time_stamp = kwargs['time_stamp']
+        self.average = kwargs.get('average', None)
+        self.minimum = kwargs.get('minimum', None)
+        self.maximum = kwargs.get('maximum', None)
+        self.total = kwargs.get('total', None)
+        self.count = kwargs.get('count', None)
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            time_stamp=generated.time_stamp,
+            average=generated.average,
+            minimum=generated.minimum,
+            maximum=generated.maximum,
+            total=generated.total,
+            count=generated.count
+        )
+
+class Metric(object):
+    """The result data of a query.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :keyword id: Required. the metric Id.
+    :paramtype id: str
+    :keyword type: Required. the resource type of the metric resource.
+    :paramtype type: str
+    :keyword name: Required. the name of the metric.
+    :paramtype name: str
+    :keyword unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
+     "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
+     "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
+    :paramtype unit: str
+    :keyword timeseries: Required. the time series returned when a data query is performed.
+    :paramtype timeseries: list[~monitor_query_client.models.TimeSeriesElement]
+    """
+    def __init__(
+        self,
+        **kwargs
+    ):
+        # type: (Any) -> None
+        self.id = kwargs['id']
+        self.type = kwargs['type']
+        self.name = kwargs['name']
+        self.unit = kwargs['unit']
+        self.timeseries = kwargs['timeseries']
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            id=generated.id,
+            type=generated.type,
+            name=generated.name.value,
+            unit=generated.unit,
+            timeseries=[TimeSeriesElement._from_generated(t) for t in generated.timeseries]
+        )
+
+
+class TimeSeriesElement(object):
+    """A time series result type. The discriminator value is always TimeSeries in this case.
+
+    :keyword metadata_values: the metadata values returned if $filter was specified in the call.
+    :paramtype metadata_values: list[~monitor_query_client.models.MetadataValue]
+    :keyword data: An array of data points representing the metric values.  This is only returned if
+     a result type of data is specified.
+    :paramtype data: list[~monitor_query_client.models.MetricValue]
     """
 
     _attribute_map = {
-        'is_dimension_required': {'key': 'isDimensionRequired', 'type': 'bool'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'LocalizableString'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'primary_aggregation_type': {'key': 'primaryAggregationType', 'type': 'str'},
-        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
-        'metric_availabilities': {'key': 'metricAvailabilities', 'type': '[MetricAvailability]'},
-        'id': {'key': 'id', 'type': 'str'},
-        'dimensions': {'key': 'dimensions', 'type': '[LocalizableString]'},
+        'metadata_values': {'key': 'metadata_values', 'type': '[MetadataValue]'},
+        'data': {'key': 'data', 'type': '[MetricValue]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(MetricDefinition, self).__init__(**kwargs)
-        self.is_dimension_required = kwargs.get('is_dimension_required', None)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.namespace = kwargs.get('namespace', None)
+        # type: (Any) -> None
+        self.metadata_values = kwargs.get('metadatavalues', None)
+        self.data = kwargs.get('data', None)
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            metadata_values=[MetricsMetadataValue._from_generated(mval) for mval in generated.metadatavalues],
+            data=[MetricValue._from_generated(val) for val in generated.data]
+        )
+
+class MetricsMetadataValue(object):
+    """Represents a metric metadata value.
+
+    :keyword name: the name of the metadata.
+    :paramtype name: str
+    :keyword value: the value of the metadata.
+    :paramtype value: str
+    """
+    def __init__(
+        self,
+        **kwargs
+    ):
+        # type: (Any) -> None
         self.name = kwargs.get('name', None)
-        self.unit = kwargs.get('unit', None)
-        self.primary_aggregation_type = kwargs.get('primary_aggregation_type', None)
-        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
-        self.metric_availabilities = kwargs.get('metric_availabilities', None)
-        self.id = kwargs.get('id', None)
-        self.dimensions = kwargs.get('dimensions', None)
+        self.value = kwargs.get('value', None)
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            name=generated.name.value,
+            value=generated.value
+        )
+
+
+class MetricAvailability(object):
+    """Metric availability specifies the time grain (aggregation interval or frequency) and the retention period for that time grain.
+
+    :keyword time_grain: the time grain specifies the aggregation interval for the metric. Expressed
+     as a duration 'PT1M', 'P1D', etc.
+    :paramtype time_grain: ~datetime.timedelta
+    :keyword retention: the retention period for the metric at the specified timegrain.  Expressed as
+     a duration 'PT1M', 'P1D', etc.
+    :paramtype retention: ~datetime.timedelta
+    """
+    def __init__(
+        self,
+        **kwargs
+    ):
+        # type: (Any) -> None
+        self.time_grain = kwargs.get('time_grain', None)
+        self.retention = kwargs.get('retention', None)
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            time_grain=generated.time_grain,
+            retention=generated.retention
+        )

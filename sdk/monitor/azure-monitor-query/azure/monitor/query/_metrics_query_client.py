@@ -13,7 +13,8 @@ from ._generated._monitor_query_client import (
     MonitorQueryClient,
 )
 
-from ._helpers import get_authentication_policy
+from ._models import MetricsResult
+from ._helpers import get_metrics_authentication_policy
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -32,7 +33,8 @@ class MetricsClient(object):
         # type: (TokenCredential, Any) -> None
         self._client = MonitorQueryClient(
             credential=credential,
-            authentication_policy=get_authentication_policy(credential),
+            base_url='https://management.azure.com',
+            authentication_policy=get_metrics_authentication_policy(credential),
             **kwargs
         )
         self._metrics_op = self._client.metrics
@@ -82,7 +84,8 @@ class MetricsClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         kwargs.setdefault("metricnames", ",".join(metricnames))
-        return self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
+        generated = self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
+        return MetricsResult._from_generated(generated)
 
     def list_metric_namespaces(self, resource_uri, **kwargs):
         # type: (str, Any) -> ItemPaged[MetricNamespace]
@@ -99,18 +102,19 @@ class MetricsClient(object):
         """
         return self._namespace_op.list(resource_uri, **kwargs)
 
-    def list_metric_definitions(self, resource_uri, **kwargs):
-        # type: (str, Any) -> ItemPaged[MetricDefinition]
+    def list_metric_definitions(self, resource_uri, metricnamespace=None, **kwargs):
+        # type: (str, str, Any) -> ItemPaged[MetricDefinition]
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :keyword metricnamespace: Metric namespace to query metric definitions for.
-        :paramtype metricnamespace: str
+        :param metricnamespace: Metric namespace to query metric definitions for.
+        :type metricnamespace: str
         :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        kwargs.setdefault("metricnamespace", metricnamespace)
         return self._namespace_op.list(resource_uri, **kwargs)
 
     def close(self):
