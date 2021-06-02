@@ -204,7 +204,6 @@ class TableClient(AsyncTablesBaseClient):
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
-        # signed_identifiers = identifiers  # type: ignore
         try:
             await self._client.table.set_access_policy(
                 table=self.table_name, table_acl=identifiers or None, **kwargs  # type: ignore
