@@ -243,7 +243,22 @@ def filter_track2_versions(package_name, versions):
         'azure-mgmt-managementpartner': '1.0.0b1',
         'azure-mgmt-redhatopenshift': '1.0.0b1',
         'azure-mgmt-serialconsole': '1.0.0b1',
-        'azure-mgmt-portal': '1.0.0b1'
+        'azure-mgmt-portal': '1.0.0b1',
+        'azure-mgmt-batchai': '7.0.0b1',
+        'azure-mgmt-devspaces': '1.0.0b1',
+        'azure-mgmt-digitaltwins': '6.0.0b1',
+        'azure-mgmt-dns ': '8.0.0b1',
+        'azure-mgmt-frontdoor': '1.0.0b1',
+        'azure-mgmt-imagebuilder': '1.0.0b1',
+        'azure-mgmt-iotcentral': '9.0.0b1',
+        'azure-mgmt-iothubprovisioningservices': '1.0.0b1',
+        'azure-mgmt-machinelearningcompute': '1.0.0b1',
+        'azure-mgmt-msi': '6.0.0b1',
+        'azure-mgmt-privatedns': '1.0.0b1',
+        'azure-mgmt-storagecache': '1.0.0b1',
+        'azure-mgmt-storageimportexport': '1.0.0b1',
+        'azure-mgmt-trafficmanager': '1.0.0b1',
+        'azure-mgmt-vmwarecloudsimple': '1.0.0b1'
     }
     upbound = track2_versions.get(package_name)
     if not upbound:
