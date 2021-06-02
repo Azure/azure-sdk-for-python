@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import json
 from typing import Any, List, Union, TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -22,6 +23,7 @@ from .._models import (
     DocumentStatusResult
 )
 from .._helpers import get_http_logging_policy, convert_datetime, get_authentication_policy
+from ._async_polling import AsyncDocumentTranslationLROPollingMethod, AsyncDocumentTranslationPoller
 from .._polling import TranslationPolling
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
@@ -92,10 +94,11 @@ class DocumentTranslationClient(object):
         await self._client.__aexit__()
 
     @distributed_trace_async
-    async def create_translation_job(self, inputs, **kwargs):
-        # type: (List[DocumentTranslationInput], **Any) -> JobStatusResult
-        """Create a document translation job which translates the document(s) in your source container
-        to your TranslationTarget(s) in the given language.
+    async def begin_translation(
+            self, inputs: List[DocumentTranslationInput], **kwargs: Any
+    ) -> AsyncDocumentTranslationPoller[AsyncItemPaged[DocumentStatusResult]]:
+        """Begin translating the document(s) in your source container to your TranslationTarget(s)
+        in the given language.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
@@ -104,8 +107,10 @@ class DocumentTranslationClient(object):
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
         :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
-        :return: A JobStatusResult with information on the status of the translation job.
-        :rtype: ~azure.ai.translation.document.JobStatusResult
+        :return: An instance of an AsyncDocumentTranslationPoller. Call `result()` on the poller
+            object to return a pageable of DocumentStatusResult. A DocumentStatusResult will be
+            returned for each translation on a document.
+        :rtype: AsyncDocumentTranslationPoller[AsyncItemPaged[~azure.ai.translation.document.DocumentStatusResult]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -118,24 +123,38 @@ class DocumentTranslationClient(object):
                 :caption: Create a translation job.
         """
 
-        # submit translation job
-        response_headers = await self._client.document_translation._start_translation_initial(  # pylint: disable=protected-access
-            # pylint: disable=protected-access
-            inputs=DocumentTranslationInput._to_generated_list(inputs),
-            cls=lambda pipeline_response, _, response_headers: response_headers,
-            **kwargs
+        def deserialization_callback(
+                raw_response, _, headers
+        ):  # pylint: disable=unused-argument
+            translation_status = json.loads(raw_response.http_response.text())
+            return self.list_all_document_statuses(translation_status["id"])
+
+        polling_interval = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
         )
 
-        def get_job_id(response_headers):
-            # extract job id.
-            operation_location_header = response_headers['Operation-Location']
-            return operation_location_header.split('/')[-1]
+        continuation_token = kwargs.pop("continuation_token", None)
+        pipeline_response = None
+        if continuation_token:
+            pipeline_response = await self._client.document_translation.get_translation_status(
+                continuation_token,
+                cls=lambda pipeline_response, _, response_headers: pipeline_response,
+            )
 
-        # get job id from response header
-        job_id = get_job_id(response_headers)
-
-        # get job status
-        return await self.get_job_status(job_id)
+        callback = kwargs.pop("cls", deserialization_callback)
+        return await self._client.document_translation.begin_start_translation(
+            inputs=DocumentTranslationInput._to_generated_list(inputs) if not continuation_token else None,
+            polling=AsyncDocumentTranslationLROPollingMethod(
+                timeout=polling_interval,
+                lro_algorithms=[
+                    TranslationPolling()
+                ],
+                cont_token_response=pipeline_response,
+                **kwargs),
+            cls=callback,
+            continuation_token=continuation_token,
+            **kwargs
+        )
 
 
     @distributed_trace_async
@@ -172,50 +191,6 @@ class DocumentTranslationClient(object):
         """
 
         await self._client.document_translation.cancel_translation(job_id, **kwargs)
-
-    @distributed_trace_async
-    async def wait_until_done(self, job_id, **kwargs):
-        # type: (str, **Any) -> JobStatusResult
-        """Wait until the translation job is done.
-
-        A job is considered "done" when it reaches a terminal state like
-        Succeeded, Failed, Cancelled.
-
-        :param str job_id: The translation job ID.
-        :return: A JobStatusResult with information on the status of the translation job.
-        :rtype: ~azure.ai.translation.document.JobStatusResult
-        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
-            Will raise if validation fails on the input. E.g. insufficient permissions on the blob containers.
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_create_translation_job_async.py
-                :start-after: [START wait_until_done_async]
-                :end-before: [END wait_until_done_async]
-                :language: python
-                :dedent: 4
-                :caption: Create a translation job and wait until it is done.
-        """
-        pipeline_response = await self._client.document_translation.get_translation_status(
-            job_id,
-            cls=lambda pipeline_response, _, response_headers: pipeline_response
-        )
-
-        def callback(raw_response):
-            detail = self._client._deserialize(_TranslationStatus, raw_response)  # pylint: disable=protected-access
-            return JobStatusResult._from_generated(detail)  # pylint: disable=protected-access
-
-        poller = AsyncLROPoller(
-            client=self._client._client,  # pylint: disable=protected-access
-            initial_response=pipeline_response,
-            deserialization_callback=callback,
-            polling_method=AsyncLROBasePolling(
-                timeout=self._client._config.polling_interval,  # pylint: disable=protected-access
-                lro_algorithms=[TranslationPolling()],
-                **kwargs
-            ),
-        )
-        return await poller.result()
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):

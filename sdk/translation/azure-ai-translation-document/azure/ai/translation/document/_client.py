@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import json
 from typing import Any, TYPE_CHECKING, List, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
@@ -17,11 +18,12 @@ from ._models import (
     FileFormat
 )
 from ._user_agent import USER_AGENT
-from ._polling import TranslationPolling
+from ._polling import TranslationPolling, DocumentTranslationLROPollingMethod
 from ._helpers import get_http_logging_policy, convert_datetime, get_authentication_policy
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.credentials import TokenCredential, AzureKeyCredential
+    from ._polling import DocumentTranslationPoller
 
 
 class DocumentTranslationClient(object):  # pylint: disable=r0205
@@ -91,10 +93,10 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         return self._client.close()
 
     @distributed_trace
-    def create_translation_job(self, inputs, **kwargs):
-        # type: (List[DocumentTranslationInput], **Any) -> JobStatusResult
-        """Create a document translation job which translates the document(s) in your source container
-        to your TranslationTarget(s) in the given language.
+    def begin_translation(self, inputs, **kwargs):
+        # type: (List[DocumentTranslationInput], **Any) -> DocumentTranslationPoller[ItemPaged[DocumentStatusResult]]
+        """Begin translating the document(s) in your source container to your TranslationTarget(s)
+        in the given language.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
@@ -103,8 +105,10 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
         :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
-        :return: A JobStatusResult with information on the status of the translation job.
-        :rtype: ~azure.ai.translation.document.JobStatusResult
+        :return: An instance of a DocumentTranslationPoller. Call `result()` on the poller
+            object to return a pageable of DocumentStatusResult. A DocumentStatusResult will be
+            returned for each translation on a document.
+        :rtype: DocumentTranslationPoller[ItemPaged[~azure.ai.translation.document.DocumentStatusResult]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -117,23 +121,38 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
                 :caption: Create a translation job.
         """
 
-        # submit translation job
-        response_headers = self._client.document_translation._start_translation_initial(  # pylint: disable=protected-access
-            inputs=DocumentTranslationInput._to_generated_list(inputs),  # pylint: disable=protected-access
-            cls=lambda pipeline_response, _, response_headers: response_headers,
-            **kwargs
+        def deserialization_callback(
+            raw_response, _, headers
+        ):  # pylint: disable=unused-argument
+            translation_status = json.loads(raw_response.http_response.text())
+            return self.list_all_document_statuses(translation_status["id"])
+
+        polling_interval = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
         )
 
-        def get_job_id(response_headers):
-            operation_loc_header = response_headers['Operation-Location']
-            return operation_loc_header.split('/')[-1]
+        continuation_token = kwargs.pop("continuation_token", None)
+        pipeline_response = None
+        if continuation_token:
+            pipeline_response = self._client.document_translation.get_translation_status(
+                continuation_token,
+                cls=lambda pipeline_response, _, response_headers: pipeline_response,
+            )
 
-        # get job id from response header
-        job_id = get_job_id(response_headers)
-
-        # get job status
-        return self.get_job_status(job_id)
-
+        callback = kwargs.pop("cls", deserialization_callback)
+        return self._client.document_translation.begin_start_translation(
+            inputs=DocumentTranslationInput._to_generated_list(inputs) if not continuation_token else None,
+            polling=DocumentTranslationLROPollingMethod(
+                timeout=polling_interval,
+                lro_algorithms=[
+                    TranslationPolling()
+                ],
+                cont_token_response=pipeline_response,
+                **kwargs),
+            cls=callback,
+            continuation_token=continuation_token,
+            **kwargs
+        )
 
     @distributed_trace
     def get_job_status(self, job_id, **kwargs):
@@ -169,50 +188,6 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
         self._client.document_translation.cancel_translation(job_id, **kwargs)
 
-    @distributed_trace
-    def wait_until_done(self, job_id, **kwargs):
-        # type: (str, **Any) -> JobStatusResult
-        """Wait until the translation job is done.
-
-        A job is considered "done" when it reaches a terminal state like
-        Succeeded, Failed, Cancelled.
-
-        :param str job_id: The translation job ID.
-        :return: A JobStatusResult with information on the status of the translation job.
-        :rtype: ~azure.ai.translation.document.JobStatusResult
-        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
-            Will raise if validation fails on the input. E.g. insufficient permissions on the blob containers.
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_create_translation_job.py
-                :start-after: [START wait_until_done]
-                :end-before: [END wait_until_done]
-                :language: python
-                :dedent: 4
-                :caption: Create a translation job and wait until it is done.
-        """
-
-        pipeline_response = self._client.document_translation.get_translation_status(
-            job_id,
-            cls=lambda pipeline_response, _, response_headers: pipeline_response
-        )
-
-        def callback(raw_response):
-            detail = self._client._deserialize(_TranslationStatus, raw_response)  # pylint: disable=protected-access
-            return JobStatusResult._from_generated(detail)  # pylint: disable=protected-access
-
-        poller = LROPoller(
-            client=self._client._client,  # pylint: disable=protected-access
-            initial_response=pipeline_response,
-            deserialization_callback=callback,
-            polling_method=LROBasePolling(
-                timeout=self._client._config.polling_interval,  # pylint: disable=protected-access
-                lro_algorithms=[TranslationPolling()],
-                **kwargs
-            ),
-        )
-        return poller.result()
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):

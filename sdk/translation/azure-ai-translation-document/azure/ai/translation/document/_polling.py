@@ -4,29 +4,121 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from typing import Any, Union, Tuple, TYPE_CHECKING
+from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import (
-    LongRunningOperation,
+    LROBasePolling,
+    OperationResourcePolling,
     _is_empty,
     _as_json,
-    BadResponse,
-    OperationFailed
+    BadResponse
 )
 
 from azure.core.exceptions import HttpResponseError, ODataV4Format
+from ._generated.models import TranslationStatus
+from ._models import JobStatusResult
 
 
-class TranslationPolling(LongRunningOperation):
-    """Implements a Location polling.
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineResponse
+    from azure.core.pipeline.transport import (
+        HttpResponse,
+        AsyncHttpResponse,
+        HttpRequest,
+    )
+
+    ResponseType = Union[HttpResponse, AsyncHttpResponse]
+    PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
+
+
+class DocumentTranslationPoller(LROPoller):
+    """A custom poller implementation for Document Translation.
     """
 
-    def __init__(self):
-        self._async_url = None
+    @property
+    def id(self):
+        # type: () -> str
+        """The ID for the translation job
+
+        :return: str
+        """
+        if self._polling_method._current_body:
+            return self._polling_method._current_body.id
+        return self._polling_method._get_id_from_headers()
+
+    @property
+    def details(self):
+        # type: () -> JobStatusResult
+        """The details for the translation job
+
+        :return: JobStatusResult
+        """
+        if not self.polling_method._current_body:
+            return None
+        return JobStatusResult._from_generated(self.polling_method._current_body)
+
+    @classmethod
+    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
+        # type: (DocumentTranslationLROPollingMethod, str, **Any) -> DocumentTranslationPoller
+
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
+class DocumentTranslationLROPollingMethod(LROBasePolling):
+    """A custom polling method implementation for Document Translation.
+    """
+
+    def __init__(self, *args, **kwargs):
+        self._cont_token_response = kwargs.pop("cont_token_response")
+        super(DocumentTranslationLROPollingMethod, self).__init__(*args, **kwargs)
+
+    @property
+    def _current_body(self):
+        # type: () -> TranslationStatus
+        return TranslationStatus.deserialize(self._pipeline_response)
+
+    def _get_id_from_headers(self):
+        # type: () -> str
+        return self._pipeline_response.http_response.headers["Operation-Location"].split("/batches/")[1]
+
+    def get_continuation_token(self):
+        # type: () -> str
+        if self._current_body:
+            return self._current_body.id
+        return self._get_id_from_headers()
+
+    def from_continuation_token(self, continuation_token, **kwargs):
+        # type: (str, Any) -> Tuple
+        try:
+            client = kwargs["client"]
+        except KeyError:
+            raise ValueError("Need kwarg 'client' to be recreated from continuation_token")
+
+        try:
+            deserialization_callback = kwargs["deserialization_callback"]
+        except KeyError:
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
+
+        return client, self._cont_token_response, deserialization_callback
+
+
+class TranslationPolling(OperationResourcePolling):
+    """Implements a Location polling.
+    """
 
     def can_poll(self, pipeline_response):
         # type: (PipelineResponseType) -> bool
         """Answer if this polling method could be used.
         """
         response = pipeline_response.http_response
+        can_poll = self._operation_location_header in response.headers
+        if can_poll:
+            return True
+
         if not _is_empty(response):
             body = _as_json(response)
             status = body.get("status")
@@ -34,30 +126,17 @@ class TranslationPolling(LongRunningOperation):
                 return True
         return False
 
-    def get_polling_url(self):
-        # type: () -> str
-        """Return the polling URL.
-        """
-        return self._async_url
-
-    def set_initial_status(self, pipeline_response):
-        # type: (PipelineResponseType) -> str
-        """Process first response after initiating long running operation.
-
-        :param azure.core.pipeline.PipelineResponse response: initial REST call response.
-        """
-        self._async_url = pipeline_response.http_response.request.url
-
-        response = pipeline_response.http_response
-        if response.status_code in {200, 201, 202, 204} and self._async_url:
-            return "InProgress"
-        raise OperationFailed("Operation failed or canceled")
+    def _set_async_url_if_present(self, response):
+        # type: (ResponseType) -> None
+        self._async_url = response.headers.get(self._operation_location_header)
+        if not self._async_url:
+            self._async_url = response.request.url
 
     def get_status(self, pipeline_response):
         # type: (PipelineResponseType) -> str
         """Process the latest status update retrieved from a 'location' header.
 
-        :param azure.core.pipeline.PipelineResponse response: latest REST call response.
+        :param azure.core.pipeline.PipelineResponse pipeline_response: latest REST call response.
         :raises: BadResponse if response has no body and not status 202.
         """
         response = pipeline_response.http_response
@@ -68,14 +147,6 @@ class TranslationPolling(LongRunningOperation):
                 return self._map_nonstandard_statuses(status, body)
             raise BadResponse("No status found in body")
         raise BadResponse("The response from long running operation does not contain a body.")
-
-    def get_final_get_url(self, pipeline_response):
-        # type: (PipelineResponseType) -> Optional[str]
-        """If a final GET is needed, returns the URL.
-
-        :rtype: str
-        """
-        return None
 
     # pylint: disable=R0201
     def _map_nonstandard_statuses(self, status, body):
