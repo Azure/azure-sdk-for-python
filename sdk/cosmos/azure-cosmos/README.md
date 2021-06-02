@@ -83,9 +83,9 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 ## Limitations
 
-Currently the features below are **not supported**.
+Currently the features below are **not supported**. 
 
-**Data Plane Limitations:**
+### Data Plane Limitations:
 
 * Group By queries (in roadmap for 2021).
 * Language Native async i/o (in roadmap for 2021).
@@ -101,7 +101,7 @@ Currently the features below are **not supported**.
 * Cross-partition ORDER BY for mixed types.
 * Integrated Cache using the default consistency level, that is "Session". To take advantage of the new [Cosmos DB Integrated Cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache), it is required to explicitly set CosmosClient consistency level to "Eventual": `consistency_level= Eventual`.
 
-**Control Plane Limitations:**
+### Control Plane Limitations:
 
 * Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics.
 * Create Geospatial Index.
@@ -111,7 +111,7 @@ Currently the features below are **not supported**.
 * Get the connection string.
 * Get the minimum RU/s of a container.
 
-**Security Limitations:**
+### Security Limitations:
 
 * AAD support. 
 
@@ -123,11 +123,11 @@ If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alt
 
 ### Control Plane Limitations Workaround
 
-Typically you can use [Azure Portal](https://portal.azure.com/), [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
+Typically you can use [Azure Portal](https://portal.azure.com/),[Azure Cosmos DB Resource Provider REST API[https://docs.microsoft.com/rest/api/cosmos-db-resource-provider/],[Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
 ### AAD Support
 
-A possible workaround is to use managed identities to [programmatically](https://docs.microsoft.com/azure/cosmos-db/managed-identity-based-authentication) grab the keys.
+A possible workaround is to use managed identities to [programmatically](https://docs.microsoft.com/azure/cosmos-db/managed-identity-based-authentication) get the keys.
 
 
 ## Consistency Level
