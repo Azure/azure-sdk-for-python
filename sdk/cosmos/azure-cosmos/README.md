@@ -83,7 +83,7 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 ## Limitations
 
-Currently the features below are **not supported**. 
+Currently the features below are **not supported**. For some options, check the [Workarounds](#Workarounds) section.
 
 ### Data Plane Limitations:
 
@@ -123,7 +123,7 @@ If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alt
 
 ### Control Plane Limitations Workaround
 
-Typically you can use [Azure Portal](https://portal.azure.com/),[Azure Cosmos DB Resource Provider REST API[https://docs.microsoft.com/rest/api/cosmos-db-resource-provider/],[Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
+Typically you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider/], [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
 ### AAD Support
 
