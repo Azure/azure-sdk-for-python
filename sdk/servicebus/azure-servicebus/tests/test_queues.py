@@ -1269,7 +1269,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.to = 'to'
                     message.reply_to = 'reply_to'
                     message.time_to_live = timedelta(seconds=60)
-                    assert message._amqp_properties.absolute_expiry_time == message._amqp_properties.creation_time + message._amqp_header.time_to_live
+                    assert message.raw_amqp_message.properties.absolute_expiry_time == message.raw_amqp_message.properties.creation_time + message.raw_amqp_message.header.time_to_live
 
                     yield message
 

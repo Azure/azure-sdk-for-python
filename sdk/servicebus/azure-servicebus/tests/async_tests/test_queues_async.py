@@ -1071,25 +1071,54 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     async def test_async_queue_message_batch(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            def message_content():
+                for i in range(5):
+                    message = ServiceBusMessage("ServiceBusMessage no. {}".format(i))
+                    message.application_properties = {'key': 'value'}
+                    message.subject = 'label'
+                    message.content_type = 'application/text'
+                    message.correlation_id = 'cid'
+                    message.message_id = str(i)
+                    message.to = 'to'
+                    message.reply_to = 'reply_to'
+                    message.time_to_live = timedelta(seconds=60)
+                    assert message.raw_amqp_message.properties.absolute_expiry_time == message.raw_amqp_message.properties.creation_time + message.raw_amqp_message.header.time_to_live
+
+                    yield message
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = ServiceBusMessageBatch()
-                for i in range(5):
-                    message.add_message(ServiceBusMessage("ServiceBusMessage no. {}".format(i)))
+                for each in message_content():
+                    message.add_message(each)
                 await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = []
-                recv = await receiver.receive_messages(max_wait_time=10)
+                messages = await receiver.receive_messages(max_wait_time=10)
+                recv = True
                 while recv:
-                    messages.extend(recv)
-                    for message in recv:
-                        print_message(_logger, message)
-                        await receiver.complete_message(message)
                     recv = await receiver.receive_messages(max_wait_time=10)
+                    messages.extend(recv)
 
                 assert len(messages) == 5
+                count = 0
+                for message in messages:
+                    assert message.delivery_count == 0
+                    assert message.application_properties
+                    assert message.application_properties[b'key'] == b'value'
+                    assert message.subject == 'label'
+                    assert message.content_type == 'application/text'
+                    assert message.correlation_id == 'cid'
+                    assert message.message_id == str(count)
+                    assert message.to == 'to'
+                    assert message.reply_to == 'reply_to'
+                    assert message.sequence_number
+                    assert message.enqueued_time_utc
+                    assert message.expires_at_utc == (message.enqueued_time_utc + timedelta(seconds=60))
+                    print_message(_logger, message)
+                    await receiver.complete_message(message)
+                    count += 1
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
