@@ -23,7 +23,12 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import pytest
 import sys
+
+@pytest.fixture
+def testserver():
+    yield  # dummy for now. Need t
 
 # Ignore collection of async tests for Python 2
 collect_ignore = []

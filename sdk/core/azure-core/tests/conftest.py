@@ -28,8 +28,10 @@ import signal
 import subprocess
 import pytest
 import sys
+from azure.core.rest import TestRestClient
 
 def start_testserver():
+    os.environ["FLASK_APP"] = "coretestserver"
     cmd = "flask run"
     if os.name == 'nt': #On windows, subprocess creation works without being in the shell
         return subprocess.Popen(cmd.format("set"))
@@ -37,6 +39,7 @@ def start_testserver():
     return subprocess.Popen(cmd.format("export"), shell=True, preexec_fn=os.setsid) #On linux, have to set shell=True
 
 def terminate_testserver(process):
+    os.environ["FLASK_APP"] = ""
     if os.name == 'nt':
         process.kill()
     else:
@@ -48,6 +51,10 @@ def testserver():
     server = start_testserver()
     yield
     terminate_testserver(server)
+
+@pytest.fixture
+def client():
+    return TestRestClient()
 
 # Ignore collection of async tests for Python 2
 collect_ignore = []
