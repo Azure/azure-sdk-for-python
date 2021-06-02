@@ -207,7 +207,7 @@ def test_imds_url_override():
         ],
     )
 
-    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IMDS_TOKEN_URL: url}, clear=True):
+    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL: url}, clear=True):
         credential = ImdsCredential(transport=transport)
         token = credential.get_token(scope)
 

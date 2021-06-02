@@ -36,7 +36,7 @@ PIPELINE_SETTINGS = {
 
 
 def get_request(scope, identity_config):
-    request = HttpRequest("GET", os.environ.get(EnvironmentVariables.AZURE_IMDS_TOKEN_URL, IMDS_URL))
+    request = HttpRequest("GET", os.environ.get(EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL, IMDS_URL))
     request.format_parameters(dict({"api-version": "2018-02-01", "resource": scope}, **identity_config))
     return request
 
@@ -47,7 +47,7 @@ class ImdsCredential(GetTokenMixin):
         super(ImdsCredential, self).__init__()
 
         self._client = ManagedIdentityClient(get_request, **dict(PIPELINE_SETTINGS, **kwargs))
-        if EnvironmentVariables.AZURE_IMDS_TOKEN_URL in os.environ:
+        if EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL in os.environ:
             self._endpoint_available = True  # type: Optional[bool]
         else:
             self._endpoint_available = None
