@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
-from .._helpers import _is_tag, _parse_next_link
+from .._helpers import _is_tag, _parse_next_link, _delete_callback
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 
 if TYPE_CHECKING:
@@ -74,7 +74,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :caption: Delete a repository from the `ContainerRegistryClient`
         """
         try:
-            await self._client.container_registry.delete_repository(repository, **kwargs)
+            await self._client.container_registry.delete_repository(repository, cls=_delete_callback, **kwargs)
         except ResourceNotFoundError as exc:
             if "Not Found" in exc.reason:
                 return
@@ -341,7 +341,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if _is_tag(tag_or_digest):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
         try:
-            await self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
+            await self._client.container_registry.delete_manifest(repository, tag_or_digest, cls=_delete_callback, **kwargs)
         except ResourceNotFoundError as exc:
             if "Not Found" in exc.reason:
                 return
@@ -369,7 +369,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 await client.delete_tag(tag.name)
         """
         try:
-            await self._client.container_registry.delete_tag(repository, tag, **kwargs)
+            await self._client.container_registry.delete_tag(repository, tag, cls=_delete_callback, **kwargs)
         except ResourceNotFoundError as exc:
             if "Not Found" in exc.reason:
                 return
