@@ -11,6 +11,7 @@ from uamqp import constants
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 from ..exceptions import ConnectError, EventHubError
+from ..amqp import AMQPAnnotatedMessage
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
 from .._producer_client import validate_outgoing_event_data
@@ -22,6 +23,8 @@ from .._utils import validate_producer_client_partition_config
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from uamqp.constants import TransportType # pylint: disable=ungrouped-imports
+
+SendEventTypes = List[Union[EventData, AMQPAnnotatedMessage]]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -281,14 +284,14 @@ class EventHubProducerClient(ClientBaseAsync):
 
     async def send_batch(
         self,
-        event_data_batch: Union[EventDataBatch, List[EventData]],
+        event_data_batch: Union[EventDataBatch, SendEventTypes],
         *,
         timeout: Optional[Union[int, float]] = None,
         **kwargs
     ) -> None:
         """Sends event data and blocks until acknowledgement is received or operation times out.
 
-        If you're sending a finite list of `EventData` and you know it's within the event hub
+        If you're sending a finite list of `EventData` or `AMQPAnnotatedMessage` and you know it's within the event hub
         frame size limit, you can send them with a `send_batch` call. Otherwise, use :meth:`create_batch`
         to create `EventDataBatch` and add either `EventData` or `AMQPAnnotatedMessage` into the batch one by one
         until the size limit, and then call this method to send out the batch.

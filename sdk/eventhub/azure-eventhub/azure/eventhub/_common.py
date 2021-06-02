@@ -421,9 +421,9 @@ class EventDataBatch(object):
             try:
                 self.add(event_data)
             except ValueError:
-                raise ValueError("The combined size of EventData collection exceeds the Event Hub frame size limit. "
-                                 "Please send a smaller collection of EventData, or use EventDataBatch, "
-                                 "which is guaranteed to be under the frame size limit")
+                raise ValueError("The combined size of EventData and AMQPAnnotatedMessage collection exceeds "
+                                 "the Event Hub frame size limit. Please send a smaller collection of EventData "
+                                 "or use EventDataBatch, which is guaranteed to be under the frame size limit")
 
     @property
     def size_in_bytes(self):
