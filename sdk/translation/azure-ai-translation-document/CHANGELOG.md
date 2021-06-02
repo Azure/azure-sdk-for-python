@@ -13,6 +13,7 @@ to wait until the translation is complete. See the README for more information a
 be found on `poller.details`.
 - `has_completed` has been removed from `JobStatusResult` and `DocumentStatusResult`. Use `poller.done()` to check if the 
 translation has completed.
+- Client method `wait_until_done` has been removed. Use `poller.result()` to wait for the LRO to complete.
 
 **New features**
 
