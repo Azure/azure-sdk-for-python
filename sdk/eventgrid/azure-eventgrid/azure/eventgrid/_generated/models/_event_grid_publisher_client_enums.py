@@ -69,6 +69,16 @@ class CommunicationCloudEnvironmentModel(with_metaclass(_CaseInsensitiveEnumMeta
     DOD = "dod"
     GCCH = "gcch"
 
+class JobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Various states a job can be in.
+    """
+
+    WAITING = "Waiting"
+    RUNNING = "Running"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELLED = "Cancelled"
+
 class MediaJobErrorCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Helps with categorization of errors.
     """
@@ -146,6 +156,14 @@ class MediaJobState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The job is being scheduled to run on an available resource. This is a transient state, between
     #: queued and processing states.
     SCHEDULED = "Scheduled"
+
+class ResourceActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Action occurred on a resource.
+    """
+
+    CREATED = "Created"
+    UPDATED = "Updated"
+    DELETED = "Deleted"
 
 class StampKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Kind of environment where app service plan is.

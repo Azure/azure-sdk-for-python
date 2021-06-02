@@ -6,6 +6,8 @@
 from typing import Dict, Any, Optional, Union, TYPE_CHECKING
 import msrest
 
+from azure.core import MatchConditions
+
 from .._common_conversion import _transform_patch_to_cosmos_post
 from .._models import UpdateMode
 from .._entity import TableEntity
@@ -223,15 +225,9 @@ class TableBatchOperations(object):
                 etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
-
-        if_match, _ = _get_match_headers(
-            kwargs=dict(
-                kwargs,
-                etag=etag,
-                match_condition=match_condition,
-            ),
-            etag_param="etag",
-            match_param="match_condition",
+        if_match = _get_match_headers(
+            etag=etag,
+            match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
         partition_key = temp["PartitionKey"]
@@ -242,7 +238,7 @@ class TableBatchOperations(object):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match or "*",
+                if_match=if_match,
                 table_entity_properties=temp,
                 **kwargs
             )
@@ -251,7 +247,7 @@ class TableBatchOperations(object):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match or "*",
+                if_match=if_match,
                 table_entity_properties=temp,
                 **kwargs
             )
@@ -502,22 +498,16 @@ class TableBatchOperations(object):
                 etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
-
-        if_match, _ = _get_match_headers(
-            kwargs=dict(
-                kwargs,
-                etag=etag,
-                match_condition=match_condition,
-            ),
-            etag_param="etag",
-            match_param="match_condition",
+        if_match = _get_match_headers(
+            etag=etag,
+            match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
         self._batch_delete_entity(
             table=self.table_name,
             partition_key=partition_key,
             row_key=row_key,
-            if_match=if_match or "*",
+            if_match=if_match,
             **kwargs
         )
 

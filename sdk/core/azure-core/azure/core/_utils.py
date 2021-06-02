@@ -53,6 +53,17 @@ def _convert_to_isoformat(date_time):
         sign, offset = date_time[-6], date_time[-5:]
         delta = int(sign + offset[:1]) * 60 + int(sign + offset[-2:])
 
+    check_decimal = timestamp.split('.')
+    if len(check_decimal) > 1:
+        decimal_str = ""
+        for digit in check_decimal[1]:
+            if digit.isdigit():
+                decimal_str += digit
+            else:
+                break
+        if len(decimal_str) > 6:
+            timestamp = timestamp.replace(decimal_str, decimal_str[0:6])
+
     if delta == 0:
         tzinfo = TZ_UTC
     else:

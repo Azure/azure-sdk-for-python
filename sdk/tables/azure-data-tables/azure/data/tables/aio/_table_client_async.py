@@ -11,6 +11,7 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import unquote  # type: ignore
 
+from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
@@ -20,7 +21,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
-from .._models import AccessPolicy
+from .._models import AccessPolicy, TableItem
 from .._serialize import serialize_iso, _parameter_filter_substitution
 from .._deserialize import _return_headers_and_deserialized
 from .._error import (
@@ -221,11 +222,11 @@ class TableClient(AsyncTablesBaseClient):
                 raise
 
     @distributed_trace_async
-    async def create_table(self, **kwargs) -> Dict[str, str]:
+    async def create_table(self, **kwargs) -> TableItem:
         """Creates a new table under the given account.
 
-        :return: Dictionary of operation metadata returned from service
-        :rtype: Dict[str,str]
+        :return: A TableItem representing the created table.
+        :rtype: :class:`~azure.data.tables.TableItem`
         :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
 
         .. admonition:: Example:
@@ -239,14 +240,10 @@ class TableClient(AsyncTablesBaseClient):
         """
         table_properties = TableProperties(table_name=self.table_name)
         try:
-            metadata, _ = await self._client.table.create(  # type: ignore
-                table_properties,
-                cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                **kwargs
-            )
+            result = await self._client.table.create(table_properties, **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
-        return _trim_service_metadata(metadata)
+        return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace_async
     async def delete_table(self, **kwargs) -> None:
@@ -291,7 +288,9 @@ class TableClient(AsyncTablesBaseClient):
         :param entity: The entity to delete
         :type entity: Union[TableEntity, Mapping[str, str]]
         :keyword str etag: Etag of the entity
-        :keyword match_condition: MatchCondition
+        :keyword match_condition: The condition under which to perform the operation.
+            Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
+            The default value is Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
@@ -327,15 +326,9 @@ class TableClient(AsyncTablesBaseClient):
                 etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
-
-        if_match, _ = _get_match_headers(
-            kwargs=dict(
-                kwargs,
-                etag=etag,
-                match_condition=match_condition,
-            ),
-            etag_param="etag",
-            match_param="match_condition",
+        if_match = _get_match_headers(
+            etag=etag,
+            match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
         try:
@@ -343,7 +336,7 @@ class TableClient(AsyncTablesBaseClient):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match or "*",
+                if_match=if_match,
                 **kwargs
             )
         except HttpResponseError as error:
@@ -377,7 +370,7 @@ class TableClient(AsyncTablesBaseClient):
         """
         entity = _add_entity_properties(entity)
         try:
-            metadata, _ = await self._client.table.insert_entity(  # type: ignore
+            metadata, content = await self._client.table.insert_entity(
                 table=self.table_name,
                 table_entity_properties=entity,  # type: ignore
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
@@ -391,7 +384,7 @@ class TableClient(AsyncTablesBaseClient):
                 if entity.get("RowKey") is None:
                     raise ValueError("RowKey must be present in an entity")
             _reraise_error(error)
-        return _trim_service_metadata(metadata)  # type: ignore
+        return _trim_service_metadata(metadata, content=content)  # type: ignore
 
 
     @distributed_trace_async
@@ -408,7 +401,9 @@ class TableClient(AsyncTablesBaseClient):
         :param mode: Merge or Replace entity
         :type mode: :class:`~azure.data.tables.UpdateMode`
         :keyword str etag: Etag of the entity
-        :keyword match_condition: MatchCondition
+        :keyword match_condition: The condition under which to perform the operation.
+            Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
+            The default value is Unconditionally.
         :paramtype match_condition: ~azure.core.MatchCondition
         :return: Dictionary of operation metadata returned from service
         :rtype: Dict[str,str]
@@ -430,15 +425,9 @@ class TableClient(AsyncTablesBaseClient):
                 etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
-
-        if_match, _ = _get_match_headers(
-            kwargs=dict(
-                kwargs,
-                etag=etag,
-                match_condition=match_condition,
-            ),
-            etag_param="etag",
-            match_param="match_condition",
+        if_match = _get_match_headers(
+            etag=etag,
+            match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
         partition_key = entity["PartitionKey"]
@@ -446,22 +435,23 @@ class TableClient(AsyncTablesBaseClient):
         entity = _add_entity_properties(entity)
         try:
             metadata = None
+            content = None
             if mode is UpdateMode.REPLACE:
-                metadata, _ = await self._client.table.update_entity(  # type: ignore
+                metadata, content = await self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,  # type: ignore
-                    if_match=if_match or "*",
+                    if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
             elif mode is UpdateMode.MERGE:
-                metadata, _ = await self._client.table.merge_entity(  # type: ignore
+                metadata, content = await self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    if_match=if_match or "*",
+                    if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     table_entity_properties=entity,  # type: ignore
                     **kwargs
@@ -470,7 +460,7 @@ class TableClient(AsyncTablesBaseClient):
                 raise ValueError("Mode type is not supported")
         except HttpResponseError as error:
             _process_table_error(error)
-        return _trim_service_metadata(metadata)  # type: ignore
+        return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
     def list_entities(self, **kwargs) -> AsyncItemPaged[TableEntity]:
@@ -629,8 +619,9 @@ class TableClient(AsyncTablesBaseClient):
 
         try:
             metadata = None
+            content = None
             if mode is UpdateMode.MERGE:
-                metadata, _ = await self._client.table.merge_entity(  # type: ignore
+                metadata, content = await self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -639,7 +630,7 @@ class TableClient(AsyncTablesBaseClient):
                     **kwargs
                 )
             elif mode is UpdateMode.REPLACE:
-                metadata, _ = await self._client.table.update_entity(  # type: ignore
+                metadata, content = await self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -656,7 +647,7 @@ class TableClient(AsyncTablesBaseClient):
                 )
         except HttpResponseError as error:
             _process_table_error(error)
-        return _trim_service_metadata(metadata)  # type: ignore
+        return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace_async
     async def submit_transaction(

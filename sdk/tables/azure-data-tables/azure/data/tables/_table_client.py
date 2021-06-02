@@ -12,6 +12,7 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import unquote  # type: ignore
 
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -38,7 +39,8 @@ from ._models import (
     TableEntityPropertiesPaged,
     UpdateMode,
     AccessPolicy,
-    TransactionOperation
+    TransactionOperation,
+    TableItem
 )
 
 EntityType = Union[TableEntity, Mapping[str, Any]]
@@ -229,11 +231,11 @@ class TableClient(TablesBaseClient):
     def create_table(
         self, **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str,str]
+        # type: (...) -> TableItem
         """Creates a new table under the current account.
 
-        :return: Dictionary of operation metadata returned from service
-        :rtype: Dict[str,str]
+        :return: A TableItem representing the created table.
+        :rtype: :class:`~azure.data.tables.TableItem`
         :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
 
         .. admonition:: Example:
@@ -247,14 +249,10 @@ class TableClient(TablesBaseClient):
         """
         table_properties = TableProperties(table_name=self.table_name)
         try:
-            metadata, _ = self._client.table.create(  # type: ignore
-                table_properties,
-                cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                **kwargs
-            )
+            result = self._client.table.create(table_properties, **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
-        return _trim_service_metadata(metadata)
+        return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace
     def delete_table(
@@ -305,7 +303,9 @@ class TableClient(TablesBaseClient):
         :param entity: The entity to delete
         :type entity: Union[TableEntity, Mapping[str, str]]
         :keyword str etag: Etag of the entity
-        :keyword match_condition: MatchCondition
+        :keyword match_condition: The condition under which to perform the operation.
+            Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
+            The default value is Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
@@ -341,15 +341,9 @@ class TableClient(TablesBaseClient):
                 etag = entity.metadata.get("etag", None)
             except (AttributeError, TypeError):
                 pass
-
-        if_match, _ = _get_match_headers(
-            kwargs=dict(
-                kwargs,
-                etag=etag,
-                match_condition=match_condition,
-            ),
-            etag_param="etag",
-            match_param="match_condition",
+        if_match = _get_match_headers(
+            etag=etag,
+            match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
         try:
@@ -357,7 +351,7 @@ class TableClient(TablesBaseClient):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match or "*",
+                if_match=if_match,
                 **kwargs
             )
         except HttpResponseError as error:
@@ -391,7 +385,7 @@ class TableClient(TablesBaseClient):
         """
         entity = _add_entity_properties(entity)
         try:
-            metadata, _ = self._client.table.insert_entity(  # type: ignore
+            metadata, content = self._client.table.insert_entity(
                 table=self.table_name,
                 table_entity_properties=entity,  # type: ignore
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
@@ -405,7 +399,7 @@ class TableClient(TablesBaseClient):
                 if entity.get("RowKey") is None:
                     raise ValueError("RowKey must be present in an entity")
             _reraise_error(error)
-        return _trim_service_metadata(metadata)  # type: ignore
+        return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
     def update_entity(
@@ -422,8 +416,10 @@ class TableClient(TablesBaseClient):
         :param mode: Merge or Replace entity
         :type mode: :class:`~azure.data.tables.UpdateMode`
         :keyword str etag: Etag of the entity
-        :keyword match_condition: MatchCondition
-        :paramtype match_condition: ~azure.core.MatchCondition
+        :keyword match_condition: The condition under which to perform the operation.
+            Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
+            The default value is Unconditionally.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -444,15 +440,9 @@ class TableClient(TablesBaseClient):
                 etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
-
-        if_match, _ = _get_match_headers(
-            kwargs=dict(
-                kwargs,
-                etag=etag,
-                match_condition=match_condition,
-            ),
-            etag_param="etag",
-            match_param="match_condition",
+        if_match = _get_match_headers(
+            etag=etag,
+            match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
         partition_key = entity["PartitionKey"]
@@ -460,22 +450,23 @@ class TableClient(TablesBaseClient):
         entity = _add_entity_properties(entity)
         try:
             metadata = None
+            content = None
             if mode is UpdateMode.REPLACE:
-                metadata, _ = self._client.table.update_entity(  # type: ignore
+                metadata, content = self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,  # type: ignore
-                    if_match=if_match or "*",
+                    if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
             elif mode is UpdateMode.MERGE:
-                metadata, _ = self._client.table.merge_entity(  # type: ignore
+                metadata, content = self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    if_match=if_match or "*",
+                    if_match=if_match,
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
@@ -484,7 +475,7 @@ class TableClient(TablesBaseClient):
                 raise ValueError("Mode type is not supported")
         except HttpResponseError as error:
             _process_table_error(error)
-        return _trim_service_metadata(metadata)  # type: ignore
+        return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
     def list_entities(
@@ -647,8 +638,9 @@ class TableClient(TablesBaseClient):
         entity = _add_entity_properties(entity)
         try:
             metadata = None
+            content = None
             if mode is UpdateMode.MERGE:
-                metadata, _ = self._client.table.merge_entity(  # type: ignore
+                metadata, content = self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -657,7 +649,7 @@ class TableClient(TablesBaseClient):
                     **kwargs
                 )
             elif mode is UpdateMode.REPLACE:
-                metadata, _ = self._client.table.update_entity(  # type: ignore
+                metadata, content = self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -674,7 +666,7 @@ class TableClient(TablesBaseClient):
                 )
         except HttpResponseError as error:
             _process_table_error(error)
-        return _trim_service_metadata(metadata)  # type: ignore
+        return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     def submit_transaction(
         self,
