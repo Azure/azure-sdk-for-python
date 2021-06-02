@@ -123,9 +123,9 @@ If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alt
 
 ### Control Plane Limitations Workaround
 
-Typically you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider/], [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
+Typically you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider], [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
-### AAD Support
+### AAD Support Workaround
 
 A possible workaround is to use managed identities to [programmatically](https://docs.microsoft.com/azure/cosmos-db/managed-identity-based-authentication) get the keys.
 
