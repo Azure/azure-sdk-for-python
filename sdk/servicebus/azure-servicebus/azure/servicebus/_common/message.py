@@ -104,12 +104,8 @@ class ServiceBusMessage(
             # Note: This cannot be renamed until UAMQP no longer relies on this specific name.
             self.message = kwargs["message"]
             self._raw_amqp_message = AMQPAnnotatedMessage(message=self.message)
-            self._amqp_properties = self._raw_amqp_message.properties
-            self._amqp_header = self._raw_amqp_message.header
         else:
             self._build_message(body)
-            self._amqp_properties = self._raw_amqp_message.properties
-            self._amqp_header = self._raw_amqp_message.header
             self.application_properties = kwargs.pop("application_properties", None)
             self.session_id = kwargs.pop("session_id", None)
             self.message_id = kwargs.pop("message_id", None)
@@ -244,12 +240,12 @@ class ServiceBusMessage(
 
         :rtype: str
         """
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             return None
         try:
-            return self._amqp_properties.group_id.decode("UTF-8")
+            return self._raw_amqp_message.properties.group_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.group_id
+            return self._raw_amqp_message.properties.group_id
 
     @session_id.setter
     def session_id(self, value):
@@ -261,11 +257,10 @@ class ServiceBusMessage(
                 )
             )
 
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AMQPMessageProperties()
-            self._amqp_properties = self._raw_amqp_message.properties
 
-        self._amqp_properties.group_id = value
+        self._raw_amqp_message.properties.group_id = value
 
     @property
     def application_properties(self):
@@ -337,33 +332,32 @@ class ServiceBusMessage(
 
         :rtype: ~datetime.timedelta
         """
-        if self._amqp_header and self._amqp_header.time_to_live:
-            return datetime.timedelta(milliseconds=self._amqp_header.time_to_live)
+        if self._raw_amqp_message.header and self._raw_amqp_message.header.time_to_live:
+            return datetime.timedelta(milliseconds=self._raw_amqp_message.header.time_to_live)
         return None
 
     @time_to_live.setter
     def time_to_live(self, value):
         # type: (datetime.timedelta) -> None
-        if not self._amqp_header:
-            self._amqp_header = AMQPMessageHeader()
-            self._raw_amqp_message.header = self._amqp_header
+        if not self._raw_amqp_message.header:
+            self._raw_amqp_message.header = AMQPMessageHeader()
         if value is None:
-            self._amqp_header.time_to_live = value
-            if self._amqp_properties.absolute_expiry_time:
-                self._amqp_properties.absolute_expiry_time = value
+            self._raw_amqp_message.header.time_to_live = value
+            if self._raw_amqp_message.properties.absolute_expiry_time:
+                self._raw_amqp_message.properties.absolute_expiry_time = value
         elif isinstance(value, datetime.timedelta):
-            self._amqp_header.time_to_live = value.seconds * 1000
+            self._raw_amqp_message.header.time_to_live = value.seconds * 1000
         else:
-            self._amqp_header.time_to_live = int(value) * 1000
+            self._raw_amqp_message.header.time_to_live = int(value) * 1000
 
-        if self._amqp_header.time_to_live and self._amqp_header.time_to_live != MAX_DURATION_VALUE:
-            if not self._amqp_properties:
+        if self._raw_amqp_message.header.time_to_live and \
+                self._raw_amqp_message.header.time_to_live != MAX_DURATION_VALUE:
+            if not self._raw_amqp_message.properties:
                 self._raw_amqp_message.properties = AMQPMessageProperties()
-                self._amqp_properties = self._raw_amqp_message.properties
-            self._amqp_properties.creation_time = int(time.mktime(utc_now().timetuple()))
-            self._amqp_properties.absolute_expiry_time = min(
+            self._raw_amqp_message.properties.creation_time = int(time.mktime(utc_now().timetuple()))
+            self._raw_amqp_message.properties.absolute_expiry_time = min(
                 MAX_ABSOLUTE_EXPIRY_TIME,
-                self._amqp_properties.creation_time + self._amqp_header.time_to_live
+                self._raw_amqp_message.properties.creation_time + self._raw_amqp_message.header.time_to_live
             )
 
     @property
@@ -393,11 +387,10 @@ class ServiceBusMessage(
     @scheduled_enqueue_time_utc.setter
     def scheduled_enqueue_time_utc(self, value):
         # type: (datetime.datetime) -> None
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AMQPMessageProperties()
-            self._amqp_properties = self._raw_amqp_message.properties
-        if not self._amqp_properties.message_id:
-            self._amqp_properties.message_id = str(uuid.uuid4())
+        if not self._raw_amqp_message.properties.message_id:
+            self._raw_amqp_message.properties.message_id = str(uuid.uuid4())
         self._set_message_annotations(_X_OPT_SCHEDULED_ENQUEUE_TIME, value)
 
     @property
@@ -431,20 +424,19 @@ class ServiceBusMessage(
 
         :rtype: str
         """
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             return None
         try:
-            return self._amqp_properties.content_type.decode("UTF-8")
+            return self._raw_amqp_message.properties.content_type.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.content_type
+            return self._raw_amqp_message.properties.content_type
 
     @content_type.setter
     def content_type(self, value):
         # type: (str) -> None
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AMQPMessageProperties()
-            self._amqp_properties = self._raw_amqp_message.properties
-        self._amqp_properties.content_type = value
+        self._raw_amqp_message.properties.content_type = value
 
     @property
     def correlation_id(self):
@@ -460,20 +452,19 @@ class ServiceBusMessage(
 
         :rtype: str
         """
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             return None
         try:
-            return self._amqp_properties.correlation_id.decode("UTF-8")
+            return self._raw_amqp_message.properties.correlation_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.correlation_id
+            return self._raw_amqp_message.properties.correlation_id
 
     @correlation_id.setter
     def correlation_id(self, value):
         # type: (str) -> None
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AMQPMessageProperties()
-            self._amqp_properties = self._raw_amqp_message.properties
-        self._amqp_properties.correlation_id = value
+        self._raw_amqp_message.properties.correlation_id = value
 
     @property
     def subject(self):
@@ -485,20 +476,19 @@ class ServiceBusMessage(
 
         :rtype: str
         """
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             return None
         try:
-            return self._amqp_properties.subject.decode("UTF-8")
+            return self._raw_amqp_message.properties.subject.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.subject
+            return self._raw_amqp_message.properties.subject
 
     @subject.setter
     def subject(self, value):
         # type: (str) -> None
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AMQPMessageProperties()
-            self._amqp_properties = self._raw_amqp_message.properties
-        self._amqp_properties.subject = value
+        self._raw_amqp_message.properties.subject = value
 
     @property
     def message_id(self):
@@ -513,12 +503,12 @@ class ServiceBusMessage(
 
         :rtype: str
         """
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             return None
         try:
-            return self._amqp_properties.message_id.decode("UTF-8")
+            return self._raw_amqp_message.properties.message_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.message_id
+            return self._raw_amqp_message.properties.message_id
 
     @message_id.setter
     def message_id(self, value):
@@ -529,10 +519,9 @@ class ServiceBusMessage(
                     MESSAGE_PROPERTY_MAX_LENGTH
                 )
             )
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AMQPMessageProperties()
-            self._amqp_properties = self._raw_amqp_message.properties
-        self._amqp_properties.message_id = value
+        self._raw_amqp_message.properties.message_id = value
 
     @property
     def reply_to(self):
@@ -549,20 +538,19 @@ class ServiceBusMessage(
 
         :rtype: str
         """
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             return None
         try:
-            return self._amqp_properties.reply_to.decode("UTF-8")
+            return self._raw_amqp_message.properties.reply_to.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.reply_to
+            return self._raw_amqp_message.properties.reply_to
 
     @reply_to.setter
     def reply_to(self, value):
         # type: (str) -> None
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AMQPMessageProperties()
-            self._amqp_properties = self._raw_amqp_message.properties
-        self._amqp_properties.reply_to = value
+        self._raw_amqp_message.properties.reply_to = value
 
     @property
     def reply_to_session_id(self):
@@ -578,12 +566,12 @@ class ServiceBusMessage(
 
         :rtype: str
         """
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             return None
         try:
-            return self._amqp_properties.reply_to_group_id.decode("UTF-8")
+            return self._raw_amqp_message.properties.reply_to_group_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.reply_to_group_id
+            return self._raw_amqp_message.properties.reply_to_group_id
 
     @reply_to_session_id.setter
     def reply_to_session_id(self, value):
@@ -595,10 +583,9 @@ class ServiceBusMessage(
                 )
             )
 
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AMQPMessageProperties()
-            self._amqp_properties = self._raw_amqp_message.properties
-        self._amqp_properties.reply_to_group_id = value
+        self._raw_amqp_message.properties.reply_to_group_id = value
 
     @property
     def to(self):
@@ -613,20 +600,19 @@ class ServiceBusMessage(
 
         :rtype: str
         """
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             return None
         try:
-            return self._amqp_properties.to.decode("UTF-8")
+            return self._raw_amqp_message.properties.to.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.to
+            return self._raw_amqp_message.properties.to
 
     @to.setter
     def to(self, value):
         # type: (str) -> None
-        if not self._amqp_properties:
+        if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AMQPMessageProperties()
-            self._amqp_properties = self._raw_amqp_message.properties
-        self._amqp_properties.to = value
+        self._raw_amqp_message.properties.to = value
 
 
 class ServiceBusMessageBatch(object):
@@ -968,8 +954,8 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
         :rtype: int
         """
-        if self._amqp_header:
-            return self._amqp_header.delivery_count
+        if self._raw_amqp_message.header:
+            return self._raw_amqp_message.header.delivery_count
         return None
 
     @property
