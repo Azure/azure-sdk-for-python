@@ -113,10 +113,6 @@ IGNORED_SAMPLES = {
         "release_phone_number_sample_async.py",
         "release_phone_number_sample.py"
     ],
-    "azure-ai-formrecognizer": [
-        "sample_authentication.py",
-        "sample_authentication_async.py"
-    ]
 }
 
 

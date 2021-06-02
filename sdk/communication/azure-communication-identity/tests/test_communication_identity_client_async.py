@@ -17,13 +17,13 @@ from _shared.asynctestcase  import AsyncCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor
 from _shared.communication_service_preparer import CommunicationPreparer
 from _shared.utils import get_http_logging_policy
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 class FakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("Fake Token", 0)
 
-    def get_token(self, *args):
+    async def get_token(self, *args):
         return self.token
 class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
     def setUp(self):

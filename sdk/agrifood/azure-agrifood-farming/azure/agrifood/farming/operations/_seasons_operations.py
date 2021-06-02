@@ -202,7 +202,7 @@ class SeasonsOperations(object):
         # type: (...) -> "_models.Season"
         """Gets a specified season resource.
 
-        :param season_id: Id of the season.
+        :param season_id: ID of the season.
         :type season_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Season, or the result of cls(response)
@@ -253,16 +253,16 @@ class SeasonsOperations(object):
     def create_or_update(
         self,
         season_id,  # type: str
-        body=None,  # type: Optional["_models.Season"]
+        season=None,  # type: Optional["_models.Season"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Season"
         """Creates or updates a season resource.
 
-        :param season_id: Id of the season resource.
+        :param season_id: ID of the season resource.
         :type season_id: str
-        :param body: Season resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.Season
+        :param season: Season resource payload to create or update.
+        :type season: ~azure.agrifood.farming.models.Season
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Season, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.Season
@@ -295,8 +295,8 @@ class SeasonsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Season')
+        if season is not None:
+            body_content = self._serialize.body(season, 'Season')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -329,7 +329,7 @@ class SeasonsOperations(object):
         # type: (...) -> None
         """Deletes a specified season resource.
 
-        :param season_id: Id of the season.
+        :param season_id: ID of the season.
         :type season_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)

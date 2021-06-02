@@ -46,7 +46,7 @@ class VirtualMachineExtensionImagesOperations:
         publisher_name: str,
         type: str,
         version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualMachineExtensionImage":
         """Gets a virtual machine extension image.
 
@@ -110,7 +110,7 @@ class VirtualMachineExtensionImagesOperations:
         self,
         location: str,
         publisher_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VirtualMachineExtensionImage"]:
         """Gets a list of virtual machine extension image types.
 
@@ -172,7 +172,7 @@ class VirtualMachineExtensionImagesOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VirtualMachineExtensionImage"]:
         """Gets a list of virtual machine extension image versions.
 

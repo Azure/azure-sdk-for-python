@@ -47,7 +47,7 @@ class ManagedDatabaseSchemasOperations:
         managed_instance_name: str,
         database_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseSchemaListResult"]:
         """List managed database schemas.
 
@@ -131,7 +131,7 @@ class ManagedDatabaseSchemasOperations:
         managed_instance_name: str,
         database_name: str,
         schema_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseSchema":
         """Get managed database schema.
 

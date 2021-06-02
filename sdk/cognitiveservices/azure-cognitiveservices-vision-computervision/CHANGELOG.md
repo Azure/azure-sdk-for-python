@@ -1,5 +1,12 @@
 # Release History
 
+## 0.9.0 (2021-05-31)
+
+**Breaking changes**
+
+  - Operation ComputerVisionClientOperationsMixin.read has a new signature
+  - Operation ComputerVisionClientOperationsMixin.read_in_stream has a new signature
+
 ## 0.8.0 (2021-03-22)
 
 **Features**

@@ -54,7 +54,7 @@ class WeatherOperations:
         end_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WeatherDataListResponse"]:
         """Returns a paginated list of weather data.
 
@@ -160,11 +160,11 @@ class WeatherOperations:
     async def get_data_ingestion_job_details(
         self,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WeatherDataIngestionJob":
         """Get weather ingestion job.
 
-        :param job_id: Id of the job.
+        :param job_id: ID of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WeatherDataIngestionJob, or the result of cls(response)
@@ -215,8 +215,8 @@ class WeatherOperations:
     async def _create_data_ingestion_job_initial(
         self,
         job_id: str,
-        body: Optional["_models.WeatherDataIngestionJob"] = None,
-        **kwargs
+        job: Optional["_models.WeatherDataIngestionJob"] = None,
+        **kwargs: Any
     ) -> "_models.WeatherDataIngestionJob":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataIngestionJob"]
         error_map = {
@@ -245,8 +245,8 @@ class WeatherOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'WeatherDataIngestionJob')
+        if job is not None:
+            body_content = self._serialize.body(job, 'WeatherDataIngestionJob')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -270,15 +270,15 @@ class WeatherOperations:
     async def begin_create_data_ingestion_job(
         self,
         job_id: str,
-        body: Optional["_models.WeatherDataIngestionJob"] = None,
-        **kwargs
+        job: Optional["_models.WeatherDataIngestionJob"] = None,
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.WeatherDataIngestionJob"]:
         """Create a weather data ingestion job.
 
         :param job_id: Job id supplied by user.
         :type job_id: str
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.agrifood.farming.models.WeatherDataIngestionJob
+        :param job: Job parameters supplied by user.
+        :type job: ~azure.agrifood.farming.models.WeatherDataIngestionJob
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling.
@@ -299,7 +299,7 @@ class WeatherOperations:
         if cont_token is None:
             raw_result = await self._create_data_ingestion_job_initial(
                 job_id=job_id,
-                body=body,
+                job=job,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -336,11 +336,11 @@ class WeatherOperations:
     async def get_data_delete_job_details(
         self,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WeatherDataDeleteJob":
         """Get weather data delete job.
 
-        :param job_id: Id of the job.
+        :param job_id: ID of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WeatherDataDeleteJob, or the result of cls(response)
@@ -391,8 +391,8 @@ class WeatherOperations:
     async def _create_data_delete_job_initial(
         self,
         job_id: str,
-        body: Optional["_models.WeatherDataDeleteJob"] = None,
-        **kwargs
+        job: Optional["_models.WeatherDataDeleteJob"] = None,
+        **kwargs: Any
     ) -> "_models.WeatherDataDeleteJob":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataDeleteJob"]
         error_map = {
@@ -421,8 +421,8 @@ class WeatherOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'WeatherDataDeleteJob')
+        if job is not None:
+            body_content = self._serialize.body(job, 'WeatherDataDeleteJob')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -446,15 +446,15 @@ class WeatherOperations:
     async def begin_create_data_delete_job(
         self,
         job_id: str,
-        body: Optional["_models.WeatherDataDeleteJob"] = None,
-        **kwargs
+        job: Optional["_models.WeatherDataDeleteJob"] = None,
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.WeatherDataDeleteJob"]:
         """Create a weather data delete job.
 
-        :param job_id: Job Id supplied by end user.
+        :param job_id: Job ID supplied by end user.
         :type job_id: str
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.agrifood.farming.models.WeatherDataDeleteJob
+        :param job: Job parameters supplied by user.
+        :type job: ~azure.agrifood.farming.models.WeatherDataDeleteJob
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling.
@@ -475,7 +475,7 @@ class WeatherOperations:
         if cont_token is None:
             raw_result = await self._create_data_delete_job_initial(
                 job_id=job_id,
-                body=body,
+                job=job,
                 cls=lambda x,y,z: x,
                 **kwargs
             )

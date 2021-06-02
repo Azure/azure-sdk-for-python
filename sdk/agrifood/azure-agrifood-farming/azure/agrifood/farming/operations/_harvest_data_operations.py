@@ -604,7 +604,7 @@ class HarvestDataOperations(object):
         self,
         farmer_id,  # type: str
         harvest_data_id,  # type: str
-        body=None,  # type: Optional["_models.HarvestData"]
+        harvest_data=None,  # type: Optional["_models.HarvestData"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.HarvestData"
@@ -614,8 +614,8 @@ class HarvestDataOperations(object):
         :type farmer_id: str
         :param harvest_data_id: ID of the harvest data resource.
         :type harvest_data_id: str
-        :param body: Harvest data resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.HarvestData
+        :param harvest_data: Harvest data resource payload to create or update.
+        :type harvest_data: ~azure.agrifood.farming.models.HarvestData
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HarvestData, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.HarvestData
@@ -649,8 +649,8 @@ class HarvestDataOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'HarvestData')
+        if harvest_data is not None:
+            body_content = self._serialize.body(harvest_data, 'HarvestData')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

@@ -45,7 +45,7 @@ class RecommendationsOperations:
         self,
         featured: Optional[bool] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecommendationCollection"]:
         """List all recommendations for a subscription.
 
@@ -124,7 +124,7 @@ class RecommendationsOperations:
 
     async def reset_all_filters(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Reset all recommendation opt-out settings for a subscription.
 
@@ -172,7 +172,7 @@ class RecommendationsOperations:
     async def disable_recommendation_for_subscription(
         self,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Disables the specified rule so it will not apply to a subscription in the future.
 
@@ -225,7 +225,7 @@ class RecommendationsOperations:
         resource_group_name: str,
         site_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecommendationCollection"]:
         """Get past recommendations for an app, optionally specified by the time range.
 
@@ -309,7 +309,7 @@ class RecommendationsOperations:
         site_name: str,
         featured: Optional[bool] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecommendationCollection"]:
         """Get all recommendations for an app.
 
@@ -395,7 +395,7 @@ class RecommendationsOperations:
         self,
         resource_group_name: str,
         site_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Disable all recommendations for an app.
 
@@ -450,7 +450,7 @@ class RecommendationsOperations:
         self,
         resource_group_name: str,
         site_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Reset all recommendation opt-out settings for an app.
 
@@ -508,7 +508,7 @@ class RecommendationsOperations:
         name: str,
         update_seen: Optional[bool] = None,
         recommendation_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecommendationRule":
         """Get a recommendation rule for an app.
 
@@ -582,7 +582,7 @@ class RecommendationsOperations:
         resource_group_name: str,
         site_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Disables the specific rule for a web site permanently.
 

@@ -47,7 +47,7 @@ class ElasticPoolOperationsOperations:
         server_name: str,
         elastic_pool_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels the asynchronous operation on the elastic pool.
 
@@ -108,7 +108,7 @@ class ElasticPoolOperationsOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ElasticPoolOperationListResult"]:
         """Gets a list of operations performed on the elastic pool.
 

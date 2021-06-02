@@ -426,7 +426,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
         A composed model allows multiple models to be called with a single model ID. When a document is
         submitted to be analyzed with a composed model ID, a classification step is first performed to
-        route it to the correct custom model
+        route it to the correct custom model.
 
         :param list[str] model_ids: List of model IDs to use in the composed model.
         :keyword str model_name: An optional, user-defined name to associate with your model.

@@ -43,7 +43,7 @@ class DomainRegistrationProviderOperations:
 
     def list_operations(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CsmOperationCollection"]:
         """Implements Csm operations Api to exposes the list of available Csm Apis under the resource provider.
 
@@ -96,7 +96,7 @@ class DomainRegistrationProviderOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
