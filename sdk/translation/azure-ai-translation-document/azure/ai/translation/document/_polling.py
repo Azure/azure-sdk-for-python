@@ -11,7 +11,9 @@ from azure.core.polling.base_polling import (
     OperationResourcePolling,
     _is_empty,
     _as_json,
-    BadResponse
+    BadResponse,
+    OperationFailed,
+    _raise_if_bad_http_status_and_method
 )
 
 from azure.core.exceptions import HttpResponseError, ODataV4Format
@@ -29,6 +31,10 @@ if TYPE_CHECKING:
 
     ResponseType = Union[HttpResponse, AsyncHttpResponse]
     PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
+
+
+_FINISHED = frozenset(["succeeded", "cancelled", "cancelling", "failed"])
+_FAILED = frozenset(["validationfailed"])
 
 
 class DocumentTranslationPoller(LROPoller):
@@ -53,9 +59,7 @@ class DocumentTranslationPoller(LROPoller):
 
         :return: JobStatusResult
         """
-        if not self.polling_method._current_body:
-            return None
-        return JobStatusResult._from_generated(self.polling_method._current_body)
+        return JobStatusResult._from_generated(self._polling_method._current_body)
 
     @classmethod
     def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
@@ -85,6 +89,24 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
         # type: () -> str
         return self._pipeline_response.http_response.headers["Operation-Location"].split("/batches/")[1]
 
+    def finished(self):
+        """Is this polling finished?
+        :rtype: bool
+        """
+        return self._finished(self.status())
+
+    @staticmethod
+    def _finished(status):
+        if hasattr(status, "value"):
+            status = status.value
+        return str(status).lower() in _FINISHED
+
+    @staticmethod
+    def _failed(status):
+        if hasattr(status, "value"):
+            status = status.value
+        return str(status).lower() in _FAILED
+
     def get_continuation_token(self):
         # type: () -> str
         if self._current_body:
@@ -104,6 +126,29 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
             raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
 
         return client, self._cont_token_response, deserialization_callback
+
+    def _poll(self):
+        """Poll status of operation so long as operation is incomplete and
+        we have an endpoint to query.
+
+        :param callable update_cmd: The function to call to retrieve the
+         latest status of the long running operation.
+        :raises: OperationFailed if operation status 'Failed' or 'Canceled'.
+        :raises: BadStatus if response status invalid.
+        :raises: BadResponse if response invalid.
+        """
+
+        while not self.finished():
+            self._delay()
+            self.update_status()
+
+        if self._failed(self.status()):
+            raise OperationFailed("Operation failed or canceled")
+
+        final_get_url = self._operation.get_final_get_url(self._pipeline_response)
+        if final_get_url:
+            self._pipeline_response = self.request_status(final_get_url)
+            _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
 
 class TranslationPolling(OperationResourcePolling):
@@ -158,11 +203,6 @@ class TranslationPolling(OperationResourcePolling):
         """
         if status == "ValidationFailed":
             self.raise_error(body)
-        if status == "Failed":
-            # We don't throw in a "Failed" case so this just indicates job completed
-            return "Succeeded"
-        if status in ["Cancelled", "Cancelling"]:
-            return "Canceled"
         return status
 
     def raise_error(self, body):

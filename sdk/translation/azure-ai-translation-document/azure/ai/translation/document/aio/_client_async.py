@@ -8,14 +8,9 @@ import json
 from typing import Any, List, Union, TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.polling import AsyncLROPoller
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from .._user_agent import USER_AGENT
-from .._generated.models import (
-    TranslationStatus as _TranslationStatus,
-)
 from .._models import (
     JobStatusResult,
     DocumentTranslationInput,

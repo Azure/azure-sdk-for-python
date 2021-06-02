@@ -22,19 +22,20 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
                 os.getenv("TRANSLATION_CLIENT_SECRET"),
             )
 
-    async def _submit_and_validate_translation_job_async(self, async_client, translation_inputs, total_docs_count=None):
+    async def _begin_and_validate_translation_async(self, async_client, translation_inputs, total_docs_count=None, language=None):
         # submit job
-        job_details = await async_client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_details.id)
+        poller = await async_client.begin_translation(translation_inputs)
+        self.assertIsNotNone(poller.id)
         # wait for result
-        job_details = await async_client.wait_until_done(job_details.id)
+        doc_statuses = await poller.result()
         # validate
-        self._validate_translation_job(job_details=job_details, status='Succeeded', total=total_docs_count, succeeded=total_docs_count)
-
-        return job_details.id
+        self._validate_translation_metadata(poller=poller, status='Succeeded', total=total_docs_count, succeeded=total_docs_count)
+        async for doc in doc_statuses:
+            self._validate_doc_status(doc, language)
+        return poller.id
 
     # client helpers
-    async def _create_and_submit_sample_translation_jobs_async(self, async_client, jobs_count, **kwargs):
+    async def _begin_multiple_translations_async(self, async_client, jobs_count, **kwargs):
         wait_for_job = kwargs.pop('wait', True)
         language_code = kwargs.pop('language_code', "es")
         docs_per_job = kwargs.pop('docs_per_job', 2)
@@ -65,16 +66,17 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
             ]
 
             # submit multiple jobs
-            job_details = await async_client.create_translation_job(translation_inputs)
-            self.assertIsNotNone(job_details.id)
+            poller = await async_client.begin_translation(translation_inputs)
+            self.assertIsNotNone(poller.id)
             if wait_for_job:
-                await async_client.wait_until_done(job_details.id)
-            result_job_ids.append(job_details.id)
+                await poller.result()
+            else:
+                await poller.wait()
+            result_job_ids.append(poller.id)
 
         return result_job_ids
 
-
-    async def _create_translation_job_with_dummy_docs_async(self, async_client, docs_count, **kwargs):
+    async def _begin_and_validate_translation_with_multiple_docs_async(self, async_client, docs_count, **kwargs):
         # get input parms
         wait_for_job = kwargs.pop('wait', False)
         language_code = kwargs.pop('language_code', "es")
@@ -98,12 +100,14 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
         ]
 
         # submit job
-        job_details = await async_client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_details.id)
+        poller = await async_client.begin_translation(translation_inputs)
+        self.assertIsNotNone(poller.id)
         # wait for result
         if wait_for_job:
-                await async_client.wait_until_done(job_details.id)
-        # validate
-        self._validate_translation_job(job_details=job_details)
+            result = await poller.result()
+            async for doc in result:
+                self._validate_doc_status(doc, "es")
 
-        return job_details.id
+        # validate
+        self._validate_translation_metadata(poller=poller)
+        return poller

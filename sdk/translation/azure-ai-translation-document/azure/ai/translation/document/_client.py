@@ -7,10 +7,7 @@
 import json
 from typing import Any, TYPE_CHECKING, List, Union
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.polling import LROPoller
-from azure.core.polling.base_polling import LROBasePolling
 from ._generated import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
-from ._generated.models import TranslationStatus as _TranslationStatus
 from ._models import (
     JobStatusResult,
     DocumentStatusResult,

@@ -265,9 +265,9 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
         **kwargs
     ):
         # type: (**Any) -> None
-        self.id = kwargs['id']
-        self.created_on = kwargs['created_on']
-        self.last_updated_on = kwargs['last_updated_on']
+        self.id = kwargs.get('id')
+        self.created_on = kwargs.get('created_on')
+        self.last_updated_on = kwargs.get('last_updated_on', None)
         self.status = kwargs.get('status', None)
         self.error = kwargs.get("error", None)
         self.documents_total_count = kwargs.get('documents_total_count', None)
@@ -281,6 +281,8 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
 
     @classmethod
     def _from_generated(cls, batch_status_details):
+        if not batch_status_details:
+            return cls()
         return cls(
             id=batch_status_details.id,
             created_on=batch_status_details.created_date_time_utc,
