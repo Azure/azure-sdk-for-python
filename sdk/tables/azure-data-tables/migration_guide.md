@@ -40,13 +40,44 @@ The package name has been changed from `azure-cosmos` to `azure-data-tables`. Th
 
 In the interest of simplicity, there are only two clients, `TableServiceClient` for account-level interactions and `TableClient` for table-level interactions. This is in contrast to the single `CosmosClient` used for interacting with the account level operations and the proxies used for interactions with specific resources (ie. `DatabaseProxy` and `ContainerProxy`).
 
+### Authenticating Clients
+
+In `azure-cosmos`:
+```python
+import os
+from azure.cosmos import CosmosClient
+
+client = CosmosClient(os.environ["ACCOUNT_URI"], credential=os.environ["ACCOUNT_KEY"])
+```
+
+In `azure-data-tables`:
+```python
+import os
+from azure.core.credentials import AzureNamedKeyCredential
+from azure.data.tables import TableClient, TableServiceClient
+
+key = os.environ["TABLES_ACCOUNT_KEY"]
+name = os.environ["TABLES_ACCOUNT_NAME"]
+url = os.environ["TABLES_ACCOUNT_URL"]
+
+credential = AzureNamedKeyCredential(key=key, name=name)
+
+table_client = TableClient(account_url, "tablename", credential=credential)
+
+table_service_client = TableServiceClient(account_url, credential=credential)
+```
+
+
 ### Table Level Scenarios
 
 #### Create and Delete
 
 In `azure-cosmos`:
 ```python
-
+from azure.cosmos import CosmosClient
+client = CosmosClient(...)
+database_name = "tableName"
+client.CreateDatabase({"id": database_name})
 ```
 
 In `azure-data-tables`:
@@ -97,6 +128,17 @@ for table in service_client.query_tables(query_filter, parameters=parameters):
 In `azure-cosmos`:
 ```python
 
+from azure.cosmos import CosmosClient
+client = CosmosClient(...)
+database = client.get_database_client("databaseName")
+container = database.get_container_client("products")
+
+item = {
+    "PartitionKey": "pk0001",
+    "RowKey": "rk0001",
+    "Value": 1
+}
+container.upsert_item(item)
 ```
 
 In `azure-data-tables`:
