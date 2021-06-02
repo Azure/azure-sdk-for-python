@@ -11,8 +11,9 @@
 
 **Breaking Changes**
 
-- Delete methods now take positional only argument as id.
+- Delete methods now take positional only argument as id
 - `update_subscription_key` and `update_api_key` are merged into one method `update_key`
+- Get rid of `DataFeedOptions` and move all its properties to the `DataFeed` model
 
 - Deprecated:
   - `HttpRequestDataFeed`
