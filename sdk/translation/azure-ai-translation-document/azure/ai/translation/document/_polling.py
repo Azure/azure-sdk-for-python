@@ -48,9 +48,9 @@ class DocumentTranslationPoller(LROPoller):
 
         :return: str
         """
-        if self._polling_method._current_body:
-            return self._polling_method._current_body.id
-        return self._polling_method._get_id_from_headers()
+        if self._polling_method._current_body:  # pylint: disable=protected-access
+            return self._polling_method._current_body.id  # pylint: disable=protected-access
+        return self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
 
     @property
     def details(self):
@@ -59,7 +59,7 @@ class DocumentTranslationPoller(LROPoller):
 
         :return: JobStatusResult
         """
-        return JobStatusResult._from_generated(self._polling_method._current_body)
+        return JobStatusResult._from_generated(self._polling_method._current_body)  # pylint: disable=protected-access
 
     @classmethod
     def from_continuation_token(cls, polling_method, continuation_token, **kwargs):

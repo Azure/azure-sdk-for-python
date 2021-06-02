@@ -29,9 +29,9 @@ class AsyncDocumentTranslationPoller(AsyncLROPoller[PollingReturnType]):
 
         :return: str
         """
-        if self._polling_method._current_body:
-            return self._polling_method._current_body.id
-        return self._polling_method._get_id_from_headers()
+        if self._polling_method._current_body:  # pylint: disable=protected-access
+            return self._polling_method._current_body.id  # pylint: disable=protected-access
+        return self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
 
     @property
     def details(self) -> JobStatusResult:
@@ -39,7 +39,7 @@ class AsyncDocumentTranslationPoller(AsyncLROPoller[PollingReturnType]):
 
         :return: JobStatusResult
         """
-        return JobStatusResult._from_generated(self._polling_method._current_body)
+        return JobStatusResult._from_generated(self._polling_method._current_body)  # pylint: disable=protected-access
 
     @classmethod
     def from_continuation_token(
@@ -66,7 +66,6 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
 
     @property
     def _current_body(self) -> TranslationStatus:
-        from .._generated.models import TranslationStatus
         return TranslationStatus.deserialize(self._pipeline_response)
 
     def _get_id_from_headers(self) -> str:

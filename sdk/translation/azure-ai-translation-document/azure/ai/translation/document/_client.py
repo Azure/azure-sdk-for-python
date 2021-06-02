@@ -125,7 +125,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             return self.list_all_document_statuses(translation_status["id"])
 
         polling_interval = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval
+            "polling_interval", self._client._config.polling_interval  # pylint: disable=protected-access
         )
 
         continuation_token = kwargs.pop("continuation_token", None)
@@ -138,7 +138,8 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
         callback = kwargs.pop("cls", deserialization_callback)
         return self._client.document_translation.begin_start_translation(
-            inputs=DocumentTranslationInput._to_generated_list(inputs) if not continuation_token else None,
+            inputs=DocumentTranslationInput._to_generated_list(inputs)  # pylint: disable=protected-access
+            if not continuation_token else None,
             polling=DocumentTranslationLROPollingMethod(
                 timeout=polling_interval,
                 lro_algorithms=[
