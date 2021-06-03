@@ -7,7 +7,7 @@ import functools
 from typing import (
     Optional,
     Dict,
-    Any,
+    List,
     TYPE_CHECKING
 )
 
@@ -28,7 +28,7 @@ from ._base_client_async import AsyncTablesBaseClient, AsyncTransportWrapper
 from ._models import TablePropertiesPaged
 
 if TYPE_CHECKING:
-    from .._models import CorsRule, Metrics, TableAnalyticsLogging
+    from .._models import TableCorsRule, TableMetrics, TableAnalyticsLogging
 
 
 class TableServiceClient(AsyncTablesBaseClient):
@@ -139,9 +139,9 @@ class TableServiceClient(AsyncTablesBaseClient):
         self,
         *,
         analytics_logging: Optional['TableAnalyticsLogging'] = None,
-        hour_metrics: Optional['Metrics'] = None,
-        minute_metrics: Optional['Metrics'] = None,
-        cors: Optional['CorsRule'] = None,
+        hour_metrics: Optional['TableMetrics'] = None,
+        minute_metrics: Optional['TableMetrics'] = None,
+        cors: Optional[List['TableCorsRule']] = None,
         **kwargs
     ) -> None:
         """Sets properties for an account's Table service endpoint,
@@ -150,11 +150,11 @@ class TableServiceClient(AsyncTablesBaseClient):
         :keyword analytics_logging: Properties for analytics
         :paramtype analytics_logging: ~azure.data.tables.TableAnalyticsLogging
         :keyword hour_metrics: Hour level metrics
-        :paramtype hour_metrics: ~azure.data.tables.Metrics
+        :paramtype hour_metrics: ~azure.data.tables.TableMetrics
         :keyword minute_metrics: Minute level metrics
-        :paramtype minute_metrics: ~azure.data.tables.Metrics
+        :paramtype minute_metrics: ~azure.data.tables.TableMetrics
         :keyword cors: Cross-origin resource sharing rules
-        :paramtype cors: ~azure.data.tables.CorsRule
+        :paramtype cors: List[~azure.data.tables.TableCorsRule]
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`

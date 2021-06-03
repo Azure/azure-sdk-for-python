@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from ._generated.models import TableServiceProperties as GenTableServiceProperties
 
 
-class AccessPolicy(GenAccessPolicy):
+class TableAccessPolicy(GenAccessPolicy):
     """Access Policy class used by the set and get access policy methods.
 
     A stored access policy can specify the start time, expiry time, and
@@ -88,7 +88,7 @@ class TableAnalyticsLogging(GeneratedLogging):
     :keyword bool delete: Required. Indicates whether all delete requests should be logged.
     :keyword bool read: Required. Indicates whether all read requests should be logged.
     :keyword bool write: Required. Indicates whether all write requests should be logged.
-    :keyword ~azure.data.tables.RetentionPolicy retention_policy: Required.
+    :keyword ~azure.data.tables.TableRetentionPolicy retention_policy: Required.
         The retention policy for the metrics.
     """
 
@@ -98,7 +98,7 @@ class TableAnalyticsLogging(GeneratedLogging):
         self.delete = kwargs.get("delete", False)
         self.read = kwargs.get("read", False)
         self.write = kwargs.get("write", False)
-        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
+        self.retention_policy = kwargs.get("retention_policy") or TableRetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
@@ -109,13 +109,13 @@ class TableAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
+            retention_policy=TableRetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
             )
         )
 
 
-class Metrics(GeneratedMetrics):
+class TableMetrics(GeneratedMetrics):
     """A summary of request statistics grouped by API in hour or minute aggregates.
 
     All required parameters must be populated in order to send to Azure.
@@ -124,7 +124,7 @@ class Metrics(GeneratedMetrics):
     :keyword bool enabled: Required. Indicates whether metrics are enabled for the service.
     :keyword bool include_apis: Indicates whether metrics should generate summary
         statistics for called API operations.
-    :keyword ~azure.data.tables.RetentionPolicy retention_policy: Required.
+    :keyword ~azure.data.tables.TableRetentionPolicy retention_policy: Required.
         The retention policy for the metrics.
     """
 
@@ -133,14 +133,14 @@ class Metrics(GeneratedMetrics):
         self.version = kwargs.get("version", u"1.0")
         self.enabled = kwargs.get("enabled", False)
         self.include_apis = kwargs.get("include_apis")
-        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
+        self.retention_policy = kwargs.get("retention_policy") or TableRetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
-        # type: (...) -> Metrics
+        # type: (...) -> TableMetrics
         """A summary of request statistics grouped by API in hour or minute aggregates.
 
-        :param Metrics generated: generated Metrics
+        :param TableMetrics generated: generated Metrics
         """
         if not generated:
             return cls()
@@ -148,13 +148,13 @@ class Metrics(GeneratedMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
+            retention_policy=TableRetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
             )
         )
 
 
-class RetentionPolicy(GeneratedRetentionPolicy):
+class TableRetentionPolicy(GeneratedRetentionPolicy):
     def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
         # type: (Any) -> None
         """The retention policy which determines how long the associated data should
@@ -175,13 +175,13 @@ class RetentionPolicy(GeneratedRetentionPolicy):
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
-        # type: (GeneratedRetentionPolicy, Dict[str, Any]) -> RetentionPolicy
+        # type: (GeneratedRetentionPolicy, Dict[str, Any]) -> TableRetentionPolicy
         """The retention policy which determines how long the associated data should
         persist.
 
         All required parameters must be populated in order to send to Azure.
 
-        :param RetentionPolicy generated: Generated Retention Policy
+        :param TableRetentionPolicy generated: Generated Retention Policy
         """
 
         if not generated:
@@ -192,7 +192,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         )
 
 
-class CorsRule(GeneratedCorsRule):
+class TableCorsRule(GeneratedCorsRule):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -436,14 +436,14 @@ def service_properties_deserialize(generated):
     """Deserialize a ServiceProperties objects into a dict."""
     return {
         "analytics_logging": TableAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
-        "hour_metrics": Metrics._from_generated(  # pylint: disable=protected-access
+        "hour_metrics": TableMetrics._from_generated(  # pylint: disable=protected-access
             generated.hour_metrics
         ),
-        "minute_metrics": Metrics._from_generated(  # pylint: disable=protected-access
+        "minute_metrics": TableMetrics._from_generated(  # pylint: disable=protected-access
             generated.minute_metrics
         ),
         "cors": [
-            CorsRule._from_generated(cors)  # pylint: disable=protected-access
+            TableCorsRule._from_generated(cors)  # pylint: disable=protected-access
             for cors in generated.cors  # type: ignore
         ],
     }

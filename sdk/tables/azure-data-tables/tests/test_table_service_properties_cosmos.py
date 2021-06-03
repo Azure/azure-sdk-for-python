@@ -13,9 +13,9 @@ from azure.core.exceptions import HttpResponseError
 
 from azure.data.tables import (
     TableServiceClient,
-    Metrics,
-    RetentionPolicy,
-    CorsRule
+    TableMetrics,
+    TableRetentionPolicy,
+    TableCorsRule
 )
 
 from _shared.testcase import TableTestCase, SLEEP_DELAY
@@ -28,7 +28,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         cors = []
         for i in range(0, 6):
-            cors.append(CorsRule(['www.xyz.com'], ['GET']))
+            cors.append(TableCorsRule(['www.xyz.com'], ['GET']))
 
         with pytest.raises(HttpResponseError):
             tsc.set_service_properties(cors=cors)
@@ -36,7 +36,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_retention_too_long(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
-        minute_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=366))
+        minute_metrics = TableMetrics(enabled=True, include_apis=True, retention_policy=TableRetentionPolicy(enabled=True, days=366))
 
         with pytest.raises(HttpResponseError):
             tsc.set_service_properties(minute_metrics=minute_metrics)
@@ -46,4 +46,4 @@ class TestTableUnitTest(TableTestCase):
 
     def test_retention_no_days(self):
         # Assert
-        pytest.raises(ValueError, RetentionPolicy, enabled=True)
+        pytest.raises(ValueError, TableRetentionPolicy, enabled=True)

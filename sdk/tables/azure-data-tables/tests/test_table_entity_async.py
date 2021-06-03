@@ -24,7 +24,7 @@ from azure.core.exceptions import (
 
 from azure.data.tables import (
     TableSasPermissions,
-    AccessPolicy,
+    TableAccessPolicy,
     UpdateMode,
     generate_table_sas,
     TableEntity,
@@ -1833,7 +1833,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Arrange
             entity, _ = await self._insert_random_entity()
 
-            access_policy = AccessPolicy()
+            access_policy = TableAccessPolicy()
             access_policy.start = datetime(2011, 10, 11)
             access_policy.expiry = datetime(2025, 10, 12)
             access_policy.permission = TableSasPermissions(read=True)

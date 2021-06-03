@@ -25,7 +25,7 @@ from ._table_client import TableClient
 from ._serialize import _parameter_filter_substitution
 
 if TYPE_CHECKING:
-    from ._models import CorsRule, Metrics, TableAnalyticsLogging
+    from ._models import TableCorsRule, TableMetrics, TableAnalyticsLogging
 
 
 class TableServiceClient(TablesBaseClient):
@@ -145,11 +145,11 @@ class TableServiceClient(TablesBaseClient):
         :keyword analytics_logging: Properties for analytics
         :paramtype analytics_logging: ~azure.data.tables.TableAnalyticsLogging
         :keyword hour_metrics: Hour level metrics
-        :paramtype hour_metrics: ~azure.data.tables.Metrics
+        :paramtype hour_metrics: ~azure.data.tables.TableMetrics
         :keyword minute_metrics: Minute level metrics
-        :paramtype minute_metrics: ~azure.data.tables.Metrics
+        :paramtype minute_metrics: ~azure.data.tables.TableMetrics
         :keyword cors: Cross-origin resource sharing rules
-        :paramtype cors: ~azure.data.tables.CorsRule
+        :paramtype cors: List[~azure.data.tables.TableCorsRule]
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`

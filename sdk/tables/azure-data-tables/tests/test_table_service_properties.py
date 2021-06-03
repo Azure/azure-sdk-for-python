@@ -13,9 +13,9 @@ from devtools_testutils import AzureTestCase
 from azure.data.tables import (
     TableServiceClient,
     TableAnalyticsLogging,
-    Metrics,
-    RetentionPolicy,
-    CorsRule
+    TableMetrics,
+    TableRetentionPolicy,
+    TableCorsRule
 )
 from azure.core.exceptions import HttpResponseError
 
@@ -34,8 +34,8 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         # Act
         resp = tsc.set_service_properties(
             analytics_logging=TableAnalyticsLogging(),
-            hour_metrics=Metrics(),
-            minute_metrics=Metrics(),
+            hour_metrics=TableMetrics(),
+            minute_metrics=TableMetrics(),
             cors=list())
 
         # Assert
@@ -50,7 +50,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(url, tables_primary_storage_account_key)
-        logging = TableAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        logging = TableAnalyticsLogging(read=True, write=True, delete=True, retention_policy=TableRetentionPolicy(enabled=True, days=5))
 
         # Act
         tsc.set_service_properties(analytics_logging=logging)
@@ -66,7 +66,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(url, tables_primary_storage_account_key)
-        hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        hour_metrics = TableMetrics(enabled=True, include_apis=True, retention_policy=TableRetentionPolicy(enabled=True, days=5))
 
         # Act
         tsc.set_service_properties(hour_metrics=hour_metrics)
@@ -82,8 +82,8 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(url, tables_primary_storage_account_key)
-        minute_metrics = Metrics(enabled=True, include_apis=True,
-                                 retention_policy=RetentionPolicy(enabled=True, days=5))
+        minute_metrics = TableMetrics(enabled=True, include_apis=True,
+                                 retention_policy=TableRetentionPolicy(enabled=True, days=5))
 
         # Act
         tsc.set_service_properties(minute_metrics=minute_metrics)
@@ -99,14 +99,14 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(url, tables_primary_storage_account_key)
-        cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
+        cors_rule1 = TableCorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
         allowed_methods = ['GET', 'PUT']
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
-        cors_rule2 = CorsRule(
+        cors_rule2 = TableCorsRule(
             allowed_origins,
             allowed_methods,
             max_age_in_seconds=max_age_in_seconds,
@@ -131,7 +131,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
         cors = []
         for i in range(0, 6):
-            cors.append(CorsRule(['www.xyz.com'], ['GET']))
+            cors.append(TableCorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
         pytest.raises(HttpResponseError,
@@ -141,8 +141,8 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     def test_retention_too_long(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
-        minute_metrics = Metrics(enabled=True, include_apis=True,
-                                 retention_policy=RetentionPolicy(enabled=True, days=366))
+        minute_metrics = TableMetrics(enabled=True, include_apis=True,
+                                 retention_policy=TableRetentionPolicy(enabled=True, days=366))
 
         # Assert
         pytest.raises(HttpResponseError,
@@ -153,4 +153,4 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 class TestTableUnitTest(TableTestCase):
     def test_retention_no_days(self):
         # Assert
-        pytest.raises(ValueError, RetentionPolicy, enabled=True)
+        pytest.raises(ValueError, TableRetentionPolicy, enabled=True)

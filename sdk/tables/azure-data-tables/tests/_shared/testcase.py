@@ -20,7 +20,7 @@ from azure.data.tables import (
     EdmType,
     TableEntity,
     TableAnalyticsLogging,
-    Metrics,
+    TableMetrics,
     TableServiceClient,
 )
 
@@ -292,8 +292,8 @@ class TableTestCase(object):
         assert prop is not None
 
         self._assert_logging_equal(prop["analytics_logging"], TableAnalyticsLogging())
-        self._assert_metrics_equal(prop["hour_metrics"], Metrics())
-        self._assert_metrics_equal(prop["minute_metrics"], Metrics())
+        self._assert_metrics_equal(prop["hour_metrics"], TableMetrics())
+        self._assert_metrics_equal(prop["minute_metrics"], TableMetrics())
         self._assert_cors_equal(prop["cors"], list())
 
     def _assert_logging_equal(self, log1, log2):
