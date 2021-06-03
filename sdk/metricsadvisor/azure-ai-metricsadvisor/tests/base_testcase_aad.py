@@ -26,7 +26,6 @@ from azure.ai.metricsadvisor.models import (
     DataFeedIngestionSettings,
     DataFeedMissingDataPointFillSettings,
     DataFeedRollupSettings,
-    DataFeedOptions,
     MetricAlertConfiguration,
     MetricAnomalyAlertScope,
     MetricAnomalyAlertConditions,
@@ -225,22 +224,20 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 ingestion_start_offset=-1,
                 stop_retry_after=-1,
             ),
-            options=DataFeedOptions(
-                admin_emails=["yournamehere@microsoft.com"],
-                data_feed_description="my first data feed",
-                missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                    fill_type="SmartFilling"
-                ),
-                rollup_settings=DataFeedRollupSettings(
-                    rollup_type="NoRollup",
-                    rollup_method="None",
-                ),
-                viewer_emails=["viewers"],
-                access_mode="Private",
-                action_link_template="action link template"
-            )
-
+            admin_emails=["yournamehere@microsoft.com"],
+            data_feed_description="my first data feed",
+            missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                fill_type="SmartFilling"
+            ),
+            rollup_settings=DataFeedRollupSettings(
+                rollup_type="NoRollup",
+                rollup_method="None",
+            ),
+            viewer_emails=["viewers"],
+            access_mode="Private",
+            action_link_template="action link template"
         )
+
 
     def _create_alert_config_for_update(self, name):
         detection_config, data_feed = self._create_data_feed_and_detection_config(name)
