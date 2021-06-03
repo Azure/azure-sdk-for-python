@@ -46,7 +46,7 @@ class ElasticPoolActivitiesOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ElasticPoolActivityListResult"]:
         """Returns elastic pool activities.
 

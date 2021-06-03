@@ -4,16 +4,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from datetime import datetime, date
+import pytest
+import pytz
+from datetime import datetime
 import functools
 from asynctestcase import AsyncDocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.ai.translation.document.aio import DocumentTranslationClient
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
-import pytest
-import pytz
 
 TOTAL_DOC_COUNT_IN_JOB = 1
+
 
 class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
@@ -24,7 +25,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         # create some jobs
         jobs_count = 5
         docs_per_job = 5
-        await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, docs_per_job=docs_per_job, wait=False)
+        await self._begin_multiple_translations_async(client, jobs_count, docs_per_job=docs_per_job, wait=False)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs()
@@ -32,7 +33,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
         # check statuses
         async for job in submitted_jobs:
-            self._validate_translation_job(job)
+            self._validate_translations(job)
 
 
     @DocumentTranslationPreparer()
@@ -44,7 +45,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         results_per_page = 2
 
         # create some jobs
-        await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, docs_per_job=docs_per_job, wait=False)
+        await self._begin_multiple_translations_async(client, jobs_count, docs_per_job=docs_per_job, wait=False)
 
         # list jobs
         submitted_jobs_pages = client.list_submitted_jobs(results_per_page=results_per_page).by_page()
@@ -55,7 +56,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             page_jobs = []
             async for job in page:
                 page_jobs.append(job)
-                self._validate_translation_job(job)
+                self._validate_translations(job)
 
             self.assertLessEqual(len(page_jobs), results_per_page)
 
@@ -69,7 +70,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         skip = 5
 
         # create some jobs
-        await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+        await self._begin_multiple_translations_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs - unable to assert skip!!
         all_jobs = client.list_submitted_jobs()
@@ -92,10 +93,10 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         docs_per_job = 1
 
         # create some jobs with the status 'Succeeded'
-        completed_job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=True, docs_per_job=docs_per_job)
+        completed_job_ids = await self._begin_multiple_translations_async(client, jobs_count, wait=True, docs_per_job=docs_per_job)
 
         # create some jobs with the status 'Cancelled'
-        job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+        job_ids = await self._begin_multiple_translations_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
         for id in job_ids:
             await client.cancel_job(id)
         self.wait(10) # wait for 'cancelled' to propagate
@@ -117,7 +118,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         docs_per_job = 2
 
         # create some jobs
-        job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+        job_ids = await self._begin_multiple_translations_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(job_ids=job_ids)
@@ -137,8 +138,8 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         docs_per_job = 2
 
         # create some jobs
-        start = datetime.now()
-        job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+        start = datetime.utcnow()
+        job_ids = await self._begin_multiple_translations_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(created_after=start)
@@ -162,9 +163,9 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         docs_per_job = 1
 
         # create some jobs
-        await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=True, docs_per_job=docs_per_job)
+        await self._begin_multiple_translations_async(client, jobs_count, wait=True, docs_per_job=docs_per_job)
         end = datetime.utcnow().replace(tzinfo=pytz.utc)
-        job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=True, docs_per_job=docs_per_job)
+        job_ids = await self._begin_multiple_translations_async(client, jobs_count, wait=True, docs_per_job=docs_per_job)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(created_before=end)
@@ -183,7 +184,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         docs_per_job = 2
 
         # create some jobs
-        await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+        await self._begin_multiple_translations_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(order_by=["createdDateTimeUtc asc"])
@@ -203,7 +204,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         docs_per_job = 2
 
         # create some jobs
-        await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+        await self._begin_multiple_translations_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(order_by=["createdDateTimeUtc desc"])
@@ -229,8 +230,8 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
         # create some jobs
         start = datetime.utcnow().replace(tzinfo=pytz.utc)
-        successful_job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=True, docs_per_job=docs_per_job)
-        cancelled_job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+        successful_job_ids = await self._begin_multiple_translations_async(client, jobs_count, wait=True, docs_per_job=docs_per_job)
+        cancelled_job_ids = await self._begin_multiple_translations_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
         for job_id in cancelled_job_ids:
             await client.cancel_job(job_id)
         self.wait(15) # wait for status to propagate

@@ -418,7 +418,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
 
             for action_result in action_results:
-                assert action_result.statistics
+                assert not hasattr(action_result, "statistics")
                 for doc in action_result.document_results:
                     assert doc.statistics
 

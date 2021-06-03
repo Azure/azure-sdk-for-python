@@ -32,7 +32,7 @@ from ._models import (
     RecognizePiiEntitiesResult,
     PiiEntity,
     PiiEntityDomainType,
-    AnalyzeHealthcareEntitiesResultItem,
+    AnalyzeHealthcareEntitiesResult,
     HealthcareEntity,
     HealthcareEntityDataSource,
     RecognizeEntitiesAction,
@@ -40,7 +40,6 @@ from ._models import (
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
     AnalyzeActionsResult,
-    RequestStatistics,
     AnalyzeActionsType,
     AnalyzeActionsError,
     HealthcareEntityRelationRoleType,
@@ -49,7 +48,6 @@ from ._models import (
     HealthcareEntityAssertion,
     AnalyzeSentimentAction
 )
-from ._paging import AnalyzeHealthcareEntitiesResult
 from ._generated.v3_1_preview_5.models import (
     PiiCategory as PiiEntityCategoryType,
     RelationType as HealthcareEntityRelationType,
@@ -57,6 +55,7 @@ from ._generated.v3_1_preview_5.models import (
     Certainty as EntityCertainty,
     Association as EntityAssociation
 )
+from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
 
 __all__ = [
     'TextAnalyticsApiVersion',
@@ -85,7 +84,6 @@ __all__ = [
     'RecognizePiiEntitiesResult',
     'PiiEntity',
     'PiiEntityDomainType',
-    'AnalyzeHealthcareEntitiesResultItem',
     'AnalyzeHealthcareEntitiesResult',
     'HealthcareEntity',
     'HealthcareEntityDataSource',
@@ -94,7 +92,6 @@ __all__ = [
     'RecognizePiiEntitiesAction',
     'ExtractKeyPhrasesAction',
     'AnalyzeActionsResult',
-    'RequestStatistics',
     'AnalyzeActionsType',
     "AnalyzeActionsError",
     "PiiEntityCategoryType",
@@ -106,7 +103,9 @@ __all__ = [
     "EntityConditionality",
     "EntityCertainty",
     "EntityAssociation",
-    "AnalyzeSentimentAction"
+    "AnalyzeSentimentAction",
+    "AnalyzeHealthcareEntitiesLROPoller",
+    "AnalyzeActionsLROPoller",
 ]
 
 __version__ = VERSION

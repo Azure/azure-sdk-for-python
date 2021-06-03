@@ -26,14 +26,14 @@ multiapi: true
 
 ```yaml $(multiapi)
 batch:
- - tag: release_3_0
- - tag: release_3_1_preview.5
- - multiapiscript: true
+  - tag: release_3_0
+  - tag: release_3_1_preview.5
+  - multiapiscript: true
 ```
 
 ## Multiapiscript
 
-``` yaml $(multiapiscript)
+```yaml $(multiapiscript)
 output-folder: ../azure/ai/textanalytics/_generated/
 default-api: v3_0
 clear-output-folder: false
@@ -44,7 +44,7 @@ perform-load: false
 
 These settings apply only when `--tag=release_3_0` is specified on the command line.
 
-``` yaml $(tag) == 'release_3_0'
+```yaml $(tag) == 'release_3_0'
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.0/TextAnalytics.json
 namespace: azure.ai.textanalytics.v3_0
 output-folder: ../azure/ai/textanalytics/_generated/v3_0
@@ -60,31 +60,30 @@ namespace: azure.ai.textanalytics.v3_1_preview_5
 output-folder: ../azure/ai/textanalytics/_generated/v3_1_preview_5
 ```
 
-### Override Analyze's pager and poller
+### Override Analyze's pager poller
 
-``` yaml
+```yaml
 directive:
-    -   from: swagger-document
-        where: '$.paths["/analyze"].post'
-        transform: >
-            $["responses"]["200"] = {"description": "dummy schema", "schema": {"$ref": "#/definitions/AnalyzeJobState"}};
-            $["x-python-custom-poller-sync"] = "...._lro.AnalyzeBatchActionsLROPoller";
-            $["x-python-custom-poller-async"] = "....._async_lro.AsyncAnalyzeBatchActionsLROPoller";
-            $["x-python-custom-default-polling-method-sync"] = "...._lro.AnalyzeBatchActionsLROPollingMethod";
-            $["x-python-custom-default-polling-method-async"] = "....._async_lro.AsyncAnalyzeBatchActionsLROPollingMethod";
+  - from: swagger-document
+    where: '$.paths["/analyze"].post'
+    transform: >
+      $["responses"]["200"] = {"description": "dummy schema", "schema": {"$ref": "#/definitions/AnalyzeJobState"}};
+      $["x-python-custom-poller-sync"] = "...._lro.AnalyzeActionsLROPoller";
+      $["x-python-custom-poller-async"] = ".....aio._lro_async.AsyncAnalyzeActionsLROPoller";
+      $["x-python-custom-default-polling-method-sync"] = "...._lro.AnalyzeActionsLROPollingMethod";
+      $["x-python-custom-default-polling-method-async"] = ".....aio._lro_async.AsyncAnalyzeActionsLROPollingMethod";
 ```
 
+### Override Healthcare's poller
 
-### Override Healthcare's pager and poller
-
-``` yaml
+```yaml
 directive:
-    -   from: swagger-document
-        where: '$.paths["/entities/health/jobs"].post'
-        transform: >
-            $["responses"]["200"] = {"description": "dummy schema", "schema": {"$ref": "#/definitions/HealthcareJobState"}};
-            $["x-python-custom-poller-sync"] = "...._lro.AnalyzeHealthcareEntitiesLROPoller";
-            $["x-python-custom-poller-async"] = "....._async_lro.AnalyzeHealthcareEntitiesAsyncLROPoller";
-            $["x-python-custom-default-polling-method-sync"] = "...._lro.AnalyzeHealthcareEntitiesLROPollingMethod";
-            $["x-python-custom-default-polling-method-async"] = "....._async_lro.AnalyzeHealthcareEntitiesAsyncLROPollingMethod";
+  - from: swagger-document
+    where: '$.paths["/entities/health/jobs"].post'
+    transform: >
+      $["responses"]["200"] = {"description": "dummy schema", "schema": {"$ref": "#/definitions/HealthcareJobState"}};
+      $["x-python-custom-poller-sync"] = "...._lro.AnalyzeHealthcareEntitiesLROPoller";
+      $["x-python-custom-poller-async"] = ".....aio._lro_async.AsyncAnalyzeHealthcareEntitiesLROPoller";
+      $["x-python-custom-default-polling-method-sync"] = "...._lro.AnalyzeHealthcareEntitiesLROPollingMethod";
+      $["x-python-custom-default-polling-method-async"] = ".....aio._lro_async.AsyncAnalyzeHealthcareEntitiesLROPollingMethod";
 ```

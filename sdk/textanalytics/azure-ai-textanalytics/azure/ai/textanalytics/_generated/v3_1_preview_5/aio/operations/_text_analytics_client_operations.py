@@ -8,7 +8,7 @@
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
-from ....._async_lro import AnalyzeHealthcareEntitiesAsyncLROPoller, AnalyzeHealthcareEntitiesAsyncLROPollingMethod, AsyncAnalyzeBatchActionsLROPoller, AsyncAnalyzeBatchActionsLROPollingMethod
+from .....aio._lro_async import AsyncAnalyzeHealthcareEntitiesLROPoller, AsyncAnalyzeHealthcareEntitiesLROPollingMethod, AsyncAnalyzeActionsLROPoller, AsyncAnalyzeActionsLROPollingMethod
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
@@ -86,7 +86,7 @@ class TextAnalyticsClientOperationsMixin:
         self,
         body: Optional["_models.AnalyzeBatchInput"] = None,
         **kwargs
-    ) -> AsyncAnalyzeBatchActionsLROPoller["_models.AnalyzeJobState"]:
+    ) -> AsyncAnalyzeActionsLROPoller["_models.AnalyzeJobState"]:
         """Submit analysis job.
 
         Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -96,12 +96,12 @@ class TextAnalyticsClientOperationsMixin:
         :type body: ~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeBatchInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncAnalyzeBatchActionsLROPollingMethod.
+        :keyword polling: By default, your polling method will be AsyncAnalyzeActionsLROPollingMethod.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncAnalyzeBatchActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
-        :rtype: ~....._async_lro.AsyncAnalyzeBatchActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeJobState]
+        :return: An instance of AsyncAnalyzeActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
+        :rtype: ~....._async_lro.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -132,18 +132,18 @@ class TextAnalyticsClientOperationsMixin:
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
-        if polling is True: polling_method = AsyncAnalyzeBatchActionsLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncAnalyzeActionsLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
-            return AsyncAnalyzeBatchActionsLROPoller.from_continuation_token(
+            return AsyncAnalyzeActionsLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return AsyncAnalyzeBatchActionsLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncAnalyzeActionsLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_analyze.metadata = {'url': '/analyze'}  # type: ignore
 
     async def analyze_status(
@@ -480,7 +480,7 @@ class TextAnalyticsClientOperationsMixin:
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
         logging_opt_out: Optional[bool] = None,
         **kwargs
-    ) -> AnalyzeHealthcareEntitiesAsyncLROPoller["_models.HealthcareJobState"]:
+    ) -> AsyncAnalyzeHealthcareEntitiesLROPoller["_models.HealthcareJobState"]:
         """Submit healthcare analysis job.
 
         Start a healthcare analysis job to recognize healthcare related entities (drugs, conditions,
@@ -505,12 +505,12 @@ class TextAnalyticsClientOperationsMixin:
         :type logging_opt_out: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AnalyzeHealthcareEntitiesAsyncLROPollingMethod.
+        :keyword polling: By default, your polling method will be AsyncAnalyzeHealthcareEntitiesLROPollingMethod.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AnalyzeHealthcareEntitiesAsyncLROPoller that returns either HealthcareJobState or the result of cls(response)
-        :rtype: ~....._async_lro.AnalyzeHealthcareEntitiesAsyncLROPoller[~azure.ai.textanalytics.v3_1_preview_5.models.HealthcareJobState]
+        :return: An instance of AsyncAnalyzeHealthcareEntitiesLROPoller that returns either HealthcareJobState or the result of cls(response)
+        :rtype: ~....._async_lro.AsyncAnalyzeHealthcareEntitiesLROPoller[~azure.ai.textanalytics.v3_1_preview_5.models.HealthcareJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -544,18 +544,18 @@ class TextAnalyticsClientOperationsMixin:
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
-        if polling is True: polling_method = AnalyzeHealthcareEntitiesAsyncLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncAnalyzeHealthcareEntitiesLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
-            return AnalyzeHealthcareEntitiesAsyncLROPoller.from_continuation_token(
+            return AsyncAnalyzeHealthcareEntitiesLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return AnalyzeHealthcareEntitiesAsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncAnalyzeHealthcareEntitiesLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_health.metadata = {'url': '/entities/health/jobs'}  # type: ignore
 
     async def entities_recognition_general(

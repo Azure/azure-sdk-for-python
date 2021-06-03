@@ -4,18 +4,18 @@
 # --------------------------------------------------------------------------------------------
 
 import unittest
+
 try:
     from unittest import mock
 except ImportError:
     import mock
-from azure_devtools.scenario_tests.utilities import (create_random_name, get_sha1_hash,
-                                                     is_text_payload, is_json_payload)
+from azure_devtools.scenario_tests.utilities import create_random_name, get_sha1_hash, is_text_payload, is_json_payload
 
 
 class TestUtilityFunctions(unittest.TestCase):
     def test_create_random_name_default_value(self):
         default_generated_name = create_random_name()
-        self.assertTrue(default_generated_name.startswith('aztest'))
+        self.assertTrue(default_generated_name.startswith("aztest"))
         self.assertEqual(24, len(default_generated_name))
         self.assertTrue(isinstance(default_generated_name, str))
 
@@ -23,31 +23,35 @@ class TestUtilityFunctions(unittest.TestCase):
         self.assertEqual(100, len(set([create_random_name() for _ in range(100)])))
 
     def test_create_random_name_customization(self):
-        customized_name = create_random_name(prefix='pauline', length=61)
-        self.assertTrue(customized_name.startswith('pauline'))
+        customized_name = create_random_name(prefix="pauline", length=61)
+        self.assertTrue(customized_name.startswith("pauline"))
         self.assertEqual(61, len(customized_name))
         self.assertTrue(isinstance(customized_name, str))
 
     def test_create_random_name_exception_long_prefix(self):
-        prefix = 'prefix-too-long'
+        prefix = "prefix-too-long"
 
         with self.assertRaises(ValueError) as cm:
-            create_random_name(prefix, length=len(prefix)-1)
-        self.assertEqual(str(cm.exception), 'The length of the prefix must not be longer than random name length')
+            create_random_name(prefix, length=len(prefix) - 1)
+        self.assertEqual(str(cm.exception), "The length of the prefix must not be longer than random name length")
 
-        self.assertTrue(create_random_name(prefix, length=len(prefix)+4).startswith(prefix))
+        self.assertTrue(create_random_name(prefix, length=len(prefix) + 4).startswith(prefix))
 
     def test_create_random_name_exception_not_enough_space_for_randomness(self):
-        prefix = 'prefix-too-long'
+        prefix = "prefix-too-long"
 
         for i in range(4):
             with self.assertRaises(ValueError) as cm:
                 create_random_name(prefix, length=len(prefix) + i)
-            self.assertEqual(str(cm.exception), 'The randomized part of the name is shorter than 4, which may not be '
-                                                'able to offer enough randomness')
+            self.assertEqual(
+                str(cm.exception),
+                "The randomized part of the name is shorter than 4, which may not be "
+                "able to offer enough randomness",
+            )
 
     def test_get_sha1_hash(self):
         import tempfile
+
         with tempfile.NamedTemporaryFile() as f:
             content = b"""
 All the world's a stage,
@@ -84,23 +88,23 @@ William Shakespeare
             f.write(content)
             f.seek(0)
             hash_value = get_sha1_hash(f.name)
-            self.assertEqual('6487bbdbd848686338d729e6076da1a795d1ae747642bf906469c6ccd9e642f9', hash_value)
+            self.assertEqual("6487bbdbd848686338d729e6076da1a795d1ae747642bf906469c6ccd9e642f9", hash_value)
 
     def test_text_payload(self):
         http_entity = mock.MagicMock()
         headers = {}
         http_entity.headers = headers
 
-        headers['content-type'] = 'foo/'
+        headers["content-type"] = "foo/"
         self.assertFalse(is_text_payload(http_entity))
 
-        headers['content-type'] = 'text/html; charset=utf-8'
+        headers["content-type"] = "text/html; charset=utf-8"
         self.assertTrue(is_text_payload(http_entity))
 
-        headers['content-type'] = 'APPLICATION/JSON; charset=utf-8'
+        headers["content-type"] = "APPLICATION/JSON; charset=utf-8"
         self.assertTrue(is_text_payload(http_entity))
 
-        headers['content-type'] = 'APPLICATION/xml'
+        headers["content-type"] = "APPLICATION/xml"
         self.assertTrue(is_text_payload(http_entity))
 
         http_entity.headers = None  # default to text mode if there is no header
@@ -111,11 +115,11 @@ William Shakespeare
         headers = {}
         http_entity.headers = headers
 
-        headers['content-type'] = 'APPLICATION/JSON; charset=utf-8'
+        headers["content-type"] = "APPLICATION/JSON; charset=utf-8"
         self.assertTrue(is_json_payload(http_entity))
 
-        headers['content-type'] = 'application/json; charset=utf-8'
+        headers["content-type"] = "application/json; charset=utf-8"
         self.assertTrue(is_json_payload(http_entity))
 
-        headers['content-type'] = 'application/xml; charset=utf-8'
+        headers["content-type"] = "application/xml; charset=utf-8"
         self.assertFalse(is_json_payload(http_entity))

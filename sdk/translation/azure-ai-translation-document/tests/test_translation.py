@@ -6,9 +6,7 @@
 
 import functools
 import pytest
-import uuid
 from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import ContainerClient
 from testcase import DocumentTranslationTest, Document
 from preparer import DocumentTranslationPreparer, \
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
@@ -17,6 +15,33 @@ DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClient
 
 
 class TestTranslation(DocumentTranslationTest):
+
+    @pytest.mark.live_test_only
+    @DocumentTranslationPreparer()
+    def test_active_directory_auth(self):
+        token = self.generate_oauth_token()
+        endpoint = self.get_oauth_endpoint()
+        client = DocumentTranslationClient(endpoint, token)
+        # prepare containers and test data
+        blob_data = b'This is some text'
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
+        target_container_sas_url = self.create_target_container()
+
+        # prepare translation inputs
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url=source_container_sas_url,
+                targets=[
+                    TranslationTarget(
+                        target_url=target_container_sas_url,
+                        language_code="fr"
+                    )
+                ]
+            )
+        ]
+
+        # submit job and test
+        self._begin_and_validate_translation(client, translation_inputs, 1, "fr")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -40,7 +65,7 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         # submit job and test
-        self._submit_and_validate_translation_job(client, translation_inputs, 1)
+        self._begin_and_validate_translation(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -69,7 +94,7 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         # submit job and test
-        self._submit_and_validate_translation_job(client, translation_inputs)
+        self._begin_and_validate_translation(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -104,7 +129,7 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         # submit job and test
-        self._submit_and_validate_translation_job(client, translation_inputs, 2)
+        self._begin_and_validate_translation(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -130,7 +155,7 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         # submit job and test
-        self._submit_and_validate_translation_job(client, translation_inputs, 1)
+        self._begin_and_validate_translation(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -156,7 +181,7 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         # submit job and test
-        self._submit_and_validate_translation_job(client, translation_inputs, 1)
+        self._begin_and_validate_translation(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -178,8 +203,8 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         with pytest.raises(HttpResponseError) as e:
-            job = client.create_translation_job(translation_inputs)
-            job = client.wait_until_done(job.id)
+            poller = client.begin_translation(translation_inputs)
+            result = poller.result()
         assert e.value.error.code == "InvalidDocumentAccessLevel"
 
     @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/17914")
@@ -204,8 +229,8 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         with pytest.raises(HttpResponseError) as e:
-            job = client.create_translation_job(translation_inputs)
-            job = client.wait_until_done(job.id)
+            poller = client.begin_translation(translation_inputs)
+            result = poller.result()
         assert e.value.error.code == "InvalidDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
@@ -232,9 +257,11 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        job = client.create_translation_job(translation_inputs)
-        job = client.wait_until_done(job.id)
-        self._validate_translation_job(job, status="Succeeded", total=1, succeeded=1)
+        poller = client.begin_translation(translation_inputs)
+        result = poller.result()
+        self._validate_translation_metadata(poller=poller, status="Succeeded", total=1, succeeded=1)
+        for document in result:
+            self._validate_doc_status(document, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -256,14 +283,13 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        job = client.create_translation_job(translation_inputs)
-        job = client.wait_until_done(job.id)
-        self._validate_translation_job(job, status="Failed", total=1, failed=1)
+        poller = client.begin_translation(translation_inputs)
+        result = poller.result()
+        self._validate_translation_metadata(poller, status="Failed", total=1, failed=1)
 
-        doc_status = client.list_all_document_statuses(job.id)
-        doc = next(doc_status)
-        assert doc.status == "Failed"
-        assert doc.error.code == "TargetFileAlreadyExists"
+        for doc in result:
+            assert doc.status == "Failed"
+            assert doc.error.code == "TargetFileAlreadyExists"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -285,12 +311,11 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        job = client.create_translation_job(translation_inputs)
-        job = client.wait_until_done(job.id)
-        self._validate_translation_job(job, status="Succeeded", total=2, failed=1)
+        poller = client.begin_translation(translation_inputs)
+        result = poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=2, failed=1)
 
-        doc_statuses = client.list_all_document_statuses(job.id)
-        for doc in doc_statuses:
+        for doc in result:
             if doc.status == "Failed":
                 assert doc.error.code == "TargetFileAlreadyExists"
 
@@ -314,11 +339,10 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        job = client.create_translation_job(translation_inputs)
-        job = client.wait_until_done(job.id)
-        self._validate_translation_job(job, status="Failed", total=1, failed=1)
+        poller = client.begin_translation(translation_inputs)
+        result = poller.result()
+        self._validate_translation_metadata(poller, status="Failed", total=1, failed=1)
 
-        doc_status = client.list_all_document_statuses(job.id)
-        doc = next(doc_status)
-        assert doc.status == "Failed"
-        assert doc.error.code == "WrongDocumentEncoding"
+        for doc in result:
+            assert doc.status == "Failed"
+            assert doc.error.code == "WrongDocumentEncoding"

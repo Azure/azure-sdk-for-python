@@ -84,6 +84,7 @@ known_content_issues:
   - ['sdk/monitor/azure-monitor-opentelemetry-exporter/README.md', '#4554']
   - ['sdk/digitaltwins/azure-digitaltwins-core/swagger/README.md', '#4554']
   - ['sdk/textanalytics/azure-ai-textanalytics/swagger/README.md', '#4554']
+  - ['sdk/translation/azure-ai-translation-document/swagger/README.md', '#4554']
   - ['sdk/purview/azure-purview-catalog/swagger/README.md',  '#4554']
   - ['sdk/purview/azure-purview-scanning/swagger/README.md',  '#4554']
   - ['sdk/agrifood/azure-agrifood-farming/swagger/README.md',  '#4554']

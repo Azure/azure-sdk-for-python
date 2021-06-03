@@ -47,7 +47,7 @@ class DataWarehouseUserActivitiesOperations:
         server_name: str,
         database_name: str,
         data_warehouse_user_activity_name: Union[str, "_models.DataWarehouseUserActivityName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataWarehouseUserActivities":
         """Gets the user activities of a data warehouse which includes running and suspended queries.
 
@@ -113,7 +113,7 @@ class DataWarehouseUserActivitiesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataWarehouseUserActivitiesListResult"]:
         """List the user activities of a data warehouse which includes running and suspended queries.
 

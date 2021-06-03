@@ -8,8 +8,8 @@
 FILE: sample_check_document_statuses_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to create a translation job and then monitor each document's status
-    and progress within the job.
+    This sample demonstrates how to begin translation and then monitor each document's status
+    and progress.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
@@ -30,8 +30,8 @@ import asyncio
 
 
 async def sample_document_status_checks_async():
+    # [START list_all_document_statuses_async]
     import os
-    # [START create_translation_job_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document.aio import DocumentTranslationClient
     from azure.ai.translation.document import (
@@ -45,8 +45,9 @@ async def sample_document_status_checks_async():
     target_container_url = os.environ["AZURE_TARGET_CONTAINER_URL"]
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
+
     async with client:
-        job_result = await client.create_translation_job(inputs=[
+        poller = await client.begin_translation(inputs=[
                 DocumentTranslationInput(
                     source_url=source_container_url,
                     targets=[
@@ -57,14 +58,13 @@ async def sample_document_status_checks_async():
                     ]
                 )
             ]
-        )  # type: JobStatusResult
-        # [END create_translation_job_async]
+        )
 
         completed_docs = []
-        while not job_result.has_completed:
+        while not poller.done():
             await asyncio.sleep(30)
 
-            doc_statuses = client.list_all_document_statuses(job_result.id)
+            doc_statuses = client.list_all_document_statuses(poller.id)
             async for document in doc_statuses:
                 if document.id not in completed_docs:
                     if document.status == "Succeeded":
@@ -82,9 +82,8 @@ async def sample_document_status_checks_async():
                             document.id, document.translation_progress * 100
                         ))
 
-            job_result = await client.get_job_status(job_result.id)
-
-        print("\nTranslation job completed.")
+        print("\nTranslation completed.")
+    # [END list_all_document_statuses_async]
 
 
 async def main():

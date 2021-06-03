@@ -544,7 +544,7 @@ class PlantingDataOperations(object):
         self,
         farmer_id,  # type: str
         planting_data_id,  # type: str
-        body=None,  # type: Optional["_models.PlantingData"]
+        planting_data=None,  # type: Optional["_models.PlantingData"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.PlantingData"
@@ -554,8 +554,8 @@ class PlantingDataOperations(object):
         :type farmer_id: str
         :param planting_data_id: ID of the planting data resource.
         :type planting_data_id: str
-        :param body: Planting data resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.PlantingData
+        :param planting_data: Planting data resource payload to create or update.
+        :type planting_data: ~azure.agrifood.farming.models.PlantingData
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PlantingData, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.PlantingData
@@ -589,8 +589,8 @@ class PlantingDataOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'PlantingData')
+        if planting_data is not None:
+            body_content = self._serialize.body(planting_data, 'PlantingData')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

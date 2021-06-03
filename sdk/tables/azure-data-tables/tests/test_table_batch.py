@@ -32,7 +32,8 @@ from azure.data.tables import (
     generate_table_sas,
     TableSasPermissions,
     RequestTooLargeError,
-    TransactionOperation
+    TransactionOperation,
+    TableErrorCode
 )
 
 from _shared.testcase import TableTestCase
@@ -230,8 +231,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
                 sent_entity1,
                 {'etag': u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"', 'match_condition':MatchConditions.IfNotModified}
             )]
-            with pytest.raises(TableTransactionError):
+            with pytest.raises(TableTransactionError) as error:
                 self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             # Assert
             received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
@@ -272,8 +275,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
                 {'etag':u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"', 'match_condition': MatchConditions.IfNotModified}
             )]
 
-            with pytest.raises(TableTransactionError):
+            with pytest.raises(TableTransactionError) as error:
                 self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             # Assert
             received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
@@ -676,8 +681,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]
 
-            with pytest.raises(TableTransactionError):
+            with pytest.raises(TableTransactionError) as error:
                 self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             received.metadata["etag"] = good_etag
             batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]

@@ -65,7 +65,7 @@ class AttachmentsOperations(object):
         # type: (...) -> Iterable["_models.AttachmentListResponse"]
         """Returns a paginated list of attachment resources under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
         :param resource_ids: Resource Ids of the resource.
         :type resource_ids: list[str]
@@ -193,9 +193,9 @@ class AttachmentsOperations(object):
         # type: (...) -> "_models.Attachment"
         """Gets a specified attachment resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
-        :param attachment_id: Id of the attachment.
+        :param attachment_id: ID of the attachment.
         :type attachment_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Attachment, or the result of cls(response)
@@ -265,9 +265,9 @@ class AttachmentsOperations(object):
         # type: (...) -> "_models.Attachment"
         """Creates or updates an attachment resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer resource.
+        :param farmer_id: ID of the associated farmer resource.
         :type farmer_id: str
-        :param attachment_id: Id of the attachment resource.
+        :param attachment_id: ID of the attachment resource.
         :type attachment_id: str
         :param file: File to be uploaded.
         :type file: IO
@@ -372,9 +372,9 @@ class AttachmentsOperations(object):
         # type: (...) -> None
         """Deletes a specified attachment resource under a particular farmer.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: ID of the farmer.
         :type farmer_id: str
-        :param attachment_id: Id of the attachment.
+        :param attachment_id: ID of the attachment.
         :type attachment_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -429,9 +429,9 @@ class AttachmentsOperations(object):
         # type: (...) -> IO
         """Downloads and returns attachment as response for the given input filePath.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
-        :param attachment_id: Id of attachment to be downloaded.
+        :param attachment_id: ID of attachment to be downloaded.
         :type attachment_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IO, or the result of cls(response)

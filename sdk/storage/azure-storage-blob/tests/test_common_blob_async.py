@@ -410,9 +410,9 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
     async def test_create_blob_with_requests_async(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
         # Act
-        uri = "https://www.gutenberg.org/files/59466/59466-0.txt"
+        uri = "https://en.wikipedia.org/wiki/Microsoft"
         data = requests.get(uri, stream=True)
-        blob = self.bsc.get_blob_client(self.container_name, "gutenberg")
+        blob = self.bsc.get_blob_client(self.container_name, "msft")
         resp = await blob.upload_blob(data=data.raw, overwrite=True)
 
         self.assertIsNotNone(resp.get('etag'))

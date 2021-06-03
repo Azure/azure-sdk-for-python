@@ -349,8 +349,9 @@ class JsonWebKey(msrest.serialization.Model):
 
     :param kid: Key identifier.
     :type kid: str
-    :param kty: JsonWebKey Key Type (kty), as defined in https://tools.ietf.org/html/draft-ietf-
-     jose-json-web-algorithms-40. Possible values include: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".
+    :param kty: JsonWebKey Key Type (kty), as defined in
+     https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40. Possible values include:
+     "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".
     :type kty: str or ~azure.keyvault.v7_1.models.JsonWebKeyType
     :param key_ops:
     :type key_ops: list[str]
@@ -661,8 +662,8 @@ class KeyOperationsParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param algorithm: Required. algorithm identifier. Possible values include: "RSA-OAEP", "RSA-
-     OAEP-256", "RSA1_5".
+    :param algorithm: Required. algorithm identifier. Possible values include: "RSA-OAEP",
+     "RSA-OAEP-256", "RSA1_5".
     :type algorithm: str or ~azure.keyvault.v7_1.models.JsonWebKeyEncryptionAlgorithm
     :param value: Required.
     :type value: bytes
@@ -693,7 +694,7 @@ class KeyOperationsParameters(msrest.serialization.Model):
 class KeyProperties(msrest.serialization.Model):
     """Properties of the key pair backing a certificate.
 
-    :param exportable: Indicates if the private key can be exported.
+    :param exportable: Not supported in this version. Indicates if the private key can be exported.
     :type exportable: bool
     :param key_type: The type of key pair to be used for the certificate. Possible values include:
      "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".

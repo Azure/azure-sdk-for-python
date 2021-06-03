@@ -54,7 +54,7 @@ class CropsOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CropListResponse"]:
         """Returns a paginated list of crop resources.
 
@@ -172,11 +172,11 @@ class CropsOperations:
     async def get(
         self,
         crop_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Crop":
         """Gets a specified crop resource.
 
-        :param crop_id: Id of the crop.
+        :param crop_id: ID of the crop.
         :type crop_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Crop, or the result of cls(response)
@@ -227,15 +227,15 @@ class CropsOperations:
     async def create_or_update(
         self,
         crop_id: str,
-        body: Optional["_models.Crop"] = None,
-        **kwargs
+        crop: Optional["_models.Crop"] = None,
+        **kwargs: Any
     ) -> "_models.Crop":
         """Creates or updates a crop resource.
 
-        :param crop_id: Id of the crop resource.
+        :param crop_id: ID of the crop resource.
         :type crop_id: str
-        :param body: Crop resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.Crop
+        :param crop: Crop resource payload to create or update.
+        :type crop: ~azure.agrifood.farming.models.Crop
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Crop, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.Crop
@@ -268,8 +268,8 @@ class CropsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Crop')
+        if crop is not None:
+            body_content = self._serialize.body(crop, 'Crop')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -297,11 +297,11 @@ class CropsOperations:
     async def delete(
         self,
         crop_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes Crop for given crop id.
 
-        :param crop_id: Id of crop to be deleted.
+        :param crop_id: ID of crop to be deleted.
         :type crop_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)

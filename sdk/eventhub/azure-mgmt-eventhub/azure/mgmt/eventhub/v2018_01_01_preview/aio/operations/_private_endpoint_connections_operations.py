@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class PrivateEndpointConnectionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,8 +47,8 @@ class PrivateEndpointConnectionsOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.PrivateEndpointConnectionListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.PrivateEndpointConnectionListResult"]:
         """Gets the available PrivateEndpointConnections within a namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -60,7 +60,7 @@ class PrivateEndpointConnectionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.PrivateEndpointConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -107,7 +107,7 @@ class PrivateEndpointConnectionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -123,9 +123,9 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         namespace_name: str,
         private_endpoint_connection_name: str,
-        parameters: "models.PrivateEndpointConnection",
-        **kwargs
-    ) -> "models.PrivateEndpointConnection":
+        parameters: "_models.PrivateEndpointConnection",
+        **kwargs: Any
+    ) -> "_models.PrivateEndpointConnection":
         """Creates or updates PrivateEndpointConnections of service namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -142,7 +142,7 @@ class PrivateEndpointConnectionsOperations:
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -179,7 +179,7 @@ class PrivateEndpointConnectionsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -199,7 +199,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         namespace_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -233,7 +233,7 @@ class PrivateEndpointConnectionsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -246,7 +246,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         namespace_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing namespace. This operation also removes all associated resources under the
         namespace.
@@ -259,8 +259,8 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -290,7 +290,14 @@ class PrivateEndpointConnectionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -309,8 +316,8 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         namespace_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
-    ) -> "models.PrivateEndpointConnection":
+        **kwargs: Any
+    ) -> "_models.PrivateEndpointConnection":
         """Gets a description for the specified Private Endpoint Connection name.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -324,7 +331,7 @@ class PrivateEndpointConnectionsOperations:
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -356,7 +363,7 @@ class PrivateEndpointConnectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)

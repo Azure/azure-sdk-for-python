@@ -46,7 +46,7 @@ class ServicesOperations:
         service_topology_name: str,
         service_name: str,
         service_info: "_models.ServiceResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServiceResource":
         """Creates or updates a service in the service topology.
 
@@ -117,7 +117,7 @@ class ServicesOperations:
         resource_group_name: str,
         service_topology_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServiceResource":
         """Gets the service.
 
@@ -181,7 +181,7 @@ class ServicesOperations:
         resource_group_name: str,
         service_topology_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the service.
 
@@ -241,9 +241,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         service_topology_name: str,
-        resource_group_name1: str,
-        service_topology_name1: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.ServiceResource"]:
         """Lists the services in the service topology.
 
@@ -253,10 +251,6 @@ class ServicesOperations:
         :type resource_group_name: str
         :param service_topology_name: The name of the service topology .
         :type service_topology_name: str
-        :param resource_group_name1: The name of the resource group. The name is case insensitive.
-        :type resource_group_name1: str
-        :param service_topology_name1: The name of the service topology .
-        :type service_topology_name1: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of ServiceResource, or the result of cls(response)
         :rtype: list[~azure.mgmt.deploymentmanager.models.ServiceResource]
@@ -268,7 +262,6 @@ class ServicesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-11-01-preview"
-        api_version = "2019-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -277,15 +270,11 @@ class ServicesOperations:
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'serviceTopologyName': self._serialize.url("service_topology_name", service_topology_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name1", resource_group_name1, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'serviceTopologyName': self._serialize.url("service_topology_name1", service_topology_name1, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers

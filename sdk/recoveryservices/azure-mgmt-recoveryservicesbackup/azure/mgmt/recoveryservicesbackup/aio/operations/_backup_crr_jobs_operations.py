@@ -47,7 +47,7 @@ class BackupCrrJobsOperations:
         parameters: "_models.CrrJobRequest",
         filter: Optional[str] = None,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobResourceList"]:
         """Gets the list of CRR jobs from the target region.
 

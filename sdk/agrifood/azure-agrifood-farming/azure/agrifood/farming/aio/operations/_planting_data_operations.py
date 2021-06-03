@@ -71,7 +71,7 @@ class PlantingDataOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PlantingDataListResponse"]:
         """Returns a paginated list of planting data resources under a particular farm.
 
@@ -289,7 +289,7 @@ class PlantingDataOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PlantingDataListResponse"]:
         """Returns a paginated list of planting data resources across all farmers.
 
@@ -478,7 +478,7 @@ class PlantingDataOperations:
         self,
         farmer_id: str,
         planting_data_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PlantingData":
         """Get a specified planting data resource under a particular farmer.
 
@@ -537,8 +537,8 @@ class PlantingDataOperations:
         self,
         farmer_id: str,
         planting_data_id: str,
-        body: Optional["_models.PlantingData"] = None,
-        **kwargs
+        planting_data: Optional["_models.PlantingData"] = None,
+        **kwargs: Any
     ) -> "_models.PlantingData":
         """Creates or updates an planting data resource under a particular farmer.
 
@@ -546,8 +546,8 @@ class PlantingDataOperations:
         :type farmer_id: str
         :param planting_data_id: ID of the planting data resource.
         :type planting_data_id: str
-        :param body: Planting data resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.PlantingData
+        :param planting_data: Planting data resource payload to create or update.
+        :type planting_data: ~azure.agrifood.farming.models.PlantingData
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PlantingData, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.PlantingData
@@ -581,8 +581,8 @@ class PlantingDataOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'PlantingData')
+        if planting_data is not None:
+            body_content = self._serialize.body(planting_data, 'PlantingData')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -611,7 +611,7 @@ class PlantingDataOperations:
         self,
         farmer_id: str,
         planting_data_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a specified planting data resource under a particular farmer.
 

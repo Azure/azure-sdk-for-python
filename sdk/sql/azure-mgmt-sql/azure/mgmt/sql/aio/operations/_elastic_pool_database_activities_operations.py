@@ -46,7 +46,7 @@ class ElasticPoolDatabaseActivitiesOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ElasticPoolDatabaseActivityListResult"]:
         """Returns activity on databases inside of an elastic pool.
 

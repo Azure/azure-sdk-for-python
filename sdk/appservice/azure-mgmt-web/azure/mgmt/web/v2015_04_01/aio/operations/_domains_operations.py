@@ -46,7 +46,7 @@ class DomainsOperations:
     async def check_availability(
         self,
         identifier: "_models.NameIdentifier",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DomainAvailablilityCheckResult":
         """Check if a domain is available for registration.
 
@@ -105,7 +105,7 @@ class DomainsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DomainCollection"]:
         """Get all domains in a subscription.
 
@@ -173,7 +173,7 @@ class DomainsOperations:
 
     async def get_control_center_sso_request(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DomainControlCenterSsoRequest":
         """Generate a single sign-on request for the domain management portal.
 
@@ -226,7 +226,7 @@ class DomainsOperations:
     def list_recommendations(
         self,
         parameters: "_models.DomainRecommendationSearchParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NameIdentifierCollection"]:
         """Get domain name recommendations based on keywords.
 
@@ -305,7 +305,7 @@ class DomainsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DomainCollection"]:
         """Get all domains in a resource group.
 
@@ -378,7 +378,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Domain":
         """Get a domain.
 
@@ -439,7 +439,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         domain: "_models.Domain",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Domain":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         error_map = {
@@ -496,7 +496,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         domain: "_models.Domain",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Domain"]:
         """Creates or updates a domain.
 
@@ -510,8 +510,8 @@ class DomainsOperations:
         :type domain: ~azure.mgmt.web.v2015_04_01.models.Domain
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Domain or the result of cls(response)
@@ -569,7 +569,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         force_hard_delete_domain: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a domain.
 
@@ -630,7 +630,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         domain: "_models.DomainPatchResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Domain":
         """Creates or updates a domain.
 
@@ -701,7 +701,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DomainOwnershipIdentifierCollection"]:
         """Lists domain ownership identifiers.
 
@@ -778,7 +778,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DomainOwnershipIdentifier":
         """Get ownership identifier for domain.
 
@@ -843,12 +843,12 @@ class DomainsOperations:
         domain_name: str,
         name: str,
         domain_ownership_identifier: "_models.DomainOwnershipIdentifier",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DomainOwnershipIdentifier":
-        """Creates an ownership identifier for a domain or updates identifier details for an existing identifer.
+        """Creates an ownership identifier for a domain or updates identifier details for an existing identifier.
 
         Creates an ownership identifier for a domain or updates identifier details for an existing
-        identifer.
+        identifier.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -915,7 +915,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete ownership identifier for domain.
 
@@ -975,12 +975,12 @@ class DomainsOperations:
         domain_name: str,
         name: str,
         domain_ownership_identifier: "_models.DomainOwnershipIdentifier",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DomainOwnershipIdentifier":
-        """Creates an ownership identifier for a domain or updates identifier details for an existing identifer.
+        """Creates an ownership identifier for a domain or updates identifier details for an existing identifier.
 
         Creates an ownership identifier for a domain or updates identifier details for an existing
-        identifer.
+        identifier.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -1046,7 +1046,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Renew a domain.
 
@@ -1092,7 +1092,7 @@ class DomainsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
