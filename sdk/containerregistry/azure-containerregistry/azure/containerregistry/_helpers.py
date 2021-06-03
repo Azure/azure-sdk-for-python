@@ -5,7 +5,7 @@
 # ------------------------------------
 import re
 
-from azure.core.exceptions import ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError
 
 BEARER = "Bearer"
 AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')

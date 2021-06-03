@@ -75,12 +75,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: Delete a repository from the `ContainerRegistryClient`
         """
-        try:
-            await self._client.container_registry.delete_repository(repository, **kwargs)
-        except ResourceNotFoundError as exc:
-            if "NAME_UNKNOWN" in exc.internal_response.text:
-                return
-            raise
+        await self._client.container_registry.delete_repository(repository, **kwargs)
 
     @distributed_trace
     def list_repository_names(self, **kwargs: Any) -> AsyncItemPaged[str]:
@@ -342,12 +337,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         if _is_tag(tag_or_digest):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
-        try:
-            await self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
-        except ResourceNotFoundError as exc:
-            if "NAME_UNKNOWN" in exc.internal_response.text:
-                return
-            raise
+
+        await self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
 
     @distributed_trace_async
     async def delete_tag(self, repository: str, tag: str, **kwargs: Any) -> None:
@@ -370,12 +361,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             async for artifact in client.list_tag_properties():
                 await client.delete_tag(tag.name)
         """
-        try:
-            await self._client.container_registry.delete_tag(repository, tag, **kwargs)
-        except ResourceNotFoundError as exc:
-            if "NAME_UNKNOWN" in exc.internal_response.text:
-                return
-            raise
+        await self._client.container_registry.delete_tag(repository, tag, **kwargs)
 
     @distributed_trace_async
     async def get_manifest_properties(
