@@ -564,7 +564,7 @@ class ResourceTypes(object):
         res_service = "s" in string
         res_object = "o" in string
 
-        parsed = cls(res_service, res_object)
+        parsed = cls(service=res_service, object=res_object)
         parsed._str = string  # pylint: disable = protected-access
         return parsed
 
