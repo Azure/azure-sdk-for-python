@@ -40,7 +40,6 @@ __all__ = [
     "MetricNamespace",
     "MetricDefinition",
     "MetricsResult",
-    "LocalizableString",
     "MetricsMetadataValue",
     "TimeSeriesElement",
     "Metric",

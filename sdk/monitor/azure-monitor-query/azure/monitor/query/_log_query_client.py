@@ -5,8 +5,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from http.client import HTTPResponse
-from time import time
 from typing import TYPE_CHECKING, Any, Union, Sequence, Dict
 from azure.core.exceptions import HttpResponseError
 
@@ -98,7 +96,7 @@ class LogsClient(object):
         )
 
         try:
-            return LogsQueryResults._from_generated(self._query_op.execute(
+            return LogsQueryResults._from_generated(self._query_op.execute( # pylint: disable=protected-access
                 workspace_id=workspace_id,
                 body=body,
                 prefer=prefer,
@@ -124,7 +122,9 @@ class LogsClient(object):
         except (KeyError, TypeError):
             pass
         batch = BatchRequest(requests=queries)
-        return LogsBatchResults._from_generated(self._query_op.batch(batch, **kwargs))
+        return LogsBatchResults._from_generated( # pylint: disable=protected-access
+            self._query_op.batch(batch, **kwargs)
+            )
 
     def close(self):
         # type: () -> None

@@ -7,15 +7,14 @@
 
 from typing import TYPE_CHECKING, Any, Union, Sequence, Dict
 from azure.core.exceptions import HttpResponseError
+from azure.core.credentials_async import TokenCredential
+
 
 from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest
 from .._helpers import get_authentication_policy, process_error
 from .._models import LogsQueryResults, LogsQueryRequest, LogsQueryBody, LogsBatchResults
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 
 class LogsClient(object):
@@ -93,7 +92,7 @@ class LogsClient(object):
         )
 
         try:
-            return await LogsQueryResults._from_generated(self._query_op.execute(
+            return await LogsQueryResults._from_generated(self._query_op.execute( # pylint: disable=protected-access
                 workspace_id=workspace_id,
                 body=body,
                 prefer=prefer,
@@ -122,7 +121,9 @@ class LogsClient(object):
         except (KeyError, TypeError):
             pass
         batch = BatchRequest(requests=queries)
-        return await LogsBatchResults._from_generated(self._query_op.batch(batch, **kwargs))
+        return await LogsBatchResults._from_generated( # pylint: disable=protected-access
+            self._query_op.batch(batch, **kwargs)
+            )
 
     async def __aenter__(self) -> "LogsClient":
         await self._client.__aenter__()

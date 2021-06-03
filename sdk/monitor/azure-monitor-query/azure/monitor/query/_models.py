@@ -5,9 +5,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from logging import error
 import uuid
-from typing import Any, Optional, Dict, List
+from typing import Any, Optional, List
 
 from ._generated.models import (
     Column as InternalColumn,
@@ -24,10 +23,10 @@ class LogsQueryResultTable(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword name: Required. The name of the table.
-    :paramtype name: str
-    :keyword columns: Required. The list of columns in this table.
-    :paramtype columns: list[~azure.monitor.query.LogsQueryResultColumn]
+    :param name: Required. The name of the table.
+    :type name: str
+    :param columns: Required. The list of columns in this table.
+    :type columns: list[~azure.monitor.query.LogsQueryResultColumn]
     :keyword rows: Required. The resulting rows from this query.
     :paramtype rows: list[list[str]]
     """
@@ -36,11 +35,9 @@ class LogsQueryResultTable(object):
         self.name = name
         self.columns = columns
         self.rows = rows
-    
+
     @classmethod
     def _from_generated(cls, generated):
-        if not generated:
-            return cls()
         return cls(
             name=generated.name,
             columns=[LogsQueryResultColumn(name=col.name, type=col.type) for col in generated.columns],
@@ -95,7 +92,11 @@ class LogsQueryResults(object):
                 target=generated.errors.target
                 )
         if generated.tables is not None:
-            tables=[LogsQueryResultTable._from_generated(table) for table in generated.tables]
+            tables=[
+                LogsQueryResultTable._from_generated( # pylint: disable=protected-access
+                    table
+                    ) for table in generated.tables
+                ]
         return cls(
             tables=tables,
             error=error
@@ -143,7 +144,7 @@ class MetricsResult(object):
             interval=generated.interval,
             namespace=generated.namespace,
             resourceregion=generated.resourceregion,
-            metrics=[Metric._from_generated(m) for m in generated.value]
+            metrics=[Metric._from_generated(m) for m in generated.value] # pylint: disable=protected-access
         )
 
 class LogsQueryRequest(InternalLogQueryRequest):
@@ -233,7 +234,7 @@ class LogsQueryResult(object):
         return cls(
             id=generated.id,
             status=generated.status,
-            body=LogsQueryResults._from_generated(generated.body)
+            body=LogsQueryResults._from_generated(generated.body) # pylint: disable=protected-access
         )
 
 class LogsBatchResults(InternalBatchResponse):
@@ -254,8 +255,10 @@ class LogsBatchResults(InternalBatchResponse):
         if not generated:
             return cls()
         return cls(
-            responses=[LogsQueryResult._from_generated(resp) for resp in generated.responses],
-            error=LogsBatchResultError._from_generated(generated.error)
+            responses=[
+                LogsQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
+                ],
+            error=LogsBatchResultError._from_generated(generated.error) # pylint: disable=protected-access
         )
 
 
@@ -400,7 +403,11 @@ class MetricDefinition(object):
             unit=generated.unit,
             primary_aggregation_type=generated.primary_aggregation_type,
             supported_aggregation_types=generated.supported_aggregation_types,
-            metric_availabilities=[MetricAvailability._from_generated(val) for val in generated.metric_availabilities],
+            metric_availabilities=[
+                MetricAvailability._from_generated( # pylint: disable=protected-access
+                    val
+                    ) for val in generated.metric_availabilities
+                ],
             id=generated.id,
             dimensions=[d.value for d in generated.dimensions]
         )
@@ -487,7 +494,9 @@ class Metric(object):
             type=generated.type,
             name=generated.name.value,
             unit=generated.unit,
-            timeseries=[TimeSeriesElement._from_generated(t) for t in generated.timeseries]
+            timeseries=[
+                TimeSeriesElement._from_generated(t) for t in generated.timeseries # pylint: disable=protected-access
+                ]
         )
 
 
@@ -519,8 +528,12 @@ class TimeSeriesElement(object):
         if not generated:
             return cls()
         return cls(
-            metadata_values=[MetricsMetadataValue._from_generated(mval) for mval in generated.metadatavalues],
-            data=[MetricValue._from_generated(val) for val in generated.data]
+            metadata_values=[
+                MetricsMetadataValue._from_generated( # pylint: disable=protected-access
+                    mval
+                    ) for mval in generated.metadatavalues
+                ],
+            data=[MetricValue._from_generated(val) for val in generated.data] # pylint: disable=protected-access
         )
 
 class MetricsMetadataValue(object):
