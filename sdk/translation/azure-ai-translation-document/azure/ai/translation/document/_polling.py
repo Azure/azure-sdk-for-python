@@ -37,7 +37,7 @@ _FINISHED = frozenset(["succeeded", "cancelled", "cancelling", "failed"])
 _FAILED = frozenset(["validationfailed"])
 
 
-class DocumentTranslationPoller(LROPoller):
+class DocumentTranslationLROPoller(LROPoller):
     """A custom poller implementation for Document Translation.
     """
 
@@ -63,7 +63,7 @@ class DocumentTranslationPoller(LROPoller):
 
     @classmethod
     def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
-        # type: (DocumentTranslationLROPollingMethod, str, **Any) -> DocumentTranslationPoller
+        # type: (DocumentTranslationLROPollingMethod, str, **Any) -> DocumentTranslationLROPoller
 
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs

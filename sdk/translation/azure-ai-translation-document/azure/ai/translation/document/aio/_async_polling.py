@@ -19,7 +19,7 @@ _FINISHED = frozenset(["succeeded", "cancelled", "cancelling", "failed"])
 _FAILED = frozenset(["validationfailed"])
 
 
-class AsyncDocumentTranslationPoller(AsyncLROPoller[PollingReturnType]):
+class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
     """An async custom poller implementation for Document Translation.
     """
 
@@ -47,7 +47,7 @@ class AsyncDocumentTranslationPoller(AsyncLROPoller[PollingReturnType]):
             polling_method: "AsyncDocumentTranslationLROPollingMethod",
             continuation_token: str,
             **kwargs: Any
-    ) -> "AsyncDocumentTranslationPoller":
+    ) -> "AsyncDocumentTranslationLROPoller":
 
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs

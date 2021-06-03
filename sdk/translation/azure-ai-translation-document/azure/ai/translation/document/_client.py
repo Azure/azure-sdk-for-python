@@ -20,7 +20,7 @@ from ._helpers import get_http_logging_policy, convert_datetime, get_authenticat
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.credentials import TokenCredential, AzureKeyCredential
-    from ._polling import DocumentTranslationPoller
+    from ._polling import DocumentTranslationLROPoller
 
 
 class DocumentTranslationClient(object):  # pylint: disable=r0205
@@ -91,7 +91,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def begin_translation(self, inputs, **kwargs):
-        # type: (List[DocumentTranslationInput], **Any) -> DocumentTranslationPoller[ItemPaged[DocumentStatusResult]]
+        # type: (List[DocumentTranslationInput], **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatusResult]]
         """Begin translating the document(s) in your source container to your TranslationTarget(s)
         in the given language.
 
@@ -102,10 +102,10 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
         :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
-        :return: An instance of a DocumentTranslationPoller. Call `result()` on the poller
+        :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatusResult. A DocumentStatusResult will be
             returned for each translation on a document.
-        :rtype: DocumentTranslationPoller[ItemPaged[~azure.ai.translation.document.DocumentStatusResult]]
+        :rtype: DocumentTranslationLROPoller[ItemPaged[~azure.ai.translation.document.DocumentStatusResult]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:

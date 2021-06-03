@@ -18,7 +18,7 @@ from .._models import (
     DocumentStatusResult
 )
 from .._helpers import get_http_logging_policy, convert_datetime, get_authentication_policy
-from ._async_polling import AsyncDocumentTranslationLROPollingMethod, AsyncDocumentTranslationPoller
+from ._async_polling import AsyncDocumentTranslationLROPollingMethod, AsyncDocumentTranslationLROPoller
 from .._polling import TranslationPolling
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
@@ -91,7 +91,7 @@ class DocumentTranslationClient(object):
     @distributed_trace_async
     async def begin_translation(
             self, inputs: List[DocumentTranslationInput], **kwargs: Any
-    ) -> AsyncDocumentTranslationPoller[AsyncItemPaged[DocumentStatusResult]]:
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatusResult]]:
         """Begin translating the document(s) in your source container to your TranslationTarget(s)
         in the given language.
 
@@ -102,10 +102,10 @@ class DocumentTranslationClient(object):
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
         :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
-        :return: An instance of an AsyncDocumentTranslationPoller. Call `result()` on the poller
+        :return: An instance of an AsyncDocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatusResult. A DocumentStatusResult will be
             returned for each translation on a document.
-        :rtype: AsyncDocumentTranslationPoller[AsyncItemPaged[~azure.ai.translation.document.DocumentStatusResult]]
+        :rtype: AsyncDocumentTranslationLROPoller[AsyncItemPaged[~azure.ai.translation.document.DocumentStatusResult]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
