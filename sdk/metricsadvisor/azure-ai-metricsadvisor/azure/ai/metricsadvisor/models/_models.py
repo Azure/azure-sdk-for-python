@@ -343,19 +343,19 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
     :ivar status: Data feed status. Possible values include: "Active", "Paused".
         Default value: "Active".
     :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
-    :keyword list[str] admin_emails: Data feed administrator emails.
-    :keyword str data_feed_description: Data feed description.
-    :keyword missing_data_point_fill_settings: The fill missing point type and value.
-    :paramtype missing_data_point_fill_settings:
+    :ivar list[str] admin_emails: Data feed administrator emails.
+    :ivar str data_feed_description: Data feed description.
+    :ivar missing_data_point_fill_settings: The fill missing point type and value.
+    :vartype missing_data_point_fill_settings:
         ~azure.ai.metricsadvisor.models.DataFeedMissingDataPointFillSettings
-    :keyword rollup_settings: The rollup settings.
-    :paramtype rollup_settings:
+    :ivar rollup_settings: The rollup settings.
+    :vartype rollup_settings:
         ~azure.ai.metricsadvisor.models.DataFeedRollupSettings
-    :keyword list[str] viewer_emails: Data feed viewer emails.
-    :keyword access_mode: Data feed access mode. Possible values include:
+    :ivar list[str] viewer_emails: Data feed viewer emails.
+    :ivar access_mode: Data feed access mode. Possible values include:
         "Private", "Public". Default value: "Private".
-    :paramtype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
-    :keyword str action_link_template: action link for alert.
+    :vartype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
+    :ivar str action_link_template: action link for alert.
     """
     def __init__(
         self, name,  # type: str
