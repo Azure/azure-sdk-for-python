@@ -247,45 +247,6 @@ class DataFeedIngestionSettings(object):
                 )[:1024]
 
 
-class DataFeedOptions(object):
-    """Data feed options.
-
-    :keyword list[str] admin_emails: Data feed administrator emails.
-    :keyword str data_feed_description: Data feed description.
-    :keyword missing_data_point_fill_settings: The fill missing point type and value.
-    :paramtype missing_data_point_fill_settings:
-        ~azure.ai.metricsadvisor.models.DataFeedMissingDataPointFillSettings
-    :keyword rollup_settings: The rollup settings.
-    :paramtype rollup_settings:
-        ~azure.ai.metricsadvisor.models.DataFeedRollupSettings
-    :keyword list[str] viewer_emails: Data feed viewer emails.
-    :keyword access_mode: Data feed access mode. Possible values include:
-        "Private", "Public". Default value: "Private".
-    :paramtype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
-    :keyword str action_link_template: action link for alert.
-    """
-    def __init__(self, **kwargs):
-        self.admin_emails = kwargs.get('admin_emails', None)
-        self.data_feed_description = kwargs.get('data_feed_description', None)
-        self.missing_data_point_fill_settings = kwargs.get('missing_data_point_fill_settings', None)
-        self.rollup_settings = kwargs.get('rollup_settings', None)
-        self.viewer_emails = kwargs.get('viewer_emails', None)
-        self.access_mode = kwargs.get('access_mode', "Private")
-        self.action_link_template = kwargs.get('action_link_template', None)
-
-    def __repr__(self):
-        return "DataFeedOptions(admin_emails={}, data_feed_description={}, missing_data_point_fill_settings={}, " \
-               "rollup_settings={}, viewer_emails={}, access_mode={}, action_link_template={})".format(
-                    self.admin_emails,
-                    self.data_feed_description,
-                    repr(self.missing_data_point_fill_settings),
-                    repr(self.rollup_settings),
-                    self.viewer_emails,
-                    self.access_mode,
-                    self.action_link_template
-                )[:1024]
-
-
 class DataFeedMissingDataPointFillSettings(object):
     """Data feed missing data point fill settings
 
@@ -372,8 +333,6 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
     :ivar bool is_admin: Whether the query user is one of data feed administrators or not.
     :ivar dict metric_ids: metric name and metric id dict
     :ivar str name: Data feed name.
-    :ivar options: Data feed options
-    :vartype options: ~azure.ai.metricsadvisor.models.DataFeedOptions
     :ivar schema: Data feed schema
     :vartype schema: ~azure.ai.metricsadvisor.models.DataFeedSchema
     :ivar source: Data feed source.
@@ -384,6 +343,19 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
     :ivar status: Data feed status. Possible values include: "Active", "Paused".
         Default value: "Active".
     :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
+    :ivar list[str] admin_emails: Data feed administrator emails.
+    :ivar str data_feed_description: Data feed description.
+    :ivar missing_data_point_fill_settings: The fill missing point type and value.
+    :vartype missing_data_point_fill_settings:
+        ~azure.ai.metricsadvisor.models.DataFeedMissingDataPointFillSettings
+    :ivar rollup_settings: The rollup settings.
+    :vartype rollup_settings:
+        ~azure.ai.metricsadvisor.models.DataFeedRollupSettings
+    :ivar list[str] viewer_emails: Data feed viewer emails.
+    :ivar access_mode: Data feed access mode. Possible values include:
+        "Private", "Public". Default value: "Private".
+    :vartype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
+    :ivar str action_link_template: action link for alert.
     """
     def __init__(
         self, name,  # type: str
@@ -403,24 +375,38 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
         self.created_time = kwargs.get('created_time', None)
         self.is_admin = kwargs.get('is_admin', None)
         self.metric_ids = kwargs.get('metric_ids', None)
-        self.options = kwargs.get('options', None)
         self.status = kwargs.get('status', None)
+        self.admin_emails = kwargs.get('admin_emails', None)
+        self.data_feed_description = kwargs.get('data_feed_description', None)
+        self.missing_data_point_fill_settings = kwargs.get('missing_data_point_fill_settings', None)
+        self.rollup_settings = kwargs.get('rollup_settings', None)
+        self.viewer_emails = kwargs.get('viewer_emails', None)
+        self.access_mode = kwargs.get('access_mode', "Private")
+        self.action_link_template = kwargs.get('action_link_template', None)
 
     def __repr__(self):
         return "DataFeed(created_time={}, granularity={}, id={}, ingestion_settings={}, is_admin={}, " \
-                "metric_ids={}, name={}, options={}, schema={}, source={}, status={})".format(
-                    self.created_time,
-                    repr(self.granularity),
-                    self.id,
-                    repr(self.ingestion_settings),
-                    self.is_admin,
-                    self.metric_ids,
-                    self.name,
-                    repr(self.options),
-                    repr(self.schema),
-                    repr(self.source),
-                    self.status
-                )[:1024]
+                "metric_ids={}, name={}, schema={}, source={}, status={}, admin_emails={}, " \
+               "data_feed_description={}, missing_data_point_fill_settings={}, " \
+               "rollup_settings={}, viewer_emails={}, access_mode={}, action_link_template={})".format(
+            self.created_time,
+            repr(self.granularity),
+            self.id,
+            repr(self.ingestion_settings),
+            self.is_admin,
+            self.metric_ids,
+            self.name,
+            repr(self.schema),
+            repr(self.source),
+            self.status,
+            self.admin_emails,
+            self.data_feed_description,
+            repr(self.missing_data_point_fill_settings),
+            repr(self.rollup_settings),
+            self.viewer_emails,
+            self.access_mode,
+            self.action_link_template
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, data_feed):
@@ -438,23 +424,21 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
             is_admin=data_feed.is_admin,
             metric_ids={metric.metric_name: metric.metric_id for metric in data_feed.metrics},
             name=data_feed.data_feed_name,
-            options=DataFeedOptions(
-                admin_emails=data_feed.admins,
-                data_feed_description=data_feed.data_feed_description,
-                missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                    fill_type=data_feed.fill_missing_point_type,
-                    custom_fill_value=data_feed.fill_missing_point_value
-                ),
-                rollup_settings=DataFeedRollupSettings(
-                    rollup_identification_value=data_feed.all_up_identification,
-                    rollup_type=DataFeedRollupType._from_generated(data_feed.need_rollup),
-                    auto_rollup_group_by_column_names=data_feed.roll_up_columns,
-                    rollup_method=data_feed.roll_up_method
-                ),
-                viewer_emails=data_feed.viewers,
-                access_mode=data_feed.view_mode,
-                action_link_template=data_feed.action_link_template
+            admin_emails=data_feed.admins,
+            data_feed_description=data_feed.data_feed_description,
+            missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                fill_type=data_feed.fill_missing_point_type,
+                custom_fill_value=data_feed.fill_missing_point_value
             ),
+            rollup_settings=DataFeedRollupSettings(
+                rollup_identification_value=data_feed.all_up_identification,
+                rollup_type=DataFeedRollupType._from_generated(data_feed.need_rollup),
+                auto_rollup_group_by_column_names=data_feed.roll_up_columns,
+                rollup_method=data_feed.roll_up_method
+            ),
+            viewer_emails=data_feed.viewers,
+            access_mode=data_feed.view_mode,
+            action_link_template=data_feed.action_link_template,
             schema=DataFeedSchema(
                 dimensions=[DataFeedDimension._from_generated(dim) for dim in data_feed.dimension],
                 metrics=[DataFeedMetric._from_generated(metric) for metric in data_feed.metrics],
@@ -490,34 +474,34 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
             stop_retry_after_in_seconds=kwargs.pop("stopRetryAfterInSeconds", None)
             or self.ingestion_settings.stop_retry_after,
             data_feed_description=kwargs.pop("dataFeedDescription", None)
-            or self.options.data_feed_description if self.options else None,
+            or self.data_feed_description,
             need_rollup=rollup_type
-            or DataFeedRollupType._to_generated(self.options.rollup_settings.rollup_type)
-            if self.options and self.options.rollup_settings else None,
+            or DataFeedRollupType._to_generated(self.rollup_settings.rollup_type)
+            if self.rollup_settings else None,
             roll_up_method=kwargs.pop("rollUpMethod", None)
-            or self.options.rollup_settings.rollup_method
-            if self.options and self.options.rollup_settings else None,
+            or self.rollup_settings.rollup_method
+            if self.rollup_settings else None,
             roll_up_columns=kwargs.pop("rollUpColumns", None)
-            or self.options.rollup_settings.auto_rollup_group_by_column_names
-            if self.options and self.options.rollup_settings else None,
+            or self.rollup_settings.auto_rollup_group_by_column_names
+            if self.rollup_settings else None,
             all_up_identification=kwargs.pop("allUpIdentification", None)
-            or self.options.rollup_settings.rollup_identification_value
-            if self.options and self.options.rollup_settings else None,
+            or self.rollup_settings.rollup_identification_value
+            if self.rollup_settings else None,
             fill_missing_point_type=kwargs.pop("fillMissingPointType", None)
-            or self.options.missing_data_point_fill_settings.fill_type
-            if self.options and self.options.missing_data_point_fill_settings else None,
+            or self.missing_data_point_fill_settings.fill_type
+            if self.missing_data_point_fill_settings else None,
             fill_missing_point_value=kwargs.pop("fillMissingPointValue", None)
-            or self.options.missing_data_point_fill_settings.custom_fill_value
-            if self.options and self.options.missing_data_point_fill_settings else None,
+            or self.missing_data_point_fill_settings.custom_fill_value
+            if self.missing_data_point_fill_settings else None,
             viewers=kwargs.pop("viewers", None)
-            or self.options.viewer_emails if self.options else None,
+            or self.viewer_emails,
             view_mode=kwargs.pop("viewMode", None)
-            or self.options.access_mode if self.options else None,
+            or self.access_mode,
             admins=kwargs.pop("admins", None)
-            or self.options.admin_emails if self.options else None,
+            or self.admin_emails,
             status=kwargs.pop("status", None) or self.status,
             action_link_template=kwargs.pop("actionLinkTemplate", None)
-            or self.options.action_link_template if self.options else None,
+            or self.action_link_template,
             authentication_type=authentication_type,
             credential_id=credential_id
         )
@@ -1763,6 +1747,8 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource):
     :keyword str client_id: The client id of service principal that have access to this Log
      Analytics.
     :keyword str client_secret: The client secret of service principal that have access to this Log Analytics.
+    :keyword str datasource_service_principal_id: Datasource service principal unique id.
+    :keyword str datasource_service_principal_in_kv_id: Datasource service principal in key vault unique id.
     :param str workspace_id: Required. The workspace id of this Log Analytics.
     :param str query: Required. The KQL (Kusto Query Language) query to fetch data from this Log
      Analytics.
@@ -1772,11 +1758,20 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource):
         # type: (str, str, **Any) -> None
         super(AzureLogAnalyticsDataFeedSource, self).__init__(
             data_source_type='AzureLogAnalytics',
-            authentication_type="Basic",
             **kwargs)
-        self.tenant_id = kwargs.get("tenant_id", None)
-        self.client_id = kwargs.get("client_id", None)
-        self.client_secret = kwargs.get("client_secret", None)
+        datasource_service_principal_id = kwargs.get("datasource_service_principal_id", False)
+        datasource_service_principal_in_kv_id = kwargs.get("datasource_service_principal_in_kv_id", False)
+        if datasource_service_principal_id:
+            self.authentication_type = "ServicePrincipal"
+            self.credential_id = datasource_service_principal_id
+        elif datasource_service_principal_in_kv_id:
+            self.authentication_type = "ServicePrincipalInKV"
+            self.credential_id = datasource_service_principal_in_kv_id
+        else:
+            self.authentication_type = "Basic"
+            self.tenant_id = kwargs.get("tenant_id", None)
+            self.client_id = kwargs.get("client_id", None)
+            self.client_secret = kwargs.get("client_secret", None)
         self.workspace_id = workspace_id
         self.query = query
 

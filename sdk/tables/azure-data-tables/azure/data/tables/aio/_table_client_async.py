@@ -181,7 +181,7 @@ class TableClient(AsyncTablesBaseClient):
         return {
             s.id: s.access_policy
             or AccessPolicy(start=None, expiry=None, permission=None)
-            for s in identifiers
+            for s in identifiers  # type: ignore
         }
 
     @distributed_trace_async
@@ -204,17 +204,16 @@ class TableClient(AsyncTablesBaseClient):
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
-        signed_identifiers = identifiers  # type: ignore
         try:
             await self._client.table.set_access_policy(
-                table=self.table_name, table_acl=signed_identifiers or None, **kwargs
+                table=self.table_name, table_acl=identifiers or None, **kwargs  # type: ignore
             )
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
             except HttpResponseError as table_error:
-                if (table_error.error_code == 'InvalidXmlDocument'
-                and len(signed_identifiers) > 5):
+                if (table_error.error_code == 'InvalidXmlDocument'  # type: ignore
+                and len(identifiers) > 5):
                     raise ValueError(
                         'Too many access policies provided. The server does not support setting '
                         'more than 5 access policies on a single resource.'
@@ -222,7 +221,7 @@ class TableClient(AsyncTablesBaseClient):
                 raise
 
     @distributed_trace_async
-    async def create_table(self, **kwargs) -> None:
+    async def create_table(self, **kwargs) -> TableItem:
         """Creates a new table under the given account.
 
         :return: A TableItem representing the created table.
@@ -241,9 +240,9 @@ class TableClient(AsyncTablesBaseClient):
         table_properties = TableProperties(table_name=self.table_name)
         try:
             result = await self._client.table.create(table_properties, **kwargs)
-            return TableItem(name=result.table_name)
         except HttpResponseError as error:
             _process_table_error(error)
+        return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace_async
     async def delete_table(self, **kwargs) -> None:
@@ -323,7 +322,7 @@ class TableClient(AsyncTablesBaseClient):
         etag = kwargs.pop("etag", None)
         if match_condition and entity and not etag:
             try:
-                etag = entity.metadata.get("etag", None)
+                etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
         if_match = _get_match_headers(
@@ -370,13 +369,12 @@ class TableClient(AsyncTablesBaseClient):
         """
         entity = _add_entity_properties(entity)
         try:
-            metadata, content = await self._client.table.insert_entity(
+            metadata, content = await self._client.table.insert_entity(  # type: ignore
                 table=self.table_name,
-                table_entity_properties=entity,
+                table_entity_properties=entity,  # type: ignore
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
                 **kwargs
             )
-            return _trim_service_metadata(metadata, content=content)
         except HttpResponseError as error:
             decoded = _decode_error(error.response, error.message)
             if decoded.error_code == "PropertiesNeedValue":
@@ -385,6 +383,7 @@ class TableClient(AsyncTablesBaseClient):
                 if entity.get("RowKey") is None:
                     raise ValueError("RowKey must be present in an entity")
             _reraise_error(error)
+        return _trim_service_metadata(metadata, content=content)  # type: ignore
 
 
     @distributed_trace_async
@@ -422,7 +421,7 @@ class TableClient(AsyncTablesBaseClient):
         etag = kwargs.pop("etag", None)
         if match_condition and entity and not etag:
             try:
-                etag = entity.metadata.get("etag", None)
+                etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
         if_match = _get_match_headers(
@@ -437,30 +436,30 @@ class TableClient(AsyncTablesBaseClient):
             metadata = None
             content = None
             if mode is UpdateMode.REPLACE:
-                metadata, content = await self._client.table.update_entity(
+                metadata, content = await self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=entity,
+                    table_entity_properties=entity,  # type: ignore
                     if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
             elif mode is UpdateMode.MERGE:
-                metadata, content = await self._client.table.merge_entity(
+                metadata, content = await self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                    table_entity_properties=entity,
+                    table_entity_properties=entity,  # type: ignore
                     **kwargs
                 )
             else:
                 raise ValueError("Mode type is not supported")
-            return _trim_service_metadata(metadata, content=content)
         except HttpResponseError as error:
             _process_table_error(error)
+        return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
     def list_entities(self, **kwargs) -> AsyncItemPaged[TableEntity]:
@@ -582,9 +581,9 @@ class TableClient(AsyncTablesBaseClient):
                 **kwargs
             )
             properties = _convert_to_entity(entity)
-            return properties
         except HttpResponseError as error:
             _process_table_error(error)
+        return properties
 
     @distributed_trace_async
     async def upsert_entity(
@@ -621,20 +620,20 @@ class TableClient(AsyncTablesBaseClient):
             metadata = None
             content = None
             if mode is UpdateMode.MERGE:
-                metadata, content = await self._client.table.merge_entity(
+                metadata, content = await self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=entity,
+                    table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
             elif mode is UpdateMode.REPLACE:
-                metadata, content = await self._client.table.update_entity(
+                metadata, content = await self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=entity,
+                    table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
@@ -645,9 +644,9 @@ class TableClient(AsyncTablesBaseClient):
                         mode
                     )
                 )
-            return _trim_service_metadata(metadata, content=content)
         except HttpResponseError as error:
             _process_table_error(error)
+        return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace_async
     async def submit_transaction(
@@ -687,7 +686,7 @@ class TableClient(AsyncTablesBaseClient):
         )
         for operation in operations:
             try:
-                operation_kwargs = operation[2]
+                operation_kwargs = operation[2]  # type: ignore
             except IndexError:
                 operation_kwargs = {}
             try:
