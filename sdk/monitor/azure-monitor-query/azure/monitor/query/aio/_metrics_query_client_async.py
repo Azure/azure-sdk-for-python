@@ -9,13 +9,13 @@
 
 from typing import TYPE_CHECKING, Any, List
 
+from azure.core.paging import ItemPaged
+
 from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,
 )
 from .._models import MetricsResult, MetricDefinition
 from .._helpers import get_authentication_policy
-
-from azure.core.paging import ItemPaged
 from .._models import MetricNamespace
 
 if TYPE_CHECKING:
@@ -97,7 +97,12 @@ class MetricsClient(object):
         """
         return await self._namespace_op.list(resource_uri, **kwargs)
 
-    async def list_metric_definitions(self, resource_uri: str, metric_namespace: str=None, **kwargs: Any) -> ItemPaged[MetricDefinition]:
+    async def list_metric_definitions(
+        self,
+        resource_uri: str,
+        metric_namespace: str = None,
+        **kwargs: Any
+        ) -> ItemPaged[MetricDefinition]:
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
