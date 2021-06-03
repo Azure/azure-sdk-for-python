@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._deployment_manager_client import DeploymentManagerClient
+from ._azure_deployment_manager import AzureDeploymentManager
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['DeploymentManagerClient']
+__all__ = ['AzureDeploymentManager']
 
 try:
     from ._patch import patch_sdk  # type: ignore

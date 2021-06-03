@@ -69,15 +69,15 @@ class AsyncTablesBaseClient(AccountHostsMixin):
     def _configure_credential(self, credential):
         # type: (Any) -> None
         if hasattr(credential, "get_token"):
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(
+            self._credential_policy = AsyncBearerTokenCredentialPolicy(  # type: ignore
                 credential, STORAGE_OAUTH_SCOPE
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
-            self._credential_policy = credential
+            self._credential_policy = credential  # type: ignore
         elif isinstance(credential, AzureSasCredential):
-            self._credential_policy = AzureSasCredentialPolicy(credential)
+            self._credential_policy = AzureSasCredentialPolicy(credential)  # type: ignore
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential_policy = SharedKeyCredentialPolicy(credential)
+            self._credential_policy = SharedKeyCredentialPolicy(credential)  # type: ignore
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -103,7 +103,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
 
-        changeset = HttpRequest("POST", None)
+        changeset = HttpRequest("POST", None)  # type: ignore
         changeset.set_multipart_mixed(
             *reqs, policies=policies, boundary="changeset_{}".format(uuid4())
         )

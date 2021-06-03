@@ -44,7 +44,7 @@ class ProviderOperations:
     def get_available_stacks(
         self,
         os_type_selected: Optional[Union[str, "_models.Enum0"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationStackCollection"]:
         """Get available application frameworks and their versions.
 
@@ -112,7 +112,7 @@ class ProviderOperations:
 
     def list_operations(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CsmOperationCollection"]:
         """Gets all available operations for the Microsoft.Web resource provider. Also exposes resource metric definitions.
 
@@ -178,7 +178,7 @@ class ProviderOperations:
     def get_available_stacks_on_prem(
         self,
         os_type_selected: Optional[Union[str, "_models.Enum1"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationStackCollection"]:
         """Get available application frameworks and their versions.
 

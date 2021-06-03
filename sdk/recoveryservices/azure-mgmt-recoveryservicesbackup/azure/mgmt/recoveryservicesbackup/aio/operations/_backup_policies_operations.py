@@ -46,7 +46,7 @@ class BackupPoliciesOperations:
         vault_name: str,
         resource_group_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProtectionPolicyResourceList"]:
         """Lists of backup policies associated with Recovery Services Vault. API provides pagination
         parameters to fetch
@@ -69,7 +69,7 @@ class BackupPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

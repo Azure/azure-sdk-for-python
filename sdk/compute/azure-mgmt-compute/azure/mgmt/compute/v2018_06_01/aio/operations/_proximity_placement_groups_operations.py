@@ -46,7 +46,7 @@ class ProximityPlacementGroupsOperations:
         resource_group_name: str,
         proximity_placement_group_name: str,
         parameters: "_models.ProximityPlacementGroup",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProximityPlacementGroup":
         """Create or update a proximity placement group.
 
@@ -116,7 +116,7 @@ class ProximityPlacementGroupsOperations:
         resource_group_name: str,
         proximity_placement_group_name: str,
         parameters: "_models.ProximityPlacementGroupUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProximityPlacementGroup":
         """Update a proximity placement group.
 
@@ -181,7 +181,7 @@ class ProximityPlacementGroupsOperations:
         self,
         resource_group_name: str,
         proximity_placement_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a proximity placement group.
 
@@ -234,7 +234,7 @@ class ProximityPlacementGroupsOperations:
         self,
         resource_group_name: str,
         proximity_placement_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProximityPlacementGroup":
         """Retrieves information about a proximity placement group .
 
@@ -290,7 +290,7 @@ class ProximityPlacementGroupsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProximityPlacementGroupListResult"]:
         """Lists all proximity placement groups in a subscription.
 
@@ -357,7 +357,7 @@ class ProximityPlacementGroupsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProximityPlacementGroupListResult"]:
         """Lists all proximity placement groups in a resource group.
 

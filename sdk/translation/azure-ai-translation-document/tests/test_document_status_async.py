@@ -38,7 +38,7 @@ class DocumentStatus(AsyncDocumentTranslationTest):
         ]
 
         # submit and validate translation job
-        job_id = await self._submit_and_validate_translation_job_async(client, translation_inputs, len(blob_data))
+        job_id = await self._begin_and_validate_translation_async(client, translation_inputs, len(blob_data), target_language)
 
         # get doc statuses
         doc_statuses = client.list_all_document_statuses(job_id)

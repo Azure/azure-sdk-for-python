@@ -47,7 +47,41 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
-class Configuration(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class Configuration(ProxyResource):
     """Tenant configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -129,7 +163,7 @@ class Dashboard(msrest.serialization.Model):
     :param lenses: The dashboard lenses.
     :type lenses: list[~azure.mgmt.portal.models.DashboardLens]
     :param metadata: The dashboard metadata.
-    :type metadata: dict[str, object]
+    :type metadata: dict[str, any]
     """
 
     _validation = {
@@ -173,7 +207,7 @@ class DashboardLens(msrest.serialization.Model):
     :param parts: Required. The dashboard parts.
     :type parts: list[~azure.mgmt.portal.models.DashboardParts]
     :param metadata: The dashboard len's metadata.
-    :type metadata: dict[str, object]
+    :type metadata: dict[str, any]
     """
 
     _validation = {
@@ -228,6 +262,9 @@ class DashboardPartMetadata(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, any]
     :param type: Required. The type of dashboard part.Constant filled by server.
     :type type: str
     """
@@ -237,6 +274,7 @@ class DashboardPartMetadata(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -249,7 +287,8 @@ class DashboardPartMetadata(msrest.serialization.Model):
         **kwargs
     ):
         super(DashboardPartMetadata, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = 'DashboardPartMetadata'  # type: str
 
 
 class DashboardParts(msrest.serialization.Model):
@@ -295,7 +334,7 @@ class DashboardPartsPosition(msrest.serialization.Model):
     :param col_span: Required. The dashboard's part column span.
     :type col_span: int
     :param metadata: The dashboard part's metadata.
-    :type metadata: dict[str, object]
+    :type metadata: dict[str, any]
     """
 
     _validation = {
@@ -384,10 +423,13 @@ class MarkdownPartMetadata(DashboardPartMetadata):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, any]
     :param type: Required. The type of dashboard part.Constant filled by server.
     :type type: str
     :param inputs: Input to dashboard part.
-    :type inputs: list[object]
+    :type inputs: list[any]
     :param settings: Markdown part settings.
     :type settings: ~azure.mgmt.portal.models.MarkdownPartMetadataSettings
     """
@@ -397,6 +439,7 @@ class MarkdownPartMetadata(DashboardPartMetadata):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
         'inputs': {'key': 'inputs', 'type': '[object]'},
         'settings': {'key': 'settings', 'type': 'MarkdownPartMetadataSettings'},
@@ -493,7 +536,7 @@ class PatchableDashboard(msrest.serialization.Model):
     :param lenses: The dashboard lenses.
     :type lenses: list[~azure.mgmt.portal.models.DashboardLens]
     :param metadata: The dashboard metadata.
-    :type metadata: dict[str, object]
+    :type metadata: dict[str, any]
     """
 
     _attribute_map = {
@@ -510,40 +553,6 @@ class PatchableDashboard(msrest.serialization.Model):
         self.tags = kwargs.get('tags', None)
         self.lenses = kwargs.get('lenses', None)
         self.metadata = kwargs.get('metadata', None)
-
-
-class ProxyResource(Resource):
-    """The resource model definition for an Azure Resource Manager proxy resource. It will have everything other than required location and tags.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
 
 
 class ResourceProviderOperation(msrest.serialization.Model):

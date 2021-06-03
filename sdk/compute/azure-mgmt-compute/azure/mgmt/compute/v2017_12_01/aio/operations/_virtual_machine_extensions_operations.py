@@ -48,7 +48,7 @@ class VirtualMachineExtensionsOperations:
         vm_name: str,
         vm_extension_name: str,
         extension_parameters: "_models.VirtualMachineExtension",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualMachineExtension":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineExtension"]
         error_map = {
@@ -107,7 +107,7 @@ class VirtualMachineExtensionsOperations:
         vm_name: str,
         vm_extension_name: str,
         extension_parameters: "_models.VirtualMachineExtension",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualMachineExtension"]:
         """The operation to create or update the extension.
 
@@ -123,8 +123,8 @@ class VirtualMachineExtensionsOperations:
         :type extension_parameters: ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineExtension
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualMachineExtension or the result of cls(response)
@@ -185,7 +185,7 @@ class VirtualMachineExtensionsOperations:
         vm_name: str,
         vm_extension_name: str,
         extension_parameters: "_models.VirtualMachineExtensionUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualMachineExtension":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineExtension"]
         error_map = {
@@ -240,7 +240,7 @@ class VirtualMachineExtensionsOperations:
         vm_name: str,
         vm_extension_name: str,
         extension_parameters: "_models.VirtualMachineExtensionUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualMachineExtension"]:
         """The operation to update the extension.
 
@@ -255,8 +255,8 @@ class VirtualMachineExtensionsOperations:
         :type extension_parameters: ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineExtensionUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualMachineExtension or the result of cls(response)
@@ -316,7 +316,7 @@ class VirtualMachineExtensionsOperations:
         resource_group_name: str,
         vm_name: str,
         vm_extension_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatusResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
@@ -367,7 +367,7 @@ class VirtualMachineExtensionsOperations:
         resource_group_name: str,
         vm_name: str,
         vm_extension_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatusResponse"]:
         """The operation to delete the extension.
 
@@ -379,8 +379,8 @@ class VirtualMachineExtensionsOperations:
         :type vm_extension_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
@@ -440,7 +440,7 @@ class VirtualMachineExtensionsOperations:
         vm_name: str,
         vm_extension_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualMachineExtension":
         """The operation to get the extension.
 

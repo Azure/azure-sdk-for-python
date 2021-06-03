@@ -38,7 +38,7 @@ class CommunicationIdentityClientSamples(object):
         from azure.communication.identity.aio import CommunicationIdentityClient
         from azure.communication.identity import CommunicationTokenScope
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
-            from azure.identity import DefaultAzureCredential
+            from azure.identity.aio import DefaultAzureCredential
             endpoint, _ = parse_connection_str(self.connection_string)
             identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
@@ -54,7 +54,7 @@ class CommunicationIdentityClientSamples(object):
         from azure.communication.identity.aio import CommunicationIdentityClient
         from azure.communication.identity import CommunicationTokenScope
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
-            from azure.identity import DefaultAzureCredential
+            from azure.identity.aio import DefaultAzureCredential
             endpoint, _ = parse_connection_str(self.connection_string)
             identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
@@ -70,7 +70,7 @@ class CommunicationIdentityClientSamples(object):
     async def create_user(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
-            from azure.identity import DefaultAzureCredential
+            from azure.identity.aio import DefaultAzureCredential
             endpoint, _ = parse_connection_str(self.connection_string)
             identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
@@ -85,7 +85,7 @@ class CommunicationIdentityClientSamples(object):
         from azure.communication.identity.aio import CommunicationIdentityClient
         from azure.communication.identity import CommunicationTokenScope
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
-            from azure.identity import DefaultAzureCredential
+            from azure.identity.aio import DefaultAzureCredential
             endpoint, _ = parse_connection_str(self.connection_string)
             identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
@@ -100,7 +100,7 @@ class CommunicationIdentityClientSamples(object):
     async def delete_user(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
-            from azure.identity import DefaultAzureCredential
+            from azure.identity.aio import DefaultAzureCredential
             endpoint, _ = parse_connection_str(self.connection_string)
             identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:

@@ -13,6 +13,8 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
 from ... import models as _models
 
@@ -54,11 +56,11 @@ class FarmsOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FarmListResponse"]:
         """Returns a paginated list of farm resources under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
         :param ids: Ids of the resource.
         :type ids: list[str]
@@ -181,7 +183,7 @@ class FarmsOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FarmListResponse"]:
         """Returns a paginated list of farm resources across all farmers.
 
@@ -296,7 +298,7 @@ class FarmsOperations:
         self,
         farmer_id: str,
         farm_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Farm":
         """Gets a specified farm resource under a particular farmer.
 
@@ -355,17 +357,17 @@ class FarmsOperations:
         self,
         farmer_id: str,
         farm_id: str,
-        body: Optional["_models.Farm"] = None,
-        **kwargs
+        farm: Optional["_models.Farm"] = None,
+        **kwargs: Any
     ) -> "_models.Farm":
         """Creates or updates a farm resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer resource.
+        :param farmer_id: ID of the associated farmer resource.
         :type farmer_id: str
-        :param farm_id: Id of the farm resource.
+        :param farm_id: ID of the farm resource.
         :type farm_id: str
-        :param body: Farm resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.Farm
+        :param farm: Farm resource payload to create or update.
+        :type farm: ~azure.agrifood.farming.models.Farm
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Farm, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.Farm
@@ -399,8 +401,8 @@ class FarmsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Farm')
+        if farm is not None:
+            body_content = self._serialize.body(farm, 'Farm')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -429,13 +431,13 @@ class FarmsOperations:
         self,
         farmer_id: str,
         farm_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a specified farm resource under a particular farmer.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: ID of the farmer.
         :type farmer_id: str
-        :param farm_id: Id of the farm.
+        :param farm_id: ID of the farm.
         :type farm_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -484,11 +486,11 @@ class FarmsOperations:
     async def get_cascade_delete_job_details(
         self,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CascadeDeleteJob":
         """Get a cascade delete job for specified farm.
 
-        :param job_id: Id of the job.
+        :param job_id: ID of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CascadeDeleteJob, or the result of cls(response)
@@ -536,26 +538,13 @@ class FarmsOperations:
         return deserialized
     get_cascade_delete_job_details.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore
 
-    async def create_cascade_delete_job(
+    async def _create_cascade_delete_job_initial(
         self,
         job_id: str,
         farmer_id: str,
         farm_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CascadeDeleteJob":
-        """Create a cascade delete job for specified farm.
-
-        :param job_id: Job ID supplied by end user.
-        :type job_id: str
-        :param farmer_id: ID of the associated farmer.
-        :type farmer_id: str
-        :param farm_id: ID of the farm to be deleted.
-        :type farm_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CascadeDeleteJob, or the result of cls(response)
-        :rtype: ~azure.agrifood.farming.models.CascadeDeleteJob
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -565,7 +554,7 @@ class FarmsOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.create_cascade_delete_job.metadata['url']  # type: ignore
+        url = self._create_cascade_delete_job_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
@@ -597,4 +586,74 @@ class FarmsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_cascade_delete_job.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore
+    _create_cascade_delete_job_initial.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore
+
+    async def begin_create_cascade_delete_job(
+        self,
+        job_id: str,
+        farmer_id: str,
+        farm_id: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.CascadeDeleteJob"]:
+        """Create a cascade delete job for specified farm.
+
+        :param job_id: Job ID supplied by end user.
+        :type job_id: str
+        :param farmer_id: ID of the associated farmer.
+        :type farmer_id: str
+        :param farm_id: ID of the farm to be deleted.
+        :type farm_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either CascadeDeleteJob or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.agrifood.farming.models.CascadeDeleteJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJob"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_cascade_delete_job_initial(
+                job_id=job_id,
+                farmer_id=farmer_id,
+                farm_id=farm_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_cascade_delete_job.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore
