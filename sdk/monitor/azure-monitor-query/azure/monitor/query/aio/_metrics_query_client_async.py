@@ -7,7 +7,7 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, List
 
 from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,
@@ -15,14 +15,11 @@ from .._generated.aio._monitor_query_client import (
 from .._models import MetricsResult, MetricDefinition
 from .._helpers import get_authentication_policy
 
-if TYPE_CHECKING:
-try:
-    from azure.core.credentials_async import AsyncTokenCredential
-except ImportError:
-    pass
-    from azure.core.paging import ItemPaged
-    from .._models import MetricNamespace
+from azure.core.paging import ItemPaged
+from .._models import MetricNamespace
 
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 class MetricsClient(object):
     """MetricsClient
@@ -31,8 +28,7 @@ class MetricsClient(object):
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, credential, **kwargs):
-        # type: (TokenCredential, Any) -> None
+    def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         self._client = MonitorQueryClient(
             credential=credential,
             authentication_policy=get_authentication_policy(credential),
@@ -42,8 +38,7 @@ class MetricsClient(object):
         self._namespace_op = self._client.metric_namespaces
         self._definitions_op = self._client.metric_definitions
 
-    async def query(self, resource_uri, metricnames, **kwargs):
-        # type: (str, list, Any) -> MetricsResult
+    async def query(self, resource_uri: str, metricnames: List, **kwargs: Any) -> MetricsResult:
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
@@ -88,8 +83,7 @@ class MetricsClient(object):
         generated = await self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
         return MetricsResult._from_generated(generated) # pylint: disable=protected-access
 
-    async def list_metric_namespaces(self, resource_uri, **kwargs):
-        # type: (str, Any) -> ItemPaged[MetricNamespace]
+    async def list_metric_namespaces(self, resource_uri: str, **kwargs: Any) -> ItemPaged[MetricNamespace]:
         """Lists the metric namespaces for the resource.
 
         :param resource_uri: The identifier of the resource.
@@ -103,8 +97,7 @@ class MetricsClient(object):
         """
         return await self._namespace_op.list(resource_uri, **kwargs)
 
-    async def list_metric_definitions(self, resource_uri, metric_namespace=None, **kwargs):
-        # type: (str, str, Any) -> ItemPaged[MetricDefinition]
+    async def list_metric_definitions(self, resource_uri: str, metric_namespace: str=None, **kwargs: Any) -> ItemPaged[MetricDefinition]:
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.

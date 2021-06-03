@@ -7,17 +7,14 @@
 
 from typing import Any, Union, Sequence, Dict, TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError
-if TYPE_CHECKING:
-    try:
-        from azure.core.credentials_async import AsyncTokenCredential
-    except ImportError:
-        pass
-
 from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest
 from .._helpers import get_authentication_policy, process_error
 from .._models import LogsQueryResults, LogsQueryRequest, LogsQueryBody, LogsBatchResults
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class LogsClient(object):
@@ -29,7 +26,7 @@ class LogsClient(object):
     :paramtype endpoint: str
     """
 
-    def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
+    def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         self._endpoint = kwargs.pop('endpoint', 'https://api.loganalytics.io/v1')
         self._client = MonitorQueryClient(
             credential=credential,
