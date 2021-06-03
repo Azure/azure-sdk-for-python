@@ -209,11 +209,11 @@ def _convert_to_single_service_bus_message(message, message_type):
     # type: (SingleMessageType, Type[ServiceBusMessage]) -> ServiceBusMessage
     # pylint: disable=protected-access
     try:
-        # AmqpAnnotatedMessage
-        return message._to_outgoing_message(message_type)  # type: ignore
-    except TypeError:
         # ServiceBusMessage/ServiceBusReceivedMessage
         return message._to_outgoing_message()  # type: ignore
+    except TypeError:
+        # AmqpAnnotatedMessage
+        return message._to_outgoing_message(message_type)  # type: ignore
     except AttributeError:
         # Mapping representing
         pass
