@@ -5,9 +5,9 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Union, Sequence, Dict
+from typing import Any, Union, Sequence, Dict
 from azure.core.exceptions import HttpResponseError
-from azure.core.credentials_async import TokenCredential
+from azure.core.credentials import TokenCredential
 
 
 from .._generated.aio._monitor_query_client import MonitorQueryClient
