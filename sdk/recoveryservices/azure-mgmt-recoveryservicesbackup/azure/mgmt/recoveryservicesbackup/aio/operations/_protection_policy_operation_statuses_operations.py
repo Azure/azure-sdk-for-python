@@ -46,7 +46,7 @@ class ProtectionPolicyOperationStatusesOperations:
         resource_group_name: str,
         policy_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationStatus":
         """Provides the status of the asynchronous operations like backup, restore. The status can be in
         progress, completed
@@ -74,7 +74,7 @@ class ProtectionPolicyOperationStatusesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
