@@ -110,7 +110,7 @@ class DocumentTranslationClient(object):
         ...
 
     @distributed_trace_async
-    async def begin_translation(self, *args, **kwargs):
+    async def begin_translation(self, *args, **kwargs):  # pylint: disable=client-method-missing-type-annotations
         """Begin translating the document(s) in your source container to your target container
         in the given language. To perform a single translation from source to target, pass the `source_url`,
         `target_url`, and `target_language_code` parameters. To pass multiple inputs for translation, including
@@ -152,7 +152,8 @@ class DocumentTranslationClient(object):
             inputs = kwargs.pop('inputs', None)
             if not inputs:
                 inputs = args[0]
-            inputs = DocumentTranslationInput._to_generated_list(inputs) if not continuation_token else None
+            inputs = DocumentTranslationInput._to_generated_list(inputs) \
+                if not continuation_token else None  # pylint: disable=protected-access
         except (AttributeError, TypeError, IndexError):
             try:
                 source_url = kwargs.pop('source_url', None)
