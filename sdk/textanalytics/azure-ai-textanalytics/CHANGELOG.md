@@ -10,6 +10,9 @@
 - Renamed `AnalyzeBatchActionsType` to `AnalyzeActionsType`.
 - Renamed `AnalyzeBatchActionsResult` to `AnalyzeActionsResult`.
 - Renamed `AnalyzeBatchActionsError` to `AnalyzeActionsError`.
+- Renamed `AnalyzeHealthcareEntitiesResultItem` to `AnalyzeHealthcareEntitiesResult`.
+- Fixed `AnalyzeHealthcareEntitiesResult`'s `statistics` to be the correct type, `TextDocumentStatistics`
+- Remove `RequestStatistics`, use `TextDocumentBatchStatistics` instead
 
 **New Features**
 - Added enums `EntityConditionality`, `EntityCertainty`, and `EntityAssociation`.
