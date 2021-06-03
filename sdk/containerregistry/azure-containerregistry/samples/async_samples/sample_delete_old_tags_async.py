@@ -33,7 +33,6 @@ class DeleteOperations(object):
         from azure.containerregistry import TagOrder
         from azure.containerregistry.aio import (
             ContainerRegistryClient,
-            ContainerRepositoryClient,
         )
         from azure.identity.aio import DefaultAzureCredential
 
@@ -42,19 +41,19 @@ class DeleteOperations(object):
         credential = DefaultAzureCredential()
         client = ContainerRegistryClient(account_url, credential)
 
-        async for repository in client.list_repository_names():
-            repository_client = ContainerRepositoryClient(account_url, repository, credential)
-            # [END list_repository_names]
+        async with client:
+            async for repository in client.list_repository_names():
+                print(repository)
+                # [END list_repository_names]
 
-            # [START list_tags]
-            tag_count = 0
-            async for tag in repository_client.list_tags(order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
-                tag_count += 1
-                if tag_count > 3:
-                    await repository_client.delete_tag(tag.name)
-            # [END list_tags]
-
-        await client.close()
+                # [START list_tag_properties]
+                # Keep the three most recent tags, delete everything else
+                tag_count = 0
+                async for tag in client.list_tag_properties(repository, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
+                    tag_count += 1
+                    if tag_count > 3:
+                        await client.delete_tag(repository, tag.name)
+                # [END list_tag_properties]
 
 
 async def main():
@@ -62,6 +61,6 @@ async def main():
     sample.delete_old_tags()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())

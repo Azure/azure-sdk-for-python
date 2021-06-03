@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Any
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
@@ -15,7 +15,6 @@ from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
-    from typing import Dict, Any, List
 
 
 class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):
