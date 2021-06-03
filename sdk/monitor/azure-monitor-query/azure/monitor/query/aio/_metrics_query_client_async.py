@@ -16,7 +16,10 @@ from .._models import MetricsResult, MetricDefinition
 from .._helpers import get_authentication_policy
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+try:
+    from azure.core.credentials_async import AsyncTokenCredential
+except ImportError:
+    pass
     from azure.core.paging import ItemPaged
     from .._models import MetricNamespace
 
