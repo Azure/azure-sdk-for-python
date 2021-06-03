@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsm/keys/selective-restore-test-key20e5150d/create?api-version=7.2-preview
+    uri: https://managedhsm/keys/selective-restore-test-key20e5150d/create?api-version=7.2
   response:
     body:
       string: ''
@@ -29,7 +29,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key20e5150d/create?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key20e5150d/create?api-version=7.2
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -42,7 +42,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsm/keys/selective-restore-test-key20e5150d/create?api-version=7.2-preview
+    uri: https://managedhsm/keys/selective-restore-test-key20e5150d/create?api-version=7.2
   response:
     body:
       string: '{"attributes":{"created":1612829541,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1612829541},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsm/keys/selective-restore-test-key20e5150d/a649e5b2c7e646ba062f308cc4736f3c","kty":"RSA-HSM","n":"oHCH2OW-TG9B0pSwDQzO-ZgNZ1mKw_pWTkXt7CdEv_VOb9qJSfaczurdEgen9wKLM8oQPdOEhZzgHZHoQW7zXVISjgTm2JADHH29aYxzu_h8EKvA6kO4eWzN_KphSr3TIn2NqtTo7QeCeTKx4bGbZejGElVmPJhq8srqq53XhuX7xZVb6-Du5Pjm1J-mlpfZR1C2r1hx049BUdz1bPBjwcVhCqXIqUwxbPex80Von26ULxHJk3TVzogSwjTreKG2NqmJBoDzAA51id4C0JxrC7bu2tHCC1OuhWcE-JN67bBtd9Vn2O1ePda2eGsdyM3_6D_aBYtAVEK-7ksEiYyFYQ"}}'
@@ -60,7 +60,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key20e5150d/create?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key20e5150d/create?api-version=7.2
 - request:
     body: null
     headers:
@@ -377,7 +377,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://managedhsm/keys/selective-restore-test-key20e5150d?api-version=7.2-preview
+    uri: https://managedhsm/keys/selective-restore-test-key20e5150d?api-version=7.2
   response:
     body:
       string: '{"attributes":{"created":1612829541,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1612829541},"deletedDate":1612829584,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsm/keys/selective-restore-test-key20e5150d/a649e5b2c7e646ba062f308cc4736f3c","kty":"RSA-HSM","n":"oHCH2OW-TG9B0pSwDQzO-ZgNZ1mKw_pWTkXt7CdEv_VOb9qJSfaczurdEgen9wKLM8oQPdOEhZzgHZHoQW7zXVISjgTm2JADHH29aYxzu_h8EKvA6kO4eWzN_KphSr3TIn2NqtTo7QeCeTKx4bGbZejGElVmPJhq8srqq53XhuX7xZVb6-Du5Pjm1J-mlpfZR1C2r1hx049BUdz1bPBjwcVhCqXIqUwxbPex80Von26ULxHJk3TVzogSwjTreKG2NqmJBoDzAA51id4C0JxrC7bu2tHCC1OuhWcE-JN67bBtd9Vn2O1ePda2eGsdyM3_6D_aBYtAVEK-7ksEiYyFYQ"},"recoveryId":"https://managedhsm/deletedkeys/selective-restore-test-key20e5150d","scheduledPurgeDate":1620605584}'
@@ -395,7 +395,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key20e5150d?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key20e5150d?api-version=7.2
 - request:
     body: null
     headers:
@@ -404,7 +404,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/deletedkeys/selective-restore-test-key20e5150d?api-version=7.2-preview
+    uri: https://managedhsm/deletedkeys/selective-restore-test-key20e5150d?api-version=7.2
   response:
     body:
       string: '{"attributes":{"created":1612829541,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1612829541},"deletedDate":1612829584,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsm/keys/selective-restore-test-key20e5150d/a649e5b2c7e646ba062f308cc4736f3c","kty":"RSA-HSM","n":"oHCH2OW-TG9B0pSwDQzO-ZgNZ1mKw_pWTkXt7CdEv_VOb9qJSfaczurdEgen9wKLM8oQPdOEhZzgHZHoQW7zXVISjgTm2JADHH29aYxzu_h8EKvA6kO4eWzN_KphSr3TIn2NqtTo7QeCeTKx4bGbZejGElVmPJhq8srqq53XhuX7xZVb6-Du5Pjm1J-mlpfZR1C2r1hx049BUdz1bPBjwcVhCqXIqUwxbPex80Von26ULxHJk3TVzogSwjTreKG2NqmJBoDzAA51id4C0JxrC7bu2tHCC1OuhWcE-JN67bBtd9Vn2O1ePda2eGsdyM3_6D_aBYtAVEK-7ksEiYyFYQ"},"recoveryId":"https://managedhsm/deletedkeys/selective-restore-test-key20e5150d","scheduledPurgeDate":1620605584}'
@@ -423,7 +423,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/selective-restore-test-key20e5150d?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/selective-restore-test-key20e5150d?api-version=7.2
 - request:
     body: null
     headers:
@@ -432,7 +432,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://managedhsm/deletedkeys/selective-restore-test-key20e5150d?api-version=7.2-preview
+    uri: https://managedhsm/deletedkeys/selective-restore-test-key20e5150d?api-version=7.2
   response:
     body:
       string: ''
@@ -450,5 +450,5 @@ interactions:
     status:
       code: 204
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/selective-restore-test-key20e5150d?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/selective-restore-test-key20e5150d?api-version=7.2
 version: 1

@@ -3,11 +3,17 @@
 ## 12.0.0 (unreleased)
 **Breaking**
 * EdmType.Binary data in entities will now be deserialized as `bytes` in Python 3 and `str` in Python 2, rather than an `EdmProperty` instance. Likewise on serialization, `bytes` in Python 3 and `str` in Python 2 will be interpreted as binary (this is unchanged for Python 3, but breaking for Python 2, where `str` was previously serialized as EdmType.String)
+* `TableClient.create_table` now returns an instance of `TableItem`.
 
 **Fixes**
 * Fixed support for Cosmos emulator endpoint, via URL/credential or connection string.
 * Fixed table name from URL parsing in `TableClient.from_table_url` classmethod.
 * The `account_name` attribute on clients will now be pulled from an `AzureNamedKeyCredential` if used.
+* Any additional odata metadata is returned in entitys metadata.
+* The timestamp in entity metadata is now deserialized to a timestamp.
+* If the `prefer` header is added in the `create_entity` operation, the echo will be returned.
+* Errors raised on a 412 if-not-match error will now be a specific `azure.core.exceptions.ResourceModifiedError`.
+* `EdmType.DOUBLE` values are now explicitly typed in the request payload.
 
 ## 12.0.0b7 (2021-05-11)
 **Breaking**

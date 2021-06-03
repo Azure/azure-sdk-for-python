@@ -4,7 +4,7 @@ from azure.communication.phonenumbers.aio import PhoneNumbersClient
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import ResponseReplacerProcessor, BodyReplacerProcessor
 from _shared.utils import (
-    create_token_credential, 
+    async_create_token_credential, 
     get_http_logging_policy
 )
 from azure.communication.phonenumbers import (
@@ -46,7 +46,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_list_purchased_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = create_token_credential()
+        credential = async_create_token_credential()
         phone_number_client = PhoneNumbersClient(
             endpoint, 
             credential, 
@@ -71,7 +71,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_get_purchased_phone_number_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = create_token_credential()
+        credential = async_create_token_credential()
         phone_number_client = PhoneNumbersClient(
             endpoint, 
             credential, 
@@ -91,7 +91,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_search_available_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = create_token_credential()
+        credential = async_create_token_credential()
         phone_number_client = PhoneNumbersClient(
             endpoint, 
             credential, 
@@ -148,7 +148,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_phone_number_capabilities_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = create_token_credential()
+        credential = async_create_token_credential()
         phone_number_client = PhoneNumbersClient(
             endpoint, 
             credential, 
@@ -171,7 +171,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_purchase_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = create_token_credential()
+        credential = async_create_token_credential()
         phone_number_client = PhoneNumbersClient(
             endpoint, 
             credential, 

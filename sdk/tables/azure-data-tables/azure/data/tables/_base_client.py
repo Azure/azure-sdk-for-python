@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Optional, Any, List, Mapping
+from typing import Dict, Optional, Any, List, Mapping, Union
 from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
@@ -50,6 +50,7 @@ from ._policies import (
     TablesRetryPolicy,
 )
 from ._sdk_moniker import SDK_MONIKER
+
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07"]
 
@@ -133,9 +134,9 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 LocationMode.PRIMARY: primary_hostname,
                 LocationMode.SECONDARY: secondary_hostname,
             }
-        self._credential_policy = None
-        self._configure_credential(self.credential)
-        self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
+        self._credential_policy = None  # type: ignore
+        self._configure_credential(self.credential)  # type: ignore
+        self._policies = self._configure_policies(hosts=self._hosts, **kwargs)  # type: ignore
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
 
@@ -203,7 +204,7 @@ class TablesBaseClient(AccountHostsMixin):
     def __init__(
         self,
         endpoint,  # type: str
-        credential=None,  # type: str
+        credential=None,  # type: Union[AzureNamedKeyCredential, AzureSasCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -242,15 +243,15 @@ class TablesBaseClient(AccountHostsMixin):
     def _configure_credential(self, credential):
         # type: (Any) -> None
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(
+            self._credential_policy = BearerTokenCredentialPolicy(  # type: ignore
                 credential, STORAGE_OAUTH_SCOPE
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
-            self._credential_policy = credential
+            self._credential_policy = credential  # type: ignore
         elif isinstance(credential, AzureSasCredential):
-            self._credential_policy = AzureSasCredentialPolicy(credential)
+            self._credential_policy = AzureSasCredentialPolicy(credential)  # type: ignore
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential_policy = SharedKeyCredentialPolicy(credential)
+            self._credential_policy = SharedKeyCredentialPolicy(credential)  # type: ignore
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -260,9 +261,9 @@ class TablesBaseClient(AccountHostsMixin):
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
 
-        changeset = HttpRequest("POST", None)
+        changeset = HttpRequest("POST", None)  # type: ignore
         changeset.set_multipart_mixed(
-            *reqs, policies=policies, boundary="changeset_{}".format(uuid4())
+            *reqs, policies=policies, boundary="changeset_{}".format(uuid4())  # type: ignore
         )
         request = self._client._client.post(  # pylint: disable=protected-access
             url="https://{}/$batch".format(self._primary_hostname),

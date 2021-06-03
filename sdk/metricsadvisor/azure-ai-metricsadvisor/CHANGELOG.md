@@ -1,31 +1,36 @@
 # Release History
 
-## 1.0.0 (2021-06-07)
+## 1.0.0b4 (2021-06-07)
 
 **New Features**
-- Added AzureLogAnalyticsDataFeedSource and AzureEventHubsDataFeedSource
+
+- Added `AzureLogAnalyticsDataFeedSource` and `AzureEventHubsDataFeedSource`
 - Update method now returns the updated object
-- Added CredentialEntities and CredentialEntity operations
+- Added DatasourceCredentials and DatasourceCredential operations
 - Added authentication type support for data feed
 
 **Breaking Changes**
 
+- Delete methods now take positional only argument as id
+- `update_subscription_key` and `update_api_key` are merged into one method `update_key`
+- Removed `DataFeedOptions` and moved all its properties to the `DataFeed` model
+
 - Deprecated:
-    - HttpRequestDataFeed
-    - ElasticsearchDataFeed
+  - `HttpRequestDataFeed`
+  - `ElasticsearchDataFeed`
 
 - Renamed
-    - AzureApplicationInsightsDataFeed -> AzureApplicationInsightsDataFeedSource
-    - AzureBlobDataFeed -> AzureBlobDataFeedSource
-    - AzureCosmosDBDataFeed -> AzureCosmosDbDataFeedSource
-    - AzureDataExplorerDataFeed -> AzureDataExplorerDataFeedSource
-    - AzureTableDataFeed -> AzureTableDataFeedSource
-    - InfluxDBDataFeed -> InfluxDbDataFeedSource
-    - MySqlDataFeed -> MySqlDataFeedSource
-    - PostgreSqlDataFeed -> PostgreSqlDataFeedSource
-    - SQLServerDataFeed -> SqlServerDataFeedSource
-    - MongoDBDataFeed -> MongoDbDataFeedSource
-    - AzureDataLakeStorageGen2DataFeed -> AzureDataLakeStorageGen2DataFeedSource
+  - `AzureApplicationInsightsDataFeed` -> `AzureApplicationInsightsDataFeedSource`
+  - `AzureBlobDataFeed` -> `AzureBlobDataFeedSource`
+  - `AzureCosmosDBDataFeed` -> `AzureCosmosDbDataFeedSource`
+  - `AzureDataExplorerDataFeed` -> `AzureDataExplorerDataFeedSource`
+  - `AzureTableDataFeed` -> `AzureTableDataFeedSource`
+  - `InfluxDBDataFeed` -> `InfluxDbDataFeedSource`
+  - `MySqlDataFeed` -> `MySqlDataFeedSource`
+  - `PostgreSqlDataFeed` -> `PostgreSqlDataFeedSource`
+  - `SQLServerDataFeed` -> `SqlServerDataFeedSource`
+  - `MongoDBDataFeed` -> `MongoDbDataFeedSource`
+  - `AzureDataLakeStorageGen2DataFeed` -> `AzureDataLakeStorageGen2DataFeedSource`
 
 **Dependency Updates**
 
@@ -47,6 +52,7 @@
 **Hotfixes**
 
 - Bump `six` requirement from `1.6` to 1.11.0`
+
 ## 1.0.0b2 (2020-11-10)
 
 **Breaking Changes**
@@ -92,4 +98,3 @@
 ## 1.0.0b1 (2020-10-07)
 
 First preview release
-

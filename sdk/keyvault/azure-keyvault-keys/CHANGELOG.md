@@ -1,6 +1,9 @@
 # Release History
 
 ## 4.4.0b5 (Unreleased)
+### Changed
+- Key Vault API version 7.2 is now the default
+
 ### Added
 - `KeyClient` has a `create_oct_key` method for creating symmetric keys
 
