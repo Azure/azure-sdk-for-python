@@ -209,7 +209,6 @@ class TestTranslation(AsyncDocumentTranslationTest):
             result = await poller.result()
         assert e.value.error.code == "InvalidDocumentAccessLevel"
 
-    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/17914")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_bad_input_target(self, client):
@@ -233,7 +232,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         with pytest.raises(HttpResponseError) as e:
             poller = await client.begin_translation(translation_inputs)
             result = await poller.result()
-        assert e.value.error.code == "InvalidDocumentAccessLevel"
+        assert e.value.error.code == "InvalidTargetDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()

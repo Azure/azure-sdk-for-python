@@ -207,7 +207,6 @@ class TestTranslation(DocumentTranslationTest):
             result = poller.result()
         assert e.value.error.code == "InvalidDocumentAccessLevel"
 
-    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/17914")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_bad_input_target(self, client):
@@ -231,7 +230,7 @@ class TestTranslation(DocumentTranslationTest):
         with pytest.raises(HttpResponseError) as e:
             poller = client.begin_translation(translation_inputs)
             result = poller.result()
-        assert e.value.error.code == "InvalidDocumentAccessLevel"
+        assert e.value.error.code == "InvalidTargetDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
