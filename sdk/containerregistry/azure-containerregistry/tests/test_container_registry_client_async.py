@@ -137,31 +137,24 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert received.can_list == True
         assert received.can_read == True
         assert received.can_write == True
-        # assert received.teleport_enabled == True
 
         received = await client.update_repository_properties(repo, can_read=False)
         assert received.can_delete == False
         assert received.can_list == True
         assert received.can_read == False
         assert received.can_write == True
-        # assert received.teleport_enabled == True
 
         received = await client.update_repository_properties(repo, can_write=False)
         assert received.can_delete == False
         assert received.can_list == True
         assert received.can_read == False
         assert received.can_write == False
-        # assert received.teleport_enabled == True
 
         received = await client.update_repository_properties(repo, can_list=False)
         assert received.can_delete == False
         assert received.can_list == False
         assert received.can_read == False
         assert received.can_write == False
-        # assert received.teleport_enabled == True
-
-        # received = await client.update_repository_properties(repo, teleport_enabled=True)
-        # self.assert_all_properties(received, True)
 
         received = await client.update_repository_properties(
             repo,
@@ -169,7 +162,6 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             can_read=True,
             can_write=True,
             can_list=True,
-            # teleport_enabled=True,
         )
 
         self.assert_all_properties(received, True)

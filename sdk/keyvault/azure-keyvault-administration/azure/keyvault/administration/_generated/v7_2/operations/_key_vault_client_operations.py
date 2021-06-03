@@ -37,7 +37,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -100,15 +100,15 @@ class KeyVaultClientOperationsMixin(object):
         :type azure_storage_blob_container_uri: ~azure.keyvault.v7_2.models.SASTokenParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be LROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either FullBackupOperation or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_2.models.FullBackupOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FullBackupOperation"]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -178,7 +178,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         # Construct URL
@@ -226,7 +226,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -289,15 +289,15 @@ class KeyVaultClientOperationsMixin(object):
         :type restore_blob_details: ~azure.keyvault.v7_2.models.RestoreOperationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be LROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either RestoreOperation or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_2.models.RestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestoreOperation"]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -367,7 +367,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         # Construct URL
@@ -416,7 +416,7 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -483,15 +483,15 @@ class KeyVaultClientOperationsMixin(object):
         :type restore_blob_details: ~azure.keyvault.v7_2.models.SelectiveKeyRestoreOperationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be LROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either SelectiveKeyRestoreOperation or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_2.models.SelectiveKeyRestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SelectiveKeyRestoreOperation"]
         lro_delay = kwargs.pop(
             'polling_interval',

@@ -14,7 +14,7 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     TagOrder,
 )
-from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 
 from testcase import ContainerRegistryTestClass
