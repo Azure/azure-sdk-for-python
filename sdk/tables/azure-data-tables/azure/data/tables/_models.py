@@ -192,7 +192,7 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
         )
 
 
-class TableCorsRule(GeneratedCorsRule):
+class TableCorsRule(object):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -222,27 +222,37 @@ class TableCorsRule(GeneratedCorsRule):
         headers. Each header can be up to 256 characters.
     """
 
-    def __init__(  # pylint: disable=super-init-not-called
+    def __init__(
         self,
         allowed_origins,  # type: List[str]
         allowed_methods,  # type: List[str]
         **kwargs  # type: Any
     ):
         # type: (...)-> None
-
-        self.allowed_origins = ",".join(allowed_origins)
-        self.allowed_methods = ",".join(allowed_methods)
-        self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
-        self.exposed_headers = ",".join(kwargs.get("exposed_headers", []))
+        self.allowed_origins = allowed_origins
+        self.allowed_methods = allowed_methods
+        self.allowed_headers = kwargs.get("allowed_headers", [])
+        self.exposed_headers = kwargs.get("exposed_headers", [])
         self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
+
+    def _to_generated(self):
+        return GeneratedCorsRule(
+            allowed_origins=",".join(self.allowed_origins),
+            allowed_methods=",".join(self.allowed_methods),
+            allowed_headers=",".join(self.allowed_headers),
+            exposed_headers=",".join(self.exposed_headers),
+            max_age_in_seconds=self.max_age_in_seconds
+        )
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
+        exposedheaders = generated.exposed_headers.split(',') if generated.exposed_headers else []
+        allowedheaders = generated.allowed_headers.split(',') if generated.allowed_headers else []
         return cls(
-            [generated.allowed_origins],
-            [generated.allowed_methods],
-            allowed_headers=[generated.allowed_headers],
-            exposed_headers=[generated.exposed_headers],
+            generated.allowed_origins.split(','),
+            generated.allowed_methods.split(','),
+            allowed_headers=allowedheaders,
+            exposed_headers=exposedheaders,
             max_age_in_seconds=generated.max_age_in_seconds,
         )
 

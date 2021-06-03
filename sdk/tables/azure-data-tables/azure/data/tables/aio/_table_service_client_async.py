@@ -159,6 +159,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        if cors:
+            cors = [c._to_generated() for c in cors]  # pylint:disable=protected-access
         props = TableServiceProperties(
             logging=analytics_logging,
             hour_metrics=hour_metrics,

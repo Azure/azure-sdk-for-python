@@ -102,12 +102,10 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
-        cors_rule2 = TableCorsRule(
-            allowed_origins,
-            allowed_methods,
-            max_age_in_seconds=max_age_in_seconds,
-            exposed_headers=exposed_headers,
-            allowed_headers=allowed_headers)
+        cors_rule2 = TableCorsRule(allowed_origins, allowed_methods)
+        cors_rule2.max_age_in_seconds = max_age_in_seconds
+        cors_rule2.exposed_headers = exposed_headers
+        cors_rule2.allowed_headers = allowed_headers
 
         cors = [cors_rule1, cors_rule2]
 

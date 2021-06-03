@@ -154,11 +154,14 @@ class TableServiceClient(TablesBaseClient):
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        cors = kwargs.pop('cors', None)
+        if cors:
+            cors = [c._to_generated() for c in cors]  # pylint:disable=protected-access
         props = TableServiceProperties(
             logging=kwargs.pop('analytics_logging', None),
             hour_metrics=kwargs.pop('hour_metrics', None),
             minute_metrics=kwargs.pop('minute_metrics', None),
-            cors=kwargs.pop('cors', None),  # type: ignore
+            cors=cors,  # type: ignore
         )
         try:
             self._client.service.set_properties(props, **kwargs)
