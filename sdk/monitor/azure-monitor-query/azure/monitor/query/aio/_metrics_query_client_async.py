@@ -100,21 +100,19 @@ class MetricsClient(object):
         """
         return await self._namespace_op.list(resource_uri, **kwargs)
 
-    async def list_metric_definitions(self, resource_uri, **kwargs):
-        # type: (str, Any) -> ItemPaged[MetricDefinition]
+    async def list_metric_definitions(self, resource_uri, metric_namespace=None, **kwargs):
+        # type: (str, str, Any) -> ItemPaged[MetricDefinition]
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :keyword metricnamespace: Metric namespace to query metric definitions for.
-        :paramtype metricnamespace: str
+        :param metric_namespace: Metric namespace to query metric definitions for.
+        :type metric_namespace: str
         :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return await MetricDefinition._from_generated( # pylint: disable=protected-access
-            self._namespace_op.list(resource_uri, **kwargs)
-        )
+        return await self._definitions_op.list(resource_uri, metric_namespace, **kwargs)
 
     async def __aenter__(self) -> "MetricsClient":
         await self._client.__aenter__()
