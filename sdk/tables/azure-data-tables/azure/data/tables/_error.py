@@ -95,7 +95,10 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):
     try:
         if not error_type:
             error_code = TableErrorCode(error_code)
-            if error_code in [TableErrorCode.condition_not_met]:
+            if error_code in [
+                TableErrorCode.condition_not_met,
+                TableErrorCode.update_condition_not_satisfied
+            ]:
                 error_type = ResourceModifiedError
             elif error_code in [
                 TableErrorCode.invalid_authentication_info,

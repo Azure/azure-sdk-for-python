@@ -44,7 +44,7 @@ class CrrOperationStatusOperations:
         self,
         azure_region: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationStatus":
         """get.
 

@@ -1,5 +1,24 @@
 # Release History
 
+## 1.0.0 (2021-05-26)
+
+**Features**
+
+  - Added operation group BackupUsageSummariesCRROperations
+
+**Breaking changes**
+
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreRequest no longer has parameter target_virtual_machine_id
+  - Model AzureWorkloadSAPHanaRestoreWithRehydrateRequest no longer has parameter target_virtual_machine_id
+  - Model AzureWorkloadSQLRestoreWithRehydrateRequest no longer has parameter target_virtual_machine_id
+  - Model AzureWorkloadRestoreRequest no longer has parameter target_virtual_machine_id
+  - Model AzureWorkloadSAPHanaRestoreRequest no longer has parameter target_virtual_machine_id
+  - Model AzureWorkloadSQLPointInTimeRestoreRequest no longer has parameter target_virtual_machine_id
+  - Model AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest no longer has parameter target_virtual_machine_id
+  - Model AzureWorkloadSQLRestoreRequest no longer has parameter target_virtual_machine_id
+  - Model AzureWorkloadPointInTimeRestoreRequest no longer has parameter target_virtual_machine_id
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest no longer has parameter target_virtual_machine_id
+
 ## 1.0.0b1 (2021-05-14)
 
 This is beta preview version.

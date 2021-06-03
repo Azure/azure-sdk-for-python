@@ -30,7 +30,8 @@ from azure.data.tables import (
     generate_table_sas,
     TableSasPermissions,
     RequestTooLargeError,
-    TransactionOperation
+    TransactionOperation,
+    TableErrorCode
 )
 
 from _shared.asynctestcase import AsyncTableTestCase
@@ -221,6 +222,8 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             )]
             with pytest.raises(TableTransactionError) as error:
                 await self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             # Assert
             received_entity = await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
@@ -632,8 +635,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
             batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]
 
-            with pytest.raises(TableTransactionError):
+            with pytest.raises(TableTransactionError) as error:
                 await self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             received.metadata["etag"] = good_etag
             batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]

@@ -110,6 +110,36 @@ class SystemEventNames(str, Enum):
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
+    FarmBeatsApplicationNameChangedEventName = 'Microsoft.AgFoodPlatform.ApplicationDataChanged'
+
+    FarmBeatsBoundaryChangedEventName = 'Microsoft.AgFoodPlatform.BoundaryChanged'
+
+    FarmBeatsCropChangedEventName = 'Microsoft.AgFoodPlatform.CropChanged'
+
+    FarmBeatsCropVarietyChangedEventName = 'Microsoft.AgFoodPlatform.CropVarietyChanged'
+
+    FarmBeatsFarmChangedEventName = 'Microsoft.AgFoodPlatform.FarmChanged'
+
+    FarmBeatsFarmOperationNameIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.FarmOperationDataIngestionJobStatusChanged'
+
+    FarmBeatsFarmerChangedEventName = 'Microsoft.AgFoodPlatform.FarmerChanged'
+
+    FarmBeatsFieldChangedEventName = 'Microsoft.AgFoodPlatform.FieldChanged'
+
+    FarmBeatsHarvestNameChangedEventName = 'Microsoft.AgFoodPlatform.HarvestDataChanged'
+
+    FarmBeatsPlantingNameChangedEventName = 'Microsoft.AgFoodPlatform.PlantingDataChanged'
+
+    FarmBeatsSatelliteNameIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.SatelliteDataIngestionJobStatusChanged'
+
+    FarmBeatsSeasonChangedEventName = 'Microsoft.AgFoodPlatform.SeasonChanged'
+
+    FarmBeatsSeasonalFieldChangedEventName = 'Microsoft.AgFoodPlatform.SeasonalFieldChanged'
+
+    FarmBeatsTillageNameChangedEventName = 'Microsoft.AgFoodPlatform.TillageDataChanged'
+
+    FarmBeatsWeatherNameIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.WeatherDataIngestionJobStatusChanged'
+
     IotHubDeviceConnectedEventName = 'Microsoft.Devices.DeviceConnected'
 
     IotHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
@@ -242,6 +272,8 @@ class SystemEventNames(str, Enum):
 
     ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailablePeriodicNotifications'
 
+    ServiceBusDeadletterMessagesAvailableWithNoListenersEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
+
     SignalRServiceClientConnectionConnectedEventName = 'Microsoft.SignalRService.ClientConnectionConnected'
 
     SignalRServiceClientConnectionDisconnectedEventName = 'Microsoft.SignalRService.ClientConnectionDisconnected'
@@ -251,6 +283,8 @@ class SystemEventNames(str, Enum):
     StorageBlobCreatedEventName = 'Microsoft.Storage.BlobCreated'
 
     StorageBlobDeletedEventName = 'Microsoft.Storage.BlobDeleted'
+
+    StorageBlobInventoryPolicyCompletedEventName = 'Microsoft.Storage.BlobInventoryPolicyCompleted'
 
     StorageBlobRenamedEventName = 'Microsoft.Storage.BlobRenamed'
 
