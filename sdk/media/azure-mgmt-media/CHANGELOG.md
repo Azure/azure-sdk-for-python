@@ -1,5 +1,21 @@
 # Release History
 
+## 4.0.0 (2021-06-03)
+
+**Features**
+
+  - Model Operation has a new parameter is_data_action
+  - Model Operation has a new parameter action_type
+  - Model MediaService has a new parameter key_delivery
+  - Model MetricSpecification has a new parameter supported_time_grain_types
+  - Model MetricSpecification has a new parameter source_mdm_namespace
+  - Model MetricSpecification has a new parameter source_mdm_account
+  - Model MetricSpecification has a new parameter enable_regional_mdm_account
+
+**Breaking changes**
+
+  - Removed operation MediaservicesOperations.get_by_subscription
+
 ## 3.1.0 (2021-02-24)
 
 **Features**
