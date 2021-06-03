@@ -66,6 +66,21 @@ try:
     from ._models_py3 import DeviceTwinProperties
     from ._models_py3 import EventGridEvent
     from ._models_py3 import EventHubCaptureFileCreatedEventData
+    from ._models_py3 import FarmBeatsApplicationDataChangedEventData
+    from ._models_py3 import FarmBeatsBoundaryChangedEventData
+    from ._models_py3 import FarmBeatsCropChangedEventData
+    from ._models_py3 import FarmBeatsCropVarietyChangedEventData
+    from ._models_py3 import FarmBeatsFarmChangedEventData
+    from ._models_py3 import FarmBeatsFarmOperationDataIngestionJobStatusChangedEventData
+    from ._models_py3 import FarmBeatsFarmerChangedEventData
+    from ._models_py3 import FarmBeatsFieldChangedEventData
+    from ._models_py3 import FarmBeatsHarvestDataChangedEventData
+    from ._models_py3 import FarmBeatsPlantingDataChangedEventData
+    from ._models_py3 import FarmBeatsSatelliteDataIngestionJobStatusChangedEventData
+    from ._models_py3 import FarmBeatsSeasonChangedEventData
+    from ._models_py3 import FarmBeatsSeasonalFieldChangedEventData
+    from ._models_py3 import FarmBeatsTillageDataChangedEventData
+    from ._models_py3 import FarmBeatsWeatherDataIngestionJobStatusChangedEventData
     from ._models_py3 import IotHubDeviceConnectedEventData
     from ._models_py3 import IotHubDeviceCreatedEventData
     from ._models_py3 import IotHubDeviceDeletedEventData
@@ -146,6 +161,7 @@ try:
     from ._models_py3 import StorageAsyncOperationInitiatedEventData
     from ._models_py3 import StorageBlobCreatedEventData
     from ._models_py3 import StorageBlobDeletedEventData
+    from ._models_py3 import StorageBlobInventoryPolicyCompletedEventData
     from ._models_py3 import StorageBlobRenamedEventData
     from ._models_py3 import StorageBlobTierChangedEventData
     from ._models_py3 import StorageDirectoryCreatedEventData
@@ -230,6 +246,21 @@ except (SyntaxError, ImportError):
     from ._models import DeviceTwinProperties  # type: ignore
     from ._models import EventGridEvent  # type: ignore
     from ._models import EventHubCaptureFileCreatedEventData  # type: ignore
+    from ._models import FarmBeatsApplicationDataChangedEventData  # type: ignore
+    from ._models import FarmBeatsBoundaryChangedEventData  # type: ignore
+    from ._models import FarmBeatsCropChangedEventData  # type: ignore
+    from ._models import FarmBeatsCropVarietyChangedEventData  # type: ignore
+    from ._models import FarmBeatsFarmChangedEventData  # type: ignore
+    from ._models import FarmBeatsFarmOperationDataIngestionJobStatusChangedEventData  # type: ignore
+    from ._models import FarmBeatsFarmerChangedEventData  # type: ignore
+    from ._models import FarmBeatsFieldChangedEventData  # type: ignore
+    from ._models import FarmBeatsHarvestDataChangedEventData  # type: ignore
+    from ._models import FarmBeatsPlantingDataChangedEventData  # type: ignore
+    from ._models import FarmBeatsSatelliteDataIngestionJobStatusChangedEventData  # type: ignore
+    from ._models import FarmBeatsSeasonChangedEventData  # type: ignore
+    from ._models import FarmBeatsSeasonalFieldChangedEventData  # type: ignore
+    from ._models import FarmBeatsTillageDataChangedEventData  # type: ignore
+    from ._models import FarmBeatsWeatherDataIngestionJobStatusChangedEventData  # type: ignore
     from ._models import IotHubDeviceConnectedEventData  # type: ignore
     from ._models import IotHubDeviceCreatedEventData  # type: ignore
     from ._models import IotHubDeviceDeletedEventData  # type: ignore
@@ -310,6 +341,7 @@ except (SyntaxError, ImportError):
     from ._models import StorageAsyncOperationInitiatedEventData  # type: ignore
     from ._models import StorageBlobCreatedEventData  # type: ignore
     from ._models import StorageBlobDeletedEventData  # type: ignore
+    from ._models import StorageBlobInventoryPolicyCompletedEventData  # type: ignore
     from ._models import StorageBlobRenamedEventData  # type: ignore
     from ._models import StorageBlobTierChangedEventData  # type: ignore
     from ._models import StorageDirectoryCreatedEventData  # type: ignore
@@ -340,10 +372,12 @@ from ._event_grid_publisher_client_enums import (
     AppServicePlanAction,
     AsyncStatus,
     CommunicationCloudEnvironmentModel,
+    JobStatus,
     MediaJobErrorCategory,
     MediaJobErrorCode,
     MediaJobRetry,
     MediaJobState,
+    ResourceActionType,
     StampKind,
 )
 
@@ -407,6 +441,21 @@ __all__ = [
     'DeviceTwinProperties',
     'EventGridEvent',
     'EventHubCaptureFileCreatedEventData',
+    'FarmBeatsApplicationDataChangedEventData',
+    'FarmBeatsBoundaryChangedEventData',
+    'FarmBeatsCropChangedEventData',
+    'FarmBeatsCropVarietyChangedEventData',
+    'FarmBeatsFarmChangedEventData',
+    'FarmBeatsFarmOperationDataIngestionJobStatusChangedEventData',
+    'FarmBeatsFarmerChangedEventData',
+    'FarmBeatsFieldChangedEventData',
+    'FarmBeatsHarvestDataChangedEventData',
+    'FarmBeatsPlantingDataChangedEventData',
+    'FarmBeatsSatelliteDataIngestionJobStatusChangedEventData',
+    'FarmBeatsSeasonChangedEventData',
+    'FarmBeatsSeasonalFieldChangedEventData',
+    'FarmBeatsTillageDataChangedEventData',
+    'FarmBeatsWeatherDataIngestionJobStatusChangedEventData',
     'IotHubDeviceConnectedEventData',
     'IotHubDeviceCreatedEventData',
     'IotHubDeviceDeletedEventData',
@@ -487,6 +536,7 @@ __all__ = [
     'StorageAsyncOperationInitiatedEventData',
     'StorageBlobCreatedEventData',
     'StorageBlobDeletedEventData',
+    'StorageBlobInventoryPolicyCompletedEventData',
     'StorageBlobRenamedEventData',
     'StorageBlobTierChangedEventData',
     'StorageDirectoryCreatedEventData',
@@ -515,9 +565,11 @@ __all__ = [
     'AppServicePlanAction',
     'AsyncStatus',
     'CommunicationCloudEnvironmentModel',
+    'JobStatus',
     'MediaJobErrorCategory',
     'MediaJobErrorCode',
     'MediaJobRetry',
     'MediaJobState',
+    'ResourceActionType',
     'StampKind',
 ]

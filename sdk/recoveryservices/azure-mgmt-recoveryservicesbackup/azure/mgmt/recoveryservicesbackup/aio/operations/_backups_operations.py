@@ -48,7 +48,7 @@ class BackupsOperations:
         container_name: str,
         protected_item_name: str,
         parameters: "_models.BackupRequestResource",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Triggers backup for specified backed up item. This is an asynchronous operation. To know the
         status of the
@@ -77,7 +77,7 @@ class BackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

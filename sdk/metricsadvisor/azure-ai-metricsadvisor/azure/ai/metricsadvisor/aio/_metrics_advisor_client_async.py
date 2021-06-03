@@ -757,8 +757,6 @@ class MetricsAdvisorClient(object):
          yyyy-MM-ddTHH:mm:ssZ.
         :type active_since: datetime.datetime
         :keyword int skip:
-        :keyword datetime.datetime active_since: query series ingested after this time, the format should be
-                 yyyy-MM-ddTHH:mm:ssZ.
         :keyword dimension_filter: filter specfic dimension name and values.
         :paramtype dimension_filter: dict[str, list[str]]
         :return: Series (dimension combinations) from metric.

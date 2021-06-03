@@ -47,7 +47,7 @@ class BackupProtectedItemsCrrOperations:
         resource_group_name: str,
         filter: Optional[str] = None,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProtectedItemResourceList"]:
         """Provides a pageable list of all items that are backed up within a vault.
 
