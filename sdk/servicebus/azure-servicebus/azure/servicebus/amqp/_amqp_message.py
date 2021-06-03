@@ -105,8 +105,6 @@ class AmqpAnnotatedMessage(object):
     :paramtype annotations: Optional[dict]
     :keyword delivery_annotations: Service specific delivery annotations.
     :paramtype delivery_annotations: Optional[dict]
-
-    :raises: :class:`ValueError`
     """
 
     def __init__(self, **kwargs):
