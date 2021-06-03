@@ -12,9 +12,9 @@
     "/sip": {
       "get": {
         "tags": [
-          "SipRouting"
+          "SipConfiguration"
         ],
-        "summary": "Get SIP configuration for resource.",
+        "summary": "Gets SIP configuration for resource.",
         "operationId": "GetSipConfiguration",
         "produces": [
           "application/json"
@@ -34,7 +34,7 @@
           "default": {
             "description": "Failure.",
             "schema": {
-              "$ref": "#/definitions/ErrorResponse"
+              "$ref": "#/definitions/CommunicationErrorResponse"
             }
           }
         },
@@ -46,9 +46,9 @@
       },
       "patch": {
         "tags": [
-          "SipRouting"
+          "SipConfiguration"
         ],
-        "summary": "Patch SIP configuration for resource.",
+        "summary": "Patches SIP configuration for resource.",
         "operationId": "PatchSipConfiguration",
         "consumes": [
           "application/merge-patch+json"
@@ -80,7 +80,7 @@
             "description": "Unsupported media type of the patch."
           },
           "422": {
-            "description": "If the request is empty, unprocessable or inconsistent with the stored data.\n{ \"code\":\"EmptyPatch\",\"message\":\"Request failed: 'Patch with no data provided'.\" }\n{ \"code\":\"InvalidRegex\",\"message\":\"Request failed: 'Not supported regex format provided'.\" }\n{ \"code\":\"InvalidTrunkFqdn\",\"message\":\"Request failed: 'Trunk with an invalid fqdn'.\" }\n{ \"code\":\"InvalidTrunkSipPort\",\"message\":\"Request failed: 'Trunk with an invalid sip signaling port'.\"}\n{ \"code\":\"DuplicatedTrunk\",\"message\":\"Request failed: 'There is a duplicated trunk'.\" }\n{ \"code\":\"TooManyTrunks\",\"message\":\"Request failed: 'Too many trunks provided'.\" }\n{ \"code\":\"InvalidRouteName\",\"message\":\"Request failed: 'Route with an invalid name'.\" }\n{ \"code\":\"InvalidRouteNumberPattern\",\"message\":\"Request failed: 'Route with an invalid number pattern'.\" }\n{ \"code\":\"InvalidRouteDescription\",\"message\":\"Request failed: 'Route with an invalid description'.\" }\n{ \"code\":\"MissingTrunk\",\"message\":\"Request failed: 'Route targeting a missing trunk'.\" }\n{ \"code\":\"DuplicatedRoute\",\"message\":\"Request failed: 'There is a duplicated route'.\" }\n{ \"code\":\"TooManyRoutes\",\"message\":\"Request failed: 'Too many routes provided'.\" }\n{ \"code\":\"RouteWithDuplicatedTrunk\",\"message\":\"Request failed: 'There is a duplicated trunk in a route'.\" }\n{ \"code\":\"RouteWithTooManyTrunks\",\"message\":\"Request failed: 'Route with too many trunks'.\" }"
+            "description": "If the request is empty, unprocessable or inconsistent with the stored data."
           },
           "500": {
             "description": "All other api errors."
@@ -88,7 +88,7 @@
           "default": {
             "description": "Failure.",
             "schema": {
-              "$ref": "#/definitions/ErrorResponse"
+              "$ref": "#/definitions/CommunicationErrorResponse"
             }
           }
         },
@@ -139,7 +139,7 @@
           "type": "string"
         },
         "trunks": {
-          "description": "Gets or sets list of SIP trunks for routing calls. Trunks are represented as fqdn.",
+          "description": "Gets or sets list of SIP trunks for routing calls. Trunks are represented as FQDN.",
           "maxLength": 250,
           "type": "array",
           "items": {
@@ -149,11 +149,11 @@
       }
     },
     "SipConfiguration": {
-      "description": "Represents a SIP configuration.",
+      "description": "Represents a SIP configuration.\nWhen a call is being routed the routes are applied in the same order as in the routes list.\nA route is matched by its number pattern.\nCall is then directed into route's first available trunk, based on the order in the route's trunks list.",
       "type": "object",
       "properties": {
         "trunks": {
-          "description": "SIP trunks for routing calls. Map key is trunk's fqdn (1-255 characters)",
+          "description": "SIP trunks for routing calls.\nMap key is trunk's FQDN (1-249 characters).",
           "maxLength": 250,
           "type": "object",
           "additionalProperties": {
@@ -161,7 +161,7 @@
           }
         },
         "routes": {
-          "description": "Trunk routes for routing calls. Route's name is used as the key.",
+          "description": "Trunk routes for routing calls.",
           "maxLength": 250,
           "type": "array",
           "items": {
@@ -170,26 +170,47 @@
         }
       }
     },
-    "ErrorBody": {
-      "description": "Represents a service error response body.",
+    "CommunicationError": {
+      "description": "Represents the Communication Services error.",
+      "required": [
+        "code",
+        "message"
+      ],
       "type": "object",
       "properties": {
         "code": {
-          "description": "The error code in the error response.",
+          "description": "The error code.",
           "type": "string"
         },
         "message": {
-          "description": "The error message in the error response.",
+          "description": "The error message.",
           "type": "string"
+        },
+        "target": {
+          "description": "The error target.",
+          "type": "string"
+        },
+        "details": {
+          "description": "Further details about specific errors that led to this error.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CommunicationError"
+          }
+        },
+        "innererror": {
+          "$ref": "#/definitions/CommunicationError"
         }
       }
     },
-    "ErrorResponse": {
-      "description": "Represents a service error response.",
+    "CommunicationErrorResponse": {
+      "description": "Represents the Communication Services error response.",
+      "required": [
+        "error"
+      ],
       "type": "object",
       "properties": {
         "error": {
-          "$ref": "#/definitions/ErrorBody"
+          "$ref": "#/definitions/CommunicationError"
         }
       }
     }
