@@ -7,7 +7,7 @@
 
 from typing import Any, Union, Sequence, Dict
 from azure.core.exceptions import HttpResponseError
-from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 
 from .._generated.aio._monitor_query_client import MonitorQueryClient
@@ -21,12 +21,12 @@ class LogsClient(object):
     """LogsClient
 
     :param credential: The credential to authenticate the client
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io/v1'.
     :paramtype endpoint: str
     """
 
-    def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
+    def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
         self._endpoint = kwargs.pop('endpoint', 'https://api.loganalytics.io/v1')
         self._client = MonitorQueryClient(
             credential=credential,
