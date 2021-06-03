@@ -10,54 +10,83 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
-class ErrorBody(msrest.serialization.Model):
-    """Represents a service error response body.
+class CommunicationError(msrest.serialization.Model):
+    """Represents the Communication Services error.
 
-    :param code: The error code in the error response.
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. The error code.
     :type code: str
-    :param message: The error message in the error response.
+    :param message: Required. The error message.
     :type message: str
+    :param target: The error target.
+    :type target: str
+    :param details: Further details about specific errors that led to this error.
+    :type details: list[~azure.communication.siprouting.models.CommunicationError]
+    :param innererror: Represents the Communication Services error.
+    :type innererror: ~azure.communication.siprouting.models.CommunicationError
     """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[CommunicationError]'},
+        'innererror': {'key': 'innererror', 'type': 'CommunicationError'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(ErrorBody, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        super(CommunicationError, self).__init__(**kwargs)
+        self.code = kwargs['code']
+        self.message = kwargs['message']
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)
+        self.innererror = kwargs.get('innererror', None)
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Represents a service error response.
+class CommunicationErrorResponse(msrest.serialization.Model):
+    """Represents the Communication Services error response.
 
-    :param error: Represents a service error response body.
-    :type error: ~azure.communication.siprouting.models.ErrorBody
+    All required parameters must be populated in order to send to Azure.
+
+    :param error: Required. Represents the Communication Services error.
+    :type error: ~azure.communication.siprouting.models.CommunicationError
     """
 
+    _validation = {
+        'error': {'required': True},
+    }
+
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorBody'},
+        'error': {'key': 'error', 'type': 'CommunicationError'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        super(CommunicationErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs['error']
 
 
 class SipConfiguration(msrest.serialization.Model):
     """Represents a SIP configuration.
+When a call is being routed the routes are applied in the same order as in the routes list.
+A route is matched by its number pattern.
+Call is then directed into route's first available trunk, based on the order in the route's trunks list.
 
-    :param trunks: SIP trunks for routing calls. Map key is trunk's fqdn (1-255 characters).
+    :param trunks: SIP trunks for routing calls.
+     Map key is trunk's FQDN (1-249 characters).
     :type trunks: dict[str, ~azure.communication.siprouting.models.Trunk]
-    :param routes: Trunk routes for routing calls. Route's name is used as the key.
+    :param routes: Trunk routes for routing calls.
     :type routes: list[~azure.communication.siprouting.models.TrunkRoute]
     """
 
@@ -115,7 +144,7 @@ class TrunkRoute(msrest.serialization.Model):
      I.e. "^\+[1-9][0-9]{3,23}$".
     :type number_pattern: str
     :param trunks: Gets or sets list of SIP trunks for routing calls. Trunks are represented as
-     fqdn.
+     FQDN.
     :type trunks: list[str]
     """
 

@@ -7,21 +7,21 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import ErrorBody
-    from ._models_py3 import ErrorResponse
+    from ._models_py3 import CommunicationError
+    from ._models_py3 import CommunicationErrorResponse
     from ._models_py3 import SipConfiguration
     from ._models_py3 import Trunk
     from ._models_py3 import TrunkRoute
 except (SyntaxError, ImportError):
-    from ._models import ErrorBody  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
+    from ._models import CommunicationError  # type: ignore
+    from ._models import CommunicationErrorResponse  # type: ignore
     from ._models import SipConfiguration  # type: ignore
     from ._models import Trunk  # type: ignore
     from ._models import TrunkRoute  # type: ignore
 
 __all__ = [
-    'ErrorBody',
-    'ErrorResponse',
+    'CommunicationError',
+    'CommunicationErrorResponse',
     'SipConfiguration',
     'Trunk',
     'TrunkRoute',

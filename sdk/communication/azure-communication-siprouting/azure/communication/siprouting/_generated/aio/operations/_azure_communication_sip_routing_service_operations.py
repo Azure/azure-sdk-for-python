@@ -23,9 +23,9 @@ class AzureCommunicationSIPRoutingServiceOperationsMixin:
         self,
         **kwargs: Any
     ) -> "_models.SipConfiguration":
-        """Get SIP configuration for resource.
+        """Gets SIP configuration for resource.
 
-        Get SIP configuration for resource.
+        Gets SIP configuration for resource.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SipConfiguration, or the result of cls(response)
@@ -61,7 +61,7 @@ class AzureCommunicationSIPRoutingServiceOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SipConfiguration', pipeline_response)
@@ -77,9 +77,9 @@ class AzureCommunicationSIPRoutingServiceOperationsMixin:
         body: Optional["_models.SipConfiguration"] = None,
         **kwargs: Any
     ) -> Optional["_models.SipConfiguration"]:
-        """Patch SIP configuration for resource.
+        """Patches SIP configuration for resource.
 
-        Patch SIP configuration for resource.
+        Patches SIP configuration for resource.
 
         :param body: Configuration patch.
         :type body: ~azure.communication.siprouting.models.SipConfiguration
@@ -125,7 +125,7 @@ class AzureCommunicationSIPRoutingServiceOperationsMixin:
 
         if response.status_code not in [200, 415, 422, 500]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = None
