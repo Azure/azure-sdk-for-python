@@ -1,5 +1,16 @@
 # Release History
 
+## 2.0.0 (2021-05-26)
+
+**Features**
+
+  - Model DatadogMonitorResourceUpdateParameters has a new parameter sku
+  - Added operation MonitorsOperations.begin_update
+
+**Breaking changes**
+
+  - Removed operation MonitorsOperations.update
+
 ## 1.0.0 (2021-03-22)
 
 **Features**

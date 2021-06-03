@@ -14,15 +14,15 @@ urlFragment: documenttranslation-samples
 These code samples show common scenario operations with the Azure Document Translation client library.
 The async versions of the samples require Python 3.6 or later.
 
-You can authenticate your client with a Document Translation API key:
+You can authenticate your client with a Document Translation API key or through Azure Active Directory with a token credential from [azure-identity][azure_identity]:
 * See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases.
 
 These sample programs show common scenarios for the Document Translation client's offerings.
 
 |**File Name**|**Description**|
 |----------------|-------------|
-|[sample_create_translation_job.py][create_translation_job] and [sample_create_translation_job_async.py][create_translation_job_async]|Create a document translation job|
-|[sample_translation_with_glossaries.py][create_translation_job_with_glossaries] and [sample_translation_with_glossaries_async.py][create_translation_job_with_glossaries_async]|Create a document translation job using custom glossaries|
+|[sample_begin_translation.py][begin_translation] and [sample_begin_translation_async.py][begin_translation_async]|Translate your documents|
+|[sample_translation_with_glossaries.py][create_translation_job_with_glossaries] and [sample_translation_with_glossaries_async.py][create_translation_job_with_glossaries_async]|Translate your documents using custom glossaries|
 |[sample_check_document_statuses.py][check_document_statuses] and [sample_check_document_statuses_async.py][check_document_statuses_async]|Check status of submitted documents|
 |[sample_list_all_submitted_jobs.py][list_all_submitted_jobs] and [sample_list_all_submitted_jobs_async.py][list_all_submitted_jobs_async]|Check status of all submitted translation jobs|
 
@@ -64,8 +64,8 @@ what you can do with the Azure Document Translation client library.
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/translation/azure-ai-translation-document/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_authentication_async.py
-[create_translation_job]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/translation/azure-ai-translation-document/samples/sample_create_translation_job.py
-[create_translation_job_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_create_translation_job_async.py
+[begin_translation]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/translation/azure-ai-translation-document/samples/sample_begin_translation.py
+[begin_translation_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_begin_translation_async.py
 [create_translation_job_with_azure_blob]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_azure_blob.py
 [create_translation_job_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_azure_blob_async.py
 [create_translation_job_with_glossaries]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_glossaries.py

@@ -254,10 +254,6 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
     :ivar int documents_not_yet_started_count: Number of documents that have not yet started being translated.
     :ivar int documents_cancelled_count: Number of documents that were cancelled for translation.
     :ivar int total_characters_charged: Total characters charged across all documents within the job.
-    :ivar bool has_completed: boolean to check whether a job has finished or not.
-        If the status returned indicates that the translation job has completed.
-        A translation job is considered 'complete' if it has reached
-        a terminal state like 'Succeeded', 'Cancelled', or 'Failed'."
     """
 
     def __init__(
@@ -265,9 +261,9 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
         **kwargs
     ):
         # type: (**Any) -> None
-        self.id = kwargs['id']
-        self.created_on = kwargs['created_on']
-        self.last_updated_on = kwargs['last_updated_on']
+        self.id = kwargs.get('id')
+        self.created_on = kwargs.get('created_on')
+        self.last_updated_on = kwargs.get('last_updated_on', None)
         self.status = kwargs.get('status', None)
         self.error = kwargs.get("error", None)
         self.documents_total_count = kwargs.get('documents_total_count', None)
@@ -277,10 +273,11 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
         self.documents_not_yet_started_count = kwargs.get('documents_not_yet_started_count', None)
         self.documents_cancelled_count = kwargs.get('documents_cancelled_count', None)
         self.total_characters_charged = kwargs.get('total_characters_charged', None)
-        self.has_completed = kwargs.get('has_completed', False)
 
     @classmethod
     def _from_generated(cls, batch_status_details):
+        if not batch_status_details:
+            return cls()
         return cls(
             id=batch_status_details.id,
             created_on=batch_status_details.created_date_time_utc,
@@ -294,8 +291,7 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
             documents_in_progress_count=batch_status_details.summary.in_progress,
             documents_not_yet_started_count=batch_status_details.summary.not_yet_started,
             documents_cancelled_count=batch_status_details.summary.cancelled,
-            total_characters_charged=batch_status_details.summary.total_character_charged,
-            has_completed=bool(batch_status_details.status not in ["NotStarted", "Running", "Cancelling"])
+            total_characters_charged=batch_status_details.summary.total_character_charged
         )
 
     def __repr__(self):
@@ -303,12 +299,12 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
             "last_updated_on={}, status={}, error={}, documents_total_count={}, "\
             "documents_failed_count={}, documents_succeeded_count={}, "\
             "documents_in_progress_count={}, documents_not_yet_started_count={}, "\
-            "documents_cancelled_count={}, total_characters_charged={}, has_completed={})" \
+            "documents_cancelled_count={}, total_characters_charged={})" \
             .format(self.id, self.created_on, self.last_updated_on, self.status,
                 self.error.__repr__(), self.documents_total_count, self.documents_failed_count,
                 self.documents_succeeded_count, self.documents_in_progress_count,
                 self.documents_not_yet_started_count, self.documents_cancelled_count,
-                self.total_characters_charged, self.has_completed)[:1024]
+                self.total_characters_charged)[:1024]
 
 
 class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritance, R0903, R0902
@@ -339,10 +335,6 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         Value is between [0.0, 1.0].
     :ivar str id: Document Id.
     :ivar int characters_charged: Characters charged for the document.
-    :ivar bool has_completed: boolean to check whether a document finished translation or not.
-        If the status returned indicates that the document has completed.
-        A document is considered 'complete' if it has reached
-        a terminal state like 'Succeeded', 'Cancelled', or 'Failed'."
     """
 
     def __init__(
@@ -360,8 +352,6 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         self.translation_progress = kwargs.get('translation_progress', None)
         self.id = kwargs.get('id', None)
         self.characters_charged = kwargs.get('characters_charged', None)
-        self.has_completed = kwargs.get('has_completed', False)
-
 
     @classmethod
     def _from_generated(cls, doc_status):
@@ -375,8 +365,7 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
             error=DocumentTranslationError._from_generated(doc_status.error) if doc_status.error else None,  # pylint: disable=protected-access
             translation_progress=doc_status.progress,
             id=doc_status.id,
-            characters_charged=doc_status.character_charged,
-            has_completed=bool(doc_status.status not in ["NotStarted", "Running", "Cancelling"])
+            characters_charged=doc_status.character_charged
         )
 
     def __repr__(self):
@@ -384,10 +373,10 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         return "DocumentStatusResult(id={}, source_document_url={}, "\
             "translated_document_url={}, created_on={}, last_updated_on={}, "\
             "status={}, translate_to={}, error={}, translation_progress={}, "\
-            "characters_charged={}, has_completed={}" \
+            "characters_charged={})" \
             .format(self.id, self.source_document_url, self.translated_document_url,
                 self.created_on, self.last_updated_on, self.status, self.translate_to,
-                self.error.__repr__(), self.translation_progress, self.characters_charged, self.has_completed)[:1024]
+                self.error.__repr__(), self.translation_progress, self.characters_charged)[:1024]
 
 
 class DocumentTranslationError(object):  # pylint: disable=useless-object-inheritance, R0903

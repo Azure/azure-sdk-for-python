@@ -128,7 +128,7 @@
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
 
 # Management Plane
-/**/*mgmt*/     @00Kai0 @msyyc @jsntcy @changlong-liu
+/**/*mgmt*/                                                          @RAY-316 @msyyc 
 
 
 ###########

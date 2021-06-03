@@ -46,7 +46,7 @@ class NetAppResourceOperations:
         name: str,
         type: Union[str, "_models.CheckNameResourceTypes"],
         resource_group: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckAvailabilityResponse":
         """Check resource name availability.
 
@@ -72,7 +72,7 @@ class NetAppResourceOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _body = _models.ResourceNameAvailabilityRequest(name=name, type=type, resource_group=resource_group)
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -118,7 +118,7 @@ class NetAppResourceOperations:
         name: str,
         type: Union[str, "_models.CheckNameResourceTypes"],
         resource_group: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckAvailabilityResponse":
         """Check file path availability.
 
@@ -144,7 +144,7 @@ class NetAppResourceOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _body = _models.ResourceNameAvailabilityRequest(name=name, type=type, resource_group=resource_group)
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -190,7 +190,7 @@ class NetAppResourceOperations:
         name: str,
         type: Union[str, "_models.CheckQuotaNameResourceTypes"],
         resource_group: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckAvailabilityResponse":
         """Check quota availability.
 
@@ -216,7 +216,7 @@ class NetAppResourceOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _body = _models.QuotaAvailabilityRequest(name=name, type=type, resource_group=resource_group)
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
+import os
 from typing import TYPE_CHECKING
 
 import six
@@ -11,6 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.transport import HttpRequest
 
 from .. import CredentialUnavailableError
+from .._constants import EnvironmentVariables
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.managed_identity_client import ManagedIdentityClient
 
@@ -34,7 +36,7 @@ PIPELINE_SETTINGS = {
 
 
 def get_request(scope, identity_config):
-    request = HttpRequest("GET", IMDS_URL)
+    request = HttpRequest("GET", os.environ.get(EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL, IMDS_URL))
     request.format_parameters(dict({"api-version": "2018-02-01", "resource": scope}, **identity_config))
     return request
 
@@ -44,10 +46,11 @@ class ImdsCredential(GetTokenMixin):
         # type: (**Any) -> None
         super(ImdsCredential, self).__init__()
 
-        self._client = ManagedIdentityClient(
-            get_request, _identity_config=kwargs.pop("identity_config", None) or {}, **dict(PIPELINE_SETTINGS, **kwargs)
-        )
-        self._endpoint_available = None  # type: Optional[bool]
+        self._client = ManagedIdentityClient(get_request, **dict(PIPELINE_SETTINGS, **kwargs))
+        if EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL in os.environ:
+            self._endpoint_available = True  # type: Optional[bool]
+        else:
+            self._endpoint_available = None
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
     def _acquire_token_silently(self, *scopes):

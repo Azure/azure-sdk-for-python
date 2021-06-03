@@ -8,8 +8,8 @@
 FILE: sample_check_document_statuses.py
 
 DESCRIPTION:
-    This sample demonstrates how to create a translation job and then monitor each document's status
-    and progress within the job.
+    This sample demonstrates how to begin translation and then monitor each document's status
+    and progress.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
@@ -28,9 +28,9 @@ USAGE:
 
 
 def sample_document_status_checks():
+    # [START list_all_document_statuses]
     import os
     import time
-    # [START create_translation_job]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (
         DocumentTranslationClient,
@@ -45,7 +45,7 @@ def sample_document_status_checks():
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
-    job_result = client.create_translation_job(inputs=[
+    poller = client.begin_translation(inputs=[
             DocumentTranslationInput(
                 source_url=source_container_url,
                 targets=[
@@ -56,14 +56,13 @@ def sample_document_status_checks():
                 ]
             )
         ]
-    )  # type: JobStatusResult
-    # [END create_translation_job]
+    )
 
     completed_docs = []
-    while not job_result.has_completed:
+    while not poller.done():
         time.sleep(30)
 
-        doc_statuses = client.list_all_document_statuses(job_result.id)
+        doc_statuses = client.list_all_document_statuses(poller.id)
         for document in doc_statuses:
             if document.id not in completed_docs:
                 if document.status == "Succeeded":
@@ -81,9 +80,8 @@ def sample_document_status_checks():
                         document.id, document.translation_progress * 100
                     ))
 
-        job_result = client.get_job_status(job_result.id)
-
-    print("\nTranslation job completed.")
+        print("\nTranslation completed.")
+    # [END list_all_document_statuses]
 
 
 if __name__ == '__main__':

@@ -6,7 +6,6 @@
 from azure.core.credentials import AzureNamedKeyCredential
 import pytest
 import platform
-from time import sleep
 
 from devtools_testutils import AzureTestCase
 
@@ -50,9 +49,6 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         async for table in tables:
             count += 1
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @cosmos_decorator_async
     async def test_user_agent_custom_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         custom_app = "TestApp/v1.0"
@@ -86,9 +82,6 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         async for table in tables:
             count += 1
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @cosmos_decorator_async
     async def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -104,9 +97,6 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         count = 0
         async for table in tables:
             count += 1
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
 
 class TestTableClientUnit(AsyncTableTestCase):
@@ -421,7 +411,7 @@ class TestTableClientUnit(AsyncTableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            assert service.account_name == "custom"
+            assert service.account_name == self.tables_cosmos_account_name
             assert service.credential.named_key.name == self.tables_cosmos_account_name
             assert service.credential.named_key.key == self.tables_primary_cosmos_account_key
             assert service._primary_hostname == 'local-machine:11002/custom/account/path'
@@ -495,6 +485,50 @@ class TestTableClientUnit(AsyncTableTestCase):
                     assert str(e.value) == "Connection string is either blank or malformed."
                 elif conn_str in ("foobar=baz=foo"):
                    assert str(e.value) == "Connection string missing required connection details."
+
+    def test_create_client_for_cosmos_emulator(self):
+        emulator_credential = AzureNamedKeyCredential('localhost', self.tables_primary_cosmos_account_key)
+        emulator_connstr = "DefaultEndpointsProtocol=http;AccountName=localhost;AccountKey={};TableEndpoint=http://localhost:8902/;".format(
+            self.tables_primary_cosmos_account_key
+        )
+
+        client = TableServiceClient.from_connection_string(emulator_connstr)
+        assert client.url == "http://localhost:8902"
+        assert client.account_name == 'localhost'
+        assert client.credential.named_key.name == 'localhost'
+        assert client.credential.named_key.key == self.tables_primary_cosmos_account_key
+        assert client._cosmos_endpoint
+
+        client = TableServiceClient("http://localhost:8902/", emulator_credential)
+        assert client.url == "http://localhost:8902"
+        assert client.account_name == 'localhost'
+        assert client.credential.named_key.name == 'localhost'
+        assert client.credential.named_key.key == self.tables_primary_cosmos_account_key
+        assert client._cosmos_endpoint
+
+        table = TableClient.from_connection_string(emulator_connstr, 'tablename')
+        assert table.url == "http://localhost:8902"
+        assert table.account_name == 'localhost'
+        assert table.table_name == 'tablename'
+        assert table.credential.named_key.name == 'localhost'
+        assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
+        assert table._cosmos_endpoint
+
+        table = TableClient("http://localhost:8902/", "tablename", emulator_credential)
+        assert table.url == "http://localhost:8902"
+        assert table.account_name == 'localhost'
+        assert table.table_name == 'tablename'
+        assert table.credential.named_key.name == 'localhost'
+        assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
+        assert table._cosmos_endpoint
+
+        table = TableClient.from_table_url("http://localhost:8902/Tables('tablename')", emulator_credential)
+        assert table.url == "http://localhost:8902"
+        assert table.account_name == 'localhost'
+        assert table.table_name == 'tablename'
+        assert table.credential.named_key.name == 'localhost'
+        assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
+        assert table._cosmos_endpoint
 
     @pytest.mark.asyncio
     async def test_closing_pipeline_client_async(self):

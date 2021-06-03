@@ -26,20 +26,6 @@ def text_document_statistics():
     return model, model_repr
 
 @pytest.fixture
-def request_statistics():
-    model = _models.RequestStatistics(
-        documents_count=1,
-        valid_documents_count=1,
-        erroneous_documents_count=0,
-        transactions_count=1
-    )
-
-    model_repr = "RequestStatistics(documents_count=1, valid_documents_count=1, erroneous_documents_count=0, transactions_count=1)"
-
-    assert repr(model) == model_repr
-    return model, model_repr
-
-@pytest.fixture
 def text_analytics_warning():
     model = _models.TextAnalyticsWarning(
         code="LongWordsInDocument",
@@ -458,7 +444,7 @@ class TestRepr():
     def test_analyze_healthcare_entities_result_item(
         self, healthcare_entity, healthcare_relation, text_analytics_warning, text_document_statistics
     ):
-        model = _models.AnalyzeHealthcareEntitiesResultItem(
+        model = _models.AnalyzeHealthcareEntitiesResult(
             id=1,
             entities=[healthcare_entity[0]],
             entity_relations=[healthcare_relation[0]],
@@ -468,7 +454,7 @@ class TestRepr():
         )
 
         model_repr = (
-            "AnalyzeHealthcareEntitiesResultItem(id=1, entities=[{}], entity_relations=[{}], warnings=[{}], statistics={}, is_error=False)".format(
+            "AnalyzeHealthcareEntitiesResult(id=1, entities=[{}], entity_relations=[{}], warnings=[{}], statistics={}, is_error=False)".format(
                 healthcare_entity[1], healthcare_relation[1], text_analytics_warning[1], text_document_statistics[1]
             )
         )

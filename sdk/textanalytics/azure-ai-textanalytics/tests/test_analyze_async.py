@@ -429,6 +429,8 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 assert len(document_results) == len(action_order)
                 for document_result in document_results:
                     assert document_result.statistics
+                    assert document_result.statistics.character_count
+                    assert document_result.statistics.transaction_count
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

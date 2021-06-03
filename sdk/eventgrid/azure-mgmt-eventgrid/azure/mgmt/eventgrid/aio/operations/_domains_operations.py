@@ -47,7 +47,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Domain":
         """Get a domain.
 
@@ -67,7 +67,7 @@ class DomainsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -108,14 +108,14 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         domain_info: "_models.Domain",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Domain":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -161,7 +161,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         domain_info: "_models.Domain",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Domain"]:
         """Create or update a domain.
 
@@ -175,8 +175,8 @@ class DomainsOperations:
         :type domain_info: ~azure.mgmt.eventgrid.models.Domain
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Domain or the result of cls(response)
@@ -233,14 +233,14 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -262,7 +262,7 @@ class DomainsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
@@ -275,7 +275,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a domain.
 
@@ -287,8 +287,8 @@ class DomainsOperations:
         :type domain_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -342,14 +342,14 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         domain_update_parameters: "_models.DomainUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Domain"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Domain"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -397,7 +397,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         domain_update_parameters: "_models.DomainUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Domain"]:
         """Update a domain.
 
@@ -411,8 +411,8 @@ class DomainsOperations:
         :type domain_update_parameters: ~azure.mgmt.eventgrid.models.DomainUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -469,7 +469,7 @@ class DomainsOperations:
         self,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DomainsListResult"]:
         """List domains under an Azure subscription.
 
@@ -496,7 +496,7 @@ class DomainsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -555,7 +555,7 @@ class DomainsOperations:
         resource_group_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DomainsListResult"]:
         """List domains under a resource group.
 
@@ -584,7 +584,7 @@ class DomainsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -643,7 +643,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DomainSharedAccessKeys":
         """List keys for a domain.
 
@@ -663,7 +663,7 @@ class DomainsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -704,7 +704,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         regenerate_key_request: "_models.DomainRegenerateKeyRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DomainSharedAccessKeys":
         """Regenerate key for a domain.
 
@@ -726,7 +726,7 @@ class DomainsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

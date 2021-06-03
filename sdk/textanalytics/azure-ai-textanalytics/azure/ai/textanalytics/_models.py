@@ -205,9 +205,9 @@ class RecognizePiiEntitiesResult(DictMixin):
             )[:1024]
 
 
-class AnalyzeHealthcareEntitiesResultItem(DictMixin):
+class AnalyzeHealthcareEntitiesResult(DictMixin):
     """
-    AnalyzeHealthcareEntitiesResultItem contains the Healthcare entities from a
+    AnalyzeHealthcareEntitiesResult contains the Healthcare entities from a
     particular document.
 
     :ivar str id: Unique, non-empty document identifier that matches the
@@ -230,7 +230,7 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a AnalyzeHealthcareEntitiesResultItem.
+        results. Always False for an instance of a AnalyzeHealthcareEntitiesResult.
     """
 
     def __init__(self, **kwargs):
@@ -256,7 +256,7 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
         )
 
     def __repr__(self):
-        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, entity_relations={}, warnings={}, "\
+        return "AnalyzeHealthcareEntitiesResult(id={}, entities={}, entity_relations={}, warnings={}, "\
         "statistics={}, is_error={})".format(
             self.id,
             repr(self.entities),
@@ -1657,28 +1657,3 @@ class RecognizeLinkedEntitiesAction(DictMixin):
                 logging_opt_out=self.disable_service_logs,
             )
         )
-
-class RequestStatistics(DictMixin):
-    def __init__(self, **kwargs):
-        self.documents_count = kwargs.get("documents_count")
-        self.valid_documents_count = kwargs.get("valid_documents_count")
-        self.erroneous_documents_count = kwargs.get("erroneous_documents_count")
-        self.transactions_count = kwargs.get("transactions_count")
-
-    @classmethod
-    def _from_generated(cls, request_statistics):
-        return cls(
-            documents_count=request_statistics.documents_count,
-            valid_documents_count=request_statistics.valid_documents_count,
-            erroneous_documents_count=request_statistics.erroneous_documents_count,
-            transactions_count=request_statistics.transactions_count
-        )
-
-    def __repr__(self, **kwargs):
-        return "RequestStatistics(documents_count={}, valid_documents_count={}, erroneous_documents_count={}, " \
-            "transactions_count={})".format(
-                self.documents_count,
-                self.valid_documents_count,
-                self.erroneous_documents_count,
-                self.transactions_count
-            )[:1024]

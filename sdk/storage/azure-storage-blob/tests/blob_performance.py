@@ -12,7 +12,7 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
 )
-import tests.settings_real as settings
+import _shared.settings_real as settings
 
 # Warning:
 # This script will take a while to run with everything enabled.

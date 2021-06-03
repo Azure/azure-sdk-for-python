@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import ManagementGroupsAPIConfiguration
 from .operations import ManagementGroupsOperations
@@ -44,13 +45,6 @@ manage access control, policies, alerting and reporting for those resources.
     :vartype entities: azure.mgmt.managementgroups.operations.EntitiesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param skip: Number of entities to skip over when retrieving results. Passing this in will override $skipToken.
-    :type skip: int
-    :param top: Number of elements to return when retrieving results. Passing this in will override $skipToken.
-    :type top: int
-    :param skiptoken: Page continuation token is only used if a previous operation returned a partial result. 
-If a previous response contains a nextLink element, the value of the nextLink element will include a token parameter that specifies a starting point to use for subsequent calls.
-    :type skiptoken: str
     :param str base_url: Service URL
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
@@ -58,16 +52,13 @@ If a previous response contains a nextLink element, the value of the nextLink el
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        skip=None,  # type: Optional[int]
-        top=None,  # type: Optional[int]
-        skiptoken=None,  # type: Optional[str]
         base_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = ManagementGroupsAPIConfiguration(credential, skip, top, skiptoken, **kwargs)
+        self._config = ManagementGroupsAPIConfiguration(credential, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -85,6 +76,21 @@ If a previous response contains a nextLink element, the value of the nextLink el
             self._client, self._config, self._serialize, self._deserialize)
         self.entities = EntitiesOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        http_request.url = self._client.format_url(http_request.url)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

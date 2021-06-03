@@ -390,7 +390,7 @@ class TestTableUnitTests(TableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            assert service.account_name == "custom"
+            assert service.account_name == self.tables_storage_account_name
             assert service.credential.named_key.name == self.tables_storage_account_name
             assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_hostname == 'local-machine:11002/custom/account/path'
@@ -526,3 +526,80 @@ class TestTableUnitTests(TableTestCase):
 
         with pytest.raises(ValueError):
             TableServiceClient(url, credential=self.credential, api_version="foo")
+
+    def test_create_client_for_azurite(self):
+        azurite_credential = AzureNamedKeyCredential("myaccount", self.tables_primary_storage_account_key)
+        http_connstr = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey={};TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;".format(
+            self.tables_primary_storage_account_key
+        )
+        https_connstr = "DefaultEndpointsProtocol=https;AccountName=devstoreaccount1;AccountKey={};TableEndpoint=https://127.0.0.1:10002/devstoreaccount1;".format(
+            self.tables_primary_storage_account_key
+        )
+        account_url = "https://127.0.0.1:10002/myaccount"
+        client = TableServiceClient(account_url, credential=azurite_credential)
+        assert client.account_name == "myaccount"
+        assert client.url == "https://127.0.0.1:10002/myaccount"
+        assert client._location_mode == "primary"
+        assert client._secondary_endpoint == "https://127.0.0.1:10002/myaccount-secondary"
+        assert client.credential.named_key.key == azurite_credential.named_key.key
+        assert client.credential.named_key.name == azurite_credential.named_key.name
+        assert not client._cosmos_endpoint
+
+        client = TableServiceClient.from_connection_string(http_connstr)
+        assert client.account_name == "devstoreaccount1"
+        assert client.url == "http://127.0.0.1:10002/devstoreaccount1"
+        assert client._location_mode == "primary"
+        assert client._secondary_endpoint == "http://127.0.0.1:10002/devstoreaccount1-secondary"
+        assert client.credential.named_key.key == self.tables_primary_storage_account_key
+        assert client.credential.named_key.name == "devstoreaccount1"
+        assert not client._cosmos_endpoint
+
+        client = TableServiceClient.from_connection_string(https_connstr)
+        assert client.account_name == "devstoreaccount1"
+        assert client.url == "https://127.0.0.1:10002/devstoreaccount1"
+        assert client._location_mode == "primary"
+        assert client._secondary_endpoint == "https://127.0.0.1:10002/devstoreaccount1-secondary"
+        assert client.credential.named_key.key == self.tables_primary_storage_account_key
+        assert client.credential.named_key.name == "devstoreaccount1"
+        assert not client._cosmos_endpoint
+
+        table = TableClient(account_url, "tablename", credential=azurite_credential)
+        assert table.account_name == "myaccount"
+        assert table.table_name == "tablename"
+        assert table.url == "https://127.0.0.1:10002/myaccount"
+        assert table._location_mode == "primary"
+        assert table._secondary_endpoint == "https://127.0.0.1:10002/myaccount-secondary"
+        assert table.credential.named_key.key == azurite_credential.named_key.key
+        assert table.credential.named_key.name == azurite_credential.named_key.name
+        assert not table._cosmos_endpoint
+
+        table = TableClient.from_connection_string(http_connstr, "tablename")
+        assert table.account_name == "devstoreaccount1"
+        assert table.table_name == "tablename"
+        assert table.url == "http://127.0.0.1:10002/devstoreaccount1"
+        assert table._location_mode == "primary"
+        assert table._secondary_endpoint == "http://127.0.0.1:10002/devstoreaccount1-secondary"
+        assert table.credential.named_key.key == self.tables_primary_storage_account_key
+        assert table.credential.named_key.name == "devstoreaccount1"
+        assert not table._cosmos_endpoint
+
+        table = TableClient.from_connection_string(https_connstr, "tablename")
+        assert table.account_name == "devstoreaccount1"
+        assert table.table_name == "tablename"
+        assert table.url == "https://127.0.0.1:10002/devstoreaccount1"
+        assert table._location_mode == "primary"
+        assert table._secondary_endpoint == "https://127.0.0.1:10002/devstoreaccount1-secondary"
+        assert table.credential.named_key.key == self.tables_primary_storage_account_key
+        assert table.credential.named_key.name == "devstoreaccount1"
+        assert not table._cosmos_endpoint
+
+        table_url = "https://127.0.0.1:10002/myaccount/Tables('tablename')"
+        table = TableClient.from_table_url(table_url, azurite_credential)
+        assert table.account_name == "myaccount"
+        assert table.table_name == "tablename"
+        assert table.url == "https://127.0.0.1:10002/myaccount"
+        assert table._location_mode == "primary"
+        assert table._secondary_endpoint == "https://127.0.0.1:10002/myaccount-secondary"
+        assert table.credential.named_key.key == azurite_credential.named_key.key
+        assert table.credential.named_key.name == azurite_credential.named_key.name
+        assert not table._cosmos_endpoint

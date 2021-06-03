@@ -3,11 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
+import os
 from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 
 from ... import CredentialUnavailableError
+from ..._constants import EnvironmentVariables
 from .._internal import AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.managed_identity_client import AsyncManagedIdentityClient
@@ -24,10 +26,11 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
     def __init__(self, **kwargs: "Any") -> None:
         super().__init__()
 
-        self._client = AsyncManagedIdentityClient(
-            get_request, _identity_config=kwargs.pop("identity_config", None) or {}, **PIPELINE_SETTINGS, **kwargs
-        )
-        self._endpoint_available = None  # type: Optional[bool]
+        self._client = AsyncManagedIdentityClient(get_request, **PIPELINE_SETTINGS, **kwargs)
+        if EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL in os.environ:
+            self._endpoint_available = True  # type: Optional[bool]
+        else:
+            self._endpoint_available = None
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
     async def close(self) -> None:

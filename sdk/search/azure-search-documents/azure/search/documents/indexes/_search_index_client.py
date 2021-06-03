@@ -277,7 +277,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.analyze(
-            index_name=index_name, request=analyze_request.to_analyze_request(), **kwargs
+            index_name=index_name, request=analyze_request._to_analyze_request(), **kwargs  # pylint:disable=protected-access
         )
         return result
 

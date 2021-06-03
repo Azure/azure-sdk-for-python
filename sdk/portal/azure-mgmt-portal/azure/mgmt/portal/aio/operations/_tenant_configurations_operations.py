@@ -43,7 +43,7 @@ class TenantConfigurationsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ConfigurationList"]:
         """Gets list of the tenant configurations.
 
@@ -93,7 +93,7 @@ class TenantConfigurationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -107,7 +107,7 @@ class TenantConfigurationsOperations:
     async def get(
         self,
         configuration_name: Union[str, "_models.ConfigurationName"],
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Configuration"]:
         """Gets the tenant configuration.
 
@@ -147,7 +147,7 @@ class TenantConfigurationsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -164,7 +164,7 @@ class TenantConfigurationsOperations:
         self,
         configuration_name: Union[str, "_models.ConfigurationName"],
         tenant_configuration: "_models.Configuration",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Configuration":
         """Create the tenant configuration. If configuration already exists - update it. User has to be a
         Tenant Admin for this operation.
@@ -212,7 +212,7 @@ class TenantConfigurationsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -230,7 +230,7 @@ class TenantConfigurationsOperations:
     async def delete(
         self,
         configuration_name: Union[str, "_models.ConfigurationName"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete the tenant configuration. User has to be a Tenant Admin for this operation.
 
@@ -270,7 +270,7 @@ class TenantConfigurationsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

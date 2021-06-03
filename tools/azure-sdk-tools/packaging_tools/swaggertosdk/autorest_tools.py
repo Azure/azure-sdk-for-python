@@ -19,10 +19,7 @@ def autorest_swagger_to_sdk_conf(readme, output_folder, config):
     autorest_bin = shutil.which("autorest")
     # --input-file=foo is to workaround a bug where the command is not executed at all if no input-file is found (even if we don't care about input-file here)
     cmd_line = "{} {} --perform-load=false --swagger-to-sdk --output-artifact=configuration.json --input-file=foo --output-folder={} --version={}".format(
-        autorest_bin,
-        str(readme),
-        str(output_folder),
-        str(config['meta']['autorest_options']['version'])
+        autorest_bin, str(readme), str(output_folder), str(config["meta"]["autorest_options"]["version"])
     )
     execute_simple_command(cmd_line.split())
     conf_path = Path(output_folder, "configuration.json")
@@ -34,7 +31,7 @@ def autorest_swagger_to_sdk_conf(readme, output_folder, config):
 
 def autorest_bootstrap_version_finder():
     try:
-        npm_bin = shutil.which('npm')
+        npm_bin = shutil.which("npm")
         cmd_line = ("{} --json ls autorest -g".format(npm_bin)).split()
         return json.loads(subprocess.check_output(cmd_line).decode().strip())
     except Exception:
@@ -47,8 +44,8 @@ def merge_options(global_conf, local_conf, key, *, keep_list_order=False):
     If keep_list_order is True, list are merged global+local. Might have duplicate.
     If false, duplication are removed.
     """
-    global_keyed_conf = global_conf.get(key) # Could be None
-    local_keyed_conf = local_conf.get(key) # Could be None
+    global_keyed_conf = global_conf.get(key)  # Could be None
+    local_keyed_conf = local_conf.get(key)  # Could be None
 
     if global_keyed_conf is None or local_keyed_conf is None:
         return global_keyed_conf or local_keyed_conf
@@ -69,17 +66,20 @@ def merge_options(global_conf, local_conf, key, *, keep_list_order=False):
 def build_autorest_options(global_conf, local_conf):
     """Build the string of the Autorest options"""
     merged_options = merge_options(global_conf, local_conf, "autorest_options") or {}
+
     def value(x):
-        escaped = x if " " not in x else "'"+x+"'"
+        escaped = x if " " not in x else "'" + x + "'"
         return "={}".format(escaped) if escaped else ""
+
     listify = lambda x: x if isinstance(x, list) else [x]
 
-    sorted_keys = sorted(list(merged_options.keys())) # To be honest, just to help for tests...
+    sorted_keys = sorted(list(merged_options.keys()))  # To be honest, just to help for tests...
     return [
         "--{}{}".format(key.lower(), value(str(option)))
         for key in sorted_keys
         for option in listify(merged_options[key])
     ]
+
 
 def generate_code(input_file, global_conf, local_conf, output_dir=None, autorest_bin=None):
     """Call the Autorest process with the given parameters.
@@ -94,7 +94,7 @@ def generate_code(input_file, global_conf, local_conf, output_dir=None, autorest
 
     params = [str(input_file)] if input_file else []
     if output_dir:  # For legacy. Define "output-folder" as "autorest_options" now
-        params.append("--output-folder={}".format(str(output_dir)+os.path.sep))
+        params.append("--output-folder={}".format(str(output_dir) + os.path.sep))
     params += build_autorest_options(global_conf, local_conf)
 
     input_files = local_conf.get("autorest_options", {}).get("input-file", [])
@@ -123,30 +123,28 @@ def generate_code(input_file, global_conf, local_conf, output_dir=None, autorest
 
 def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
     try:
-        process = subprocess.Popen(cmd_line,
-                                   stderr=subprocess.STDOUT,
-                                   stdout=subprocess.PIPE,
-                                   universal_newlines=True,
-                                   cwd=cwd,
-                                   shell=shell,
-                                   env=env,
-                                   encoding='utf-8')
+        process = subprocess.Popen(
+            cmd_line,
+            stderr=subprocess.STDOUT,
+            stdout=subprocess.PIPE,
+            universal_newlines=True,
+            cwd=cwd,
+            shell=shell,
+            env=env,
+            encoding="utf-8",
+        )
         output_buffer = []
         for line in process.stdout:
             output_buffer.append(line.rstrip())
-            _LOGGER.info(f"==[autorest]"+output_buffer[-1])
+            _LOGGER.info(f"==[autorest]" + output_buffer[-1])
         process.wait()
         output = "\n".join(output_buffer)
         if process.returncode:
             # print necessary error info
             for i in range(-min(len(output_buffer), 5), 0):
-                print(f'[Autorest] {output_buffer[i]}')
-                
-            raise subprocess.CalledProcessError(
-                process.returncode,
-                cmd_line,
-                output
-            )
+                print(f"[Autorest] {output_buffer[i]}")
+
+            raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
     except Exception as err:
         _LOGGER.error(err)

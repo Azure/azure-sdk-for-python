@@ -7,7 +7,8 @@ stages:
       ServiceDirectory: tables
       AllocateResourceGroup: false
       DeployArmTemplate: true
-      TestSamples: true
+      MatrixReplace:
+        - TestSamples=.*/true
       EnvVars:
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
