@@ -39,10 +39,6 @@ import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceExistsError
 from azure.ai.translation.document.aio import DocumentTranslationClient
-from azure.ai.translation.document import (
-    DocumentTranslationInput,
-    TranslationTarget
-)
 from azure.storage.blob.aio import BlobServiceClient, BlobClient
 from azure.storage.blob import generate_container_sas
 
@@ -93,19 +89,7 @@ class SampleTranslationWithAzureBlobAsync(object):
         source_container_sas_url = self.generate_sas_url(source_container, permissions="rl")
         target_container_sas_url = self.generate_sas_url(target_container, permissions="wl")
 
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_sas_url,
-                        language_code="fr"
-                    )
-                ]
-            )
-        ]
-
-        poller = await translation_client.begin_translation(translation_inputs)
+        poller = await translation_client.begin_translation(source_container_sas_url, target_container_sas_url, "fr")
         print("Created translation operation with ID: {}".format(poller.id))
         print("Waiting until translation completes...")
 

@@ -15,7 +15,6 @@ from ._helpers import _enforce_https
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
-    from typing import Optional
 
 
 class ContainerRegistryChallengePolicy(HTTPPolicy):

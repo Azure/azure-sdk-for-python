@@ -37,11 +37,7 @@ import os
 import datetime
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceExistsError
-from azure.ai.translation.document import (
-    DocumentTranslationClient,
-    DocumentTranslationInput,
-    TranslationTarget
-)
+from azure.ai.translation.document import DocumentTranslationClient
 from azure.storage.blob import BlobServiceClient, BlobClient, generate_container_sas
 
 
@@ -91,19 +87,7 @@ class SampleTranslationWithAzureBlob(object):
         source_container_sas_url = self.generate_sas_url(source_container, permissions="rl")
         target_container_sas_url = self.generate_sas_url(target_container, permissions="wl")
 
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_sas_url,
-                        language_code="fr"
-                    )
-                ]
-            )
-        ]
-
-        poller = translation_client.begin_translation(translation_inputs)
+        poller = translation_client.begin_translation(source_container_sas_url, target_container_sas_url, "fr")
         print("Created translation operation with ID: {}".format(poller.id))
         print("Waiting until translation completes...")
 
