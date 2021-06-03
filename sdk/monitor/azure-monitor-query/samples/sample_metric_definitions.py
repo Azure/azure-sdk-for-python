@@ -2,11 +2,8 @@
 # Licensed under the MIT License.
 
 import os
-import urllib3
 from azure.monitor.query import MetricsClient
 from azure.identity import ClientSecretCredential
-
-urllib3.disable_warnings()
 
 credential  = ClientSecretCredential(
         client_id = os.environ['AZURE_CLIENT_ID'],
@@ -17,15 +14,7 @@ credential  = ClientSecretCredential(
 client = MetricsClient(credential)
 
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
-response = client.query(
-    metrics_uri,
-    metricnames=["PublishSuccessCount"],
-    timespan='P2D'
-    )
+response = client.list_metric_definitions(metrics_uri, metric_namespace='microsoft.eventgrid/topics')
 
-for metric in response.metrics:
-    print(metric.name)
-    for time_series_element in metric.timeseries:
-        for metric_value in time_series_element.data:
-            print(metric_value.time_stamp)
-    
+for item in response:
+    pass

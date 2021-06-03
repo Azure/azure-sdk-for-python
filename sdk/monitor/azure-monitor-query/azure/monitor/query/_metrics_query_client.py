@@ -102,22 +102,19 @@ class MetricsClient(object):
         """
         return self._namespace_op.list(resource_uri, **kwargs)
 
-    def list_metric_definitions(self, resource_uri, metricnamespace=None, **kwargs):
+    def list_metric_definitions(self, resource_uri, metric_namespace=None, **kwargs):
         # type: (str, str, Any) -> ItemPaged[MetricDefinition]
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param metricnamespace: Metric namespace to query metric definitions for.
-        :type metricnamespace: str
+        :param metric_namespace: Metric namespace to query metric definitions for.
+        :type metric_namespace: str
         :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        kwargs.setdefault("metricnamespace", metricnamespace)
-        return MetricDefinition._from_generated( # pylint: disable=protected-access
-            self._namespace_op.list(resource_uri, **kwargs)
-        )
+        return self._definitions_op.list(resource_uri, metric_namespace, **kwargs)
 
     def close(self):
         # type: () -> None
