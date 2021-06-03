@@ -1,6 +1,9 @@
 # Release History
 
 ## 4.0.0b4 (Unreleased)
+### Changed
+- Key Vault API version 7.2 is now the default
+
 ### Added
 - `KeyVaultAccessControlClient.set_role_definition` accepts an optional 
   `assignable_scopes` keyword-only argument

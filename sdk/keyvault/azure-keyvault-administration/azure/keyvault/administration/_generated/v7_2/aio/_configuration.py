@@ -27,7 +27,7 @@ class KeyVaultClientConfiguration(Configuration):
     ) -> None:
         super(KeyVaultClientConfiguration, self).__init__(**kwargs)
 
-        self.api_version = "7.2-preview"
+        self.api_version = "7.2"
         kwargs.setdefault('sdk_moniker', 'keyvault/{}'.format(VERSION))
         self._configure(**kwargs)
 

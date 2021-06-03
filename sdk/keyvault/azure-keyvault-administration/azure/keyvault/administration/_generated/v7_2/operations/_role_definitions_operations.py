@@ -70,7 +70,7 @@ class RoleDefinitionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         # Construct URL
@@ -138,7 +138,7 @@ class RoleDefinitionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -206,7 +206,7 @@ class RoleDefinitionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         # Construct URL
@@ -270,7 +270,7 @@ class RoleDefinitionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2-preview"
+        api_version = "7.2"
         accept = "application/json"
 
         def prepare_request(next_link=None):
