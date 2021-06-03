@@ -25,10 +25,10 @@ from .models import (
     CommentFeedback,
     PeriodFeedback,
     DataFeedRollupType,
-    SqlConnectionStringCredentialEntity,
-    DataLakeGen2SharedKeyCredentialEntity,
-    ServicePrincipalCredentialEntity,
-    ServicePrincipalInKeyVaultCredentialEntity
+    DatasourceSqlConnectionString,
+    DatasourceDataLakeGen2SharedKey,
+    DatasourceServicePrincipal,
+    DatasourceServicePrincipalInKeyVault
 )
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
@@ -108,7 +108,13 @@ def convert_to_generated_data_feed_type(
         granularity,
         schema,
         ingestion_settings,
-        options
+        admin_emails=None,
+        data_feed_description=None,
+        missing_data_point_fill_settings=None,
+        rollup_settings=None,
+        viewer_emails=None,
+        access_mode=None,
+        action_link_template=None
 ):
     """Convert input to data feed generated model type
 
@@ -129,8 +135,19 @@ def convert_to_generated_data_feed_type(
     :type schema: ~azure.ai.metricsadvisor.models.DataFeedSchema
     :param ingestion_settings: The data feed ingestions settings
     :type ingestion_settings: ~azure.ai.metricsadvisor.models.DataFeedIngestionSettings
-    :param options: Data feed options.
-    :type options: ~azure.ai.metricsadvisor.models.DataFeedOptions
+    :param list[str] admin_emails: Data feed administrator emails.
+    :param str data_feed_description: Data feed description.
+    :param missing_data_point_fill_settings: The fill missing point type and value.
+    :type missing_data_point_fill_settings:
+        ~azure.ai.metricsadvisor.models.DataFeedMissingDataPointFillSettings
+    :param rollup_settings: The rollup settings.
+    :type rollup_settings:
+        ~azure.ai.metricsadvisor.models.DataFeedRollupSettings
+    :param list[str] viewer_emails: Data feed viewer emails.
+    :param access_mode: Data feed access mode. Possible values include:
+        "Private", "Public". Default value: "Private".
+    :type access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
+    :param str action_link_template: action link for alert.
     :rtype: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
         AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, AzureLogAnalyticsDataFeed,
         InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
@@ -168,22 +185,22 @@ def convert_to_generated_data_feed_type(
         min_retry_interval_in_seconds=ingestion_settings.ingestion_retry_delay,
         start_offset_in_seconds=ingestion_settings.ingestion_start_offset,
         stop_retry_after_in_seconds=ingestion_settings.stop_retry_after,
-        data_feed_description=options.data_feed_description if options else None,
-        need_rollup=DataFeedRollupType._to_generated(options.rollup_settings.rollup_type)
-        if options and options.rollup_settings else None,
-        roll_up_method=options.rollup_settings.rollup_method if options and options.rollup_settings else None,
-        roll_up_columns=options.rollup_settings.auto_rollup_group_by_column_names
-        if options and options.rollup_settings else None,
-        all_up_identification=options.rollup_settings.rollup_identification_value
-        if options and options.rollup_settings else None,
-        fill_missing_point_type=options.missing_data_point_fill_settings.fill_type
-        if options and options.missing_data_point_fill_settings else None,
-        fill_missing_point_value=options.missing_data_point_fill_settings.custom_fill_value
-        if options and options.missing_data_point_fill_settings else None,
-        viewers=options.viewer_emails if options else None,
-        view_mode=options.access_mode if options else None,
-        admins=options.admin_emails if options else None,
-        action_link_template=options.action_link_template if options else None
+        data_feed_description=data_feed_description,
+        need_rollup=DataFeedRollupType._to_generated(rollup_settings.rollup_type)
+        if rollup_settings else None,
+        roll_up_method=rollup_settings.rollup_method if rollup_settings else None,
+        roll_up_columns=rollup_settings.auto_rollup_group_by_column_names
+        if rollup_settings else None,
+        all_up_identification=rollup_settings.rollup_identification_value
+        if rollup_settings else None,
+        fill_missing_point_type=missing_data_point_fill_settings.fill_type
+        if missing_data_point_fill_settings else None,
+        fill_missing_point_value=missing_data_point_fill_settings.custom_fill_value
+        if missing_data_point_fill_settings else None,
+        viewers=viewer_emails,
+        view_mode=access_mode,
+        admins=admin_emails,
+        action_link_template=action_link_template
     )
 
 def convert_to_sub_feedback(feedback):
@@ -226,11 +243,11 @@ def get_authentication_policy(credential):
 
     return authentication_policy
 
-def convert_to_credential_entity(credential_entity):
-    if credential_entity.data_source_credential_type == "AzureSQLConnectionString":
-        return SqlConnectionStringCredentialEntity._from_generated(credential_entity)
-    if credential_entity.data_source_credential_type == "DataLakeGen2SharedKey":
-        return DataLakeGen2SharedKeyCredentialEntity._from_generated(credential_entity)
-    if credential_entity.data_source_credential_type == "ServicePrincipal":
-        return ServicePrincipalCredentialEntity._from_generated(credential_entity)
-    return ServicePrincipalInKeyVaultCredentialEntity._from_generated(credential_entity)
+def convert_to_datasource_credential(datasource_credential):
+    if datasource_credential.data_source_credential_type == "AzureSQLConnectionString":
+        return DatasourceSqlConnectionString._from_generated(datasource_credential)
+    if datasource_credential.data_source_credential_type == "DataLakeGen2SharedKey":
+        return DatasourceDataLakeGen2SharedKey._from_generated(datasource_credential)
+    if datasource_credential.data_source_credential_type == "ServicePrincipal":
+        return DatasourceServicePrincipal._from_generated(datasource_credential)
+    return DatasourceServicePrincipalInKeyVault._from_generated(datasource_credential)

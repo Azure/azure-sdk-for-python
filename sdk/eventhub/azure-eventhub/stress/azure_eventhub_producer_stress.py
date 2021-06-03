@@ -9,16 +9,28 @@ import threading
 import time
 import asyncio
 from argparse import ArgumentParser
+
 from azure.eventhub import EventHubProducerClient, EventData, EventHubSharedKeyCredential, TransportType
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub.aio import EventHubProducerClient as EventHubProducerClientAsync
 from azure.identity import ClientSecretCredential
 from azure.identity.aio import ClientSecretCredential as ClientSecretCredentialAsync
+
 from logger import get_logger
 from process_monitor import ProcessMonitor
+from app_insights_metric import AzureMonitorMetric
 
 
-def stress_send_sync(producer: EventHubProducerClient, args, logger):
+def handle_exception(error, ignore_send_failure, stress_logger, azure_monitor_metric):
+    err_msg = "Sync send failed due to error: {}".format(repr(error))
+    azure_monitor_metric.record_error(error)
+    if ignore_send_failure:
+        stress_logger.warning(err_msg)
+        return 0
+    raise error
+
+
+def stress_send_sync(producer: EventHubProducerClient, args, stress_logger, azure_monitor_metric):
     batch = producer.create_batch(partition_id=args.send_partition_id, partition_key=args.send_partition_key)
     try:
         while True:
@@ -28,14 +40,11 @@ def stress_send_sync(producer: EventHubProducerClient, args, logger):
         try:
             producer.send_batch(batch)
         except EventHubError as e:
-            if args.ignore_send_failure:
-                logger.warning("Sync send failed due to error: %r.", e)
-                return 0
-            raise
+            return handle_exception(e, args.ignore_send_failure, stress_logger, azure_monitor_metric)
     return len(batch)
 
 
-def stress_send_list_sync(producer: EventHubProducerClient, args, logger):
+def stress_send_list_sync(producer: EventHubProducerClient, args, stress_logger, azure_monitor_metric):
     quantity = int(256*1023 / args.payload)
     send_list = []
     for _ in range(quantity):
@@ -43,14 +52,11 @@ def stress_send_list_sync(producer: EventHubProducerClient, args, logger):
     try:
         producer.send_batch(send_list)
     except EventHubError as e:
-        if args.ignore_send_failure:
-            logger.warning("Sync send failed due to error: %r.", e)
-            return 0
-        raise
+        return handle_exception(e, args.ignore_send_failure, stress_logger, azure_monitor_metric)
     return len(send_list)
 
 
-async def stress_send_async(producer: EventHubProducerClientAsync, args, logger):
+async def stress_send_async(producer: EventHubProducerClientAsync, args, stress_logger, azure_monitor_metric):
     batch = await producer.create_batch()
     try:
         while True:
@@ -60,14 +66,11 @@ async def stress_send_async(producer: EventHubProducerClientAsync, args, logger)
         try:
             await producer.send_batch(batch)
         except EventHubError as e:
-            if args.ignore_send_failure:
-                logger.warning("ASync send failed due to error: %r.", e)
-                return 0
-            raise
+            return handle_exception(e, args.ignore_send_failure, stress_logger, azure_monitor_metric)
     return len(batch)
 
 
-async def stress_send_list_async(producer: EventHubProducerClientAsync, args, logger):
+async def stress_send_list_async(producer: EventHubProducerClientAsync, args, stress_logger, azure_monitor_metric):
     quantity = int(256*1023 / args.payload)
     send_list = []
     for _ in range(quantity):
@@ -75,10 +78,7 @@ async def stress_send_list_async(producer: EventHubProducerClientAsync, args, lo
     try:
         await producer.send_batch(send_list)
     except EventHubError as e:
-        if args.ignore_send_failure:
-            logger.warning("ASync send failed due to error: %r.", e)
-            return 0
-        raise
+        return handle_exception(e, args.ignore_send_failure, stress_logger, azure_monitor_metric)
     return len(send_list)
 
 
@@ -212,7 +212,7 @@ class StressTestRunner(object):
             self.run_sync()
 
     def run_sync(self):
-        with ProcessMonitor("monitor_{}".format(self.args.log_filename), "producer_stress_sync", print_console=self.args.print_console):
+        with ProcessMonitor("monitor_{}".format(self.args.log_filename), "producer_stress_sync", print_console=self.args.print_console) as process_monitor:
             class EventHubProducerClientTest(EventHubProducerClient):
                 def get_partition_ids(self_inner):
                     if self.args.partitions != 0:
@@ -233,16 +233,17 @@ class StressTestRunner(object):
                     ]
                 else:
                     clients = [self.create_client(EventHubProducerClientTest)]
-                self.run_test_method_parallel(test_method, clients, logger)
+                self.run_test_method_parallel(test_method, clients, logger, process_monitor)
             else:
                 client = self.create_client(EventHubProducerClientTest)
-                self.run_test_method(test_method, client, logger)
+                self.run_test_method(test_method, client, logger, process_monitor)
 
     def stop(self):
         self.running = False
 
-    def run_test_method(self, test_method, worker, logger):
+    def run_test_method(self, test_method, worker, logger, process_monitor):
         deadline = time.time() + self.args.duration
+        azure_monitor_metric = AzureMonitorMetric("Sync EventHubProducerClient")
         with worker:
             total_processed = 0
             iter_processed = 0
@@ -250,7 +251,7 @@ class StressTestRunner(object):
             while self.running and time.time() < deadline:
                 try:
                     cur_iter_start_time = time.perf_counter()
-                    processed = test_method(worker, self.args, logger)
+                    processed = test_method(worker, self.args, logger, azure_monitor_metric)
                     now_time = time.perf_counter()
                     cur_iter_time_elapsed = now_time - cur_iter_start_time
                     total_processed += processed
@@ -264,6 +265,11 @@ class StressTestRunner(object):
                             total_processed / time_elapsed,
                             processed / cur_iter_time_elapsed
                         )
+                        azure_monitor_metric.record_events_cpu_memory(
+                            iter_processed,
+                            process_monitor.cpu_usage_percent,
+                            process_monitor.memory_usage_percent
+                        )
                         iter_processed -= self.args.output_interval
                 except KeyboardInterrupt:
                     logger.info("keyboard interrupted")
@@ -273,7 +279,7 @@ class StressTestRunner(object):
                     self.stop()
             logger.info("%r has finished testing", test_method)
 
-    def run_test_method_parallel(self, test_method, workers, logger):
+    def run_test_method_parallel(self, test_method, workers, logger, process_monitor):
         cnt = self.args.parallel_send_cnt
         threads = []
         if self.args.parallel_create_new_client:
@@ -283,7 +289,8 @@ class StressTestRunner(object):
                     args=(
                         test_method,
                         workers[i],
-                        logger
+                        logger,
+                        process_monitor
                     ),
                     daemon=True
                 ))
@@ -293,7 +300,8 @@ class StressTestRunner(object):
                 args=(
                     test_method,
                     workers[0],
-                    logger
+                    logger,
+                    process_monitor
                 ),
                 daemon=True
             ) for _ in range(cnt)]
@@ -305,7 +313,7 @@ class StressTestRunner(object):
             thread.join(timeout=self.args.duration)
 
     async def run_async(self):
-        with ProcessMonitor("monitor_{}".format(self.args.log_filename), "producer_stress_async", print_console=self.args.print_console):
+        with ProcessMonitor("monitor_{}".format(self.args.log_filename), "producer_stress_async", print_console=self.args.print_console) as process_monitor:
             class EventHubProducerClientTestAsync(EventHubProducerClientAsync):
                 async def get_partition_ids(self_inner):
                     if self.args.partitions != 0:
@@ -326,13 +334,14 @@ class StressTestRunner(object):
                     ]
                 else:
                     clients = [self.create_client(EventHubProducerClientTestAsync, is_async=True)]
-                await self.run_test_method_parallel_async(test_method, clients, logger)
+                await self.run_test_method_parallel_async(test_method, clients, logger, process_monitor)
             else:
                 client = self.create_client(EventHubProducerClientTestAsync, is_async=True)
-                await self.run_test_method_async(test_method, client, logger)
+                await self.run_test_method_async(test_method, client, logger, process_monitor)
 
-    async def run_test_method_async(self, test_method, worker, logger):
+    async def run_test_method_async(self, test_method, worker, logger, process_monitor):
         deadline = time.time() + self.args.duration
+        azure_monitor_metric = AzureMonitorMetric("Async EventHubProducerClient")
         async with worker:
             total_processed = 0
             iter_processed = 0
@@ -340,7 +349,7 @@ class StressTestRunner(object):
             while self.running and time.time() < deadline:
                 try:
                     cur_iter_start_time = time.perf_counter()
-                    processed = await test_method(worker, self.args, logger)
+                    processed = await test_method(worker, self.args, logger, azure_monitor_metric)
                     now_time = time.perf_counter()
                     cur_iter_time_elapsed = now_time - cur_iter_start_time
                     total_processed += processed
@@ -354,6 +363,11 @@ class StressTestRunner(object):
                             total_processed / time_elapsed,
                             processed / cur_iter_time_elapsed,
                         )
+                        azure_monitor_metric.record_events_cpu_memory(
+                            iter_processed,
+                            process_monitor.cpu_usage_percent,
+                            process_monitor.memory_usage_percent
+                        )
                         iter_processed -= self.args.output_interval
                 except KeyboardInterrupt:
                     logger.info("keyboard interrupted")
@@ -363,7 +377,7 @@ class StressTestRunner(object):
                     self.stop()
             logger.info("%r has finished testing", test_method)
 
-    async def run_test_method_parallel_async(self, test_method, worker, logger):
+    async def run_test_method_parallel_async(self, test_method, worker, logger, process_monitor):
         cnt = self.args.parallel_send_cnt
         tasks = []
         if self.args.parallel_create_new_client:
@@ -373,7 +387,8 @@ class StressTestRunner(object):
                         self.run_test_method_async(
                             test_method,
                             worker[i],
-                            logger
+                            logger,
+                            process_monitor
                         )
                     )
                 )
@@ -383,7 +398,8 @@ class StressTestRunner(object):
                     self.run_test_method_async(
                         test_method,
                         worker[0],
-                        logger
+                        logger,
+                        process_monitor
                     )
                 ) for _ in range(cnt)
             ]

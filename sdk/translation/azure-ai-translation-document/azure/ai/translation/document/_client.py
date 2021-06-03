@@ -104,7 +104,6 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         # type: (List[DocumentTranslationInput], **Any) -> DocumentTranslationPoller[ItemPaged[DocumentStatusResult]]
         pass
 
-    @distributed_trace
     def begin_translation(self, *args, **kwargs):  # pylint: disable=client-method-missing-type-annotations
         """Begin translating the document(s) in your source container to your target container
         in the given language. To perform a single translation from source to target, pass the `source_url`,

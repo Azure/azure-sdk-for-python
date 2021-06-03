@@ -42,7 +42,7 @@ class OperationsDiscoveryOperations:
 
     async def get(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationsDiscoveryCollection":
         """get.
 

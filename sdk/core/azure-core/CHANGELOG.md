@@ -9,6 +9,7 @@
 ### Bug Fixes
 
 - Retry policies don't sleep after operations time out
+- The `from_dict` methhod in the `CloudEvent` can now convert a datetime string to datetime object when microsecond exceeds the python limitation
 
 
 ## 1.14.0 (2021-05-13)
