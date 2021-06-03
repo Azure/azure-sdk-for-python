@@ -73,9 +73,7 @@ class TableClient(TablesBaseClient):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string or an account shared access
             key.
-        :type credential:
-            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-            :class:`~azure.core.credentials.AzureSasCredential`
+        :type credential: ~azure.core.credentials.AzureNamedKeyCredential or ~azure.core.credentials.AzureSasCredential
         :returns: None
         """
         if not table_name:
@@ -366,7 +364,7 @@ class TableClient(TablesBaseClient):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: Dict[str,str] or :class:`~azure.data.tables.TableEntity`
+        :type entity: Union[TableEntity, Mapping[str, Any]]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`

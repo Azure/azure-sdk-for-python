@@ -63,9 +63,7 @@ class TableClient(AsyncTablesBaseClient):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string or an account shared access
             key.
-        :type credential:
-            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-            :class:`~azure.core.credentials.AzureSasCredential`
+        :type credential: ~azure.core.credentials.AzureNamedKeyCredential or ~azure.core.credentials.AzureSasCredential
 
         :returns: None
         """
@@ -123,9 +121,7 @@ class TableClient(AsyncTablesBaseClient):
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, an account
             shared access key.
-        :type credential:
-            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-            :class:`~azure.core.credentials.AzureSasCredential`
+        :type credential: ~azure.core.credentials.AzureNamedKeyCredential or ~azure.core.credentials.AzureSasCredential
         :returns: A table client.
         :rtype: :class:`~azure.data.tables.TableClient`
         """
@@ -222,7 +218,7 @@ class TableClient(AsyncTablesBaseClient):
                 raise
 
     @distributed_trace_async
-    async def create_table(self, **kwargs) -> None:
+    async def create_table(self, **kwargs) -> TableItem:
         """Creates a new table under the given account.
 
         :return: A TableItem representing the created table.
@@ -353,7 +349,7 @@ class TableClient(AsyncTablesBaseClient):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: Union[TableEntity, Mapping[str, Any]]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
@@ -470,7 +466,7 @@ class TableClient(AsyncTablesBaseClient):
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[TableEntity]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -511,7 +507,7 @@ class TableClient(AsyncTablesBaseClient):
         :keyword parameters: Dictionary for formatting query with additional, user defined parameters
         :paramtype parameters: Dict[str, Any]
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[TableEntity]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
