@@ -351,50 +351,6 @@ class TestAnalyze(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_show_stats_and_model_version_multiple_tasks(self, client):
-
-        def callback(resp):
-            if resp.raw_response:
-                a = "b"
-
-        docs = [{"id": "56", "text": ":)"},
-                {"id": "0", "text": ":("},
-                {"id": "19", "text": ":P"},
-                {"id": "1", "text": ":D"}]
-
-        poller = client.begin_analyze_actions(
-            docs,
-            actions=[
-                RecognizeEntitiesAction(model_version="latest"),
-                ExtractKeyPhrasesAction(model_version="latest"),
-                RecognizePiiEntitiesAction(model_version="latest"),
-                RecognizeLinkedEntitiesAction(model_version="latest"),
-                AnalyzeSentimentAction(model_version="latest")
-            ],
-            show_stats=True,
-            polling_interval=self._interval(),
-            raw_response_hook=callback,
-        )
-
-        response = poller.result()
-
-        action_results = list(response)
-        assert len(action_results) == 5
-        assert action_results[0].action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
-        assert action_results[1].action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
-        assert action_results[2].action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
-        assert action_results[3].action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
-        assert action_results[4].action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
-
-        assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
-
-        for action_result in action_results:
-            assert action_result.statistics
-            for doc in action_result.document_results:
-                assert doc.statistics
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
     def test_poller_metadata(self, client):
         docs = [{"id": "56", "text": ":)"}]
 
@@ -683,3 +639,37 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
             raw_response_hook=callback,
         ).result()
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_show_stats_and_model_version(self, client):
+        actions = [
+            AnalyzeSentimentAction(model_version="2020-04-01"),
+            ExtractKeyPhrasesAction(model_version="2020-07-01"),
+        ]
+        documents = ["Show stats", "model version", ""]
+
+        def callback(response):
+            assert response
+            assert len(response.action_model_versions) == len(actions)
+            assert response.action_model_versions[0] == "2020-04-01"
+            assert response.action_model_versions[1] == "2020-07-01"
+            assert len(response.action_statistics) == len(actions)
+            for stat in response.statistics:
+                assert stat.document_count == len(documents)
+                assert stat.transaction_count == 2
+                assert stat.valid_document_count == 2
+                assert stat.erroneous_document_count == 1
+
+        response = list(client.begin_analyze_actions(
+            documents=documents,
+            actions=actions,
+            polling_interval=self._interval(),
+            show_stats=True,
+            raw_response_hook=callback,
+        ).result())
+
+        analyze_sentiment_document = response[0].document_results[0]
+        assert analyze_sentiment_document.statistics.character_count == 10
+        assert analyze_sentiment_document.stat
+        a = "b"
