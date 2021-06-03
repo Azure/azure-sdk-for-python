@@ -87,7 +87,6 @@ def _enforce_https(request):
 
 
 def _delete_callback(pipeline_response, deserialized, headers):  # pylint: disable=unused-argument
-    # type: (HttpResponse) -> None
     if pipeline_response.http_response.status_code == 404:
         internal_response = pipeline_response.http_response.internal_response
         UNKNOWNS = ["NAME_UNKNOWN", "MANIFEST_UNKNOWN", "TAG_UNKNOWN"]
