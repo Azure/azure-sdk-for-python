@@ -60,7 +60,7 @@ if TYPE_CHECKING:
         RecognizeLinkedEntitiesAction,
         ExtractKeyPhrasesAction,
         AnalyzeSentimentAction,
-        AnalyzeHealthcareEntitiesResultItem,
+        AnalyzeHealthcareEntitiesResult,
         AnalyzeActionsResult,
     )
 
@@ -508,7 +508,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeHealthcareEntitiesResultItem]]
+    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeHealthcareEntitiesResult]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -553,10 +553,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
         :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
-            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem`.
+            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult`.
         :rtype:
             ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
-            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem]]
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:

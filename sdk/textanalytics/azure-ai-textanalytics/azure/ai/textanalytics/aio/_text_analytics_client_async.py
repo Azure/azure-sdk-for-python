@@ -56,7 +56,7 @@ from .._async_lro import (
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.credentials import AzureKeyCredential
-    from .._models import AnalyzeHealthcareEntitiesResultItem
+    from .._models import AnalyzeHealthcareEntitiesResult
 
 
 class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
@@ -684,7 +684,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareEntitiesResultItem]]
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareEntitiesResult]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -731,7 +731,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`.
         :rtype:
             ~azure.core.polling.AsyncLROPoller[~azure.core.paging.AsyncItemPaged[
-            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem]]
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:

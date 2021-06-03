@@ -509,7 +509,7 @@ class TestRepr():
     def test_analyze_healthcare_entities_result_item(
         self, healthcare_entity, healthcare_relation, text_analytics_warning, text_document_statistics
     ):
-        model = _models.AnalyzeHealthcareEntitiesResultItem(
+        model = _models.AnalyzeHealthcareEntitiesResult(
             id=1,
             entities=[healthcare_entity[0]],
             entity_relations=[healthcare_relation[0]],
@@ -519,7 +519,7 @@ class TestRepr():
         )
 
         model_repr = (
-            "AnalyzeHealthcareEntitiesResultItem(id=1, entities=[{}], entity_relations=[{}], warnings=[{}], statistics={}, is_error=False)".format(
+            "AnalyzeHealthcareEntitiesResult(id=1, entities=[{}], entity_relations=[{}], warnings=[{}], statistics={}, is_error=False)".format(
                 healthcare_entity[1], healthcare_relation[1], text_analytics_warning[1], text_document_statistics[1]
             )
         )

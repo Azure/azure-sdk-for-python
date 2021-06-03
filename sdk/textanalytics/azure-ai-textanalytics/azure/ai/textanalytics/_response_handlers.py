@@ -31,7 +31,7 @@ from ._models import (
     TextAnalyticsWarning,
     RecognizePiiEntitiesResult,
     PiiEntity,
-    AnalyzeHealthcareEntitiesResultItem,
+    AnalyzeHealthcareEntitiesResult,
     AnalyzeActionsResult,
     RequestStatistics,
     AnalyzeActionsType,
@@ -191,7 +191,7 @@ def pii_entities_result(entity, results, *args, **kwargs):  # pylint: disable=un
 
 @prepare_result
 def healthcare_result(health_result, results, *args, **kwargs): # pylint: disable=unused-argument
-    return AnalyzeHealthcareEntitiesResultItem._from_generated(health_result) # pylint: disable=protected-access
+    return AnalyzeHealthcareEntitiesResult._from_generated(health_result) # pylint: disable=protected-access
 
 
 def healthcare_extract_page_data(doc_id_order, obj, response_headers, health_job_state): # pylint: disable=unused-argument

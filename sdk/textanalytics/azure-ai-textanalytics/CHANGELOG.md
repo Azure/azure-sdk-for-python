@@ -10,6 +10,7 @@
 - Renamed `AnalyzeBatchActionsType` to `AnalyzeActionsType`.
 - Renamed `AnalyzeBatchActionsResult` to `AnalyzeActionsResult`.
 - Renamed `AnalyzeBatchActionsError` to `AnalyzeActionsError`.
+- Renamed `AnalyzeHealthcareEntitiesResultItem` to `AnalyzeHealthcareEntitiesResult`.
 
 **New Features**
 - Added enums `EntityConditionality`, `EntityCertainty`, and `EntityAssociation`.
