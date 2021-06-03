@@ -195,7 +195,7 @@ followed by polling the service at intervals to determine whether the operation 
 succeeded, to get the result.
 
 Methods that translate documents are modeled as long-running operations.
-The client exposes a `begin_<method-name>` method that returns an `DocumentTranslationPoller` or `AsyncDocumentTranslationPoller`. Callers should wait
+The client exposes a `begin_<method-name>` method that returns a `DocumentTranslationPoller` or `AsyncDocumentTranslationPoller`. Callers should wait
 for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
 Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
 

@@ -22,7 +22,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
                 os.getenv("TRANSLATION_CLIENT_SECRET"),
             )
 
-    async def _begin_and_validate_translation_async(self, async_client, translation_inputs, total_docs_count=None, language=None):
+    async def _begin_and_validate_translation_async(self, async_client, translation_inputs, total_docs_count, language=None):
         # submit job
         poller = await async_client.begin_translation(translation_inputs)
         self.assertIsNotNone(poller.id)

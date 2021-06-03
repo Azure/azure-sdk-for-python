@@ -96,7 +96,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         ]
 
         # submit job and test
-        await self._begin_and_validate_translation_async(client, translation_inputs)
+        await self._begin_and_validate_translation_async(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()

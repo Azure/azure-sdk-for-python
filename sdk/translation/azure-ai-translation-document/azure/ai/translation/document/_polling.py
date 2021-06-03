@@ -44,7 +44,7 @@ class DocumentTranslationPoller(LROPoller):
     @property
     def id(self):
         # type: () -> str
-        """The ID for the translation job
+        """The ID for the translation operation
 
         :return: str
         """
@@ -55,7 +55,7 @@ class DocumentTranslationPoller(LROPoller):
     @property
     def details(self):
         # type: () -> JobStatusResult
-        """The details for the translation job
+        """The details for the translation operation
 
         :return: JobStatusResult
         """

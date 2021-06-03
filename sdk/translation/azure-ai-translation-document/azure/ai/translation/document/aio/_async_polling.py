@@ -25,7 +25,7 @@ class AsyncDocumentTranslationPoller(AsyncLROPoller[PollingReturnType]):
 
     @property
     def id(self) -> str:
-        """The ID for the translation job
+        """The ID for the translation operation
 
         :return: str
         """
@@ -35,7 +35,7 @@ class AsyncDocumentTranslationPoller(AsyncLROPoller[PollingReturnType]):
 
     @property
     def details(self) -> JobStatusResult:
-        """The details for the translation job
+        """The details for the translation operation
 
         :return: JobStatusResult
         """
