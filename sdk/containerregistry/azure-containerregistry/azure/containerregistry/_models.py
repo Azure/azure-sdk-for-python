@@ -40,7 +40,6 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     :ivar str repository_name: Repository name the artifact belongs to
     :ivar str size: Size of the artifact
     :ivar List[str] tags: Tags associated with a registry artifact
-    :ivar str fully_qualified_reference: The fully qualified reference for an artifact
     """
 
     def __init__(self, **kwargs):
@@ -138,6 +137,15 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             self._repository_name,
             ":" if _is_tag(self._digest) else "@",
             _strip_alg(self._digest)
+        )
+
+    def _to_generated(self):
+        # type: () -> ManifestWriteableProperties
+        return ManifestWriteableProperties(
+            can_delete=self.can_delete,
+            can_read=self.can_read,
+            can_write=self.can_write,
+            can_list=self.can_list,
         )
 
 

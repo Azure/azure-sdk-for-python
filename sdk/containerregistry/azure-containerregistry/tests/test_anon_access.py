@@ -3,17 +3,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import pytest
 import six
 
+from azure.core.exceptions import ClientAuthenticationError
+from azure.core.paging import ItemPaged
 from azure.containerregistry import (
     ArtifactTagProperties,
     RepositoryProperties,
     ArtifactManifestProperties,
-    # RegistryArtifact,
 )
-
-from azure.core.paging import ItemPaged
-from azure.core.pipeline.transport import RequestsTransport
 
 from testcase import ContainerRegistryTestClass
 from constants import HELLO_WORLD
@@ -67,23 +66,19 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        properties = client.get_repository_properties(HELLO_WORLD)
+        properties = client.get_repository_properties("library/hello-world")
 
         assert isinstance(properties, RepositoryProperties)
         assert properties.name == HELLO_WORLD
 
     @acr_preparer()
-    def test_list_manifests(self, containerregistry_anonregistry_endpoint):
+    def test_list_manifest_properties(self, containerregistry_anonregistry_endpoint):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
         count = 0
-        for manifest in client.list_manifests(HELLO_WORLD):
+        for manifest in client.list_manifest_properties("library/hello-world"):
             assert isinstance(manifest, ArtifactManifestProperties)
-            assert (
-                self.create_fully_qualified_reference(containerregistry_anonregistry_endpoint, HELLO_WORLD, manifest.digest)
-                == manifest.fully_qualified_reference
-            )
             count += 1
         assert count > 0
 
@@ -92,24 +87,70 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
-        registry_artifact = client.get_manifest_properties(HELLO_WORLD, "latest")
+        registry_artifact = client.get_manifest_properties("library/hello-world", "latest")
 
         assert isinstance(registry_artifact, ArtifactManifestProperties)
         assert "latest" in registry_artifact.tags
-        assert registry_artifact.repository_name == HELLO_WORLD
-        assert (
-            self.create_fully_qualified_reference(containerregistry_anonregistry_endpoint, HELLO_WORLD, registry_artifact.digest)
-            == registry_artifact.fully_qualified_reference
-        )
-
+        assert registry_artifact.repository_name == "library/hello-world"
 
     @acr_preparer()
-    def test_list_tags(self, containerregistry_anonregistry_endpoint):
+    def test_list_tag_properties(self, containerregistry_anonregistry_endpoint):
         client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
         count = 0
-        for tag in client.list_tags(HELLO_WORLD):
+        for tag in client.list_tag_properties("library/hello-world"):
             count += 1
             assert isinstance(tag, ArtifactTagProperties)
         assert count > 0
+
+    @acr_preparer()
+    def test_delete_repository(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+        assert client._credential is None
+
+        with pytest.raises(ClientAuthenticationError):
+            client.delete_repository("library/hello-world")
+
+    @acr_preparer()
+    def test_delete_tag(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+        assert client._credential is None
+
+        with pytest.raises(ClientAuthenticationError):
+            client.delete_tag("library/hello-world", "latest")
+
+    @acr_preparer()
+    def test_delete_manifest(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+        assert client._credential is None
+
+        with pytest.raises(ClientAuthenticationError):
+            client.delete_manifest("library/hello-world", "latest")
+
+    @acr_preparer()
+    def test_update_repository_properties(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+
+        properties = client.get_repository_properties(HELLO_WORLD)
+
+        with pytest.raises(ClientAuthenticationError):
+            client.update_repository_properties(HELLO_WORLD, properties, can_delete=True)
+
+    @acr_preparer()
+    def test_update_tag_properties(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+
+        properties = client.get_tag_properties(HELLO_WORLD, "latest")
+
+        with pytest.raises(ClientAuthenticationError):
+            client.update_tag_properties(HELLO_WORLD, "latest", properties, can_delete=True)
+
+    @acr_preparer()
+    def test_update_manifest_properties(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+
+        properties = client.get_manifest_properties(HELLO_WORLD, "latest")
+
+        with pytest.raises(ClientAuthenticationError):
+            client.update_manifest_properties(HELLO_WORLD, "latest", properties, can_delete=True)

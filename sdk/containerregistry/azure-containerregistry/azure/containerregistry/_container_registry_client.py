@@ -51,7 +51,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     def _get_digest_from_tag(self, repository, tag):
         # type: (str, str) -> str
-        tag_props = self.get_tag(repository, tag)
+        tag_props = self.get_tag_properties(repository, tag)
         return tag_props.digest
 
     @distributed_trace
@@ -74,10 +74,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: Delete a repository from the `ContainerRegistryClient`
         """
-        try:
-            self._client.container_registry.delete_repository(repository, **kwargs)
-        except ResourceNotFoundError:
-            pass
+        self._client.container_registry.delete_repository(repository, **kwargs)
 
     @distributed_trace
     def list_repository_names(self, **kwargs):
@@ -203,7 +200,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_manifests(self, repository, **kwargs):
+    def list_manifest_properties(self, repository, **kwargs):
         # type: (str, **Any) -> ItemPaged[ArtifactManifestProperties]
         """List the artifacts for a repository
 
@@ -345,10 +342,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
 
-        try:
-            self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
-        except ResourceNotFoundError:
-            pass
+        self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
 
     @distributed_trace
     def delete_tag(self, repository, tag, **kwargs):
@@ -369,13 +363,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            for artifact in client.list_tags():
+            for artifact in client.list_tag_properties():
                 client.delete_tag(tag.name)
         """
-        try:
-            self._client.container_registry.delete_tag(repository, tag, **kwargs)
-        except ResourceNotFoundError:
-            pass
+        self._client.container_registry.delete_tag(repository, tag, **kwargs)
 
     @distributed_trace
     def get_manifest_properties(self, repository, tag_or_digest, **kwargs):
@@ -394,8 +385,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            for artifact in client.list_manifests():
-                properties = client.get_registry_artifact_properties(artifact.digest)
+            for artifact in client.list_manifest_properties():
+                properties = client.get_manifest_properties(artifact.digest)
         """
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
@@ -407,7 +398,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def get_tag(self, repository, tag, **kwargs):
+    def get_tag_properties(self, repository, tag, **kwargs):
         # type: (str, str, **Any) -> ArtifactTagProperties
         """Get the properties for a tag
 
@@ -423,8 +414,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            for tag in client.list_tags():
-                tag_properties = client.get_tag(tag.name)
+            for tag in client.list_tag_properties():
+                tag_properties = client.get_tag_properties(tag.name)
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.get_tag_properties(repository, tag, **kwargs),
@@ -432,7 +423,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_tags(self, repository, **kwargs):
+    def list_tag_properties(self, repository, **kwargs):
         # type: (str, **Any) -> ItemPaged[ArtifactTagProperties]
         """List the tags for a repository
 
@@ -453,8 +444,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            for tag in client.list_tags():
-                tag_properties = client.get_tag(tag.name)
+            for tag in client.list_tag_properties():
+                tag_properties = client.get_tag_properties(tag.name)
         """
         name = repository
         last = kwargs.pop("last", None)
@@ -593,7 +584,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            for artifact in client.list_manifests():
+            for artifact in client.list_manifest_properties():
                 received_properties = client.update_manifest_properties(
                     artifact.digest,
                     can_delete=False,
@@ -626,7 +617,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 **kwargs
             ),
             repository_name=repository,
-            registry=self._endpoint,
+            registry=self._endpoint
         )
 
     @overload

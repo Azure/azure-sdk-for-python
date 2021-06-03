@@ -13,15 +13,18 @@ from uamqp.authentication.common import AMQPAuth
 
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
-from ._common.message import ServiceBusMessage, ServiceBusMessageBatch
+from ._common.message import (
+    ServiceBusMessage,
+    ServiceBusMessageBatch,
+)
+from .amqp import AmqpAnnotatedMessage
 from .exceptions import (
     OperationTimeoutError,
     _ServiceBusErrorPolicy,
 )
 from ._common.utils import (
     create_authentication,
-    transform_messages_to_sendable_if_needed,
-    create_messages_from_dicts_if_needed,
+    transform_messages_if_needed,
     send_trace_context_manager,
     trace_message,
 )
@@ -44,12 +47,15 @@ if TYPE_CHECKING:
     MessageTypes = Union[
         Mapping[str, Any],
         ServiceBusMessage,
-        List[Union[Mapping[str, Any], ServiceBusMessage]]
+        AmqpAnnotatedMessage,
+        List[Union[Mapping[str, Any], ServiceBusMessage, AmqpAnnotatedMessage]],
     ]
     MessageObjTypes = Union[
         ServiceBusMessage,
+        AmqpAnnotatedMessage,
         ServiceBusMessageBatch,
-        List[ServiceBusMessage]]
+        List[Union[ServiceBusMessage, AmqpAnnotatedMessage]],
+    ]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -94,9 +100,9 @@ class SenderMixin(object):
                         message.__class__.__name__
                     )
                 )
-            message = transform_messages_to_sendable_if_needed(message)
-            trace_message(message, send_span)
             message.scheduled_enqueue_time_utc = schedule_time_utc
+            message = transform_messages_if_needed(message, ServiceBusMessage)
+            trace_message(message, send_span)
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
             if message.session_id:
@@ -263,7 +269,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         Returns a list of the sequence numbers of the enqueued messages.
 
         :param messages: The message or list of messages to schedule.
-        :type messages: Union[~azure.servicebus.ServiceBusMessage, List[~azure.servicebus.ServiceBusMessage]]
+        :type messages: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.amqp.AmqpAnnotatedMessage,
+         List[Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.amqp.AmqpAnnotatedMessage]]]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
@@ -282,7 +289,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # pylint: disable=protected-access
 
         self._check_live()
-        obj_messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)
+        obj_messages = transform_messages_if_needed(messages, ServiceBusMessage)
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -355,8 +362,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         `ValueError` if they cannot fit in a single batch.
 
         :param message: The ServiceBus message to be sent.
-        :type message: Union[~azure.servicebus.ServiceBusMessage,~azure.servicebus.ServiceBusMessageBatch,
-         list[~azure.servicebus.ServiceBusMessage]]
+        :type message: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.ServiceBusMessageBatch,
+         ~azure.servicebus.amqp.AmqpAnnotatedMessage, List[Union[~azure.servicebus.ServiceBusMessage,
+         ~azure.servicebus.amqp.AmqpAnnotatedMessage]]]
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
@@ -387,9 +395,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             if isinstance(message, ServiceBusMessageBatch):
                 obj_message = message  # type: MessageObjTypes
             else:
-                obj_message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
-                # Ensure message is sendable (not a ReceivedMessage), and if needed (a list) is batched. Adds tracing.
-                obj_message = transform_messages_to_sendable_if_needed(obj_message)
+                obj_message = transform_messages_if_needed(  # type: ignore
+                    message, ServiceBusMessage
+                )
                 try:
                     batch = self.create_message_batch()
                     batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access
@@ -398,7 +406,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     trace_message(cast(ServiceBusMessage, obj_message), send_span)
 
             if (
-                isinstance(obj_message, ServiceBusMessageBatch) and len(obj_message) == 0
+                isinstance(obj_message, ServiceBusMessageBatch)
+                and len(obj_message) == 0
             ):  # pylint: disable=len-as-condition
                 return  # Short circuit noop if an empty list or batch is provided.
 

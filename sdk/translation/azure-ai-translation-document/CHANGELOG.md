@@ -21,6 +21,9 @@ translation has completed.
 - Authentication using `azure-identity` credentials now supported.
   - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) for more information.
 - Added paging and filtering options to `list_all_document_statuses` and `list_submitted_jobs`.
+- The input to `begin_translation` now accepts either the parameter `inputs` as a `List[DocumentTranslationInput]` to
+perform multiple translations, or the parameters `source_url`, `target_url`, and `target_language_code` to perform a
+single translation of your documents.
 
 **Dependency updates**
 
