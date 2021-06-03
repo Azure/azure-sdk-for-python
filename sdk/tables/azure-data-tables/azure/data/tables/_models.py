@@ -31,19 +31,6 @@ if TYPE_CHECKING:
     from ._generated.models import TableServiceProperties as GenTableServiceProperties
 
 
-class TableServiceStats(GenTableServiceStats):
-    """Stats for the service
-
-    :param geo_replication: Geo-Replication information for the Secondary Storage Service.
-    :type geo_replication: ~azure.data.tables.models.GeoReplication
-    """
-
-    def __init__(  # pylint: disable=super-init-not-called
-        self, geo_replication=None, **kwargs
-    ):
-        self.geo_replication = geo_replication
-
-
 class AccessPolicy(GenAccessPolicy):
     """Access Policy class used by the set and get access policy methods.
 
@@ -64,35 +51,32 @@ class AccessPolicy(GenAccessPolicy):
     both in the Shared Access Signature URL and in the stored access policy, the
     request will fail with status code 400 (Bad Request).
 
-    :param str permission:
+    :keyword str permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :param expiry:
+    :keyword expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: ~datetime.datetime or str
-    :param start:
+    :paramtype expiry: ~datetime.datetime or str
+    :keyword start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: ~datetime.datetime or str
+    :paramtype start: ~datetime.datetime or str
     """
-
-    def __init__(  # pylint: disable=super-init-not-called
-        self, permission=None, expiry=None, start=None, **kwargs
-    ):
-        self.start = start
-        self.expiry = expiry
-        self.permission = permission
+    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
+        self.start = kwargs.get('start')
+        self.expiry = kwargs.get('expiry')
+        self.permission = kwargs.get('permission')
 
 
 class TableAnalyticsLogging(GeneratedLogging):
@@ -108,11 +92,8 @@ class TableAnalyticsLogging(GeneratedLogging):
         The retention policy for the metrics.
     """
 
-    def __init__(  # pylint: disable=super-init-not-called
-        self, **kwargs  # type: Any
-    ):
-        # type: (...)-> None
-
+    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
+        # type: (Any)-> None
         self.version = kwargs.get("version", u"1.0")
         self.delete = kwargs.get("delete", False)
         self.read = kwargs.get("read", False)
@@ -120,7 +101,7 @@ class TableAnalyticsLogging(GeneratedLogging):
         self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
         if not generated:
             return cls()
         return cls(
@@ -147,17 +128,15 @@ class Metrics(GeneratedMetrics):
         The retention policy for the metrics.
     """
 
-    def __init__(  # pylint: disable=super-init-not-called
-        self,
-        **kwargs  # type: Any
-    ):
+    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
+        # type: (Any) -> None
         self.version = kwargs.get("version", u"1.0")
         self.enabled = kwargs.get("enabled", False)
         self.include_apis = kwargs.get("include_apis")
         self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
         # type: (...) -> Metrics
         """A summary of request statistics grouped by API in hour or minute aggregates.
 
@@ -176,27 +155,21 @@ class Metrics(GeneratedMetrics):
 
 
 class RetentionPolicy(GeneratedRetentionPolicy):
-    def __init__(  # pylint: disable=super-init-not-called
-        self,
-        enabled=False,  # type: bool
-        days=None,  # type: int
-        **kwargs  # type: Any
-    ):
-        # type: (...) ->None
+    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
+        # type: (Any) -> None
         """The retention policy which determines how long the associated data should
         persist.
 
         All required parameters must be populated in order to send to Azure.
 
-        :param bool enabled: Required. Indicates whether a retention policy is enabled
-            for the storage service.
-        :param int days: Indicates the number of days that metrics or logging or
+        :keyword bool enabled: Required. Indicates whether a retention policy is enabled
+            for the storage service. Default value is False.
+        :keyword int days: Indicates the number of days that metrics or logging or
             soft-deleted data should be retained. All data older than this value will
-            be deleted.
-        :param Any kwargs:
+            be deleted. Must be specified if policy is enabled.
         """
-        self.enabled = enabled
-        self.days = days
+        self.enabled = kwargs.get('enabled', False)
+        self.days = kwargs.get('days')
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
@@ -264,7 +237,7 @@ class CorsRule(GeneratedCorsRule):
         self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
         return cls(
             [generated.allowed_origins],
             [generated.allowed_methods],
@@ -484,8 +457,8 @@ class TableItem(object):
     :ivar str name: The name of the table.
     """
 
-    def __init__(self, name, **kwargs):  # pylint: disable=unused-argument
-        # type: (str, Dict[str, Any]) -> None
+    def __init__(self, name):
+        # type: (str) -> None
         """
         :param str name: Name of the Table
         """
@@ -493,9 +466,9 @@ class TableItem(object):
 
     # TODO: TableQueryResponse is not the correct type
     @classmethod
-    def _from_generated(cls, generated, **kwargs):
-        # type: (TableQueryResponse, Dict[str, Any]) -> TableItem
-        return cls(generated.table_name, **kwargs)  # type: ignore
+    def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
+        # type: (TableQueryResponse) -> TableItem
+        return cls(generated.table_name)  # type: ignore
 
 
 class TablePayloadFormat(object):
@@ -548,17 +521,17 @@ class ResourceTypes(object):
     """
     Specifies the resource types that are accessible with the account SAS.
 
-    :param bool service:
+    :keyword bool service:
         Access to service-level APIs (e.g., Get/Set Service Properties,
         Get Service Stats, List Tables)
-    :param bool object:
+    :keyword bool object:
         Access to object-level APIs for tables (e.g. Get/Create/Query Entity etc.)
     """
 
-    def __init__(self, service=False, object=False):  # pylint: disable=redefined-builtin
-        # type: (bool, bool) -> None
-        self.service = service
-        self.object = object
+    def __init__(self, **kwargs):  # pylint: disable=redefined-builtin
+        # type: (Any) -> None
+        self.service = kwargs.get('service', False)
+        self.object = kwargs.get('object', False)
         self._str = ("s" if self.service else "") + ("o" if self.object else "")
 
     def __str__(self):

@@ -102,12 +102,12 @@ class TableServiceClient(TablesBaseClient):
 
     @distributed_trace
     def get_service_stats(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+        # type: (Any) -> Dict[str, object]
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
         :return: Dictionary of service stats
-        :rtype: :class:`~azure.data.tables.models.TableServiceStats`
+        :rtype: Dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError:`
         """
         try:
@@ -126,7 +126,7 @@ class TableServiceClient(TablesBaseClient):
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :return: Dictionary of service properties
-        :rtype: :class:`~azure.data.tables.models.TableServiceProperties`
+        :rtype: Dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -137,35 +137,28 @@ class TableServiceClient(TablesBaseClient):
         return service_properties_deserialize(service_props)
 
     @distributed_trace
-    def set_service_properties(
-        self,
-        analytics_logging=None,  # type: Optional[TableAnalyticsLogging]
-        hour_metrics=None,  # type: Optional[Metrics]
-        minute_metrics=None,  # type: Optional[Metrics]
-        cors=None,  # type: Optional[CorsRule]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def set_service_properties(self, **kwargs):
+        # type: (Any) -> None
         """Sets properties for an account's Table service endpoint,
          including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :param analytics_logging: Properties for analytics
-        :type analytics_logging: ~azure.data.tables.TableAnalyticsLogging
-        :param hour_metrics: Hour level metrics
-        :type hour_metrics: ~azure.data.tables.Metrics
-        :param minute_metrics: Minute level metrics
-        :type minute_metrics: ~azure.data.tables.Metrics
-        :param cors: Cross-origin resource sharing rules
-        :type cors: ~azure.data.tables.CorsRule
+        :keyword analytics_logging: Properties for analytics
+        :paramtype analytics_logging: ~azure.data.tables.TableAnalyticsLogging
+        :keyword hour_metrics: Hour level metrics
+        :paramtype hour_metrics: ~azure.data.tables.Metrics
+        :keyword minute_metrics: Minute level metrics
+        :paramtype minute_metrics: ~azure.data.tables.Metrics
+        :keyword cors: Cross-origin resource sharing rules
+        :paramtype cors: ~azure.data.tables.CorsRule
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         props = TableServiceProperties(
-            logging=analytics_logging,
-            hour_metrics=hour_metrics,
-            minute_metrics=minute_metrics,
-            cors=cors,  # type: ignore
+            logging=kwargs.pop('analytics_logging', None),
+            hour_metrics=kwargs.pop('hour_metrics', None),
+            minute_metrics=kwargs.pop('minute_metrics', None),
+            cors=kwargs.pop('cors', None),  # type: ignore
         )
         try:
             self._client.service.set_properties(props, **kwargs)

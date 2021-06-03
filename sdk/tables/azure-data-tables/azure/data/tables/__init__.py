@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.data.tables._models import TableServiceStats
-
 from ._entity import TableEntity, EntityProperty, EdmType
 from ._error import RequestTooLargeError, TableTransactionError, TableErrorCode
 from ._table_shared_access_signature import generate_table_sas, generate_account_sas
@@ -20,7 +18,6 @@ from ._models import (
     UpdateMode,
     SASProtocol,
     TableItem,
-    LocationMode,
     ResourceTypes,
     AccountSasPermissions,
     TransactionOperation
@@ -32,11 +29,9 @@ __version__ = VERSION
 __all__ = [
     "TableClient",
     "TableServiceClient",
-    "LocationMode",
     "ResourceTypes",
     "AccountSasPermissions",
     "TableErrorCode",
-    "TableServiceStats",
     "TableSasPermissions",
     "AccessPolicy",
     "TableAnalyticsLogging",

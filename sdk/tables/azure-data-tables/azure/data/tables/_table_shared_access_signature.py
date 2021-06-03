@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential
     from ._models import ResourceTypes
 
+
 def generate_account_sas(
     credential,  # type: AzureNamedKeyCredential
     resource_types,  # type: ResourceTypes

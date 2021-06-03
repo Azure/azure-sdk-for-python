@@ -29,7 +29,7 @@ class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
 
         # Assert
         with pytest.raises(HttpResponseError):
-            await tsc.set_service_properties(None, None, None, cors)
+            await tsc.set_service_properties(cors=cors)
 
     @cosmos_decorator_async
     async def test_retention_too_long_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -40,7 +40,7 @@ class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
 
         # Assert
         with pytest.raises(HttpResponseError):
-            await tsc.set_service_properties(None, None, minute_metrics)
+            await tsc.set_service_properties(minute_metrics=minute_metrics)
 
 
 class TestTableUnitTest(AsyncTableTestCase):
@@ -48,4 +48,4 @@ class TestTableUnitTest(AsyncTableTestCase):
     @pytest.mark.asyncio
     async def test_retention_no_days_async(self):
         # Assert
-        pytest.raises(ValueError, RetentionPolicy, True, None)
+        pytest.raises(ValueError, RetentionPolicy, enabled=True)
