@@ -11,7 +11,6 @@ from typing import Any, Optional, List
 from ._generated.models import (
     Column as InternalColumn,
     QueryBody as InternalQueryBody,
-    BatchResponse as InternalBatchResponse,
     LogQueryRequest as InternalLogQueryRequest,
     MetricNamespace as InternalMetricNamespace,
     ErrorDetails as InternalErrorDetails
