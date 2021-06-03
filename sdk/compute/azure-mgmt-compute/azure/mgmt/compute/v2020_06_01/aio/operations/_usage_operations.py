@@ -44,7 +44,7 @@ class UsageOperations:
     def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListUsagesResult"]:
         """Gets, for the specified location, the current compute resource usage information as well as the
         limits for compute resources under the subscription.

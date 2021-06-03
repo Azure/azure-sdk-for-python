@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Optional, Any, List, Mapping
+from typing import Dict, Optional, Any, List, Mapping, Union
 from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
@@ -51,6 +51,7 @@ from ._policies import (
 )
 from ._sdk_moniker import SDK_MONIKER
 
+
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07"]
 
 
@@ -80,7 +81,6 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 account_url = "https://" + account_url
         except AttributeError:
             raise ValueError("Account URL must be a string.")
-        self._cosmos_endpoint = _is_cosmos_endpoint(account_url)
         parsed_url = urlparse(account_url.rstrip("/"))
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(account_url))
@@ -94,7 +94,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         self._location_mode = kwargs.get("location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
-        self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url.hostname)
+        self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url)
         if ".core." in parsed_url.netloc or ".cosmos." in parsed_url.netloc:
             account = parsed_url.netloc.split(".table.core.")
             if "cosmos" in parsed_url.netloc:
@@ -114,17 +114,19 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         self.credential = credential
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
-        if hasattr(self.credential, "account_name"):
-            self.account_name = self.credential.account_name
+        if hasattr(self.credential, "named_key"):
+            self.account_name = self.credential.named_key.name
             secondary_hostname = "{}-secondary.table.{}".format(
-                self.credential.account_name, SERVICE_HOST_BASE
+                self.credential.named_key.name, SERVICE_HOST_BASE
             )
 
         if not self._hosts:
             if len(account) > 1:
                 secondary_hostname = parsed_url.netloc.replace(
                     account[0], account[0] + "-secondary"
-                )
+                ) + parsed_url.path.replace(
+                    account[0], account[0] + "-secondary"
+                ).rstrip("/")
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
@@ -132,9 +134,9 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 LocationMode.PRIMARY: primary_hostname,
                 LocationMode.SECONDARY: secondary_hostname,
             }
-        self._credential_policy = None
-        self._configure_credential(self.credential)
-        self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
+        self._credential_policy = None  # type: ignore
+        self._configure_credential(self.credential)  # type: ignore
+        self._policies = self._configure_policies(hosts=self._hosts, **kwargs)  # type: ignore
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
 
@@ -202,7 +204,7 @@ class TablesBaseClient(AccountHostsMixin):
     def __init__(
         self,
         endpoint,  # type: str
-        credential=None,  # type: str
+        credential=None,  # type: Union[AzureNamedKeyCredential, AzureSasCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -241,15 +243,15 @@ class TablesBaseClient(AccountHostsMixin):
     def _configure_credential(self, credential):
         # type: (Any) -> None
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(
+            self._credential_policy = BearerTokenCredentialPolicy(  # type: ignore
                 credential, STORAGE_OAUTH_SCOPE
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
-            self._credential_policy = credential
+            self._credential_policy = credential  # type: ignore
         elif isinstance(credential, AzureSasCredential):
-            self._credential_policy = AzureSasCredentialPolicy(credential)
+            self._credential_policy = AzureSasCredentialPolicy(credential)  # type: ignore
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential_policy = SharedKeyCredentialPolicy(credential)
+            self._credential_policy = SharedKeyCredentialPolicy(credential)  # type: ignore
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -259,9 +261,9 @@ class TablesBaseClient(AccountHostsMixin):
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
 
-        changeset = HttpRequest("POST", None)
+        changeset = HttpRequest("POST", None)  # type: ignore
         changeset.set_multipart_mixed(
-            *reqs, policies=policies, boundary="changeset_{}".format(uuid4())
+            *reqs, policies=policies, boundary="changeset_{}".format(uuid4())  # type: ignore
         )
         request = self._client._client.post(  # pylint: disable=protected-access
             url="https://{}/$batch".format(self._primary_hostname),
@@ -346,7 +348,6 @@ def parse_connection_str(conn_str, credential, keyword_args):
             credential = conn_settings.get("sharedaccesssignature")
             # if "sharedaccesssignature" in conn_settings:
             #     credential = AzureSasCredential(conn_settings['sharedaccesssignature'])
-
     primary = conn_settings.get("tableendpoint")
     secondary = conn_settings.get("tablesecondaryendpoint")
     if not primary:

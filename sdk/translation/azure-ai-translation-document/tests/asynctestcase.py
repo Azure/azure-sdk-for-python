@@ -3,6 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+import os
 from testcase import DocumentTranslationTest, Document
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 
@@ -11,19 +13,29 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
     def __init__(self, method_name):
         super(AsyncDocumentTranslationTest, self).__init__(method_name)
 
-    async def _submit_and_validate_translation_job_async(self, async_client, translation_inputs, total_docs_count=None):
-        # submit job
-        job_details = await async_client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_details.id)
-        # wait for result
-        job_details = await async_client.wait_until_done(job_details.id)
-        # validate
-        self._validate_translation_job(job_details=job_details, status='Succeeded', total=total_docs_count, succeeded=total_docs_count)
+    def generate_oauth_token(self):
+        if self.is_live:
+            from azure.identity.aio import ClientSecretCredential
+            return ClientSecretCredential(
+                os.getenv("TRANSLATION_TENANT_ID"),
+                os.getenv("TRANSLATION_CLIENT_ID"),
+                os.getenv("TRANSLATION_CLIENT_SECRET"),
+            )
 
-        return job_details.id
+    async def _begin_and_validate_translation_async(self, async_client, translation_inputs, total_docs_count, language=None):
+        # submit job
+        poller = await async_client.begin_translation(translation_inputs)
+        self.assertIsNotNone(poller.id)
+        # wait for result
+        doc_statuses = await poller.result()
+        # validate
+        self._validate_translation_metadata(poller=poller, status='Succeeded', total=total_docs_count, succeeded=total_docs_count)
+        async for doc in doc_statuses:
+            self._validate_doc_status(doc, language)
+        return poller.id
 
     # client helpers
-    async def _create_and_submit_sample_translation_jobs_async(self, async_client, jobs_count, **kwargs):
+    async def _begin_multiple_translations_async(self, async_client, jobs_count, **kwargs):
         wait_for_job = kwargs.pop('wait', True)
         language_code = kwargs.pop('language_code', "es")
         docs_per_job = kwargs.pop('docs_per_job', 2)
@@ -54,16 +66,17 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
             ]
 
             # submit multiple jobs
-            job_details = await async_client.create_translation_job(translation_inputs)
-            self.assertIsNotNone(job_details.id)
+            poller = await async_client.begin_translation(translation_inputs)
+            self.assertIsNotNone(poller.id)
             if wait_for_job:
-                await async_client.wait_until_done(job_details.id)
-            result_job_ids.append(job_details.id)
+                await poller.result()
+            else:
+                await poller.wait()
+            result_job_ids.append(poller.id)
 
         return result_job_ids
 
-
-    async def _create_translation_job_with_dummy_docs_async(self, async_client, docs_count, **kwargs):
+    async def _begin_and_validate_translation_with_multiple_docs_async(self, async_client, docs_count, **kwargs):
         # get input parms
         wait_for_job = kwargs.pop('wait', False)
         language_code = kwargs.pop('language_code', "es")
@@ -87,12 +100,14 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
         ]
 
         # submit job
-        job_details = await async_client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_details.id)
+        poller = await async_client.begin_translation(translation_inputs)
+        self.assertIsNotNone(poller.id)
         # wait for result
         if wait_for_job:
-                await async_client.wait_until_done(job_details.id)
-        # validate
-        self._validate_translation_job(job_details=job_details)
+            result = await poller.result()
+            async for doc in result:
+                self._validate_doc_status(doc, "es")
 
-        return job_details.id
+        # validate
+        self._validate_translation_metadata(poller=poller)
+        return poller

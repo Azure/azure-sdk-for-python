@@ -46,7 +46,7 @@ class ServerConnectionPoliciesOperations:
         server_name: str,
         connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
         parameters: "_models.ServerConnectionPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServerConnectionPolicy":
         """Creates or updates the server's connection policy.
 
@@ -120,7 +120,7 @@ class ServerConnectionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServerConnectionPolicy":
         """Gets the server's secure connection policy.
 

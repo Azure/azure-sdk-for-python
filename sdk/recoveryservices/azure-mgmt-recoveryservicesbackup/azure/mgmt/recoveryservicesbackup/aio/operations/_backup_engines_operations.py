@@ -47,7 +47,7 @@ class BackupEnginesOperations:
         resource_group_name: str,
         filter: Optional[str] = None,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BackupEngineBaseResourceList"]:
         """Backup management servers registered to Recovery Services Vault. Returns a pageable list of
         servers.
@@ -71,7 +71,7 @@ class BackupEnginesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -134,7 +134,7 @@ class BackupEnginesOperations:
         backup_engine_name: str,
         filter: Optional[str] = None,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupEngineBaseResource":
         """Returns backup management server registered to Recovery Services Vault.
 
@@ -159,7 +159,7 @@ class BackupEnginesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL

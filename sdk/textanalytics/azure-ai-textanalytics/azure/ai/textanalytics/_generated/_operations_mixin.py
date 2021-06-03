@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 import warnings
 
 # FIXME: have to manually reconfigure import path for multiapi operation mixin
-from .._lro import AnalyzeBatchActionsLROPoller, AnalyzeBatchActionsLROPollingMethod, AnalyzeHealthcareEntitiesLROPoller, AnalyzeHealthcareEntitiesLROPollingMethod
+from .._lro import AnalyzeActionsLROPoller, AnalyzeActionsLROPollingMethod, AnalyzeHealthcareEntitiesLROPoller, AnalyzeHealthcareEntitiesLROPollingMethod
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -84,12 +84,12 @@ class TextAnalyticsClientOperationsMixin(object):
         :type body: ~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeBatchInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AnalyzeBatchActionsLROPollingMethod.
+        :keyword polling: By default, your polling method will be AnalyzeActionsLROPollingMethod.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AnalyzeBatchActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
-        :rtype: ~...._lro.AnalyzeBatchActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeJobState]
+        :return: An instance of AnalyzeActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
+        :rtype: ~...._lro.AnalyzeActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_analyze')

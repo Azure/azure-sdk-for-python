@@ -8,8 +8,7 @@
 FILE: list_all_submitted_jobs.py
 
 DESCRIPTION:
-    This sample demonstrates how to list all the submitted translation jobs for the resource and
-    wait until done on any jobs that are still running.
+    This sample demonstrates how to list all the submitted translation jobs for the resource.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
@@ -38,9 +37,6 @@ def sample_list_all_submitted_jobs():
     translation_jobs = client.list_submitted_jobs()  # type: ItemPaged[JobStatusResult]
 
     for job in translation_jobs:
-        if job.status == "Running":
-            job = client.wait_until_done(job.id)
-
         print("Job ID: {}".format(job.id))
         print("Job status: {}".format(job.status))
         print("Job created on: {}".format(job.created_on))

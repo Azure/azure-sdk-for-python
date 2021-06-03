@@ -46,7 +46,7 @@ class UsagesOperations:
         resource_group_name: str,
         instance_pool_name: str,
         expand_children: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UsageListResult"]:
         """Gets all instance pool usage metrics.
 

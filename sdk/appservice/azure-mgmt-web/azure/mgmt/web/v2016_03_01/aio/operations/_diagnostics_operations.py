@@ -46,7 +46,7 @@ class DiagnosticsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DetectorResponseCollection"]:
         """List Hosting Environment Detector Responses.
 
@@ -126,7 +126,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DetectorResponse":
         """Get Hosting Environment Detector Response.
 
@@ -201,7 +201,7 @@ class DiagnosticsOperations:
         self,
         resource_group_name: str,
         site_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DetectorResponseCollection"]:
         """List Site Detector Responses.
 
@@ -281,7 +281,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DetectorResponse":
         """Get site detector response.
 
@@ -356,7 +356,7 @@ class DiagnosticsOperations:
         self,
         resource_group_name: str,
         site_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticCategoryCollection"]:
         """Get Diagnostics Categories.
 
@@ -433,7 +433,7 @@ class DiagnosticsOperations:
         resource_group_name: str,
         site_name: str,
         diagnostic_category: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticCategory":
         """Get Diagnostics Category.
 
@@ -497,7 +497,7 @@ class DiagnosticsOperations:
         resource_group_name: str,
         site_name: str,
         diagnostic_category: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticAnalysisCollection"]:
         """Get Site Analyses.
 
@@ -578,7 +578,7 @@ class DiagnosticsOperations:
         site_name: str,
         diagnostic_category: str,
         analysis_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticAnalysis":
         """Get Site Analysis.
 
@@ -649,7 +649,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticAnalysis":
         """Execute Analysis.
 
@@ -728,7 +728,7 @@ class DiagnosticsOperations:
         resource_group_name: str,
         site_name: str,
         diagnostic_category: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticDetectorCollection"]:
         """Get Detectors.
 
@@ -809,7 +809,7 @@ class DiagnosticsOperations:
         site_name: str,
         diagnostic_category: str,
         detector_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticDetectorCollection"]:
         """Get Detector.
 
@@ -896,7 +896,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticDetectorResponse":
         """Execute Detector.
 
@@ -975,7 +975,7 @@ class DiagnosticsOperations:
         resource_group_name: str,
         site_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DetectorResponseCollection"]:
         """List Site Detector Responses.
 
@@ -1059,7 +1059,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DetectorResponse":
         """Get site detector response.
 
@@ -1138,7 +1138,7 @@ class DiagnosticsOperations:
         resource_group_name: str,
         site_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticCategoryCollection"]:
         """Get Diagnostics Categories.
 
@@ -1219,7 +1219,7 @@ class DiagnosticsOperations:
         site_name: str,
         diagnostic_category: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticCategory":
         """Get Diagnostics Category.
 
@@ -1287,7 +1287,7 @@ class DiagnosticsOperations:
         site_name: str,
         diagnostic_category: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticAnalysisCollection"]:
         """Get Site Analyses.
 
@@ -1372,7 +1372,7 @@ class DiagnosticsOperations:
         diagnostic_category: str,
         analysis_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticAnalysis":
         """Get Site Analysis.
 
@@ -1447,7 +1447,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticAnalysis":
         """Execute Analysis.
 
@@ -1530,7 +1530,7 @@ class DiagnosticsOperations:
         site_name: str,
         diagnostic_category: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticDetectorCollection"]:
         """Get Detectors.
 
@@ -1615,7 +1615,7 @@ class DiagnosticsOperations:
         diagnostic_category: str,
         detector_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiagnosticDetectorCollection"]:
         """Get Detector.
 
@@ -1706,7 +1706,7 @@ class DiagnosticsOperations:
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiagnosticDetectorResponse":
         """Execute Detector.
 

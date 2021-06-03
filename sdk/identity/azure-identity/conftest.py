@@ -14,8 +14,12 @@ if sys.version_info < (3, 5, 3):
     collect_ignore_glob = ["*_async.py"]
 
 
+RECORD_IMDS = "--record-imds"
+
+
 def pytest_addoption(parser):
     parser.addoption("--manual", action="store_true", default=False, help="run manual tests")
+    parser.addoption(RECORD_IMDS, action="store_true", default=False, help="record IMDS live tests")
 
 
 def pytest_configure(config):
@@ -37,6 +41,17 @@ def pytest_collection_modifyitems(config, items):
             test.add_marker(skip_manual)
         elif stdout_captured and "prints" in test.keywords:
             test.add_marker(skip_prints)
+
+
+@pytest.fixture(scope="class")
+def record_imds_test(request):
+    """Fixture to control recording IMDS managed identity tests
+
+    Recorded IMDS tests run as expected in playback. However, because they require particular live environments, a
+    custom pytest option ("--record-imds") controls whether they're included in a live test run.
+    """
+    if request.instance.is_live and not request.session.config.getoption(RECORD_IMDS):
+        pytest.skip('Run "pytest {}" to record a live run of this test'.format(RECORD_IMDS))
 
 
 @pytest.fixture()

@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
@@ -19,7 +20,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -46,6 +47,83 @@ class SignalRPrivateEndpointConnectionsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
+    def list(
+        self,
+        resource_group_name,  # type: str
+        resource_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.PrivateEndpointConnectionList"]
+        """List private endpoint connections.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param resource_name: The name of the resource.
+        :type resource_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either PrivateEndpointConnectionList or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.signalr.models.PrivateEndpointConnectionList]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionList"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-04-01-preview"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('PrivateEndpointConnectionList', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/privateEndpointConnections'}  # type: ignore
+
     def get(
         self,
         private_endpoint_connection_name,  # type: str
@@ -54,15 +132,14 @@ class SignalRPrivateEndpointConnectionsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.PrivateEndpointConnection"
-        """Get the specified private endpoint connection associated with a SignalR resource.
+        """Get the specified private endpoint connection.
 
-        :param private_endpoint_connection_name: The name of the private endpoint connection associated
-         with the SignalR resource.
+        :param private_endpoint_connection_name: The name of the private endpoint connection.
         :type private_endpoint_connection_name: str
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
-        :param resource_name: The name of the SignalR resource.
+        :param resource_name: The name of the resource.
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection, or the result of cls(response)
@@ -74,7 +151,7 @@ class SignalRPrivateEndpointConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2021-04-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -101,7 +178,7 @@ class SignalRPrivateEndpointConnectionsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
@@ -117,19 +194,18 @@ class SignalRPrivateEndpointConnectionsOperations(object):
         private_endpoint_connection_name,  # type: str
         resource_group_name,  # type: str
         resource_name,  # type: str
-        parameters=None,  # type: Optional["_models.PrivateEndpointConnection"]
+        parameters,  # type: "_models.PrivateEndpointConnection"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.PrivateEndpointConnection"
-        """Update the state of specified private endpoint connection associated with a SignalR resource.
+        """Update the state of specified private endpoint connection.
 
-        :param private_endpoint_connection_name: The name of the private endpoint connection associated
-         with the SignalR resource.
+        :param private_endpoint_connection_name: The name of the private endpoint connection.
         :type private_endpoint_connection_name: str
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
-        :param resource_name: The name of the SignalR resource.
+        :param resource_name: The name of the resource.
         :type resource_name: str
         :param parameters: The resource of private endpoint and its properties.
         :type parameters: ~azure.mgmt.signalr.models.PrivateEndpointConnection
@@ -143,7 +219,7 @@ class SignalRPrivateEndpointConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2021-04-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -167,10 +243,7 @@ class SignalRPrivateEndpointConnectionsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if parameters is not None:
-            body_content = self._serialize.body(parameters, 'PrivateEndpointConnection')
-        else:
-            body_content = None
+        body_content = self._serialize.body(parameters, 'PrivateEndpointConnection')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -178,7 +251,7 @@ class SignalRPrivateEndpointConnectionsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
@@ -202,7 +275,7 @@ class SignalRPrivateEndpointConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2021-04-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -227,9 +300,9 @@ class SignalRPrivateEndpointConnectionsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -245,20 +318,19 @@ class SignalRPrivateEndpointConnectionsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Delete the specified private endpoint connection associated with a SignalR resource.
+        """Delete the specified private endpoint connection.
 
-        :param private_endpoint_connection_name: The name of the private endpoint connection associated
-         with the SignalR resource.
+        :param private_endpoint_connection_name: The name of the private endpoint connection.
         :type private_endpoint_connection_name: str
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
-        :param resource_name: The name of the SignalR resource.
+        :param resource_name: The name of the resource.
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)

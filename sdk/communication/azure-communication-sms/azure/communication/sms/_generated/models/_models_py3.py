@@ -177,8 +177,8 @@ class SmsSendResponseItem(msrest.serialization.Model):
     :type message_id: str
     :param http_status_code: Required. HTTP Status code.
     :type http_status_code: int
-    :param repeatability_result: The result of a repeatable request with one of the case-
-     insensitive values accepted or rejected. Possible values include: "accepted", "rejected".
+    :param repeatability_result: The result of a repeatable request with one of the
+     case-insensitive values accepted or rejected. Possible values include: "accepted", "rejected".
     :type repeatability_result: str or
      ~azure.communication.sms.models.SmsSendResponseItemRepeatabilityResult
     :param successful: Required. Indicates if the message is processed successfully or not.
