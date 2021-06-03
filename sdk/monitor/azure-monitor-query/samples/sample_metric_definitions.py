@@ -17,4 +17,6 @@ metrics_uri = os.environ['METRICS_RESOURCE_URI']
 response = client.list_metric_definitions(metrics_uri, metric_namespace='microsoft.eventgrid/topics')
 
 for item in response:
-    pass
+    print(item)
+    for availability in item.metric_availabilities:
+        print(availability.time_grain)

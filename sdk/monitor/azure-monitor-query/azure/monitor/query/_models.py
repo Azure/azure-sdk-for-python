@@ -394,6 +394,9 @@ class MetricDefinition(object):
     def _from_generated(cls, generated):
         if not generated:
             return cls()
+        dimensions = None
+        if generated.dimensions is not None:
+            dimensions = [d.value for d in generated.dimensions]
         return cls(
             is_dimension_required=generated.is_dimension_required,
             resource_id=generated.resource_id,
@@ -408,7 +411,7 @@ class MetricDefinition(object):
                     ) for val in generated.metric_availabilities
                 ],
             id=generated.id,
-            dimensions=[d.value for d in generated.dimensions]
+            dimensions=dimensions
         )
 
 class MetricValue(object):

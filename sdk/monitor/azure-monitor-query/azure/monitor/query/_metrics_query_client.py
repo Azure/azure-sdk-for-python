@@ -114,7 +114,16 @@ class MetricsClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._definitions_op.list(resource_uri, metric_namespace, **kwargs)
+        return self._definitions_op.list(
+            resource_uri,
+            metric_namespace,
+            cls=kwargs.pop(
+                "cls",
+                lambda objs: [
+                    MetricDefinition._from_generated(x) for x in objs
+                ]
+            ),
+            **kwargs)
 
     def close(self):
         # type: () -> None
