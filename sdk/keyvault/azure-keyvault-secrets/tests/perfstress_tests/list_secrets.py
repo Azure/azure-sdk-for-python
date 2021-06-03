@@ -5,8 +5,8 @@
 import asyncio
 
 from azure_devtools.perfstress_tests import PerfStressTest
-from azure.identity import EnvironmentCredential
-from azure.identity.aio import EnvironmentCredential as AsyncEnvironmentCredential
+from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from azure.keyvault.secrets.aio import SecretClient as AsyncSecretClient
 
@@ -17,8 +17,8 @@ class ListSecretsTest(PerfStressTest):
         super().__init__(arguments)
 
         # Auth configuration
-        self.credential = EnvironmentCredential()
-        self.async_credential = AsyncEnvironmentCredential()
+        self.credential = DefaultAzureCredential()
+        self.async_credential = AsyncDefaultAzureCredential()
 
         # Create clients
         vault_url = self.get_from_env("AZURE_KEYVAULT_URL")
@@ -28,7 +28,7 @@ class ListSecretsTest(PerfStressTest):
     async def global_setup(self):
         """The global setup is run only once."""
         await super().global_setup()
-        self.secret_names = ["livekvtestlistperfsecret{}".format(str(i)) for i in range(self.args.list_size)]
+        self.secret_names = ["livekvtestlistperfsecret{}".format(i) for i in range(self.args.list_size)]
         create = [self.async_client.set_secret(name, "secret-value") for name in self.secret_names]
         await asyncio.wait(create)
 
@@ -50,17 +50,14 @@ class ListSecretsTest(PerfStressTest):
         """The synchronous perf test."""
         secret_properties = self.client.list_properties_of_secrets()
         # enumerate secrets to exercise paging code
-        count = 0
-        for property in secret_properties:
-            count += 1
+        list(secret_properties)
 
     async def run_async(self):
         """The asynchronous perf test."""
         secret_properties = self.async_client.list_properties_of_secrets()
         # enumerate secrets to exercise paging code
-        count = 0
-        async for property in secret_properties:
-            count += 1
+        async for _ in secret_properties:
+            pass
 
     @staticmethod
     def add_arguments(parser):

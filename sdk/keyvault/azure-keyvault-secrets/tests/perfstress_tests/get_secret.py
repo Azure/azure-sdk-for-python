@@ -3,8 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure_devtools.perfstress_tests import PerfStressTest
-from azure.identity import EnvironmentCredential
-from azure.identity.aio import EnvironmentCredential as AsyncEnvironmentCredential
+from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from azure.keyvault.secrets.aio import SecretClient as AsyncSecretClient
 
@@ -15,8 +15,8 @@ class GetSecretTest(PerfStressTest):
         super().__init__(arguments)
 
         # Auth configuration
-        self.credential = EnvironmentCredential()
-        self.async_credential = AsyncEnvironmentCredential()
+        self.credential = DefaultAzureCredential()
+        self.async_credential = AsyncDefaultAzureCredential()
 
         # Create clients
         vault_url = self.get_from_env("AZURE_KEYVAULT_URL")

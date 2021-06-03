@@ -5,12 +5,17 @@
 import os
 
 from azure_devtools.perfstress_tests import PerfStressTest
-from azure.identity import EnvironmentCredential
-from azure.identity.aio import EnvironmentCredential as AsyncEnvironmentCredential
+from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys.aio import KeyClient as AsyncKeyClient
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
 from azure.keyvault.keys.crypto.aio import CryptographyClient as AsyncCryptographyClient
+from azure.mgmt.keyvault.models import KeyPermissions, Permissions
+
+
+# without keys/get, a CryptographyClient created with a key ID performs all ops remotely
+NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 
 class DecryptTest(PerfStressTest):
@@ -19,8 +24,8 @@ class DecryptTest(PerfStressTest):
         super().__init__(arguments)
 
         # Auth configuration
-        self.credential = EnvironmentCredential()
-        self.async_credential = AsyncEnvironmentCredential()
+        self.credential = DefaultAzureCredential()
+        self.async_credential = AsyncDefaultAzureCredential()
 
         # Create clients
         vault_url = self.get_from_env("AZURE_KEYVAULT_URL")
@@ -31,13 +36,12 @@ class DecryptTest(PerfStressTest):
         """The global setup is run only once."""
         await super().global_setup()
         rsa_key = await self.async_client.create_rsa_key("livekvtestdecryptperfkey")
-        self.crypto_client = CryptographyClient(rsa_key, self.credential)
-        self.async_crypto_client = AsyncCryptographyClient(rsa_key, self.async_credential)
+        self.crypto_client = CryptographyClient(rsa_key.id, self.credential, permissions=NO_GET)
+        self.async_crypto_client = AsyncCryptographyClient(rsa_key.id, self.async_credential, permissions=NO_GET)
 
         self.test_algorithm = EncryptionAlgorithm.rsa_oaep_256
         plaintext = os.urandom(32)
         self.ciphertext = self.crypto_client.encrypt(self.test_algorithm, plaintext).ciphertext
-        
 
     async def global_cleanup(self):
         """The global cleanup is run only once."""
