@@ -520,6 +520,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         gateway_settings = self.hdinsight_client.clusters.get_gateway_settings(rg_name, cluster_name)
         self.validate_gateway_settings(gateway_settings, user_name, new_password)
 
+    @unittest.skip('hard to test')
     def test_get_usages(self):
         usages = self.hdinsight_client.locations.list_usages(LOCATION)
         self.assertIsNotNone(usages)
