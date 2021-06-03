@@ -33,7 +33,6 @@ from ._models import (
     PiiEntity,
     AnalyzeHealthcareEntitiesResult,
     AnalyzeActionsResult,
-    RequestStatistics,
     AnalyzeActionsType,
     AnalyzeActionsError,
     _get_indices,
@@ -262,9 +261,6 @@ def _get_good_result(current_task_type, index_of_task_result, doc_id_order, resp
     )
     return AnalyzeActionsResult(
         document_results=document_results,
-        statistics=RequestStatistics._from_generated( # pylint: disable=protected-access
-            response_task_to_deserialize.results.statistics
-        ) if response_task_to_deserialize.results.statistics else None,
         action_type=current_task_type,
         completed_on=response_task_to_deserialize.last_update_date_time,
     )

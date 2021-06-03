@@ -4,9 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import copy
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Union,
-    Optional,
     Any,
     List,
     Dict,
@@ -14,7 +13,6 @@ from typing import (  # pylint: disable=unused-import
 )
 from functools import partial
 from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
@@ -39,7 +37,7 @@ from ._models import AnalyzeActionsType
 
 from ._lro import (
     TextAnalyticsOperationResourcePolling,
-    AnalyzeBatchActionsLROPollingMethod,
+    AnalyzeActionsLROPollingMethod,
     AnalyzeHealthcareEntitiesLROPollingMethod,
 )
 
@@ -63,6 +61,7 @@ if TYPE_CHECKING:
         AnalyzeHealthcareEntitiesResult,
         AnalyzeActionsResult,
     )
+    from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
 
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
@@ -508,7 +507,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeHealthcareEntitiesResult]]
+    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[AnalyzeHealthcareEntitiesResult]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -555,7 +554,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
             object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult`.
         :rtype:
-            ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesLROPoller[~azure.core.paging.ItemPaged[
             ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
@@ -826,7 +825,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction]] # pylint: disable=line-too-long
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeActionsResult]]
+    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[AnalyzeActionsResult]]
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
@@ -853,11 +852,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 30 seconds.
-        :return: An instance of an LROPoller. Call `result()` on the poller
+        :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the poller
             object to return a pageable heterogeneous list of the action results in the order
             the actions were sent in this method.
         :rtype:
-            ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
             ~azure.ai.textanalytics.AnalyzeActionsResult]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
@@ -921,7 +920,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=kwargs.pop("cls", partial(
                     self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats
                 )),
-                polling=AnalyzeBatchActionsLROPollingMethod(
+                polling=AnalyzeActionsLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)

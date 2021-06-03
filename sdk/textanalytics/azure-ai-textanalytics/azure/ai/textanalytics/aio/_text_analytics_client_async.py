@@ -4,19 +4,18 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import copy
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Union,
-    Optional,
     Any,
     List,
     Dict,
     TYPE_CHECKING
 )
 from functools import partial
-from azure.core.polling import AsyncLROPoller
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
+from azure.core.credentials import AzureKeyCredential
 from ._base_client_async import AsyncTextAnalyticsClientBase
 from .._request_handlers import _validate_input, _determine_action_type, _check_string_index_type_arg
 from .._response_handlers import (
@@ -45,18 +44,19 @@ from .._models import (
     AnalyzeActionsResult,
     AnalyzeActionsType,
     RecognizeLinkedEntitiesAction,
-    AnalyzeSentimentAction
+    AnalyzeSentimentAction,
+    AnalyzeHealthcareEntitiesResult,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
-from .._async_lro import (
-    AnalyzeHealthcareEntitiesAsyncLROPollingMethod,
-    AsyncAnalyzeBatchActionsLROPollingMethod
+from ._lro_async import (
+    AsyncAnalyzeHealthcareEntitiesLROPollingMethod,
+    AsyncAnalyzeActionsLROPollingMethod,
+    AsyncAnalyzeHealthcareEntitiesLROPoller,
+    AsyncAnalyzeActionsLROPoller,
 )
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.credentials import AzureKeyCredential
-    from .._models import AnalyzeHealthcareEntitiesResult
 
 
 class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
@@ -682,9 +682,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def begin_analyze_healthcare_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareEntitiesResult]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> AsyncAnalyzeHealthcareEntitiesLROPoller[AsyncItemPaged[AnalyzeHealthcareEntitiesResult]]:
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -727,10 +727,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
-        :return: An instance of an AnalyzeHealthcareEntitiesAsyncLROPoller. Call `result()` on the poller
+        :return: An instance of an AsyncAnalyzeHealthcareEntitiesLROPoller. Call `result()` on the poller
             object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`.
         :rtype:
-            ~azure.core.polling.AsyncLROPoller[~azure.core.paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.aio.AsyncAnalyzeHealthcareEntitiesLROPoller[~azure.core.paging.AsyncItemPaged[
             ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
@@ -767,7 +767,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 model_version=model_version,
                 string_index_type=string_index_type,
                 cls=my_cls,
-                polling=AnalyzeHealthcareEntitiesAsyncLROPollingMethod(
+                polling=AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
                     text_analytics_client=self._client,
                     timeout=polling_interval,
                     lro_algorithms=[
@@ -805,10 +805,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def begin_analyze_actions(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction]] # pylint: disable=line-too-long
-        **kwargs  # type: Any
-    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeActionsResult]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        actions: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction]], # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> AsyncAnalyzeActionsLROPoller[AsyncItemPaged[AnalyzeActionsResult]]:
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
@@ -835,11 +835,11 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 30 seconds.
-        :return: An instance of an LROPoller. Call `result()` on the poller
+        :return: An instance of an AsyncAnalyzeActionsLROPoller. Call `result()` on the poller
             object to return a pageable heterogeneous list of the action results in the order
             the actions were sent in this method.
         :rtype:
-            ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.aio.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
             ~azure.ai.textanalytics.AnalyzeActionsResult]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
@@ -903,7 +903,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 cls=kwargs.pop("cls", partial(
                     self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats
                 )),
-                polling=AsyncAnalyzeBatchActionsLROPollingMethod(
+                polling=AsyncAnalyzeActionsLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
