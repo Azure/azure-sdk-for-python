@@ -4,8 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import re
-from typing import Type
-from azure.core import pipeline
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 
@@ -88,21 +86,19 @@ def _enforce_https(request):
         )
 
 
-def _delete_callback(pipeline_response, deserialized, headers):
+def _delete_callback(pipeline_response, deserialized, headers):  # pylint: disable=unused-argument
     # type: (HttpResponse) -> None
-    if pipeline_response.http_response.status_code != 404:
-        return None
-
-    internal_response = pipeline_response.http_response.internal_response
-    UNKNOWNS = ["NAME_UNKNOWN", "MANIFEST_UNKNOWN", "TAG_UNKNOWN"]
-    valid = []
-    try:
-        for UNKOWN in UNKNOWNS:
-            if UNKOWN in internal_response.text:
-                valid.append(True)
-    except TypeError:
-        for UNKNOWN in UNKNOWNS:
-            if UNKNOWN in internal_response._body.decode("utf-8"):  # pylint: disable=protected-access
-                valid.append(True)
-    if True not in valid:
-        raise HttpResponseError(response=pipeline_response.http_response)
+    if pipeline_response.http_response.status_code == 404:
+        internal_response = pipeline_response.http_response.internal_response
+        UNKNOWNS = ["NAME_UNKNOWN", "MANIFEST_UNKNOWN", "TAG_UNKNOWN"]
+        valid = []
+        try:
+            for UNKOWN in UNKNOWNS:
+                if UNKOWN in internal_response.text:
+                    valid.append(True)
+        except TypeError:
+            for UNKNOWN in UNKNOWNS:
+                if UNKNOWN in internal_response._body.decode("utf-8"):  # pylint: disable=protected-access
+                    valid.append(True)
+        if True not in valid:
+            raise HttpResponseError(response=pipeline_response.http_response)
