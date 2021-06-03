@@ -14,7 +14,7 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     TagOrder,
 )
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 from testcase import ContainerRegistryTestClass
@@ -544,3 +544,10 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         digest = digest[:-10] + u"a" * 10
 
         client.delete_manifest(repo, digest)
+
+    @acr_preparer()
+    def test_incorrect_authentication_scope(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint, authentication_scope="https://microsoft.com")
+
+        with pytest.raises(ClientAuthenticationError):
+            properties = client.get_repository_properties(HELLO_WORLD)

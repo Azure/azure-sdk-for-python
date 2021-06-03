@@ -34,7 +34,7 @@ class ContainerRegistryBaseClient(object):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Optional[TokenCredential], Dict[str, Any]) -> None
-        auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
+        auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,

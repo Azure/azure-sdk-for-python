@@ -33,7 +33,7 @@ class ContainerRegistryBaseClient(object):
     """
 
     def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs) -> None:
-        auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
+        auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
