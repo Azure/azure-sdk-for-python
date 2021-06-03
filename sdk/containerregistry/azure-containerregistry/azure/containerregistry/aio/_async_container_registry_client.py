@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
-from .._helpers import _is_tag, _parse_next_link, _delete_callback
+from .._helpers import _is_tag, _parse_next_link
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 
 if TYPE_CHECKING:
@@ -73,7 +73,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: Delete a repository from the `ContainerRegistryClient`
         """
-        await self._client.container_registry.delete_repository(repository, cls=_delete_callback, **kwargs)
+        await self._client.container_registry.delete_repository(repository, **kwargs)
 
     @distributed_trace
     def list_repository_names(self, **kwargs: Any) -> AsyncItemPaged[str]:
@@ -336,7 +336,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if _is_tag(tag_or_digest):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
-        await self._client.container_registry.delete_manifest(repository, tag_or_digest, cls=_delete_callback, **kwargs)
+        await self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
 
     @distributed_trace_async
     async def delete_tag(self, repository: str, tag: str, **kwargs: Any) -> None:
@@ -359,7 +359,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             async for artifact in client.list_tag_properties():
                 await client.delete_tag(tag.name)
         """
-        await self._client.container_registry.delete_tag(repository, tag, cls=_delete_callback, **kwargs)
+        await self._client.container_registry.delete_tag(repository, tag, **kwargs)
 
     @distributed_trace_async
     async def get_manifest_properties(

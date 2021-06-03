@@ -84,20 +84,3 @@ def _enforce_https(request):
         raise ServiceRequestError(
             "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
         )
-
-
-def _delete_callback(pipeline_response, deserialized, headers):  # pylint: disable=unused-argument
-    if pipeline_response.http_response.status_code == 404:
-        internal_response = pipeline_response.http_response.internal_response
-        UNKNOWNS = ["NAME_UNKNOWN", "MANIFEST_UNKNOWN", "TAG_UNKNOWN"]
-        valid = []
-        try:
-            for UNKOWN in UNKNOWNS:
-                if UNKOWN in internal_response.text:
-                    valid.append(True)
-        except TypeError:
-            for UNKNOWN in UNKNOWNS:
-                if UNKNOWN in internal_response._body.decode("utf-8"):  # pylint: disable=protected-access
-                    valid.append(True)
-        if True not in valid:
-            raise HttpResponseError(response=pipeline_response.http_response)
