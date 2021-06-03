@@ -418,6 +418,7 @@ class EventDataBatch(object):
 
     def _load_events(self, events):
         for event_data in events:
+            print(event_data)
             try:
                 self.add(event_data)
             except ValueError:
@@ -460,8 +461,11 @@ class EventDataBatch(object):
         :rtype: None
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
+        print('in batch add')
         if isinstance(event_data, AmqpAnnotatedMessage):
             event_data = EventData._from_message(event_data._to_outgoing_amqp_message())    # pylint: disable=protected-access
+            print(type(event_data))
+            print(event_data)
 
         if self._partition_key:
             if (
