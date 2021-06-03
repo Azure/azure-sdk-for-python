@@ -12,13 +12,13 @@ from typing import TYPE_CHECKING, Any
 from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,
 )
-
+from .._models import MetricsResult, MetricDefinition
 from .._helpers import get_authentication_policy
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.paging import ItemPaged
-    from .._models import MetricsResult, MetricNamespace, MetricDefinition
+    from .._models import MetricNamespace
 
 
 class MetricsClient(object):
@@ -82,7 +82,8 @@ class MetricsClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         kwargs.setdefault("metricnames", ",".join(metricnames))
-        return await self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
+        generated = await self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
+        return MetricsResult._from_generated(generated) # pylint: disable=protected-access
 
     async def list_metric_namespaces(self, resource_uri, **kwargs):
         # type: (str, Any) -> ItemPaged[MetricNamespace]
@@ -111,7 +112,9 @@ class MetricsClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return await self._namespace_op.list(resource_uri, **kwargs)
+        return await MetricDefinition._from_generated( # pylint: disable=protected-access
+            self._namespace_op.list(resource_uri, **kwargs)
+        )
 
     async def __aenter__(self) -> "MetricsClient":
         await self._client.__aenter__()
