@@ -78,7 +78,7 @@ class LogsQueryResults(object):
         # type: (Any) -> None
         self.tables = kwargs.get("tables", None)
         self.errors = kwargs.get("errors", None)
-    
+
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
@@ -92,7 +92,7 @@ class LogsQueryResults(object):
                 target=generated.errors.target
                 )
         if generated.tables is not None:
-            tables=[
+            tables = [
                 LogsQueryResultTable._from_generated( # pylint: disable=protected-access
                     table
                     ) for table in generated.tables
@@ -178,7 +178,7 @@ class LogsQueryRequest(InternalLogQueryRequest):
 
 
 class LogsQueryBody(InternalQueryBody):
-    """The Analytics query. Learn more about the 
+    """The Analytics query. Learn more about the
     `Analytics query syntax <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
 
     All required parameters must be populated in order to send to Azure.
@@ -237,7 +237,7 @@ class LogsQueryResult(object):
             body=LogsQueryResults._from_generated(generated.body) # pylint: disable=protected-access
         )
 
-class LogsBatchResults(InternalBatchResponse):
+class LogsBatchResults(object):
     """Response to a batch.
 
     :keyword responses: An array of responses corresponding to each individual request in a batch.
@@ -277,7 +277,7 @@ class LogsBatchResultError(object):
         self.message = kwargs.get("message", None)
         self.code = kwargs.get("code", None)
         self.details = kwargs.get("details", None)
-    
+
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
@@ -563,7 +563,8 @@ class MetricsMetadataValue(object):
 
 
 class MetricAvailability(object):
-    """Metric availability specifies the time grain (aggregation interval or frequency) and the retention period for that time grain.
+    """Metric availability specifies the time grain (aggregation interval or frequency)
+    and the retention period for that time grain.
 
     :keyword time_grain: the time grain specifies the aggregation interval for the metric. Expressed
      as a duration 'PT1M', 'P1D', etc.
