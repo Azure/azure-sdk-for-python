@@ -23,26 +23,22 @@ except (ModuleNotFoundError, ImportError) as e:
 
 _LOGGER = logging.getLogger(__name__)
 
+
 def parse_input(input_parameter):
     """From a syntax like package_name#submodule, build a package name
     and complete module name.
     """
-    split_package_name = input_parameter.split('#')
+    split_package_name = input_parameter.split("#")
     package_name = split_package_name[0]
     module_name = package_name.replace("-", ".")
     if len(split_package_name) >= 2:
         module_name = ".".join([module_name, split_package_name[1]])
     return package_name, module_name
 
+
 def create_empty_report():
-    return {
-        "models": {
-            "enums": {},
-            "exceptions": {},
-            "models": {}
-        },
-        "operations": {}
-    }
+    return {"models": {"enums": {}, "exceptions": {}, "models": {}}, "operations": {}}
+
 
 def create_report(module_name: str) -> Dict[str, Any]:
     module_to_generate = importlib.import_module(module_name)
@@ -55,7 +51,7 @@ def create_report(module_name: str) -> Dict[str, Any]:
         model_cls = getattr(module_to_generate.models, model_name)
         if hasattr(model_cls, "_attribute_map"):
             report["models"]["models"][model_name] = create_model_report(model_cls)
-        elif issubclass(model_cls, Exception): # If not, might be an exception
+        elif issubclass(model_cls, Exception):  # If not, might be an exception
             report["models"]["exceptions"][model_name] = create_model_report(model_cls)
         else:
             report["models"]["enums"][model_name] = create_model_report(model_cls)
@@ -67,7 +63,7 @@ def create_report(module_name: str) -> Dict[str, Any]:
         operations_classes = []
 
     for op_name in operations_classes:
-        op_content = {'name': op_name}
+        op_content = {"name": op_name}
         op_cls = getattr(module_to_generate.operations, op_name)
         for op_attr_name in dir(op_cls):
             op_attr = getattr(op_cls, op_attr_name)
@@ -75,73 +71,85 @@ def create_report(module_name: str) -> Dict[str, Any]:
                 # Keep it
                 func_content = create_report_from_func(op_attr)
                 op_content.setdefault("functions", {})[op_attr_name] = func_content
-        report['operations'][op_name] = op_content
+        report["operations"][op_name] = op_content
 
     return report
 
+
 def create_model_report(model_cls):
     result = {
-        'name': model_cls.__name__,
+        "name": model_cls.__name__,
     }
     # If _attribute_map, it's a model
     if hasattr(model_cls, "_attribute_map"):
-        result['type'] = "Model"
+        result["type"] = "Model"
         for attribute, conf in model_cls._attribute_map.items():
             attribute_validation = getattr(model_cls, "_validation", {}).get(attribute, {})
 
-            result.setdefault('parameters', {})[attribute] = {
-                'name': attribute,
-                'properties': {
-                    'type': conf['type'],
-                    'required': attribute_validation.get('required', False),
-                    'readonly': attribute_validation.get('readonly', False)
-                }
+            result.setdefault("parameters", {})[attribute] = {
+                "name": attribute,
+                "properties": {
+                    "type": conf["type"],
+                    "required": attribute_validation.get("required", False),
+                    "readonly": attribute_validation.get("readonly", False),
+                },
             }
-    elif issubclass(model_cls, Exception): # If not, might be an exception
-        result['type'] = "Exception"
-    else: # If not, it's an enum
-        result['type'] = "Enum"
-        result['values'] = list(model_cls.__members__)
+    elif issubclass(model_cls, Exception):  # If not, might be an exception
+        result["type"] = "Exception"
+    else:  # If not, it's an enum
+        result["type"] = "Enum"
+        result["values"] = list(model_cls.__members__)
 
     return result
 
+
 def create_report_from_func(function_attr):
     func_content = {
-        'name': function_attr.__name__,
-        'metadata': getattr(function_attr, "metadata", {}),
-        'parameters': []
+        "name": function_attr.__name__,
+        "metadata": getattr(function_attr, "metadata", {}),
+        "parameters": [],
     }
     signature = inspect.signature(function_attr)
     for parameter_name in signature.parameters:
         if parameter_name == "self":
             continue
-        if parameter_name =="custom_headers":
-            break # We reach Autorest generic
+        if parameter_name == "custom_headers":
+            break  # We reach Autorest generic
         parameter = signature.parameters[parameter_name]
-        func_content["parameters"].append({
-            'name': parameter.name,
-        })
+        func_content["parameters"].append(
+            {
+                "name": parameter.name,
+            }
+        )
     return func_content
+
 
 # given an input of a name, we need to return the appropriate relative diff between the sdk_root and the actual package directory
 def resolve_package_directory(package_name):
-    packages = [os.path.dirname(p) for p in (glob.glob('{}/setup.py'.format(package_name)) + glob.glob('sdk/*/{}/setup.py'.format(package_name)))]
+    packages = [
+        os.path.dirname(p)
+        for p in (glob.glob("{}/setup.py".format(package_name)) + glob.glob("sdk/*/{}/setup.py".format(package_name)))
+    ]
 
     if len(packages) > 1:
-        print('There should only be a single package matched in either repository structure. The following were found: {}'.format(packages))
+        print(
+            "There should only be a single package matched in either repository structure. The following were found: {}".format(
+                packages
+            )
+        )
         sys.exit(1)
 
     return packages[0]
 
+
 def merge_report(report_paths):
-    """Merge report on the given paths list.
-    """
+    """Merge report on the given paths list."""
     if len(report_paths) == 1:
         raise ValueError("Doesn't make sense to merge a report if there is only one report....")
 
     merged_report = create_empty_report()
     for report in sorted(report_paths):
-        with open(report, 'r') as report_fd:
+        with open(report, "r") as report_fd:
             report_json = json.load(report_fd)
 
         merged_report["models"]["enums"].update(report_json["models"]["enums"])
@@ -150,22 +158,25 @@ def merge_report(report_paths):
         merged_report["operations"].update(report_json["operations"])
     return merged_report
 
+
 def main(
-        input_parameter: str,
-        version: Optional[str] = None,
-        no_venv: bool = False,
-        pypi: bool = False,
-        last_pypi: bool = False,
-        output: Optional[str] = None,
-        metadata_path: Optional[str] = None
-    ):
+    input_parameter: str,
+    version: Optional[str] = None,
+    no_venv: bool = False,
+    pypi: bool = False,
+    last_pypi: bool = False,
+    output: Optional[str] = None,
+    metadata_path: Optional[str] = None,
+):
 
     output_msg = output if output else "default folder"
-    _LOGGER.info(f"Building code report of {input_parameter} for version {version} in {output_msg} ({no_venv}/{pypi}/{last_pypi})")
+    _LOGGER.info(
+        f"Building code report of {input_parameter} for version {version} in {output_msg} ({no_venv}/{pypi}/{last_pypi})"
+    )
     package_name, module_name = parse_input(input_parameter)
     path_to_package = resolve_package_directory(package_name)
 
-    output_filename = ''
+    output_filename = ""
     result = []
     if (version or pypi or last_pypi) and not no_venv:
         if version:
@@ -173,6 +184,7 @@ def main(
         else:
             _LOGGER.info(f"Download versions of {package_name} on PyPI")
             from pypi_tools.pypi import PyPIClient
+
             client = PyPIClient()
             versions = [str(v) for v in client.get_ordered_versions(package_name)]
             _LOGGER.info(f"Got {versions}")
@@ -182,7 +194,9 @@ def main(
 
         for version in versions:
             _LOGGER.info(f"Installing version {version} of {package_name} in a venv")
-            with create_venv_with_package([f"{package_name}=={version}"]) as venv, tempfile.TemporaryDirectory() as temp_dir:
+            with create_venv_with_package(
+                [f"{package_name}=={version}"]
+            ) as venv, tempfile.TemporaryDirectory() as temp_dir:
                 metadata_path = str(Path(temp_dir, f"metadata_{version}.json"))
                 args = [
                     venv.env_exe,
@@ -192,7 +206,7 @@ def main(
                     version,
                     "--metadata",
                     metadata_path,
-                    input_parameter
+                    input_parameter,
                 ]
                 if output is not None:
                     args.append("--output=" + output)
@@ -200,7 +214,9 @@ def main(
                     subprocess.check_call(args)
                 except subprocess.CalledProcessError:
                     # If it fail, just assume this version is too old to get an Autorest report
-                    _LOGGER.warning(f"Version {version} seems to be too old to build a report (probably not Autorest based)")
+                    _LOGGER.warning(
+                        f"Version {version} seems to be too old to build a report (probably not Autorest based)"
+                    )
                 # Files have been written by the subprocess
                 with open(metadata_path, "r") as metadata_fd:
                     result.extend(json.load(metadata_fd)["reports_path"])
@@ -219,7 +235,7 @@ def main(
 
         module_for_path = get_sub_module_part(package_name, module_name)
         if module_for_path:
-            output_filename = output_folder / Path(module_for_path+".json")
+            output_filename = output_folder / Path(module_for_path + ".json")
         else:
             if output is not None:
                 output_filename = output
@@ -250,6 +266,7 @@ def main(
 
     return result
 
+
 def find_autorest_generated_folder(module_prefix="azure"):
     """Find all Autorest generated code in that module prefix.
     This actually looks for a "models" package only (not file). We could be smarter if necessary.
@@ -273,7 +290,7 @@ def find_autorest_generated_folder(module_prefix="azure"):
     except (ModuleNotFoundError, AttributeError):
         # No model, might dig deeper
         prefix_module = importlib.import_module(module_prefix)
-        for _, sub_package, ispkg in pkgutil.iter_modules(prefix_module.__path__, module_prefix+"."):
+        for _, sub_package, ispkg in pkgutil.iter_modules(prefix_module.__path__, module_prefix + "."):
             if ispkg:
                 result += find_autorest_generated_folder(sub_package)
     return result
@@ -287,39 +304,46 @@ def get_sub_module_part(package_name, module_name):
     if not module_name.startswith(sub_module_from_package):
         _LOGGER.warning(f"Submodule {module_name} does not start with package name {package_name}")
         return
-    return module_name[len(sub_module_from_package)+1:]
+    return module_name[len(sub_module_from_package) + 1 :]
 
 
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description='Code fingerprint building',
+        description="Code fingerprint building",
         formatter_class=argparse.RawTextHelpFormatter,
     )
-    parser.add_argument('package_name',
-                        help='Package name.')
-    parser.add_argument('--version', '-v',
-                        dest='version',
-                        help='The version of the package you want. By default, latest and current branch.')
-    parser.add_argument('--no-venv',
-                        dest='no_venv', action="store_true",
-                        help="If version is provided, this will assume the current accessible package is already this version. You should probably not use it.")
-    parser.add_argument('--pypi',
-                        dest='pypi', action="store_true",
-                        help="If provided, build report for all versions on pypi of this package.")
-    parser.add_argument('--last-pypi',
-                        dest='last_pypi', action="store_true",
-                        help="If provided, build report for last version on pypi of this package.")
-    parser.add_argument("--debug",
-                        dest="debug", action="store_true",
-                        help="Verbosity in DEBUG mode")
-    parser.add_argument("--output",
-                        dest="output",
-                        help="Override output path.")
-    parser.add_argument("--metadata-path",
-                        dest="metadata",
-                        help="Write a metadata file about what happen. Mostly used for automation.")
+    parser.add_argument("package_name", help="Package name.")
+    parser.add_argument(
+        "--version",
+        "-v",
+        dest="version",
+        help="The version of the package you want. By default, latest and current branch.",
+    )
+    parser.add_argument(
+        "--no-venv",
+        dest="no_venv",
+        action="store_true",
+        help="If version is provided, this will assume the current accessible package is already this version. You should probably not use it.",
+    )
+    parser.add_argument(
+        "--pypi",
+        dest="pypi",
+        action="store_true",
+        help="If provided, build report for all versions on pypi of this package.",
+    )
+    parser.add_argument(
+        "--last-pypi",
+        dest="last_pypi",
+        action="store_true",
+        help="If provided, build report for last version on pypi of this package.",
+    )
+    parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
+    parser.add_argument("--output", dest="output", help="Override output path.")
+    parser.add_argument(
+        "--metadata-path", dest="metadata", help="Write a metadata file about what happen. Mostly used for automation."
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)

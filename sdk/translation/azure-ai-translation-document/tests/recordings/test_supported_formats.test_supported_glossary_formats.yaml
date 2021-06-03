@@ -17,7 +17,7 @@ interactions:
       string: '{"value":[{"format":"XLIFF","fileExtensions":[".xlf"],"contentTypes":["application/xliff+xml"],"defaultVersion":"1.2","versions":["1.0","1.1","1.2"]},{"format":"TSV","fileExtensions":[".tsv",".tab"],"contentTypes":["text/tab-separated-values"]},{"format":"CSV","fileExtensions":[".csv"],"contentTypes":["text/csv"]}]}'
     headers:
       apim-request-id:
-      - d07dca62-7c2e-4f16-a716-a58d20ec9b21
+      - efa9abeb-7e0f-4185-9ee2-581e4460b740
       cache-control:
       - public,max-age=1
       content-length:
@@ -25,12 +25,12 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 21 May 2021 17:00:46 GMT
+      - Wed, 02 Jun 2021 06:34:32 GMT
       etag:
       - '"BB09005FA0DB45CD46802EE70709AA319365D435A020BE2897C9B902157EAD55"'
       set-cookie:
-      - ARRAffinity=0ff46fa6d58b00f2d44b7073721903c0eace480139d8ecfc38f61130af5e1587;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com
-      - ARRAffinitySameSite=0ff46fa6d58b00f2d44b7073721903c0eace480139d8ecfc38f61130af5e1587;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
+      - ARRAffinity=20358cd7aa5d6b0695f01ef171fc9a95880154357830e1c6bb513b73834a2e5f;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com
+      - ARRAffinitySameSite=20358cd7aa5d6b0695f01ef171fc9a95880154357830e1c6bb513b73834a2e5f;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +42,7 @@ interactions:
       x-powered-by:
       - ASP.NET
       x-requestid:
-      - d07dca62-7c2e-4f16-a716-a58d20ec9b21
+      - efa9abeb-7e0f-4185-9ee2-581e4460b740
     status:
       code: 200
       message: OK

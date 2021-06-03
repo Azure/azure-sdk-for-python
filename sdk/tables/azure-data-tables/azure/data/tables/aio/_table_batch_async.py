@@ -6,6 +6,8 @@
 from typing import Dict, Any, Optional, Union, TYPE_CHECKING
 import msrest
 
+from azure.core import MatchConditions
+
 from .._common_conversion import _transform_patch_to_cosmos_post
 from .._models import UpdateMode
 from .._entity import TableEntity
@@ -52,7 +54,7 @@ class TableBatchOperations(object):
         self.table_name = table_name
 
         self._partition_key = kwargs.pop("partition_key", None)
-        self.requests = []
+        self.requests = []  # type: ignore
 
     def __len__(self):
         return len(self.requests)
@@ -88,7 +90,7 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp = entity.copy()
+        temp = entity.copy()  # type: ignore
 
         if "PartitionKey" in temp and "RowKey" in temp:
             temp = _add_entity_properties(temp)
@@ -214,24 +216,18 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp = entity.copy()
+        temp = entity.copy()  # type: ignore
 
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             try:
-                etag = entity.metadata.get("etag", None)
+                etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
-
-        if_match, _ = _get_match_headers(
-            kwargs=dict(
-                kwargs,
-                etag=etag,
-                match_condition=match_condition,
-            ),
-            etag_param="etag",
-            match_param="match_condition",
+        if_match = _get_match_headers(
+            etag=etag,
+            match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
         partition_key = temp["PartitionKey"]
@@ -242,7 +238,7 @@ class TableBatchOperations(object):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match or "*",
+                if_match=if_match,
                 table_entity_properties=temp,
                 **kwargs
             )
@@ -251,7 +247,7 @@ class TableBatchOperations(object):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match or "*",
+                if_match=if_match,
                 table_entity_properties=temp,
                 **kwargs
             )
@@ -356,9 +352,9 @@ class TableBatchOperations(object):
         )
         self.requests.append(request)
 
-    _batch_update_entity.metadata = {
+    _batch_update_entity.metadata = {  # type: ignore
         "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
-    }  # type: ignore
+    }
 
     def _batch_merge_entity(
         self,
@@ -462,7 +458,7 @@ class TableBatchOperations(object):
             _transform_patch_to_cosmos_post(request)
         self.requests.append(request)
 
-    _batch_merge_entity.metadata = {
+    _batch_merge_entity.metadata = {  # type: ignore
         "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
     }
 
@@ -491,7 +487,7 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp = entity.copy()
+        temp = entity.copy()  # type: ignore
         partition_key = temp["PartitionKey"]
         row_key = temp["RowKey"]
 
@@ -499,25 +495,19 @@ class TableBatchOperations(object):
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             try:
-                etag = entity.metadata.get("etag", None)
+                etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
-
-        if_match, _ = _get_match_headers(
-            kwargs=dict(
-                kwargs,
-                etag=etag,
-                match_condition=match_condition,
-            ),
-            etag_param="etag",
-            match_param="match_condition",
+        if_match = _get_match_headers(
+            etag=etag,
+            match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
         self._batch_delete_entity(
             table=self.table_name,
             partition_key=partition_key,
             row_key=row_key,
-            if_match=if_match or "*",
+            if_match=if_match,
             **kwargs
         )
 
@@ -605,7 +595,7 @@ class TableBatchOperations(object):
         )
         self.requests.append(request)
 
-    _batch_delete_entity.metadata = {
+    _batch_delete_entity.metadata = {  # type: ignore
         "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
     }
 
@@ -635,7 +625,7 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp = entity.copy()
+        temp = entity.copy()  # type: ignore
 
         partition_key = temp["PartitionKey"]
         row_key = temp["RowKey"]

@@ -140,8 +140,8 @@ class JsonWebKeySignatureAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str,
     ES256_K = "ES256K"
 
 class JsonWebKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """JsonWebKey Key Type (kty), as defined in https://tools.ietf.org/html/draft-ietf-jose-json-web-
-    algorithms-40.
+    """JsonWebKey Key Type (kty), as defined in
+    https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40.
     """
 
     #: Elliptic Curve.

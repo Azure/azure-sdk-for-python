@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0b2 (2021-05-11)
+## 1.2.0b2 (2021-06-08)
 
 ### Features
 - Adds context manager functionality to the sync and async `AzureAppConfigurationClient`s.
