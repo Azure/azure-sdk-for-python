@@ -19,7 +19,7 @@ client = MetricsClient(credential)
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
 response = client.query(
     metrics_uri,
-    metricnames=["PublishSuccessCount"],
+    metric_names=["PublishSuccessCount"],
     timespan='P2D'
     )
 

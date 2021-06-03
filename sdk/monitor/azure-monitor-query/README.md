@@ -229,7 +229,7 @@ credential  = ClientSecretCredential(
     )
 
 client = MetricsClient(credential)
-response = client.query(os.environ['METRICS_RESOURCE_URI'], metricnames=["Microsoft.CognitiveServices/accounts"])
+response = client.query(os.environ['METRICS_RESOURCE_URI'], metric_names=["Microsoft.CognitiveServices/accounts"])
 ```
 
 ## Troubleshooting
