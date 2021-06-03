@@ -83,7 +83,7 @@ class MetricsClient(object):
         :rtype: ~azure.monitor.query.MetricsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        kwargs.setdefault("metric_names", ",".join(metric_names))
+        kwargs.setdefault("metricnames", ",".join(metric_names))
         generated = self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
         return MetricsResult._from_generated(generated) # pylint: disable=protected-access
 
