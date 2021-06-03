@@ -183,7 +183,7 @@ class ContainerRegistryTestClass(AzureTestCase):
 # Moving this out of testcase so the fixture and individual tests can use it
 def import_image(repository, tags):
     mgmt_client = ContainerRegistryManagementClient(
-        DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
+        DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], api_version="2019-05-01"
     )
     registry_uri = "registry.hub.docker.com"
     rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
@@ -204,7 +204,7 @@ def import_image(repository, tags):
 
     # Do the same for anonymous
     mgmt_client = ContainerRegistryManagementClient(
-        DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
+        DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], api_version="2019-05-01"
     )
     registry_uri = "registry.hub.docker.com"
     rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]

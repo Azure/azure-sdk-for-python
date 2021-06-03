@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, overload
+from typing import TYPE_CHECKING, overload, Any, Dict, Optional, Union
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
@@ -20,7 +20,6 @@ from ._helpers import _parse_next_link, _is_tag
 from ._models import RepositoryProperties, ArtifactTagProperties, ArtifactManifestProperties
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Union
     from azure.core.credentials import TokenCredential
 
 
@@ -52,13 +51,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     def _get_digest_from_tag(self, repository, tag):
         # type: (str, str) -> str
-        tag_props = self.get_tag(repository, tag)
+        tag_props = self.get_tag_properties(repository, tag)
         return tag_props.digest
 
     @distributed_trace
     def delete_repository(self, repository, **kwargs):
         # type: (str, **Any) -> None
-        """Delete a repository
+        """Delete a repository. If the repository cannot be found or a response status code of
+        404 is returned an error will not be raised.
 
         :param str repository: The repository to delete
         :returns: None
@@ -74,10 +74,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: Delete a repository from the `ContainerRegistryClient`
         """
-        try:
-            self._client.container_registry.delete_repository(repository, **kwargs)
-        except ResourceNotFoundError:
-            pass
+        self._client.container_registry.delete_repository(repository, **kwargs)
 
     @distributed_trace
     def list_repository_names(self, **kwargs):
@@ -203,7 +200,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_manifests(self, repository, **kwargs):
+    def list_manifest_properties(self, repository, **kwargs):
         # type: (str, **Any) -> ItemPaged[ArtifactManifestProperties]
         """List the artifacts for a repository
 
@@ -324,7 +321,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     @distributed_trace
     def delete_manifest(self, repository, tag_or_digest, **kwargs):
         # type: (str, str, **Any) -> None
-        """Delete a manifest
+        """Delete a manifest. If the manifest cannot be found or a response status code of
+        404 is returned an error will not be raised.
 
         :param str repository: Name of the repository the manifest belongs to
         :param str tag_or_digest: Tag or digest of the manifest to be deleted
@@ -344,15 +342,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
 
-        try:
-            self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
-        except ResourceNotFoundError:
-            pass
+        self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
 
     @distributed_trace
     def delete_tag(self, repository, tag, **kwargs):
         # type: (str, str, **Any) -> None
-        """Delete a tag from a repository
+        """Delete a tag from a repository. If the tag cannot be found or a response status code of
+        404 is returned an error will not be raised.
 
         :param str repository: Name of the repository the tag belongs to
         :param str tag: The tag to be deleted
@@ -367,13 +363,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            for artifact in client.list_tags():
+            for artifact in client.list_tag_properties():
                 client.delete_tag(tag.name)
         """
-        try:
-            self._client.container_registry.delete_tag(repository, tag, **kwargs)
-        except ResourceNotFoundError:
-            pass
+        self._client.container_registry.delete_tag(repository, tag, **kwargs)
 
     @distributed_trace
     def get_manifest_properties(self, repository, tag_or_digest, **kwargs):
@@ -392,7 +385,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            for artifact in client.list_manifests():
+            for artifact in client.list_manifest_properties():
                 properties = client.get_registry_artifact_properties(artifact.digest)
         """
         if _is_tag(tag_or_digest):
@@ -404,7 +397,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def get_tag(self, repository, tag, **kwargs):
+    def get_tag_properties(self, repository, tag, **kwargs):
         # type: (str, str, **Any) -> ArtifactTagProperties
         """Get the properties for a tag
 
@@ -420,16 +413,109 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            for tag in client.list_tags():
-                tag_properties = client.get_tag(tag.name)
+            for tag in client.list_tag_properties():
+                tag_properties = client.get_tag_properties(tag.name)
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.get_tag_properties(repository, tag, **kwargs),
             repository=repository,
         )
 
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
+                "accept", accept, "str"
+            )
+
+            if not next_link:
+                # Construct URL
+                url = "/acr/v1/{name}/_tags"
+                path_format_arguments = {
+                    "url": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._config.url",
+                        self._client._config.url,  # pylint: disable=protected-access
+                        "str",
+                        skip_quote=True,
+                    ),
+                    "name": self._client._serialize.url("name", name, "str"),  # pylint: disable=protected-access
+                }
+                url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                if last is not None:
+                    query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "last", last, "str"
+                    )
+                if n is not None:
+                    query_parameters["n"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "n", n, "int"
+                    )
+                if orderby is not None:
+                    query_parameters["orderby"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "orderby", orderby, "str"
+                    )
+                if digest is not None:
+                    query_parameters["digest"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "digest", digest, "str"
+                    )
+
+                request = self._client._client.get(  # pylint: disable=protected-access
+                    url, query_parameters, header_parameters
+                )
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                path_format_arguments = {
+                    "url": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._client._config.url",
+                        self._client._config.url,  # pylint: disable=protected-access
+                        "str",
+                        skip_quote=True,
+                    ),
+                    "name": self._client._serialize.url("name", name, "str"),  # pylint: disable=protected-access
+                }
+                url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
+                request = self._client._client.get(  # pylint: disable=protected-access
+                    url, query_parameters, header_parameters
+                )
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._client._deserialize("TagList", pipeline_response)  # pylint: disable=protected-access
+            list_of_elem = deserialized.tag_attribute_bases
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            link = None
+            if "Link" in pipeline_response.http_response.headers.keys():
+                link = _parse_next_link(pipeline_response.http_response.headers["Link"])
+            return link, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                error = self._client._deserialize.failsafe_deserialize(  # pylint: disable=protected-access
+                    AcrErrors, response
+                )
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
     @distributed_trace
-    def list_tags(self, repository, **kwargs):
+    def list_tag_properties(self, repository, **kwargs):
         # type: (str, **Any) -> ItemPaged[ArtifactTagProperties]
         """List the tags for a repository
 
@@ -450,8 +536,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            for tag in client.list_tags():
-                tag_properties = client.get_tag(tag.name)
+            for tag in client.list_tag_properties():
+                tag_properties = client.get_tag_properties(tag.name)
         """
         name = repository
         last = kwargs.pop("last", None)
@@ -590,15 +676,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            for artifact in client.list_manifests():
+            for artifact in client.list_manifest_properties():
                 received_properties = client.update_manifest_properties(
                     artifact.digest,
-                    ManifestWriteableProperties(
-                        can_delete=False,
-                        can_list=False,
-                        can_read=False,
-                        can_write=False,
-                    ),
+                    can_delete=False,
+                    can_list=False,
+                    can_read=False,
+                    can_write=False,
                 )
         """
         repository = args[0]
@@ -607,12 +691,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if len(args) == 3:
             properties = args[2]
         else:
-            properties = ArtifactManifestProperties(
-                can_delete=kwargs.pop("can_delete", None),
-                can_list=kwargs.pop("can_list", None),
-                can_read=kwargs.pop("can_read", None),
-                can_write=kwargs.pop("can_write", None),
-            )
+            properties = ArtifactManifestProperties()
+
+        properties.can_delete = kwargs.pop("can_delete", properties.can_delete)
+        properties.can_list = kwargs.pop("can_list", properties.can_list)
+        properties.can_read = kwargs.pop("can_read", properties.can_read)
+        properties.can_write = kwargs.pop("can_write", properties.can_write)
 
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
@@ -660,13 +744,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             tag_identifier = "latest"
             received = client.update_tag_properties(
+                "my_repository",
                 tag_identifier,
-                TagWriteableProperties(
-                    can_delete=False,
-                    can_list=False,
-                    can_read=False,
-                    can_write=False,
-                ),
+                can_delete=False,
+                can_list=False,
+                can_read=False,
+                can_write=False,
             )
         """
         repository = args[0]
@@ -675,12 +758,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if len(args) == 3:
             properties = args[2]
         else:
-            properties = ArtifactTagProperties(
-                can_delete=kwargs.pop("can_delete", None),
-                can_list=kwargs.pop("can_list", None),
-                can_read=kwargs.pop("can_read", None),
-                can_write=kwargs.pop("can_write", None),
-            )
+            properties = ArtifactTagProperties()
+
+        properties.can_delete = kwargs.pop("can_delete", properties.can_delete)
+        properties.can_list = kwargs.pop("can_list", properties.can_list)
+        properties.can_read = kwargs.pop("can_read", properties.can_read)
+        properties.can_write = kwargs.pop("can_write", properties.can_write)
 
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.update_tag_attributes(
@@ -718,13 +801,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             properties = args[1]
         else:
             repository = args[0]
-            properties = RepositoryProperties(
-                can_delete=kwargs.pop("can_delete", None),
-                can_list=kwargs.pop("can_list", None),
-                can_read=kwargs.pop("can_read", None),
-                can_write=kwargs.pop("can_write", None),
-                teleport_enabled=kwargs.pop("teleport_enabled", None),
-            )
+            properties = RepositoryProperties()
+
+        properties.can_delete = kwargs.pop("can_delete", properties.can_delete)
+        properties.can_list = kwargs.pop("can_list", properties.can_list)
+        properties.can_read = kwargs.pop("can_read", properties.can_read)
+        properties.can_write = kwargs.pop("can_write", properties.can_write)
+        properties.teleport_enabled = kwargs.pop("teleport_enabled", None)
 
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.set_properties(

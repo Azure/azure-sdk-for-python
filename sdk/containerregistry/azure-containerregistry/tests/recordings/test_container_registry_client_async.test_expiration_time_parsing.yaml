@@ -5,20 +5,28 @@ interactions:
       Accept:
       - application/json
       User-Agent:
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+=======
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog
+    uri: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_tags/tag7bda1b05
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
+        "repository", "Name": "repo7bda1b05", "Action": "metadata_read"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '196'
+      content-length: '215'
       content-type: application/json; charset=utf-8
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       date: Tue, 25 May 2021 18:55:00 GMT
+=======
+      date: Wed, 19 May 2021 21:09:57 GMT
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -27,7 +35,11 @@ interactions:
     status:
       code: 401
       message: Unauthorized
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
     url: https://seankane.azurecr.io/acr/v1/_catalog
+=======
+    url: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_tags/tag7bda1b05
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
 - request:
     body:
       access_token: REDACTED
@@ -37,7 +49,11 @@ interactions:
       Accept:
       - application/json
       User-Agent:
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+=======
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -46,11 +62,19 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       date: Tue, 25 May 2021 18:55:02 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       x-ms-ratelimit-remaining-calls-per-second: '166.65'
+=======
+      date: Wed, 19 May 2021 21:09:58 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.583333'
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
     status:
       code: 200
       message: OK
@@ -59,13 +83,22 @@ interactions:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       scope: registry:catalog:*
       service: seankane.azurecr.io
+=======
+      scope: repository:repo7bda1b05:metadata_read
+      service: fake_url.azurecr.io
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
     headers:
       Accept:
       - application/json
       User-Agent:
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+=======
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -74,11 +107,19 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       date: Tue, 25 May 2021 18:55:02 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       x-ms-ratelimit-remaining-calls-per-second: '166.633333'
+=======
+      date: Wed, 19 May 2021 21:09:58 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.116667'
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
     status:
       code: 200
       message: OK
@@ -89,11 +130,16 @@ interactions:
       Accept:
       - application/json
       User-Agent:
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+=======
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog
+    uri: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_tags/tag7bda1b05
   response:
     body:
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       string: '{"repositories": ["library/alpine", "library/busybox", "repo13cf14de",
         "repo25ce0f5d", "repo26ab150f", "repo27331535", "repo28471541", "repo2915152d",
         "repo2b381dc2", "repo2bef19cb", "repo2c591564", "repo2e8319c5", "repo308e19dd",
@@ -112,6 +158,19 @@ interactions:
       content-length: '904'
       content-type: application/json; charset=utf-8
       date: Tue, 25 May 2021 18:55:03 GMT
+=======
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "repo7bda1b05", "tag":
+        {"name": "tag7bda1b05", "digest": "sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c",
+        "createdTime": "2021-05-19T19:12:49.3903848Z", "lastUpdateTime": "2021-05-19T19:12:49.3903848Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '386'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 21:09:59 GMT
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -119,27 +178,39 @@ interactions:
     status:
       code: 200
       message: OK
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
     url: https://seankane.azurecr.io/acr/v1/_catalog
+=======
+    url: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_tags/tag7bda1b05
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+=======
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog
+    uri: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_manifests/sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
+        "repository", "Name": "repo7bda1b05", "Action": "metadata_read"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '196'
+      content-length: '215'
       content-type: application/json; charset=utf-8
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       date: Tue, 25 May 2021 18:55:03 GMT
+=======
+      date: Wed, 19 May 2021 21:09:59 GMT
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -148,18 +219,31 @@ interactions:
     status:
       code: 401
       message: Unauthorized
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
     url: https://seankane.azurecr.io/acr/v1/_catalog
+=======
+    url: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_manifests/sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       scope: registry:catalog:*
       service: seankane.azurecr.io
+=======
+      scope: repository:repo7bda1b05:metadata_read
+      service: fake_url.azurecr.io
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
     headers:
       Accept:
       - application/json
       User-Agent:
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+=======
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -168,11 +252,19 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       date: Tue, 25 May 2021 18:55:04 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       x-ms-ratelimit-remaining-calls-per-second: '166.616667'
+=======
+      date: Wed, 19 May 2021 21:09:59 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.1'
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
     status:
       code: 200
       message: OK
@@ -183,11 +275,16 @@ interactions:
       Accept:
       - application/json
       User-Agent:
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+=======
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog
+    uri: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_manifests/sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c
   response:
     body:
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
       string: '{"repositories": ["library/alpine", "library/busybox", "repo13cf14de",
         "repo25ce0f5d", "repo26ab150f", "repo27331535", "repo28471541", "repo2915152d",
         "repo2b381dc2", "repo2bef19cb", "repo2c591564", "repo2e8319c5", "repo308e19dd",
@@ -206,6 +303,30 @@ interactions:
       content-length: '904'
       content-type: application/json; charset=utf-8
       date: Tue, 25 May 2021 18:55:04 GMT
+=======
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "repo7bda1b05", "manifest":
+        {"digest": "sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c",
+        "imageSize": 5325, "createdTime": "2021-05-19T19:12:49.3154017Z", "lastUpdateTime":
+        "2021-05-19T19:12:49.3154017Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
+        "tags": ["tag7bda1b05"], "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}, "references": [{"digest":
+        "sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792",
+        "architecture": "amd64", "os": "linux"}, {"digest": "sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9",
+        "architecture": "arm", "os": "linux"}, {"digest": "sha256:50b8560ad574c779908da71f7ce370c0a2471c098d44d1c8f6b513c5a55eeeb1",
+        "architecture": "arm", "os": "linux"}, {"digest": "sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343",
+        "architecture": "arm64", "os": "linux"}, {"digest": "sha256:cb55d8f7347376e1ba38ca740904b43c9a52f66c7d2ae1ef1a0de1bc9f40df98",
+        "architecture": "386", "os": "linux"}, {"digest": "sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90",
+        "architecture": "mips64le", "os": "linux"}, {"digest": "sha256:bb7ab0fa94fdd78aca84b27a1bd46c4b811051f9b69905d81f5f267fc6546a9d",
+        "architecture": "ppc64le", "os": "linux"}, {"digest": "sha256:e49abad529e5d9bd6787f3abeab94e09ba274fe34731349556a850b9aebbf7bf",
+        "architecture": "s390x", "os": "linux"}, {"digest": "sha256:7fed95756fe4ebeb6eb1d82c2176e0800a02807cc66fe48beb179e57c54ddcf1",
+        "architecture": "amd64", "os": "windows"}]}}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '1572'
+      content-type: application/json; charset=utf-8
+      date: Wed, 19 May 2021 21:09:59 GMT
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -213,5 +334,9 @@ interactions:
     status:
       code: 200
       message: OK
+<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_expiration_time_parsing.yaml
     url: https://seankane.azurecr.io/acr/v1/_catalog
+=======
+    url: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_manifests/sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c
+>>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client_async.test_get_manifest_properties.yaml
 version: 1
