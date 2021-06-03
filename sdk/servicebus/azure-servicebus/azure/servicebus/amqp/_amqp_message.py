@@ -4,11 +4,15 @@
 # license information.
 # -------------------------------------------------------------------------
 
+import time
+from datetime import datetime
 from typing import Optional, Any, cast, Mapping
 
+from msrest.serialization import UTC
 import uamqp
 
 from ._constants import AMQP_MESSAGE_BODY_TYPE_MAP, AmqpMessageBodyType
+from .._common.constants import MAX_DURATION_VALUE, MAX_ABSOLUTE_EXPIRY_TIME
 
 
 class DictMixin(object):
@@ -214,6 +218,9 @@ class AmqpAnnotatedMessage(object):
 
     def _to_outgoing_amqp_message(self):
         message_header = None
+        creation_time_from_ttl = None
+        absolute_expiry_time_from_ttl = None
+        ttl_set = False
         if self.header:
             message_header = uamqp.message.MessageHeader()
             message_header.delivery_count = self.header.delivery_count
@@ -221,6 +228,15 @@ class AmqpAnnotatedMessage(object):
             message_header.first_acquirer = self.header.first_acquirer
             message_header.durable = self.header.durable
             message_header.priority = self.header.priority
+            if self.header.time_to_live and self.header.time_to_live != MAX_DURATION_VALUE:
+                ttl_set = True
+                creation_time_from_ttl = int(time.mktime(datetime.now(UTC()).timetuple()))
+                absolute_expiry_time_from_ttl = min(
+                    MAX_ABSOLUTE_EXPIRY_TIME,
+                    creation_time_from_ttl + self.header.time_to_live
+                )
+            else:
+                ttl_set = False
 
         message_properties = None
         if self.properties:
@@ -233,13 +249,17 @@ class AmqpAnnotatedMessage(object):
                 correlation_id=self.properties.correlation_id,
                 content_type=self.properties.content_type,
                 content_encoding=self.properties.content_encoding,
-                creation_time=int(self.properties.creation_time) if self.properties.creation_time else None,
-                absolute_expiry_time=int(self.properties.absolute_expiry_time)
-                if self.properties.absolute_expiry_time else None,
+                creation_time=creation_time_from_ttl if ttl_set else None,
+                absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
                 group_id=self.properties.group_id,
                 group_sequence=self.properties.group_sequence,
                 reply_to_group_id=self.properties.reply_to_group_id,
                 encoding=self._encoding
+            )
+        elif ttl_set:
+            message_properties = uamqp.message.MessageProperties(
+                creation_time=creation_time_from_ttl if ttl_set else None,
+                absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
             )
 
         amqp_body = self._message._body  # pylint: disable=protected-access
