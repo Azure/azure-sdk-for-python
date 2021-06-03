@@ -12,19 +12,19 @@
 from msrest.paging import Paged
 
 
-class CognitiveServicesAccountPaged(Paged):
+class AccountPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`CognitiveServicesAccount <azure.mgmt.cognitiveservices.models.CognitiveServicesAccount>` object
+    A paging container for iterating over a list of :class:`Account <azure.mgmt.cognitiveservices.models.Account>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[CognitiveServicesAccount]'}
+        'current_page': {'key': 'value', 'type': '[Account]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(CognitiveServicesAccountPaged, self).__init__(*args, **kwargs)
+        super(AccountPaged, self).__init__(*args, **kwargs)
 class ResourceSkuPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ResourceSku <azure.mgmt.cognitiveservices.models.ResourceSku>` object
@@ -38,16 +38,16 @@ class ResourceSkuPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ResourceSkuPaged, self).__init__(*args, **kwargs)
-class OperationEntityPaged(Paged):
+class OperationPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`OperationEntity <azure.mgmt.cognitiveservices.models.OperationEntity>` object
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.cognitiveservices.models.Operation>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[OperationEntity]'}
+        'current_page': {'key': 'value', 'type': '[Operation]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(OperationEntityPaged, self).__init__(*args, **kwargs)
+        super(OperationPaged, self).__init__(*args, **kwargs)

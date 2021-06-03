@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from ._accounts_operations import AccountsOperations
+from ._deleted_accounts_operations import DeletedAccountsOperations
 from ._resource_skus_operations import ResourceSkusOperations
 from ._operations import Operations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
@@ -18,6 +19,7 @@ from ._cognitive_services_management_client_operations import CognitiveServicesM
 
 __all__ = [
     'AccountsOperations',
+    'DeletedAccountsOperations',
     'ResourceSkusOperations',
     'Operations',
     'PrivateEndpointConnectionsOperations',

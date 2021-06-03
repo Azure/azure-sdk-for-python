@@ -15,6 +15,7 @@ from msrest import Serializer, Deserializer
 from ._configuration import CognitiveServicesManagementClientConfiguration
 from .operations import CognitiveServicesManagementClientOperationsMixin
 from .operations import AccountsOperations
+from .operations import DeletedAccountsOperations
 from .operations import ResourceSkusOperations
 from .operations import Operations
 from .operations import PrivateEndpointConnectionsOperations
@@ -30,6 +31,8 @@ class CognitiveServicesManagementClient(CognitiveServicesManagementClientOperati
 
     :ivar accounts: Accounts operations
     :vartype accounts: azure.mgmt.cognitiveservices.operations.AccountsOperations
+    :ivar deleted_accounts: DeletedAccounts operations
+    :vartype deleted_accounts: azure.mgmt.cognitiveservices.operations.DeletedAccountsOperations
     :ivar resource_skus: ResourceSkus operations
     :vartype resource_skus: azure.mgmt.cognitiveservices.operations.ResourceSkusOperations
     :ivar operations: Operations operations
@@ -54,11 +57,13 @@ class CognitiveServicesManagementClient(CognitiveServicesManagementClientOperati
         super(CognitiveServicesManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-04-18'
+        self.api_version = '2021-04-30'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.accounts = AccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.deleted_accounts = DeletedAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.resource_skus = ResourceSkusOperations(
             self._client, self.config, self._serialize, self._deserialize)

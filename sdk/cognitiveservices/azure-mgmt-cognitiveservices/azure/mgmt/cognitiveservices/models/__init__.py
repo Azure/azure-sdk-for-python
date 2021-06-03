@@ -10,28 +10,28 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import Account
+    from ._models_py3 import AccountProperties
+    from ._models_py3 import AccountSku
+    from ._models_py3 import AccountSkuListResult
+    from ._models_py3 import ApiKeys
+    from ._models_py3 import ApiProperties
     from ._models_py3 import AzureEntityResource
+    from ._models_py3 import CallRateLimit
     from ._models_py3 import CheckDomainAvailabilityParameter
-    from ._models_py3 import CheckDomainAvailabilityResult
     from ._models_py3 import CheckSkuAvailabilityParameter
-    from ._models_py3 import CheckSkuAvailabilityResult
-    from ._models_py3 import CheckSkuAvailabilityResultList
-    from ._models_py3 import CognitiveServicesAccount
-    from ._models_py3 import CognitiveServicesAccountApiProperties
-    from ._models_py3 import CognitiveServicesAccountEnumerateSkusResult
-    from ._models_py3 import CognitiveServicesAccountKeys
-    from ._models_py3 import CognitiveServicesAccountProperties
-    from ._models_py3 import CognitiveServicesResourceAndSku
+    from ._models_py3 import DomainAvailability
     from ._models_py3 import Encryption
-    from ._models_py3 import Error, ErrorException
-    from ._models_py3 import ErrorBody
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import Identity
     from ._models_py3 import IpRule
     from ._models_py3 import KeyVaultProperties
     from ._models_py3 import MetricName
     from ._models_py3 import NetworkRuleSet
-    from ._models_py3 import OperationDisplayInfo
-    from ._models_py3 import OperationEntity
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointConnectionListResult
@@ -41,42 +41,49 @@ try:
     from ._models_py3 import PrivateLinkResourceProperties
     from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import ProxyResource
+    from ._models_py3 import QuotaLimit
     from ._models_py3 import RegenerateKeyParameters
+    from ._models_py3 import RequestMatchPattern
     from ._models_py3 import Resource
     from ._models_py3 import ResourceSku
     from ._models_py3 import ResourceSkuRestrictionInfo
     from ._models_py3 import ResourceSkuRestrictions
     from ._models_py3 import Sku
+    from ._models_py3 import SkuAvailability
+    from ._models_py3 import SkuAvailabilityListResult
     from ._models_py3 import SkuCapability
+    from ._models_py3 import SkuChangeInfo
+    from ._models_py3 import SystemData
+    from ._models_py3 import ThrottlingRule
     from ._models_py3 import TrackedResource
     from ._models_py3 import Usage
-    from ._models_py3 import UsagesResult
+    from ._models_py3 import UsageListResult
     from ._models_py3 import UserAssignedIdentity
     from ._models_py3 import UserOwnedStorage
     from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
+    from ._models import Account
+    from ._models import AccountProperties
+    from ._models import AccountSku
+    from ._models import AccountSkuListResult
+    from ._models import ApiKeys
+    from ._models import ApiProperties
     from ._models import AzureEntityResource
+    from ._models import CallRateLimit
     from ._models import CheckDomainAvailabilityParameter
-    from ._models import CheckDomainAvailabilityResult
     from ._models import CheckSkuAvailabilityParameter
-    from ._models import CheckSkuAvailabilityResult
-    from ._models import CheckSkuAvailabilityResultList
-    from ._models import CognitiveServicesAccount
-    from ._models import CognitiveServicesAccountApiProperties
-    from ._models import CognitiveServicesAccountEnumerateSkusResult
-    from ._models import CognitiveServicesAccountKeys
-    from ._models import CognitiveServicesAccountProperties
-    from ._models import CognitiveServicesResourceAndSku
+    from ._models import DomainAvailability
     from ._models import Encryption
-    from ._models import Error, ErrorException
-    from ._models import ErrorBody
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorDetail
+    from ._models import ErrorResponse, ErrorResponseException
     from ._models import Identity
     from ._models import IpRule
     from ._models import KeyVaultProperties
     from ._models import MetricName
     from ._models import NetworkRuleSet
-    from ._models import OperationDisplayInfo
-    from ._models import OperationEntity
+    from ._models import Operation
+    from ._models import OperationDisplay
     from ._models import PrivateEndpoint
     from ._models import PrivateEndpointConnection
     from ._models import PrivateEndpointConnectionListResult
@@ -86,60 +93,71 @@ except (SyntaxError, ImportError):
     from ._models import PrivateLinkResourceProperties
     from ._models import PrivateLinkServiceConnectionState
     from ._models import ProxyResource
+    from ._models import QuotaLimit
     from ._models import RegenerateKeyParameters
+    from ._models import RequestMatchPattern
     from ._models import Resource
     from ._models import ResourceSku
     from ._models import ResourceSkuRestrictionInfo
     from ._models import ResourceSkuRestrictions
     from ._models import Sku
+    from ._models import SkuAvailability
+    from ._models import SkuAvailabilityListResult
     from ._models import SkuCapability
+    from ._models import SkuChangeInfo
+    from ._models import SystemData
+    from ._models import ThrottlingRule
     from ._models import TrackedResource
     from ._models import Usage
-    from ._models import UsagesResult
+    from ._models import UsageListResult
     from ._models import UserAssignedIdentity
     from ._models import UserOwnedStorage
     from ._models import VirtualNetworkRule
-from ._paged_models import CognitiveServicesAccountPaged
-from ._paged_models import OperationEntityPaged
+from ._paged_models import AccountPaged
+from ._paged_models import OperationPaged
 from ._paged_models import ResourceSkuPaged
 from ._cognitive_services_management_client_enums import (
     SkuTier,
+    ResourceIdentityType,
+    CreatedByType,
     ProvisioningState,
     NetworkRuleAction,
     KeySource,
     PrivateEndpointServiceConnectionStatus,
+    PrivateEndpointConnectionProvisioningState,
     PublicNetworkAccess,
-    IdentityType,
     KeyName,
     UnitType,
     QuotaUsageStatus,
     ResourceSkuRestrictionsType,
     ResourceSkuRestrictionsReasonCode,
+    Origin,
+    ActionType,
 )
 
 __all__ = [
+    'Account',
+    'AccountProperties',
+    'AccountSku',
+    'AccountSkuListResult',
+    'ApiKeys',
+    'ApiProperties',
     'AzureEntityResource',
+    'CallRateLimit',
     'CheckDomainAvailabilityParameter',
-    'CheckDomainAvailabilityResult',
     'CheckSkuAvailabilityParameter',
-    'CheckSkuAvailabilityResult',
-    'CheckSkuAvailabilityResultList',
-    'CognitiveServicesAccount',
-    'CognitiveServicesAccountApiProperties',
-    'CognitiveServicesAccountEnumerateSkusResult',
-    'CognitiveServicesAccountKeys',
-    'CognitiveServicesAccountProperties',
-    'CognitiveServicesResourceAndSku',
+    'DomainAvailability',
     'Encryption',
-    'Error', 'ErrorException',
-    'ErrorBody',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse', 'ErrorResponseException',
     'Identity',
     'IpRule',
     'KeyVaultProperties',
     'MetricName',
     'NetworkRuleSet',
-    'OperationDisplayInfo',
-    'OperationEntity',
+    'Operation',
+    'OperationDisplay',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionListResult',
@@ -149,32 +167,43 @@ __all__ = [
     'PrivateLinkResourceProperties',
     'PrivateLinkServiceConnectionState',
     'ProxyResource',
+    'QuotaLimit',
     'RegenerateKeyParameters',
+    'RequestMatchPattern',
     'Resource',
     'ResourceSku',
     'ResourceSkuRestrictionInfo',
     'ResourceSkuRestrictions',
     'Sku',
+    'SkuAvailability',
+    'SkuAvailabilityListResult',
     'SkuCapability',
+    'SkuChangeInfo',
+    'SystemData',
+    'ThrottlingRule',
     'TrackedResource',
     'Usage',
-    'UsagesResult',
+    'UsageListResult',
     'UserAssignedIdentity',
     'UserOwnedStorage',
     'VirtualNetworkRule',
-    'CognitiveServicesAccountPaged',
+    'AccountPaged',
     'ResourceSkuPaged',
-    'OperationEntityPaged',
+    'OperationPaged',
     'SkuTier',
+    'ResourceIdentityType',
+    'CreatedByType',
     'ProvisioningState',
     'NetworkRuleAction',
     'KeySource',
     'PrivateEndpointServiceConnectionStatus',
+    'PrivateEndpointConnectionProvisioningState',
     'PublicNetworkAccess',
-    'IdentityType',
     'KeyName',
     'UnitType',
     'QuotaUsageStatus',
     'ResourceSkuRestrictionsType',
     'ResourceSkuRestrictionsReasonCode',
+    'Origin',
+    'ActionType',
 ]
