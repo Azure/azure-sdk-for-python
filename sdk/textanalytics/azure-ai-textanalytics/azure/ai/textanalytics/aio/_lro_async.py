@@ -3,7 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+import datetime
+from typing import Optional
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.base_polling import OperationFailed, BadStatus
@@ -77,15 +78,15 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
                 self._pipeline_response.http_response
             )
 
-class AnalyzeHealthcareEntitiesAsyncLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
+class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
     def __init__(self, *args, **kwargs):
         self._text_analytics_client = kwargs.pop("text_analytics_client")
-        super(AnalyzeHealthcareEntitiesAsyncLROPollingMethod, self).__init__(*args, **kwargs)
+        super(AsyncAnalyzeHealthcareEntitiesLROPollingMethod, self).__init__(*args, **kwargs)
 
     @property
     def _current_body(self):
-        from ._generated.v3_1_preview_5.models import JobMetadata
+        from .._generated.v3_1_preview_5.models import JobMetadata
         return JobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -113,28 +114,53 @@ class AnalyzeHealthcareEntitiesAsyncLROPollingMethod(TextAnalyticsAsyncLROPollin
         return self._current_body.job_id
 
 
-class AnalyzeHealthcareEntitiesAsyncLROPoller(AsyncLROPoller[PollingReturnType]):
+class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType]):
+
+    def polling_method(self) -> AsyncAnalyzeHealthcareEntitiesLROPollingMethod:  # type: ignore
+        """Return the polling method associated to this poller.
+        """
+        return self._polling_method  # type: ignore
 
     @property
-    def created_on(self):
-        return self._polling_method.created_on
+    def created_on(self) -> datetime.datetime:
+        """When your healthcare entities job was created
+
+        :return: When your healthcare entities job was created
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().created_on
 
     @property
-    def expires_on(self):
-        return self._polling_method.expires_on
+    def expires_on(self) -> datetime.datetime:
+        """When your healthcare entities job will expire
+
+        :return: When your healthcare entities job will expire
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().expires_on
 
     @property
-    def last_modified_on(self):
-        return self._polling_method.last_modified_on
+    def last_modified_on(self) -> datetime.datetime:
+        """When your healthcare entities job was last modified
+
+        :return: When your healthcare entities job was last modified
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().last_modified_on
 
     @property
-    def id(self):
-        return self._polling_method.id
+    def id(self) -> str:
+        """ID of your call to :func:`begin_analyze_healthcare_entities`
+
+        :return: ID of your call to :func:`begin_analyze_healthcare_entities`
+        :rtype: str
+        """
+        return self.polling_method().id
 
     async def cancel( # type: ignore
         self,
         **kwargs
-    ):
+    ) -> "AsyncAnalyzeHealthcareEntitiesLROPoller[None]":
         """Cancel the operation currently being polled.
 
         :keyword int polling_interval: The polling interval to use to poll the cancellation status.
@@ -153,7 +179,7 @@ class AnalyzeHealthcareEntitiesAsyncLROPoller(AsyncLROPoller[PollingReturnType])
                 :caption: Cancel an existing health operation.
         """
         polling_interval = kwargs.pop("polling_interval", 5)
-        await self._polling_method.update_status()
+        await self.polling_method().update_status()
 
         try:
             return await getattr(self._polling_method, "_text_analytics_client").begin_cancel_health_job(
@@ -162,15 +188,15 @@ class AnalyzeHealthcareEntitiesAsyncLROPoller(AsyncLROPoller[PollingReturnType])
             )
 
         except HttpResponseError as error:
-            from ._response_handlers import process_http_response_error
+            from .._response_handlers import process_http_response_error
             process_http_response_error(error)
 
 
-class AsyncAnalyzeBatchActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
+class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
     @property
     def _current_body(self):
-        from ._generated.v3_1_preview_5.models import AnalyzeJobMetadata
+        from .._generated.v3_1_preview_5.models import AnalyzeJobMetadata
         return AnalyzeJobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -228,40 +254,93 @@ class AsyncAnalyzeBatchActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMetho
         return self._current_body.job_id
 
 
-class AsyncAnalyzeBatchActionsLROPoller(AsyncLROPoller[PollingReturnType]):
+class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
+
+    def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:  # type: ignore
+        """Return the polling method associated to this poller.
+        """
+        return self._polling_method  # type: ignore
 
     @property
-    def created_on(self):
-        return self._polling_method.created_on
+    def created_on(self) -> datetime.datetime:
+        """When your analyze job was created
+
+        :return: When your analyze job was created
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().created_on
 
     @property
-    def display_name(self):
-        return self._polling_method.display_name
+    def display_name(self) -> Optional[str]:
+        """The display name of your :func:`begin_analyze_actions` call.
+
+        Corresponds to the `display_name` kwarg you pass to your
+        :func:`begin_analyze_actions` call.
+
+        :return: The display name of your :func:`begin_analyze_actions` call.
+        :rtype: str
+        """
+        return self.polling_method().display_name
 
     @property
-    def expires_on(self):
-        return self._polling_method.expires_on
+    def expires_on(self) -> datetime.datetime:
+        """When your analyze job will expire
+
+        :return: When your analyze job will expire
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().expires_on
 
     @property
-    def actions_failed_count(self):
-        return self._polling_method.actions_failed_count
+    def actions_failed_count(self) -> int:
+        """Total number of actions that have failed
+
+        :return: Total number of actions that have failed
+        :rtype: int
+        """
+        return self.polling_method().actions_failed_count
 
     @property
-    def actions_in_progress_count(self):
-        return self._polling_method.actions_in_progress_count
+    def actions_in_progress_count(self) -> int:
+        """Total number of actions currently in progress
+
+        :return: Total number of actions currently in progress
+        :rtype: int
+        """
+        return self.polling_method().actions_in_progress_count
 
     @property
-    def actions_succeeded_count(self):
-        return self._polling_method.actions_succeeded_count
+    def actions_succeeded_count(self) -> int:
+        """Total number of actions that succeeded
+
+        :return: Total number of actions that succeeded
+        :rtype: int
+        """
+        return self.polling_method().actions_succeeded_count
 
     @property
-    def last_modified_on(self):
-        return self._polling_method.last_modified_on
+    def last_modified_on(self) -> datetime.datetime:
+        """The last time your actions results were updated
+
+        :return: The last time your actions results were updated
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().last_modified_on
 
     @property
-    def total_actions_count(self):
-        return self._polling_method.total_actions_count
+    def total_actions_count(self) -> int:
+        """Total number of actions you submitted
+
+        :return: Total number of actions submitted
+        :rtype: int
+        """
+        return self.polling_method().total_actions_count
 
     @property
-    def id(self):
-        return self._polling_method.id
+    def id(self) -> str:
+        """ID of your :func:`begin_analyze_actions` call.
+
+        :return: ID of your :func:`begin_analyze_actions` call.
+        :rtype: str
+        """
+        return self.polling_method().id
