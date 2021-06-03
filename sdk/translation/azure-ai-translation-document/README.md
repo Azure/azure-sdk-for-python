@@ -148,7 +148,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.translation.document import DocumentTranslationClient
 
 document_translation_client = DocumentTranslationClient("<endpoint>", AzureKeyCredential("<api_key>"))
-poller = document_translation_client.begin_translation("<sas_url_to_source>", "<sas_url_to_target", "fr")
+poller = document_translation_client.begin_translation("<sas_url_to_source>", "<sas_url_to_target>", "<target_language_code>")
 ```
 
 Or multiple different sources can be provided each with their own targets.
@@ -258,7 +258,7 @@ source_container_sas_url_de = "<sas-url-de>"
 source_container_sas_url_en = "<sas-url-en>"
 target_container_sas_url_es = "<sas-url-es>"
 target_container_sas_url_fr = "<sas-url-fr>"
-target_container_sas_url_ar = "<sas-url-fr>"
+target_container_sas_url_ar = "<sas-url-ar>"
 
 document_translation_client = DocumentTranslationClient(endpoint, credential)
 

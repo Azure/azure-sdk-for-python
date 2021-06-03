@@ -10,11 +10,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
-from .._generated.models import (
-    BatchRequest as _BatchRequest,
-    SourceInput as _SourceInput,
-    TargetInput as _TargetInput,
-)
 from .._user_agent import USER_AGENT
 from .._models import (
     JobStatusResult,
@@ -22,7 +17,7 @@ from .._models import (
     FileFormat,
     DocumentStatusResult
 )
-from .._helpers import get_http_logging_policy, convert_datetime, get_authentication_policy
+from .._helpers import get_http_logging_policy, convert_datetime, get_authentication_policy, get_translation_input
 from ._async_polling import AsyncDocumentTranslationLROPollingMethod, AsyncDocumentTranslationPoller
 from .._polling import TranslationPolling
 if TYPE_CHECKING:
@@ -148,36 +143,7 @@ class DocumentTranslationClient(object):
 
         continuation_token = kwargs.pop("continuation_token", None)
 
-        try:
-            inputs = kwargs.pop('inputs', None)
-            if not inputs:
-                inputs = args[0]
-            inputs = DocumentTranslationInput._to_generated_list(inputs) \
-                if not continuation_token else None  # pylint: disable=protected-access
-        except (AttributeError, TypeError, IndexError):
-            try:
-                source_url = kwargs.pop('source_url', None)
-                if not source_url:
-                    source_url = args[0]
-                target_url = kwargs.pop("target_url", None)
-                if not target_url:
-                    target_url = args[1]
-                target_language_code = kwargs.pop("target_language_code", None)
-                if not target_language_code:
-                    target_language_code = args[2]
-                inputs = [
-                    _BatchRequest(
-                        source=_SourceInput(
-                            source_url=source_url
-                        ),
-                        targets=[_TargetInput(
-                            target_url=target_url,
-                            language=target_language_code
-                        )]
-                    )
-                ]
-            except (AttributeError, TypeError, IndexError):
-                raise ValueError("Pass either 'inputs' or 'source_url', 'target_url', and 'target_language_code'")
+        inputs = get_translation_input(args, kwargs, continuation_token)
 
         def deserialization_callback(
             raw_response, _, headers
