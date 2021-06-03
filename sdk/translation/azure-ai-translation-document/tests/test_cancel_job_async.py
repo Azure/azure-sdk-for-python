@@ -10,6 +10,7 @@ from asynctestcase import AsyncDocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 from azure.ai.translation.document.aio import DocumentTranslationClient
+from azure.core.exceptions import HttpResponseError
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 
@@ -28,15 +29,19 @@ class TestCancelJob(AsyncDocumentTranslationTest):
         '''
         # submit translation job
         docs_count = 8 # large number of docs 
-        job_id = await self._create_translation_job_with_dummy_docs_async(client, docs_count, wait=False)
+        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, wait=False)
 
         # cancel job
-        await client.cancel_job(job_id)
+        await client.cancel_job(poller.id)
 
         # wait for propagation
         wait_time = 15  # for 'cancelled' status to propagate, if test failed, increase this value!
         self.wait(duration=wait_time) 
 
         # check job status
-        job_details = await client.get_job_status(job_id)
-        self._validate_translation_job(job_details, status="Cancelled", total=docs_count)
+        job_details = await client.get_job_status(poller.id)
+        self._validate_translations(job_details, status="Cancelled", total=docs_count)
+        try:
+            await poller.wait()
+        except HttpResponseError:
+            pass  # expected if the operation was already in a terminal state.

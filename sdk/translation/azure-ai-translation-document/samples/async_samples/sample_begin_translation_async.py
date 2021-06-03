@@ -5,17 +5,16 @@
 # ------------------------------------
 
 """
-FILE: sample_create_translation_job_async.py
+FILE: sample_begin_translation_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to create a translation job for documents in your Azure Blob
-    Storage container and wait until the job is completed.
+    This sample demonstrates how to translate documents in your Azure Blob Storage container.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
 
 USAGE:
-    python sample_create_translation_job_async.py
+    python sample_begin_translation_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Document Translation resource.
@@ -31,8 +30,8 @@ import asyncio
 
 
 async def sample_translation_async():
+    # [START begin_translation_async]
     import os
-    # [START wait_until_done_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document.aio import DocumentTranslationClient
     from azure.ai.translation.document import (
@@ -48,7 +47,7 @@ async def sample_translation_async():
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
     async with client:
-        job = await client.create_translation_job(inputs=[
+        poller = await client.begin_translation(inputs=[
                 DocumentTranslationInput(
                     source_url=source_container_url,
                     targets=[
@@ -59,23 +58,19 @@ async def sample_translation_async():
                     ]
                 )
             ]
-        )  # type: JobStatusResult
+        )
+        result = await poller.result()
 
-        job_result = await client.wait_until_done(job.id)  # type: JobStatusResult
-
-        print("Job status: {}".format(job_result.status))
-        print("Job created on: {}".format(job_result.created_on))
-        print("Job last updated on: {}".format(job_result.last_updated_on))
-        print("Total number of translations on documents: {}".format(job_result.documents_total_count))
+        print("Status: {}".format(poller.status()))
+        print("Created on: {}".format(poller.details.created_on))
+        print("Last updated on: {}".format(poller.details.last_updated_on))
+        print("Total number of translations on documents: {}".format(poller.details.documents_total_count))
 
         print("\nOf total documents...")
-        print("{} failed".format(job_result.documents_failed_count))
-        print("{} succeeded".format(job_result.documents_succeeded_count))
-        # [END wait_until_done_async]
+        print("{} failed".format(poller.details.documents_failed_count))
+        print("{} succeeded".format(poller.details.documents_succeeded_count))
 
-        # [START list_all_document_statuses_async]
-        doc_results = client.list_all_document_statuses(job_result.id)  # type: AsyncItemPaged[DocumentStatusResult]
-        async for document in doc_results:
+        async for document in result:
             print("Document ID: {}".format(document.id))
             print("Document status: {}".format(document.status))
             if document.status == "Succeeded":
@@ -84,7 +79,7 @@ async def sample_translation_async():
                 print("Translated to language: {}\n".format(document.translate_to))
             else:
                 print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
-        # [END list_all_document_statuses_async]
+    # [END begin_translation_async]
 
 
 async def main():

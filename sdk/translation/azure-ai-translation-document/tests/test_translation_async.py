@@ -11,7 +11,6 @@ from asynctestcase import AsyncDocumentTranslationTest
 from preparer import DocumentTranslationPreparer, \
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 from azure.ai.translation.document.aio import DocumentTranslationClient
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
@@ -44,7 +43,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         ]
 
         # submit job and test
-        await self._submit_and_validate_translation_job_async(client, translation_inputs, 1)
+        await self._begin_and_validate_translation_async(client, translation_inputs, 1, "fr")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -68,7 +67,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         ]
 
         # submit job and test
-        await self._submit_and_validate_translation_job_async(client, translation_inputs, 1)
+        await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -97,7 +96,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         ]
 
         # submit job and test
-        await self._submit_and_validate_translation_job_async(client, translation_inputs)
+        await self._begin_and_validate_translation_async(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -132,7 +131,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         ]
 
         # submit job and test
-        await self._submit_and_validate_translation_job_async(client, translation_inputs, 2)
+        await self._begin_and_validate_translation_async(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -158,7 +157,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         ]
 
         # submit job and test
-        await self._submit_and_validate_translation_job_async(client, translation_inputs, 1)
+        await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -184,7 +183,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         ]
 
         # submit job and test
-        await self._submit_and_validate_translation_job_async(client, translation_inputs, 1)
+        await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -206,8 +205,8 @@ class TestTranslation(AsyncDocumentTranslationTest):
         ]
 
         with pytest.raises(HttpResponseError) as e:
-            job = await client.create_translation_job(translation_inputs)
-            job = await client.wait_until_done(job.id)
+            poller = await client.begin_translation(translation_inputs)
+            result = await poller.result()
         assert e.value.error.code == "InvalidDocumentAccessLevel"
 
     @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/17914")
@@ -232,8 +231,8 @@ class TestTranslation(AsyncDocumentTranslationTest):
         ]
 
         with pytest.raises(HttpResponseError) as e:
-            job = await client.create_translation_job(translation_inputs)
-            job = await client.wait_until_done(job.id)
+            poller = await client.begin_translation(translation_inputs)
+            result = await poller.result()
         assert e.value.error.code == "InvalidDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
@@ -260,9 +259,11 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        job = await client.create_translation_job(translation_inputs)
-        job = await client.wait_until_done(job.id)
-        self._validate_translation_job(job, status="Succeeded", total=1, succeeded=1)
+        poller = await client.begin_translation(translation_inputs)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+        async for document in result:
+            self._validate_doc_status(document, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -284,14 +285,13 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        job = await client.create_translation_job(translation_inputs)
-        job = await client.wait_until_done(job.id)
-        self._validate_translation_job(job, status="Failed", total=1, failed=1)
+        poller = await client.begin_translation(translation_inputs)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Failed", total=1, failed=1)
 
-        doc_status = client.list_all_document_statuses(job.id)
-        doc = await doc_status.__anext__()
-        assert doc.status == "Failed"
-        assert doc.error.code == "TargetFileAlreadyExists"
+        async for doc in result:
+            assert doc.status == "Failed"
+            assert doc.error.code == "TargetFileAlreadyExists"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -313,12 +313,11 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        job = await client.create_translation_job(translation_inputs)
-        job = await client.wait_until_done(job.id)
-        self._validate_translation_job(job, status="Succeeded", total=2, failed=1)
+        poller = await client.begin_translation(translation_inputs)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=2, failed=1)
 
-        doc_statuses = client.list_all_document_statuses(job.id)
-        async for doc in doc_statuses:
+        async for doc in result:
             if doc.status == "Failed":
                 assert doc.error.code == "TargetFileAlreadyExists"
 
@@ -342,11 +341,10 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        job = await client.create_translation_job(translation_inputs)
-        job = await client.wait_until_done(job.id)
-        self._validate_translation_job(job, status="Failed", total=1, failed=1)
+        poller = await client.begin_translation(translation_inputs)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Failed", total=1, failed=1)
 
-        doc_status = client.list_all_document_statuses(job.id)
-        doc = await doc_status.__anext__()
-        assert doc.status == "Failed"
-        assert doc.error.code == "WrongDocumentEncoding"
+        async for doc in result:
+            assert doc.status == "Failed"
+            assert doc.error.code == "WrongDocumentEncoding"
