@@ -927,7 +927,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ],
                     **kwargs),
                 continuation_token=continuation_token,
-                _task_order=task_order,
                 **kwargs
             )
 
