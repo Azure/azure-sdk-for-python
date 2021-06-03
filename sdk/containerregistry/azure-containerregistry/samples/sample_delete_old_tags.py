@@ -29,11 +29,7 @@ class DeleteOperations(object):
         self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
     def delete_old_tags(self):
-        from azure.containerregistry import (
-            ContainerRegistryClient,
-            ContainerRepositoryClient,
-            TagOrder
-        )
+        from azure.containerregistry import ContainerRegistryClient, TagOrder
         from azure.identity import DefaultAzureCredential
 
         # [START list_repository_names]
@@ -42,15 +38,15 @@ class DeleteOperations(object):
         client = ContainerRegistryClient(account_url, credential)
 
         for repository in client.list_repository_names():
-            repository_client = ContainerRepositoryClient(account_url, repository, credential)
+            print(repository)
             # [END list_repository_names]
 
-            # [START list_tags]
+            # [START list_tag_properties]
+            # Keep the three most recent tags, delete everything else
             tag_count = 0
-            for tag in repository_client.list_tags(order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
-                tag_count += 1
-                if tag_count > 3:
-                    repository_client.delete_tag(tag.name)
-            # [END list_tags]
+            tags = client.list_tag_properties(repository, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING)
+            for tag in tags[3:]:
+                client.delete_tag(repository, tag.name)
+            # [END list_tag_properties]
 
         client.close()

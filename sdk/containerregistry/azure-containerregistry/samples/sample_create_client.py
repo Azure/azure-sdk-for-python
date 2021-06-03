@@ -32,6 +32,7 @@ class CreateClients(object):
         # [START create_registry_client]
         from azure.containerregistry import ContainerRegistryClient
         from azure.identity import DefaultAzureCredential
+
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
         client = ContainerRegistryClient(account_url, DefaultAzureCredential())
@@ -41,6 +42,7 @@ class CreateClients(object):
 
         from azure.containerregistry import ContainerRegistryClient
         from azure.identity import DefaultAzureCredential
+
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
         # Instantiate the client
@@ -49,16 +51,11 @@ class CreateClients(object):
             # Iterate through all the repositories
             for repository_name in client.list_repository_names():
                 if repository_name == "hello-world":
-                    # Create a repository object from the registry client
-                    container_repository = client.get_repository(repository_name)
-
-                    with container_repository:
-                        # Show all tags
-                        for manifest in container_repository.list_manifests():
-                            print(manifest.tags)
+                    for tag in client.list_tag_properties(repository_name):
+                        print(tag.digest)
 
                     # [START delete_repository]
-                    client.delete_repository("hello-world")
+                    client.delete_repository(repository_name, tag.name)
                     # [END delete_repository]
 
 

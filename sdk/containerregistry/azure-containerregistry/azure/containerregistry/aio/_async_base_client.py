@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from azure.core.pipeline.transport import AsyncHttpTransport
 
@@ -31,7 +31,7 @@ class ContainerRegistryBaseClient(object):
 
     """
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs) -> None:
+    def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs) -> None:
         auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
         self._client = ContainerRegistry(
             credential=credential,

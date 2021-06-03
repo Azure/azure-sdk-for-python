@@ -13,7 +13,6 @@ from .._helpers import _enforce_https
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
-    from typing import Optional, Dict, Any, Union
 
 
 class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
