@@ -10,7 +10,7 @@ FILE: sample_translation_with_azure_blob_async.py
 DESCRIPTION:
     This sample demonstrates how to use Azure Blob Storage to set up the necessary resources to translate
     documents. Run the sample to create containers, upload documents, and generate SAS tokens for the source/target
-    containers. Once the job is completed, use the storage library to download your documents locally.
+    containers. Once the operation is completed, use the storage library to download your documents locally.
 
 PREREQUISITE:
     This sample requires you install azure-storage-blob client library:
@@ -106,11 +106,11 @@ class SampleTranslationWithAzureBlobAsync(object):
         ]
 
         poller = await translation_client.begin_translation(translation_inputs)
-        print("Created translation job with ID: {}".format(poller.id))
+        print("Created translation operation with ID: {}".format(poller.id))
         print("Waiting until translation completes...")
 
         result = await poller.result()
-        print("Job status: {}".format(poller.status()))
+        print("Status: {}".format(poller.status()))
 
         print("\nDocument results:")
         async for document in result:
@@ -119,7 +119,7 @@ class SampleTranslationWithAzureBlobAsync(object):
             if document.status == "Succeeded":
                 print("Source document location: {}".format(document.source_document_url))
                 print("Translated document location: {}".format(document.translated_document_url))
-                print("Translated to language: {}\n".format(document.translate_to))
+                print("Translated to language: {}\n".format(document.translated_to))
 
                 blob_client = BlobClient.from_blob_url(document.translated_document_url, credential=self.storage_key)
                 async with blob_client:

@@ -42,7 +42,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 1, "fr")
 
     @DocumentTranslationPreparer()
@@ -66,7 +66,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
@@ -95,7 +95,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
@@ -130,7 +130,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
@@ -156,7 +156,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
@@ -182,7 +182,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()

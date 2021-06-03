@@ -40,7 +40,7 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 1, "fr")
 
     @DocumentTranslationPreparer()
@@ -64,7 +64,7 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
@@ -93,7 +93,7 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
@@ -128,7 +128,7 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
@@ -154,7 +154,7 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
@@ -180,7 +180,7 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()

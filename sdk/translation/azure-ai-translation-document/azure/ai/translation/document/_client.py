@@ -9,7 +9,7 @@ from typing import Any, TYPE_CHECKING, List, Union
 from azure.core.tracing.decorator import distributed_trace
 from ._generated import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from ._models import (
-    JobStatusResult,
+    TranslationStatusResult,
     DocumentStatusResult,
     DocumentTranslationInput,
     FileFormat
@@ -153,83 +153,82 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def get_job_status(self, job_id, **kwargs):
-        # type: (str, **Any) -> JobStatusResult
-        """Gets the status of a translation job.
+    def get_translation_status(self, translation_id, **kwargs):
+        # type: (str, **Any) -> TranslationStatusResult
+        """Gets the status of the translation operation.
 
-        The status includes the overall job status, as well as a summary of
-        the documents that are being translated as part of that translation job.
+        Includes the overall status, as well as a summary of
+        the documents that are being translated as part of that translation operation.
 
-        :param str job_id: The translation job ID.
-        :return: A JobStatusResult with information on the status of the translation job.
-        :rtype: ~azure.ai.translation.document.JobStatusResult
+        :param str translation_id: The translation operation ID.
+        :return: A TranslationStatusResult with information on the status of the translation operation.
+        :rtype: ~azure.ai.translation.document.TranslationStatusResult
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
-        job_status = self._client.document_translation.get_translation_status(job_id, **kwargs)
-        return JobStatusResult._from_generated(job_status)  # pylint: disable=protected-access
+        translation_status = self._client.document_translation.get_translation_status(translation_id, **kwargs)
+        return TranslationStatusResult._from_generated(translation_status)  # pylint: disable=protected-access
 
     @distributed_trace
-    def cancel_job(self, job_id, **kwargs):
+    def cancel_translation(self, translation_id, **kwargs):
         # type: (str, **Any) -> None
-        """Cancel a currently processing or queued job.
+        """Cancel a currently processing or queued translation operation.
 
-        A job will not be cancelled if it is already completed, failed, or cancelling.
+        A translation will not be cancelled if it is already completed, failed, or cancelling.
         All documents that have completed translation will not be cancelled and will be charged.
         If possible, all pending documents will be cancelled.
 
-        :param str job_id: The translation job ID.
+        :param str translation_id: The translation operation ID.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
-        self._client.document_translation.cancel_translation(job_id, **kwargs)
-
+        self._client.document_translation.cancel_translation(translation_id, **kwargs)
 
     @distributed_trace
-    def list_submitted_jobs(self, **kwargs):
-        # type: (**Any) -> ItemPaged[JobStatusResult]
-        """List all the submitted translation jobs under the Document Translation resource.
+    def list_translations(self, **kwargs):
+        # type: (**Any) -> ItemPaged[TranslationStatusResult]
+        """List all the submitted translation operations under the Document Translation resource.
 
-        :keyword int top: the total number of jobs to return (across all pages) from all submitted jobs.
-        :keyword int skip: the number of jobs to skip (from beginning of the all submitted jobs).
-            By default, we sort by all submitted jobs descendingly by start time.
-        :keyword int results_per_page: is the number of jobs returned per page.
-        :keyword list[str] job_ids: job ids to filter by.
-        :keyword list[str] statuses: job statuses to filter by.
-        :keyword Union[str, datetime.datetime] created_after: get jobs created after certain datetime.
-        :keyword Union[str, datetime.datetime] created_before: get jobs created before certain datetime.
-        :keyword list[str] order_by: the sorting query for the jobs returned.
+        :keyword int top: the total number of operations to return (across all pages) from all submitted translations.
+        :keyword int skip: the number of operations to skip (from beginning of all submitted operations).
+            By default, we sort by all submitted operations descendingly by start time.
+        :keyword int results_per_page: is the number of operations returned per page.
+        :keyword list[str] translation_ids: translation operations ids to filter by.
+        :keyword list[str] statuses: translation operation statuses to filter by.
+        :keyword Union[str, datetime.datetime] created_after: get operations created after certain datetime.
+        :keyword Union[str, datetime.datetime] created_before: get operations created before certain datetime.
+        :keyword list[str] order_by: the sorting query for the operations returned.
             format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
-        :return: ~azure.core.paging.ItemPaged[:class:`~azure.ai.translation.document.JobStatusResult`]
-        :rtype: ~azure.core.paging.ItemPaged
+        :return: ~azure.core.paging.ItemPaged[:class:`~azure.ai.translation.document.TranslationStatusResult`]
+        :rtype: ~azure.core.paging.ItemPaged[:class:`~azure.ai.translation.document.TranslationStatusResult`]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_list_all_submitted_jobs.py
-                :start-after: [START list_all_jobs]
-                :end-before: [END list_all_jobs]
+            .. literalinclude:: ../samples/sample_list_all_translations.py
+                :start-after: [START list_all_translations]
+                :end-before: [END list_all_translations]
                 :language: python
                 :dedent: 4
-                :caption: List all submitted jobs under the resource.
+                :caption: List all submitted translations under the resource.
         """
         created_after = kwargs.pop("created_after", None)
         created_before = kwargs.pop("created_before", None)
         created_after = convert_datetime(created_after) if created_after else None
         created_before = convert_datetime(created_before) if created_before else None
         results_per_page = kwargs.pop("results_per_page", None)
-        job_ids = kwargs.pop("job_ids", None)
+        translation_ids = kwargs.pop("translation_ids", None)
 
         def _convert_from_generated_model(generated_model):  # pylint: disable=protected-access
-            return JobStatusResult._from_generated(generated_model)  # pylint: disable=protected-access
+            return TranslationStatusResult._from_generated(generated_model)  # pylint: disable=protected-access
 
         model_conversion_function = kwargs.pop(
             "cls",
-            lambda job_statuses: [
-                _convert_from_generated_model(job_status) for job_status in job_statuses
+            lambda translation_statuses: [
+                _convert_from_generated_model(status) for status in translation_statuses
             ])
 
         return self._client.document_translation.get_translations_status(
@@ -237,16 +236,16 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             maxpagesize=results_per_page,
             created_date_time_utc_start=created_after,
             created_date_time_utc_end=created_before,
-            ids=job_ids,
+            ids=translation_ids,
             **kwargs
         )
 
     @distributed_trace
-    def list_all_document_statuses(self, job_id, **kwargs):
+    def list_all_document_statuses(self, translation_id, **kwargs):
         # type: (str, **Any) -> ItemPaged[DocumentStatusResult]
-        """List all the document statuses for a given translation job.
+        """List all the document statuses for a given translation operation.
 
-        :param str job_id: ID of translation job to list documents for.
+        :param str translation_id: ID of translation operation to list documents for.
         :keyword int top: the total number of documents to return (across all pages).
         :keyword int skip: the number of documents to skip (from beginning).
             By default, we sort by all documents descendingly by start time.
@@ -259,7 +258,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
         :return: ~azure.core.paging.ItemPaged[:class:`~azure.ai.translation.document.DocumentStatusResult`]
-        :rtype: ~azure.core.paging.ItemPaged
+        :rtype: ~azure.core.paging.ItemPaged[:class:`~azure.ai.translation.document.DocumentStatusResult`]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -268,7 +267,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
                 :start-after: [START list_all_document_statuses]
                 :end-before: [END list_all_document_statuses]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: List all the document statuses as they are being translated.
         """
         translated_after = kwargs.pop("translated_after", None)
@@ -289,7 +288,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             ])
 
         return self._client.document_translation.get_documents_status(
-            id=job_id,
+            id=translation_id,
             cls=model_conversion_function,
             maxpagesize=results_per_page,
             created_date_time_utc_start=translated_after,
@@ -299,11 +298,11 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def get_document_status(self, job_id, document_id, **kwargs):
+    def get_document_status(self, translation_id, document_id, **kwargs):
         # type: (str, str, **Any) -> DocumentStatusResult
-        """Get the status of an individual document within a translation job.
+        """Get the status of an individual document within a translation operation.
 
-        :param str job_id: The translation job ID.
+        :param str translation_id: The translation operation ID.
         :param str document_id: The ID for the document.
         :return: A DocumentStatusResult with information on the status of the document.
         :rtype: ~azure.ai.translation.document.DocumentStatusResult
@@ -311,7 +310,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """
 
         document_status = self._client.document_translation.get_document_status(
-            job_id,
+            translation_id,
             document_id,
             **kwargs)
         return DocumentStatusResult._from_generated(document_status)  # pylint: disable=protected-access
