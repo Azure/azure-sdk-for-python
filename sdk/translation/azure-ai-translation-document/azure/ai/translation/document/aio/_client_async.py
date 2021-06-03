@@ -5,11 +5,16 @@
 # ------------------------------------
 
 import json
-from typing import Any, List, Union, TYPE_CHECKING
+from typing import Any, List, Union, TYPE_CHECKING, overload
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
+from .._generated.models import (
+    BatchRequest as _BatchRequest,
+    SourceInput as _SourceInput,
+    TargetInput as _TargetInput,
+)
 from .._user_agent import USER_AGENT
 from .._models import (
     JobStatusResult,
@@ -88,21 +93,44 @@ class DocumentTranslationClient(object):
         """Close the :class:`~azure.ai.translation.document.aio.DocumentTranslationClient` session."""
         await self._client.__aexit__()
 
-    @distributed_trace_async
+    @overload
     async def begin_translation(
-            self, inputs: List[DocumentTranslationInput], **kwargs: Any
+        self, source_url: str,
+        target_url: str,
+        target_language_code: str,
+        **kwargs: Any
     ) -> AsyncDocumentTranslationPoller[AsyncItemPaged[DocumentStatusResult]]:
-        """Begin translating the document(s) in your source container to your TranslationTarget(s)
-        in the given language.
+        ...
+
+    @overload
+    async def begin_translation(
+        self, inputs: List[DocumentTranslationInput],
+        **kwargs: Any
+    ) -> AsyncDocumentTranslationPoller[AsyncItemPaged[DocumentStatusResult]]:
+        ...
+
+    @distributed_trace_async
+    async def begin_translation(self, *args, **kwargs):
+        """Begin translating the document(s) in your source container to your target container
+        in the given language. To perform a single translation from source to target, pass the `source_url`,
+        `target_url`, and `target_language_code` parameters. To pass multiple inputs for translation, including
+         other translation options, pass the `inputs` parameter as a list of DocumentTranslationInput.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 
+        :param str source_url: The source SAS URL to the Azure Blob container containing the documents
+            to be translated. Requires read and list permissions at the minimum.
+        :param str target_url: The target SAS URL to the Azure Blob container where the translated documents
+            should be written. Requires write and list permissions at the minimum.
+        :param str target_language_code: This is the language you want your documents to be translated to.
+            See supported language codes here:
+            https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
         :param inputs: A list of translation inputs. Each individual input has a single
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
         :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
-        :return: An instance of an AsyncDocumentTranslationPoller. Call `result()` on the poller
+        :return: An instance of a DocumentTranslationPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatusResult. A DocumentStatusResult will be
             returned for each translation on a document.
         :rtype: AsyncDocumentTranslationPoller[AsyncItemPaged[~azure.ai.translation.document.DocumentStatusResult]]
@@ -118,8 +146,40 @@ class DocumentTranslationClient(object):
                 :caption: Translate the documents in your storage container.
         """
 
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        try:
+            inputs = kwargs.pop('inputs', None)
+            if not inputs:
+                inputs = args[0]
+            inputs = DocumentTranslationInput._to_generated_list(inputs) if not continuation_token else None
+        except (AttributeError, TypeError, IndexError):
+            try:
+                source_url = kwargs.pop('source_url', None)
+                if not source_url:
+                    source_url = args[0]
+                target_url = kwargs.pop("target_url", None)
+                if not target_url:
+                    target_url = args[1]
+                target_language_code = kwargs.pop("target_language_code", None)
+                if not target_language_code:
+                    target_language_code = args[2]
+                inputs = [
+                    _BatchRequest(
+                        source=_SourceInput(
+                            source_url=source_url
+                        ),
+                        targets=[_TargetInput(
+                            target_url=target_url,
+                            language=target_language_code
+                        )]
+                    )
+                ]
+            except (AttributeError, TypeError, IndexError):
+                raise ValueError("Pass either 'inputs' or 'source_url', 'target_url', and 'target_language_code'")
+
         def deserialization_callback(
-                raw_response, _, headers
+            raw_response, _, headers
         ):  # pylint: disable=unused-argument
             translation_status = json.loads(raw_response.http_response.text())
             return self.list_all_document_statuses(translation_status["id"])
@@ -128,7 +188,6 @@ class DocumentTranslationClient(object):
             "polling_interval", self._client._config.polling_interval  # pylint: disable=protected-access
         )
 
-        continuation_token = kwargs.pop("continuation_token", None)
         pipeline_response = None
         if continuation_token:
             pipeline_response = await self._client.document_translation.get_translation_status(
@@ -138,8 +197,7 @@ class DocumentTranslationClient(object):
 
         callback = kwargs.pop("cls", deserialization_callback)
         return await self._client.document_translation.begin_start_translation(
-            inputs=DocumentTranslationInput._to_generated_list(inputs)  # pylint: disable=protected-access
-            if not continuation_token else None,
+            inputs=inputs if not continuation_token else None,
             polling=AsyncDocumentTranslationLROPollingMethod(
                 timeout=polling_interval,
                 lro_algorithms=[

@@ -5,9 +5,14 @@
 # ------------------------------------
 
 import json
-from typing import Any, TYPE_CHECKING, List, Union
+from typing import Any, TYPE_CHECKING, List, Union, overload
 from azure.core.tracing.decorator import distributed_trace
 from ._generated import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
+from ._generated.models import (
+    BatchRequest as _BatchRequest,
+    SourceInput as _SourceInput,
+    TargetInput as _TargetInput,
+)
 from ._models import (
     JobStatusResult,
     DocumentStatusResult,
@@ -89,15 +94,33 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """Close the :class:`~azure.ai.translation.document.DocumentTranslationClient` session."""
         return self._client.close()
 
-    @distributed_trace
+    @overload
+    def begin_translation(self, source_url, target_url, target_language_code, **kwargs):
+        # type: (str, str, str, **Any) -> DocumentTranslationPoller[ItemPaged[DocumentStatusResult]]
+        pass
+
+    @overload
     def begin_translation(self, inputs, **kwargs):
         # type: (List[DocumentTranslationInput], **Any) -> DocumentTranslationPoller[ItemPaged[DocumentStatusResult]]
-        """Begin translating the document(s) in your source container to your TranslationTarget(s)
-        in the given language.
+        pass
+
+    @distributed_trace
+    def begin_translation(self, *args, **kwargs):
+        """Begin translating the document(s) in your source container to your target container
+        in the given language. To perform a single translation from source to target, pass the `source_url`,
+        `target_url`, and `target_language_code` parameters. To pass multiple inputs for translation, including
+         other translation options, pass the `inputs` parameter as a list of DocumentTranslationInput.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 
+        :param str source_url: The source SAS URL to the Azure Blob container containing the documents
+            to be translated. Requires read and list permissions at the minimum.
+        :param str target_url: The target SAS URL to the Azure Blob container where the translated documents
+            should be written. Requires write and list permissions at the minimum.
+        :param str target_language_code: This is the language you want your documents to be translated to.
+            See supported language codes here:
+            https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
         :param inputs: A list of translation inputs. Each individual input has a single
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
@@ -118,6 +141,38 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
                 :caption: Translate the documents in your storage container.
         """
 
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        try:
+            inputs = kwargs.pop('inputs', None)
+            if not inputs:
+                inputs = args[0]
+            inputs = DocumentTranslationInput._to_generated_list(inputs) if not continuation_token else None
+        except (AttributeError, TypeError, IndexError):
+            try:
+                source_url = kwargs.pop('source_url', None)
+                if not source_url:
+                    source_url = args[0]
+                target_url = kwargs.pop("target_url", None)
+                if not target_url:
+                    target_url = args[1]
+                target_language_code = kwargs.pop("target_language_code", None)
+                if not target_language_code:
+                    target_language_code = args[2]
+                inputs = [
+                    _BatchRequest(
+                        source=_SourceInput(
+                            source_url=source_url
+                        ),
+                        targets=[_TargetInput(
+                            target_url=target_url,
+                            language=target_language_code
+                        )]
+                    )
+                ]
+            except (AttributeError, TypeError, IndexError):
+                raise ValueError("Pass either 'inputs' or 'source_url', 'target_url', and 'target_language_code'")
+
         def deserialization_callback(
             raw_response, _, headers
         ):  # pylint: disable=unused-argument
@@ -128,7 +183,6 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             "polling_interval", self._client._config.polling_interval  # pylint: disable=protected-access
         )
 
-        continuation_token = kwargs.pop("continuation_token", None)
         pipeline_response = None
         if continuation_token:
             pipeline_response = self._client.document_translation.get_translation_status(
@@ -138,8 +192,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
         callback = kwargs.pop("cls", deserialization_callback)
         return self._client.document_translation.begin_start_translation(
-            inputs=DocumentTranslationInput._to_generated_list(inputs)  # pylint: disable=protected-access
-            if not continuation_token else None,
+            inputs=inputs if not continuation_token else None,
             polling=DocumentTranslationLROPollingMethod(
                 timeout=polling_interval,
                 lro_algorithms=[
