@@ -16,7 +16,7 @@ def test_metrics_auth():
     credential = _credential()
     client = MetricsClient(credential)
     # returns LogsQueryResults 
-    response = client.query(os.environ['METRICS_RESOURCE_URI'], metricnames=["PublishSuccessCount"], timespan='P2D')
+    response = client.query(os.environ['METRICS_RESOURCE_URI'], metric_names=["PublishSuccessCount"], timespan='P2D')
 
     assert response is not None
     assert response.metrics is not None

@@ -41,14 +41,14 @@ class MetricsClient(object):
         self._namespace_op = self._client.metric_namespaces
         self._definitions_op = self._client.metric_definitions
 
-    def query(self, resource_uri, metricnames, **kwargs):
+    def query(self, resource_uri, metric_names, **kwargs):
         # type: (str, list, Any) -> MetricsResult
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param metricnames: The names of the metrics to retrieve.
-        :type metricnames: list
+        :param metric_names: The names of the metrics to retrieve.
+        :type metric_names: list
         :keyword timespan: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'.
         :paramtype timespan: str
@@ -77,13 +77,13 @@ class MetricsClient(object):
         :keyword result_type: Reduces the set of data collected. The syntax allowed depends on the
          operation. See the operation's description for details.
         :paramtype result_type: str or ~monitor_query_client.models.ResultType
-        :keyword metricnamespace: Metric namespace to query metric definitions for.
-        :paramtype metricnamespace: str
+        :keyword metric_namespace: Metric namespace to query metric definitions for.
+        :paramtype metric_namespace: str
         :return: Response, or the result of cls(response)
         :rtype: ~azure.monitor.query.MetricsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        kwargs.setdefault("metricnames", ",".join(metricnames))
+        kwargs.setdefault("metric_names", ",".join(metric_names))
         generated = self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
         return MetricsResult._from_generated(generated) # pylint: disable=protected-access
 
