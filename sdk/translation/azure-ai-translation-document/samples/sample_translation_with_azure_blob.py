@@ -8,8 +8,8 @@
 FILE: sample_translation_with_azure_blob.py
 
 DESCRIPTION:
-    This sample demonstrates how to use Azure Blob Storage to set up the necessary resources to create a translation
-    job. Run the sample to create containers, upload documents, and generate SAS tokens for the source/target
+    This sample demonstrates how to use Azure Blob Storage to set up the necessary resources to translate
+    documents. Run the sample to create containers, upload documents, and generate SAS tokens for the source/target
     containers. Once the job is completed, use the storage library to download your documents locally.
 
 PREREQUISITE:
@@ -103,17 +103,15 @@ class SampleTranslationWithAzureBlob(object):
             )
         ]
 
-        job = translation_client.create_translation_job(translation_inputs)
-        print("Created translation job with ID: {}".format(job.id))
-        print("Waiting until job completes...")
+        poller = translation_client.begin_translation(translation_inputs)
+        print("Created translation job with ID: {}".format(poller.id))
+        print("Waiting until translation completes...")
 
-        job_result = translation_client.wait_until_done(job.id)
-        print("Job status: {}".format(job_result.status))
-
-        doc_results = translation_client.list_all_document_statuses(job_result.id)
+        result = poller.result()
+        print("Job status: {}".format(poller.status()))
 
         print("\nDocument results:")
-        for document in doc_results:
+        for document in result:
             print("Document ID: {}".format(document.id))
             print("Document status: {}".format(document.status))
             if document.status == "Succeeded":

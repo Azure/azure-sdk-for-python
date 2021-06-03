@@ -26,7 +26,7 @@ USAGE:
 import os
 import asyncio
 
-async def sample_list_document_statuses_with_filters_async(self, client):
+async def sample_list_document_statuses_with_filters_async():
     # import libraries
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (

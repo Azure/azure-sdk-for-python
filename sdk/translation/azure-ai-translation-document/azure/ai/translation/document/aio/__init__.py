@@ -5,7 +5,9 @@
 # ------------------------------------
 
 from ._client_async import DocumentTranslationClient
+from ._async_polling import AsyncDocumentTranslationPoller
 
 __all__ = [
-    "DocumentTranslationClient"
+    "DocumentTranslationClient",
+    "AsyncDocumentTranslationPoller"
 ]

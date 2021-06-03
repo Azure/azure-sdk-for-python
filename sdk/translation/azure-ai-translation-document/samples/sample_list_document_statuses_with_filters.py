@@ -23,7 +23,7 @@ USAGE:
     3) JOB_ID - The ID of the translation job
 """
 
-def sample_list_document_statuses_with_filters(self, client):
+def sample_list_document_statuses_with_filters():
     # import libraries
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (

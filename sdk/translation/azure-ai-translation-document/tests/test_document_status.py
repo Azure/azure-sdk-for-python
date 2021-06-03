@@ -36,7 +36,7 @@ class DocumentStatus(DocumentTranslationTest):
         ]
 
         # submit and validate translation job
-        job_id = self._submit_and_validate_translation_job(client, translation_inputs, len(blob_data))
+        job_id = self._begin_and_validate_translation(client, translation_inputs, len(blob_data), target_language)
 
         # get doc statuses
         doc_statuses = client.list_all_document_statuses(job_id)
