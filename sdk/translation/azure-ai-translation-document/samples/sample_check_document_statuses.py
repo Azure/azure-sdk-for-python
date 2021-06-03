@@ -32,11 +32,7 @@ def sample_document_status_checks():
     import os
     import time
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.translation.document import (
-        DocumentTranslationClient,
-        DocumentTranslationInput,
-        TranslationTarget
-    )
+    from azure.ai.translation.document import DocumentTranslationClient
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
@@ -45,18 +41,7 @@ def sample_document_status_checks():
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
-    poller = client.begin_translation(inputs=[
-            DocumentTranslationInput(
-                source_url=source_container_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_url,
-                        language_code="es"
-                    )
-                ]
-            )
-        ]
-    )
+    poller = client.begin_translation(source_container_url, target_container_url, "es")
 
     completed_docs = []
     while not poller.done():
