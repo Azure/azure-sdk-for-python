@@ -9,7 +9,6 @@ from typing import Any, Union, Sequence, Dict
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials_async import AsyncTokenCredential
 
-
 from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest
