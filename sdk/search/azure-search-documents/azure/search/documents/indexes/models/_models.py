@@ -84,7 +84,7 @@ class AnalyzeTextOptions(msrest.serialization.Model):
         self.token_filters = kwargs.get('token_filters', None)
         self.char_filters = kwargs.get('char_filters', None)
 
-    def to_analyze_request(self):
+    def _to_analyze_request(self):
         return AnalyzeRequest(
             text=self.text,
             analyzer=self.analyzer_name,
