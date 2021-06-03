@@ -49,7 +49,6 @@ from ._models import (
     HealthcareEntityAssertion,
     AnalyzeSentimentAction
 )
-from ._paging import AnalyzeHealthcareEntitiesResult
 from ._generated.v3_1_preview_5.models import (
     PiiCategory as PiiEntityCategoryType,
     RelationType as HealthcareEntityRelationType,
@@ -86,7 +85,6 @@ __all__ = [
     'PiiEntity',
     'PiiEntityDomainType',
     'AnalyzeHealthcareEntitiesResultItem',
-    'AnalyzeHealthcareEntitiesResult',
     'HealthcareEntity',
     'HealthcareEntityDataSource',
     'RecognizeEntitiesAction',

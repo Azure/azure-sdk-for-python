@@ -27,7 +27,6 @@ from .._response_handlers import (
     sentiment_result,
     language_result,
     pii_entities_result,
-    _get_deserialize
 )
 from .._response_handlers_async import healthcare_paged_result, analyze_paged_result
 from .._models import (
@@ -118,7 +117,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
-        self._deserialize = _get_deserialize()
 
     @distributed_trace_async
     async def detect_language(  # type: ignore
@@ -669,8 +667,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
-        healthcare_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.5").HealthcareJobState,
+        healthcare_result = self._client.models(api_version="v3.1-preview.5").HealthcareJobState.deserialize(
             raw_response
         )
         return healthcare_paged_result(
@@ -792,8 +789,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
-        analyze_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.5").AnalyzeJobState,
+        analyze_result = self._client.models(api_version="v3.1-preview.5").AnalyzeJobState.deserialize(
             raw_response
         )
         return analyze_paged_result(

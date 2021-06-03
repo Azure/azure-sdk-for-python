@@ -60,7 +60,7 @@ namespace: azure.ai.textanalytics.v3_1_preview_5
 output-folder: ../azure/ai/textanalytics/_generated/v3_1_preview_5
 ```
 
-### Override Analyze's pager and poller
+### Override Analyze's pager poller
 
 ``` yaml
 directive:
@@ -75,7 +75,7 @@ directive:
 ```
 
 
-### Override Healthcare's pager and poller
+### Override Healthcare's poller
 
 ``` yaml
 directive:

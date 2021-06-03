@@ -33,7 +33,6 @@ from ._response_handlers import (
     pii_entities_result,
     healthcare_paged_result,
     analyze_paged_result,
-    _get_deserialize
 )
 
 from ._models import AnalyzeActionsType
@@ -120,7 +119,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_index_type_default = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
-        self._deserialize = _get_deserialize()
 
 
     @distributed_trace
@@ -493,8 +491,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
-        healthcare_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.5").HealthcareJobState,
+        healthcare_result = self._client.models(api_version="v3.1-preview.5").HealthcareJobState.deserialize(
             raw_response
         )
         return healthcare_paged_result(
@@ -810,8 +807,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
-        analyze_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.5").AnalyzeJobState, # pylint: disable=protected-access
+        analyze_result = self._client.models(api_version="v3.1-preview.5").AnalyzeJobState.deserialize(
             raw_response
         )
         return analyze_paged_result(
@@ -932,6 +928,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ],
                     **kwargs),
                 continuation_token=continuation_token,
+                _task_order=task_order,
                 **kwargs
             )
 
