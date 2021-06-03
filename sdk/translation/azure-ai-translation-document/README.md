@@ -207,7 +207,7 @@ The following section provides several code snippets covering some of the most c
 * [Translate multiple inputs](#translate-multiple-inputs "Translate Multiple Inputs")
 * [List translation operations](#list-translation-operations "List Translation Operations")
 
-### Translate multiple inputs
+### Translate your documents
 Translate the documents in your source container to the target container.
 
 ```python

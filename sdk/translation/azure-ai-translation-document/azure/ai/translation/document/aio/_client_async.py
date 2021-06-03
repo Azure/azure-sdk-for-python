@@ -130,7 +130,7 @@ class DocumentTranslationClient(object):
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
         :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
-        :return: An instance of a DocumentTranslationPoller. Call `result()` on the poller
+        :return: An instance of an AsyncDocumentTranslationPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatusResult. A DocumentStatusResult will be
             returned for each translation on a document.
         :rtype: AsyncDocumentTranslationPoller[AsyncItemPaged[~azure.ai.translation.document.DocumentStatusResult]]
