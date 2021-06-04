@@ -39,9 +39,6 @@ class DocumentTranslationClientPreparer(AzureMgmtPreparer):
         # set polling interval to 0 for recorded tests
         if not self.is_live:
             self.client_kwargs["polling_interval"] = 0
-        else:
-            # default is 30s, but our tests translate very small docs so this helps speed up live testing
-            self.client_kwargs["polling_interval"] = 5
 
         client = self.client_cls(
             doctranslation_test_endpoint,

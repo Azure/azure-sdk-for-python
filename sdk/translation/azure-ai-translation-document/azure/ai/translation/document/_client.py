@@ -16,7 +16,13 @@ from ._models import (
 )
 from ._user_agent import USER_AGENT
 from ._polling import TranslationPolling, DocumentTranslationLROPollingMethod
-from ._helpers import get_http_logging_policy, convert_datetime, get_authentication_policy, get_translation_input
+from ._helpers import (
+    get_http_logging_policy,
+    convert_datetime,
+    get_authentication_policy,
+    get_translation_input,
+    POLLING_INTERVAL
+)
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -64,7 +70,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         self._api_version = kwargs.pop('api_version', None)
 
         authentication_policy = get_authentication_policy(credential)
-
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         self._client = _BatchDocumentTranslationClient(
             endpoint=endpoint,
             credential=credential,  # type: ignore
@@ -72,6 +78,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             http_logging_policy=get_http_logging_policy(),
+            polling_interval=polling_interval,
             **kwargs
         )
 
