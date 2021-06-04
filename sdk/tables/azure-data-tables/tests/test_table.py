@@ -36,7 +36,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     def test_create_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
         # Act
         created = ts.create_table(table_name)
@@ -64,7 +64,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     def test_create_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
         table_name = self._get_table_reference()
 
@@ -80,7 +80,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     def test_create_table_fail_on_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
 
         # Act
@@ -99,7 +99,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     def test_query_tables_per_page(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
         table_name = "mytable"
 
@@ -126,7 +126,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     @tables_decorator
     def test_create_table_if_exists(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
 
         t0 = ts.create_table(table_name)
@@ -140,7 +140,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     @tables_decorator
     def test_create_table_if_exists_new_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
 
         t = ts.create_table_if_not_exists(table_name)
@@ -153,7 +153,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     def test_query_tables(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         t = self._create_table(ts)
 
         # Act
@@ -173,7 +173,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     def test_query_tables_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         t = self._create_table(ts)
 
         # Act
@@ -195,7 +195,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         # Arrange
         prefix = 'listtable'
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table_list = []
         for i in range(0, 4):
             self._create_table(ts, prefix + str(i), table_list)
@@ -220,7 +220,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     def test_query_tables_with_marker(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         prefix = 'listtable'
         table_names = []
         for i in range(0, 4):
@@ -247,7 +247,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     def test_delete_table_with_existing_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table = self._create_table(ts)
 
         # Act
@@ -262,7 +262,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
         ts.delete_table(table_name)
 
@@ -271,7 +271,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table = self._create_table(ts)
         try:
             # Act
@@ -288,7 +288,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
         table = self._create_table(ts)
         try:
@@ -307,7 +307,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
         table = self._create_table(ts)
         try:
@@ -329,7 +329,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
         table = self._create_table(ts)
         client = ts.get_table_client(table_name=table.table_name)
@@ -354,7 +354,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
         table = self._create_table(ts)
         try:
@@ -372,7 +372,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     @tables_decorator
     def test_account_sas(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
-        tsc = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
+        tsc = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
         table = self._create_table(tsc)
         try:
@@ -397,7 +397,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
             account_url = self.account_url(tables_storage_account_name, "table")
 
-            service = self.create_client_from_credential(TableServiceClient, token, endpoint=account_url)
+            service = TableServiceClient(credential=token, endpoint=account_url)
 
             # Act
 

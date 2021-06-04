@@ -47,7 +47,7 @@ class TableClient(AsyncTablesBaseClient):
     :ivar str url: The full URL to the Tables account.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
         table_name: str,

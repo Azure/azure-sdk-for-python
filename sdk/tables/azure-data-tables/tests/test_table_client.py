@@ -594,7 +594,7 @@ class TestTableUnitTests(TableTestCase):
         assert not table._cosmos_endpoint
 
         table_url = "https://127.0.0.1:10002/myaccount/Tables('tablename')"
-        table = TableClient.from_table_url(table_url, azurite_credential)
+        table = TableClient.from_table_url(table_url, credential=azurite_credential)
         assert table.account_name == "myaccount"
         assert table.table_name == "tablename"
         assert table.url == "https://127.0.0.1:10002/myaccount"

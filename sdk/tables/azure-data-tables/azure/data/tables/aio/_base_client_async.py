@@ -38,7 +38,7 @@ from ._policies_async import AsyncTablesRetryPolicy
 
 class AsyncTablesBaseClient(AccountHostsMixin):
 
-    def __init__(
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
         *,

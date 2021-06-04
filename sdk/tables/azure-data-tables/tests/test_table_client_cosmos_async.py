@@ -499,7 +499,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert client.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert client._cosmos_endpoint
 
-        client = TableServiceClient("http://localhost:8902/", emulator_credential)
+        client = TableServiceClient("http://localhost:8902/", credential=emulator_credential)
         assert client.url == "http://localhost:8902"
         assert client.account_name == 'localhost'
         assert client.credential.named_key.name == 'localhost'
@@ -514,7 +514,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert table._cosmos_endpoint
 
-        table = TableClient("http://localhost:8902/", "tablename", emulator_credential)
+        table = TableClient("http://localhost:8902/", "tablename", credential=emulator_credential)
         assert table.url == "http://localhost:8902"
         assert table.account_name == 'localhost'
         assert table.table_name == 'tablename'
@@ -522,7 +522,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert table._cosmos_endpoint
 
-        table = TableClient.from_table_url("http://localhost:8902/Tables('tablename')", emulator_credential)
+        table = TableClient.from_table_url("http://localhost:8902/Tables('tablename')", credential=emulator_credential)
         assert table.url == "http://localhost:8902"
         assert table.account_name == 'localhost'
         assert table.table_name == 'tablename'

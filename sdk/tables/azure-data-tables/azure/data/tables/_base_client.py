@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Optional, Any, List, Mapping, Union
+from typing import Dict, Optional, Any, List, Mapping
 from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
@@ -201,7 +201,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
 
 class TablesBaseClient(AccountHostsMixin):
 
-    def __init__(
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint,  # type: str
         **kwargs  # type: Any

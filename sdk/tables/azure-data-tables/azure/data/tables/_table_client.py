@@ -59,7 +59,7 @@ class TableClient(TablesBaseClient):
     :ivar str url: The full URL to the Tables account.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint,  # type: str
         table_name,  # type: str
@@ -122,7 +122,7 @@ class TableClient(TablesBaseClient):
 
     @classmethod
     def from_table_url(cls, table_url, **kwargs):
-        # type: (str, Optional[Any], Any) -> TableClient
+        # type: (str, Any) -> TableClient
         """A client to interact with a specific Table.
 
         :param str table_url: The full URI to the table, including SAS token if used.
