@@ -5,7 +5,7 @@
 # ------------------------------------
 
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Any
+from typing import TYPE_CHECKING, Dict, Any, List
 
 from ._generated.models import (
     ArtifactTagProperties as GeneratedArtifactTagProperties,
@@ -14,6 +14,7 @@ from ._generated.models import (
     TagWriteableProperties,
     ManifestWriteableProperties,
 )
+from ._helpers import _host_only, _is_tag, _strip_alg
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -52,6 +53,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
         if self._operating_system is not None:
             self._operating_system = ArtifactOperatingSystem(self._operating_system)
         self._repository_name = kwargs.get("repository_name", None)
+        self._registry = kwargs.get("registry", None)
         self._size = kwargs.get("size", None)
         self._tags = kwargs.get("tags", None)
         self.can_delete = kwargs.get("can_delete")
@@ -75,6 +77,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             can_write=generated.can_write,
             can_list=generated.can_list,
             repository_name=kwargs.get("repository_name", None),
+            registry=kwargs.get("registry", None),
         )
 
     def _to_generated(self):
@@ -125,6 +128,25 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     def tags(self):
         # type: () -> List[str]
         return self._tags
+
+    @property
+    def fully_qualified_reference(self):
+        # type: () -> str
+        return "{}/{}{}{}".format(
+            _host_only(self._registry),
+            self._repository_name,
+            ":" if _is_tag(self._digest) else "@",
+            _strip_alg(self._digest)
+        )
+
+    def _to_generated(self):
+        # type: () -> ManifestWriteableProperties
+        return ManifestWriteableProperties(
+            can_delete=self.can_delete,
+            can_read=self.can_read,
+            can_write=self.can_write,
+            can_list=self.can_list,
+        )
 
 
 class RepositoryProperties(object):
