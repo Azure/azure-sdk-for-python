@@ -61,7 +61,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def delete_role_assignment(self, role_scope, role_assignment_name, **kwargs):
-        # type: (Union[str, KeyVaultRoleScope], Union[str, UUID], **Any) -> KeyVaultRoleAssignment
+        # type: (Union[str, KeyVaultRoleScope], Union[str, UUID], **Any) -> None
         """Delete a role assignment.
 
         :param role_scope: the assignment's scope, for example "/", "/keys", or "/keys/<specific key identifier>"
@@ -69,13 +69,12 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :type role_scope: str or KeyVaultRoleScope
         :param role_assignment_name: the assignment's name.
         :type role_assignment_name: str or uuid.UUID
-        :returns: the deleted assignment
-        :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
+        :returns: None
         """
-        assignment = self._client.role_assignments.delete(
+        self._client.role_assignments.delete(
             vault_base_url=self._vault_url, scope=role_scope, role_assignment_name=str(role_assignment_name), **kwargs
         )
-        return KeyVaultRoleAssignment._from_generated(assignment)
+        return
 
     @distributed_trace
     def get_role_assignment(self, role_scope, role_assignment_name, **kwargs):
@@ -183,7 +182,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def delete_role_definition(self, role_scope, role_definition_name, **kwargs):
-        # type: (Union[str, KeyVaultRoleScope], Union[str, UUID], **Any) -> KeyVaultRoleDefinition
+        # type: (Union[str, KeyVaultRoleScope], Union[str, UUID], **Any) -> None
         """Deletes a custom role definition.
 
         :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
@@ -191,13 +190,12 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :type role_scope: str or KeyVaultRoleScope
         :param role_definition_name: the role definition's name.
         :type role_definition_name: str or uuid.UUID
-        :returns: the deleted role definition
-        :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
+        :returns: None
         """
-        definition = self._client.role_definitions.delete(
+        self._client.role_definitions.delete(
             vault_base_url=self._vault_url, scope=role_scope, role_definition_name=str(role_definition_name), **kwargs
         )
-        return KeyVaultRoleDefinition._from_generated(definition)
+        return
 
     @distributed_trace
     def list_role_definitions(self, role_scope, **kwargs):
