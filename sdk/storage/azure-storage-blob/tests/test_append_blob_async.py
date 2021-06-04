@@ -18,7 +18,7 @@ import unittest
 import uuid
 
 from azure.mgmt.storage.aio import StorageManagementClient
-from azure.mgmt.storage.v2021_04_01.models import ImmutableStorageWithVersioning
+
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
@@ -1419,7 +1419,7 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
-                immutable_storage_with_versioning=ImmutableStorageWithVersioning(enabled=True))
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             await mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
 
         # Act

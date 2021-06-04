@@ -13,7 +13,7 @@ import pytest
 import uuid
 
 from azure.mgmt.storage import StorageManagementClient
-from azure.mgmt.storage.v2021_04_01.models import ImmutableStorageWithVersioning
+
 
 from azure.storage.blob._shared.policies import StorageContentValidation
 
@@ -435,7 +435,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
-                immutable_storage_with_versioning=ImmutableStorageWithVersioning(enabled=True))
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
 
         blob_name = self._get_blob_reference()

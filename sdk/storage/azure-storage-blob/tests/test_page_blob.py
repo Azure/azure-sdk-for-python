@@ -14,7 +14,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from azure.mgmt.storage import StorageManagementClient
-from azure.mgmt.storage.v2021_04_01.models import ImmutableStorageWithVersioning
+
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
@@ -154,7 +154,7 @@ class StoragePageBlobTest(StorageTestCase):
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
-                immutable_storage_with_versioning=ImmutableStorageWithVersioning(enabled=True))
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
 
         blob_name = self.get_resource_name("vlwblob")
