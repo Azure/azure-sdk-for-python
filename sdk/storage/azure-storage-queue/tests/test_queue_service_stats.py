@@ -49,7 +49,7 @@ class QueueServiceStatsTest(StorageTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
     def test_queue_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = self.create_storage_client(QueueServiceClient, self.account_url(storage_account, "queue"), storage_account_key)
 
         # Act
         stats = qsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
@@ -60,11 +60,10 @@ class QueueServiceStatsTest(StorageTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
     def test_queue_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = self.create_storage_client(QueueServiceClient, self.account_url(storage_account, "queue"), storage_account_key)
 
         # Act
-        stats = qsc.get_service_stats(
-            raw_response_hook=self.override_response_body_with_unavailable_status)
+        stats = qsc.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)
 
         # Assert
         self._assert_stats_unavailable(stats)
