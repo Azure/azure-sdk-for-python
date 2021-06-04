@@ -22,7 +22,8 @@ pip install azure-identity
 ### Prerequisites
 
 - an [Azure subscription](https://azure.microsoft.com/free/)
-- Python 2.7 or 3.5.3+
+- Python 2.7 or a recent version of Python 3 (this library doesn't support
+  end-of-life versions)
 
 ### Authenticating during local development
 
@@ -184,7 +185,7 @@ client = EventHubProducerClient(namespace, eventhub_name, credential_chain)
 
 ### Async credentials
 
-This library includes an async API supported on Python 3.5+. To use the async
+This library includes an async API supported on Python 3. To use the async
 credentials in [azure.identity.aio][ref_docs_aio], you must first install an
 async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). See
 [azure-core documentation][azure_core_transport_doc] for more information.
