@@ -233,8 +233,6 @@ class AmqpAnnotatedMessage(object):
                     MAX_ABSOLUTE_EXPIRY_TIME,
                     creation_time_from_ttl + self.header.time_to_live
                 ))
-            else:
-                ttl_set = False
 
         message_properties = None
         if self.properties:
