@@ -319,6 +319,28 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
+        :keyword ~datetime.datetime immutability_policy_expiry_time:
+            Specifies the date time when the blobs immutability policy is set to expire.
+            Currently this parameter of upload_blob() API is for BlockBlob only.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword immutability_policy_mode:
+            Specifies the immutability policy mode to set on the blob.
+            Currently this parameter of upload_blob() API is for BlockBlob only.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :paramtype immutability_policy_mode: ~azure.storage.blob.BlobImmutabilityPolicyMode or str
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+            Currently this parameter of upload_blob() API is for BlockBlob only.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
@@ -790,6 +812,63 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
+    async def set_immutability_policy(self, **kwargs):
+        # type: (**Any) -> Dict[str, str]
+        """The Set Immutability Policy operation sets the immutability policy on the blob.
+
+        .. versionadded:: 12.10.0
+            This operation was introduced in API version '2020-10-02'.
+
+        :keyword ~datetime.datetime immutability_policy_expiry_time:
+            Specifies the date time when the blobs immutability policy is set to expire.
+        :keyword immutability_policy_mode:
+            Specifies the immutability policy mode to set on the blob.
+        :paramtype immutability_policy_mode: ~azure.storage.blob.BlobImmutabilityPolicyMode or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, str]
+        """
+
+        return await self._client.blob.set_immutability_policy(
+            immutability_policy_expiry=kwargs.pop('immutability_policy_expiry_time', None),
+            cls=return_response_headers, **kwargs)
+
+    @distributed_trace_async()
+    async def delete_immutability_policy(self, **kwargs):
+        # type: (**Any) -> None
+        """The Delete Immutability Policy operation deletes the immutability policy on the blob.
+
+        .. versionadded:: 12.10.0
+            This operation was introduced in API version '2020-10-02'.
+
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, str]
+        """
+
+        await self._client.blob.delete_immutability_policy(**kwargs)
+
+    @distributed_trace_async
+    async def set_legal_hold(self, legal_hold, **kwargs):
+        # type: (**Any) -> Dict[str, str]
+        """The Set Legal Hold operation sets a legal hold on the blob.
+
+        .. versionadded:: 12.10.0
+            This operation was introduced in API version '2020-10-02'.
+
+        :param bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, str]
+        """
+
+        return await self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs)
+
+    @distributed_trace_async
     async def create_page_blob(  # type: ignore
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
@@ -831,6 +910,25 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :keyword ~datetime.datetime immutability_policy_expiry_time:
+            Specifies the date time when the blobs immutability policy is set to expire.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword immutability_policy_mode:
+            Specifies the immutability policy mode to set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :paramtype immutability_policy_mode: ~azure.storage.blob.BlobImmutabilityPolicyMode or str
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -898,6 +996,25 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             .. versionadded:: 12.4.0
 
         :paramtype tags: dict(str, str)
+        :keyword ~datetime.datetime immutability_policy_expiry_time:
+            Specifies the date time when the blobs immutability policy is set to expire.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword immutability_policy_mode:
+            Specifies the immutability policy mode to set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :paramtype immutability_policy_mode: ~azure.storage.blob.BlobImmutabilityPolicyMode or str
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1091,6 +1208,25 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             .. versionadded:: 12.4.0
 
         :paramtype tags: dict(str, str)
+        :keyword ~datetime.datetime immutability_policy_expiry_time:
+            Specifies the date time when the blobs immutability policy is set to expire.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword immutability_policy_mode:
+            Specifies the immutability policy mode to set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :paramtype immutability_policy_mode: ~azure.storage.blob.BlobImmutabilityPolicyMode or str
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1505,6 +1641,25 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :keyword ~datetime.datetime immutability_policy_expiry_time:
+            Specifies the date time when the blobs immutability policy is set to expire.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :keyword immutability_policy_mode:
+            Specifies the immutability policy mode to set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
+        :paramtype immutability_policy_mode: ~azure.storage.blob.BlobImmutabilityPolicyMode or str
+        :keyword bool legal_hold:
+            Specified if a legal hold should be set on the blob.
+
+            .. versionadded:: 12.10.0
+                This was introduced in API version '2020-10-02'.
+
         :keyword bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived

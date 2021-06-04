@@ -54,6 +54,9 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
         blob_headers = kwargs.pop('blob_headers', None)
         tier = kwargs.pop('standard_blob_tier', None)
         blob_tags_string = kwargs.pop('blob_tags_string', None)
+        immutability_policy_expiry = kwargs.pop('immutability_policy_expiry', None)
+        immutability_policy_mode = kwargs.pop('immutability_policy_mode', None)
+        legal_hold = kwargs.pop('legal_hold', None)
 
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
@@ -77,6 +80,9 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 upload_stream_current=0,
                 tier=tier.value if tier else None,
                 blob_tags_string=blob_tags_string,
+                immutability_policy_expiry=immutability_policy_expiry,
+                immutability_policy_mode=immutability_policy_mode,
+                legal_hold=legal_hold,
                 **kwargs)
 
         use_original_upload_path = blob_settings.use_byte_buffer or \
@@ -126,6 +132,9 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
             headers=headers,
             tier=tier.value if tier else None,
             blob_tags_string=blob_tags_string,
+            immutability_policy_expiry=immutability_policy_expiry,
+            immutability_policy_mode=immutability_policy_mode,
+            legal_hold=legal_hold,
             **kwargs)
     except HttpResponseError as error:
         try:

@@ -224,6 +224,7 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         self.assertIsNotNone(containers[0].has_immutability_policy)
         self.assertIsNotNone(containers[0].has_legal_hold)
+        self.assertIsNotNone(containers[0].is_immutable_storage_with_versioning_enabled)
 
     @GlobalStorageAccountPreparer()
     def test_list_containers_with_prefix(self, resource_group, location, storage_account, storage_account_key):
@@ -396,6 +397,7 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(props)
         self.assertDictEqual(props.metadata, metadata)
+        self.assertIsNotNone(props.is_immutable_storage_with_versioning_enabled)
         # self.assertEqual(props.lease.duration, 'infinite')
         # self.assertEqual(props.lease.state, 'leased')
         # self.assertEqual(props.lease.status, 'locked')

@@ -17,12 +17,15 @@ from os import (
 import unittest
 import uuid
 
+from azure.mgmt.storage.aio import StorageManagementClient
+from azure.mgmt.storage.v2021_04_01.models import ImmutableStorageWithVersioning
+
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.storage.blob import BlobSasPermissions, generate_blob_sas
+from azure.storage.blob import BlobSasPermissions, generate_blob_sas, BlobImmutabilityPolicyMode
 from azure.storage.blob._shared.policies import StorageContentValidation
 from azure.storage.blob import BlobType
 from azure.storage.blob.aio import (
@@ -1403,4 +1406,39 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
 
         self.assertIsNone(prop.is_append_blob_sealed)
         await copied_blob3.append_block("abc")
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_append_blob_with_immutability_policy_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
+        await self._setup(bsc)
+
+        container_name = self.get_resource_name('vlwcontainerasync')
+        if self.is_live:
+            token_credential = self.generate_oauth_token()
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=ImmutableStorageWithVersioning(enabled=True))
+            await mgmt_client.blob_containers.create("XClient", storage_account.name, container_name, blob_container=property)
+
+        # Act
+        blob_name = self.get_resource_name('vlwblob')
+        blob = bsc.get_blob_client(container_name, blob_name)
+        await blob.create_append_blob(immutability_policy_expiry_time=datetime.utcnow() + timedelta(seconds=5),
+                                      immutability_policy_mode=BlobImmutabilityPolicyMode.UNLOCKED,
+                                      legal_hold=True)
+
+        props = await blob.get_blob_properties()
+
+        with self.assertRaises(HttpResponseError):
+            await blob.delete_blob()
+
+        self.assertTrue(props['legal_hold'])
+        self.assertIsNotNone(props['immutability_policy_expiry_time'])
+        self.assertIsNotNone(props['immutability_policy_mode'])
+
+        if self.is_live:
+            await mgmt_client.blob_containers.delete("XClient", storage_account.name, self.container_name)
+
 # ------------------------------------------------------------------------------

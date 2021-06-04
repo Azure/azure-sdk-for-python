@@ -313,6 +313,12 @@ class ContainerProperties(DictMixin):
         Represents whether the container has an immutability policy.
     :ivar bool has_legal_hold:
         Represents whether the container has a legal hold.
+    :ivar bool is_immutable_storage_with_versioning_enabled:
+        Represents whether immutable storage with versioning enabled on the container.
+
+        .. versionadded:: 12.10.0
+            This was introduced in API version '2020-10-02'.
+
     :ivar dict metadata: A dict with name-value pairs to associate with the
         container as metadata.
     :ivar ~azure.storage.blob.ContainerEncryptionScope encryption_scope:
@@ -335,6 +341,7 @@ class ContainerProperties(DictMixin):
         self.has_legal_hold = kwargs.get('x-ms-has-legal-hold')
         self.metadata = kwargs.get('metadata')
         self.encryption_scope = None
+        self.is_immutable_storage_with_versioning_enabled = kwargs.get('x-ms-immutable-storage-with-versioning-enabled')
         default_encryption_scope = kwargs.get('x-ms-default-encryption-scope')
         if default_encryption_scope:
             self.encryption_scope = ContainerEncryptionScope(
@@ -351,6 +358,7 @@ class ContainerProperties(DictMixin):
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
+        props.is_immutable_storage_with_versioning_enabled = generated.properties.is_immutable_storage_with_versioning_enabled
         props.deleted = generated.deleted
         props.version = generated.version
         props.has_legal_hold = generated.properties.has_legal_hold
@@ -559,6 +567,9 @@ class BlobProperties(DictMixin):
         self.last_accessed_on = kwargs.get('x-ms-last-access-time')
         self.tag_count = kwargs.get('x-ms-tag-count')
         self.tags = None
+        self.immutability_policy_expiry_time = kwargs.get('x-ms-immutability-policy-until-date')
+        self.immutability_policy_mode = kwargs.get('x-ms-immutability-policy-mode')
+        self.legal_hold = kwargs.get('x-ms-legal-hold')
 
 
 class FilteredBlob(DictMixin):
@@ -832,20 +843,25 @@ class ContainerSasPermissions(object):
         List blobs in the container.
     :param bool tag:
         Set or get tags on the blobs in the container.
+    :keyword bool immutability_policy:
+        To enable operations related to immutability policy.
     """
-    def __init__(self, read=False, write=False, delete=False, list=False, delete_previous_version=False, tag=False):  # pylint: disable=redefined-builtin
+    def __init__(self, read=False, write=False, delete=False,
+                 list=False, delete_previous_version=False, tag=False, **kwargs):  # pylint: disable=redefined-builtin
         self.read = read
         self.write = write
         self.delete = delete
         self.list = list
         self.delete_previous_version = delete_previous_version
         self.tag = tag
+        self.immutability_policy = kwargs.pop('immutability_policy', False)
         self._str = (('r' if self.read else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('x' if self.delete_previous_version else '') +
                      ('l' if self.list else '') +
-                     ('t' if self.tag else ''))
+                     ('t' if self.tag else '') +
+                     ('i' if self.immutability_policy else ''))
 
     def __str__(self):
         return self._str
@@ -869,8 +885,10 @@ class ContainerSasPermissions(object):
         p_list = 'l' in permission
         p_delete_previous_version = 'x' in permission
         p_tag = 't' in permission
+        p_immutability_policy = 'i' in permission
         parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
-                     delete_previous_version=p_delete_previous_version, tag=p_tag)
+                     delete_previous_version=p_delete_previous_version, tag=p_tag,
+                     immutability_policy=p_immutability_policy)
 
         return parsed
 
@@ -896,9 +914,11 @@ class BlobSasPermissions(object):
         Delete the previous blob version for the versioning enabled storage account.
     :param bool tag:
         Set or get tags on the blob.
+    :keyword bool immutability_policy:
+        To enable operations related to immutability policy.
     """
     def __init__(self, read=False, add=False, create=False, write=False,
-                 delete=False, delete_previous_version=False, tag=True):
+                 delete=False, delete_previous_version=False, tag=True, **kwargs):
         self.read = read
         self.add = add
         self.create = create
@@ -906,13 +926,15 @@ class BlobSasPermissions(object):
         self.delete = delete
         self.delete_previous_version = delete_previous_version
         self.tag = tag
+        self.immutability_policy = kwargs.pop('immutability_policy', False)
         self._str = (('r' if self.read else '') +
                      ('a' if self.add else '') +
                      ('c' if self.create else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('x' if self.delete_previous_version else '') +
-                     ('t' if self.tag else ''))
+                     ('t' if self.tag else '') +
+                     ('i' if self.immutability_policy else ''))
 
     def __str__(self):
         return self._str
@@ -937,9 +959,11 @@ class BlobSasPermissions(object):
         p_delete = 'd' in permission
         p_delete_previous_version = 'x' in permission
         p_tag = 't' in permission
+        p_immutability_policy = 'i' in permission
 
         parsed = cls(read=p_read, add=p_add, create=p_create, write=p_write, delete=p_delete,
-                     delete_previous_version=p_delete_previous_version, tag=p_tag)
+                     delete_previous_version=p_delete_previous_version, tag=p_tag,
+                     immutability_policy=p_immutability_policy)
 
         return parsed
 
