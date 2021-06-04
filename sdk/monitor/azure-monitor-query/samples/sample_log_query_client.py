@@ -23,7 +23,7 @@ where TimeGenerated > ago(12h) |
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
 # returns LogsQueryResults 
-response = client.query(os.environ['LOG_WORKSPACE_ID'], query)
+response = client.query(os.environ['LOG_WORKSPACE_ID'], query, start_time=datetime(2021, 6, 2), end_time=datetime.now())
 
 if not response.tables:
     print("No results for the query")
