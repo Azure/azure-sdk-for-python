@@ -545,6 +545,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         client.delete_manifest(repo, digest)
 
+    # Live only, the fake credential doesn't check auth scope the same way
+    @pytest.mark.live_test_only
     @acr_preparer()
     def test_incorrect_authentication_scope(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint, authentication_scope="https://microsoft.com")
