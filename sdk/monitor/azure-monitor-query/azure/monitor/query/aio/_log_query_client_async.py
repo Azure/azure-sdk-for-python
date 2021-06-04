@@ -10,8 +10,9 @@ from azure.core.exceptions import HttpResponseError
 from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest
-from .._helpers import get_authentication_policy, process_error, construct_iso8601
+from .._helpers import process_error, construct_iso8601
 from .._models import LogsQueryResults, LogsQueryRequest, LogsQueryBody, LogsBatchResults
+from ._helpers_asyc import get_authentication_policy
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
