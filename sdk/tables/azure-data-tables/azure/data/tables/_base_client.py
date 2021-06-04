@@ -12,7 +12,6 @@ except ImportError:
     from urlparse import parse_qs, urlparse  # type: ignore
     from urllib2 import quote  # type: ignore
 
-import six
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.utils import parse_connection_string
 from azure.core.pipeline.transport import (
@@ -115,9 +114,9 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "named_key"):
-            self.account_name = self.credential.named_key.name
+            self.account_name = self.credential.named_key.name  # type: ignore
             secondary_hostname = "{}-secondary.table.{}".format(
-                self.credential.named_key.name, SERVICE_HOST_BASE
+                self.credential.named_key.name, SERVICE_HOST_BASE  # type: ignore
             )
 
         if not self._hosts:
@@ -395,7 +394,7 @@ def format_query_string(sas_token, credential):
             "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
     if sas_token and not credential:
         query_str += sas_token
-    elif isinstance(credential, AzureSasCredential) or isinstance(credential, AzureNamedKeyCredential):
+    elif isinstance(credential, (AzureSasCredential, AzureNamedKeyCredential)):
         return "", credential
     return query_str.rstrip("?&"), None
 
