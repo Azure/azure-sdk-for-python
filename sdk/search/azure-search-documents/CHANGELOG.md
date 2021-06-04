@@ -6,7 +6,6 @@ This version will be the last version to officially support Python 3.5, future v
 
 **New features**
 
-- Added `create_from_file` for `SynonymMap`
 - Added support for knowledge store    #18461
 - Added new data source type ADLS gen2  #16852
 
