@@ -90,7 +90,7 @@ class SystemEventNames(str, Enum):
 
     AcsSmsReceivedEventName = 'Microsoft.Communication.SMSReceived'
 
-    AgriFoodFarmingApplicationNameChangedEventName = 'Microsoft.AgFoodPlatform.ApplicationDataChanged'
+    AgriFoodFarmingApplicationDataChangedEventName = 'Microsoft.AgFoodPlatform.ApplicationDataChanged'
 
     AgriFoodFarmingBoundaryChangedEventName = 'Microsoft.AgFoodPlatform.BoundaryChanged'
 
@@ -100,25 +100,25 @@ class SystemEventNames(str, Enum):
 
     AgriFoodFarmingFarmChangedEventName = 'Microsoft.AgFoodPlatform.FarmChanged'
 
-    AgriFoodFarmingFarmOperationNameIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.FarmOperationDataIngestionJobStatusChanged'
+    AgriFoodFarmingFarmOperationDataIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.FarmOperationDataIngestionJobStatusChanged'
 
     AgriFoodFarmingFarmerChangedEventName = 'Microsoft.AgFoodPlatform.FarmerChanged'
 
     AgriFoodFarmingFieldChangedEventName = 'Microsoft.AgFoodPlatform.FieldChanged'
 
-    AgriFoodFarmingHarvestNameChangedEventName = 'Microsoft.AgFoodPlatform.HarvestDataChanged'
+    AgriFoodFarmingHarvestDataChangedEventName = 'Microsoft.AgFoodPlatform.HarvestDataChanged'
 
-    AgriFoodFarmingPlantingNameChangedEventName = 'Microsoft.AgFoodPlatform.PlantingDataChanged'
+    AgriFoodFarmingPlantingDataChangedEventName = 'Microsoft.AgFoodPlatform.PlantingDataChanged'
 
-    AgriFoodFarmingSatelliteNameIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.SatelliteDataIngestionJobStatusChanged'
+    AgriFoodFarmingSatelliteDataIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.SatelliteDataIngestionJobStatusChanged'
 
     AgriFoodFarmingSeasonChangedEventName = 'Microsoft.AgFoodPlatform.SeasonChanged'
 
     AgriFoodFarmingSeasonalFieldChangedEventName = 'Microsoft.AgFoodPlatform.SeasonalFieldChanged'
 
-    AgriFoodFarmingTillageNameChangedEventName = 'Microsoft.AgFoodPlatform.TillageDataChanged'
+    AgriFoodFarmingTillageDataChangedEventName = 'Microsoft.AgFoodPlatform.TillageDataChanged'
 
-    AgriFoodFarmingWeatherNameIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.WeatherDataIngestionJobStatusChanged'
+    AgriFoodFarmingWeatherDataIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.WeatherDataIngestionJobStatusChanged'
 
     AppConfigurationKeyValueDeletedEventName = 'Microsoft.AppConfiguration.KeyValueDeleted'
 
