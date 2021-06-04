@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python
+#!/usr/bin/env python
 
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -68,7 +68,7 @@ setup(
         'pytyped': ['py.typed'],
     },
     install_requires=[
-        "azure-core<2.0.0,>=1.13.0",
+        "azure-core<2.0.0,>=1.15.0",
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-mgmt-nspkg'],
