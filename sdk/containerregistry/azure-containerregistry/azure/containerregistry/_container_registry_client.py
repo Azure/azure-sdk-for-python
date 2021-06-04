@@ -65,7 +65,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository: The repository to delete
         :returns: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -223,7 +223,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             "cls",
             lambda objs: [
                 ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-                    x, repository_name=repository
+                    x, repository_name=repository, registry=self._endpoint
                 )
                 for x in objs
             ],
@@ -330,16 +330,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str tag_or_digest: Tag or digest of the manifest to be deleted
         :returns: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
-            client.delete()
+            client = ContainerRepositoryClient(account_url, DefaultAzureCredential())
+            client.delete_manifest("my_repository", "my_tag_or_digest")
         """
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
@@ -356,17 +357,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str tag: The tag to be deleted
         :returns: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for artifact in client.list_tag_properties():
-                client.delete_tag(tag.name)
+                client.delete_tag("my_repository", tag.name)
         """
         self._client.container_registry.delete_tag(repository, tag, **kwargs)
 
@@ -383,12 +385,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for artifact in client.list_manifest_properties():
-                properties = client.get_registry_artifact_properties(artifact.digest)
+                properties = client.get_manifest_properties("my_repository", artifact.digest)
         """
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
@@ -396,6 +399,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.get_manifest_properties(repository, tag_or_digest, **kwargs),
             repository_name=repository,
+            registry=self._endpoint,
         )
 
     @distributed_trace
@@ -411,12 +415,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for tag in client.list_tag_properties():
-                tag_properties = client.get_tag_properties(tag.name)
+                tag_properties = client.get_tag_properties("my_repository", tag.name)
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.get_tag_properties(repository, tag, **kwargs),
@@ -441,12 +446,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for tag in client.list_tag_properties():
-                tag_properties = client.get_tag_properties(tag.name)
+                tag_properties = client.get_tag_properties("my_repository", tag.name)
         """
         name = repository
         last = kwargs.pop("last", None)
@@ -581,12 +587,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for artifact in client.list_manifest_properties():
                 received_properties = client.update_manifest_properties(
+                    "my_repository",
                     artifact.digest,
                     can_delete=False,
                     can_list=False,
@@ -618,6 +626,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 **kwargs
             ),
             repository_name=repository,
+            registry=self._endpoint
         )
 
     @overload
@@ -647,6 +656,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient, TagWriteableProperties
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]

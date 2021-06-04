@@ -16,7 +16,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ClientAuthenticationError
 
 from asynctestcase import AsyncContainerRegistryTestClass
-from constants import HELLO_WORLD
+from constants import HELLO_WORLD, ALPINE
 from preparer import acr_preparer
 
 

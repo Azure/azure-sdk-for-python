@@ -7,9 +7,16 @@ import base64
 import json
 import re
 import time
-from typing import Dict, List
+from typing import TYPE_CHECKING, List, Dict
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
+
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineRequest
 
 BEARER = "Bearer"
 AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
@@ -89,6 +96,18 @@ def _enforce_https(request):
             "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
         )
 
+
+def _host_only(url):
+    # type: (str) -> str
+    return urlparse(url).netloc
+
+
+def _strip_alg(digest):
+    if len(digest.split(":")) == 2:
+        return digest.split(":")[1]
+    return digest
+
+
 def _parse_exp_time(raw_token):
     # type: (bytes) -> float
     value = raw_token.split(".")
@@ -97,10 +116,8 @@ def _parse_exp_time(raw_token):
         padding = len(value) % 4
         if padding > 0:
             value += "=" * padding
-        byte_value = base64.urlsafe_b64decode(value)
-        byte_value = byte_value.decode("utf-8")
+        byte_value = base64.urlsafe_b64decode(value).decode("utf-8")
         web_token = json.loads(byte_value)
-        expiration = web_token.get("exp", time.time())
-        return expiration
+        return web_token.get("exp", time.time())
 
     return time.time()
