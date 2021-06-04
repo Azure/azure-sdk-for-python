@@ -231,15 +231,26 @@ class AmqpAnnotatedMessage(object):
             if self.header.time_to_live and self.header.time_to_live != MAX_DURATION_VALUE:
                 ttl_set = True
                 creation_time_from_ttl = int(time.mktime(datetime.now(UTC()).timetuple()))
-                absolute_expiry_time_from_ttl = min(
+                absolute_expiry_time_from_ttl = int(min(
                     MAX_ABSOLUTE_EXPIRY_TIME,
                     creation_time_from_ttl + self.header.time_to_live
-                )
+                ))
             else:
                 ttl_set = False
 
         message_properties = None
         if self.properties:
+            creation_time = None
+            absolute_expiry_time = None
+            if ttl_set:
+                creation_time = creation_time_from_ttl
+                absolute_expiry_time = absolute_expiry_time_from_ttl
+            else:
+                if self.properties.creation_time:
+                    creation_time = int(self.properties.creation_time)
+                if self.properties.absolute_expiry_time:
+                    absolute_expiry_time = int(self.properties.absolute_expiry_time)
+
             message_properties = uamqp.message.MessageProperties(
                 message_id=self.properties.message_id,
                 user_id=self.properties.user_id,
@@ -249,8 +260,8 @@ class AmqpAnnotatedMessage(object):
                 correlation_id=self.properties.correlation_id,
                 content_type=self.properties.content_type,
                 content_encoding=self.properties.content_encoding,
-                creation_time=creation_time_from_ttl if ttl_set else None,
-                absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
+                creation_time=creation_time,
+                absolute_expiry_time=absolute_expiry_time,
                 group_id=self.properties.group_id,
                 group_sequence=self.properties.group_sequence,
                 reply_to_group_id=self.properties.reply_to_group_id,
