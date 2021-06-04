@@ -42,7 +42,7 @@ class ShareOperations:
     async def create(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[str] = None,
         quota: Optional[int] = None,
         access_tier: Optional[Union[str, "_models.ShareAccessTier"]] = None,
         enabled_protocols: Optional[str] = None,
@@ -58,7 +58,7 @@ class ShareOperations:
          Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param quota: Specifies the maximum size of the share, in gigabytes.
         :type quota: int
         :param access_tier: Specifies the access tier of the share.
@@ -96,7 +96,7 @@ class ShareOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if metadata is not None:
-            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, '{str}')
+            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         if quota is not None:
             header_parameters['x-ms-share-quota'] = self._serialize.header("quota", quota, 'int', minimum=1)
         if access_tier is not None:
@@ -198,7 +198,7 @@ class ShareOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
+        response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
@@ -778,7 +778,7 @@ class ShareOperations:
     async def create_snapshot(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Creates a read-only snapshot of a share.
@@ -789,7 +789,7 @@ class ShareOperations:
          Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -821,7 +821,7 @@ class ShareOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if metadata is not None:
-            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, '{str}')
+            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
@@ -1083,7 +1083,7 @@ class ShareOperations:
     async def set_metadata(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
@@ -1095,7 +1095,7 @@ class ShareOperations:
          Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param lease_access_conditions: Parameter group.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1133,7 +1133,7 @@ class ShareOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if metadata is not None:
-            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, '{str}')
+            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if _lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", _lease_id, 'str')

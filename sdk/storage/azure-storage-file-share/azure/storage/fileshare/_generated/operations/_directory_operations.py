@@ -46,7 +46,7 @@ class DirectoryOperations(object):
     def create(
         self,
         timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[Dict[str, str]]
+        metadata=None,  # type: Optional[str]
         file_permission="inherit",  # type: Optional[str]
         file_permission_key=None,  # type: Optional[str]
         file_attributes="none",  # type: str
@@ -63,7 +63,7 @@ class DirectoryOperations(object):
          Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param file_permission: If specified the permission (security descriptor) shall be set for the
          directory/file. This header can be used if Permission size is <= 8KB, else
          x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
@@ -109,7 +109,7 @@ class DirectoryOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if metadata is not None:
-            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, '{str}')
+            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if file_permission is not None:
             header_parameters['x-ms-file-permission'] = self._serialize.header("file_permission", file_permission, 'str')
@@ -211,7 +211,7 @@ class DirectoryOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
+        response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
@@ -401,7 +401,7 @@ class DirectoryOperations(object):
     def set_metadata(
         self,
         timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[Dict[str, str]]
+        metadata=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -413,7 +413,7 @@ class DirectoryOperations(object):
          Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -445,7 +445,7 @@ class DirectoryOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if metadata is not None:
-            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, '{str}')
+            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 

@@ -292,6 +292,8 @@ class BlobItemInternal(msrest.serialization.Model):
     :type blob_tags: ~azure.storage.blob.models.BlobTags
     :param object_replication_metadata: Dictionary of :code:`<string>`.
     :type object_replication_metadata: dict[str, str]
+    :param has_versions_only:
+    :type has_versions_only: bool
     """
 
     _validation = {
@@ -311,6 +313,7 @@ class BlobItemInternal(msrest.serialization.Model):
         'metadata': {'key': 'Metadata', 'type': 'BlobMetadata'},
         'blob_tags': {'key': 'BlobTags', 'type': 'BlobTags'},
         'object_replication_metadata': {'key': 'OrMetadata', 'type': '{str}'},
+        'has_versions_only': {'key': 'HasVersionsOnly', 'type': 'bool'},
     }
     _xml_map = {
         'name': 'Blob'
@@ -328,6 +331,7 @@ class BlobItemInternal(msrest.serialization.Model):
         metadata: Optional["BlobMetadata"] = None,
         blob_tags: Optional["BlobTags"] = None,
         object_replication_metadata: Optional[Dict[str, str]] = None,
+        has_versions_only: Optional[bool] = None,
         **kwargs
     ):
         super(BlobItemInternal, self).__init__(**kwargs)
@@ -340,6 +344,7 @@ class BlobItemInternal(msrest.serialization.Model):
         self.metadata = metadata
         self.blob_tags = blob_tags
         self.object_replication_metadata = object_replication_metadata
+        self.has_versions_only = has_versions_only
 
 
 class BlobMetadata(msrest.serialization.Model):

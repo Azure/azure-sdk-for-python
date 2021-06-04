@@ -43,7 +43,7 @@ class FileOperations:
         self,
         file_content_length: int,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[str] = None,
         file_permission: Optional[str] = "inherit",
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
@@ -63,7 +63,7 @@ class FileOperations:
          Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param file_permission: If specified the permission (security descriptor) shall be set for the
          directory/file. This header can be used if Permission size is <= 8KB, else
          x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
@@ -144,7 +144,7 @@ class FileOperations:
         if _file_content_disposition is not None:
             header_parameters['x-ms-content-disposition'] = self._serialize.header("file_content_disposition", _file_content_disposition, 'str')
         if metadata is not None:
-            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, '{str}')
+            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         if file_permission is not None:
             header_parameters['x-ms-file-permission'] = self._serialize.header("file_permission", file_permission, 'str')
         if file_permission_key is not None:
@@ -259,7 +259,7 @@ class FileOperations:
         response_headers = {}
         if response.status_code == 200:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
+            response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
             response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
             response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
             response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
@@ -295,7 +295,7 @@ class FileOperations:
 
         if response.status_code == 206:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
+            response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
             response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
             response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
             response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
@@ -403,7 +403,7 @@ class FileOperations:
 
         response_headers = {}
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
+        response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
         response_headers['x-ms-type']=self._deserialize('str', response.headers.get('x-ms-type'))
         response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
         response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
@@ -655,7 +655,7 @@ class FileOperations:
     async def set_metadata(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
@@ -667,7 +667,7 @@ class FileOperations:
          Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param lease_access_conditions: Parameter group.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -703,7 +703,7 @@ class FileOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if metadata is not None:
-            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, '{str}')
+            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if _lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", _lease_id, 'str')
@@ -1186,6 +1186,7 @@ class FileOperations:
         timeout: Optional[int] = None,
         source_range: Optional[str] = None,
         source_content_crc64: Optional[bytearray] = None,
+        copy_source_authorization: Optional[str] = None,
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         **kwargs: Any
@@ -1215,6 +1216,9 @@ class FileOperations:
         :param source_content_crc64: Specify the crc64 calculated for the range of bytes that must be
          read from the copy source.
         :type source_content_crc64: bytearray
+        :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
+         OAuth access token to copy source.
+        :type copy_source_authorization: str
         :param source_modified_access_conditions: Parameter group.
         :type source_modified_access_conditions: ~azure.storage.fileshare.models.SourceModifiedAccessConditions
         :param lease_access_conditions: Parameter group.
@@ -1271,6 +1275,8 @@ class FileOperations:
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if _lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", _lease_id, 'str')
+        if copy_source_authorization is not None:
+            header_parameters['x-ms-copy-source-authorization'] = self._serialize.header("copy_source_authorization", copy_source_authorization, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
@@ -1393,7 +1399,7 @@ class FileOperations:
         self,
         copy_source: str,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[str] = None,
         file_permission: Optional[str] = "inherit",
         file_permission_key: Optional[str] = None,
         copy_file_smb_info: Optional["_models.CopyFileSmbInfo"] = None,
@@ -1416,7 +1422,7 @@ class FileOperations:
          Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
-        :type metadata: dict[str, str]
+        :type metadata: str
         :param file_permission: If specified the permission (security descriptor) shall be set for the
          directory/file. This header can be used if Permission size is <= 8KB, else
          x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
@@ -1475,7 +1481,7 @@ class FileOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if metadata is not None:
-            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, '{str}')
+            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-copy-source'] = self._serialize.header("copy_source", copy_source, 'str')
         if file_permission is not None:
             header_parameters['x-ms-file-permission'] = self._serialize.header("file_permission", file_permission, 'str')
