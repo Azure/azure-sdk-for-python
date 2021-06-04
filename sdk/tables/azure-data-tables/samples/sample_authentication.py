@@ -70,7 +70,7 @@ class TableAuthSamples(object):
 
         # [START auth_from_sas]
         from azure.data.tables import TableServiceClient
-        from azure.core.credentials import AzureNamedKeyCredential
+        from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
         # Create a SAS token to use for authentication of a client
         from azure.data.tables import generate_account_sas, ResourceTypes, AccountSasPermissions
@@ -84,7 +84,7 @@ class TableAuthSamples(object):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
-        with TableServiceClient(endpoint=self.endpoint, credential=sas_token) as token_auth_table_service:
+        with TableServiceClient(endpoint=self.endpoint, credential=AzureSasCredential(sas_token)) as token_auth_table_service:
             properties = token_auth_table_service.get_service_properties()
             print("Shared Access Signature: {}".format(properties))
         # [END auth_from_sas]
