@@ -37,10 +37,18 @@ class LogsQueryClient(object):
         )
         self._query_op = self._client.query
 
-    async def query(self, workspace_id: str, query: str, **kwargs: Any) -> LogsQueryResults:
+    async def query(
+        self,
+        workspace_id: str,
+        query: str,
+        duration: str = None,
+        **kwargs: Any) -> LogsQueryResults:
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
+
+        **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
+        recommended to specify the timespan. If not, the entire dataset is queried.
 
         :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
          Azure portal.
@@ -48,13 +56,13 @@ class LogsQueryClient(object):
         :param query: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
         :type query: str
+        :param str duration: The duration for which to query the data. This can also be accompanied
+         with either start_time or end_time. If start_time or end_time is not provided, the current time is
+         taken as the end time. This should be provided in a ISO8601 string format like 'PT1H', 'P1Y2M10DT2H30M'.
         :keyword datetime start_time: The start time from which to query the data. This should be accompanied
          with either end_time or duration.
         :keyword datetime end_time: The end time till which to query the data. This should be accompanied
          with either start_time or duration.
-        :keyword str duration: The duration for which to query the data. This can also be accompanied
-         with either start_time or end_time. If start_time or end_time is not provided, the current time is
-         taken as the end time. This should be provided in a ISO8601 string format like 'PT1H', 'P1Y2M10DT2H30M'.
         :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
@@ -75,7 +83,6 @@ class LogsQueryClient(object):
         """
         start = kwargs.pop('start_time', None)
         end = kwargs.pop('end_time', None)
-        duration = kwargs.pop('duration', None)
         timespan = construct_iso8601(start, end, duration)
         include_statistics = kwargs.pop("include_statistics", False)
         include_render = kwargs.pop("include_render", False)

@@ -8,7 +8,7 @@
 import uuid
 from typing import Any, Optional, List
 
-from ._helpers import order_results
+from ._helpers import order_results, construct_iso8601
 from ._generated.models import (
     Column as InternalColumn,
     QueryBody as InternalQueryBody,
@@ -154,9 +154,13 @@ class LogsQueryRequest(InternalLogQueryRequest):
     :param query: The Analytics query. Learn more about the `Analytics query syntax
      <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
     :type query: str
-    :param timespan: The timespan (in ISO8601 duration format) in which to run the query.
-     If this parameter is not specified, the query will run over all data.
-    :type timespan: str
+    :param str duration: The duration for which to query the data. This can also be accompanied
+     with either start_time or end_time. If start_time or end_time is not provided, the current time is
+     taken as the end time. This should be provided in a ISO8601 string format like 'PT1H', 'P1Y2M10DT2H30M'.
+    :keyword datetime start_time: The start time from which to query the data. This should be accompanied
+     with either end_time or duration.
+    :keyword datetime end_time: The end time till which to query the data. This should be accompanied
+     with either start_time or duration.
     :param workspace: Workspace Id to be included in the query.
     :type workspace: str
     :keyword request_id: The error details.
@@ -165,9 +169,12 @@ class LogsQueryRequest(InternalLogQueryRequest):
     :paramtype headers: dict[str, str]
     """
 
-    def __init__(self, query, workspace, timespan=None, **kwargs):
+    def __init__(self, query, workspace, duration=None, **kwargs):
         # type: (str, str, Optional[str], Any) -> None
         super(LogsQueryRequest, self).__init__(**kwargs)
+        start = kwargs.pop('start_time', None)
+        end = kwargs.pop('end_time', None)
+        timespan = construct_iso8601(start, end, duration)
         self.id = kwargs.get("request_id", str(uuid.uuid4()))
         self.headers = kwargs.get("headers", None)
         self.body = {
