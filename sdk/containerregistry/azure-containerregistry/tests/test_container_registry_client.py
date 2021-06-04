@@ -15,7 +15,7 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     TagOrder,
 )
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 
 from testcase import ContainerRegistryTestClass
@@ -563,3 +563,12 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             count += 1
 
         assert count >= 1
+
+    # Live only, the fake credential doesn't check auth scope the same way
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    def test_incorrect_authentication_scope(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint, authentication_scope="https://microsoft.com")
+
+        with pytest.raises(ClientAuthenticationError):
+            properties = client.get_repository_properties(HELLO_WORLD)

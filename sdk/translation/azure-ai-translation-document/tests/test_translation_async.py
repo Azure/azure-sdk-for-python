@@ -209,7 +209,6 @@ class TestTranslation(AsyncDocumentTranslationTest):
             result = await poller.result()
         assert e.value.error.code == "InvalidDocumentAccessLevel"
 
-    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/17914")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_bad_input_target(self, client):
@@ -233,7 +232,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         with pytest.raises(HttpResponseError) as e:
             poller = await client.begin_translation(translation_inputs)
             result = await poller.result()
-        assert e.value.error.code == "InvalidDocumentAccessLevel"
+        assert e.value.error.code == "InvalidTargetDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -348,3 +347,81 @@ class TestTranslation(AsyncDocumentTranslationTest):
         async for doc in result:
             assert doc.status == "Failed"
             assert doc.error.code == "WrongDocumentEncoding"
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    async def test_overloaded_inputs(self, client):
+        # prepare containers and test data
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
+        target_container_sas_url = self.create_target_container()
+        target_container_sas_url_2 = self.create_target_container()
+
+        # prepare translation inputs
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url=source_container_sas_url,
+                targets=[
+                    TranslationTarget(
+                        target_url=target_container_sas_url,
+                        language_code="es"
+                    )
+                ]
+            )
+        ]
+
+
+        # positional
+        poller = await client.begin_translation(translation_inputs)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+
+        # keyword
+        translation_inputs[0].targets[0].target_url = target_container_sas_url_2
+        poller = await client.begin_translation(inputs=translation_inputs)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    async def test_overloaded_single_input(self, client):
+        # prepare containers and test data
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
+        target_container_sas_url = self.create_target_container()
+        target_container_sas_url_2 = self.create_target_container()
+
+        # positional
+        poller = await client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+
+        # keyword
+        poller = await client.begin_translation(source_url=source_container_sas_url, target_url=target_container_sas_url_2, target_language_code="es")
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    async def test_overloaded_bad_input(self, client):
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url="container",
+                targets=[
+                    TranslationTarget(
+                        target_url="container",
+                        language_code="es"
+                    )
+                ]
+            )
+        ]
+
+        with pytest.raises(ValueError):
+            await client.begin_translation("container")
+
+        with pytest.raises(ValueError):
+            await client.begin_translation("container", "container")
+
+        with pytest.raises(ValueError):
+            await client.begin_translation(source_url=translation_inputs)
+
+        with pytest.raises(ValueError):
+            await client.begin_translation(inputs="container")
