@@ -11,7 +11,7 @@ def _credential():
     )
     return credential
 
-@pytest.mark.liveTest
+@pytest.mark.live_test_only
 def test_metrics_auth():
     credential = _credential()
     client = MetricsQueryClient(credential)
@@ -21,7 +21,7 @@ def test_metrics_auth():
     assert response is not None
     assert response.metrics is not None
 
-@pytest.mark.liveTest
+@pytest.mark.live_test_only
 def test_metrics_namespaces():
     client = MetricsQueryClient(_credential())
 
@@ -29,7 +29,7 @@ def test_metrics_namespaces():
 
     assert response is not None
 
-@pytest.mark.liveTest
+@pytest.mark.live_test_only
 def test_metrics_definitions():
     client = MetricsQueryClient(_credential())
 
