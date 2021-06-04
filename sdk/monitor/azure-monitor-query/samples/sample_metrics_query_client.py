@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import os
+from datetime import datetime
 import urllib3
 from azure.monitor.query import MetricsQueryClient
 from azure.identity import ClientSecretCredential
@@ -20,7 +21,8 @@ metrics_uri = os.environ['METRICS_RESOURCE_URI']
 response = client.query(
     metrics_uri,
     metric_names=["PublishSuccessCount"],
-    timespan='P2D'
+    start_time=datetime(2021, 5, 25),
+    duration='P1D'
     )
 
 for metric in response.metrics:
@@ -28,4 +30,4 @@ for metric in response.metrics:
     for time_series_element in metric.timeseries:
         for metric_value in time_series_element.data:
             print(metric_value.time_stamp)
-    
+ 

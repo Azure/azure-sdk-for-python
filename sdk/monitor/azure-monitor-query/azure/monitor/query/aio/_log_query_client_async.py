@@ -10,7 +10,7 @@ from azure.core.exceptions import HttpResponseError
 from .._generated.aio._monitor_query_client import MonitorQueryClient
 
 from .._generated.models import BatchRequest
-from .._helpers import get_authentication_policy, process_error
+from .._helpers import get_authentication_policy, process_error, construct_iso8601
 from .._models import LogsQueryResults, LogsQueryRequest, LogsQueryBody, LogsBatchResults
 
 if TYPE_CHECKING:
@@ -47,9 +47,13 @@ class LogsQueryClient(object):
         :param query: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
         :type query: str
-        :keyword ~datetime.timedelta timespan: Optional. The timespan over which to query data. This is an ISO8601 time
-         period value.  This timespan is applied in addition to any that are specified in the query
-         expression.
+        :keyword datetime start_time: The start time from which to query the data. This should be accompanied
+         with either end_time or duration.
+        :keyword datetime end_time: The end time till which to query the data. This should be accompanied
+         with either start_time or duration.
+        :keyword str duration: The duration for which to query the data. This can also be accompanied
+         with either start_time or end_time. If start_time or end_time is not provided, the current time is
+         taken as the end time. This should be provided in a ISO8601 string format like 'PT1H', 'P1Y2M10DT2H30M'.
         :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
@@ -68,7 +72,10 @@ class LogsQueryClient(object):
         :rtype: ~azure.monitor.query.LogsQueryResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        timespan = kwargs.pop("timespan", None)
+        start = kwargs.pop('start_time', None)
+        end = kwargs.pop('end_time', None)
+        duration = kwargs.pop('duration', None)
+        timespan = construct_iso8601(start, end, duration)
         include_statistics = kwargs.pop("include_statistics", False)
         include_render = kwargs.pop("include_render", False)
         server_timeout = kwargs.pop("server_timeout", None)
