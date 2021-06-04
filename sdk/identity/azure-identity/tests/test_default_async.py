@@ -214,7 +214,10 @@ async def test_shared_cache_username():
     assert token.token == expected_access_token
 
 
-def test_vscode_arguments():
+def test_vscode_arguments(monkeypatch):
+    monkeypatch.delenv(EnvironmentVariables.AZURE_AUTHORITY_HOST, raising=False)
+    monkeypatch.delenv(EnvironmentVariables.AZURE_TENANT_ID, raising=False)
+
     credential = DefaultAzureCredential.__module__ + ".VisualStudioCodeCredential"
 
     # DefaultAzureCredential shouldn't specify a default authority or tenant to VisualStudioCodeCredential
@@ -229,13 +232,13 @@ def test_vscode_arguments():
     mock_credential.assert_called_once_with(**tenant)
 
     # tenant id can also be specified in $AZURE_TENANT_ID
-    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: tenant["tenant_id"]}, clear=True):
+    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: tenant["tenant_id"]}):
         with patch(credential) as mock_credential:
             DefaultAzureCredential()
     mock_credential.assert_called_once_with(**tenant)
 
     # keyword argument should override environment variable
-    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: "not-" + tenant["tenant_id"]}, clear=True):
+    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: "not-" + tenant["tenant_id"]}):
         with patch(credential) as mock_credential:
             DefaultAzureCredential(visual_studio_code_tenant_id=tenant["tenant_id"])
     mock_credential.assert_called_once_with(**tenant)
