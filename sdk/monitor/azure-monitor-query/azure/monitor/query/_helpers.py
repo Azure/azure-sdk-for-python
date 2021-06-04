@@ -4,11 +4,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import re
 from typing import TYPE_CHECKING
+from msrest import Serializer
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-from msrest import Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential

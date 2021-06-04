@@ -114,9 +114,10 @@ class LogsQueryClient(object):
 
     def batch_query(self, queries, **kwargs):
         # type: (Union[Sequence[Dict], Sequence[LogsQueryRequest]], Any) -> LogsBatchResults
-        """Execute an Analytics query.
+        """Execute a list of analytics queries. Each request can be either a LogQueryRequest
+        object or an equivalent serialized model.
 
-        Executes an Analytics query for data.
+        The response is returned in the same order as that of the requests sent.
 
         :param queries: The list of queries that should be processed
         :type queries: list[dict] or list[~azure.monitor.query.LogsQueryRequest]

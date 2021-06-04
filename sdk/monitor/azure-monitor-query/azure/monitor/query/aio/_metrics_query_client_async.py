@@ -9,13 +9,14 @@
 
 from typing import TYPE_CHECKING, Any, List
 
-from azure.core.paging import ItemPaged
+from azure.core.async_paging import AsyncItemPaged
 
 from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,
 )
 from .._models import MetricsResult, MetricDefinition, MetricNamespace
-from .._helpers import get_metrics_authentication_policy, construct_iso8601
+from ._helpers_asyc import get_metrics_authentication_policy
+from .._helpers import construct_iso8601
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -90,12 +91,12 @@ class MetricsQueryClient(object):
         end = kwargs.pop('end_time', None)
         duration = kwargs.pop('duration', None)
         timespan = construct_iso8601(start, end, duration)
-        kwargs.setdefault("metric_names", ",".join(metric_names))
+        kwargs.setdefault("metricnames", ",".join(metric_names))
         kwargs.setdefault("timespan", timespan)
         generated = await self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
         return MetricsResult._from_generated(generated) # pylint: disable=protected-access
 
-    async def list_metric_namespaces(self, resource_uri: str, **kwargs: Any) -> ItemPaged[MetricNamespace]:
+    def list_metric_namespaces(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged[MetricNamespace]:
         """Lists the metric namespaces for the resource.
 
         :param resource_uri: The identifier of the resource.
@@ -107,7 +108,7 @@ class MetricsQueryClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return await self._namespace_op.list(
+        return self._namespace_op.list(
             resource_uri,
             cls=kwargs.pop(
                 "cls",
@@ -117,12 +118,12 @@ class MetricsQueryClient(object):
             ),
             **kwargs)
 
-    async def list_metric_definitions(
+    def list_metric_definitions(
         self,
         resource_uri: str,
         metric_namespace: str = None,
         **kwargs: Any
-        ) -> ItemPaged[MetricDefinition]:
+        ) -> AsyncItemPaged[MetricDefinition]:
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
@@ -133,7 +134,7 @@ class MetricsQueryClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return await self._definitions_op.list(
+        return self._definitions_op.list(
             resource_uri,
             metric_namespace,
             cls=kwargs.pop(
