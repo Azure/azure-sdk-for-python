@@ -8,11 +8,11 @@
 import uuid
 from typing import Any, Optional, List
 
+from ._helpers import order_results
 from ._generated.models import (
     Column as InternalColumn,
     QueryBody as InternalQueryBody,
     LogQueryRequest as InternalLogQueryRequest,
-    MetricNamespace as InternalMetricNamespace,
     ErrorDetails as InternalErrorDetails
 )
 
@@ -168,7 +168,7 @@ class LogsQueryRequest(InternalLogQueryRequest):
     def __init__(self, query, workspace, timespan=None, **kwargs):
         # type: (str, str, Optional[str], Any) -> None
         super(LogsQueryRequest, self).__init__(**kwargs)
-        self.id = kwargs.get("request_id", uuid.uuid4())
+        self.id = kwargs.get("request_id", str(uuid.uuid4()))
         self.headers = kwargs.get("headers", None)
         self.body = {
             "query": query, "timespan": timespan
@@ -250,13 +250,13 @@ class LogsBatchResults(object):
         self.error = kwargs.get("error", None)
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated, request_order):
         if not generated:
             return cls()
         return cls(
-            responses=[
+            responses=order_results(request_order, [
                 LogsQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
-                ],
+                ]),
             error=LogsBatchResultError._from_generated(generated.error) # pylint: disable=protected-access
         )
 
