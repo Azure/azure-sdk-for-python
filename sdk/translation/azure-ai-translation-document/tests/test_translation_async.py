@@ -426,6 +426,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         with pytest.raises(ValueError):
             await client.begin_translation(inputs="container")
 
+    @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_translation_continuation_token(self, client):

@@ -424,6 +424,7 @@ class TestTranslation(DocumentTranslationTest):
         with pytest.raises(ValueError):
             client.begin_translation(inputs="container")
 
+    @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_translation_continuation_token(self, client):
