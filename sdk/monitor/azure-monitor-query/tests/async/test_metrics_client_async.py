@@ -2,7 +2,7 @@ import py
 import pytest
 import os
 from azure.identity.aio import ClientSecretCredential
-from azure.monitor.query.aio import MetricsClient
+from azure.monitor.query.aio import MetricsQueryClient
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -15,7 +15,7 @@ def _credential():
 @pytest.mark.live_test_only
 async def test_metrics_auth():
     credential = _credential()
-    client = MetricsClient(credential)
+    client = MetricsQueryClient(credential)
     # returns LogsQueryResults 
     response = await client.query(os.environ['METRICS_RESOURCE_URI'], metric_names=["PublishSuccessCount"], timespan='P2D')
 
@@ -24,7 +24,7 @@ async def test_metrics_auth():
 
 @pytest.mark.live_test_only
 async def test_metrics_namespaces():
-    client = MetricsClient(_credential())
+    client = MetricsQueryClient(_credential())
 
     response = await client.list_metric_namespaces(os.environ['METRICS_RESOURCE_URI'])
 
@@ -32,7 +32,7 @@ async def test_metrics_namespaces():
 
 @pytest.mark.live_test_only
 async def test_metrics_definitions():
-    client = MetricsClient(_credential())
+    client = MetricsQueryClient(_credential())
 
     response = await client.list_metric_definitions(os.environ['METRICS_RESOURCE_URI'], metric_namespace='microsoft.eventgrid/topics')
 

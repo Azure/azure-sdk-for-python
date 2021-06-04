@@ -3,7 +3,7 @@
 
 import os
 import urllib3
-from azure.monitor.query import MetricsClient
+from azure.monitor.query import MetricsQueryClient
 from azure.identity import ClientSecretCredential
 
 urllib3.disable_warnings()
@@ -14,7 +14,7 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = MetricsClient(credential)
+client = MetricsQueryClient(credential)
 
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
 response = client.query(

@@ -147,7 +147,7 @@ class MetricsResult(object):
         )
 
 class LogsQueryRequest(InternalLogQueryRequest):
-    """An single request in a batch.
+    """A single request in a batch.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 

@@ -4,10 +4,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from ._log_query_client_async import LogsClient
-from ._metrics_query_client_async import MetricsClient
+from ._log_query_client_async import LogsQueryClient
+from ._metrics_query_client_async import MetricsQueryClient
 
 __all__ = [
-    "LogsClient",
-    "MetricsClient"
+    "LogsQueryClient",
+    "MetricsQueryClient"
 ]

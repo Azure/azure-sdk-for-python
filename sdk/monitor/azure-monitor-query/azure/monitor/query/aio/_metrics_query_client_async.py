@@ -15,39 +15,42 @@ from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,
 )
 from .._models import MetricsResult, MetricDefinition, MetricNamespace
-from .._helpers import get_authentication_policy
-from .._models import MetricNamespace
+from .._helpers import get_metrics_authentication_policy
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-class MetricsClient(object):
-    """MetricsClient
+class MetricsQueryClient(object):
+    """MetricsQueryClient
 
     :param credential: The credential to authenticate the client
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword endpoint: The endpoint to connect to. Defaults to 'https://management.azure.com'.
+    :paramtype endpoint: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        endpoint = kwargs.pop('endpoint', 'https://management.azure.com')
         self._client = MonitorQueryClient(
             credential=credential,
-            authentication_policy=get_authentication_policy(credential),
+            base_url=endpoint,
+            authentication_policy=get_metrics_authentication_policy(credential),
             **kwargs
         )
         self._metrics_op = self._client.metrics
         self._namespace_op = self._client.metric_namespaces
         self._definitions_op = self._client.metric_definitions
 
-    async def query(self, resource_uri: str, metric_names: List, **kwargs: Any) -> MetricsResult:
+    async def query(self, resource_uri: str, metric_names: List, timespan :str = None, **kwargs: Any) -> MetricsResult:
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :param metric_names: The names of the metrics to retrieve.
         :type metric_names: list
-        :keyword timespan: The timespan of the query. It is a string with the following format
+        :param timespan: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'.
-        :paramtype timespan: str
+        :type timespan: str
         :keyword interval: The interval (i.e. timegrain) of the query.
         :paramtype interval: ~datetime.timedelta
         :keyword aggregation: The list of aggregation types (comma separated) to retrieve.
@@ -80,6 +83,7 @@ class MetricsClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         kwargs.setdefault("metric_names", ",".join(metric_names))
+        kwargs.setdefault("timespan", timespan)
         generated = await self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
         return MetricsResult._from_generated(generated) # pylint: disable=protected-access
 
@@ -100,7 +104,7 @@ class MetricsClient(object):
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricNamespace._from_generated(x) for x in objs
+                    MetricNamespace._from_generated(x) for x in objs # pylint: disable=protected-access
                 ]
             ),
             **kwargs)
@@ -127,12 +131,12 @@ class MetricsClient(object):
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricDefinition._from_generated(x) for x in objs
+                    MetricDefinition._from_generated(x) for x in objs # pylint: disable=protected-access
                 ]
             ),
             **kwargs)
 
-    async def __aenter__(self) -> "MetricsClient":
+    async def __aenter__(self) -> "MetricsQueryClient":
         await self._client.__aenter__()
         return self
 
@@ -140,5 +144,5 @@ class MetricsClient(object):
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:
-        """Close the :class:`~azure.monitor.query.aio.MetricsClient` session."""
+        """Close the :class:`~azure.monitor.query.aio.MetricsQueryClient` session."""
         await self._client.__aexit__()

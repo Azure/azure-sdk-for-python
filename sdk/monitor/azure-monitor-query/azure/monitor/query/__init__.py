@@ -4,8 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from ._log_query_client import LogsClient
-from ._metrics_query_client import MetricsClient
+from ._log_query_client import LogsQueryClient
+from ._metrics_query_client import MetricsQueryClient
 
 from ._models import (
     LogsQueryResults,
@@ -28,7 +28,7 @@ from ._models import (
 from ._version import VERSION
 
 __all__ = [
-    "LogsClient",
+    "LogsQueryClient",
     "LogsBatchResults",
     "LogsBatchResultError",
     "LogsQueryResults",
@@ -36,7 +36,7 @@ __all__ = [
     "LogsQueryResultTable",
     "LogsQueryRequest",
     "LogsErrorDetails",
-    "MetricsClient",
+    "MetricsQueryClient",
     "MetricNamespace",
     "MetricDefinition",
     "MetricsResult",
