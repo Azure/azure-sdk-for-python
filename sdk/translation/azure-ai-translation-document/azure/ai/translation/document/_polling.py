@@ -18,7 +18,7 @@ from azure.core.polling.base_polling import (
 
 from azure.core.exceptions import HttpResponseError, ODataV4Format
 from ._generated.models import TranslationStatus
-from ._models import JobStatusResult
+from ._models import TranslationStatusResult
 
 
 if TYPE_CHECKING:
@@ -37,7 +37,7 @@ _FINISHED = frozenset(["succeeded", "cancelled", "cancelling", "failed"])
 _FAILED = frozenset(["validationfailed"])
 
 
-class DocumentTranslationPoller(LROPoller):
+class DocumentTranslationLROPoller(LROPoller):
     """A custom poller implementation for Document Translation.
     """
 
@@ -54,16 +54,16 @@ class DocumentTranslationPoller(LROPoller):
 
     @property
     def details(self):
-        # type: () -> JobStatusResult
+        # type: () -> TranslationStatusResult
         """The details for the translation operation
 
-        :return: JobStatusResult
+        :return: ~azure.ai.translation.document.TranslationStatusResult
         """
-        return JobStatusResult._from_generated(self._polling_method._current_body)  # pylint: disable=protected-access
+        return TranslationStatusResult._from_generated(self._polling_method._current_body)  # pylint: disable=protected-access
 
     @classmethod
     def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
-        # type: (DocumentTranslationLROPollingMethod, str, **Any) -> DocumentTranslationPoller
+        # type: (DocumentTranslationLROPollingMethod, str, **Any) -> DocumentTranslationLROPoller
 
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs

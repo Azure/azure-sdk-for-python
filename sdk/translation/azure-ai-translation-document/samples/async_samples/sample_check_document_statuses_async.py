@@ -54,7 +54,7 @@ async def sample_document_status_checks_async():
                 if document.id not in completed_docs:
                     if document.status == "Succeeded":
                         print("Document at {} was translated to {} language. You can find translated document at {}".format(
-                            document.source_document_url, document.translate_to, document.translated_document_url
+                            document.source_document_url, document.translated_to, document.translated_document_url
                         ))
                         completed_docs.append(document.id)
                     if document.status == "Failed":
