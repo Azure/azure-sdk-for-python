@@ -118,20 +118,19 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def set_role_definition(
-        self,
-        role_scope: "Union[str, KeyVaultRoleScope]",
-        role_definition_name: "Optional[Union[str, UUID]]" = None,
-        **kwargs: "Any"
+        self, role_scope: "Union[str, KeyVaultRoleScope]", **kwargs: "Any"
     ) -> "KeyVaultRoleDefinition":
         """Creates or updates a custom role definition.
+
+        To update a role definition, provide the ``role_definition_name`` of the existing definition.
 
         :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
             Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.GLOBAL.
         :type role_scope: str or KeyVaultRoleScope
-        :param role_definition_name: the unique role definition name. Unless a UUID is provided, a new role definition
+        :keyword role_definition_name: the unique role definition name. Unless a UUID is provided, a new role definition
             will be created with a generated unique name. Providing the unique name of an existing role definition will
             update that role definition.
-        :type role_definition_name: str or uuid.UUID
+        :paramtype role_definition_name: str or uuid.UUID
         :keyword str role_name: the role's display name. If unspecified when creating or updating a role definition, the
             role name will be set to an empty string.
         :keyword str description: a description of the role definition. If unspecified when creating or updating a role
@@ -165,7 +164,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         definition = await self._client.role_definitions.create_or_update(
             vault_base_url=self._vault_url,
             scope=role_scope,
-            role_definition_name=str(role_definition_name or uuid4()),
+            role_definition_name=str(kwargs.pop("role_definition_name", None) or uuid4()),
             parameters=parameters,
             **kwargs
         )
