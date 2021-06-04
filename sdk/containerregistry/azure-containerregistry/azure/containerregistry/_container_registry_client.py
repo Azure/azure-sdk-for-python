@@ -335,6 +335,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
@@ -361,6 +362,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
@@ -383,6 +385,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
@@ -412,6 +415,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
@@ -442,6 +446,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
@@ -582,6 +587,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
@@ -649,6 +655,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient, TagWriteableProperties
             from azure.identity import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
