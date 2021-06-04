@@ -425,3 +425,20 @@ class TestTranslation(AsyncDocumentTranslationTest):
 
         with pytest.raises(ValueError):
             await client.begin_translation(inputs="container")
+
+    @pytest.mark.live_test_only
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    async def test_translation_continuation_token(self, client):
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
+        target_container_sas_url = self.create_target_container()
+
+        initial_poller = await client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
+        cont_token = initial_poller.continuation_token()
+
+        poller = await client.begin_translation(None, continuation_token=cont_token)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+        async for doc in result:
+            self._validate_doc_status(doc, target_language="es")
+        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
