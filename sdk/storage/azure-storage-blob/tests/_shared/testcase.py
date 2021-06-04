@@ -34,6 +34,7 @@ try:
 except ImportError:
     from io import StringIO
 
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.credentials import AccessToken
 from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
@@ -318,15 +319,25 @@ class StorageTestCase(AzureMgmtTestCase):
 
     def create_storage_client(self, client, *args, **kwargs):
         kwargs["api_version"] = self._get_service_version(**kwargs)
+        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
         return client(*args, **kwargs)
 
     def create_storage_client_from_conn_str(self, client, *args, **kwargs):
         kwargs["api_version"] = self._get_service_version(**kwargs)
+        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
         return client.from_connection_string(*args, **kwargs)
 
-    def create_storage_client(self, client, *args, **kwargs):
-        kwargs["api_version"] = self._get_service_version(**kwargs)
-        return client(*args, **kwargs)
+
+class ApiVersionAssertPolicy(SansIOHTTPPolicy):
+    """
+    Assert the ApiVersion is set properly on the response
+    """
+
+    def __init__(self, api_version):
+        self.api_version = api_version
+
+    def on_request(self, request):
+        assert request.http_request.headers['x-ms-version'] == self.api_version
 
 
 def not_for_emulator(test):

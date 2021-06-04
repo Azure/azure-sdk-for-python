@@ -11,14 +11,7 @@ class ServiceVersion(str, Enum):
     V2020_04_08 = "2020-04-08"
     V2020_06_12 = "2020-06-12"
     V2020_08_04 = "2020-08-04"
-    #     '2019-02-02',
-    # '2019-07-07',
-    # '2019-10-10',
-    # '2019-12-12',
-    # '2020-02-10',
-    # '2020-04-08',
-    # '2020-06-12',
-    # '2020-08-04'
+
 
 LATEST_SERVICE_VERSION = ServiceVersion.V2020_08_04
 LATEST_SERVICE_VERSION_PLUS_1 = ServiceVersion.V2020_06_12
