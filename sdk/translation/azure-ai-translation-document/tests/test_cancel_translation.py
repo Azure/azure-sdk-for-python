@@ -13,33 +13,33 @@ from azure.ai.translation.document import DocumentTranslationClient, DocumentTra
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 
-class TestCancelJob(DocumentTranslationTest):
+class TestCancelTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_cancel_job(self, client):
+    def test_cancel_translation(self, client):
         '''
             some notes (test sporadically failing):
-            1. use a large number of jobs
-                - because when running tests the job sometimes finishes with status 'Succeeded'
+            1. use a large number of translations
+                - because when running tests the translations sometimes finishes with status 'Succeeded'
                   before we call the 'cancel' endpoint!
             2. wait sometime after calling 'cancel' and before calling 'get status'
                 - in order for the cancel status to propagate
         '''
-        # submit translation job
+        # submit translation operation
         docs_count = 8 # large number of docs 
         poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, wait=False)
 
-        # cancel job
-        client.cancel_job(poller.id)
+        # cancel translation
+        client.cancel_translation(poller.id)
 
         # wait for propagation
         wait_time = 15  # for 'cancelled' status to propagate, if test failed, increase this value!
         self.wait(duration=wait_time) 
 
-        # check job status
-        job_details = client.get_job_status(poller.id)
-        self._validate_translations(job_details, status="Cancelled", total=docs_count)
+        # check translation status
+        translation_details = client.get_translation_status(poller.id)
+        self._validate_translations(translation_details, status="Cancelled", total=docs_count)
         try:
             poller.wait()
         except HttpResponseError:

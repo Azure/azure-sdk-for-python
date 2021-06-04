@@ -223,29 +223,28 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
                 self.storage_source, self.prefix, self.suffix)[:1024]
 
 
-class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
-    """Status information about the translation job.
+class TranslationStatusResult(object):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
+    """Status information about the translation operation.
 
-    :ivar str id: Id of the job.
-    :ivar created_on: The date time when the translation job was created.
+    :ivar str id: Id of the translation operation.
+    :ivar created_on: The date time when the translation operation was created.
     :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: The date time when the translation job's status was last updated.
+    :ivar last_updated_on: The date time when the translation operation's status was last updated.
     :vartype last_updated_on: ~datetime.datetime
-    :ivar str status: Status for a job.
+    :ivar str status: Status for a translation operation.
 
-        * `NotStarted` - the job has not begun yet.
+        * `NotStarted` - the operation has not begun yet.
         * `Running` - translation is in progress.
-        * `Succeeded` - at least one document translated successfully within the job.
-        * `Cancelled` - the job was cancelled.
-        * `Cancelling` - the job is being cancelled.
+        * `Succeeded` - at least one document translated successfully within the operation.
+        * `Cancelled` - the operation was cancelled.
+        * `Cancelling` - the operation is being cancelled.
         * `ValidationFailed` - the input failed validation. E.g. there was insufficient permissions on blob containers.
-        * `Failed` - all the documents within the job failed. To understand the reason for each document failure,
-         call the :func:`~DocumentTranslationClient.list_all_document_statuses()` client method and inspect the error.
+        * `Failed` - all the documents within the operation failed.
 
-    :ivar error: Returned if there is an error with the translation job.
+    :ivar error: Returned if there is an error with the translation operation.
         Includes error code, message, target.
     :vartype error: ~azure.ai.translation.document.DocumentTranslationError
-    :ivar int documents_total_count: Number of translations to be made on documents in the job.
+    :ivar int documents_total_count: Number of translations to be made on documents in the operation.
     :ivar int documents_failed_count: Number of documents that failed translation.
         More details can be found by calling the :func:`~DocumentTranslationClient.list_all_document_statuses`
         client method.
@@ -253,7 +252,7 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
     :ivar int documents_in_progress_count: Number of translations on documents in progress.
     :ivar int documents_not_yet_started_count: Number of documents that have not yet started being translated.
     :ivar int documents_cancelled_count: Number of documents that were cancelled for translation.
-    :ivar int total_characters_charged: Total characters charged across all documents within the job.
+    :ivar int total_characters_charged: Total characters charged across all documents within the translation operation.
     """
 
     def __init__(
@@ -295,7 +294,7 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
         )
 
     def __repr__(self):
-        return "JobStatusResult(id={}, created_on={}, "\
+        return "TranslationStatusResult(id={}, created_on={}, "\
             "last_updated_on={}, status={}, error={}, documents_total_count={}, "\
             "documents_failed_count={}, documents_succeeded_count={}, "\
             "documents_in_progress_count={}, documents_not_yet_started_count={}, "\
@@ -308,7 +307,7 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
 
 
 class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritance, R0903, R0902
-    """Status information about a particular document within a translation job.
+    """Status information about a particular document within a translation operation.
 
     :ivar str source_document_url: Location of the source document in the source
         container. Note that any SAS tokens are removed from this path.
@@ -324,9 +323,9 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         * `Running` - translation is in progress for document
         * `Succeeded` - translation succeeded for the document
         * `Failed` - the document failed to translate. Check the error property.
-        * `Cancelled` - the job was cancelled, the document was not translated.
-        * `Cancelling` - the job is cancelling, the document will not be translated.
-    :ivar str translate_to: The language code of the language the document was translated to,
+        * `Cancelled` - the operation was cancelled, the document was not translated.
+        * `Cancelling` - the operation is cancelling, the document will not be translated.
+    :ivar str translated_to: The language code of the language the document was translated to,
         if successful.
     :ivar error: Returned if there is an error with the particular document.
         Includes error code, message, target.
@@ -347,7 +346,7 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         self.created_on = kwargs['created_on']
         self.last_updated_on = kwargs['last_updated_on']
         self.status = kwargs['status']
-        self.translate_to = kwargs['translate_to']
+        self.translated_to = kwargs['translated_to']
         self.error = kwargs.get('error', None)
         self.translation_progress = kwargs.get('translation_progress', None)
         self.id = kwargs.get('id', None)
@@ -361,7 +360,7 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
             created_on=doc_status.created_date_time_utc,
             last_updated_on=doc_status.last_action_date_time_utc,
             status=doc_status.status,
-            translate_to=doc_status.to,
+            translated_to=doc_status.to,
             error=DocumentTranslationError._from_generated(doc_status.error) if doc_status.error else None,  # pylint: disable=protected-access
             translation_progress=doc_status.progress,
             id=doc_status.id,
@@ -372,16 +371,16 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         # pylint: disable=line-too-long
         return "DocumentStatusResult(id={}, source_document_url={}, "\
             "translated_document_url={}, created_on={}, last_updated_on={}, "\
-            "status={}, translate_to={}, error={}, translation_progress={}, "\
+            "status={}, translated_to={}, error={}, translation_progress={}, "\
             "characters_charged={})" \
             .format(self.id, self.source_document_url, self.translated_document_url,
-                self.created_on, self.last_updated_on, self.status, self.translate_to,
+                self.created_on, self.last_updated_on, self.status, self.translated_to,
                 self.error.__repr__(), self.translation_progress, self.characters_charged)[:1024]
 
 
 class DocumentTranslationError(object):  # pylint: disable=useless-object-inheritance, R0903
     """This contains the error code, message, and target with descriptive details on why
-    a translation job or particular document failed.
+    a translation operation or particular document failed.
 
     :ivar str code: The error code. Possible high level values include:
         "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable",
