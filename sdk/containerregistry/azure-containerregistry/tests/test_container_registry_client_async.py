@@ -176,10 +176,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             assert isinstance(artifact.created_on, datetime)
             assert isinstance(artifact.last_updated_on, datetime)
             assert artifact.repository_name == BUSYBOX
-            assert (
-                self.create_fully_qualified_reference(containerregistry_endpoint, BUSYBOX, artifact.digest)
-                == artifact.fully_qualified_reference
-            )
+            assert artifact.fully_qualified_reference in self.create_fully_qualified_reference(containerregistry_endpoint, BUSYBOX, artifact.digest)
             count += 1
 
         assert count > 0
@@ -264,10 +261,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         assert isinstance(properties, ArtifactManifestProperties)
         assert properties.repository_name == repo
-        assert (
-            self.create_fully_qualified_reference(containerregistry_endpoint, repo, properties.digest)
-            == properties.fully_qualified_reference
-        )
+        assert properties.fully_qualified_reference in self.create_fully_qualified_reference(containerregistry_endpoint, repo, properties.digest)
 
     @acr_preparer()
     async def test_get_manifest_properties_does_not_exist(self, containerregistry_endpoint):
