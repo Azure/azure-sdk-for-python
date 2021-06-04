@@ -34,7 +34,7 @@ TEST_BLOB_PREFIX = 'blob'
 class StorageBlobTagsTest(StorageTestCase):
 
     def _setup(self, storage_account, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key)
+        self.bsc = self.create_storage_client(BlobServiceClient, self.account_url(storage_account, "blob"), credential=key)
         self.container_name = self.get_resource_name("container")
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)

@@ -50,7 +50,7 @@ try:
 except ImportError:
     from devtools_testutils import mgmt_settings_fake as settings
 
-from .service_versions import ServiceVersion, LATEST_SERVICE_VERSION
+from .service_versions import LATEST_SERVICE_VERSION, ServiceVersion, LATEST_SERVICE_VERSION_PLUS_1
 
 import pytest
 
@@ -313,7 +313,7 @@ class StorageTestCase(AzureMgmtTestCase):
         return FakeTokenCredential()
 
     def _get_service_version(self, **kwargs):
-        env_version = os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION", LATEST_SERVICE_VERSION)
+        env_version = os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION", LATEST_SERVICE_VERSION)# ServiceVersion.V2020_04_08)
         return kwargs.pop("service_version", env_version)
 
     def create_storage_client(self, client, *args, **kwargs):
@@ -323,6 +323,10 @@ class StorageTestCase(AzureMgmtTestCase):
     def create_storage_client_from_conn_str(self, client, *args, **kwargs):
         kwargs["api_version"] = self._get_service_version(**kwargs)
         return client.from_connection_string(*args, **kwargs)
+
+    def create_storage_client(self, client, *args, **kwargs):
+        kwargs["api_version"] = self._get_service_version(**kwargs)
+        return client(*args, **kwargs)
 
 
 def not_for_emulator(test):
