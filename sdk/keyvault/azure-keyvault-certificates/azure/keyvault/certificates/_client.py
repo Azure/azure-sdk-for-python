@@ -338,10 +338,10 @@ class CertificateClient(KeyVaultClientBase):
         # type: (str, bytes, **Any) -> KeyVaultCertificate
         """Import a certificate created externally. Requires certificates/import permission.
 
-        Imports an existing valid certificate, containing a private key, into
-        Azure Key Vault. The certificate to be imported can be in either PFX or
-        PEM format. If the certificate is in PEM format the PEM file must
-        contain the key as well as x509 certificates.
+        Imports an existing valid certificate, containing a private key, into Azure Key Vault. The certificate to be
+        imported can be in either PFX or PEM format. If the certificate is in PEM format the PEM file must contain the
+        key as well as x509 certificates, and you must provide a ``policy`` with :attr:`CertificatePolicy.content_type`
+        of :attr:`CertificateContentType.pem`.
 
         :param str certificate_name: The name of the certificate.
         :param bytes certificate_bytes: Bytes of the certificate object to import. This certificate
@@ -351,7 +351,8 @@ class CertificateClient(KeyVaultClientBase):
         :paramtype tags: dict[str, str]
         :keyword str password: If the private key in the passed in certificate is encrypted, it
          is the password used for encryption.
-        :keyword policy: The management policy for the certificate
+        :keyword policy: The management policy for the certificate. Required if importing a PEM-format certificate,
+         with :attr:`CertificatePolicy.content_type` set to :attr:`CertificateContentType.pem`.
         :paramtype policy: ~azure.keyvault.certificates.CertificatePolicy
         :returns: The imported KeyVaultCertificate
         :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
