@@ -163,7 +163,7 @@ class RepositoryProperties(object):
     :vartype last_updated_on: datetime.datetime
     :ivar int manifest_count: Number of manifest in the repository
     :ivar str name: Name of the repository
-    :ivar int tag_count: Number of tags associated with the repositor
+    :ivar int tag_count: Number of tags associated with the repository
     """
 
     def __init__(self, **kwargs):
