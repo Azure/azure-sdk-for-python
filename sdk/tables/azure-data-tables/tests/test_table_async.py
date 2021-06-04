@@ -4,7 +4,7 @@ import pytest
 
 from devtools_testutils import AzureTestCase
 
-from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import ResourceExistsError
 from azure.data.tables import (
     TableAccessPolicy,
@@ -335,6 +335,8 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
                 expiry=datetime.utcnow() + timedelta(hours=1),
                 start=datetime.utcnow() - timedelta(minutes=1),
             )
+
+            token = AzureSasCredential(token)
 
             account_url = self.account_url(tables_storage_account_name, "table")
 

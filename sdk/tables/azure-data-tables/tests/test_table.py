@@ -23,7 +23,7 @@ from azure.data.tables import (
     generate_account_sas,
     ResourceTypes
 )
-from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import ResourceExistsError
 
 from _shared.testcase import TableTestCase, TEST_TABLE_PREFIX
@@ -386,14 +386,14 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             entity['RowKey'] = u'test2'
             table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
-            token = self.generate_sas(
+            token = AzureSasCredential(self.generate_sas(
                 generate_account_sas,
                 tables_primary_storage_account_key,
                 resource_types=ResourceTypes(object=True),
                 permission=AccountSasPermissions(read=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
                 start=datetime.utcnow() - timedelta(minutes=1),
-            )
+            ))
 
             account_url = self.account_url(tables_storage_account_name, "table")
 
