@@ -574,6 +574,7 @@ class DirectoryProperties(DictMixin):
         self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
         self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
         self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
+        self.last_access_time = None
         self.file_attributes = kwargs.get('x-ms-file-attributes')
         self.permission_key = kwargs.get('x-ms-file-permission-key')
         self.file_id = kwargs.get('x-ms-file-id')
@@ -651,8 +652,8 @@ class DirectoryPropertiesPaged(PageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items]
-        self.current_page.extend([FileProperties._from_generated(i) for i in self._response.segment.file_items])
+        self.current_page = [DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items] # pylint: disable = protected-access
+        self.current_page.extend([FileProperties._from_generated(i) for i in self._response.segment.file_items]) # pylint: disable = protected-access
         return self._response.next_marker or None, self.current_page
 
 
@@ -711,6 +712,7 @@ class FileProperties(DictMixin):
         self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
         self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
         self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
+        self.last_access_time = None
         self.file_attributes = kwargs.get('x-ms-file-attributes')
         self.permission_key = kwargs.get('x-ms-file-permission-key')
         self.file_id = kwargs.get('x-ms-file-id')
