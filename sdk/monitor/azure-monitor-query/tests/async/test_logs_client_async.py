@@ -1,8 +1,9 @@
 import pytest
 import os
-from azure.identity import ClientSecretCredential
+from azure.identity.aio import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.query import LogsClient, LogsQueryRequest
+from azure.monitor.query import LogsQueryRequest
+from azure.monitor.query.aio import LogsClient
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -12,6 +13,7 @@ def _credential():
     )
     return credential
 
+@pytest.mark.live_test_only
 async def test_logs_auth():
     credential = _credential()
     client = LogsClient(credential)
@@ -25,6 +27,7 @@ async def test_logs_auth():
     assert response is not None
     assert response.tables is not None
 
+@pytest.mark.live_test_only
 async def test_logs_server_timeout():
     client = LogsClient(_credential())
 
@@ -36,6 +39,7 @@ async def test_logs_server_timeout():
         )
         assert e.message.contains('Gateway timeout')
 
+@pytest.mark.live_test_only
 async def test_logs_batch_query():
     client = LogsClient(_credential())
 

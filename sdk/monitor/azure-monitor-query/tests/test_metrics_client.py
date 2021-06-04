@@ -1,7 +1,6 @@
 import pytest
 import os
 from azure.identity import ClientSecretCredential
-from azure.core.exceptions import HttpResponseError
 from azure.monitor.query import MetricsClient
 
 def _credential():
@@ -12,6 +11,7 @@ def _credential():
     )
     return credential
 
+@pytest.mark.liveTest
 def test_metrics_auth():
     credential = _credential()
     client = MetricsClient(credential)
@@ -21,6 +21,7 @@ def test_metrics_auth():
     assert response is not None
     assert response.metrics is not None
 
+@pytest.mark.liveTest
 def test_metrics_namespaces():
     client = MetricsClient(_credential())
 
@@ -28,6 +29,7 @@ def test_metrics_namespaces():
 
     assert response is not None
 
+@pytest.mark.liveTest
 def test_metrics_definitions():
     client = MetricsClient(_credential())
 
