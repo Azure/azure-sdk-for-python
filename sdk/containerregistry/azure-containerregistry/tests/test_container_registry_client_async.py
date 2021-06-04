@@ -14,7 +14,7 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     TagOrder,
 )
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.async_paging import AsyncItemPaged
 
 from asynctestcase import AsyncContainerRegistryTestClass
@@ -137,31 +137,24 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert received.can_list == True
         assert received.can_read == True
         assert received.can_write == True
-        # assert received.teleport_enabled == True
 
         received = await client.update_repository_properties(repo, can_read=False)
         assert received.can_delete == False
         assert received.can_list == True
         assert received.can_read == False
         assert received.can_write == True
-        # assert received.teleport_enabled == True
 
         received = await client.update_repository_properties(repo, can_write=False)
         assert received.can_delete == False
         assert received.can_list == True
         assert received.can_read == False
         assert received.can_write == False
-        # assert received.teleport_enabled == True
 
         received = await client.update_repository_properties(repo, can_list=False)
         assert received.can_delete == False
         assert received.can_list == False
         assert received.can_read == False
         assert received.can_write == False
-        # assert received.teleport_enabled == True
-
-        # received = await client.update_repository_properties(repo, teleport_enabled=True)
-        # self.assert_all_properties(received, True)
 
         received = await client.update_repository_properties(
             repo,
@@ -169,7 +162,6 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             can_read=True,
             can_write=True,
             can_list=True,
-            # teleport_enabled=True,
         )
 
         self.assert_all_properties(received, True)
@@ -545,3 +537,12 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         digest = digest[:-10] + u"a" * 10
 
         await client.delete_manifest(repo, digest)
+
+    # Live only, the fake credential doesn't check auth scope the same way
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    async def test_incorrect_authentication_scope(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint, authentication_scope="https://microsoft.com")
+
+        with pytest.raises(ClientAuthenticationError):
+            properties = await client.get_repository_properties(HELLO_WORLD)
