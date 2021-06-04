@@ -41,6 +41,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
     def __init__(
         self,
         endpoint: str,
+        *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
         **kwargs: Any
     ) -> None:

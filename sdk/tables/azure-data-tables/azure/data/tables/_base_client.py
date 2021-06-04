@@ -204,10 +204,10 @@ class TablesBaseClient(AccountHostsMixin):
     def __init__(
         self,
         endpoint,  # type: str
-        credential=None,  # type: Union[AzureNamedKeyCredential, AzureSasCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        credential = kwargs.pop('credential', None)
         super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
         self._client = AzureTable(
             self.url,
