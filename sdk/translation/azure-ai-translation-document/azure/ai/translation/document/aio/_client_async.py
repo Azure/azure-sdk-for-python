@@ -17,7 +17,13 @@ from .._models import (
     FileFormat,
     DocumentStatusResult
 )
-from .._helpers import get_http_logging_policy, convert_datetime, get_authentication_policy, get_translation_input
+from .._helpers import (
+    get_http_logging_policy,
+    convert_datetime,
+    get_authentication_policy,
+    get_translation_input,
+    POLLING_INTERVAL
+)
 from ._async_polling import AsyncDocumentTranslationLROPollingMethod, AsyncDocumentTranslationLROPoller
 from .._polling import TranslationPolling
 if TYPE_CHECKING:
@@ -67,6 +73,7 @@ class DocumentTranslationClient(object):
         self._api_version = kwargs.pop('api_version', None)
 
         authentication_policy = get_authentication_policy(credential)
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         self._client = _BatchDocumentTranslationClient(
             endpoint=endpoint,
             credential=credential,  # type: ignore
@@ -74,6 +81,7 @@ class DocumentTranslationClient(object):
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             http_logging_policy=get_http_logging_policy(),
+            polling_interval=polling_interval,
             **kwargs
         )
 

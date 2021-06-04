@@ -17,6 +17,7 @@ from ._generated.models import (
 )
 from ._models import DocumentTranslationInput
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
+POLLING_INTERVAL = 1
 
 
 def get_translation_input(args, kwargs, continuation_token):
