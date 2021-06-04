@@ -169,6 +169,7 @@ class ListBlobsIncludeItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TAGS = "tags"
     IMMUTABILITYPOLICY = "immutabilitypolicy"
     LEGALHOLD = "legalhold"
+    DELETEDWITHVERSIONS = "deletedwithversions"
 
 class ListContainersIncludeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

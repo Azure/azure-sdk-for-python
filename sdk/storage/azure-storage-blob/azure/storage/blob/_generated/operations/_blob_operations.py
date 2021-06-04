@@ -2585,6 +2585,7 @@ class BlobOperations(object):
         immutability_policy_expiry=None,  # type: Optional[datetime.datetime]
         immutability_policy_mode=None,  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
         legal_hold=None,  # type: Optional[bool]
+        copy_source_authorization=None,  # type: Optional[str]
         source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
         modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
@@ -2629,6 +2630,9 @@ class BlobOperations(object):
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :param legal_hold: Specified if a legal hold should be set on the blob.
         :type legal_hold: bool
+        :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
+         OAuth access token to copy source.
+        :type copy_source_authorization: str
         :param source_modified_access_conditions: Parameter group.
         :type source_modified_access_conditions: ~azure.storage.blob.models.SourceModifiedAccessConditions
         :param modified_access_conditions: Parameter group.
@@ -2725,6 +2729,8 @@ class BlobOperations(object):
             header_parameters['x-ms-immutability-policy-mode'] = self._serialize.header("immutability_policy_mode", immutability_policy_mode, 'str')
         if legal_hold is not None:
             header_parameters['x-ms-legal-hold'] = self._serialize.header("legal_hold", legal_hold, 'bool')
+        if copy_source_authorization is not None:
+            header_parameters['x-ms-copy-source-authorization'] = self._serialize.header("copy_source_authorization", copy_source_authorization, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
