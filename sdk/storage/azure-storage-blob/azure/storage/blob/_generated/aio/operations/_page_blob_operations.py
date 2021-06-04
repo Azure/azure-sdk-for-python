@@ -602,6 +602,7 @@ class PageBlobOperations:
         source_contentcrc64: Optional[bytearray] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
+        copy_source_authorization: Optional[str] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -637,6 +638,9 @@ class PageBlobOperations:
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
+        :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
+         OAuth access token to copy source.
+        :type copy_source_authorization: str
         :param cpk_info: Parameter group.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group.
@@ -765,6 +769,8 @@ class PageBlobOperations:
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        if copy_source_authorization is not None:
+            header_parameters['x-ms-copy-source-authorization'] = self._serialize.header("copy_source_authorization", copy_source_authorization, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)

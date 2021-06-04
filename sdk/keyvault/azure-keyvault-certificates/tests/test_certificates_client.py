@@ -20,11 +20,11 @@ from azure.keyvault.certificates import (
     KeyType,
     KeyCurveName,
     KeyUsageType,
+    KeyVaultCertificateIdentifier,
     CertificateContentType,
     LifetimeAction,
     CertificateIssuer,
-    IssuerProperties,
-    parse_key_vault_certificate_id
+    IssuerProperties
 )
 import pytest
 
@@ -88,7 +88,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
         self.assertIsNotNone(pending_cert_operation)
         self.assertIsNotNone(pending_cert_operation.csr)
         self.assertEqual(original_cert_policy.issuer_name, pending_cert_operation.issuer_name)
-        pending_id = parse_key_vault_certificate_id(pending_cert_operation.id)
+        pending_id = KeyVaultCertificateIdentifier(pending_cert_operation.id)
         self.assertEqual(pending_id.vault_url.strip("/"), vault.strip("/"))
         self.assertEqual(pending_id.name, cert_name)
 
@@ -349,7 +349,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
             client.begin_delete_certificate(certificate_name=cert_name).wait()
 
         # validate all our deleted certificates are returned by list_deleted_certificates
-        deleted = [parse_key_vault_certificate_id(source_id=c.id).name for c in client.list_deleted_certificates()]
+        deleted = [KeyVaultCertificateIdentifier(id=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(all(c in deleted for c in certs.keys()))
 
         # recover select certificates (test resources have a "livekvtest" prefix)
@@ -364,7 +364,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
             time.sleep(50)
 
         # validate none of our deleted certificates are returned by list_deleted_certificates
-        deleted = [parse_key_vault_certificate_id(source_id=c.id).name for c in client.list_deleted_certificates()]
+        deleted = [KeyVaultCertificateIdentifier(id=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(not any(c in deleted for c in certs.keys()))
 
         # validate the recovered certificates

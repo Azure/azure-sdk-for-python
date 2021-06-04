@@ -5,10 +5,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import division
-from contextlib import contextmanager
-import copy
-import inspect
-import os
 import os.path
 import time
 from datetime import datetime, timedelta
@@ -43,8 +39,10 @@ from azure.core.credentials import AccessToken
 from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
 from azure.mgmt.storage.models import StorageAccount, Endpoints
 try:
+    # Running locally - use configuration in settings_real.py
     from .settings_real import *
 except ImportError:
+    # Running on the pipeline - use fake values in order to create rg, etc.
     from .settings_fake import *
 
 try:

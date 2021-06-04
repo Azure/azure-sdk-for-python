@@ -48,7 +48,7 @@ class DatabaseTablesOperations:
         database_name: str,
         schema_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseTableListResult"]:
         """List database tables.
 
@@ -136,7 +136,7 @@ class DatabaseTablesOperations:
         database_name: str,
         schema_name: str,
         table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseTable":
         """Get database table.
 

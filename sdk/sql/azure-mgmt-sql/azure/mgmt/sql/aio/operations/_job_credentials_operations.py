@@ -46,7 +46,7 @@ class JobCredentialsOperations:
         resource_group_name: str,
         server_name: str,
         job_agent_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobCredentialListResult"]:
         """Gets a list of jobs credentials.
 
@@ -126,7 +126,7 @@ class JobCredentialsOperations:
         server_name: str,
         job_agent_name: str,
         credential_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobCredential":
         """Gets a jobs credential.
 
@@ -194,7 +194,7 @@ class JobCredentialsOperations:
         job_agent_name: str,
         credential_name: str,
         parameters: "_models.JobCredential",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobCredential":
         """Creates or updates a job credential.
 
@@ -272,7 +272,7 @@ class JobCredentialsOperations:
         server_name: str,
         job_agent_name: str,
         credential_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a job credential.
 

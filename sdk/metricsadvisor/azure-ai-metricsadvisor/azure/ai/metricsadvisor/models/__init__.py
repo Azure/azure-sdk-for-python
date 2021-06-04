@@ -39,7 +39,9 @@ from .._generated.models._azure_cognitive_service_metrics_advisor_restapi_open_a
     ChangePointValue,
     PeriodType,
     FeedbackType,
-    TimeMode as AlertQueryTimeMode
+    TimeMode as AlertQueryTimeMode,
+    DataSourceCredentialType,
+    AuthenticationTypeEnum as DataSourceAuthenticationType
 )
 
 from .._generated.models import (
@@ -72,12 +74,12 @@ from ._models import (
     MetricAlertConfiguration,
     AzureApplicationInsightsDataFeedSource,
     AzureBlobDataFeedSource,
-    AzureCosmosDBDataFeedSource,
+    AzureCosmosDbDataFeedSource,
     AzureTableDataFeedSource,
     AzureLogAnalyticsDataFeedSource,
-    InfluxDBDataFeedSource,
-    SQLServerDataFeedSource,
-    MongoDBDataFeedSource,
+    InfluxDbDataFeedSource,
+    SqlServerDataFeedSource,
+    MongoDbDataFeedSource,
     MySqlDataFeedSource,
     PostgreSqlDataFeedSource,
     AzureDataExplorerDataFeedSource,
@@ -111,7 +113,11 @@ from ._models import (
     MetricAnomalyAlertScopeType,
     DataFeedRollupType,
     IncidentRootCause,
-    MetricEnrichedSeriesData
+    MetricEnrichedSeriesData,
+    SqlConnectionStringCredentialEntity,
+    DataLakeGen2SharedKeyCredentialEntity,
+    ServicePrincipalCredentialEntity,
+    ServicePrincipalInKeyVaultCredentialEntity,
 )
 
 
@@ -148,12 +154,12 @@ __all__ = (
     "MetricBoundaryCondition",
     "AzureApplicationInsightsDataFeedSource",
     "AzureBlobDataFeedSource",
-    "AzureCosmosDBDataFeedSource",
+    "AzureCosmosDbDataFeedSource",
     "AzureTableDataFeedSource",
     "AzureLogAnalyticsDataFeedSource",
-    "InfluxDBDataFeedSource",
-    "SQLServerDataFeedSource",
-    "MongoDBDataFeedSource",
+    "InfluxDbDataFeedSource",
+    "SqlServerDataFeedSource",
+    "MongoDbDataFeedSource",
     "MySqlDataFeedSource",
     "PostgreSqlDataFeedSource",
     "AzureDataExplorerDataFeedSource",
@@ -196,5 +202,11 @@ __all__ = (
     "AlertQueryTimeMode",
     "IncidentRootCause",
     "SeverityFilterCondition",
-    "MetricEnrichedSeriesData"
+    "MetricEnrichedSeriesData",
+    "SqlConnectionStringCredentialEntity",
+    "DataLakeGen2SharedKeyCredentialEntity",
+    "ServicePrincipalCredentialEntity",
+    "ServicePrincipalInKeyVaultCredentialEntity",
+    "DataSourceCredentialType",
+    "DataSourceAuthenticationType"
 )

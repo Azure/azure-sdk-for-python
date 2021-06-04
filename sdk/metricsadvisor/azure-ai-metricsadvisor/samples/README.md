@@ -23,6 +23,7 @@ The async versions of the samples require Python 3.5 or later.
 |[sample_hooks.py][sample_hooks] and [sample_hooks_async.py][sample_hooks_async]|Create, list, get, update, and delete notification hooks|
 |[sample_feedback.py][sample_feedback] and [sample_feedback_async.py][sample_feedback_async]|Add, get, and list feedback for the anomaly detection result|
 |[sample_queries.py][sample_queries] and [sample_queries_async.py][sample_queries_async]|Query dimensions/data/status/etc.|
+|[sample_credential_entities.py][sample_credential_entities] and [sample_credential_entities_async.py][sample_credential_entities_async]|Create, list, get, update, and delete credential entities|
 
 
 ## Prerequisites
@@ -72,4 +73,6 @@ what you can do with the Azure Metrics Advisor client library.
 [sample_feedback]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_feedback.py
 [sample_feedback_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_feedback_async.py
 [sample_queries]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_queries.py
+[sample_credential_entities]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_credential_entities.py
+[sample_credential_entities_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_credential_entities_async.py
 [sample_queries_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_queries_async.py

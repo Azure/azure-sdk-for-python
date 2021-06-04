@@ -36,6 +36,7 @@ from .._helpers import (
     construct_data_feed_dict,
     convert_datetime,
     get_authentication_policy,
+    convert_to_credential_entity,
 )
 from ..models import (
     DataFeed,
@@ -50,17 +51,23 @@ from ..models import (
     DataFeedSchema,
     DataFeedIngestionSettings,
     NotificationHook,
-    MetricDetectionCondition
+    MetricDetectionCondition,
 )
 from .._metrics_advisor_administration_client import (
     DATA_FEED,
     DATA_FEED_PATCH,
-    DataFeedSourceUnion
+    DataFeedSourceUnion,
+    CredentialEntityUnion
 )
 if TYPE_CHECKING:
     from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
-
+    from ..models import (
+        SqlConnectionStringCredentialEntity,
+        DataLakeGen2SharedKeyCredentialEntity,
+        ServicePrincipalCredentialEntity,
+        ServicePrincipalInKeyVaultCredentialEntity
+    )
 
 class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-public-methods
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
@@ -181,9 +188,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param str name: Name for the data feed.
         :param source: The source of the data feed
         :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
-            AzureCosmosDBDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
-            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
-            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
+            AzureCosmosDbDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SqlServerDataFeedSource, MongoDbDataFeedSource, AzureEventHubsDataFeedSource]
         :param granularity: Granularity type. If using custom granularity, you must instantiate a DataFeedGranularity.
         :type granularity: Union[str, ~azure.ai.metricsadvisor.models.DataFeedGranularityType,
             ~azure.ai.metricsadvisor.models.DataFeedGranularity]
@@ -646,9 +653,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :paramtype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
         :keyword source: The source of the data feed for update
         :paramtype source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
-            AzureCosmosDBDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
-            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource,
-            PostgreSqlDataFeedSource, SQLServerDataFeedSource, MongoDBDataFeedSource, AzureEventHubsDataFeedSource]
+            AzureCosmosDbDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SqlServerDataFeedSource, MongoDbDataFeedSource, AzureEventHubsDataFeedSource]
         :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -1122,3 +1129,176 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             skip=skip,
             **kwargs
         )
+
+    @distributed_trace_async
+    async def get_credential_entity(
+        self,
+        credential_entity_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> CredentialEntityUnion
+        """Get a data source credential entity
+
+        :param credential_entity_id: Data source credential entity unique ID.
+        :type credential_entity_id: str
+        :return: The credential entity
+        :rtype: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_credential_entities_async.py
+                :start-after: [START get_credential_entity_async]
+                :end-before: [END get_credential_entity_async]
+                :language: python
+                :dedent: 4
+                :caption: Get a credential entity by its ID
+        """
+
+        credential_entity = await self._client.get_credential(credential_entity_id, **kwargs)
+        return convert_to_credential_entity(credential_entity)
+
+    @distributed_trace_async
+    async def create_credential_entity(
+            self, credential_entity,        # type: CredentialEntityUnion
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> CredentialEntityUnion
+        """Create a new data source credential entity.
+
+        :param credential_entity: The data source credential entity to create
+        :type credential_entity: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :return: The created data source credential entity
+        :rtype: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_credential_entities_async.py
+                :start-after: [START create_credential_entity_async]
+                :end-before: [END create_credential_entity_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a credential entity
+        """
+
+        credential_entity_request = None
+        if credential_entity.credential_entity_type in ["AzureSQLConnectionString",
+            "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
+            credential_entity_request = credential_entity._to_generated()
+
+        response_headers = await self._client.create_credential(  # type: ignore
+            credential_entity_request,  # type: ignore
+            cls=lambda pipeline_response, _, response_headers: response_headers,
+            **kwargs
+        )
+        credential_entity_id = response_headers["Location"].split("credentials/")[1]    # type: ignore
+        return await self.get_credential_entity(credential_entity_id)
+
+    @distributed_trace
+    def list_credential_entities(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[CredentialEntityUnion]
+        """List all credential entities.
+
+        :param skip: for paging, skipped number.
+        :type skip: int
+        :return: Pageable containing credential entities
+        :rtype: ~azure.core.paging.AsyncItemPaged[Union[
+            ~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_credential_entities_async.py
+                :start-after: [START list_credential_entities_async]
+                :end-before: [END list_credential_entities_async]
+                :language: python
+                :dedent: 4
+                :caption: List all of the credential entities under the account
+        """
+        return self._client.list_credentials(  # type: ignore
+            cls=kwargs.pop(
+                "cls",
+                lambda credentials: [convert_to_credential_entity(credential) for credential in credentials]),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def update_credential_entity(
+        self,
+        credential_entity,    # type: CredentialEntityUnion
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> CredentialEntityUnion
+        """Update a credential entity.
+
+        :param credential_entity: The new credential entity object
+        :type credential_entity: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :rtype: Union[~azure.ai.metricsadvisor.models.SqlConnectionStringCredentialEntity,
+            ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalCredentialEntity,
+            ~azure.ai.metricsadvisor.models.ServicePrincipalInKeyVaultCredentialEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_credential_entities_async.py
+                :start-after: [START update_credential_entity_async]
+                :end-before: [END update_credential_entity_async]
+                :language: python
+                :dedent: 4
+                :caption: Update an existing credential entity
+        """
+
+        if credential_entity.credential_entity_type in ["AzureSQLConnectionString",
+            "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
+            credential_entity_request = credential_entity._to_generated_patch()
+
+        updated_credential_entity = await self._client.update_credential(
+            credential_entity.id,
+            credential_entity_request,
+            **kwargs
+        )
+
+        return convert_to_credential_entity(updated_credential_entity)
+
+    @distributed_trace_async
+    async def delete_credential_entity(self, credential_entity_id, **kwargs):
+        # type: (str, Any) -> None
+        """Delete a credential entity by its ID.
+
+        ::param credential_entity_id: Credential entity unique ID.
+        :type credential_entity_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_credential_entities_async.py
+                :start-after: [START delete_credential_entity_async]
+                :end-before: [END delete_credential_entity_async]
+                :language: python
+                :dedent: 4
+                :caption: Delete a credential entity by its ID
+        """
+
+        await self._client.delete_credential(credential_id=credential_entity_id, **kwargs)

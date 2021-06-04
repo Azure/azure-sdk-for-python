@@ -1,6 +1,14 @@
 # Release History
 
-## 1.14.1 (Unreleased)
+## 1.15.0 (2021-06-04)
+
+### New Features
+
+- Added `BearerTokenCredentialPolicy.on_challenge` and `.authorize_request` to allow subclasses to optionally handle authentication challenges
+
+### Bug Fixes
+
+- Retry policies don't sleep after operations time out
 
 
 ## 1.14.0 (2021-05-13)

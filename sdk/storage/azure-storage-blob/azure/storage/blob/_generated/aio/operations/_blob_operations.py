@@ -2561,6 +2561,7 @@ class BlobOperations:
         immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
+        copy_source_authorization: Optional[str] = None,
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -2604,6 +2605,9 @@ class BlobOperations:
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :param legal_hold: Specified if a legal hold should be set on the blob.
         :type legal_hold: bool
+        :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
+         OAuth access token to copy source.
+        :type copy_source_authorization: str
         :param source_modified_access_conditions: Parameter group.
         :type source_modified_access_conditions: ~azure.storage.blob.models.SourceModifiedAccessConditions
         :param modified_access_conditions: Parameter group.
@@ -2700,6 +2704,8 @@ class BlobOperations:
             header_parameters['x-ms-immutability-policy-mode'] = self._serialize.header("immutability_policy_mode", immutability_policy_mode, 'str')
         if legal_hold is not None:
             header_parameters['x-ms-legal-hold'] = self._serialize.header("legal_hold", legal_hold, 'bool')
+        if copy_source_authorization is not None:
+            header_parameters['x-ms-copy-source-authorization'] = self._serialize.header("copy_source_authorization", copy_source_authorization, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
