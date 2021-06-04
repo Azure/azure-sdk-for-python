@@ -37,8 +37,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     $packageName = $pkgInfo[0]
     $packageVersion = $pkgInfo[1]
     $isNewSdk = ($pkgInfo[2] -eq "True")
-    $setupPyDir = $pkgInfo[3]
-    $pkgDirectoryPath = Resolve-Path (Join-Path -Path $RepoRoot $setupPyDir)
+    $pkgDirectoryPath = $pkgInfo[3]
     $serviceDirectoryName = Split-Path (Split-Path -Path $pkgDirectoryPath -Parent) -Leaf
     if ($packageName -match "mgmt")
     {
@@ -60,19 +59,19 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
 # Returns the pypi publish status of a package id and version.
 function IsPythonPackageVersionPublished($pkgId, $pkgVersion)
 {
-  try 
+  try
   {
     $existingVersion = (Invoke-RestMethod -MaximumRetryCount 3 -RetryIntervalSec 10 -Method "Get" -uri "https://pypi.org/pypi/$pkgId/$pkgVersion/json").info.version
     # if existingVersion exists, then it's already been published
     return $True
   }
-  catch 
+  catch
   {
     $statusCode = $_.Exception.Response.StatusCode.value__
     $statusDescription = $_.Exception.Response.StatusDescription
 
     # if this is 404ing, then this pkg has never been published before
-    if ($statusCode -eq 404) 
+    if ($statusCode -eq 404)
     {
       return $False
     }
@@ -151,7 +150,7 @@ function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 function Get-python-GithubIoDocIndex()
 {
   # Update the main.js and docfx.json language content
-  UpdateDocIndexFiles -appTitleLang Python 
+  UpdateDocIndexFiles -appTitleLang Python
   # Fetch out all package metadata from csv file.
   $metadata = Get-CSVMetadata -MetadataUri $MetadataUri
   # Get the artifacts name from blob storage
@@ -204,7 +203,7 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
       }
     }
     else {
-      $newItem = New-Object PSObject -Property @{ 
+      $newItem = New-Object PSObject -Property @{
         package_info = New-Object PSObject -Property @{
           prefer_source_distribution = "true"
           install_type = "pypi"
