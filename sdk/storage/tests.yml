@@ -27,7 +27,7 @@ stages:
           # Use dedicated storage pool in canadacentral with higher memory capacity
           - Pool=(.*)-general/$1-storage
         ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly') }}:
-          AdditionalMatrixConfigs:
+          MatrixConfigs:
             - Name: Storage_all_versions_live_test
               Path: sdk/storage/platform-matrix-all-versions.json
               Selection: sparse
