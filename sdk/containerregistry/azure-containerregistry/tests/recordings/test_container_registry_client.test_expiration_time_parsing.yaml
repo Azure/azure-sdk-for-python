@@ -11,12 +11,12 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "library/hello-world", "Action": "metadata_read"}]}]}'
+        "registry", "Name": "catalog", "Action": "*"}]}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -26,15 +26,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '222'
+      - '196'
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
-      - Tue, 25 May 2021 18:52:58 GMT
-=======
-      - Fri, 28 May 2021 14:21:43 GMT
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
+      - Fri, 04 Jun 2021 14:47:52 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -50,7 +46,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: service=seankaneanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_read&grant_type=password
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -59,12 +55,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '108'
+      - '1343'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -76,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 25 May 2021 18:53:01 GMT
+      - Fri, 04 Jun 2021 14:47:53 GMT
       server:
       - openresty
       strict-transport-security:
@@ -84,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.583333'
+      - '166.616667'
     status:
       code: 200
       message: OK
@@ -103,8 +98,6 @@ interactions:
       - application/x-www-form-urlencoded
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-=======
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -116,11 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
-      - Tue, 25 May 2021 18:53:01 GMT
-=======
-      - Fri, 28 May 2021 14:21:44 GMT
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
+      - Fri, 04 Jun 2021 14:47:53 GMT
       server:
       - openresty
       strict-transport-security:
@@ -128,11 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
       - '166.566667'
-=======
-      - '166.65'
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
     status:
       code: 200
       message: OK
@@ -148,29 +133,23 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
-      string: '{"repositories": ["library/alpine", "library/busybox", "repo13cf14de",
-        "repo25ce0f5d", "repo26ab150f", "repo27331535", "repo28471541", "repo2915152d",
-        "repo2b381dc2", "repo2bef19cb", "repo2c591564", "repo2e8319c5", "repo308e19dd",
+      string: '{"repositories": ["library/alpine", "library/busybox", "repo12071936",
+        "repo13cf14de", "repo13d41966", "repo1ff2054", "repo25ce0f5d", "repo26ab150f",
+        "repo27331535", "repo27741d6f", "repo28471541", "repo2915152d", "repo2b381dc2",
+        "repo2b9d199e", "repo2bef19cb", "repo2c591564", "repo2e8319c5", "repo308e19dd",
         "repo34ab0fa1", "repo3db51597", "repo3dc21571", "repo3e8d15a3", "repo41a21dd2",
-        "repo46ec1a2d", "repo60eb1a9e", "repo63d41ad4", "repo6969166d", "repo6a411679",
-        "repo7bda1b05", "repo7cee1b11", "repo80c61ece", "repo84e316ff", "repo8a3011c1",
-        "repo8b5a11da", "repo93d41b55", "repo99be175b", "repo9b321760", "repo9bf1d1b",
-        "repo9cb4121e", "repoa14a1f36", "repoaf17178c", "repoaf8317b0", "repoaf8812b0",
-        "repoaf9517b2", "repob0a917be", "repob22512e7", "repoc1b5131a", "repoc1b812f4",
-        "repoc28d1326", "repocfba1c48", "repod2be1c42", "repodf771888", "repoe08b1894",
-        "repoe19b1892", "repoe568203f", "repoeb7113db", "repoec051cb9", "repof94c18ea",
+        "repo45431dd7", "repo46ec1a2d", "repo60eb1a9e", "repo63d41ad4", "repo6969166d",
+        "repo6a411679", "repo7bda1b05", "repo7cee1b11", "repo80c61ece", "repo816516e9",
+        "repo84e316ff", "repo8a3011c1", "repo8b5a11da", "repo93d41b55", "repo99be175b",
+        "repo9b321760", "repo9bf1d1b", "repo9cb4121e", "repoa14a1f36", "repoaf17178c",
+        "repoaf8317b0", "repoaf8812b0", "repoaf9517b2", "repob0a917be", "repob22512e7",
+        "repob3551bb3", "repoc1b5131a", "repoc1b812f4", "repoc28d1326", "repocf681c1b",
+        "repocfba1c48", "repod2be1c42", "repodf771888", "repoe08b1894", "repoe19b1892",
+        "repoe1a41fec", "repoe568203f", "repoeb7113db", "repoec051cb9", "repof94c18ea",
         "repofa2418f6", "repofeb4143e", "repos6ce51658", "reposetb7cc1bf8", "reposetmani160e197b"]}'
-=======
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "library/hello-world",
-        "createdTime": "2021-05-11T21:17:45.937904Z", "lastUpdateTime": "2021-05-13T16:00:26.7224943Z",
-        "manifestCount": 12, "tagCount": 5, "changeableAttributes": {"deleteEnabled":
-        true, "writeEnabled": true, "readEnabled": true, "listEnabled": true, "teleportEnabled":
-        false}}'
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -180,19 +159,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
-      - '904'
+      - '1053'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 25 May 2021 18:53:02 GMT
-=======
-      - '325'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 28 May 2021 14:21:44 GMT
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
+      - Fri, 04 Jun 2021 14:47:53 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -206,8 +177,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"deleteEnabled": true, "writeEnabled": true, "listEnabled": true, "readEnabled":
-      true}'
+    body: null
     headers:
       Accept:
       - application/json
@@ -215,24 +185,15 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '87'
-      Content-Type:
-      - application/json
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
-=======
-    method: PATCH
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "library/hello-world", "Action": "metadata_write"}]}]}'
+        "registry", "Name": "catalog", "Action": "*"}]}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -242,15 +203,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '223'
+      - '196'
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
-      - Tue, 25 May 2021 18:53:02 GMT
-=======
-      - Fri, 28 May 2021 14:21:44 GMT
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
+      - Fri, 04 Jun 2021 14:47:53 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -266,11 +223,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
     body: service=fake_url.azurecr.io&scope=registry%3Acatalog%3A%2A&refresh_token=REDACTED&grant_type=refresh_token
-=======
-    body: service=seankaneanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_write&grant_type=password
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
     headers:
       Accept:
       - application/json
@@ -279,11 +232,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
       - '1125'
-=======
-      - '109'
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -299,11 +248,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
-      - Tue, 25 May 2021 18:53:03 GMT
-=======
-      - Fri, 28 May 2021 14:21:44 GMT
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
+      - Fri, 04 Jun 2021 14:47:53 GMT
       server:
       - openresty
       strict-transport-security:
@@ -311,17 +256,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
       - '166.55'
-=======
-      - '166.633333'
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
     status:
       code: 200
       message: OK
 - request:
-    body: '{"deleteEnabled": true, "writeEnabled": true, "listEnabled": true, "readEnabled":
-      true}'
+    body: null
     headers:
       Accept:
       - application/json
@@ -329,38 +269,26 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '87'
-      Content-Type:
-      - application/json
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories": ["library/alpine", "library/busybox", "repo13cf14de",
-        "repo25ce0f5d", "repo26ab150f", "repo27331535", "repo28471541", "repo2915152d",
-        "repo2b381dc2", "repo2bef19cb", "repo2c591564", "repo2e8319c5", "repo308e19dd",
+      string: '{"repositories": ["library/alpine", "library/busybox", "repo12071936",
+        "repo13cf14de", "repo13d41966", "repo1ff2054", "repo25ce0f5d", "repo26ab150f",
+        "repo27331535", "repo27741d6f", "repo28471541", "repo2915152d", "repo2b381dc2",
+        "repo2b9d199e", "repo2bef19cb", "repo2c591564", "repo2e8319c5", "repo308e19dd",
         "repo34ab0fa1", "repo3db51597", "repo3dc21571", "repo3e8d15a3", "repo41a21dd2",
-        "repo46ec1a2d", "repo60eb1a9e", "repo63d41ad4", "repo6969166d", "repo6a411679",
-        "repo7bda1b05", "repo7cee1b11", "repo80c61ece", "repo84e316ff", "repo8a3011c1",
-        "repo8b5a11da", "repo93d41b55", "repo99be175b", "repo9b321760", "repo9bf1d1b",
-        "repo9cb4121e", "repoa14a1f36", "repoaf17178c", "repoaf8317b0", "repoaf8812b0",
-        "repoaf9517b2", "repob0a917be", "repob22512e7", "repoc1b5131a", "repoc1b812f4",
-        "repoc28d1326", "repocfba1c48", "repod2be1c42", "repodf771888", "repoe08b1894",
-        "repoe19b1892", "repoe568203f", "repoeb7113db", "repoec051cb9", "repof94c18ea",
+        "repo45431dd7", "repo46ec1a2d", "repo60eb1a9e", "repo63d41ad4", "repo6969166d",
+        "repo6a411679", "repo7bda1b05", "repo7cee1b11", "repo80c61ece", "repo816516e9",
+        "repo84e316ff", "repo8a3011c1", "repo8b5a11da", "repo93d41b55", "repo99be175b",
+        "repo9b321760", "repo9bf1d1b", "repo9cb4121e", "repoa14a1f36", "repoaf17178c",
+        "repoaf8317b0", "repoaf8812b0", "repoaf9517b2", "repob0a917be", "repob22512e7",
+        "repob3551bb3", "repoc1b5131a", "repoc1b812f4", "repoc28d1326", "repocf681c1b",
+        "repocfba1c48", "repod2be1c42", "repodf771888", "repoe08b1894", "repoe19b1892",
+        "repoe1a41fec", "repoe568203f", "repoeb7113db", "repoec051cb9", "repof94c18ea",
         "repofa2418f6", "repofeb4143e", "repos6ce51658", "reposetb7cc1bf8", "reposetmani160e197b"]}'
-=======
-    method: PATCH
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
-  response:
-    body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "library/hello-world", "Action": "metadata_write"}]}]}'
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -370,19 +298,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-<<<<<<< HEAD:sdk/containerregistry/azure-containerregistry/tests/recordings/test_container_registry_client.test_expiration_time_parsing.yaml
-      - '904'
+      - '1053'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 25 May 2021 18:53:03 GMT
-=======
-      - '223'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 28 May 2021 14:21:44 GMT
->>>>>>> 05ed2d142be213b49469fc03c293df5261393129:sdk/containerregistry/azure-containerregistry/tests/recordings/test_anon_access.test_update_repository_properties.yaml
+      - Fri, 04 Jun 2021 14:47:53 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -390,11 +310,9 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate:
-      - Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
       x-content-type-options:
       - nosniff
     status:
-      code: 401
-      message: Unauthorized
+      code: 200
+      message: OK
 version: 1
