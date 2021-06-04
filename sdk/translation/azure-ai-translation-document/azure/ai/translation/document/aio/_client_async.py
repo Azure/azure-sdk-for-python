@@ -213,7 +213,7 @@ class DocumentTranslationClient(object):
         await self._client.document_translation.cancel_translation(translation_id, **kwargs)
 
     @distributed_trace
-    def list_translations(self, **kwargs):
+    def list_all_translation_statuses(self, **kwargs):
         # type: (**Any) -> AsyncItemPaged[TranslationStatusResult]
         """List all the submitted translation operations under the Document Translation resource.
 

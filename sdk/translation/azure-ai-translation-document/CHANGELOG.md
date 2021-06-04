@@ -15,7 +15,7 @@ be found on `poller.details`.
 - `has_completed` has been removed from `JobStatusResult` and `DocumentStatusResult`. Use `poller.done()` to check if the 
 translation has completed.
 - Client method `wait_until_done` has been removed. Use `poller.result()` to wait for the LRO to complete.
-- Client method `list_submitted_jobs` has been renamed to `list_translations`.
+- Client method `list_submitted_jobs` has been renamed to `list_all_translation_statuses`.
 - Client method `get_job_status` has been renamed to `get_translation_status`.
 - Client method `cancel_job` has been renamed to `cancel_translation`.
 - Parameter `job_id` was renamed to `translation_id` for `get_translation_status`, `cancel_translation`, `list_all_document_statuses`, and `get_document_status`.

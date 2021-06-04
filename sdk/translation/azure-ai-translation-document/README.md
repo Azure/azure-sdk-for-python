@@ -305,7 +305,7 @@ credential = AzureKeyCredential("<api_key>")
 
 document_translation_client = DocumentTranslationClient(endpoint, credential)
 
-operations = document_translation_client.list_translations()  # type: ItemPaged[TranslationStatusResult]
+operations = document_translation_client.list_all_translation_statuses()  # type: ItemPaged[TranslationStatusResult]
 
 for operation in operations:
     print("ID: {}".format(operation.id))
