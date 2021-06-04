@@ -11,7 +11,7 @@ from devtools_testutils import AzureTestCase
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables import __version__ as  VERSION
-from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
 from _shared.testcase import (
     TableTestCase,
@@ -157,6 +157,7 @@ class TestTableClientUnit(TableTestCase):
         url = self.account_url(self.tables_cosmos_account_name, "cosmos")
         suffix = '.table.cosmos.azure.com'
         self.sas_token = self.generate_sas_token()
+        self.sas_token = AzureSasCredential(self.sas_token)
         for service_type in SERVICES:
             # Act
             service = service_type(
@@ -168,8 +169,7 @@ class TestTableClientUnit(TableTestCase):
             assert service is not None
             assert service.account_name ==  self.tables_cosmos_account_name
             assert service.url.startswith('https://' + self.tables_cosmos_account_name + suffix)
-            assert service.url.endswith(self.sas_token)
-            assert service.credential is None
+            assert isinstance(service.credential, AzureSasCredential)
 
     def test_create_service_with_token(self):
         url = self.account_url(self.tables_cosmos_account_name, "cosmos")
@@ -178,7 +178,7 @@ class TestTableClientUnit(TableTestCase):
             # Act
             service = service_type(
                 endpoint=self._account_url(self.tables_cosmos_account_name),
-                credential=self.credential,
+                credential=AzureSasCredential("fake_sas_credential"),
                 table_name="foo")
 
             # Assert
@@ -196,7 +196,7 @@ class TestTableClientUnit(TableTestCase):
                 url = self.account_url(self.tables_cosmos_account_name, "cosmos").replace('https', 'http')
                 service = service_type(
                     endpoint=url,
-                    credential=self.token_credential,
+                    credential=AzureSasCredential("fake_sas_credential"),
                     table_name="foo")
 
     def test_create_service_china(self):
@@ -235,7 +235,7 @@ class TestTableClientUnit(TableTestCase):
             with pytest.raises(ValueError) as e:
                 test_service = service_type('testaccount', credential='', table_name='foo')
 
-            assert str(e.value) == "You need to provide either a SAS token or an account shared key to authenticate."
+            assert str(e.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
 
     def test_create_service_with_socket_timeout(self):
         # Arrange
@@ -274,7 +274,8 @@ class TestTableClientUnit(TableTestCase):
     def test_create_service_with_connection_string_sas(self):
         # Arrange
         self.sas_token = self.generate_sas_token()
-        conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.tables_cosmos_account_name, self.sas_token)
+        self.sas_token = AzureSasCredential(self.sas_token)
+        conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.tables_cosmos_account_name, self.sas_token.signature)
 
         for service_type in SERVICES:
             # Act
@@ -283,8 +284,7 @@ class TestTableClientUnit(TableTestCase):
             # Assert
             assert service is not None
             assert service.url.startswith('https://' + self.tables_cosmos_account_name + '.table.core.windows.net')
-            assert service.url.endswith(self.sas_token)
-            assert service.credential is None
+            assert isinstance(service.credential , AzureSasCredential)
 
 
     def test_create_service_with_connection_string_cosmos(self):
@@ -410,8 +410,8 @@ class TestTableClientUnit(TableTestCase):
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_custom_account_endpoint_path(self):
-        self.sas_token = self.generate_sas_token()
-        custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
+        self.sas_token = AzureSasCredential(self.generate_sas_token())
+        custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token.signature
         for service_type in SERVICES.items():
             conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};TableEndpoint={};'.format(
                 self.tables_cosmos_account_name, self.tables_primary_cosmos_account_key, custom_account_url)
@@ -439,7 +439,7 @@ class TestTableClientUnit(TableTestCase):
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
-        service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token)
+        service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token.signature)
         assert service.account_name == "custom"
         assert service.table_name ==  "foo"
         assert service.credential ==  None

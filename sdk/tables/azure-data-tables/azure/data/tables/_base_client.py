@@ -72,7 +72,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         account_url,  # type: Any
-        credential=None,  # type: Optional[Any]
+        credential=None,  # type: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -88,7 +88,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
-                "You need to provide either a SAS token or an account shared key to authenticate."
+                "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
             )
         self._query_str, credential = format_query_string(sas_token, credential)
         self._location_mode = kwargs.get("location_mode", LocationMode.PRIMARY)
@@ -345,9 +345,10 @@ def parse_connection_str(conn_str, credential, keyword_args):
         try:
             credential = AzureNamedKeyCredential(name=conn_settings["accountname"], key=conn_settings["accountkey"])
         except KeyError:
-            credential = conn_settings.get("sharedaccesssignature")
-            # if "sharedaccesssignature" in conn_settings:
-            #     credential = AzureSasCredential(conn_settings['sharedaccesssignature'])
+            credential = conn_settings.get("sharedaccesssignature", None)
+            if not credential:
+                raise ValueError("Connection string missing required connection details.")
+            credential = AzureSasCredential(credential)
     primary = conn_settings.get("tableendpoint")
     secondary = conn_settings.get("tablesecondaryendpoint")
     if not primary:
@@ -392,12 +393,9 @@ def format_query_string(sas_token, credential):
     if sas_token and isinstance(credential, AzureSasCredential):
         raise ValueError(
             "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
-    if sas_token and not credential:
-        query_str += sas_token
-    elif is_credential_sastoken(credential):
-        query_str += credential.lstrip("?")
-        credential = None
-    return query_str.rstrip("?&"), credential
+    elif isinstance(credential, AzureSasCredential) or isinstance(credential, AzureNamedKeyCredential):
+        return query_str.rstrip("?"), credential
+    return query_str.rstrip("?&"), None
 
 
 def parse_query(query_str):
@@ -414,14 +412,3 @@ def parse_query(query_str):
 
     snapshot = parsed_query.get("snapshot") or parsed_query.get("sharesnapshot")
     return snapshot, sas_token
-
-
-def is_credential_sastoken(credential):
-    if not credential or not isinstance(credential, six.string_types):
-        return False
-
-    sas_values = QueryStringConstants.to_list()
-    parsed_query = parse_qs(credential.lstrip("?"))
-    if parsed_query and all([k in sas_values for k in parsed_query.keys()]):
-        return True
-    return False

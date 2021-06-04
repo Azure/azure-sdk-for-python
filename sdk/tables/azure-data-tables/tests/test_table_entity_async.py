@@ -1931,7 +1931,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert 'timestamp' in received.metadata
             assert isinstance(received.metadata['timestamp'], datetime)
             assert received.metadata['timestamp'].year > 2020
-        
+
             received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9)
             await self.table.update_entity(received, mode=UpdateMode.REPLACE)
             received = await self.table.get_entity(partition, row)
@@ -1970,7 +1970,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity['Etag'] = u'three'
             with pytest.raises(ValueError):
                 await self.table.update_entity(entity, match_condition=MatchConditions.IfNotModified)
-        
+
             created['ETag'] = u'one'
             created['etag'] = u'two'
             created['Etag'] = u'three'
