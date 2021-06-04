@@ -393,8 +393,10 @@ def format_query_string(sas_token, credential):
     if sas_token and isinstance(credential, AzureSasCredential):
         raise ValueError(
             "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
+    if sas_token and not credential:
+        query_str += sas_token
     elif isinstance(credential, AzureSasCredential) or isinstance(credential, AzureNamedKeyCredential):
-        return query_str.rstrip("?"), credential
+        return "", credential
     return query_str.rstrip("?&"), None
 
 

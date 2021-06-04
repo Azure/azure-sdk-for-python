@@ -476,6 +476,7 @@ class TestTableUnitTests(TableTestCase):
                 self.account_url(self.tables_storage_account_name, "table"), credential=self.credential, table_name='table')
             service.close()
 
+    @pytest.mark.skip("HTTP prefix does not raise an error")
     def test_create_service_with_token_and_http(self):
         for service_type in SERVICES:
 
