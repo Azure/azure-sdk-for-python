@@ -51,10 +51,10 @@ class LogsClient(object):
         :param query: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
         :type query: str
-        :keyword ~datetime.timedelta timespan: Optional. The timespan over which to query data. This is an ISO8601 time
+        :keyword str timespan: Optional. The timespan over which to query data. This is an ISO8601 time
          period value.  This timespan is applied in addition to any that are specified in the query
          expression.
-        :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
+        :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
         :keyword bool include_render: In the query language, it is possible to specify different render options.
@@ -121,9 +121,14 @@ class LogsClient(object):
             queries = [LogsQueryRequest(**q) for q in queries]
         except (KeyError, TypeError):
             pass
+        try:
+            request_order = [req.id for req in queries]
+        except AttributeError:
+            request_order = [req['id'] for req in queries]
         batch = BatchRequest(requests=queries)
+        generated = self._query_op.batch(batch, **kwargs)
         return LogsBatchResults._from_generated( # pylint: disable=protected-access
-            self._query_op.batch(batch, **kwargs)
+            generated, request_order
             )
 
     def close(self):

@@ -12,6 +12,7 @@ def _credential():
     )
     return credential
 
+@pytest.mark.live_test_only
 def test_logs_auth():
     credential = _credential()
     client = LogsClient(credential)
@@ -25,6 +26,7 @@ def test_logs_auth():
     assert response is not None
     assert response.tables is not None
 
+@pytest.mark.live_test_only
 def test_logs_server_timeout():
     client = LogsClient(_credential())
 
@@ -36,6 +38,7 @@ def test_logs_server_timeout():
         )
         assert e.message.contains('Gateway timeout')
 
+@pytest.mark.live_test_only
 def test_logs_batch_query():
     client = LogsClient(_credential())
 

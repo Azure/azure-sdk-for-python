@@ -14,7 +14,7 @@ from azure.core.paging import ItemPaged
 from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,
 )
-from .._models import MetricsResult, MetricDefinition
+from .._models import MetricsResult, MetricDefinition, MetricNamespace
 from .._helpers import get_authentication_policy
 from .._models import MetricNamespace
 
@@ -95,7 +95,15 @@ class MetricsClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return await self._namespace_op.list(resource_uri, **kwargs)
+        return await self._namespace_op.list(
+            resource_uri,
+            cls=kwargs.pop(
+                "cls",
+                lambda objs: [
+                    MetricNamespace._from_generated(x) for x in objs
+                ]
+            ),
+            **kwargs)
 
     async def list_metric_definitions(
         self,
@@ -113,7 +121,16 @@ class MetricsClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return await self._definitions_op.list(resource_uri, metric_namespace, **kwargs)
+        return await self._definitions_op.list(
+            resource_uri,
+            metric_namespace,
+            cls=kwargs.pop(
+                "cls",
+                lambda objs: [
+                    MetricDefinition._from_generated(x) for x in objs
+                ]
+            ),
+            **kwargs)
 
     async def __aenter__(self) -> "MetricsClient":
         await self._client.__aenter__()

@@ -36,6 +36,7 @@ response = client.batch_query(requests)
 
 for response in response.responses:
     body = response.body
+    print(response.id)
     if not body.tables:
         print("Something is wrong")
     else:

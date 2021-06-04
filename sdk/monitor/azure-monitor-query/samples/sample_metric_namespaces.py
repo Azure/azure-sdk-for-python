@@ -14,9 +14,8 @@ credential  = ClientSecretCredential(
 client = MetricsClient(credential)
 
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
-response = client.list_metric_definitions(metrics_uri, metric_namespace='microsoft.eventgrid/topics')
+response = client.list_metric_namespaces(metrics_uri)
 
 for item in response:
-    print(item)
-    for availability in item.metric_availabilities:
-        print(availability.time_grain)
+    print(item.metric_namespace_name)
+    print(item.type)

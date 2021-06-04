@@ -92,7 +92,7 @@ class LogsClient(object):
         )
 
         try:
-            return await LogsQueryResults._from_generated(self._query_op.execute( # pylint: disable=protected-access
+            return LogsQueryResults._from_generated(await self._query_op.execute( # pylint: disable=protected-access
                 workspace_id=workspace_id,
                 body=body,
                 prefer=prefer,
@@ -120,9 +120,13 @@ class LogsClient(object):
             queries = [LogsQueryRequest(**q) for q in queries]
         except (KeyError, TypeError):
             pass
+        try:
+            request_order = [req.id for req in queries]
+        except AttributeError:
+            request_order = [req['id'] for req in queries]
         batch = BatchRequest(requests=queries)
-        return await LogsBatchResults._from_generated( # pylint: disable=protected-access
-            self._query_op.batch(batch, **kwargs)
+        return LogsBatchResults._from_generated( # pylint: disable=protected-access
+            await self._query_op.batch(batch, **kwargs), request_order
             )
 
     async def __aenter__(self) -> "LogsClient":

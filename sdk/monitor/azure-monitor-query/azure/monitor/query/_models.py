@@ -8,11 +8,11 @@
 import uuid
 from typing import Any, Optional, List
 
+from ._helpers import order_results
 from ._generated.models import (
     Column as InternalColumn,
     QueryBody as InternalQueryBody,
     LogQueryRequest as InternalLogQueryRequest,
-    MetricNamespace as InternalMetricNamespace,
     ErrorDetails as InternalErrorDetails
 )
 
@@ -168,7 +168,7 @@ class LogsQueryRequest(InternalLogQueryRequest):
     def __init__(self, query, workspace, timespan=None, **kwargs):
         # type: (str, str, Optional[str], Any) -> None
         super(LogsQueryRequest, self).__init__(**kwargs)
-        self.id = kwargs.get("request_id", uuid.uuid4())
+        self.id = kwargs.get("request_id", str(uuid.uuid4()))
         self.headers = kwargs.get("headers", None)
         self.body = {
             "query": query, "timespan": timespan
@@ -250,13 +250,13 @@ class LogsBatchResults(object):
         self.error = kwargs.get("error", None)
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated, request_order):
         if not generated:
             return cls()
         return cls(
-            responses=[
+            responses=order_results(request_order, [
                 LogsQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
-                ],
+                ]),
             error=LogsBatchResultError._from_generated(generated.error) # pylint: disable=protected-access
         )
 
@@ -314,35 +314,40 @@ class LogsErrorDetails(InternalErrorDetails):
         self.target = kwargs.get('target', None)
 
 
-class MetricNamespace(InternalMetricNamespace):
+class MetricNamespace(object):
     """Metric namespace class specifies the metadata for a metric namespace.
 
-    :param id: The ID of the metricNamespace.
-    :type id: str
-    :param type: The type of the namespace.
-    :type type: str
-    :param name: The name of the namespace.
-    :type name: str
-    :param properties: Properties which include the fully qualified namespace name.
-    :type properties: ~monitor_query_client.models.MetricNamespaceName
+    :keyword id: The ID of the metricNamespace.
+    :paramtype id: str
+    :keyword type: The type of the namespace.
+    :paramtype type: str
+    :keyword name: The name of the namespace.
+    :paramtype name: str
+    :keyword metric_namespace_name: The fully qualified namespace name.
+    :paramtype properties: str
     """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'MetricNamespaceName'},
-    }
-
     def __init__(
         self,
         **kwargs
     ):
-        super(MetricNamespace, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.type = kwargs.get('type', None)
         self.name = kwargs.get('name', None)
-        self.properties = kwargs.get('properties', None)
+        self.metric_namespace_name = kwargs.get('metric_namespace_name', None)
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        metric_namespace_name = None
+        if generated.properties:
+            metric_namespace_name = generated.properties.metric_namespace_name
+        return cls(
+            id=generated.id,
+            type=generated.type,
+            name=generated.name,
+            metric_namespace_name=metric_namespace_name
+        )
 
 class MetricDefinition(object):
     """Metric definition class specifies the metadata for a metric.
@@ -394,6 +399,9 @@ class MetricDefinition(object):
     def _from_generated(cls, generated):
         if not generated:
             return cls()
+        dimensions = None
+        if generated.dimensions is not None:
+            dimensions = [d.value for d in generated.dimensions]
         return cls(
             is_dimension_required=generated.is_dimension_required,
             resource_id=generated.resource_id,
@@ -408,7 +416,7 @@ class MetricDefinition(object):
                     ) for val in generated.metric_availabilities
                 ],
             id=generated.id,
-            dimensions=[d.value for d in generated.dimensions]
+            dimensions=dimensions
         )
 
 class MetricValue(object):

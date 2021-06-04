@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Mapping, TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
@@ -43,3 +43,8 @@ def get_metrics_authentication_policy(
 def process_error(exception):
     raise_error = HttpResponseError
     raise raise_error(message=exception.message, response=exception.response)
+
+def order_results(request_order, responses):
+    mapping = {item.id: item for item in responses}
+    ordered = [mapping[id] for id in request_order]
+    return ordered
