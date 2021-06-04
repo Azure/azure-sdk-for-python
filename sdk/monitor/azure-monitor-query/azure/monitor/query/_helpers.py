@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Mapping, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 

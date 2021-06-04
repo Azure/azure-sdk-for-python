@@ -4,7 +4,7 @@
 import os
 import pandas as pd
 from datetime import timedelta
-from azure.monitor.query import LogsClient
+from azure.monitor.query import LogsQueryClient
 from azure.identity import ClientSecretCredential
 
 
@@ -14,7 +14,7 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = LogsClient(credential)
+client = LogsQueryClient(credential)
 
 # Response time trend 
 # request duration over the last 12 hours. 

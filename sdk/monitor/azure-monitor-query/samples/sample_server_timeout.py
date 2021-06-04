@@ -3,7 +3,7 @@
 
 import os
 import pandas as pd
-from azure.monitor.query import LogsClient
+from azure.monitor.query import LogsQueryClient
 from azure.identity import ClientSecretCredential
 
 
@@ -13,7 +13,7 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = LogsClient(credential)
+client = LogsQueryClient(credential)
 
 response = client.query(
     os.environ['LOG_WORKSPACE_ID'],

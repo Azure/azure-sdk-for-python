@@ -3,7 +3,7 @@ import os
 from azure.identity.aio import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.query import LogsQueryRequest
-from azure.monitor.query.aio import LogsClient
+from azure.monitor.query.aio import LogsQueryClient
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -16,7 +16,7 @@ def _credential():
 @pytest.mark.live_test_only
 async def test_logs_auth():
     credential = _credential()
-    client = LogsClient(credential)
+    client = LogsQueryClient(credential)
     query = """AppRequests | 
     where TimeGenerated > ago(12h) | 
     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
@@ -29,7 +29,7 @@ async def test_logs_auth():
 
 @pytest.mark.live_test_only
 async def test_logs_server_timeout():
-    client = LogsClient(_credential())
+    client = LogsQueryClient(_credential())
 
     with pytest.raises(HttpResponseError) as e:
         response = await client.query(
@@ -41,7 +41,7 @@ async def test_logs_server_timeout():
 
 @pytest.mark.live_test_only
 async def test_logs_batch_query():
-    client = LogsClient(_credential())
+    client = LogsQueryClient(_credential())
 
     requests = [
         LogsQueryRequest(

@@ -18,12 +18,12 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class LogsClient(object):
-    """LogsClient
+class LogsQueryClient(object):
+    """LogsQueryClient
 
     :param credential: The credential to authenticate the client
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io/v1'.
+    :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
     :paramtype endpoint: str
     """
 
@@ -133,11 +133,11 @@ class LogsClient(object):
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.monitor.query.LogsClient` session."""
+        """Close the :class:`~azure.monitor.query.LogsQueryClient` session."""
         return self._client.close()
 
     def __enter__(self):
-        # type: () -> LogsClient
+        # type: () -> LogsQueryClient
         self._client.__enter__()  # pylint:disable=no-member
         return self
 

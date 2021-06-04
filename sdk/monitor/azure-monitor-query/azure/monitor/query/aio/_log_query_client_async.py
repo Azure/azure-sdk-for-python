@@ -17,8 +17,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class LogsClient(object):
-    """LogsClient
+class LogsQueryClient(object):
+    """LogsQueryClient
 
     :param credential: The credential to authenticate the client
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
@@ -106,9 +106,10 @@ class LogsClient(object):
         queries: Union[Sequence[Dict], Sequence[LogsQueryRequest]],
         **kwargs: Any
         ) -> LogsBatchResults:
-        """Execute an Analytics query.
+        """Execute a list of analytics queries. Each request can be either a LogQueryRequest
+        object or an equivalent serialized model.
 
-        Executes an Analytics query for data.
+        The response is returned in the same order as that of the requests sent.
 
         :param queries: The list of queries that should be processed
         :type queries: list[dict] or list[~azure.monitor.query.LogsQueryRequest]
@@ -129,7 +130,7 @@ class LogsClient(object):
             await self._query_op.batch(batch, **kwargs), request_order
             )
 
-    async def __aenter__(self) -> "LogsClient":
+    async def __aenter__(self) -> "LogsQueryClient":
         await self._client.__aenter__()
         return self
 
@@ -137,5 +138,5 @@ class LogsClient(object):
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:
-        """Close the :class:`~azure.monitor.query.aio.LogsClient` session."""
+        """Close the :class:`~azure.monitor.query.aio.LogsQueryClient` session."""
         await self._client.__aexit__()

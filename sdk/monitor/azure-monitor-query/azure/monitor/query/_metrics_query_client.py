@@ -7,6 +7,7 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
+from datetime import time
 from typing import TYPE_CHECKING, Any
 
 from ._generated._monitor_query_client import (
@@ -19,21 +20,23 @@ from ._helpers import get_metrics_authentication_policy
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.paging import ItemPaged
-    from ._models import MetricNamespace
 
 
-class MetricsClient(object):
-    """MetricsClient
+class MetricsQueryClient(object):
+    """MetricsQueryClient
 
     :param credential: The credential to authenticate the client
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword endpoint: The endpoint to connect to. Defaults to 'https://management.azure.com'.
+    :paramtype endpoint: str
     """
 
     def __init__(self, credential, **kwargs):
         # type: (TokenCredential, Any) -> None
+        endpoint = kwargs.pop('endpoint', 'https://management.azure.com')
         self._client = MonitorQueryClient(
             credential=credential,
-            base_url='https://management.azure.com',
+            base_url=endpoint,
             authentication_policy=get_metrics_authentication_policy(credential),
             **kwargs
         )
@@ -41,17 +44,17 @@ class MetricsClient(object):
         self._namespace_op = self._client.metric_namespaces
         self._definitions_op = self._client.metric_definitions
 
-    def query(self, resource_uri, metric_names, **kwargs):
-        # type: (str, list, Any) -> MetricsResult
+    def query(self, resource_uri, metric_names, timespan=None, **kwargs):
+        # type: (str, list, str, Any) -> MetricsResult
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :param metric_names: The names of the metrics to retrieve.
         :type metric_names: list
-        :keyword timespan: The timespan of the query. It is a string with the following format
+        :param timespan: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'.
-        :paramtype timespan: str
+        :type timespan: str
         :keyword interval: The interval (i.e. timegrain) of the query.
         :paramtype interval: ~datetime.timedelta
         :keyword aggregation: The list of aggregation types (comma separated) to retrieve.
@@ -84,6 +87,7 @@ class MetricsClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         kwargs.setdefault("metricnames", ",".join(metric_names))
+        kwargs.setdefault("timespan", timespan)
         generated = self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
         return MetricsResult._from_generated(generated) # pylint: disable=protected-access
 
@@ -105,7 +109,7 @@ class MetricsClient(object):
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricNamespace._from_generated(x) for x in objs
+                    MetricNamespace._from_generated(x) for x in objs # pylint: disable=protected-access
                 ]
             ),
             **kwargs)
@@ -128,18 +132,18 @@ class MetricsClient(object):
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricDefinition._from_generated(x) for x in objs
+                    MetricDefinition._from_generated(x) for x in objs # pylint: disable=protected-access
                 ]
             ),
             **kwargs)
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.monitor.query.MetricsClient` session."""
+        """Close the :class:`~azure.monitor.query.MetricsQueryClient` session."""
         return self._client.close()
 
     def __enter__(self):
-        # type: () -> MetricsClient
+        # type: () -> MetricsQueryClient
         self._client.__enter__()  # pylint:disable=no-member
         return self
 

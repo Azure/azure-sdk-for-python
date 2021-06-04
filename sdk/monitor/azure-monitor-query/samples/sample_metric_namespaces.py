@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import os
-from azure.monitor.query import MetricsClient
+from azure.monitor.query import MetricsQueryClient
 from azure.identity import ClientSecretCredential
 
 credential  = ClientSecretCredential(
@@ -11,7 +11,7 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = MetricsClient(credential)
+client = MetricsQueryClient(credential)
 
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
 response = client.list_metric_namespaces(metrics_uri)

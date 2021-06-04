@@ -21,10 +21,10 @@ pip install azure-monitor-query --pre
 ```
 
 ### Authenticate the client
-A **token credential** is necessary to instantiate both the LogsClient and the MetricsClient object.
+A **token credential** is necessary to instantiate both the LogsQueryClient and the MetricsQueryClient object.
 
 ```Python
-from azure.monitor.query import LogsClient
+from azure.monitor.query import LogsQueryClient
 from azure.identity import ClientSecretCredential
 
 
@@ -34,11 +34,11 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = LogsClient(credential)
+client = LogsQueryClient(credential)
 ```
 
 ```Python
-from azure.monitor.query import MetricsClient
+from azure.monitor.query import MetricsQueryClient
 from azure.identity import ClientSecretCredential
 
 
@@ -48,7 +48,7 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = MetricsClient(credential)
+client = MetricsQueryClient(credential)
 ```
 
 ## Key concepts
@@ -111,7 +111,7 @@ time-stamped data. Each set of metric values is a time series with the following
 ```Python
 import os
 import pandas as pd
-from azure.monitor.query import LogsClient
+from azure.monitor.query import LogsQueryClient
 from azure.identity import ClientSecretCredential
 
 
@@ -121,7 +121,7 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = LogsClient(credential)
+client = LogsQueryClient(credential)
 
 # Response time trend 
 # request duration over the last 12 hours. 
@@ -145,7 +145,7 @@ for table in response.tables:
 ```Python
 import os
 import pandas as pd
-from azure.monitor.query import LogsClient, LogsQueryRequest
+from azure.monitor.query import LogsQueryClient, LogsQueryRequest
 from azure.identity import ClientSecretCredential
 
 
@@ -155,7 +155,7 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = LogsClient(credential)
+client = LogsQueryClient(credential)
 
 requests = [
     LogsQueryRequest(
@@ -191,7 +191,7 @@ for response in response.responses:
 ```Python
 import os
 import pandas as pd
-from azure.monitor.query import LogsClient
+from azure.monitor.query import LogsQueryClient
 from azure.identity import ClientSecretCredential
 
 
@@ -201,7 +201,7 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = LogsClient(credential)
+client = LogsQueryClient(credential)
 
 response = client.query(
     os.environ['LOG_WORKSPACE_ID'],
@@ -218,7 +218,7 @@ for table in response.tables:
 
 ```Python
 import os
-from azure.monitor.query import MetricsClient
+from azure.monitor.query import MetricsQueryClient
 from azure.identity import ClientSecretCredential
 
 
@@ -228,7 +228,7 @@ credential  = ClientSecretCredential(
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 
-client = MetricsClient(credential)
+client = MetricsQueryClient(credential)
 response = client.query(os.environ['METRICS_RESOURCE_URI'], metric_names=["Microsoft.CognitiveServices/accounts"])
 ```
 
