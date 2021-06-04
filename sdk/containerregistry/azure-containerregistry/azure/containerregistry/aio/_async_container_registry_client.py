@@ -335,7 +335,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity.aio import DefaultAzureCredential
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, DefaultAzureCredential())
-            await client.delete_manifest("my_resository", "my_tag_or_digest")
+            await client.delete_manifest("my_repository", "my_tag_or_digest")
         """
         if _is_tag(tag_or_digest):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
