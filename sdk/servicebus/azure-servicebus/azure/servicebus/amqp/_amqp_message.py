@@ -218,8 +218,6 @@ class AmqpAnnotatedMessage(object):
 
     def _to_outgoing_amqp_message(self):
         message_header = None
-        creation_time_from_ttl = None
-        absolute_expiry_time_from_ttl = None
         ttl_set = False
         if self.header:
             message_header = uamqp.message.MessageHeader()
