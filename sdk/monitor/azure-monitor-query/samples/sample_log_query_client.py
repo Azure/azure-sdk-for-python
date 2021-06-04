@@ -3,7 +3,7 @@
 
 import os
 import pandas as pd
-from datetime import timedelta
+from datetime import datetime
 from azure.monitor.query import LogsQueryClient
 from azure.identity import ClientSecretCredential
 
