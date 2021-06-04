@@ -436,5 +436,7 @@ class TestTranslation(DocumentTranslationTest):
 
         poller = client.begin_translation(None, continuation_token=cont_token)
         result = poller.result()
-        assert result
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+        for doc in result:
+            self._validate_doc_status(doc, target_language="es")
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
