@@ -2464,6 +2464,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             content = "normalmessage"
             dict_message = {"body": content}
             sb_message = ServiceBusMessage(body=content)
+            message_with_ttl = AmqpAnnotatedMessage(data_body=data_body, header=AmqpMessageHeader(time_to_live=60000))
+            uamqp_with_ttl = message_with_ttl._to_outgoing_amqp_message()
+            assert uamqp_with_ttl.properties.absolute_expiry_time == uamqp_with_ttl.properties.creation_time + uamqp_with_ttl.header.time_to_live
 
             recv_data_msg = recv_sequence_msg = recv_value_msg = normal_msg = 0
             with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
@@ -2506,6 +2509,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             assert raw_amqp_message.annotations[b'ann_key'] == b'ann_value'
                             assert raw_amqp_message.application_properties[b'body_type'] == b'value'
                             recv_value_msg += 1
+                        
                         receiver.complete_message(message)
 
                     assert recv_sequence_msg == 3
