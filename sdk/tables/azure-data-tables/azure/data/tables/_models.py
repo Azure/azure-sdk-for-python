@@ -101,7 +101,7 @@ class TableAnalyticsLogging(GeneratedLogging):
         self.retention_policy = kwargs.get("retention_policy") or TableRetentionPolicy()
 
     @classmethod
-    def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
+    def _from_generated(cls, generated):
         if not generated:
             return cls()
         return cls(
@@ -136,7 +136,7 @@ class TableMetrics(GeneratedMetrics):
         self.retention_policy = kwargs.get("retention_policy") or TableRetentionPolicy()
 
     @classmethod
-    def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
+    def _from_generated(cls, generated):
         # type: (...) -> TableMetrics
         """A summary of request statistics grouped by API in hour or minute aggregates.
 
@@ -245,7 +245,7 @@ class TableCorsRule(object):
         )
 
     @classmethod
-    def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
+    def _from_generated(cls, generated):
         exposedheaders = generated.exposed_headers.split(',') if generated.exposed_headers else []
         allowedheaders = generated.allowed_headers.split(',') if generated.allowed_headers else []
         return cls(
@@ -357,12 +357,8 @@ class TableEntityPropertiesPaged(PageIterator):
 
 
 class TableSasPermissions(object):
-    def __init__(
-        self,
-        _str=None,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
         """
         :keyword bool read:
             Get entities and query entities.
@@ -372,15 +368,12 @@ class TableSasPermissions(object):
             Update entities. Add and Update permissions are required for upsert operations.
         :keyword bool delete:
             Delete entities.
-        :param str _str:
-            A string representing the permissions.
         """
-        if not _str:
-            _str = ""
-        self.read = kwargs.pop("read", None) or ("r" in _str)
-        self.add = kwargs.pop("add", None) or ("a" in _str)
-        self.update = kwargs.pop("update", None) or ("u" in _str)
-        self.delete = kwargs.pop("delete", None) or ("d" in _str)
+        _str = kwargs.pop('_str', "") or ""
+        self.read = kwargs.pop("read", False) or ("r" in _str)
+        self.add = kwargs.pop("add", False) or ("a" in _str)
+        self.update = kwargs.pop("update", False) or ("u" in _str)
+        self.delete = kwargs.pop("delete", False) or ("d" in _str)
 
     def __or__(self, other):
         # type: (TableSasPermissions) -> TableSasPermissions
@@ -477,7 +470,7 @@ class TableItem(object):
     # TODO: TableQueryResponse is not the correct type
     @classmethod
     def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
-        # type: (TableQueryResponse) -> TableItem
+        # type: (TableQueryResponse, Any) -> TableItem
         return cls(generated.table_name)  # type: ignore
 
 
@@ -538,7 +531,7 @@ class ResourceTypes(object):
         Access to object-level APIs for tables (e.g. Get/Create/Query Entity etc.)
     """
 
-    def __init__(self, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, **kwargs):
         # type: (Any) -> None
         self.service = kwargs.get('service', False)
         self.object = kwargs.get('object', False)
@@ -571,12 +564,7 @@ class ResourceTypes(object):
 
 class AccountSasPermissions(object):
     """
-    :class:`~ResourceTypes` class to be used with generate_account_sas
-    function and for the AccessPolicies used with set_*_acl. There are two types of
-    SAS which may be used to grant resource access. One is to grant access to a
-    specific resource (resource-specific). Another is to grant access to the
-    entire service for a specific account and allow certain operations based on
-    perms found here.
+    :class:`~AccountSasPermissions` class to be used with generate_account_sas
 
     :ivar bool read:
         Valid for all signed resources types (Service, Container, and Object).
@@ -601,14 +589,14 @@ class AccountSasPermissions(object):
     """
 
     def __init__(self, **kwargs):
-        self.read = kwargs.pop("read", None)
-        self.write = kwargs.pop("write", None)
-        self.delete = kwargs.pop("delete", None)
-        self.list = kwargs.pop("list", None)
-        self.add = kwargs.pop("add", None)
-        self.create = kwargs.pop("create", None)
-        self.update = kwargs.pop("update", None)
-        self.process = kwargs.pop("process", None)
+        self.read = kwargs.pop("read", False)
+        self.write = kwargs.pop("write", False)
+        self.delete = kwargs.pop("delete", False)
+        self.list = kwargs.pop("list", False)
+        self.add = kwargs.pop("add", False)
+        self.create = kwargs.pop("create", False)
+        self.update = kwargs.pop("update", False)
+        self.process = kwargs.pop("process", False)
         self._str = (
             ("r" if self.read else "")
             + ("w" if self.write else "")
@@ -634,7 +622,6 @@ class AccountSasPermissions(object):
 
         :param permission: Specify permissions in the string with the first letter of the word.
         :type permission: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An AccountSasPermissions object
         :rtype: :class:`~azure.data.tables.AccountSasPermissions`
         """
