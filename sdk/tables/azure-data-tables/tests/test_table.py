@@ -13,11 +13,11 @@ from devtools_testutils import AzureTestCase
 from azure.data.tables import (
     ResourceTypes,
     AccountSasPermissions,
-    RetentionPolicy,
+    TableRetentionPolicy,
     UpdateMode,
-    AccessPolicy,
+    TableAccessPolicy,
     TableAnalyticsLogging,
-    Metrics,
+    TableMetrics,
     TableServiceClient,
     TableItem,
     generate_account_sas,
@@ -50,10 +50,10 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         p = ts.get_service_properties()
         # have to wait for return to service
         ts.set_service_properties(
-            minute_metrics=Metrics(
+            minute_metrics=TableMetrics(
                 enabled=True,
                 include_apis=True,
-                retention_policy=RetentionPolicy(enabled=True, days=5)
+                retention_policy=TableRetentionPolicy(enabled=True, days=5)
             )
         )
 
@@ -336,7 +336,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         # Act
         identifiers = dict()
-        identifiers['testid'] = AccessPolicy(start=datetime.utcnow() - timedelta(minutes=5),
+        identifiers['testid'] = TableAccessPolicy(start=datetime.utcnow() - timedelta(minutes=5),
                                              expiry=datetime.utcnow() + timedelta(hours=1),
                                              permission='r')
         try:

@@ -21,7 +21,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
-from .._models import AccessPolicy, TableItem
+from .._models import TableAccessPolicy, TableItem
 from .._serialize import serialize_iso, _parameter_filter_substitution
 from .._deserialize import _return_headers_and_deserialized
 from .._error import (
@@ -159,13 +159,13 @@ class TableClient(AsyncTablesBaseClient):
         return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def get_table_access_policy(self, **kwargs) -> Mapping[str, AccessPolicy]:
+    async def get_table_access_policy(self, **kwargs) -> Mapping[str, TableAccessPolicy]:
         """
         Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: Dict[str, :class:`~azure.data.tables.AccessPolicy`]
+        :rtype: Dict[str, :class:`~azure.data.tables.TableAccessPolicy`]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -180,20 +180,20 @@ class TableClient(AsyncTablesBaseClient):
             _process_table_error(error)
         return {
             s.id: s.access_policy
-            or AccessPolicy(start=None, expiry=None, permission=None)
+            or TableAccessPolicy(start=None, expiry=None, permission=None)
             for s in identifiers  # type: ignore
         }
 
     @distributed_trace_async
     async def set_table_access_policy(
         self,
-        signed_identifiers: Mapping[str, AccessPolicy],
+        signed_identifiers: Mapping[str, TableAccessPolicy],
         **kwargs
     ) -> None:
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
         :param signed_identifiers: Access policies to set for the table
-        :type signed_identifiers: Dict[str, :class:`~azure.data.tables.AccessPolicy`]
+        :type signed_identifiers: Dict[str, :class:`~azure.data.tables.TableAccessPolicy`]
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`

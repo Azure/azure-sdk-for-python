@@ -7,7 +7,7 @@ from devtools_testutils import AzureTestCase
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ResourceExistsError
 from azure.data.tables import (
-    AccessPolicy,
+    TableAccessPolicy,
     TableSasPermissions,
     ResourceTypes,
     AccountSasPermissions,
@@ -278,7 +278,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
 
         # Act
         identifiers = dict()
-        identifiers['testid'] = AccessPolicy(start=datetime.utcnow() - timedelta(minutes=5),
+        identifiers['testid'] = TableAccessPolicy(start=datetime.utcnow() - timedelta(minutes=5),
                                              expiry=datetime.utcnow() + timedelta(hours=1),
                                              permission=TableSasPermissions(read=True))
         try:

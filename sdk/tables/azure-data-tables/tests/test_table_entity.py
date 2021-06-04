@@ -21,7 +21,7 @@ from azure.data.tables import (
     EntityProperty,
     EdmType,
     TableSasPermissions,
-    AccessPolicy,
+    TableAccessPolicy,
     UpdateMode
 )
 
@@ -1799,7 +1799,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Arrange
             entity, _ = self._insert_random_entity()
 
-            access_policy = AccessPolicy()
+            access_policy = TableAccessPolicy()
             access_policy.start = datetime(2011, 10, 11)
             access_policy.expiry = datetime(2025, 10, 12)
             access_policy.permission = TableSasPermissions(read=True)
@@ -1839,7 +1839,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Arrange
             entity, _ = self._insert_random_entity()
 
-            access_policy = AccessPolicy()
+            access_policy = TableAccessPolicy()
             access_policy.start = datetime(2011, 10, 11)
             access_policy.expiry = datetime(2025, 10, 12)
             access_policy.permission = TableSasPermissions(read=True)

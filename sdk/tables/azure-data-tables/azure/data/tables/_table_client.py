@@ -38,7 +38,7 @@ from ._table_batch import TableBatchOperations
 from ._models import (
     TableEntityPropertiesPaged,
     UpdateMode,
-    AccessPolicy,
+    TableAccessPolicy,
     TransactionOperation,
     TableItem
 )
@@ -169,12 +169,12 @@ class TableClient(TablesBaseClient):
     def get_table_access_policy(
         self, **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str,AccessPolicy]
+        # type: (...) -> Dict[str, TableAccessPolicy]
         """Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: Dict[str, :class:`~azure.data.tables.AccessPolicy`]
+        :rtype: Dict[str, :class:`~azure.data.tables.TableAccessPolicy`]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -187,19 +187,19 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}  # type: ignore
+        return {s.id: s.access_policy or TableAccessPolicy() for s in identifiers}  # type: ignore
 
     @distributed_trace
     def set_table_access_policy(
         self,
-        signed_identifiers,  # type: Dict[str,AccessPolicy]
+        signed_identifiers,  # type: Dict[str, TableAccessPolicy]
         **kwargs
     ):
         # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
         :param signed_identifiers: Access policies to set for the table
-        :type signed_identifiers: Dict[str, :class:`~azure.data.tables.AccessPolicy`]
+        :type signed_identifiers: Dict[str, :class:`~azure.data.tables.TableAccessPolicy`]
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
