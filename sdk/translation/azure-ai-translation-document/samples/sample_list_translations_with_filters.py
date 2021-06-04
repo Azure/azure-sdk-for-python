@@ -5,17 +5,17 @@
 # ------------------------------------
 
 """
-FILE: sample_list_submitted_jobs_with_filters.py
+FILE: sample_list_translations_with_filters.py
 
 DESCRIPTION:
-    This sample demonstrates how to list all the submitted translation jobs for the resource 
+    This sample demonstrates how to list all the submitted translation operations for the resource
     using different kind of filters/sorting/paging options
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
 
 USAGE:
-    python sample_list_submitted_jobs_with_filters.py
+    python sample_list_translations_with_filters.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Document Translation resource.
@@ -24,7 +24,7 @@ USAGE:
 
 
 
-def sample_list_submitted_jobs_with_filters():
+def sample_list_translations_with_filters():
     # import libraries
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (
@@ -53,8 +53,8 @@ def sample_list_submitted_jobs_with_filters():
     results_per_page = 2
     skip = 3
 
-    # list jobs
-    submitted_jobs = client.list_submitted_jobs(
+    # list translation operations
+    submitted_translations = client.list_all_translation_statuses(
         # filters
         statuses=statuses,
         created_after=start,
@@ -67,23 +67,23 @@ def sample_list_submitted_jobs_with_filters():
     ).by_page()
 
     # check statuses
-    for page in submitted_jobs:
-        for job in page:
-            display_job_info(job)
+    for page in submitted_translations:
+        for translation in page:
+            display_translation_info(translation)
 
 
-def display_job_info(job):
-    print("Job ID: {}".format(job.id))
-    print("Job status: {}".format(job.status))
-    print("Job created on: {}".format(job.created_on))
-    print("Job last updated on: {}".format(job.last_updated_on))
-    print("Total number of translations on documents: {}".format(job.documents_total_count))
-    print("Total number of characters charged: {}".format(job.total_characters_charged))
+def display_translation_info(translation):
+    print("ID: {}".format(translation.id))
+    print("Status: {}".format(translation.status))
+    print("Created on: {}".format(translation.created_on))
+    print("Last updated on: {}".format(translation.last_updated_on))
+    print("Total number of translations on documents: {}".format(translation.documents_total_count))
+    print("Total number of characters charged: {}".format(translation.total_characters_charged))
     print("\nOf total documents...")
-    print("{} failed".format(job.documents_failed_count))
-    print("{} succeeded".format(job.documents_succeeded_count))
-    print("{} cancelled\n".format(job.documents_cancelled_count))
+    print("{} failed".format(translation.documents_failed_count))
+    print("{} succeeded".format(translation.documents_succeeded_count))
+    print("{} cancelled\n".format(translation.documents_cancelled_count))
 
 
 if __name__ == '__main__':
-    sample_list_submitted_jobs_with_filters()
+    sample_list_translations_with_filters()

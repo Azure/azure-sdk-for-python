@@ -6,6 +6,7 @@
 from datetime import datetime
 import pytest
 import six
+import time
 
 from azure.containerregistry import (
     RepositoryProperties,
@@ -14,7 +15,7 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     TagOrder,
 )
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 
 from testcase import ContainerRegistryTestClass
@@ -161,7 +162,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             can_read=True,
             can_write=True,
             can_list=True,
-            # teleport_enabled=True,
         )
 
         self.assert_all_properties(received, True)
@@ -552,3 +552,31 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         digest = digest[:-10] + u"a" * 10
 
         client.delete_manifest(repo, digest)
+
+    @acr_preparer()
+    def test_expiration_time_parsing(self, containerregistry_endpoint):
+        from azure.containerregistry._authentication_policy import ContainerRegistryChallengePolicy
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        for repo in client.list_repository_names():
+            pass
+
+        for policy in client._client._client._pipeline._impl_policies:
+            if isinstance(policy, ContainerRegistryChallengePolicy):
+                policy._exchange_client._expiration_time = 0
+                break
+
+        count = 0
+        for repo in client.list_repository_names():
+            count += 1
+
+        assert count >= 1
+
+    # Live only, the fake credential doesn't check auth scope the same way
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    def test_incorrect_authentication_scope(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint, authentication_scope="https://microsoft.com")
+
+        with pytest.raises(ClientAuthenticationError):
+            properties = client.get_repository_properties(HELLO_WORLD)

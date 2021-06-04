@@ -3,7 +3,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import base64
+import json
 import re
+import time
 from typing import TYPE_CHECKING, List, Dict
 try:
     from urllib.parse import urlparse
@@ -103,3 +106,20 @@ def _strip_alg(digest):
     if len(digest.split(":")) == 2:
         return digest.split(":")[1]
     return digest
+
+
+def _parse_exp_time(raw_token):
+    # type: (bytes) -> float
+    value = raw_token.split(".")
+    if len(value) > 2:
+        value = value[1]
+        padding = len(value) % 4
+        if padding > 0:
+            value += "=" * padding
+        byte_value = base64.urlsafe_b64decode(value)
+        byte_value = byte_value.decode("utf-8")
+        web_token = json.loads(byte_value)
+        expiration = web_token.get("exp", time.time())
+        return expiration
+
+    return time.time()

@@ -12,14 +12,14 @@ from azure.core.polling.base_polling import (
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from .._generated.models import TranslationStatus
-from .._models import JobStatusResult
+from .._models import TranslationStatusResult
 
 PollingReturnType = TypeVar("PollingReturnType")
 _FINISHED = frozenset(["succeeded", "cancelled", "cancelling", "failed"])
 _FAILED = frozenset(["validationfailed"])
 
 
-class AsyncDocumentTranslationPoller(AsyncLROPoller[PollingReturnType]):
+class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
     """An async custom poller implementation for Document Translation.
     """
 
@@ -34,12 +34,12 @@ class AsyncDocumentTranslationPoller(AsyncLROPoller[PollingReturnType]):
         return self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
 
     @property
-    def details(self) -> JobStatusResult:
+    def details(self) -> TranslationStatusResult:
         """The details for the translation operation
 
-        :return: JobStatusResult
+        :return: ~azure.ai.translation.document.TranslationStatusResult
         """
-        return JobStatusResult._from_generated(self._polling_method._current_body)  # pylint: disable=protected-access
+        return TranslationStatusResult._from_generated(self._polling_method._current_body)  # pylint: disable=protected-access
 
     @classmethod
     def from_continuation_token(
@@ -47,7 +47,7 @@ class AsyncDocumentTranslationPoller(AsyncLROPoller[PollingReturnType]):
             polling_method: "AsyncDocumentTranslationLROPollingMethod",
             continuation_token: str,
             **kwargs: Any
-    ) -> "AsyncDocumentTranslationPoller":
+    ) -> "AsyncDocumentTranslationLROPoller":
 
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs

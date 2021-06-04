@@ -9,7 +9,7 @@ import datetime
 from typing import TYPE_CHECKING
 import warnings
 
-from ..._polling import DocumentTranslationLROPollingMethod, DocumentTranslationPoller
+from ..._polling import DocumentTranslationLROPollingMethod, DocumentTranslationLROPoller
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
@@ -108,7 +108,7 @@ class DocumentTranslationOperations(object):
         inputs,  # type: List["_models.BatchRequest"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> DocumentTranslationPoller[None]
+        # type: (...) -> DocumentTranslationLROPoller[None]
         """Submit a document translation request to the Document Translation service.
 
         Use this API to submit a bulk (batch) translation request to the Document Translation service.
@@ -134,8 +134,8 @@ class DocumentTranslationOperations(object):
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of DocumentTranslationPoller that returns either None or the result of cls(response)
-        :rtype: ~..._polling.DocumentTranslationPoller[None]
+        :return: An instance of DocumentTranslationLROPoller that returns either None or the result of cls(response)
+        :rtype: ~..._polling.DocumentTranslationLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -167,14 +167,14 @@ class DocumentTranslationOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
-            return DocumentTranslationPoller.from_continuation_token(
+            return DocumentTranslationLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return DocumentTranslationPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return DocumentTranslationLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_start_translation.metadata = {'url': '/batches'}  # type: ignore
 
     def get_translations_status(

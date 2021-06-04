@@ -42,7 +42,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 1, "fr")
 
     @DocumentTranslationPreparer()
@@ -66,7 +66,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
@@ -95,7 +95,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
@@ -130,7 +130,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
@@ -156,7 +156,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
@@ -182,7 +182,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
@@ -209,7 +209,6 @@ class TestTranslation(AsyncDocumentTranslationTest):
             result = await poller.result()
         assert e.value.error.code == "InvalidDocumentAccessLevel"
 
-    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/17914")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_bad_input_target(self, client):
@@ -233,7 +232,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         with pytest.raises(HttpResponseError) as e:
             poller = await client.begin_translation(translation_inputs)
             result = await poller.result()
-        assert e.value.error.code == "InvalidDocumentAccessLevel"
+        assert e.value.error.code == "InvalidTargetDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()

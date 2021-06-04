@@ -154,7 +154,7 @@ class DocumentTranslationTest(AzureTestCase):
         # specific assertions
         self.assertIn(doc_details.status, status)
         if target_language:
-            self.assertEqual(doc_details.translate_to, target_language)
+            self.assertEqual(doc_details.translated_to, target_language)
         # generic assertions
         self.assertIn(doc_details.id, ids) if ids else self.assertIsNotNone(doc_details.id)
         self.assertIsNotNone(doc_details.id)
@@ -245,14 +245,14 @@ class DocumentTranslationTest(AzureTestCase):
         return poller.id
         
 
-    def _begin_multiple_translations(self, client, jobs_count, **kwargs):
-        wait_for_job = kwargs.pop('wait', True)
+    def _begin_multiple_translations(self, client, operations_count, **kwargs):
+        wait_for_operation = kwargs.pop('wait', True)
         language_code = kwargs.pop('language_code', "es")
-        docs_per_job = kwargs.pop('docs_per_job', 2)
+        docs_per_operation = kwargs.pop('docs_per_operation', 2)
         result_job_ids = []
-        for i in range(jobs_count):
+        for i in range(operations_count):
             # prepare containers and test data
-            blob_data = Document.create_dummy_docs(docs_per_job)
+            blob_data = Document.create_dummy_docs(docs_per_operation)
             source_container_sas_url = self.create_source_container(data=blob_data)
             target_container_sas_url = self.create_target_container()
 
@@ -272,7 +272,7 @@ class DocumentTranslationTest(AzureTestCase):
             # submit multiple jobs
             poller = client.begin_translation(translation_inputs)
             self.assertIsNotNone(poller.id)
-            if wait_for_job:
+            if wait_for_operation:
                 result = poller.result()
             else:
                 poller.wait()
@@ -282,7 +282,7 @@ class DocumentTranslationTest(AzureTestCase):
 
     def _begin_and_validate_translation_with_multiple_docs(self, client, docs_count, **kwargs):
         # get input parms
-        wait_for_job = kwargs.pop('wait', False)
+        wait_for_operation = kwargs.pop('wait', False)
         language_code = kwargs.pop('language_code', "es")
 
         # prepare containers and test data
@@ -307,7 +307,7 @@ class DocumentTranslationTest(AzureTestCase):
         poller = client.begin_translation(translation_inputs)
         self.assertIsNotNone(poller.id)
         # wait for result
-        if wait_for_job:
+        if wait_for_operation:
             result = poller.result()
             for doc in result:
                 self._validate_doc_status(doc, "es")

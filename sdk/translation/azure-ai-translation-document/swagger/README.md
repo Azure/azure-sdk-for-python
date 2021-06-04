@@ -41,8 +41,8 @@ directive:
     -   from: swagger-document
         where: '$.paths["/batches"].post'
         transform: >
-            $["x-python-custom-poller-sync"] = "..._polling.DocumentTranslationPoller";
-            $["x-python-custom-poller-async"] = "....aio._async_polling.AsyncDocumentTranslationPoller";
+            $["x-python-custom-poller-sync"] = "..._polling.DocumentTranslationLROPoller";
+            $["x-python-custom-poller-async"] = "....aio._async_polling.AsyncDocumentTranslationLROPoller";
             $["x-python-custom-default-polling-method-sync"] = "..._polling.DocumentTranslationLROPollingMethod";
             $["x-python-custom-default-polling-method-async"] = "....aio._async_polling.AsyncDocumentTranslationLROPollingMethod";
 ```
