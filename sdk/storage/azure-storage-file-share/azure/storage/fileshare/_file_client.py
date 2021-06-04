@@ -1023,9 +1023,11 @@ class ShareFileClient(StorageAccountHostsMixin):
         end_range = offset + length - 1
         destination_range = 'bytes={0}-{1}'.format(offset, end_range)
         source_range = 'bytes={0}-{1}'.format(source_offset, source_offset + length - 1)
-        source_bearer_token = kwargs.get('source_bearer_token', None)
+        source_bearer_token = kwargs.pop('source_bearer_token', None)
         if isinstance(source_bearer_token, AccessToken):
             source_bearer_token = source_bearer_token.token
+        if source_bearer_token:
+            source_bearer_token = "Bearer {}".format(source_bearer_token)
         source_mod_conditions = get_source_conditions(kwargs)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
 

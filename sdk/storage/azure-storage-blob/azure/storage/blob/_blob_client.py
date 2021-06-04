@@ -426,9 +426,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         tier = kwargs.pop('standard_blob_tier', None)
         overwrite = kwargs.pop('overwrite', False)
         content_settings = kwargs.pop('content_settings', None)
-        source_bearer_token = kwargs.get('source_bearer_token', None)
+        source_bearer_token = kwargs.pop('source_bearer_token', None)
         if isinstance(source_bearer_token, AccessToken):
             source_bearer_token = source_bearer_token.token
+        if source_bearer_token:
+            source_bearer_token = "Bearer {}".format(source_bearer_token)
         if content_settings:
             kwargs['blob_http_headers'] = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
@@ -1746,12 +1748,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 headers['x-ms-source-lease-id'] = source_lease
 
         tier = kwargs.pop('premium_page_blob_tier', None) or kwargs.pop('standard_blob_tier', None)
-        requires_sync = kwargs.get('requires_sync', None)
-        source_bearer_token = kwargs.get('source_bearer_token', None)
+        requires_sync = kwargs.pop('requires_sync', None)
+        source_bearer_token = kwargs.pop('source_bearer_token', None)
         if isinstance(source_bearer_token, AccessToken):
             source_bearer_token = source_bearer_token.token
-        if requires_sync:
-            headers['x-ms-requires-sync'] = str(kwargs.pop('requires_sync'))
+        if requires_sync is not None:
+            headers['x-ms-requires-sync'] = str(requires_sync)
+        if source_bearer_token:
+            headers['x-ms-copy-source-authorization'] = "Bearer {}".format(source_bearer_token)
         else:
             if source_bearer_token:
                 raise ValueError("Source tokens are only applicable for synchronous copy operations.")
@@ -1760,7 +1764,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
 
         options = {
-            'copy_source_authorization': source_bearer_token,
             'copy_source': source_url,
             'seal_blob': kwargs.pop('seal_destination_blob', None),
             'timeout': timeout,
@@ -1913,8 +1916,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
         :keyword ~azure.core.AccessToken or str source_bearer_token:
-            Authenticate as a service principal using a client secret to access a source blob. This flag can only
-            be used if the `requires_sync` flag is set.
+            Authenticate as a service principal using a client secret to access a source blob. This feature is only
+            supported when the `requires_sync` flag is set to True.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: dict[str, str or ~datetime.datetime]
 
@@ -2209,9 +2212,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
-        source_bearer_token = kwargs.get('source_bearer_token', None)
+        source_bearer_token = kwargs.pop('source_bearer_token', None)
         if isinstance(source_bearer_token, AccessToken):
             source_bearer_token = source_bearer_token.token
+        if source_bearer_token:
+            source_bearer_token = "Bearer {}".format(source_bearer_token)
         if source_length is not None and source_offset is None:
             raise ValueError("Source offset value must not be None if length is set.")
         if source_length is not None:
@@ -2248,7 +2253,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def stage_block_from_url(
-            self, block_id,  # type: str
+            self, block_id,  # type: Union[str, int]
             source_url,  # type: str
             source_offset=None,  # type: Optional[int]
             source_length=None,  # type: Optional[int]
@@ -3156,9 +3161,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
             if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
         )
-        source_bearer_token = kwargs.get('source_bearer_token', None)
+        source_bearer_token = kwargs.pop('source_bearer_token', None)
         if isinstance(source_bearer_token, AccessToken):
             source_bearer_token = source_bearer_token.token
+        if source_bearer_token:
+            source_bearer_token = "Bearer {}".format(source_bearer_token)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         source_mod_conditions = get_source_conditions(kwargs)
@@ -3582,9 +3589,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 max_size=maxsize_condition,
                 append_position=appendpos_condition
             )
-        source_bearer_token = kwargs.get('source_bearer_token', None)
+        source_bearer_token = kwargs.pop('source_bearer_token', None)
         if isinstance(source_bearer_token, AccessToken):
             source_bearer_token = source_bearer_token.token
+        if source_bearer_token:
+            source_bearer_token = "Bearer {}".format(source_bearer_token)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         source_mod_conditions = get_source_conditions(kwargs)
@@ -3598,7 +3607,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                encryption_algorithm=cpk.algorithm)
 
         options = {
-            'copy-source-authorization': source_bearer_token,
+            'copy_source_authorization': source_bearer_token,
             'source_url': copy_source_url,
             'content_length': 0,
             'source_range': source_range,

@@ -78,9 +78,53 @@ class StorageBlockBlobTest(StorageTestCase):
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
+        self.source_blob_url_without_sas = blob.url
         self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
         self.source_blob_url_with_special_chars = BlobClient.from_blob_url(
             blob_with_special_chars.url, credential=sas_token_for_special_chars).url
+
+    @GlobalStorageAccountPreparer()
+    def test_put_block_from_url_with_oauth(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._setup(storage_account, storage_account_key)
+        split = 4 * 1024
+        destination_blob_name = self.get_resource_name('destblob')
+        destination_blob_client = self.bsc.get_blob_client(self.container_name, destination_blob_name)
+        access_token = self.generate_oauth_token()
+
+        # Assert this operation fails without a credential
+        with self.assertRaises(HttpResponseError):
+            destination_blob_client.stage_block_from_url(
+                block_id=1,
+                source_url=self.source_blob_url_without_sas,
+                source_offset=0,
+                source_length=split)
+        # Assert it passes after passing an oauth credential
+        destination_blob_client.stage_block_from_url(
+                block_id=1,
+                source_url=self.source_blob_url_without_sas,
+                source_offset=0,
+                source_length=split,
+                source_bearer_token=access_token.get_token("https://storage.azure.com/.default"))
+        destination_blob_client.stage_block_from_url(
+            block_id=2,
+            source_url=self.source_blob_url_without_sas,
+            source_offset=split,
+            source_length=split,
+            source_bearer_token=access_token.get_token("https://storage.azure.com/.default"))
+
+        committed, uncommitted = destination_blob_client.get_block_list('all')
+        self.assertEqual(len(uncommitted), 2)
+        self.assertEqual(len(committed), 0)
+
+        # Act part 2: commit the blocks
+        destination_blob_client.commit_block_list(['1', '2'])
+
+        # Assert destination blob has right content
+        destination_blob_data = destination_blob_client.download_blob().readall()
+        self.assertEqual(len(destination_blob_data), 8 * 1024)
+        self.assertEqual(destination_blob_data, self.source_blob_data)
+        self.assertEqual(self.source_blob_data, destination_blob_data)
 
     @GlobalStorageAccountPreparer()
     def test_put_block_from_url_and_commit(self, resource_group, location, storage_account, storage_account_key):

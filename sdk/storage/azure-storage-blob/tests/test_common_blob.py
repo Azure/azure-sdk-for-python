@@ -49,7 +49,7 @@ from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, Glob
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
-
+LARGE_BLOB_SIZE = 64 * 1024 + 5
 # ------------------------------------------------------------------------------
 
 
@@ -59,11 +59,27 @@ class StorageCommonBlobTest(StorageTestCase):
         self.container_name = self.get_resource_name('utcontainer')
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
+            self.source_container_name = self.get_resource_name('utcontainersource')
             try:
                 container.create_container(timeout=5)
             except ResourceExistsError:
                 pass
+            try:
+                self.bsc.create_container(self.source_container_name)
+            except ResourceExistsError:
+                pass
         self.byte_data = self.get_random_bytes(1024)
+
+    def _create_blob(self, tags=None, data=b'', **kwargs):
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, tags=tags, overwrite=True, **kwargs)
+        return blob
+
+    def _create_source_blob(self, data):
+        blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX))
+        blob_client.upload_blob(data)
+        return blob_client
 
     def _setup_remote(self, storage_account, key):
         self.bsc2 = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key)
@@ -1137,6 +1153,26 @@ class StorageCommonBlobTest(StorageTestCase):
         finally:
             self._disable_soft_delete()
 
+    @GlobalStorageAccountPreparer()
+    def test_start_copy_from_url_with_oauth(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._setup(storage_account, storage_account_key)
+        source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_blob_client = self._create_source_blob(data=source_blob_data)
+        destination_blob_client = self._create_blob()
+        access_token = self.generate_oauth_token()
+
+        with self.assertRaises(HttpResponseError):
+            destination_blob_client.start_copy_from_url(source_blob_client.url, requires_sync=True)
+
+        # TODO: confirm why this passes rather than fail
+        # with self.assertRaises(HttpResponseError):
+        #     destination_blob_client.start_copy_from_url(source_blob_client.url, requires_sync=False)
+        destination_blob_client.start_copy_from_url(
+            source_blob_client.url, source_bearer_token=access_token.get_token("https://storage.azure.com/.default"),
+            requires_sync=True)
+        destination_blob_data = destination_blob_client.download_blob().readall()
+        self.assertEqual(source_blob_data, destination_blob_data)
 
     @GlobalStorageAccountPreparer()
     def test_copy_blob_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):

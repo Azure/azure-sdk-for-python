@@ -59,7 +59,7 @@ class StorageFileTest(StorageTestCase):
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
         self.fsc = ShareServiceClient(url, credential=credential, max_range_size=4 * 1024)
-        self.share_name = self.get_resource_name('utshare')
+        self.share_name = self.get_resource_name('utshdfare')
         if self.is_live:
             self.fsc.create_share(self.share_name)
 
@@ -767,6 +767,25 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(0, file_ranges[0].get('start'))
         self.assertEqual(511, file_ranges[0].get('end'))
         self.assertEqual(data, file_content)
+
+    @GlobalStorageAccountPreparer()
+    def test_update_range_from_file_url_with_oauth(
+            self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        source_file_name = 'testfile'
+        source_file_client = self._create_file(file_name=source_file_name)
+        data = b'abcdefghijklmnop' * 32
+        resp = source_file_client.upload_range(data, offset=0, length=512)
+        access_token = self.generate_oauth_token()
+
+        destination_file_name = 'filetoupdate'
+        destination_file_client = self._create_empty_file(file_name=destination_file_name)
+        with self.assertRaises(HttpResponseError):
+            destination_file_client.upload_range_from_url(source_file_client.url, offset=0, length=512, source_offset=0)
+
+        destination_file_client.upload_range_from_url(source_file_client.url, offset=0, length=512, source_offset=0,
+                                                      source_bearer_token=access_token.get_token(
+                                                          "https://storage.azure.com/.default"))
 
     @GlobalStorageAccountPreparer()
     def test_update_range_from_file_url_with_lease(self, resource_group, location, storage_account, storage_account_key):
