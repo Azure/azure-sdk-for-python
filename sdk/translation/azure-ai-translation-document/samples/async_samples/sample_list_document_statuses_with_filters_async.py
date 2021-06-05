@@ -29,7 +29,7 @@ import asyncio
 async def sample_list_document_statuses_with_filters_async():
     # import libraries
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.translation.document import (
+    from azure.ai.translation.document.aio import (
         DocumentTranslationClient,
     )
     from datetime import datetime

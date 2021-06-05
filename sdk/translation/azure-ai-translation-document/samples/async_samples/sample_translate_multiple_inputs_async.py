@@ -97,7 +97,7 @@ async def sample_multiple_translation_async():
             if document.status == "Succeeded":
                 print("Source document location: {}".format(document.source_document_url))
                 print("Translated document location: {}".format(document.translated_document_url))
-                print("Translated to language: {}\n".format(document.translate_to))
+                print("Translated to language: {}\n".format(document.translated_to))
             else:
                 print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
 

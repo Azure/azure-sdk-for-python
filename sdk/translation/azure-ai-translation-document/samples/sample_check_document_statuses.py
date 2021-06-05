@@ -56,8 +56,8 @@ def sample_document_status_checks():
                     ))
                     completed_docs.append(document.id)
                 if document.status == "Failed":
-                    print("Document ID: {}, Error Code: {}, Message: {}".format(
-                        document.id, document.error.code, document.error.message
+                    print("Document at {} failed translation. Error Code: {}, Message: {}".format(
+                        document.source_document_url, document.error.code, document.error.message
                     ))
                     completed_docs.append(document.id)
                 if document.status == "Running":
@@ -65,7 +65,7 @@ def sample_document_status_checks():
                         document.id, document.translation_progress * 100
                     ))
 
-        print("\nTranslation completed.")
+    print("\nTranslation completed.")
     # [END list_all_document_statuses]
 
 
