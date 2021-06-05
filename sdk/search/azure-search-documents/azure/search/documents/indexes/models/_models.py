@@ -84,7 +84,7 @@ class AnalyzeTextOptions(msrest.serialization.Model):
         self.token_filters = kwargs.get('token_filters', None)
         self.char_filters = kwargs.get('char_filters', None)
 
-    def to_analyze_request(self):
+    def _to_analyze_request(self):
         return AnalyzeRequest(
             text=self.text,
             analyzer=self.analyzer_name,
@@ -462,16 +462,6 @@ class SynonymMap(msrest.serialization.Model):
             encryption_key=SearchResourceEncryptionKey._from_generated(synonym_map.encryption_key),
             e_tag=synonym_map.e_tag
         )
-
-    @classmethod
-    def create_from_file(cls, name, file_path):
-        with open(file_path, "r") as f:
-            solr_format_synonyms = f.read()
-            synonyms = solr_format_synonyms.split("\n")
-            return cls(
-                name=name,
-                synonyms=synonyms
-            )
 
 class SearchIndexerDataSourceConnection(msrest.serialization.Model):
     """Represents a datasource connection definition, which can be used to configure an indexer.

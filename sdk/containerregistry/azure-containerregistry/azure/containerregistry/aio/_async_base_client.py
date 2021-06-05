@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from azure.core.pipeline.transport import AsyncHttpTransport
 
@@ -28,17 +28,18 @@ class ContainerRegistryBaseClient(object):
     :type endpoint: str
     :param credential: AAD Token for authenticating requests with Azure
     :type credential: :class:`~azure.identity.DefaultTokenCredential`
-
+    :keyword authentication_scope: URL for credential authentication if different from the default
+    :paramtype authentication_scope: str
     """
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs) -> None:
-        auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
+    def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs) -> None:
+        auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=auth_policy,
-            credential_scopes="https://management.core.windows.net/.default",
+            credential_scopes=kwargs.get("credential_scopes", "https://management.core.windows.net/.default"),
             **kwargs
         )
 

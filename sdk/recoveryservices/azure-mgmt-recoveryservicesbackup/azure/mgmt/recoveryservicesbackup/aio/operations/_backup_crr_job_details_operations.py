@@ -44,7 +44,7 @@ class BackupCrrJobDetailsOperations:
         self,
         azure_region: str,
         parameters: "_models.CrrJobRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobResource":
         """Get CRR job details from target region.
 

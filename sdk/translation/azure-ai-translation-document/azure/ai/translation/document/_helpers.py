@@ -10,7 +10,50 @@ import six
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.pipeline.policies import HttpLoggingPolicy
+from ._generated.models import (
+    BatchRequest as _BatchRequest,
+    SourceInput as _SourceInput,
+    TargetInput as _TargetInput,
+)
+from ._models import DocumentTranslationInput
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
+POLLING_INTERVAL = 1
+
+
+def get_translation_input(args, kwargs, continuation_token):
+    try:
+        inputs = kwargs.pop('inputs', None)
+        if not inputs:
+            inputs = args[0]
+        request = DocumentTranslationInput._to_generated_list(inputs) \
+            if not continuation_token else None  # pylint: disable=protected-access
+    except (AttributeError, TypeError, IndexError):
+        try:
+            source_url = kwargs.pop('source_url', None)
+            if not source_url:
+                source_url = args[0]
+            target_url = kwargs.pop("target_url", None)
+            if not target_url:
+                target_url = args[1]
+            target_language_code = kwargs.pop("target_language_code", None)
+            if not target_language_code:
+                target_language_code = args[2]
+            request = [
+                _BatchRequest(
+                    source=_SourceInput(
+                        source_url=source_url
+                    ),
+                    targets=[_TargetInput(
+                        target_url=target_url,
+                        language=target_language_code
+                    )]
+                )
+            ]
+        except (AttributeError, TypeError, IndexError):
+            raise ValueError("Pass 'inputs' for multiple inputs or 'source_url', 'target_url', "
+                             "and 'target_language_code' for a single input.")
+
+    return request
 
 
 def get_authentication_policy(credential):
