@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Optional, Any, List, Mapping, Union
+from typing import Dict, Optional, Any, List, Mapping
 from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
@@ -200,13 +200,13 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
 
 class TablesBaseClient(AccountHostsMixin):
 
-    def __init__(
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint,  # type: str
-        credential=None,  # type: Union[AzureNamedKeyCredential, AzureSasCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        credential = kwargs.pop('credential', None)
         super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
         self._client = AzureTable(
             self.url,

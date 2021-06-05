@@ -90,9 +90,8 @@ class TestTableClient(AzureTestCase, TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        service = self.create_client_from_credential(
-            TableServiceClient,
-            endpoint=self.account_url(tables_cosmos_account_name, "cosmos"),
+        service = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"),
             credential=tables_primary_cosmos_account_key)
 
         def callback(response):
@@ -511,7 +510,7 @@ class TestTableClientUnit(TableTestCase):
         assert client.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert client._cosmos_endpoint
 
-        client = TableServiceClient("http://localhost:8902/", emulator_credential)
+        client = TableServiceClient("http://localhost:8902/", credential=emulator_credential)
         assert client.url == "http://localhost:8902"
         assert client.account_name == 'localhost'
         assert client.credential.named_key.name == 'localhost'
@@ -526,7 +525,7 @@ class TestTableClientUnit(TableTestCase):
         assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert table._cosmos_endpoint
 
-        table = TableClient("http://localhost:8902/", "tablename", emulator_credential)
+        table = TableClient("http://localhost:8902/", "tablename", credential=emulator_credential)
         assert table.url == "http://localhost:8902"
         assert table.account_name == 'localhost'
         assert table.table_name == 'tablename'
@@ -534,7 +533,7 @@ class TestTableClientUnit(TableTestCase):
         assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert table._cosmos_endpoint
 
-        table = TableClient.from_table_url("http://localhost:8902/Tables('tablename')", emulator_credential)
+        table = TableClient.from_table_url("http://localhost:8902/Tables('tablename')", credential=emulator_credential)
         assert table.url == "http://localhost:8902"
         assert table.account_name == 'localhost'
         assert table.table_name == 'tablename'
