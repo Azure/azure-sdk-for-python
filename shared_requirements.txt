@@ -1,6 +1,7 @@
 azure-ai-nspkg
 azure-ai-translation-nspkg
 azure-iot-nspkg
+azure-monitor-nspkg
 azure-applicationinsights~=0.1.0
 azure-batch~=4.1
 azure-cognitiveservices-nspkg
@@ -186,6 +187,8 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-ai-anomalydetector azure-core>=1.6.0,<2.0.0
 #override azure-eventgrid msrest>=0.6.19
 #override azure-eventgrid azure-core<2.0.0,>=1.12.0
+#override azure-monitor-query msrest>=0.6.19
+#override azure-monitor-query azure-core<2.0.0,>=1.12.0
 #override azure-communication-chat msrest>=0.6.0
 #override azure-communication-sms msrest>=0.6.0
 #override azure-communication-phonenumbers msrest>=0.6.0
