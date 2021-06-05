@@ -49,7 +49,7 @@ class RecoveryPointsCrrOperations:
         container_name: str,
         protected_item_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecoveryPointResourceList"]:
         """Lists the backup copies for the backed up item.
 

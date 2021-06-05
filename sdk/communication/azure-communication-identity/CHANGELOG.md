@@ -1,7 +1,8 @@
 # Release History
 
-## 1.0.1 (Unreleased)
-
+## 1.0.1 (2021-06-08)
+### Bug Fixes
+- Fixed async client to use async bearer token credential policy instead of sync policy.
 
 ## 1.0.0 (2021-03-29)
 - Stable release of `azure-communication-identity`.

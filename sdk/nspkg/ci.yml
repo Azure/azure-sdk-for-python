@@ -59,6 +59,9 @@ extends:
     - name: azure-messaging-nspkg
       safeName: azuremessagingnspkg
       skipVerifyChangeLog: true
+    - name: azure-monitor-nspkg
+      safeName: azuremonitornspkg
+      skipVerifyChangeLog: true
     - name: azure-purview-nspkg
       safeName: azurepurviewnspkg
       skipVerifyChangeLog: true

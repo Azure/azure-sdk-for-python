@@ -37,8 +37,6 @@ class SystemEventNames(str, Enum):
 
     ResourceWriteCancelEventName = 'Microsoft.Resources.ResourceWriteCancel'
 
-    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener'
-
     ResourceActionFailureEventName = 'Microsoft.Resources.ResourceActionFailure'
 
     AcsChatMemberRemovedFromThreadWithUserEventName = 'Microsoft.Communication.ChatMemberRemovedFromThreadWithUser'
@@ -91,6 +89,36 @@ class SystemEventNames(str, Enum):
     AcsSmsDeliveryReportReceivedEventName = 'Microsoft.Communication.SMSDeliveryReportReceived'
 
     AcsSmsReceivedEventName = 'Microsoft.Communication.SMSReceived'
+
+    AgriFoodFarmingApplicationDataChangedEventName = 'Microsoft.AgFoodPlatform.ApplicationDataChanged'
+
+    AgriFoodFarmingBoundaryChangedEventName = 'Microsoft.AgFoodPlatform.BoundaryChanged'
+
+    AgriFoodFarmingCropChangedEventName = 'Microsoft.AgFoodPlatform.CropChanged'
+
+    AgriFoodFarmingCropVarietyChangedEventName = 'Microsoft.AgFoodPlatform.CropVarietyChanged'
+
+    AgriFoodFarmingFarmChangedEventName = 'Microsoft.AgFoodPlatform.FarmChanged'
+
+    AgriFoodFarmingFarmOperationDataIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.FarmOperationDataIngestionJobStatusChanged'
+
+    AgriFoodFarmingFarmerChangedEventName = 'Microsoft.AgFoodPlatform.FarmerChanged'
+
+    AgriFoodFarmingFieldChangedEventName = 'Microsoft.AgFoodPlatform.FieldChanged'
+
+    AgriFoodFarmingHarvestDataChangedEventName = 'Microsoft.AgFoodPlatform.HarvestDataChanged'
+
+    AgriFoodFarmingPlantingDataChangedEventName = 'Microsoft.AgFoodPlatform.PlantingDataChanged'
+
+    AgriFoodFarmingSatelliteDataIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.SatelliteDataIngestionJobStatusChanged'
+
+    AgriFoodFarmingSeasonChangedEventName = 'Microsoft.AgFoodPlatform.SeasonChanged'
+
+    AgriFoodFarmingSeasonalFieldChangedEventName = 'Microsoft.AgFoodPlatform.SeasonalFieldChanged'
+
+    AgriFoodFarmingTillageDataChangedEventName = 'Microsoft.AgFoodPlatform.TillageDataChanged'
+
+    AgriFoodFarmingWeatherDataIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.WeatherDataIngestionJobStatusChanged'
 
     AppConfigurationKeyValueDeletedEventName = 'Microsoft.AppConfiguration.KeyValueDeleted'
 
@@ -242,6 +270,8 @@ class SystemEventNames(str, Enum):
 
     ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailablePeriodicNotifications'
 
+    ServiceBusDeadletterMessagesAvailableWithNoListenersEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
+
     SignalRServiceClientConnectionConnectedEventName = 'Microsoft.SignalRService.ClientConnectionConnected'
 
     SignalRServiceClientConnectionDisconnectedEventName = 'Microsoft.SignalRService.ClientConnectionDisconnected'
@@ -251,6 +281,8 @@ class SystemEventNames(str, Enum):
     StorageBlobCreatedEventName = 'Microsoft.Storage.BlobCreated'
 
     StorageBlobDeletedEventName = 'Microsoft.Storage.BlobDeleted'
+
+    StorageBlobInventoryPolicyCompletedEventName = 'Microsoft.Storage.BlobInventoryPolicyCompleted'
 
     StorageBlobRenamedEventName = 'Microsoft.Storage.BlobRenamed'
 
@@ -293,3 +325,6 @@ class SystemEventNames(str, Enum):
     WebSlotSwapWithPreviewCancelledEventName = 'Microsoft.Web.SlotSwapWithPreviewCancelled'
 
     WebSlotSwapWithPreviewStartedEventName = 'Microsoft.Web.SlotSwapWithPreviewStarted'
+
+    # servicebus alias
+    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'

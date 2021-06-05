@@ -20,7 +20,7 @@ from azure.data.tables import (
     EdmType,
     TableEntity,
     TableAnalyticsLogging,
-    Metrics,
+    TableMetrics,
     TableServiceClient,
 )
 
@@ -292,8 +292,8 @@ class TableTestCase(object):
         assert prop is not None
 
         self._assert_logging_equal(prop["analytics_logging"], TableAnalyticsLogging())
-        self._assert_metrics_equal(prop["hour_metrics"], Metrics())
-        self._assert_metrics_equal(prop["minute_metrics"], Metrics())
+        self._assert_metrics_equal(prop["hour_metrics"], TableMetrics())
+        self._assert_metrics_equal(prop["minute_metrics"], TableMetrics())
         self._assert_cors_equal(prop["cors"], list())
 
     def _assert_logging_equal(self, log1, log2):
@@ -347,15 +347,14 @@ class TableTestCase(object):
             return
 
         assert len(cors1) == len(cors2)
-
         for i in range(0, len(cors1)):
             rule1 = cors1[i]
             rule2 = cors2[i]
-            assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
-            assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
+            assert sorted(rule1.allowed_origins) == sorted(rule2.allowed_origins)
+            assert sorted(rule1.allowed_methods) == sorted(rule2.allowed_methods)
             assert rule1.max_age_in_seconds == rule2.max_age_in_seconds
-            assert len(rule1.exposed_headers) == len(rule2.exposed_headers)
-            assert len(rule1.allowed_headers) == len(rule2.allowed_headers)
+            assert sorted(rule1.exposed_headers) == sorted(rule2.exposed_headers)
+            assert sorted(rule1.allowed_headers) == sorted(rule2.allowed_headers)
 
     def _assert_retention_equal(self, ret1, ret2):
         assert ret1.enabled == ret2.enabled

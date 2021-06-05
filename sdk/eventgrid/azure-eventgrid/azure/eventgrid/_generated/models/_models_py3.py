@@ -1148,12 +1148,18 @@ class AcsRecordingChunkInfoProperties(msrest.serialization.Model):
     :type index: long
     :param end_reason: The reason for ending the recording chunk.
     :type end_reason: str
+    :param metadata_location: The location of the metadata for this chunk.
+    :type metadata_location: str
+    :param content_location: The location of the content for this chunk.
+    :type content_location: str
     """
 
     _attribute_map = {
         'document_id': {'key': 'documentId', 'type': 'str'},
         'index': {'key': 'index', 'type': 'long'},
         'end_reason': {'key': 'endReason', 'type': 'str'},
+        'metadata_location': {'key': 'metadataLocation', 'type': 'str'},
+        'content_location': {'key': 'contentLocation', 'type': 'str'},
     }
 
     def __init__(
@@ -1162,12 +1168,16 @@ class AcsRecordingChunkInfoProperties(msrest.serialization.Model):
         document_id: Optional[str] = None,
         index: Optional[int] = None,
         end_reason: Optional[str] = None,
+        metadata_location: Optional[str] = None,
+        content_location: Optional[str] = None,
         **kwargs
     ):
         super(AcsRecordingChunkInfoProperties, self).__init__(**kwargs)
         self.document_id = document_id
         self.index = index
         self.end_reason = end_reason
+        self.metadata_location = metadata_location
+        self.content_location = content_location
 
 
 class AcsRecordingFileStatusUpdatedEventData(msrest.serialization.Model):
@@ -1381,6 +1391,1096 @@ class AcsSmsReceivedEventData(AcsSmsEventBaseProperties):
         super(AcsSmsReceivedEventData, self).__init__(message_id=message_id, from_property=from_property, to=to, **kwargs)
         self.message = message
         self.received_timestamp = received_timestamp
+
+
+class AgriFoodFarmingApplicationDataChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.ApplicationDataChanged event.
+
+    :param action_type: Action occurred on a resource. Possible values include: "Created",
+     "Updated", "Deleted".
+    :type action_type: str or ~event_grid_publisher_client.models.AgriFoodFarmingResourceActionType
+    :param farmer_id: Id of the farmer it belongs to.
+    :type farmer_id: str
+    :param status: Status of the resource.
+    :type status: str
+    :param source: Source of the farm operation data.
+    :type source: str
+    :param modified_date_time: Date-time when resource was last modified, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type modified_date_time: ~datetime.datetime
+    :param e_tag: The ETag value to implement optimistic concurrency.
+    :type e_tag: str
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'action_type': {'key': 'actionType', 'type': 'str'},
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        action_type: Optional[Union[str, "AgriFoodFarmingResourceActionType"]] = None,
+        farmer_id: Optional[str] = None,
+        status: Optional[str] = None,
+        source: Optional[str] = None,
+        modified_date_time: Optional[datetime.datetime] = None,
+        e_tag: Optional[str] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingApplicationDataChangedEventData, self).__init__(**kwargs)
+        self.action_type = action_type
+        self.farmer_id = farmer_id
+        self.status = status
+        self.source = source
+        self.modified_date_time = modified_date_time
+        self.e_tag = e_tag
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingBoundaryChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.BoundaryChanged event.
+
+    :param farmer_id: Id of the farmer it belongs to.
+    :type farmer_id: str
+    :param parent_id: Id of the parent(field or seasonalField) it belongs to.
+    :type parent_id: str
+    :param parent_type: Type of the parent it belongs to.
+    :type parent_type: str
+    :param is_primary: A boolean flag indicating whether the boundary is primary or not.
+    :type is_primary: bool
+    :param action_type: Action occurred on a resource. Possible values include: "Created",
+     "Updated", "Deleted".
+    :type action_type: str or ~event_grid_publisher_client.models.AgriFoodFarmingResourceActionType
+    :param status: Status of the resource.
+    :type status: str
+    :param modified_date_time: Date-time when resource was last modified, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type modified_date_time: ~datetime.datetime
+    :param e_tag: The ETag value to implement optimistic concurrency.
+    :type e_tag: str
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'parent_id': {'key': 'parentId', 'type': 'str'},
+        'parent_type': {'key': 'parentType', 'type': 'str'},
+        'is_primary': {'key': 'isPrimary', 'type': 'bool'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        farmer_id: Optional[str] = None,
+        parent_id: Optional[str] = None,
+        parent_type: Optional[str] = None,
+        is_primary: Optional[bool] = None,
+        action_type: Optional[Union[str, "AgriFoodFarmingResourceActionType"]] = None,
+        status: Optional[str] = None,
+        modified_date_time: Optional[datetime.datetime] = None,
+        e_tag: Optional[str] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingBoundaryChangedEventData, self).__init__(**kwargs)
+        self.farmer_id = farmer_id
+        self.parent_id = parent_id
+        self.parent_type = parent_type
+        self.is_primary = is_primary
+        self.action_type = action_type
+        self.status = status
+        self.modified_date_time = modified_date_time
+        self.e_tag = e_tag
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingCropChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.CropChanged event.
+
+    :param action_type: Action occurred on a resource. Possible values include: "Created",
+     "Updated", "Deleted".
+    :type action_type: str or ~event_grid_publisher_client.models.AgriFoodFarmingResourceActionType
+    :param status: Status of the resource.
+    :type status: str
+    :param modified_date_time: Date-time when resource was last modified, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type modified_date_time: ~datetime.datetime
+    :param e_tag: The ETag value to implement optimistic concurrency.
+    :type e_tag: str
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'action_type': {'key': 'actionType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        action_type: Optional[Union[str, "AgriFoodFarmingResourceActionType"]] = None,
+        status: Optional[str] = None,
+        modified_date_time: Optional[datetime.datetime] = None,
+        e_tag: Optional[str] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingCropChangedEventData, self).__init__(**kwargs)
+        self.action_type = action_type
+        self.status = status
+        self.modified_date_time = modified_date_time
+        self.e_tag = e_tag
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingCropVarietyChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.CropVarietyChanged event.
+
+    :param crop_id: Id of the crop it belongs to.
+    :type crop_id: str
+    :param action_type: Action occurred on a resource. Possible values include: "Created",
+     "Updated", "Deleted".
+    :type action_type: str or ~event_grid_publisher_client.models.AgriFoodFarmingResourceActionType
+    :param status: Status of the resource.
+    :type status: str
+    :param modified_date_time: Date-time when resource was last modified, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type modified_date_time: ~datetime.datetime
+    :param e_tag: The ETag value to implement optimistic concurrency.
+    :type e_tag: str
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'crop_id': {'key': 'cropId', 'type': 'str'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        crop_id: Optional[str] = None,
+        action_type: Optional[Union[str, "AgriFoodFarmingResourceActionType"]] = None,
+        status: Optional[str] = None,
+        modified_date_time: Optional[datetime.datetime] = None,
+        e_tag: Optional[str] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingCropVarietyChangedEventData, self).__init__(**kwargs)
+        self.crop_id = crop_id
+        self.action_type = action_type
+        self.status = status
+        self.modified_date_time = modified_date_time
+        self.e_tag = e_tag
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingFarmChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.FarmChanged event.
+
+    :param farmer_id: Id of the farmer it belongs to.
+    :type farmer_id: str
+    :param action_type: Action occurred on a resource. Possible values include: "Created",
+     "Updated", "Deleted".
+    :type action_type: str or ~event_grid_publisher_client.models.AgriFoodFarmingResourceActionType
+    :param status: Status of the resource.
+    :type status: str
+    :param modified_date_time: Date-time when resource was last modified, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type modified_date_time: ~datetime.datetime
+    :param e_tag: The ETag value to implement optimistic concurrency.
+    :type e_tag: str
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        farmer_id: Optional[str] = None,
+        action_type: Optional[Union[str, "AgriFoodFarmingResourceActionType"]] = None,
+        status: Optional[str] = None,
+        modified_date_time: Optional[datetime.datetime] = None,
+        e_tag: Optional[str] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingFarmChangedEventData, self).__init__(**kwargs)
+        self.farmer_id = farmer_id
+        self.action_type = action_type
+        self.status = status
+        self.modified_date_time = modified_date_time
+        self.e_tag = e_tag
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingFarmerChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.FarmerChanged event.
+
+    :param action_type: Action occurred on a resource. Possible values include: "Created",
+     "Updated", "Deleted".
+    :type action_type: str or ~event_grid_publisher_client.models.AgriFoodFarmingResourceActionType
+    :param status: Status of the resource.
+    :type status: str
+    :param modified_date_time: Date-time when resource was last modified, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type modified_date_time: ~datetime.datetime
+    :param e_tag: The ETag value to implement optimistic concurrency.
+    :type e_tag: str
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'action_type': {'key': 'actionType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        action_type: Optional[Union[str, "AgriFoodFarmingResourceActionType"]] = None,
+        status: Optional[str] = None,
+        modified_date_time: Optional[datetime.datetime] = None,
+        e_tag: Optional[str] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingFarmerChangedEventData, self).__init__(**kwargs)
+        self.action_type = action_type
+        self.status = status
+        self.modified_date_time = modified_date_time
+        self.e_tag = e_tag
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingFarmOperationDataIngestionJobStatusChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.FarmOperationDataIngestionJobStatusChanged event.
+
+    :param farmer_id: Farmer id for which job was created.
+    :type farmer_id: str
+    :param message: Status message to capture more details of the job.
+    :type message: str
+    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
+     "Succeeded", "Failed", "Cancelled".
+    :type status: str or ~event_grid_publisher_client.models.AgriFoodFarmingJobStatus
+    :param last_action_date_time: Date-time when last action was taken on job, sample format: yyyy-
+     MM-ddTHH:mm:ssZ.
+    :type last_action_date_time: ~datetime.datetime
+    :param is_cancellation_requested: Flag that gets set when job cancellation is requested.
+    :type is_cancellation_requested: bool
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
+        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        farmer_id: Optional[str] = None,
+        message: Optional[str] = None,
+        status: Optional[Union[str, "AgriFoodFarmingJobStatus"]] = None,
+        last_action_date_time: Optional[datetime.datetime] = None,
+        is_cancellation_requested: Optional[bool] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingFarmOperationDataIngestionJobStatusChangedEventData, self).__init__(**kwargs)
+        self.farmer_id = farmer_id
+        self.message = message
+        self.status = status
+        self.last_action_date_time = last_action_date_time
+        self.is_cancellation_requested = is_cancellation_requested
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingFieldChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.FieldChanged event.
+
+    :param farmer_id: Farmer Id.
+    :type farmer_id: str
+    :param farm_id: Id of the associated Farm.
+    :type farm_id: str
+    :param action_type: Action occurred on a resource. Possible values include: "Created",
+     "Updated", "Deleted".
+    :type action_type: str or ~event_grid_publisher_client.models.AgriFoodFarmingResourceActionType
+    :param status: Status of the resource.
+    :type status: str
+    :param modified_date_time: Date-time when resource was last modified, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type modified_date_time: ~datetime.datetime
+    :param e_tag: The ETag value to implement optimistic concurrency.
+    :type e_tag: str
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'farm_id': {'key': 'farmId', 'type': 'str'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        farmer_id: Optional[str] = None,
+        farm_id: Optional[str] = None,
+        action_type: Optional[Union[str, "AgriFoodFarmingResourceActionType"]] = None,
+        status: Optional[str] = None,
+        modified_date_time: Optional[datetime.datetime] = None,
+        e_tag: Optional[str] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingFieldChangedEventData, self).__init__(**kwargs)
+        self.farmer_id = farmer_id
+        self.farm_id = farm_id
+        self.action_type = action_type
+        self.status = status
+        self.modified_date_time = modified_date_time
+        self.e_tag = e_tag
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingHarvestDataChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.HarvestDataChanged event.
+
+    :param action_type: Action occurred on a resource. Possible values include: "Created",
+     "Updated", "Deleted".
+    :type action_type: str or ~event_grid_publisher_client.models.AgriFoodFarmingResourceActionType
+    :param farmer_id: Id of the farmer it belongs to.
+    :type farmer_id: str
+    :param status: Status of the resource.
+    :type status: str
+    :param source: Source of the farm operation data.
+    :type source: str
+    :param modified_date_time: Date-time when resource was last modified, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type modified_date_time: ~datetime.datetime
+    :param e_tag: The ETag value to implement optimistic concurrency.
+    :type e_tag: str
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'action_type': {'key': 'actionType', 'type': 'str'},
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        action_type: Optional[Union[str, "AgriFoodFarmingResourceActionType"]] = None,
+        farmer_id: Optional[str] = None,
+        status: Optional[str] = None,
+        source: Optional[str] = None,
+        modified_date_time: Optional[datetime.datetime] = None,
+        e_tag: Optional[str] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingHarvestDataChangedEventData, self).__init__(**kwargs)
+        self.action_type = action_type
+        self.farmer_id = farmer_id
+        self.status = status
+        self.source = source
+        self.modified_date_time = modified_date_time
+        self.e_tag = e_tag
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingPlantingDataChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.PlantingDataChanged event.
+
+    :param action_type: Action occurred on a resource. Possible values include: "Created",
+     "Updated", "Deleted".
+    :type action_type: str or ~event_grid_publisher_client.models.AgriFoodFarmingResourceActionType
+    :param farmer_id: Id of the farmer it belongs to.
+    :type farmer_id: str
+    :param status: Status of the resource.
+    :type status: str
+    :param source: Source of the farm operation data.
+    :type source: str
+    :param modified_date_time: Date-time when resource was last modified, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type modified_date_time: ~datetime.datetime
+    :param e_tag: The ETag value to implement optimistic concurrency.
+    :type e_tag: str
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'action_type': {'key': 'actionType', 'type': 'str'},
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        action_type: Optional[Union[str, "AgriFoodFarmingResourceActionType"]] = None,
+        farmer_id: Optional[str] = None,
+        status: Optional[str] = None,
+        source: Optional[str] = None,
+        modified_date_time: Optional[datetime.datetime] = None,
+        e_tag: Optional[str] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingPlantingDataChangedEventData, self).__init__(**kwargs)
+        self.action_type = action_type
+        self.farmer_id = farmer_id
+        self.status = status
+        self.source = source
+        self.modified_date_time = modified_date_time
+        self.e_tag = e_tag
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingSatelliteDataIngestionJobStatusChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.SatelliteDataIngestionJobStatusChanged event.
+
+    :param farmer_id: Farmer id for which job was created.
+    :type farmer_id: str
+    :param message: Status message to capture more details of the job.
+    :type message: str
+    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
+     "Succeeded", "Failed", "Cancelled".
+    :type status: str or ~event_grid_publisher_client.models.AgriFoodFarmingJobStatus
+    :param last_action_date_time: Date-time when last action was taken on job, sample format: yyyy-
+     MM-ddTHH:mm:ssZ.
+    :type last_action_date_time: ~datetime.datetime
+    :param is_cancellation_requested: Flag that gets set when job cancellation is requested.
+    :type is_cancellation_requested: bool
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
+        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        farmer_id: Optional[str] = None,
+        message: Optional[str] = None,
+        status: Optional[Union[str, "AgriFoodFarmingJobStatus"]] = None,
+        last_action_date_time: Optional[datetime.datetime] = None,
+        is_cancellation_requested: Optional[bool] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingSatelliteDataIngestionJobStatusChangedEventData, self).__init__(**kwargs)
+        self.farmer_id = farmer_id
+        self.message = message
+        self.status = status
+        self.last_action_date_time = last_action_date_time
+        self.is_cancellation_requested = is_cancellation_requested
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingSeasonalFieldChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.SeasonalFieldChanged event.
+
+    :param farmer_id: Id of the farmer it belongs to.
+    :type farmer_id: str
+    :param season_id: Id of the season it belongs to.
+    :type season_id: str
+    :param field_id: Id of the field it belongs to.
+    :type field_id: str
+    :param farm_id: Id of the associated Farm.
+    :type farm_id: str
+    :param action_type: Action occurred on a resource. Possible values include: "Created",
+     "Updated", "Deleted".
+    :type action_type: str or ~event_grid_publisher_client.models.AgriFoodFarmingResourceActionType
+    :param status: Status of the resource.
+    :type status: str
+    :param modified_date_time: Date-time when resource was last modified, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type modified_date_time: ~datetime.datetime
+    :param e_tag: The ETag value to implement optimistic concurrency.
+    :type e_tag: str
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'season_id': {'key': 'seasonId', 'type': 'str'},
+        'field_id': {'key': 'fieldId', 'type': 'str'},
+        'farm_id': {'key': 'farmId', 'type': 'str'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        farmer_id: Optional[str] = None,
+        season_id: Optional[str] = None,
+        field_id: Optional[str] = None,
+        farm_id: Optional[str] = None,
+        action_type: Optional[Union[str, "AgriFoodFarmingResourceActionType"]] = None,
+        status: Optional[str] = None,
+        modified_date_time: Optional[datetime.datetime] = None,
+        e_tag: Optional[str] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingSeasonalFieldChangedEventData, self).__init__(**kwargs)
+        self.farmer_id = farmer_id
+        self.season_id = season_id
+        self.field_id = field_id
+        self.farm_id = farm_id
+        self.action_type = action_type
+        self.status = status
+        self.modified_date_time = modified_date_time
+        self.e_tag = e_tag
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingSeasonChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.SeasonChanged event.
+
+    :param action_type: Action occurred on a resource. Possible values include: "Created",
+     "Updated", "Deleted".
+    :type action_type: str or ~event_grid_publisher_client.models.AgriFoodFarmingResourceActionType
+    :param status: Status of the resource.
+    :type status: str
+    :param modified_date_time: Date-time when resource was last modified, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type modified_date_time: ~datetime.datetime
+    :param e_tag: The ETag value to implement optimistic concurrency.
+    :type e_tag: str
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'action_type': {'key': 'actionType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        action_type: Optional[Union[str, "AgriFoodFarmingResourceActionType"]] = None,
+        status: Optional[str] = None,
+        modified_date_time: Optional[datetime.datetime] = None,
+        e_tag: Optional[str] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingSeasonChangedEventData, self).__init__(**kwargs)
+        self.action_type = action_type
+        self.status = status
+        self.modified_date_time = modified_date_time
+        self.e_tag = e_tag
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingTillageDataChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.TillageDataChanged event.
+
+    :param action_type: Action occurred on a resource. Possible values include: "Created",
+     "Updated", "Deleted".
+    :type action_type: str or ~event_grid_publisher_client.models.AgriFoodFarmingResourceActionType
+    :param farmer_id: Id of the farmer it belongs to.
+    :type farmer_id: str
+    :param status: Status of the resource.
+    :type status: str
+    :param source: Source of the farm operation data.
+    :type source: str
+    :param modified_date_time: Date-time when resource was last modified, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type modified_date_time: ~datetime.datetime
+    :param e_tag: The ETag value to implement optimistic concurrency.
+    :type e_tag: str
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'action_type': {'key': 'actionType', 'type': 'str'},
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        action_type: Optional[Union[str, "AgriFoodFarmingResourceActionType"]] = None,
+        farmer_id: Optional[str] = None,
+        status: Optional[str] = None,
+        source: Optional[str] = None,
+        modified_date_time: Optional[datetime.datetime] = None,
+        e_tag: Optional[str] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingTillageDataChangedEventData, self).__init__(**kwargs)
+        self.action_type = action_type
+        self.farmer_id = farmer_id
+        self.status = status
+        self.source = source
+        self.modified_date_time = modified_date_time
+        self.e_tag = e_tag
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
+
+
+class AgriFoodFarmingWeatherDataIngestionJobStatusChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AgFoodPlatform.WeatherDataIngestionJobStatusChanged event.
+
+    :param farmer_id: Farmer id for which job was created.
+    :type farmer_id: str
+    :param message: Status message to capture more details of the job.
+    :type message: str
+    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
+     "Succeeded", "Failed", "Cancelled".
+    :type status: str or ~event_grid_publisher_client.models.AgriFoodFarmingJobStatus
+    :param last_action_date_time: Date-time when last action was taken on job, sample format: yyyy-
+     MM-ddTHH:mm:ssZ.
+    :type last_action_date_time: ~datetime.datetime
+    :param is_cancellation_requested: Flag that gets set when job cancellation is requested.
+    :type is_cancellation_requested: bool
+    :param id: Unique id of resource.
+    :type id: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of resource.
+    :type description: str
+    :param created_date_time: Date-time when resource was created, sample format: yyyy-MM-
+     ddTHH:mm:ssZ.
+    :type created_date_time: ~datetime.datetime
+    :param properties: A list of key value pairs that describe the resource.
+     Only string and numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
+        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        farmer_id: Optional[str] = None,
+        message: Optional[str] = None,
+        status: Optional[Union[str, "AgriFoodFarmingJobStatus"]] = None,
+        last_action_date_time: Optional[datetime.datetime] = None,
+        is_cancellation_requested: Optional[bool] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_date_time: Optional[datetime.datetime] = None,
+        properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AgriFoodFarmingWeatherDataIngestionJobStatusChangedEventData, self).__init__(**kwargs)
+        self.farmer_id = farmer_id
+        self.message = message
+        self.status = status
+        self.last_action_date_time = last_action_date_time
+        self.is_cancellation_requested = is_cancellation_requested
+        self.id = id
+        self.name = name
+        self.description = description
+        self.created_date_time = created_date_time
+        self.properties = properties
 
 
 class AppConfigurationKeyValueDeletedEventData(msrest.serialization.Model):
@@ -5988,7 +7088,7 @@ class ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventData(msrest
 
 
 class ServiceBusDeadletterMessagesAvailableWithNoListenersEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for a Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListenersEvent event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners event.
 
     :param namespace_name: The namespace name of the Microsoft.ServiceBus resource.
     :type namespace_name: str
@@ -6335,6 +7435,58 @@ class StorageBlobDeletedEventData(msrest.serialization.Model):
         self.sequencer = sequencer
         self.identity = identity
         self.storage_diagnostics = storage_diagnostics
+
+
+class StorageBlobInventoryPolicyCompletedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Storage.BlobInventoryPolicyCompleted event.
+
+    :param schedule_date_time: The time at which inventory policy was scheduled.
+    :type schedule_date_time: ~datetime.datetime
+    :param account_name: The account name for which inventory policy is registered.
+    :type account_name: str
+    :param rule_name: The rule name for inventory policy.
+    :type rule_name: str
+    :param policy_run_status: The status of inventory run, it can be
+     Succeeded/PartiallySucceeded/Failed.
+    :type policy_run_status: str
+    :param policy_run_status_message: The status message for inventory run.
+    :type policy_run_status_message: str
+    :param policy_run_id: The policy run id for inventory run.
+    :type policy_run_id: str
+    :param manifest_blob_url: The blob URL for manifest file for inventory run.
+    :type manifest_blob_url: str
+    """
+
+    _attribute_map = {
+        'schedule_date_time': {'key': 'scheduleDateTime', 'type': 'iso-8601'},
+        'account_name': {'key': 'accountName', 'type': 'str'},
+        'rule_name': {'key': 'ruleName', 'type': 'str'},
+        'policy_run_status': {'key': 'policyRunStatus', 'type': 'str'},
+        'policy_run_status_message': {'key': 'policyRunStatusMessage', 'type': 'str'},
+        'policy_run_id': {'key': 'policyRunId', 'type': 'str'},
+        'manifest_blob_url': {'key': 'manifestBlobUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        schedule_date_time: Optional[datetime.datetime] = None,
+        account_name: Optional[str] = None,
+        rule_name: Optional[str] = None,
+        policy_run_status: Optional[str] = None,
+        policy_run_status_message: Optional[str] = None,
+        policy_run_id: Optional[str] = None,
+        manifest_blob_url: Optional[str] = None,
+        **kwargs
+    ):
+        super(StorageBlobInventoryPolicyCompletedEventData, self).__init__(**kwargs)
+        self.schedule_date_time = schedule_date_time
+        self.account_name = account_name
+        self.rule_name = rule_name
+        self.policy_run_status = policy_run_status
+        self.policy_run_status_message = policy_run_status_message
+        self.policy_run_id = policy_run_id
+        self.manifest_blob_url = manifest_blob_url
 
 
 class StorageBlobRenamedEventData(msrest.serialization.Model):
