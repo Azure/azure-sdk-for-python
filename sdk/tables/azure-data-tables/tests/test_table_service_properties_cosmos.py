@@ -25,7 +25,7 @@ from preparers import cosmos_decorator
 class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_too_many_cors_rules(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         cors = []
         for i in range(0, 6):
             cors.append(TableCorsRule(['www.xyz.com'], ['GET']))
@@ -35,7 +35,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
     @cosmos_decorator
     def test_retention_too_long(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         minute_metrics = TableMetrics(enabled=True, include_apis=True, retention_policy=TableRetentionPolicy(enabled=True, days=366))
 
         with pytest.raises(HttpResponseError):

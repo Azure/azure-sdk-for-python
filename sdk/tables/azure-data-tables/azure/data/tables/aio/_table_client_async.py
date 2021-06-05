@@ -47,10 +47,11 @@ class TableClient(AsyncTablesBaseClient):
     :ivar str url: The full URL to the Tables account.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
         table_name: str,
+        *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
         **kwargs
     ) -> None:
@@ -58,12 +59,11 @@ class TableClient(AsyncTablesBaseClient):
 
         :param str endpoint: A URL to an Azure Tables account.
         :param str table_name: The table name.
-        :param credential:
+        :keyword credential:
             The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string or an account shared access
-            key.
-        :type credential:
+            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential
+            or AzureSasCredential from azure-core.
+        :paramtype credential:
             :class:`~azure.core.credentials.AzureNamedKeyCredential` or
             :class:`~azure.core.credentials.AzureSasCredential`
 
@@ -113,17 +113,16 @@ class TableClient(AsyncTablesBaseClient):
     def from_table_url(
         cls,
         table_url: str,
-        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
         **kwargs
     ) -> 'TableClient':
         """A client to interact with a specific Table.
 
         :param str table_url: The full URI to the table, including SAS token if used.
-        :param credential:
+        :keyword credential:
             The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string, an account
-            shared access key.
-        :type credential:
+            table URL already has a SAS token. The value can be one of AzureNamedKeyCredential
+            or AzureSasCredential from azure-core.
+        :paramtype credential:
             :class:`~azure.core.credentials.AzureNamedKeyCredential` or
             :class:`~azure.core.credentials.AzureSasCredential`
         :returns: A table client.
@@ -156,7 +155,7 @@ class TableClient(AsyncTablesBaseClient):
             raise ValueError(
                 "Invalid URL. Please provide a URL with a valid table name"
             )
-        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
+        return cls(endpoint, table_name=table_name, **kwargs)
 
     @distributed_trace_async
     async def get_table_access_policy(self, **kwargs) -> Mapping[str, TableAccessPolicy]:

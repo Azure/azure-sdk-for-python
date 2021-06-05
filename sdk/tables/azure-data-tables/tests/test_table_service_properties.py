@@ -30,7 +30,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     def test_table_service_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
-        tsc = TableServiceClient(url, tables_primary_storage_account_key)
+        tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
         # Act
         resp = tsc.set_service_properties(
             analytics_logging=TableAnalyticsLogging(),
@@ -49,7 +49,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     def test_set_logging(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
-        tsc = TableServiceClient(url, tables_primary_storage_account_key)
+        tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
         logging = TableAnalyticsLogging(read=True, write=True, delete=True, retention_policy=TableRetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -65,7 +65,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     def test_set_hour_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
-        tsc = TableServiceClient(url, tables_primary_storage_account_key)
+        tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
         hour_metrics = TableMetrics(enabled=True, include_apis=True, retention_policy=TableRetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -81,7 +81,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     def test_set_minute_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
-        tsc = TableServiceClient(url, tables_primary_storage_account_key)
+        tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
         minute_metrics = TableMetrics(enabled=True, include_apis=True,
                                  retention_policy=TableRetentionPolicy(enabled=True, days=5))
 
@@ -98,7 +98,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     def test_set_cors(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
-        tsc = TableServiceClient(url, tables_primary_storage_account_key)
+        tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
         cors_rule1 = TableCorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -126,7 +126,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     @tables_decorator
     def test_too_many_cors_rules(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
+        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
         cors = []
         for i in range(0, 6):
             cors.append(TableCorsRule(['www.xyz.com'], ['GET']))
@@ -138,7 +138,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     @tables_decorator
     def test_retention_too_long(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
+        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
         minute_metrics = TableMetrics(enabled=True, include_apis=True,
                                  retention_policy=TableRetentionPolicy(enabled=True, days=366))
 

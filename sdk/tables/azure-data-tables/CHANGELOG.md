@@ -8,6 +8,7 @@
 * Storage service configuration models have now been prefixed with `Table`, including
   `TableAccessPolicy`, `TableMetrics`, `TableRetentionPolicy`, `TableCorsRule`
 * All parameters for `TableServiceClient.set_service_properties` are now keyword-only.
+* The `credential` parameter for all Clients is now keyword-only.
 
 **Fixes**
 * Fixed support for Cosmos emulator endpoint, via URL/credential or connection string.
