@@ -1,6 +1,7 @@
 azure-ai-nspkg
 azure-ai-translation-nspkg
 azure-iot-nspkg
+azure-monitor-nspkg
 azure-applicationinsights~=0.1.0
 azure-batch~=4.1
 azure-cognitiveservices-nspkg
