@@ -552,7 +552,7 @@ class BatchError(Model):
 
 
 class BatchErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'BatchError'.
+    """Server responded with exception of type: 'BatchError'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.

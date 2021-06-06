@@ -340,7 +340,7 @@ class ComputerVisionErrorResponse(Model):
 
 
 class ComputerVisionErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ComputerVisionErrorResponse'.
+    """Server responded with exception of type: 'ComputerVisionErrorResponse'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
@@ -419,7 +419,7 @@ class ComputerVisionOcrError(Model):
 
 
 class ComputerVisionOcrErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'ComputerVisionOcrError'.
+    """Server responded with exception of type: 'ComputerVisionOcrError'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.

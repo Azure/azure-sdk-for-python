@@ -9934,7 +9934,7 @@ class FabricError(Model):
 
 
 class FabricErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'FabricError'.
+    """Server responded with exception of type: 'FabricError'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
