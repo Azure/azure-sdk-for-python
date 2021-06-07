@@ -48,7 +48,6 @@ Initialize client with the service endpoint and azure credentials:
 ```python
 from azure.communication.siprouting import SIPRoutingClient
 from azure.identity import DefaultAzureCredential
-
 # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
 # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
 endpoint = "https://<RESOURCE_NAME>.communication.azure.com"
@@ -59,7 +58,6 @@ Or initialize the client from connection string:
 
 ```python
 from azure.communication.siprouting import SIPRoutingClient
-
 connection_string = "endpoint=ENDPOINT;accessKey=KEY"
 sip_client = SIPRoutingClient.from_connection_string(connection_string)
 ```
@@ -104,7 +102,7 @@ The SIP configuration client will raise exceptions defined in [Azure Core][azure
 
 # Next steps
 
-Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/communication/azure-communication-siprouting/sample) directory for detailed examples of how to use this library.
+Please take a look at the samples directory for detailed examples of how to use this library.
 
 ## Provide Feedback
 
