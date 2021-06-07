@@ -1,13 +1,36 @@
 # Release History
 
-## 4.4.0b5 (Unreleased)
+## 4.4.0 (2020-06-08)
+This is the last version to support Python 3.5. The next version will require Python 2.7 or 3.6+.
 ### Changed
 - Key Vault API version 7.2 is now the default
+- (From 4.4.0b1) Updated minimum `msrest` version to 0.6.21
 
 ### Added
 - `KeyClient` has a `create_oct_key` method for creating symmetric keys
+- `KeyClient`'s `create_key` and `create_rsa_key` methods now accept a `public_exponent`
+  keyword-only argument ([#18016](https://github.com/Azure/azure-sdk-for-python/issues/18016))
+- (From 4.4.0b1) Added support for Key Vault API version 7.2
+  ([#16566](https://github.com/Azure/azure-sdk-for-python/pull/16566))
+  - Added `oct_hsm` to `KeyType`
+  - Added 128-, 192-, and 256-bit AES-GCM, AES-CBC, and AES-CBCPAD encryption
+    algorithms to `EncryptionAlgorithm`
+  - Added 128- and 192-bit AES-KW key wrapping algorithms to `KeyWrapAlgorithm`
+  - `CryptographyClient`'s `encrypt` method accepts `iv` and 
+    `additional_authenticated_data` keyword arguments
+  - `CryptographyClient`'s `decrypt` method accepts `iv`, 
+    `additional_authenticated_data`, and `authentication_tag` keyword arguments
+  - Added `iv`, `aad`, and `tag` properties to `EncryptResult`
+- (From 4.4.0b3) `CryptographyClient` will perform all operations locally if initialized with
+  the `.from_jwk` factory method
+  ([#16565](https://github.com/Azure/azure-sdk-for-python/pull/16565))
+- (From 4.4.0b3) Added requirement for `six`>=1.12.0
+- (From 4.4.0b4) `CryptographyClient` can perform AES-CBCPAD encryption and decryption locally
+  ([#17762](https://github.com/Azure/azure-sdk-for-python/pull/17762))
 
 ### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.3.1.
+> Only code written against a beta version such as 4.4.0b1 may be affected.
 - `parse_key_vault_key_id` and `KeyVaultResourceId` have been replaced by a
   `KeyVaultKeyIdentifier` class, which can be initialized with a key ID
 
