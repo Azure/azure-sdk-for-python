@@ -128,3 +128,10 @@ class EventGridSerializationTests(AzureMgmtTestCase):
             )
         
         assert "EventGridEvent(subject=sample2" in event.__repr__()
+
+    def test_servicebus_system_events(self):
+        val == "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners"
+        assert SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenerEventName == val
+        assert SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenersEventName == val
+        assert 'ServiceBusDeadletterMessagesAvailableWithNoListenersEventName' in dir(SystemEventNames)
+        assert 'ServiceBusDeadletterMessagesAvailableWithNoListenerEventName' not in dir(SystemEventNames) 
