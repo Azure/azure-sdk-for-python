@@ -169,12 +169,12 @@ class TableClient(TablesBaseClient):
     def get_table_access_policy(
         self, **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str, TableAccessPolicy]
+        # type: (...) -> Dict[str, Optional[TableAccessPolicy]]
         """Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: Dict[str, :class:`~azure.data.tables.TableAccessPolicy`]
+        :rtype: Dict[str, Optional[:class:`~azure.data.tables.TableAccessPolicy`]]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -187,29 +187,33 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error)
-        return {s.id: s.access_policy or TableAccessPolicy() for s in identifiers}  # type: ignore
+        return {s.id: s.access_policy or None for s in identifiers}  # type: ignore
 
     @distributed_trace
     def set_table_access_policy(
         self,
-        signed_identifiers,  # type: Dict[str, TableAccessPolicy]
+        signed_identifiers,  # type: Dict[str, Optional[TableAccessPolicy]]
         **kwargs
     ):
         # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
         :param signed_identifiers: Access policies to set for the table
-        :type signed_identifiers: Dict[str, :class:`~azure.data.tables.TableAccessPolicy`]
+        :type signed_identifiers: Dict[str, Optional[:class:`~azure.data.tables.TableAccessPolicy`]]
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         identifiers = []
         for key, value in signed_identifiers.items():
+            payload = None
             if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+                payload = TableAccessPolicy(
+                    start=serialize_iso(value.start),
+                    expiry=serialize_iso(value.expiry),
+                    permission=value.permission
+                )
+            identifiers.append(SignedIdentifier(id=key, access_policy=payload))
         signed_identifiers = identifiers  # type: ignore
         try:
             self._client.table.set_access_policy(

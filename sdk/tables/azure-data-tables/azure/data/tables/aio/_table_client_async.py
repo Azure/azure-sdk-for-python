@@ -158,13 +158,13 @@ class TableClient(AsyncTablesBaseClient):
         return cls(endpoint, table_name=table_name, **kwargs)
 
     @distributed_trace_async
-    async def get_table_access_policy(self, **kwargs) -> Mapping[str, TableAccessPolicy]:
+    async def get_table_access_policy(self, **kwargs) -> Mapping[str, Optional[TableAccessPolicy]]:
         """
         Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: Dict[str, :class:`~azure.data.tables.TableAccessPolicy`]
+        :rtype: Dict[str, Optional[:class:`~azure.data.tables.TableAccessPolicy`]]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -178,15 +178,14 @@ class TableClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             _process_table_error(error)
         return {
-            s.id: s.access_policy
-            or TableAccessPolicy(start=None, expiry=None, permission=None)
+            s.id: s.access_policy or None
             for s in identifiers  # type: ignore
         }
 
     @distributed_trace_async
     async def set_table_access_policy(
         self,
-        signed_identifiers: Mapping[str, TableAccessPolicy],
+        signed_identifiers: Mapping[str, Optional[TableAccessPolicy]],
         **kwargs
     ) -> None:
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
@@ -199,10 +198,14 @@ class TableClient(AsyncTablesBaseClient):
         """
         identifiers = []
         for key, value in signed_identifiers.items():
+            payload = None
             if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+                payload = TableAccessPolicy(
+                    start=serialize_iso(value.start),
+                    expiry=serialize_iso(value.expiry),
+                    permission=value.permission
+                )
+            identifiers.append(SignedIdentifier(id=key, access_policy=payload))
         try:
             await self._client.table.set_access_policy(
                 table=self.table_name, table_acl=identifiers or None, **kwargs  # type: ignore

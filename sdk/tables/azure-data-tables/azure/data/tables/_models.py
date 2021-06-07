@@ -73,10 +73,6 @@ class TableAccessPolicy(GenAccessPolicy):
         be UTC.
     :paramtype start: ~datetime.datetime or str
     """
-    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
-        self.start = kwargs.get('start')
-        self.expiry = kwargs.get('expiry')
-        self.permission = kwargs.get('permission')
 
 
 class TableAnalyticsLogging(GeneratedLogging):
