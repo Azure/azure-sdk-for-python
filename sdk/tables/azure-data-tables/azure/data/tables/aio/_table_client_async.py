@@ -351,7 +351,7 @@ class TableClient(AsyncTablesBaseClient):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: Union[TableEntity, Mapping[str, Any]]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
@@ -468,7 +468,7 @@ class TableClient(AsyncTablesBaseClient):
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[TableEntity]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -509,7 +509,7 @@ class TableClient(AsyncTablesBaseClient):
         :keyword parameters: Dictionary for formatting query with additional, user defined parameters
         :paramtype parameters: Dict[str, Any]
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[TableEntity]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
