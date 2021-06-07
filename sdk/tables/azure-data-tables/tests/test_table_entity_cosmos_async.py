@@ -1,304 +1,47 @@
 # coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import pytest
 
-from base64 import b64encode
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
-from time import sleep
-import uuid
 
 from devtools_testutils import AzureTestCase
 
 from azure.data.tables import (
-    generate_table_sas,
     TableEntity,
     EntityProperty,
     EdmType,
+    UpdateMode,
+    generate_table_sas,
     TableSasPermissions,
-    AccessPolicy,
-    UpdateMode
+    TableAccessPolicy,
 )
 from azure.data.tables.aio import TableServiceClient
-
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError,
+    ResourceModifiedError
 )
 
 from _shared.asynctestcase import AsyncTableTestCase
-from _shared.testcase import SLEEP_DELAY
 from async_preparers import cosmos_decorator_async
 # ------------------------------------------------------------------------------
 # TODO: change to `with table_client as client:` to close sessions
 # ------------------------------------------------------------------------------
 
 class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
-
-    async def _set_up(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        account_url = self.account_url(tables_cosmos_account_name, "cosmos")
-        self.ts = TableServiceClient(account_url, tables_primary_cosmos_account_key)
-        self.table_name = self.get_resource_name('uttable')
-        self.table = self.ts.get_table_client(self.table_name)
-        if self.is_live:
-            try:
-                await self.ts.create_table(table_name=self.table_name)
-            except ResourceExistsError:
-                pass
-
-        self.query_tables = []
-
-    async def _tear_down(self):
-        if self.is_live:
-            async with self.ts as t:
-                try:
-                    await t.delete_table(self.table_name)
-                except:
-                    pass
-
-                for table_name in self.query_tables:
-                    try:
-                        await t.delete_table(table_name)
-                    except:
-                        pass
-            self.sleep(SLEEP_DELAY)
-
-    # --Helpers-----------------------------------------------------------------
-    async def _create_query_table(self, entity_count):
-        """
-        Creates a table with the specified name and adds entities with the
-        default set of values. PartitionKey is set to 'MyPartition' and RowKey
-        is set to a unique counter value starting at 1 (as a string).
-        """
-        table_name = self.get_resource_name('querytable')
-        table = await self.ts.create_table(table_name)
-        self.query_tables.append(table_name)
-        client = self.ts.get_table_client(table_name)
-        entity = self._create_random_entity_dict()
-        for i in range(1, entity_count + 1):
-            entity['RowKey'] = entity['RowKey'] + str(i)
-            await client.create_entity(entity=entity)
-        return client
-
-    def _create_random_base_entity_dict(self):
-        """
-        Creates a dict-based entity with only pk and rk.
-        """
-        partition = self.get_resource_name('pk')
-        row = self.get_resource_name('rk')
-        return {
-            'PartitionKey': partition,
-            'RowKey': row,
-        }
-
-    def _create_pk_rk(self, pk, rk):
-        try:
-            pk = pk if pk is not None else self.get_resource_name('pk').decode('utf-8')
-            rk = rk if rk is not None else self.get_resource_name('rk').decode('utf-8')
-        except AttributeError:
-            pk = pk if pk is not None else self.get_resource_name('pk')
-            rk = rk if rk is not None else self.get_resource_name('rk')
-        return pk, rk
-
-    async def _insert_two_opposite_entities(self, pk=None, rk=None):
-        entity1 = self._create_random_entity_dict()
-        resp = await self.table.create_entity(entity1)
-
-        partition, row = self._create_pk_rk(pk, rk)
-        properties = {
-            'PartitionKey': partition + u'1',
-            'RowKey': row + u'1',
-            'age': 49,
-            'sex': u'female',
-            'married': False,
-            'deceased': True,
-            'optional': None,
-            'ratio': 5.2,
-            'evenratio': 6.0,
-            'large': 39999011,
-            'Birthday': datetime(1993, 4, 1, tzinfo=tzutc()),
-            'birthday': datetime(1990, 4, 1, tzinfo=tzutc()),
-            'binary': b'binary-binary',
-            'other': EntityProperty(40, EdmType.INT32),
-            'clsid': uuid.UUID('c8da6455-213e-42d9-9b79-3f9149a57833')
-        }
-        await self.table.create_entity(properties)
-        return entity1, resp
-
-    def _create_random_entity_dict(self, pk=None, rk=None):
-        """
-        Creates a dictionary-based entity with fixed values, using all
-        of the supported data types.
-        """
-        partition = pk if pk is not None else self.get_resource_name('pk')
-        row = rk if rk is not None else self.get_resource_name('rk')
-        properties = {
-            'PartitionKey': partition,
-            'RowKey': row,
-            'age': 39,
-            'sex': 'male',
-            'married': True,
-            'deceased': False,
-            'optional': None,
-            'ratio': 3.1,
-            'evenratio': 3.0,
-            'large': 933311100,
-            'Birthday': datetime(1973, 10, 4, tzinfo=tzutc()),
-            'birthday': datetime(1970, 10, 4, tzinfo=tzutc()),
-            'binary': b'binary',
-            'other': EntityProperty(20, EdmType.INT32),
-            'clsid': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        }
-        return TableEntity(**properties)
-
-    async def _insert_random_entity(self, pk=None, rk=None):
-        entity = self._create_random_entity_dict(pk, rk)
-        metadata = await self.table.create_entity(entity=entity)
-        return entity, metadata['etag']
-
-    def _create_updated_entity_dict(self, partition, row):
-        """
-        Creates a dictionary-based entity with fixed values, with a
-        different set of values than the default entity. It
-        adds fields, changes field values, changes field types,
-        and removes fields when compared to the default entity.
-        """
-        return {
-            'PartitionKey': partition,
-            'RowKey': row,
-            'age': 'abc',
-            'sex': 'female',
-            'sign': 'aquarius',
-            'birthday': datetime(1991, 10, 4, tzinfo=tzutc())
-        }
-
-    def _assert_default_entity(self, entity, headers=None):
-        '''
-        Asserts that the entity passed in matches the default entity.
-        '''
-        assert entity['age'] ==  39
-        assert entity['sex'] ==  'male'
-        assert entity['married'] ==  True
-        assert entity['deceased'] ==  False
-        assert not "optional" in entity
-        assert not "aquarius" in entity
-        assert entity['ratio'] ==  3.1
-        assert entity['evenratio'] ==  3.0
-        assert entity['large'] ==  933311100
-        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity['birthday'] == datetime(1970, 10, 4, tzinfo=tzutc())
-        assert entity['binary'].value ==  b'binary'
-        assert entity['other'] ==  20
-        assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_default_entity_json_full_metadata(self, entity, headers=None):
-        '''
-        Asserts that the entity passed in matches the default entity.
-        '''
-        assert entity['age'] ==  39
-        assert entity['sex'] ==  'male'
-        assert entity['married'] ==  True
-        assert entity['deceased'] ==  False
-        assert not "optional" in entity
-        assert not "aquarius" in entity
-        assert entity['ratio'] ==  3.1
-        assert entity['evenratio'] ==  3.0
-        assert entity['large'] ==  933311100
-        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity['birthday'] == datetime(1970, 10, 4, tzinfo=tzutc())
-        assert entity['binary'].value ==  b'binary'
-        assert entity['other'] ==  20
-        assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_default_entity_json_no_metadata(self, entity, headers=None):
-        '''
-        Asserts that the entity passed in matches the default entity.
-        '''
-        assert entity['age'] ==  39
-        assert entity['sex'] ==  'male'
-        assert entity['married'] ==  True
-        assert entity['deceased'] ==  False
-        assert not "optional" in entity
-        assert not "aquarius" in entity
-        assert entity['ratio'] ==  3.1
-        assert entity['evenratio'] ==  3.0
-        assert entity['large'] ==  933311100
-        assert entity['Birthday'].startswith('1973-10-04T00:00:00')
-        assert entity['birthday'].startswith('1970-10-04T00:00:00')
-        assert entity['Birthday'].endswith('00Z')
-        assert entity['birthday'].endswith('00Z')
-        assert entity['binary'] ==  b64encode(b'binary').decode('utf-8')
-        assert entity['other'] ==  20
-        assert entity['clsid'] ==  'c9da6455-213d-42c9-9a79-3e9149a57833'
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_updated_entity(self, entity):
-        '''
-        Asserts that the entity passed in matches the updated entity.
-        '''
-        assert entity['age'] ==  'abc'
-        assert entity['sex'] ==  'female'
-        assert not "married" in entity
-        assert not "deceased" in entity
-        assert entity['sign'] ==  'aquarius'
-        assert not "optional" in entity
-        assert not "ratio" in entity
-        assert not "evenratio" in entity
-        assert not "large" in entity
-        assert not "Birthday" in entity
-        assert entity['birthday'] == datetime(1991, 10, 4, tzinfo=tzutc())
-        assert not "other" in entity
-        assert not "clsid" in entity
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_merged_entity(self, entity):
-        '''
-        Asserts that the entity passed in matches the default entity
-        merged with the updated entity.
-        '''
-        assert entity['age'] ==  'abc'
-        assert entity['sex'] ==  'female'
-        assert entity['sign'] ==  'aquarius'
-        assert entity['married'] ==  True
-        assert entity['deceased'] ==  False
-        assert entity['ratio'] ==  3.1
-        assert entity['evenratio'] ==  3.0
-        assert entity['large'] ==  933311100
-        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity['birthday'] == datetime(1991, 10, 4, tzinfo=tzutc())
-        assert entity['other'] ==  20
-        assert isinstance(entity['clsid'],  uuid.UUID)
-        assert str(entity['clsid']) ==  'c9da6455-213d-42c9-9a79-3e9149a57833'
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_valid_metadata(self, metadata):
-        keys = metadata.keys()
-        assert "version" in  keys
-        assert "date" in  keys
-        assert "etag" in  keys
-        assert len(keys) ==  3
-
-    # --Test cases for entities ------------------------------------------
     @cosmos_decorator_async
     async def test_url_encoding_at_symbol(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = {
                 u"PartitionKey": u"PK",
@@ -333,7 +76,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_insert_entity_dictionary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
 
@@ -348,7 +91,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_insert_entity_with_hook(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
 
@@ -367,7 +110,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_insert_entity_with_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
             headers = {'Accept': 'application/json;odata=nometadata'}
@@ -393,7 +136,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_insert_entity_with_full_metadata(self, tables_cosmos_account_name,
                                                     tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
             headers = {'Accept': 'application/json;odata=fullmetadata'}
@@ -418,7 +161,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_insert_entity_conflict(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -434,7 +177,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_insert_entity_with_large_int32_value_throws(self, tables_cosmos_account_name,
                                                                tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             dict32 = self._create_random_base_entity_dict()
@@ -454,7 +197,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_insert_entity_with_large_int64_value_throws(self, tables_cosmos_account_name,
                                                                tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             dict64 = self._create_random_base_entity_dict()
@@ -474,7 +217,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_insert_entity_with_large_int_success(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             # Act
             dict64 = self._create_random_base_entity_dict()
@@ -499,21 +242,21 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_insert_entity_missing_pk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = {'RowKey': 'rk'}
 
             # Act
-            with pytest.raises(ValueError):
-                await self.table.create_entity(entity=entity)
-            # Assert
+            with pytest.raises(ValueError) as error:
+                resp = await self.table.create_entity(entity=entity)
+                assert str(error).contains("PartitionKey must be present in an entity")
         finally:
             await self._tear_down()
 
     @cosmos_decorator_async
     async def test_insert_entity_empty_string_pk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = {'RowKey': 'rk', 'PartitionKey': ''}
 
@@ -526,22 +269,21 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_insert_entity_missing_rk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = {'PartitionKey': 'pk'}
 
             # Act
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError) as error:
                 resp = await self.table.create_entity(entity=entity)
-
-            # Assert
+                assert str(error).contains("PartitionKey must be present in an entity")
         finally:
             await self._tear_down()
 
     @cosmos_decorator_async
     async def test_insert_entity_empty_string_rk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = {'PartitionKey': 'pk', 'RowKey': ''}
 
@@ -555,7 +297,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_get_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -573,7 +315,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_get_entity_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -594,7 +336,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_get_entity_with_hook(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -614,7 +356,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_get_entity_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, etag = await self._insert_random_entity()
 
@@ -640,7 +382,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_get_entity_if_match_entity_bad_etag(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, old_etag = await self._insert_random_entity()
 
@@ -652,7 +394,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             new_etag = e.metadata["etag"]
             e.metadata["etag"] = old_etag
 
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 await self.table.delete_entity(e, match_condition=MatchConditions.IfNotModified)
 
             # Try delete with correct etag
@@ -664,7 +406,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_delete_entity_if_match_table_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, etag = await self._insert_random_entity()
             table_entity = TableEntity(**entity)
@@ -683,12 +425,12 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 await self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
 
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @cosmos_decorator_async
     async def test_get_entity_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -708,7 +450,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_get_entity_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -728,7 +470,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_get_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
 
@@ -745,7 +487,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_get_entity_with_special_doubles(self, tables_cosmos_account_name,
                                                    tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({
@@ -769,7 +511,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_update_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -791,7 +533,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_update_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -807,7 +549,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_update_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, etag = await self._insert_random_entity()
 
@@ -830,13 +572,13 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_update_entity_with_if_doesnt_match(self, tables_cosmos_account_name,
                                                       tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 await self.table.update_entity(
                     mode=UpdateMode.REPLACE,
                     entity=sent_entity,
@@ -851,7 +593,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_insert_or_merge_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                                tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -870,7 +612,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_insert_or_merge_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                                    tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -888,7 +630,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_insert_or_replace_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                                  tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -907,7 +649,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_insert_or_replace_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                                      tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -923,7 +665,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_merge_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -940,7 +682,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_merge_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -956,7 +698,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_merge_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, etag = await self._insert_random_entity()
 
@@ -976,13 +718,13 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_merge_entity_with_if_doesnt_match(self, tables_cosmos_account_name,
                                                      tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 await self.table.update_entity(mode=UpdateMode.MERGE,
                                                entity=sent_entity,
                                                etag='W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
@@ -995,7 +737,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_delete_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -1009,7 +751,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_delete_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
             await self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
@@ -1019,7 +761,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_delete_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, etag = await self._insert_random_entity()
 
@@ -1039,12 +781,12 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_delete_entity_with_if_doesnt_match(self, tables_cosmos_account_name,
                                                       tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
             # Act
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 await self.table.delete_entity(
                     entity['PartitionKey'],
                     entity['RowKey'],
@@ -1057,7 +799,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_delete_entity_overloads(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -1086,7 +828,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_delete_entity_overloads_kwargs(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -1116,7 +858,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_unicode_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         ''' regression test for github issue #57'''
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
             entity1 = entity.copy()
@@ -1142,7 +884,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_unicode_property_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
             entity1 = entity.copy()
@@ -1171,7 +913,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         # Arrange
         partition_key_with_single_quote = "a''''b"
         row_key_with_single_quote = "a''''b"
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity(pk=partition_key_with_single_quote, rk=row_key_with_single_quote)
 
@@ -1197,19 +939,19 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_empty_and_spaces_property_value(self, tables_cosmos_account_name,
                                                    tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({
-                'EmptyByte': '',
+                'EmptyByte': b'',
                 'EmptyUnicode': u'',
-                'SpacesOnlyByte': '   ',
+                'SpacesOnlyByte': b'   ',
                 'SpacesOnlyUnicode': u'   ',
-                'SpacesBeforeByte': '   Text',
+                'SpacesBeforeByte': b'   Text',
                 'SpacesBeforeUnicode': u'   Text',
-                'SpacesAfterByte': 'Text   ',
+                'SpacesAfterByte': b'Text   ',
                 'SpacesAfterUnicode': u'Text   ',
-                'SpacesBeforeAndAfterByte': '   Text   ',
+                'SpacesBeforeAndAfterByte': b'   Text   ',
                 'SpacesBeforeAndAfterUnicode': u'   Text   ',
             })
 
@@ -1219,15 +961,15 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Assert
             assert resp is not None
-            assert resp['EmptyByte'] ==  ''
+            assert resp['EmptyByte'] ==  b''
             assert resp['EmptyUnicode'] ==  u''
-            assert resp['SpacesOnlyByte'] ==  '   '
+            assert resp['SpacesOnlyByte'] ==  b'   '
             assert resp['SpacesOnlyUnicode'] ==  u'   '
-            assert resp['SpacesBeforeByte'] ==  '   Text'
+            assert resp['SpacesBeforeByte'] ==  b'   Text'
             assert resp['SpacesBeforeUnicode'] ==  u'   Text'
-            assert resp['SpacesAfterByte'] ==  'Text   '
+            assert resp['SpacesAfterByte'] ==  b'Text   '
             assert resp['SpacesAfterUnicode'] ==  u'Text   '
-            assert resp['SpacesBeforeAndAfterByte'] ==  '   Text   '
+            assert resp['SpacesBeforeAndAfterByte'] ==  b'   Text   '
             assert resp['SpacesBeforeAndAfterUnicode'] ==  u'   Text   '
         finally:
             await self._tear_down()
@@ -1235,7 +977,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_none_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({'NoneValue': None})
@@ -1253,7 +995,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_binary_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             binary_data = b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'
             entity = self._create_random_base_entity_dict()
@@ -1265,14 +1007,14 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Assert
             assert resp is not None
-            assert resp['binary'].value ==  binary_data
+            assert resp['binary'] ==  binary_data
         finally:
             await self._tear_down()
 
     @cosmos_decorator_async
     async def test_timezone(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             local_tz = tzoffset('BRST', -10800)
             local_date = datetime(2003, 9, 27, 9, 52, 43, tzinfo=local_tz)
@@ -1294,7 +1036,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_entities(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             async with await self._create_query_table(2) as table:
 
@@ -1313,7 +1055,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_entities_each_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             base_entity = {
                 "PartitionKey": u"pk",
@@ -1353,7 +1095,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_user_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = await self._insert_two_opposite_entities()
 
@@ -1374,7 +1116,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_user_filter_multiple_params(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_two_opposite_entities()
 
@@ -1398,7 +1140,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_user_filter_integers(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_two_opposite_entities()
 
@@ -1421,7 +1163,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_user_filter_floats(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_two_opposite_entities()
 
@@ -1444,7 +1186,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_user_filter_datetimes(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_two_opposite_entities()
 
@@ -1467,7 +1209,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_user_filter_guids(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_two_opposite_entities()
 
@@ -1490,7 +1232,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_user_filter_binary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_two_opposite_entities()
 
@@ -1513,7 +1255,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_user_filter_int64(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_two_opposite_entities()
             large_entity = {
@@ -1543,7 +1285,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_zero_entities(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             async with await self._create_query_table(0) as table:
 
@@ -1560,7 +1302,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_entities_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             async with await self._create_query_table(2) as table:
 
@@ -1579,7 +1321,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_entities_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             async with await self._create_query_table(2) as table:
 
@@ -1598,7 +1340,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_entities_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = await self._insert_random_entity()
             entity2, _ = await self._insert_random_entity(pk="foo" + entity['PartitionKey'])
@@ -1620,7 +1362,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_injection_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             table_name = self.get_resource_name('querytable')
             table = await self.ts.create_table_if_not_exists(table_name)
@@ -1655,7 +1397,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_special_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             table_name = self.get_resource_name('querytable')
             table = await self.ts.create_table_if_not_exists(table_name)
@@ -1713,7 +1455,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_invalid_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             base_entity = {
                 u"PartitionKey": u"pk",
@@ -1734,7 +1476,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     async def test_query_entities_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             table = await self._create_query_table(2)
 
@@ -1756,7 +1498,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_query_entities_with_top(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             async with await self._create_query_table(3) as table:
 
@@ -1772,7 +1514,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
     async def test_query_entities_with_top_and_next(self, tables_cosmos_account_name,
                                                     tables_primary_cosmos_account_key):
         # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             async with await self._create_query_table(5) as table:
 
@@ -1806,7 +1548,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     async def test_datetime_milliseconds(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = self._create_random_entity_dict()
 
@@ -1826,7 +1568,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     async def test_datetime_str_passthrough(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         partition, row = self._create_pk_rk(None, None)
 
         dotnet_timestamp = "2013-08-22T01:12:06.2608595Z"
@@ -1849,5 +1591,269 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert isinstance(updated['datetime1'], datetime)
             assert isinstance(updated['datetime2'], datetime)
             assert updated['datetime1'].tables_service_value == dotnet_timestamp
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
+    async def test_sas_query(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            # Arrange
+            entity, _ = await self._insert_random_entity()
+            token = self.generate_sas(
+                generate_table_sas,
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                permission=TableSasPermissions(read=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start=datetime.utcnow() - timedelta(minutes=1),
+            )
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=AzureSasCredential(token),
+            )
+            table = service.get_table_client(self.table_name)
+            entities = []
+            async for t in table.query_entities(
+                    "PartitionKey eq '{}'".format(entity['PartitionKey'])):
+                entities.append(t)
+
+            # Assert
+            assert len(entities) ==  1
+            self._assert_default_entity(entities[0])
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
+    async def test_sas_add(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            # Arrange
+            token = self.generate_sas(
+                generate_table_sas,
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                permission=TableSasPermissions(add=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start=datetime.utcnow() - timedelta(minutes=1),
+            )
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=AzureSasCredential(token),
+            )
+            table = service.get_table_client(self.table_name)
+
+            entity = self._create_random_entity_dict()
+            await table.create_entity(entity=entity)
+
+            # Assert
+            resp = await self.table.get_entity(partition_key=entity['PartitionKey'],
+                                               row_key=entity['RowKey'])
+            self._assert_default_entity(resp)
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
+    async def test_sas_add_outside_range(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            # Arrange
+            token = self.generate_sas(
+                generate_table_sas,
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                permission=TableSasPermissions(add=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start_pk='test', start_rk='test1',
+                end_pk='test', end_rk='test1',
+            )
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=AzureSasCredential(token),
+            )
+            table = service.get_table_client(self.table_name)
+            with pytest.raises(HttpResponseError):
+                entity = self._create_random_entity_dict()
+                await table.create_entity(entity=entity)
+
+            # Assert
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
+    async def test_sas_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            # Arrange
+            entity, _ = await self._insert_random_entity()
+            token = self.generate_sas(
+                generate_table_sas,
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                permission=TableSasPermissions(update=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+            )
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=AzureSasCredential(token),
+            )
+            table = service.get_table_client(self.table_name)
+            updated_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
+            resp = await table.update_entity(mode=UpdateMode.REPLACE, entity=updated_entity)
+            received_entity = await self.table.get_entity(entity['PartitionKey'],
+                                                          entity['RowKey'])
+
+            # Assert
+            self._assert_updated_entity(received_entity)
+            assert resp is not None
+
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
+    async def test_sas_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            # Arrange
+            entity, _ = await self._insert_random_entity()
+            token = self.generate_sas(
+                generate_table_sas,
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                permission=TableSasPermissions(delete=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+            )
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=AzureSasCredential(token),
+            )
+            table = service.get_table_client(self.table_name)
+            await table.delete_entity(entity['PartitionKey'], entity['RowKey'])
+
+            # Assert
+            with pytest.raises(ResourceNotFoundError):
+                await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
+    async def test_datetime_duplicate_field(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9)
+        }
+        try:
+            await self.table.create_entity(entity)
+            received = await self.table.get_entity(partition, row)
+
+            assert 'Timestamp' not in received
+            assert 'timestamp' in received.metadata
+            assert isinstance(received.metadata['timestamp'], datetime)
+            assert received.metadata['timestamp'].year > 2020
+        
+            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9)
+            await self.table.update_entity(received, mode=UpdateMode.REPLACE)
+            received = await self.table.get_entity(partition, row)
+
+            assert 'timestamp' in received
+            assert isinstance(received['timestamp'], datetime)
+            assert received['timestamp'].year == 1999
+            assert isinstance(received.metadata['timestamp'], datetime)
+            assert received.metadata['timestamp'].year > 2020
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
+    async def test_etag_duplicate_field(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            #'ETag': u'foo',
+            'etag': u'bar',
+            'Etag': u'baz',
+        }
+        try:
+            await self.table.create_entity(entity)
+            created = await self.table.get_entity(partition, row)
+
+            #assert created['ETag'] == u'foo'
+            assert created['etag'] == u'bar'
+            assert 'Etag' not in created
+            assert created.metadata['etag'].startswith(u'W/"datetime\'')
+
+            #entity['ETag'] = u'one'
+            entity['etag'] = u'two'
+            entity['Etag'] = u'three'
+            with pytest.raises(ValueError):
+                await self.table.update_entity(entity, match_condition=MatchConditions.IfNotModified)
+        
+            #created['ETag'] = u'one'
+            created['etag'] = u'two'
+            created['Etag'] = u'three'
+            await self.table.update_entity(created, match_condition=MatchConditions.IfNotModified)
+
+            updated = await self.table.get_entity(partition, row)
+            #assert updated['ETag'] == u'one'
+            assert updated['etag'] == u'two'
+            assert 'Etag' not in updated
+            assert updated.metadata['etag'].startswith(u'W/"datetime\'')
+            assert updated.metadata['etag'] != created.metadata['etag']
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
+    async def test_entity_create_response_echo(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'Value': 'foobar',
+            'Answer': 42
+        }
+        try:
+            result = await self.table.create_entity(entity)
+            assert 'preference_applied' not in result
+            assert 'content' not in result
+            await self.table.delete_entity(entity)
+
+            result = await self.table.create_entity(entity, headers={'Prefer': 'return-no-content'})
+            assert 'preference_applied' in result
+            assert result['preference_applied'] == 'return-no-content'
+            assert 'content' in result
+            assert result['content'] is None
+            await self.table.delete_entity(entity)
+
+            result = await self.table.create_entity(entity, headers={'Prefer': 'return-content'})
+            assert 'preference_applied' in result
+            assert result['preference_applied'] == 'return-content'
+            assert 'content' in result
+            assert result['content']['PartitionKey'] == partition
+            assert result['content']['Value'] == 'foobar'
+            assert result['content']['Answer'] == 42
         finally:
             await self._tear_down()

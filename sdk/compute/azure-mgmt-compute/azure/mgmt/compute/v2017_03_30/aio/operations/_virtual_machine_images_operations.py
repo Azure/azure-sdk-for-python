@@ -47,7 +47,7 @@ class VirtualMachineImagesOperations:
         offer: str,
         skus: str,
         version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualMachineImage":
         """Gets a virtual machine image.
 
@@ -119,7 +119,7 @@ class VirtualMachineImagesOperations:
         expand: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VirtualMachineImageResource"]:
         """Gets a list of all virtual machine image versions for the specified location, publisher, offer,
         and SKU.
@@ -196,7 +196,7 @@ class VirtualMachineImagesOperations:
         self,
         location: str,
         publisher_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VirtualMachineImageResource"]:
         """Gets a list of virtual machine image offers for the specified location and publisher.
 
@@ -253,7 +253,7 @@ class VirtualMachineImagesOperations:
     async def list_publishers(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VirtualMachineImageResource"]:
         """Gets a list of virtual machine image publishers for the specified Azure location.
 
@@ -309,7 +309,7 @@ class VirtualMachineImagesOperations:
         location: str,
         publisher_name: str,
         offer: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VirtualMachineImageResource"]:
         """Gets a list of virtual machine image SKUs for the specified location, publisher, and offer.
 

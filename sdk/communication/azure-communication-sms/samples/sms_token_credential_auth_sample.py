@@ -14,7 +14,8 @@ DESCRIPTION:
 USAGE:
     python sms_token_credential_auth_sample.py
     Set the environment variable with your own value before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - the connection string in your ACS account
+    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS resource
+    2) AZURE_PHONE_NUMBER - a phone number with SMS capabilities in your ACS resource
 """
 
 import os
@@ -27,8 +28,8 @@ sys.path.append("..")
 
 class SmsTokenCredentialAuthSample(object):
 
-    connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-    phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
+    connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
+    phone_number = os.getenv("AZURE_PHONE_NUMBER")
     
     def sms_token_credential_auth(self):
         # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have

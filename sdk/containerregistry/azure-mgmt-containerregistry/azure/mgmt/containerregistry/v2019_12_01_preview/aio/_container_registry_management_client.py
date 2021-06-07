@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -24,12 +25,6 @@ from .operations import PipelineRunsOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import ReplicationsOperations
 from .operations import WebhooksOperations
-from .operations import AgentPoolsOperations
-from .operations import RunsOperations
-from .operations import TaskRunsOperations
-from .operations import TasksOperations
-from .operations import ScopeMapsOperations
-from .operations import TokensOperations
 from .. import models
 
 
@@ -52,18 +47,6 @@ class ContainerRegistryManagementClient(object):
     :vartype replications: azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.ReplicationsOperations
     :ivar webhooks: WebhooksOperations operations
     :vartype webhooks: azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.WebhooksOperations
-    :ivar agent_pools: AgentPoolsOperations operations
-    :vartype agent_pools: azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.AgentPoolsOperations
-    :ivar runs: RunsOperations operations
-    :vartype runs: azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.RunsOperations
-    :ivar task_runs: TaskRunsOperations operations
-    :vartype task_runs: azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.TaskRunsOperations
-    :ivar tasks: TasksOperations operations
-    :vartype tasks: azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.TasksOperations
-    :ivar scope_maps: ScopeMapsOperations operations
-    :vartype scope_maps: azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.ScopeMapsOperations
-    :ivar tokens: TokensOperations operations
-    :vartype tokens: azure.mgmt.containerregistry.v2019_12_01_preview.aio.operations.TokensOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Microsoft Azure subscription ID.
@@ -105,18 +88,23 @@ class ContainerRegistryManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.webhooks = WebhooksOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.agent_pools = AgentPoolsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.runs = RunsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.task_runs = TaskRunsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.tasks = TasksOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.scope_maps = ScopeMapsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.tokens = TokensOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()

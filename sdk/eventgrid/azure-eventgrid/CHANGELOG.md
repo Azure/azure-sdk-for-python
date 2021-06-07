@@ -1,6 +1,11 @@
 # Release History
 
-## 4.2.0 (2021-05-11)
+## 4.3.0 (Unreleased)
+
+  **New Features**
+  - Added new event names related to farm beats and blob inventory to the `SystemEventNames` enum.
+
+## 4.2.0 (2021-05-12)
 
   **New Features**
   - Added new event names to the `SystemEventNames` enum.

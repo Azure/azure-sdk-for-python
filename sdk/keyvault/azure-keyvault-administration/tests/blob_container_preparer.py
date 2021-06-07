@@ -23,7 +23,7 @@ class BlobContainerPreparer(AzureMgmtPreparer):
                 permission=AccountSasPermissions(
                     create=True, list=True, write=True, read=True, add=True, delete=True, delete_previous_version=True
                 ),
-                expiry=datetime.utcnow() + timedelta(minutes=5),
+                expiry=datetime.utcnow() + timedelta(minutes=30),
             )
             blob_client = BlobServiceClient(storage_account.primary_endpoints.blob, sas_token)
             container = blob_client.create_container(name)

@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 02 Apr 2021 19:47:23 GMT
+      - Wed, 26 May 2021 22:22:47 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 02 Apr 2021 19:47:23 GMT
+      - Wed, 26 May 2021 22:22:47 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -25,8 +25,8 @@ interactions:
       string: '{"TableName":"uttablef7f118fd","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Fri, 02 Apr 2021 19:47:23 GMT
-      etag: W/"datetime'2021-04-02T19%3A47%3A23.8773768Z'"
+      date: Wed, 26 May 2021 22:22:47 GMT
+      etag: W/"datetime'2021-05-26T22%3A22%3A47.2399880Z'"
       location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttablef7f118fd')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -48,22 +48,22 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 02 Apr 2021 19:47:24 GMT
+      - Wed, 26 May 2021 22:22:47 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 02 Apr 2021 19:47:24 GMT
+      - Wed, 26 May 2021 22:22:47 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://fake_cosmos_account.table.cosmos.azure.com/uttablef7f118fd
   response:
     body:
-      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttablef7f118fd/$metadata#uttablef7f118fd/@Element","odata.etag":"W/\"datetime''2021-04-02T19%3A47%3A24.5579272Z''\"","PartitionKey":"pkf7f118fd","RowKey":"rkf7f118fd","datetime1@odata.type":"Edm.DateTime","datetime1":"2013-08-22T01:12:06.2608595Z","Timestamp":"2021-04-02T19:47:24.5579272Z"}'
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttablef7f118fd/$metadata#uttablef7f118fd/@Element","odata.etag":"W/\"datetime''2021-05-26T22%3A22%3A47.6482568Z''\"","PartitionKey":"pkf7f118fd","RowKey":"rkf7f118fd","datetime1@odata.type":"Edm.DateTime","datetime1":"2013-08-22T01:12:06.2608595Z","Timestamp":"2021-05-26T22:22:47.6482568Z"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Fri, 02 Apr 2021 19:47:23 GMT
-      etag: W/"datetime'2021-04-02T19%3A47%3A24.5579272Z'"
+      date: Wed, 26 May 2021 22:22:47 GMT
+      etag: W/"datetime'2021-05-26T22%3A22%3A47.6482568Z'"
       location: https://fake_cosmos_account.table.cosmos.azure.com/uttablef7f118fd(PartitionKey='pkf7f118fd',RowKey='rkf7f118fd')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -79,22 +79,22 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 02 Apr 2021 19:47:24 GMT
+      - Wed, 26 May 2021 22:22:47 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 02 Apr 2021 19:47:24 GMT
+      - Wed, 26 May 2021 22:22:47 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://fake_cosmos_account.table.cosmos.azure.com/uttablef7f118fd(PartitionKey='pkf7f118fd',RowKey='rkf7f118fd')
   response:
     body:
-      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttablef7f118fd/$metadata#uttablef7f118fd/@Element","odata.etag":"W/\"datetime''2021-04-02T19%3A47%3A24.5579272Z''\"","PartitionKey":"pkf7f118fd","RowKey":"rkf7f118fd","datetime1@odata.type":"Edm.DateTime","datetime1":"2013-08-22T01:12:06.2608595Z","Timestamp":"2021-04-02T19:47:24.5579272Z"}'
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttablef7f118fd/$metadata#uttablef7f118fd/@Element","odata.etag":"W/\"datetime''2021-05-26T22%3A22%3A47.6482568Z''\"","PartitionKey":"pkf7f118fd","RowKey":"rkf7f118fd","datetime1@odata.type":"Edm.DateTime","datetime1":"2013-08-22T01:12:06.2608595Z","Timestamp":"2021-05-26T22:22:47.6482568Z"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Fri, 02 Apr 2021 19:47:24 GMT
-      etag: W/"datetime'2021-04-02T19%3A47%3A24.5579272Z'"
+      date: Wed, 26 May 2021 22:22:47 GMT
+      etag: W/"datetime'2021-05-26T22%3A22%3A47.6482568Z'"
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
@@ -116,13 +116,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 02 Apr 2021 19:47:24 GMT
+      - Wed, 26 May 2021 22:22:47 GMT
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 02 Apr 2021 19:47:24 GMT
+      - Wed, 26 May 2021 22:22:47 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -132,8 +132,8 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 02 Apr 2021 19:47:24 GMT
-      etag: W/"datetime'2021-04-02T19%3A47%3A24.8324616Z'"
+      date: Wed, 26 May 2021 22:22:47 GMT
+      etag: W/"datetime'2021-05-26T22%3A22%3A47.6964872Z'"
       server: Microsoft-HTTPAPI/2.0
     status:
       code: 204
@@ -147,22 +147,22 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 02 Apr 2021 19:47:24 GMT
+      - Wed, 26 May 2021 22:22:47 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 02 Apr 2021 19:47:24 GMT
+      - Wed, 26 May 2021 22:22:47 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://fake_cosmos_account.table.cosmos.azure.com/uttablef7f118fd(PartitionKey='pkf7f118fd',RowKey='rkf7f118fd')
   response:
     body:
-      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttablef7f118fd/$metadata#uttablef7f118fd/@Element","odata.etag":"W/\"datetime''2021-04-02T19%3A47%3A24.8324616Z''\"","PartitionKey":"pkf7f118fd","RowKey":"rkf7f118fd","datetime1@odata.type":"Edm.DateTime","datetime1":"2013-08-22T01:12:06.2608595Z","datetime2@odata.type":"Edm.DateTime","datetime2":"2020-08-22T01:12:06.2608590Z","Timestamp":"2021-04-02T19:47:24.8324616Z"}'
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttablef7f118fd/$metadata#uttablef7f118fd/@Element","odata.etag":"W/\"datetime''2021-05-26T22%3A22%3A47.6964872Z''\"","PartitionKey":"pkf7f118fd","RowKey":"rkf7f118fd","datetime1@odata.type":"Edm.DateTime","datetime1":"2013-08-22T01:12:06.2608595Z","datetime2@odata.type":"Edm.DateTime","datetime2":"2020-08-22T01:12:06.2608590Z","Timestamp":"2021-05-26T22:22:47.6964872Z"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Fri, 02 Apr 2021 19:47:24 GMT
-      etag: W/"datetime'2021-04-02T19%3A47%3A24.8324616Z'"
+      date: Wed, 26 May 2021 22:22:47 GMT
+      etag: W/"datetime'2021-05-26T22%3A22%3A47.6964872Z'"
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
@@ -173,13 +173,42 @@ interactions:
     body: null
     headers:
       Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 26 May 2021 22:22:47 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 26 May 2021 22:22:47 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"value":[{"TableName":"uttablef7f118fd"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Wed, 26 May 2021 22:22:47 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables
+- request:
+    body: null
+    headers:
+      Accept:
       - application/json
       Date:
-      - Fri, 02 Apr 2021 19:47:24 GMT
+      - Wed, 26 May 2021 22:22:47 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.8.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 02 Apr 2021 19:47:24 GMT
+      - Wed, 26 May 2021 22:22:47 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -189,7 +218,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 02 Apr 2021 19:47:24 GMT
+      date: Wed, 26 May 2021 22:22:47 GMT
       server: Microsoft-HTTPAPI/2.0
     status:
       code: 204

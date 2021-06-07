@@ -48,7 +48,7 @@ class VolumesOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VolumeList"]:
         """Describe all volumes.
 
@@ -70,7 +70,7 @@ class VolumesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -129,7 +129,7 @@ class VolumesOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Volume":
         """Describe a volume.
 
@@ -153,7 +153,7 @@ class VolumesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         # Construct URL
@@ -198,14 +198,14 @@ class VolumesOperations:
         pool_name: str,
         volume_name: str,
         body: "_models.Volume",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Volume"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Volume"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -260,7 +260,7 @@ class VolumesOperations:
         pool_name: str,
         volume_name: str,
         body: "_models.Volume",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Volume"]:
         """Create or Update a volume.
 
@@ -278,8 +278,8 @@ class VolumesOperations:
         :type body: ~azure.mgmt.netapp.models.Volume
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Volume or the result of cls(response)
@@ -343,14 +343,14 @@ class VolumesOperations:
         pool_name: str,
         volume_name: str,
         body: "_models.VolumePatch",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Volume"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Volume"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -402,7 +402,7 @@ class VolumesOperations:
         pool_name: str,
         volume_name: str,
         body: "_models.VolumePatch",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Volume"]:
         """Update a volume.
 
@@ -420,8 +420,8 @@ class VolumesOperations:
         :type body: ~azure.mgmt.netapp.models.VolumePatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Volume or the result of cls(response)
@@ -484,14 +484,14 @@ class VolumesOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -530,7 +530,7 @@ class VolumesOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a volume.
 
@@ -546,8 +546,8 @@ class VolumesOperations:
         :type volume_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -607,14 +607,14 @@ class VolumesOperations:
         pool_name: str,
         volume_name: str,
         body: "_models.VolumeRevert",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -659,7 +659,7 @@ class VolumesOperations:
         pool_name: str,
         volume_name: str,
         body: "_models.VolumeRevert",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Revert a volume to one of its snapshots.
 
@@ -677,8 +677,8 @@ class VolumesOperations:
         :type body: ~azure.mgmt.netapp.models.VolumeRevert
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -739,14 +739,14 @@ class VolumesOperations:
         pool_name: str,
         volume_name: str,
         body: Optional["_models.BreakReplicationRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -794,7 +794,7 @@ class VolumesOperations:
         pool_name: str,
         volume_name: str,
         body: Optional["_models.BreakReplicationRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Break volume replication.
 
@@ -812,8 +812,8 @@ class VolumesOperations:
         :type body: ~azure.mgmt.netapp.models.BreakReplicationRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -873,7 +873,7 @@ class VolumesOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ReplicationStatus":
         """Get volume replication status.
 
@@ -897,7 +897,7 @@ class VolumesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         # Construct URL
@@ -941,14 +941,14 @@ class VolumesOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
 
         # Construct URL
         url = self._resync_replication_initial.metadata['url']  # type: ignore
@@ -987,7 +987,7 @@ class VolumesOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Resync volume replication.
 
@@ -1004,8 +1004,8 @@ class VolumesOperations:
         :type volume_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1064,14 +1064,14 @@ class VolumesOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
 
         # Construct URL
         url = self._delete_replication_initial.metadata['url']  # type: ignore
@@ -1110,7 +1110,7 @@ class VolumesOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete volume replication.
 
@@ -1127,8 +1127,8 @@ class VolumesOperations:
         :type volume_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1188,14 +1188,14 @@ class VolumesOperations:
         pool_name: str,
         volume_name: str,
         body: "_models.AuthorizeRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1240,7 +1240,7 @@ class VolumesOperations:
         pool_name: str,
         volume_name: str,
         body: "_models.AuthorizeRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Authorize source volume replication.
 
@@ -1258,8 +1258,8 @@ class VolumesOperations:
         :type body: ~azure.mgmt.netapp.models.AuthorizeRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1319,14 +1319,14 @@ class VolumesOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
 
         # Construct URL
         url = self._re_initialize_replication_initial.metadata['url']  # type: ignore
@@ -1365,7 +1365,7 @@ class VolumesOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """ReInitialize volume replication.
 
@@ -1381,8 +1381,8 @@ class VolumesOperations:
         :type volume_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1442,14 +1442,14 @@ class VolumesOperations:
         pool_name: str,
         volume_name: str,
         body: "_models.PoolChangeRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1494,7 +1494,7 @@ class VolumesOperations:
         pool_name: str,
         volume_name: str,
         body: "_models.PoolChangeRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Change pool for volume.
 
@@ -1512,8 +1512,8 @@ class VolumesOperations:
         :type body: ~azure.mgmt.netapp.models.PoolChangeRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

@@ -1,7 +1,37 @@
 # Release History
 
 ## 4.0.0b4 (Unreleased)
+### Changed
+- Key Vault API version 7.2 is now the default
 
+### Added
+- `KeyVaultAccessControlClient.set_role_definition` accepts an optional 
+  `assignable_scopes` keyword-only argument
+
+### Breaking Changes
+- Changed parameter order in `KeyVaultAccessControlClient.set_role_definition`.
+  `permissions` is now an optional keyword-only argument
+- Renamed `BackupOperation` to `KeyVaultBackupOperation`
+- Renamed `RestoreOperation` to `KeyVaultRestoreOperation`
+- Renamed `SelectiveKeyRestoreOperation` to 
+  `KeyVaultSelectiveKeyRestoreOperation`
+- Renamed `KeyVaultBackupClient.begin_selective_restore` to `begin_selective_key_restore`
+  - Changed parameter order from `folder_url, sas_token, key_name` to
+    `key_name, folder_url, sas_token`
+- `KeyVaultRoleAssignment`'s `principal_id`, `role_definition_id`, and `scope`
+  are now properties of a `properties` property
+  ```
+  # before (4.0.0b3):
+  print(KeyVaultRoleAssignment.scope)
+
+  # after:
+  print(KeyVaultRoleAssignment.properties.scope)
+  ```
+- Renamed `KeyVaultPermission` properties:
+  - `allowed_actions` -> `actions`
+  - `denied_actions` -> `not_actions`
+  - `allowed_data_actions` -> `data_actions`
+  - `denied_data_actions` -> `denied_data_actions`
 
 ## 4.0.0b3 (2021-02-09)
 ### Added

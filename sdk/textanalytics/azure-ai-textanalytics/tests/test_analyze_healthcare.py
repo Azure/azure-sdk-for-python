@@ -26,7 +26,6 @@ from azure.ai.textanalytics import (
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
-@pytest.mark.skip("404 Not Found")
 class TestHealth(TextAnalyticsTest):
     def _interval(self):
         return 5 if self.is_live else 0
@@ -115,8 +114,14 @@ class TestHealth(TextAnalyticsTest):
         expected_order = ["56", "0", "22", "19", "1"]
         actual_order = [x.id for x in response]
 
+        num_error = 0
         for idx, resp in enumerate(response):
-            self.assertEqual(resp.id, expected_order[idx])
+            assert resp.id == expected_order[idx]
+            if resp.is_error:
+                num_error += 1
+                continue
+            assert not resp.statistics
+        assert num_error == 1
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -134,15 +139,14 @@ class TestHealth(TextAnalyticsTest):
             polling_interval=self._interval()
         ).result()
 
-        assert response.model_version  # commenting out bc of service error, always uses latest https://github.com/Azure/azure-sdk-for-python/issues/17160
-        self.assertEqual(response.statistics.documents_count, 5)
-        self.assertEqual(response.statistics.transactions_count, 4)
-        self.assertEqual(response.statistics.valid_documents_count, 4)
-        self.assertEqual(response.statistics.erroneous_documents_count, 1)
-
+        num_error = 0
         for doc in response:
-            if not doc.is_error:
-                self.assertIsNotNone(doc.statistics)
+            if doc.is_error:
+                num_error += 1
+                continue
+            assert doc.statistics.characters_count
+            assert doc.statistics.transactions_count
+        assert num_error == 1
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -404,3 +408,17 @@ class TestHealth(TextAnalyticsTest):
         meningitis_entity = next(e for e in result[0].entities if e.text == "Meningitis")
         assert meningitis_entity.assertion.certainty == "negativePossible"
 
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_disable_service_logs(self, client):
+        def callback(resp):
+            # this is called for both the initial post
+            # and the gets. Only care about the initial post
+            if resp.http_request.method == "POST":
+                assert resp.http_request.query['loggingOptOut']
+        client.begin_analyze_healthcare_entities(
+            documents=["Test for logging disable"],
+            polling_interval=self._interval(),
+            disable_service_logs=True,
+            raw_response_hook=callback,
+        ).result()

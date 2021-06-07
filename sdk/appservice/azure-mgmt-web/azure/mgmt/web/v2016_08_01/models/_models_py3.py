@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import msrest.serialization
 
@@ -847,7 +847,7 @@ class ContinuousWebJob(ProxyOnlyResource):
     :param using_sdk: Using SDK?.
     :type using_sdk: bool
     :param settings: Job settings.
-    :type settings: dict[str, object]
+    :type settings: dict[str, any]
     """
 
     _validation = {
@@ -888,7 +888,7 @@ class ContinuousWebJob(ProxyOnlyResource):
         job_type: Optional[Union[str, "WebJobType"]] = None,
         error: Optional[str] = None,
         using_sdk: Optional[bool] = None,
-        settings: Optional[Dict[str, object]] = None,
+        settings: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(ContinuousWebJob, self).__init__(kind=kind, **kwargs)
@@ -940,8 +940,8 @@ class ContinuousWebJobCollection(msrest.serialization.Model):
 class CorsSettings(msrest.serialization.Model):
     """Cross-Origin Resource Sharing (CORS) settings for the app.
 
-    :param allowed_origins: Gets or sets the list of origins that should be allowed to make cross-
-     origin
+    :param allowed_origins: Gets or sets the list of origins that should be allowed to make
+     cross-origin
      calls (for example: http://example.com:12345). Use "*" to allow all.
     :type allowed_origins: list[str]
     """
@@ -1541,7 +1541,7 @@ class FunctionEnvelope(ProxyOnlyResource):
     :param href: Function URI.
     :type href: str
     :param config: Config information.
-    :type config: object
+    :type config: any
     :param files: File list.
     :type files: dict[str, str]
     :param test_data: Test data used when testing via the Azure Portal.
@@ -1582,7 +1582,7 @@ class FunctionEnvelope(ProxyOnlyResource):
         config_href: Optional[str] = None,
         secrets_file_href: Optional[str] = None,
         href: Optional[str] = None,
-        config: Optional[object] = None,
+        config: Optional[Any] = None,
         files: Optional[Dict[str, str]] = None,
         test_data: Optional[str] = None,
         **kwargs
@@ -4612,8 +4612,8 @@ class SiteAuthSettings(ProxyOnlyResource):
      When using Azure Active Directory, this value is the URI of the directory tenant, e.g.
      https://sts.windows.net/{tenant-guid}/.
      This URI is a case-sensitive identifier for the token issuer.
-     More information on OpenID Connect Discovery: http://openid.net/specs/openid-connect-
-     discovery-1_0.html.
+     More information on OpenID Connect Discovery:
+     http://openid.net/specs/openid-connect-discovery-1_0.html.
     :type issuer: str
     :param allowed_audiences: Allowed audience values to consider when validating JWTs issued by
      Azure Active Directory. Note that the :code:`<code>ClientID</code>` value is always considered
@@ -4674,8 +4674,8 @@ class SiteAuthSettings(ProxyOnlyResource):
     :param microsoft_account_o_auth_scopes: The OAuth 2.0 scopes that will be requested as part of
      Microsoft Account authentication.
      This setting is optional. If not specified, "wl.basic" is used as the default scope.
-     Microsoft Account Scopes and permissions documentation: https://msdn.microsoft.com/en-
-     us/library/dn631845.aspx.
+     Microsoft Account Scopes and permissions documentation:
+     https://msdn.microsoft.com/en-us/library/dn631845.aspx.
     :type microsoft_account_o_auth_scopes: list[str]
     """
 
@@ -6953,7 +6953,7 @@ class TriggeredWebJob(ProxyOnlyResource):
     :param using_sdk: Using SDK?.
     :type using_sdk: bool
     :param settings: Job settings.
-    :type settings: dict[str, object]
+    :type settings: dict[str, any]
     """
 
     _validation = {
@@ -6994,7 +6994,7 @@ class TriggeredWebJob(ProxyOnlyResource):
         job_type: Optional[Union[str, "WebJobType"]] = None,
         error: Optional[str] = None,
         using_sdk: Optional[bool] = None,
-        settings: Optional[Dict[str, object]] = None,
+        settings: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(TriggeredWebJob, self).__init__(kind=kind, **kwargs)
@@ -7243,8 +7243,8 @@ class VnetInfo(ProxyOnlyResource):
     :ivar resync_required: :code:`<code>true</code>` if a resync is required; otherwise,
      :code:`<code>false</code>`.
     :vartype resync_required: bool
-    :param dns_servers: DNS servers to be used by this Virtual Network. This should be a comma-
-     separated list of IP addresses.
+    :param dns_servers: DNS servers to be used by this Virtual Network. This should be a
+     comma-separated list of IP addresses.
     :type dns_servers: str
     """
 
@@ -7450,7 +7450,7 @@ class WebJob(ProxyOnlyResource):
     :param using_sdk: Using SDK?.
     :type using_sdk: bool
     :param settings: Job settings.
-    :type settings: dict[str, object]
+    :type settings: dict[str, any]
     """
 
     _validation = {
@@ -7485,7 +7485,7 @@ class WebJob(ProxyOnlyResource):
         job_type: Optional[Union[str, "WebJobType"]] = None,
         error: Optional[str] = None,
         using_sdk: Optional[bool] = None,
-        settings: Optional[Dict[str, object]] = None,
+        settings: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(WebJob, self).__init__(kind=kind, **kwargs)

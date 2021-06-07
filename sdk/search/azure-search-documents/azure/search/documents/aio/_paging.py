@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, TYPE_CHECKING
+from typing import Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator, ReturnType
 from .._generated.models import SearchRequest
@@ -12,10 +12,6 @@ from .._paging import (
     pack_continuation_token,
     unpack_continuation_token,
 )
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from ...documents.models import AnswerResult
 
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
     def __init__(self, *args, **kwargs):
@@ -65,11 +61,6 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         """
         return await self._first_iterator_instance().get_count()
 
-    async def get_answers(self):
-        # type: () -> Union[list[AnswerResult], None]
-        """Return answers."""
-        return await self._first_iterator_instance().get_answers()
-
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
 # fact, become a method of the class when it is applied.
@@ -118,6 +109,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
 
     @_ensure_response
     async def get_facets(self):
+        self.continuation_token = None
         facets = self._response.facets
         if facets is not None and self._facets is None:
             self._facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
@@ -125,12 +117,10 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
 
     @_ensure_response
     async def get_coverage(self):
+        self.continuation_token = None
         return self._response.coverage
 
     @_ensure_response
     async def get_count(self):
+        self.continuation_token = None
         return self._response.count
-
-    @_ensure_response
-    async def get_answers(self):
-        return self._response.answers

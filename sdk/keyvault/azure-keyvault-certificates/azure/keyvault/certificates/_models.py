@@ -147,7 +147,7 @@ class CertificateProperties(object):
         # type: (**Any) -> None
         self._attributes = kwargs.pop("attributes", None)
         self._id = kwargs.pop("cert_id", None)
-        self._vault_id = parse_key_vault_id(self._id)
+        self._vault_id = KeyVaultCertificateIdentifier(self._id)
         self._x509_thumbprint = kwargs.pop("x509_thumbprint", None)
         self._tags = kwargs.pop("tags", None)
 
@@ -392,6 +392,45 @@ class KeyVaultCertificate(object):
         return self._cer
 
 
+class KeyVaultCertificateIdentifier(object):
+    """Information about a KeyVaultCertificate parsed from a certificate ID.
+
+    :param str source_id: the full original identifier of a certificate
+    :raises ValueError: if the certificate ID is improperly formatted
+    Example:
+        .. literalinclude:: ../tests/test_parse_id.py
+            :start-after: [START parse_key_vault_certificate_id]
+            :end-before: [END parse_key_vault_certificate_id]
+            :language: python
+            :caption: Parse a certificate's ID
+            :dedent: 8
+    """
+
+    def __init__(self, source_id):
+        # type: (str) -> None
+        self._resource_id = parse_key_vault_id(source_id)
+
+    @property
+    def source_id(self):
+        # type: () -> str
+        return self._resource_id.source_id
+
+    @property
+    def vault_url(self):
+        # type: () -> str
+        return self._resource_id.vault_url
+
+    @property
+    def name(self):
+        # type: () -> str
+        return self._resource_id.name
+
+    @property
+    def version(self):
+        # type: () -> Optional[str]
+        return self._resource_id.version
+
+
 class CertificateOperation(object):
     # pylint:disable=too-many-instance-attributes
     """A certificate operation is returned in case of long running requests.
@@ -604,7 +643,8 @@ class CertificatePolicy(object):
     :paramtype enhanced_key_usage: list[str]
     :keyword key_usage: List of key usages.
     :paramtype key_usage: list[str or ~azure.keyvault.certificates.KeyUsageType]
-    :keyword content_type: The media type (MIME type) of the secret backing the certificate.
+    :keyword content_type: The media type (MIME type) of the secret backing the certificate.  If not specified,
+        :attr:`CertificateContentType.pkcs12` is assumed.
     :paramtype content_type: str or ~azure.keyvault.certificates.CertificateContentType
     :keyword int validity_in_months: The duration that the certificate is valid in months.
     :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime

@@ -51,6 +51,8 @@ class FilterMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     EXCLUDE = "Exclude"
     INCLUDE = "Include"
+    RECOMMEND = "Recommend"
+    DEFAULT = "Default"
 
 class HDInsightClusterProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state, which only appears in the response.

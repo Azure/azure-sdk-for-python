@@ -22,7 +22,8 @@ pip install azure-identity
 ### Prerequisites
 
 - an [Azure subscription](https://azure.microsoft.com/free/)
-- Python 2.7 or 3.5.3+
+- Python 2.7 or a recent version of Python 3 (this library doesn't support
+  end-of-life versions)
 
 ### Authenticating during local development
 
@@ -85,9 +86,12 @@ the following mechanisms in this order, stopping when one succeeds:
   Managed Identity enabled, `DefaultAzureCredential` will authenticate with it.
 - Visual Studio Code - if a user has signed in to the Visual Studio Code Azure
   Account extension, `DefaultAzureCredential` will authenticate as that user.
-- Azure CLI - If a user has signed in via the Azure CLI `az login` command,
+- Azure CLI - if a user has signed in via the Azure CLI `az login` command,
   `DefaultAzureCredential` will authenticate as that user.
-- Interactive - If enabled, `DefaultAzureCredential` will interactively
+- Azure PowerShell - if a user has signed in via Azure PowerShell's
+  `Connect-AzAccount` command, `DefaultAzureCredential` will authenticate
+  as that user.
+- Interactive - if enabled, `DefaultAzureCredential` will interactively
   authenticate a user via the default browser.
 
 >DefaultAzureCredential is intended to simplify getting started with the SDK by handling common
@@ -181,7 +185,7 @@ client = EventHubProducerClient(namespace, eventhub_name, credential_chain)
 
 ### Async credentials
 
-This library includes an async API supported on Python 3.5+. To use the async
+This library includes an async API supported on Python 3. To use the async
 credentials in [azure.identity.aio][ref_docs_aio], you must first install an
 async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). See
 [azure-core documentation][azure_core_transport_doc] for more information.

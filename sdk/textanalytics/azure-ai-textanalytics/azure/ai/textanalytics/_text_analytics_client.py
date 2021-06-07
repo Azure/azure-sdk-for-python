@@ -3,10 +3,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
-from typing import (  # pylint: disable=unused-import
+import copy
+from typing import (
     Union,
-    Optional,
     Any,
     List,
     Dict,
@@ -14,7 +13,6 @@ from typing import (  # pylint: disable=unused-import
 )
 from functools import partial
 from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
@@ -33,14 +31,13 @@ from ._response_handlers import (
     pii_entities_result,
     healthcare_paged_result,
     analyze_paged_result,
-    _get_deserialize
 )
 
 from ._models import AnalyzeActionsType
 
 from ._lro import (
     TextAnalyticsOperationResourcePolling,
-    AnalyzeBatchActionsLROPollingMethod,
+    AnalyzeActionsLROPollingMethod,
     AnalyzeHealthcareEntitiesLROPollingMethod,
 )
 
@@ -61,9 +58,10 @@ if TYPE_CHECKING:
         RecognizeLinkedEntitiesAction,
         ExtractKeyPhrasesAction,
         AnalyzeSentimentAction,
-        AnalyzeHealthcareEntitiesResultItem,
+        AnalyzeHealthcareEntitiesResult,
         AnalyzeActionsResult,
     )
+    from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
 
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
@@ -120,7 +118,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_index_type_default = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
-        self._deserialize = _get_deserialize()
 
 
     @distributed_trace
@@ -157,6 +154,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the Text Analytics natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
         :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -178,6 +183,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        if disable_service_logs is not None:
+            kwargs['logging_opt_out'] = disable_service_logs
         try:
             return self._client.languages(
                 documents=docs,
@@ -228,6 +236,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the Text Analytics natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -256,6 +272,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        if disable_service_logs is not None:
+            kwargs['logging_opt_out'] = disable_service_logs
 
         try:
             return self._client.entities_recognition_general(
@@ -316,6 +335,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the Text Analytics natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -347,6 +374,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        if disable_service_logs is not None:
+            kwargs['logging_opt_out'] = disable_service_logs
 
         try:
             return self._client.entities_recognition_pii(
@@ -407,6 +437,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the Text Analytics natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -428,6 +466,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        if disable_service_logs is not None:
+            kwargs['logging_opt_out'] = disable_service_logs
 
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
@@ -449,8 +490,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
-        healthcare_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.5").HealthcareJobState,
+        healthcare_result = self._client.models(api_version="v3.1-preview.5").HealthcareJobState.deserialize(
             raw_response
         )
         return healthcare_paged_result(
@@ -467,7 +507,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeHealthcareEntitiesResultItem]]
+    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[AnalyzeHealthcareEntitiesResult]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -503,11 +543,19 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the Text Analytics natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
         :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
-            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem`.
+            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult`.
         :rtype:
-            ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
-            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem]]
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesLROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
@@ -529,22 +577,30 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         string_index_type = kwargs.pop("string_index_type", self._string_index_type_default)
 
         doc_id_order = [doc.get("id") for doc in docs]
+        my_cls = kwargs.pop(
+            "cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)
+        )
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        polling_kwargs = kwargs
+        operation_kwargs = copy.copy(kwargs)
+        if disable_service_logs is not None:
+            operation_kwargs['logging_opt_out'] = disable_service_logs
 
         try:
             return self._client.begin_health(
                 docs,
                 model_version=model_version,
                 string_index_type=string_index_type,
-                cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
+                cls=my_cls,
                 polling=AnalyzeHealthcareEntitiesLROPollingMethod(
                     text_analytics_client=self._client,
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
                     ],
-                    **kwargs),
+                    **polling_kwargs),
                 continuation_token=continuation_token,
-                **kwargs
+                **operation_kwargs
             )
 
         except ValueError as error:
@@ -595,6 +651,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the Text Analytics natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
         :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -616,6 +680,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        if disable_service_logs is not None:
+            kwargs['logging_opt_out'] = disable_service_logs
+
         try:
             return self._client.key_phrases(
                 documents=docs,
@@ -672,6 +740,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the Text Analytics natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
         .. versionadded:: v3.1-preview
             The *show_opinion_mining* parameter.
             The *string_index_type* parameter.
@@ -697,6 +773,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        if disable_service_logs is not None:
+            kwargs['logging_opt_out'] = disable_service_logs
 
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
@@ -727,8 +806,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
-        analyze_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.5").AnalyzeJobState, # pylint: disable=protected-access
+        analyze_result = self._client.models(api_version="v3.1-preview.5").AnalyzeJobState.deserialize(
             raw_response
         )
         return analyze_paged_result(
@@ -747,7 +825,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction]] # pylint: disable=line-too-long
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeActionsResult]]
+    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[AnalyzeActionsResult]]
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
@@ -774,11 +852,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 30 seconds.
-        :return: An instance of an LROPoller. Call `result()` on the poller
+        :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the poller
             object to return a pageable heterogeneous list of the action results in the order
             the actions were sent in this method.
         :rtype:
-            ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
             ~azure.ai.textanalytics.AnalyzeActionsResult]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
@@ -842,7 +920,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=kwargs.pop("cls", partial(
                     self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats
                 )),
-                polling=AnalyzeBatchActionsLROPollingMethod(
+                polling=AnalyzeActionsLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)

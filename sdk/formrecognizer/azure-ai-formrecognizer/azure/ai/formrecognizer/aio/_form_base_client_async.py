@@ -31,9 +31,9 @@ class FormRecognizerClientBaseAsync(object):
     ) -> None:
         self._endpoint = endpoint
         self._credential = credential
-        self._api_version = kwargs.pop(
-            "api_version", FormRecognizerApiVersion.V2_1_PREVIEW
-        )
+        self._api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
+        if self._api_version.startswith("v"):  # v2.0 released with this option
+            self._api_version = self._api_version[1:]
         validate_api_version(self._api_version)
 
         authentication_policy = get_authentication_policy(credential)
@@ -43,14 +43,25 @@ class FormRecognizerClientBaseAsync(object):
         http_logging_policy.allowed_header_names.update(
             {
                 "Operation-Location",
+                "Location",
                 "x-envoy-upstream-service-time",
                 "apim-request-id",
                 "Strict-Transport-Security",
                 "x-content-type-options",
+                "ms-azure-ai-errorcode",
+                "x-ms-cs-error-code",
             }
         )
         http_logging_policy.allowed_query_params.update(
-            {"includeTextDetails", "locale", "language", "includeKeys", "op"}
+            {
+                "includeTextDetails",
+                "locale",
+                "language",
+                "includeKeys",
+                "op",
+                "pages",
+                "readingOrder",
+            }
         )
         self._client = FormRecognizer(
             endpoint=endpoint,

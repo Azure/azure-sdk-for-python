@@ -9,6 +9,8 @@ import pytest
 import platform
 import functools
 import itertools
+import json
+import time
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.pipeline.transport import AioHttpTransport
@@ -416,7 +418,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
 
             for action_result in action_results:
-                assert action_result.statistics
+                assert not hasattr(action_result, "statistics")
                 for doc in action_result.document_results:
                     assert doc.statistics
 
@@ -697,3 +699,23 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     polling_interval=self._interval()
                 )).result()
         assert excinfo.value.status_code == 400
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_disable_service_logs(self, client):
+        actions = [
+            RecognizeEntitiesAction(disable_service_logs=True),
+            ExtractKeyPhrasesAction(disable_service_logs=True),
+            RecognizePiiEntitiesAction(disable_service_logs=True),
+            RecognizeLinkedEntitiesAction(disable_service_logs=True),
+            AnalyzeSentimentAction(disable_service_logs=True),
+        ]
+
+        for action in actions:
+            assert action.disable_service_logs
+
+        await (await client.begin_analyze_actions(
+            documents=["Test for logging disable"],
+            actions=actions,
+            polling_interval=self._interval(),
+        )).result()

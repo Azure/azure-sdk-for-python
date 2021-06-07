@@ -7,7 +7,8 @@ stages:
       DeployArmTemplate: true
       ServiceDirectory: formrecognizer
       TestTimeoutInMinutes: 200
-      TestSamples: true
+      MatrixReplace:
+        - TestSamples=.*/true
       Clouds: 'Prod,Canary'
       # This is a specific request from the formrecognizer service team
       # their claim is that the full matrix ends up stress-testing their service.
@@ -30,19 +31,3 @@ stages:
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
-        # EnvVars for samples to run. TODO: These use an existing FR resource. Fix samples so they don't have to
-        AZURE_FORM_RECOGNIZER_AAD_ENDPOINT: $(python-formrecognizer-test-aad-endpoint)
-        AZURE_FORM_RECOGNIZER_ENDPOINT: $(python-formrecognizer-test-endpoint)
-        AZURE_FORM_RECOGNIZER_KEY: $(python-formrecognizer-test-endpoint-key)
-        CUSTOM_TRAINED_MODEL_ID: $(python-formrecognizer-test-model-trained-without-labels)
-        AZURE_SOURCE_MODEL_ID: $(python-formrecognizer-test-model-trained-with-labels)
-        ID_OF_MODEL_TRAINED_WITH_LABELS: $(python-formrecognizer-test-model-trained-with-labels)
-        ID_OF_MODEL_TRAINED_WITHOUT_LABELS: $(python-formrecognizer-test-model-trained-without-labels)
-        AZURE_FORM_RECOGNIZER_SOURCE_ENDPOINT: $(python-formrecognizer-test-endpoint)
-        AZURE_FORM_RECOGNIZER_SOURCE_KEY: $(python-formrecognizer-test-endpoint-key)
-        AZURE_FORM_RECOGNIZER_TARGET_ENDPOINT: $(python-formrecognizer-test-endpoint)
-        AZURE_FORM_RECOGNIZER_TARGET_KEY: $(python-formrecognizer-test-endpoint-key)
-        AZURE_FORM_RECOGNIZER_TARGET_REGION: $(python-formrecognizer-test-target-region)
-        AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID: $(python-formrecognizer-test-target-resource-id)
-        MODEL_ID_FIXED_ROW_TABLES: $(python-formrecognizer-test-model-id-fixed-row-tables)
-        MODEL_ID_DYNAMIC_ROW_TABLES: $(python-formrecognizer-test-model-id-dynamic-row-tables)

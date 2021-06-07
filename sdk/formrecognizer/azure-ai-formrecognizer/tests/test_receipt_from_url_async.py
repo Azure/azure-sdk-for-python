@@ -346,7 +346,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="en-US")
-        assert "'locale' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+        assert "'locale' is only available for API version V2_1 and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

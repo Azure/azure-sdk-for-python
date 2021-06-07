@@ -139,7 +139,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
     :param pipeline: The pipeline object
     :param response: The response object.
     :keyword bool decompress: If True which is default, will attempt to decode the body based
-            on the ‘content-encoding’ header.
+            on the *content-encoding* header.
     """
     def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs) -> None:
         self.pipeline = pipeline

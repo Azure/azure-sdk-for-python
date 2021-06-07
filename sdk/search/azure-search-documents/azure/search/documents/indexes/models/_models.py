@@ -84,7 +84,7 @@ class AnalyzeTextOptions(msrest.serialization.Model):
         self.token_filters = kwargs.get('token_filters', None)
         self.char_filters = kwargs.get('char_filters', None)
 
-    def to_analyze_request(self):
+    def _to_analyze_request(self):
         return AnalyzeRequest(
             text=self.text,
             analyzer=self.analyzer_name,
@@ -403,7 +403,7 @@ class SynonymMap(msrest.serialization.Model):
     :vartype format: str
     :param synonyms: Required. A series of synonym rules in the specified synonym map format. The
      rules must be separated by newlines.
-    :type synonyms: str
+    :type synonyms: list[str]
     :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive

@@ -32,11 +32,11 @@ client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
 async def create_synonym_map():
     # [START create_synonym_map_async]
-    solr_format_synonyms = "\n".join([
+    synonyms = [
         "USA, United States, United States of America",
         "Washington, Wash. => WA",
-    ])
-    synonym_map = SynonymMap(name="test-syn-map", synonyms=solr_format_synonyms)
+    ]
+    synonym_map = SynonymMap(name="test-syn-map", synonyms=synonyms)
     result = await client.create_synonym_map(synonym_map)
     print("Create new Synonym Map 'test-syn-map succeeded")
     # [END create_synonym_map_async]

@@ -7,12 +7,10 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from base64 import b64encode
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
 from enum import Enum
 from math import isnan
-import uuid
 
 from devtools_testutils import AzureTestCase
 
@@ -23,7 +21,7 @@ from azure.data.tables import (
     EntityProperty,
     EdmType,
     TableSasPermissions,
-    AccessPolicy,
+    TableAccessPolicy,
     UpdateMode
 )
 
@@ -33,6 +31,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError,
+    ResourceModifiedError
 )
 
 from _shared.testcase import TableTestCase
@@ -41,261 +40,6 @@ from preparers import tables_decorator
 # ------------------------------------------------------------------------------
 
 class StorageTableEntityTest(AzureTestCase, TableTestCase):
-
-    def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='table'):
-        self.table_name = self.get_resource_name('uttable')
-        self.ts = TableServiceClient(
-            self.account_url(tables_storage_account_name, url),
-            credential=tables_primary_storage_account_key,
-            table_name = self.table_name
-        )
-        self.table = self.ts.get_table_client(self.table_name)
-        if self.is_live:
-            try:
-                self.ts.create_table(self.table_name)
-            except ResourceExistsError:
-                pass
-
-        self.query_tables = []
-
-    def _tear_down(self):
-        if self.is_live:
-            try:
-                self.ts.delete_table(self.table_name)
-            except:
-                pass
-
-            try:
-                for table_name in self.query_tables:
-                    try:
-                        self.ts.delete_table(table_name)
-                    except:
-                        pass
-            except AttributeError:
-                pass
-
-    # --Helpers-----------------------------------------------------------------
-
-    def _create_query_table(self, entity_count):
-        """
-        Creates a table with the specified name and adds entities with the
-        default set of values. PartitionKey is set to 'MyPartition' and RowKey
-        is set to a unique counter value starting at 1 (as a string).
-        """
-        table_name = self.get_resource_name('querytable')
-        table = self.ts.create_table(table_name)
-        self.query_tables.append(table_name)
-        client = self.ts.get_table_client(table_name)
-        entity = self._create_random_entity_dict()
-        for i in range(1, entity_count + 1):
-            entity['RowKey'] = entity['RowKey'] + str(i)
-            client.create_entity(entity)
-        return client
-
-    def _create_random_base_entity_dict(self):
-        """
-        Creates a dict-based entity with only pk and rk.
-        """
-        partition, row = self._create_pk_rk(None, None)
-        return {
-            'PartitionKey': partition,
-            'RowKey': row,
-        }
-
-    def _create_pk_rk(self, pk, rk):
-        try:
-            pk = pk if pk is not None else self.get_resource_name('pk').decode('utf-8')
-            rk = rk if rk is not None else self.get_resource_name('rk').decode('utf-8')
-        except AttributeError:
-            pk = pk if pk is not None else self.get_resource_name('pk')
-            rk = rk if rk is not None else self.get_resource_name('rk')
-        return pk, rk
-
-    def _insert_two_opposite_entities(self, pk=None, rk=None):
-        entity1 = self._create_random_entity_dict()
-        resp = self.table.create_entity(entity1)
-
-        partition, row = self._create_pk_rk(pk, rk)
-        properties = {
-            'PartitionKey': partition + u'1',
-            'RowKey': row + u'1',
-            'age': 49,
-            'sex': u'female',
-            'married': False,
-            'deceased': True,
-            'optional': None,
-            'ratio': 5.2,
-            'evenratio': 6.0,
-            'large': 39999011,
-            'Birthday': datetime(1993, 4, 1, tzinfo=tzutc()),
-            'birthday': datetime(1990, 4, 1, tzinfo=tzutc()),
-            'binary': b'binary-binary',
-            'other': EntityProperty(40, EdmType.INT32),
-            'clsid': uuid.UUID('c8da6455-213e-42d9-9b79-3f9149a57833')
-        }
-        self.table.create_entity(properties)
-        return entity1, resp
-
-    def _create_random_entity_dict(self, pk=None, rk=None):
-        """
-        Creates a dictionary-based entity with fixed values, using all
-        of the supported data types.
-        """
-        partition, row = self._create_pk_rk(pk, rk)
-        properties = {
-            'PartitionKey': partition,
-            'RowKey': row,
-            'age': 39,
-            'sex': u'male',
-            'married': True,
-            'deceased': False,
-            'optional': None,
-            'ratio': 3.1,
-            'evenratio': 3.0,
-            'large': 933311100,
-            'Birthday': datetime(1973, 10, 4, tzinfo=tzutc()),
-            'birthday': datetime(1970, 10, 4, tzinfo=tzutc()),
-            'binary': b'binary',
-            'other': EntityProperty(20, EdmType.INT32),
-            'clsid': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        }
-        return TableEntity(**properties)
-
-    def _insert_random_entity(self, pk=None, rk=None):
-        entity = self._create_random_entity_dict(pk, rk)
-        metadata = self.table.create_entity(entity)
-        return entity, metadata['etag']
-
-    def _create_updated_entity_dict(self, partition, row):
-        """
-        Creates a dictionary-based entity with fixed values, with a
-        different set of values than the default entity. It
-        adds fields, changes field values, changes field types,
-        and removes fields when compared to the default entity.
-        """
-        return {
-            'PartitionKey': partition,
-            'RowKey': row,
-            'age': u'abc',
-            'sex': u'female',
-            'sign': u'aquarius',
-            'birthday': datetime(1991, 10, 4, tzinfo=tzutc())
-        }
-
-    def _assert_default_entity(self, entity, headers=None):
-        '''
-        Asserts that the entity passed in matches the default entity.
-        '''
-        assert entity['age'] ==  39
-        assert entity['sex'] ==  'male'
-        assert entity['married'] ==  True
-        assert entity['deceased'] ==  False
-        assert not "optional" in entity
-        assert not "aquarius" in entity
-        assert entity['ratio'] ==  3.1
-        assert entity['evenratio'] ==  3.0
-        assert entity['large'] ==  933311100
-        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity['birthday'] == datetime(1970, 10, 4, tzinfo=tzutc())
-        assert entity['binary'].value ==  b'binary'
-        assert entity['other'] ==  20
-        assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_default_entity_json_full_metadata(self, entity, headers=None):
-        '''
-        Asserts that the entity passed in matches the default entity.
-        '''
-        assert entity['age'] ==  39
-        assert entity['sex'] ==  'male'
-        assert entity['married'] ==  True
-        assert entity['deceased'] ==  False
-        assert not "optional" in entity
-        assert not "aquarius" in entity
-        assert entity['ratio'] ==  3.1
-        assert entity['evenratio'] ==  3.0
-        assert entity['large'] ==  933311100
-        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity['birthday'] == datetime(1970, 10, 4, tzinfo=tzutc())
-        assert entity['binary'].value ==  b'binary'
-        assert entity['other'] ==  20
-        assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_default_entity_json_no_metadata(self, entity, headers=None):
-        '''
-        Asserts that the entity passed in matches the default entity.
-        '''
-        assert entity['age'] ==  39
-        assert entity['sex'] ==  'male'
-        assert entity['married'] ==  True
-        assert entity['deceased'] ==  False
-        assert not "optional" in entity
-        assert not "aquarius" in entity
-        assert entity['ratio'] ==  3.1
-        assert entity['evenratio'] ==  3.0
-        assert entity['large'] ==  933311100
-        assert entity['Birthday'].startswith('1973-10-04T00:00:00')
-        assert entity['birthday'].startswith('1970-10-04T00:00:00')
-        assert entity['Birthday'].endswith('00Z')
-        assert entity['birthday'].endswith('00Z')
-        assert entity['binary'] ==  b64encode(b'binary').decode('utf-8')
-        assert entity['other'] ==  20
-        assert entity['clsid'] ==  'c9da6455-213d-42c9-9a79-3e9149a57833'
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_updated_entity(self, entity):
-        '''
-        Asserts that the entity passed in matches the updated entity.
-        '''
-        assert entity['age'] ==  'abc'
-        assert entity['sex'] ==  'female'
-        assert not "married" in entity
-        assert not "deceased" in entity
-        assert entity['sign'] ==  'aquarius'
-        assert not "optional" in entity
-        assert not "ratio" in entity
-        assert not "evenratio" in entity
-        assert not "large" in entity
-        assert not "Birthday" in entity
-        assert entity['birthday'] == datetime(1991, 10, 4, tzinfo=tzutc())
-        assert not "other" in entity
-        assert not "clsid" in entity
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_merged_entity(self, entity):
-        '''
-        Asserts that the entity passed in matches the default entity
-        merged with the updated entity.
-        '''
-        assert entity['age'] ==  'abc'
-        assert entity['sex'] ==  'female'
-        assert entity['sign'] ==  'aquarius'
-        assert entity['married'] ==  True
-        assert entity['deceased'] ==  False
-        assert entity['ratio'] ==  3.1
-        assert entity['evenratio'] ==  3.0
-        assert entity['large'] ==  933311100
-        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity['birthday'] == datetime(1991, 10, 4, tzinfo=tzutc())
-        assert entity['other'] ==  20
-        assert isinstance(entity['clsid'],  uuid.UUID)
-        assert str(entity['clsid']) ==  'c9da6455-213d-42c9-9a79-3e9149a57833'
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_valid_metadata(self, metadata):
-        keys = metadata.keys()
-        assert "version" in  keys
-        assert "date" in  keys
-        assert "etag" in  keys
-        assert len(keys) ==  3
-
-    # --Test cases for entities ------------------------------------------
     @tables_decorator
     def test_url_encoding_at_symbol(self, tables_storage_account_name, tables_primary_storage_account_key):
 
@@ -737,12 +481,12 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            entity = {'RowKey': 'rk'}
+            entity = {'RowKey': u'rk'}
 
             # Act
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError) as error:
                 resp = self.table.create_entity(entity=entity)
-            # Assert
+                assert str(error).contains("PartitionKey must be present in an entity")
         finally:
             self._tear_down()
 
@@ -765,11 +509,12 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            entity = {'PartitionKey': 'pk'}
+            entity = {'PartitionKey': u'pk'}
 
             # Act
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError) as error:
                 resp = self.table.create_entity(entity=entity)
+                assert str(error).contains("RowKey must be present in an entity")
 
         finally:
             self._tear_down()
@@ -953,7 +698,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             new_etag = e.metadata["etag"]
             e.metadata["etag"] = old_etag
 
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 self.table.delete_entity(e, match_condition=MatchConditions.IfNotModified)
 
             # Try delete with correct etag
@@ -1134,7 +879,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
 
             sent_entity = self._create_updated_entity_dict(entity[u'PartitionKey'], entity[u'RowKey'])
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 self.table.update_entity(
                     mode=UpdateMode.REPLACE,
                     entity=sent_entity,
@@ -1287,7 +1032,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 self.table.update_entity(mode=UpdateMode.MERGE,
                                          entity=sent_entity,
                                          etag='W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
@@ -1350,7 +1095,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 self.table.delete_entity(
                     entity['PartitionKey'], entity['RowKey'],
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
@@ -1527,15 +1272,15 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Assert
             assert resp is not None
-            assert resp['EmptyByte'].value ==  b''
+            assert resp['EmptyByte'] ==  b''
             assert resp['EmptyUnicode'] ==  u''
-            assert resp['SpacesOnlyByte'].value ==  b'   '
+            assert resp['SpacesOnlyByte'] ==  b'   '
             assert resp['SpacesOnlyUnicode'] ==  u'   '
-            assert resp['SpacesBeforeByte'].value ==  b'   Text'
+            assert resp['SpacesBeforeByte'] ==  b'   Text'
             assert resp['SpacesBeforeUnicode'] ==  u'   Text'
-            assert resp['SpacesAfterByte'].value ==  b'Text   '
+            assert resp['SpacesAfterByte'] ==  b'Text   '
             assert resp['SpacesAfterUnicode'] ==  u'Text   '
-            assert resp['SpacesBeforeAndAfterByte'].value ==  b'   Text   '
+            assert resp['SpacesBeforeAndAfterByte'] ==  b'   Text   '
             assert resp['SpacesBeforeAndAfterUnicode'] ==  u'   Text   '
         finally:
             self._tear_down()
@@ -1573,7 +1318,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Assert
             assert resp is not None
-            assert resp['binary'].value ==  binary_data
+            assert resp['binary'] ==  binary_data
         finally:
             self._tear_down()
 
@@ -1864,7 +1609,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_query(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
 
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1897,7 +1641,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_add(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1930,7 +1673,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_add_inside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1962,7 +1704,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_add_outside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1993,7 +1734,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_update(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -2024,7 +1764,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -2054,14 +1793,13 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_upper_case_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             entity, _ = self._insert_random_entity()
 
-            access_policy = AccessPolicy()
+            access_policy = TableAccessPolicy()
             access_policy.start = datetime(2011, 10, 11)
             access_policy.expiry = datetime(2025, 10, 12)
             access_policy.permission = TableSasPermissions(read=True)
@@ -2095,14 +1833,13 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             entity, _ = self._insert_random_entity()
 
-            access_policy = AccessPolicy()
+            access_policy = TableAccessPolicy()
             access_policy.start = datetime(2011, 10, 11)
             access_policy.expiry = datetime(2025, 10, 12)
             access_policy.permission = TableSasPermissions(read=True)
@@ -2178,5 +1915,111 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             assert isinstance(updated['datetime1'], datetime)
             assert isinstance(updated['datetime2'], datetime)
             assert updated['datetime1'].tables_service_value == dotnet_timestamp
+        finally:
+            self._tear_down()
+    
+    @tables_decorator
+    def test_datetime_duplicate_field(self, tables_storage_account_name, tables_primary_storage_account_key):
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9)
+        }
+        try:
+            self.table.create_entity(entity)
+            received = self.table.get_entity(partition, row)
+
+            assert 'Timestamp' not in received
+            assert 'timestamp' in received.metadata
+            assert isinstance(received.metadata['timestamp'], datetime)
+            assert received.metadata['timestamp'].year > 2020
+        
+            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9)
+            self.table.update_entity(received, mode=UpdateMode.REPLACE)
+            received = self.table.get_entity(partition, row)
+
+            assert 'timestamp' in received
+            assert isinstance(received['timestamp'], datetime)
+            assert received['timestamp'].year == 1999
+            assert isinstance(received.metadata['timestamp'], datetime)
+            assert received.metadata['timestamp'].year > 2020
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    def test_etag_duplicate_field(self, tables_storage_account_name, tables_primary_storage_account_key):
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'ETag': u'foo',
+            'etag': u'bar',
+            'Etag': u'baz',
+        }
+        try:
+            self.table.create_entity(entity)
+            created = self.table.get_entity(partition, row)
+
+            assert created['ETag'] == u'foo'
+            assert created['etag'] == u'bar'
+            assert created['Etag'] == u'baz'
+            assert created.metadata['etag'].startswith(u'W/"datetime\'')
+
+            entity['ETag'] = u'one'
+            entity['etag'] = u'two'
+            entity['Etag'] = u'three'
+            with pytest.raises(ValueError):
+                self.table.update_entity(entity, match_condition=MatchConditions.IfNotModified)
+        
+            created['ETag'] = u'one'
+            created['etag'] = u'two'
+            created['Etag'] = u'three'
+            self.table.update_entity(created, match_condition=MatchConditions.IfNotModified)
+
+            updated = self.table.get_entity(partition, row)
+            assert updated['ETag'] == u'one'
+            assert updated['etag'] == u'two'
+            assert updated['Etag'] == u'three'
+            assert updated.metadata['etag'].startswith(u'W/"datetime\'')
+            assert updated.metadata['etag'] != created.metadata['etag']
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    def test_entity_create_response_echo(self, tables_storage_account_name, tables_primary_storage_account_key):
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'Value': u'foobar',
+            'Answer': 42
+        }
+        try:
+            result = self.table.create_entity(entity)
+            assert 'preference_applied' not in result
+            assert 'content' not in result
+            self.table.delete_entity(entity)
+
+            result = self.table.create_entity(entity, headers={'Prefer': 'return-no-content'})
+            assert 'preference_applied' in result
+            assert result['preference_applied'] == 'return-no-content'
+            assert 'content' in result
+            assert result['content'] is None
+            self.table.delete_entity(entity)
+
+            result = self.table.create_entity(entity, headers={'Prefer': 'return-content'})
+            assert 'preference_applied' in result
+            assert result['preference_applied'] == 'return-content'
+            assert 'content' in result
+            assert result['content']['PartitionKey'] == partition
+            assert result['content']['Value'] == u'foobar'
+            assert result['content']['Answer'] == 42
         finally:
             self._tear_down()

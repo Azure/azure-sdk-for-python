@@ -10,6 +10,50 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
+class AaddsResourceDetails(msrest.serialization.Model):
+    """The Azure active directory domain service resource details.
+
+    :param domain_name: The Azure active directory domain service name.
+    :type domain_name: str
+    :param initial_sync_complete: This indicates whether initial sync complete or not.
+    :type initial_sync_complete: bool
+    :param ldaps_enabled: This indicates whether enable ldaps or not.
+    :type ldaps_enabled: bool
+    :param ldaps_public_certificate_in_base64: The base 64 format string of public ldap
+     certificate.
+    :type ldaps_public_certificate_in_base64: str
+    :param resource_id: The resource id of azure active directory domain service.
+    :type resource_id: str
+    :param subnet_id: The subnet resource id.
+    :type subnet_id: str
+    :param tenant_id: The tenant id of azure active directory domain service .
+    :type tenant_id: str
+    """
+
+    _attribute_map = {
+        'domain_name': {'key': 'domainName', 'type': 'str'},
+        'initial_sync_complete': {'key': 'initialSyncComplete', 'type': 'bool'},
+        'ldaps_enabled': {'key': 'ldapsEnabled', 'type': 'bool'},
+        'ldaps_public_certificate_in_base64': {'key': 'ldapsPublicCertificateInBase64', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'subnet_id': {'key': 'subnetId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AaddsResourceDetails, self).__init__(**kwargs)
+        self.domain_name = kwargs.get('domain_name', None)
+        self.initial_sync_complete = kwargs.get('initial_sync_complete', None)
+        self.ldaps_enabled = kwargs.get('ldaps_enabled', None)
+        self.ldaps_public_certificate_in_base64 = kwargs.get('ldaps_public_certificate_in_base64', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.subnet_id = kwargs.get('subnet_id', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+
+
 class Resource(msrest.serialization.Model):
     """The core properties of ARM resources.
 
@@ -45,7 +89,39 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
-class Application(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class Application(ProxyResource):
     """The HDInsight cluster application.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -98,12 +174,15 @@ class ApplicationGetEndpoint(msrest.serialization.Model):
     :type destination_port: int
     :param public_port: The public port to connect to.
     :type public_port: int
+    :param private_ip_address: The private ip address of the endpoint.
+    :type private_ip_address: str
     """
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'destination_port': {'key': 'destinationPort', 'type': 'int'},
         'public_port': {'key': 'publicPort', 'type': 'int'},
+        'private_ip_address': {'key': 'privateIPAddress', 'type': 'str'},
     }
 
     def __init__(
@@ -114,30 +193,41 @@ class ApplicationGetEndpoint(msrest.serialization.Model):
         self.location = kwargs.get('location', None)
         self.destination_port = kwargs.get('destination_port', None)
         self.public_port = kwargs.get('public_port', None)
+        self.private_ip_address = kwargs.get('private_ip_address', None)
 
 
 class ApplicationGetHttpsEndpoint(msrest.serialization.Model):
     """Gets the application HTTP endpoints.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :param access_modes: The list of access modes for the application.
     :type access_modes: list[str]
-    :param location: The location of the endpoint.
-    :type location: str
+    :ivar location: The location of the endpoint.
+    :vartype location: str
     :param destination_port: The destination port to connect to.
     :type destination_port: int
-    :param public_port: The public port to connect to.
-    :type public_port: int
+    :ivar public_port: The public port to connect to.
+    :vartype public_port: int
+    :param private_ip_address: The private ip address of the endpoint.
+    :type private_ip_address: str
     :param sub_domain_suffix: The subdomain suffix of the application.
     :type sub_domain_suffix: str
     :param disable_gateway_auth: The value indicates whether to disable GatewayAuth.
     :type disable_gateway_auth: bool
     """
 
+    _validation = {
+        'location': {'readonly': True},
+        'public_port': {'readonly': True},
+    }
+
     _attribute_map = {
         'access_modes': {'key': 'accessModes', 'type': '[str]'},
         'location': {'key': 'location', 'type': 'str'},
         'destination_port': {'key': 'destinationPort', 'type': 'int'},
         'public_port': {'key': 'publicPort', 'type': 'int'},
+        'private_ip_address': {'key': 'privateIPAddress', 'type': 'str'},
         'sub_domain_suffix': {'key': 'subDomainSuffix', 'type': 'str'},
         'disable_gateway_auth': {'key': 'disableGatewayAuth', 'type': 'bool'},
     }
@@ -148,9 +238,10 @@ class ApplicationGetHttpsEndpoint(msrest.serialization.Model):
     ):
         super(ApplicationGetHttpsEndpoint, self).__init__(**kwargs)
         self.access_modes = kwargs.get('access_modes', None)
-        self.location = kwargs.get('location', None)
+        self.location = None
         self.destination_port = kwargs.get('destination_port', None)
-        self.public_port = kwargs.get('public_port', None)
+        self.public_port = None
+        self.private_ip_address = kwargs.get('private_ip_address', None)
         self.sub_domain_suffix = kwargs.get('sub_domain_suffix', None)
         self.disable_gateway_auth = kwargs.get('disable_gateway_auth', None)
 
@@ -250,6 +341,30 @@ class ApplicationProperties(msrest.serialization.Model):
         self.errors = kwargs.get('errors', None)
         self.created_date = None
         self.marketplace_identifier = None
+
+
+class AsyncOperationResult(msrest.serialization.Model):
+    """The azure async operation response.
+
+    :param status: The async operation state. Possible values include: "InProgress", "Succeeded",
+     "Failed".
+    :type status: str or ~azure.mgmt.hdinsight.models.AsyncOperationState
+    :param error: The operation error information.
+    :type error: ~azure.mgmt.hdinsight.models.Errors
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'Errors'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AsyncOperationResult, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.error = kwargs.get('error', None)
 
 
 class Autoscale(msrest.serialization.Model):
@@ -390,6 +505,106 @@ class AutoscaleTimeAndCapacity(msrest.serialization.Model):
         self.max_instance_count = kwargs.get('max_instance_count', None)
 
 
+class AzureMonitorRequest(msrest.serialization.Model):
+    """The azure monitor parameters.
+
+    :param workspace_id: The Log Analytics workspace ID.
+    :type workspace_id: str
+    :param primary_key: The Log Analytics workspace key.
+    :type primary_key: str
+    :param selected_configurations: The selected configurations.
+    :type selected_configurations: ~azure.mgmt.hdinsight.models.AzureMonitorSelectedConfigurations
+    """
+
+    _attribute_map = {
+        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
+        'primary_key': {'key': 'primaryKey', 'type': 'str'},
+        'selected_configurations': {'key': 'selectedConfigurations', 'type': 'AzureMonitorSelectedConfigurations'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureMonitorRequest, self).__init__(**kwargs)
+        self.workspace_id = kwargs.get('workspace_id', None)
+        self.primary_key = kwargs.get('primary_key', None)
+        self.selected_configurations = kwargs.get('selected_configurations', None)
+
+
+class AzureMonitorResponse(msrest.serialization.Model):
+    """The azure monitor status response.
+
+    :param cluster_monitoring_enabled: The status of the monitor on the HDInsight cluster.
+    :type cluster_monitoring_enabled: bool
+    :param workspace_id: The workspace ID of the monitor on the HDInsight cluster.
+    :type workspace_id: str
+    :param selected_configurations: The selected configurations.
+    :type selected_configurations: ~azure.mgmt.hdinsight.models.AzureMonitorSelectedConfigurations
+    """
+
+    _attribute_map = {
+        'cluster_monitoring_enabled': {'key': 'clusterMonitoringEnabled', 'type': 'bool'},
+        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
+        'selected_configurations': {'key': 'selectedConfigurations', 'type': 'AzureMonitorSelectedConfigurations'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureMonitorResponse, self).__init__(**kwargs)
+        self.cluster_monitoring_enabled = kwargs.get('cluster_monitoring_enabled', None)
+        self.workspace_id = kwargs.get('workspace_id', None)
+        self.selected_configurations = kwargs.get('selected_configurations', None)
+
+
+class AzureMonitorSelectedConfigurations(msrest.serialization.Model):
+    """The selected configurations for azure monitor.
+
+    :param configuration_version: The configuration version.
+    :type configuration_version: str
+    :param global_configurations: The global configurations of selected configurations.
+    :type global_configurations: dict[str, str]
+    :param table_list: The table list.
+    :type table_list: list[~azure.mgmt.hdinsight.models.AzureMonitorTableConfiguration]
+    """
+
+    _attribute_map = {
+        'configuration_version': {'key': 'configurationVersion', 'type': 'str'},
+        'global_configurations': {'key': 'globalConfigurations', 'type': '{str}'},
+        'table_list': {'key': 'tableList', 'type': '[AzureMonitorTableConfiguration]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureMonitorSelectedConfigurations, self).__init__(**kwargs)
+        self.configuration_version = kwargs.get('configuration_version', None)
+        self.global_configurations = kwargs.get('global_configurations', None)
+        self.table_list = kwargs.get('table_list', None)
+
+
+class AzureMonitorTableConfiguration(msrest.serialization.Model):
+    """The table configuration for the Log Analytics integration.
+
+    :param name: The name.
+    :type name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureMonitorTableConfiguration, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+
+
 class BillingMeters(msrest.serialization.Model):
     """The billing meters.
 
@@ -447,18 +662,30 @@ class BillingResources(msrest.serialization.Model):
 class BillingResponseListResult(msrest.serialization.Model):
     """The response for the operation to get regional billingSpecs for a subscription.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :param vm_sizes: The virtual machine sizes to include or exclude.
     :type vm_sizes: list[str]
+    :param vm_sizes_with_encryption_at_host: The vm sizes which enable encryption at host.
+    :type vm_sizes_with_encryption_at_host: list[str]
     :param vm_size_filters: The virtual machine filtering mode. Effectively this can enabling or
      disabling the virtual machine sizes in a particular set.
     :type vm_size_filters: list[~azure.mgmt.hdinsight.models.VmSizeCompatibilityFilterV2]
+    :ivar vm_size_properties: The vm size properties.
+    :vartype vm_size_properties: list[~azure.mgmt.hdinsight.models.VmSizeProperty]
     :param billing_resources: The billing and managed disk billing resources for a region.
     :type billing_resources: list[~azure.mgmt.hdinsight.models.BillingResources]
     """
 
+    _validation = {
+        'vm_size_properties': {'readonly': True},
+    }
+
     _attribute_map = {
         'vm_sizes': {'key': 'vmSizes', 'type': '[str]'},
+        'vm_sizes_with_encryption_at_host': {'key': 'vmSizesWithEncryptionAtHost', 'type': '[str]'},
         'vm_size_filters': {'key': 'vmSizeFilters', 'type': '[VmSizeCompatibilityFilterV2]'},
+        'vm_size_properties': {'key': 'vmSizeProperties', 'type': '[VmSizeProperty]'},
         'billing_resources': {'key': 'billingResources', 'type': '[BillingResources]'},
     }
 
@@ -468,7 +695,9 @@ class BillingResponseListResult(msrest.serialization.Model):
     ):
         super(BillingResponseListResult, self).__init__(**kwargs)
         self.vm_sizes = kwargs.get('vm_sizes', None)
+        self.vm_sizes_with_encryption_at_host = kwargs.get('vm_sizes_with_encryption_at_host', None)
         self.vm_size_filters = kwargs.get('vm_size_filters', None)
+        self.vm_size_properties = None
         self.billing_resources = kwargs.get('billing_resources', None)
 
 
@@ -481,10 +710,10 @@ class CapabilitiesResult(msrest.serialization.Model):
     :type versions: dict[str, ~azure.mgmt.hdinsight.models.VersionsCapability]
     :param regions: The virtual machine size compatibility features.
     :type regions: dict[str, ~azure.mgmt.hdinsight.models.RegionsCapability]
-    :param vm_sizes: The virtual machine sizes.
-    :type vm_sizes: dict[str, ~azure.mgmt.hdinsight.models.VmSizesCapability]
-    :param vm_size_filters: The virtual machine size compatibility filters.
-    :type vm_size_filters: list[~azure.mgmt.hdinsight.models.VmSizeCompatibilityFilter]
+    :param vmsizes: The virtual machine sizes.
+    :type vmsizes: dict[str, ~azure.mgmt.hdinsight.models.VmSizesCapability]
+    :param vmsize_filters: The virtual machine size compatibility filters.
+    :type vmsize_filters: list[~azure.mgmt.hdinsight.models.VmSizeCompatibilityFilter]
     :param features: The capability features.
     :type features: list[str]
     :ivar quota: The quota capability.
@@ -498,8 +727,8 @@ class CapabilitiesResult(msrest.serialization.Model):
     _attribute_map = {
         'versions': {'key': 'versions', 'type': '{VersionsCapability}'},
         'regions': {'key': 'regions', 'type': '{RegionsCapability}'},
-        'vm_sizes': {'key': 'vmSizes', 'type': '{VmSizesCapability}'},
-        'vm_size_filters': {'key': 'vmSize_filters', 'type': '[VmSizeCompatibilityFilter]'},
+        'vmsizes': {'key': 'vmsizes', 'type': '{VmSizesCapability}'},
+        'vmsize_filters': {'key': 'vmsize_filters', 'type': '[VmSizeCompatibilityFilter]'},
         'features': {'key': 'features', 'type': '[str]'},
         'quota': {'key': 'quota', 'type': 'QuotaCapability'},
     }
@@ -511,8 +740,8 @@ class CapabilitiesResult(msrest.serialization.Model):
         super(CapabilitiesResult, self).__init__(**kwargs)
         self.versions = kwargs.get('versions', None)
         self.regions = kwargs.get('regions', None)
-        self.vm_sizes = kwargs.get('vm_sizes', None)
-        self.vm_size_filters = kwargs.get('vm_size_filters', None)
+        self.vmsizes = kwargs.get('vmsizes', None)
+        self.vmsize_filters = kwargs.get('vmsize_filters', None)
         self.features = kwargs.get('features', None)
         self.quota = None
 
@@ -749,6 +978,80 @@ class ClusterCreateProperties(msrest.serialization.Model):
         self.compute_isolation_properties = kwargs.get('compute_isolation_properties', None)
 
 
+class ClusterCreateRequestValidationParameters(ClusterCreateParametersExtended):
+    """The cluster create request specification.
+
+    :param location: The location of the cluster.
+    :type location: str
+    :param tags: A set of tags. The resource tags.
+    :type tags: dict[str, str]
+    :param properties: The cluster create parameters.
+    :type properties: ~azure.mgmt.hdinsight.models.ClusterCreateProperties
+    :param identity: The identity of the cluster, if configured.
+    :type identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
+    :param name: The cluster name.
+    :type name: str
+    :param type: The resource type.
+    :type type: str
+    :param tenant_id: The tenant id.
+    :type tenant_id: str
+    :param fetch_aadds_resource: This indicates whether fetch Aadds resource or not.
+    :type fetch_aadds_resource: bool
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'ClusterCreateProperties'},
+        'identity': {'key': 'identity', 'type': 'ClusterIdentity'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'fetch_aadds_resource': {'key': 'fetchAaddsResource', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ClusterCreateRequestValidationParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.fetch_aadds_resource = kwargs.get('fetch_aadds_resource', None)
+
+
+class ClusterCreateValidationResult(msrest.serialization.Model):
+    """The response of cluster create request validation.
+
+    :param validation_errors: The validation errors.
+    :type validation_errors: list[~azure.mgmt.hdinsight.models.ValidationErrorInfo]
+    :param validation_warnings: The validation warnings.
+    :type validation_warnings: list[~azure.mgmt.hdinsight.models.ValidationErrorInfo]
+    :param estimated_creation_duration: The estimated creation duration.
+    :type estimated_creation_duration: ~datetime.timedelta
+    :param aadds_resources_details: The Azure active directory domain service resource details.
+    :type aadds_resources_details: list[~azure.mgmt.hdinsight.models.AaddsResourceDetails]
+    """
+
+    _attribute_map = {
+        'validation_errors': {'key': 'validationErrors', 'type': '[ValidationErrorInfo]'},
+        'validation_warnings': {'key': 'validationWarnings', 'type': '[ValidationErrorInfo]'},
+        'estimated_creation_duration': {'key': 'estimatedCreationDuration', 'type': 'duration'},
+        'aadds_resources_details': {'key': 'aaddsResourcesDetails', 'type': '[AaddsResourceDetails]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ClusterCreateValidationResult, self).__init__(**kwargs)
+        self.validation_errors = kwargs.get('validation_errors', None)
+        self.validation_warnings = kwargs.get('validation_warnings', None)
+        self.estimated_creation_duration = kwargs.get('estimated_creation_duration', None)
+        self.aadds_resources_details = kwargs.get('aadds_resources_details', None)
+
+
 class ClusterDefinition(msrest.serialization.Model):
     """The cluster definition.
 
@@ -759,7 +1062,7 @@ class ClusterDefinition(msrest.serialization.Model):
     :param component_version: The versions of different services in the cluster.
     :type component_version: dict[str, str]
     :param configurations: The cluster configurations.
-    :type configurations: object
+    :type configurations: any
     """
 
     _attribute_map = {
@@ -815,6 +1118,8 @@ class ClusterGetProperties(msrest.serialization.Model):
 
     :param cluster_version: The version of the cluster.
     :type cluster_version: str
+    :param cluster_hdp_version: The hdp version of the cluster.
+    :type cluster_hdp_version: str
     :param os_type: The type of operating system. Possible values include: "Windows", "Linux".
     :type os_type: str or ~azure.mgmt.hdinsight.models.OSType
     :param tier: The cluster tier. Possible values include: "Standard", "Premium".
@@ -847,8 +1152,12 @@ class ClusterGetProperties(msrest.serialization.Model):
     :param encryption_in_transit_properties: The encryption-in-transit properties.
     :type encryption_in_transit_properties:
      ~azure.mgmt.hdinsight.models.EncryptionInTransitProperties
+    :param storage_profile: The storage profile.
+    :type storage_profile: ~azure.mgmt.hdinsight.models.StorageProfile
     :param min_supported_tls_version: The minimal supported tls version.
     :type min_supported_tls_version: str
+    :param excluded_services_config: The excluded services config.
+    :type excluded_services_config: ~azure.mgmt.hdinsight.models.ExcludedServicesConfig
     :param network_properties: The network properties.
     :type network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
     :param compute_isolation_properties: The compute isolation properties.
@@ -861,6 +1170,7 @@ class ClusterGetProperties(msrest.serialization.Model):
 
     _attribute_map = {
         'cluster_version': {'key': 'clusterVersion', 'type': 'str'},
+        'cluster_hdp_version': {'key': 'clusterHdpVersion', 'type': 'str'},
         'os_type': {'key': 'osType', 'type': 'str'},
         'tier': {'key': 'tier', 'type': 'str'},
         'cluster_id': {'key': 'clusterId', 'type': 'str'},
@@ -876,7 +1186,9 @@ class ClusterGetProperties(msrest.serialization.Model):
         'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': '[ConnectivityEndpoint]'},
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
         'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
+        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
+        'excluded_services_config': {'key': 'excludedServicesConfig', 'type': 'ExcludedServicesConfig'},
         'network_properties': {'key': 'networkProperties', 'type': 'NetworkProperties'},
         'compute_isolation_properties': {'key': 'computeIsolationProperties', 'type': 'ComputeIsolationProperties'},
     }
@@ -887,6 +1199,7 @@ class ClusterGetProperties(msrest.serialization.Model):
     ):
         super(ClusterGetProperties, self).__init__(**kwargs)
         self.cluster_version = kwargs.get('cluster_version', None)
+        self.cluster_hdp_version = kwargs.get('cluster_hdp_version', None)
         self.os_type = kwargs.get('os_type', None)
         self.tier = kwargs.get('tier', None)
         self.cluster_id = kwargs.get('cluster_id', None)
@@ -902,7 +1215,9 @@ class ClusterGetProperties(msrest.serialization.Model):
         self.connectivity_endpoints = kwargs.get('connectivity_endpoints', None)
         self.disk_encryption_properties = kwargs.get('disk_encryption_properties', None)
         self.encryption_in_transit_properties = kwargs.get('encryption_in_transit_properties', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
         self.min_supported_tls_version = kwargs.get('min_supported_tls_version', None)
+        self.excluded_services_config = kwargs.get('excluded_services_config', None)
         self.network_properties = kwargs.get('network_properties', None)
         self.compute_isolation_properties = kwargs.get('compute_isolation_properties', None)
 
@@ -1071,11 +1386,11 @@ class ClusterListRuntimeScriptActionDetailResultAutoGenerated(msrest.serializati
 
 
 class ClusterMonitoringRequest(msrest.serialization.Model):
-    """The Operations Management Suite (OMS) parameters.
+    """The cluster monitor parameters.
 
-    :param workspace_id: The Operations Management Suite (OMS) workspace ID.
+    :param workspace_id: The cluster monitor workspace ID.
     :type workspace_id: str
-    :param primary_key: The Operations Management Suite (OMS) workspace key.
+    :param primary_key: The cluster monitor workspace key.
     :type primary_key: str
     """
 
@@ -1094,13 +1409,11 @@ class ClusterMonitoringRequest(msrest.serialization.Model):
 
 
 class ClusterMonitoringResponse(msrest.serialization.Model):
-    """The Operations Management Suite (OMS) status response.
+    """The cluster monitoring status response.
 
-    :param cluster_monitoring_enabled: The status of the Operations Management Suite (OMS) on the
-     HDInsight cluster.
+    :param cluster_monitoring_enabled: The status of the monitor on the HDInsight cluster.
     :type cluster_monitoring_enabled: bool
-    :param workspace_id: The workspace ID of the Operations Management Suite (OMS) on the HDInsight
-     cluster.
+    :param workspace_id: The workspace ID of the monitor on the HDInsight cluster.
     :type workspace_id: str
     """
 
@@ -1165,6 +1478,8 @@ class ComponentsC51Ht8SchemasClusteridentityPropertiesUserassignedidentitiesAddi
     :vartype principal_id: str
     :ivar client_id: The client id of user assigned identity.
     :vartype client_id: str
+    :param tenant_id: The tenant id of user assigned identity.
+    :type tenant_id: str
     """
 
     _validation = {
@@ -1175,6 +1490,7 @@ class ComponentsC51Ht8SchemasClusteridentityPropertiesUserassignedidentitiesAddi
     _attribute_map = {
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'client_id': {'key': 'clientId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
     def __init__(
@@ -1184,6 +1500,7 @@ class ComponentsC51Ht8SchemasClusteridentityPropertiesUserassignedidentitiesAddi
         super(ComponentsC51Ht8SchemasClusteridentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
+        self.tenant_id = kwargs.get('tenant_id', None)
 
 
 class ComputeIsolationProperties(msrest.serialization.Model):
@@ -1205,7 +1522,7 @@ class ComputeIsolationProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(ComputeIsolationProperties, self).__init__(**kwargs)
-        self.enable_compute_isolation = kwargs.get('enable_compute_isolation', None)
+        self.enable_compute_isolation = kwargs.get('enable_compute_isolation', False)
         self.host_sku = kwargs.get('host_sku', None)
 
 
@@ -1239,6 +1556,8 @@ class ConnectivityEndpoint(msrest.serialization.Model):
     :type location: str
     :param port: The port to connect to.
     :type port: int
+    :param private_ip_address: The private ip address of the endpoint.
+    :type private_ip_address: str
     """
 
     _attribute_map = {
@@ -1246,6 +1565,7 @@ class ConnectivityEndpoint(msrest.serialization.Model):
         'protocol': {'key': 'protocol', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'port': {'key': 'port', 'type': 'int'},
+        'private_ip_address': {'key': 'privateIPAddress', 'type': 'str'},
     }
 
     def __init__(
@@ -1257,6 +1577,7 @@ class ConnectivityEndpoint(msrest.serialization.Model):
         self.protocol = kwargs.get('protocol', None)
         self.location = kwargs.get('location', None)
         self.port = kwargs.get('port', None)
+        self.private_ip_address = kwargs.get('private_ip_address', None)
 
 
 class DataDisksGroups(msrest.serialization.Model):
@@ -1291,6 +1612,38 @@ class DataDisksGroups(msrest.serialization.Model):
         self.disks_per_node = kwargs.get('disks_per_node', None)
         self.storage_account_type = None
         self.disk_size_gb = None
+
+
+class Dimension(msrest.serialization.Model):
+    """The definition of Dimension.
+
+    :param name: The name of the dimension.
+    :type name: str
+    :param display_name: The display name of the dimension.
+    :type display_name: str
+    :param internal_name: The display name of the dimension.
+    :type internal_name: str
+    :param to_be_exported_for_shoebox: The flag indicates whether the metric will be exported for
+     shoebox or not.
+    :type to_be_exported_for_shoebox: bool
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'internal_name': {'key': 'internalName', 'type': 'str'},
+        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Dimension, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.internal_name = kwargs.get('internal_name', None)
+        self.to_be_exported_for_shoebox = kwargs.get('to_be_exported_for_shoebox', None)
 
 
 class DiskBillingMeters(msrest.serialization.Model):
@@ -1426,6 +1779,29 @@ class Errors(msrest.serialization.Model):
         super(Errors, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
+
+
+class ExcludedServicesConfig(msrest.serialization.Model):
+    """The configuration that services will be excluded when creating cluster.
+
+    :param excluded_services_config_id: The config id of excluded services.
+    :type excluded_services_config_id: str
+    :param excluded_services_list: The list of excluded services.
+    :type excluded_services_list: str
+    """
+
+    _attribute_map = {
+        'excluded_services_config_id': {'key': 'excludedServicesConfigId', 'type': 'str'},
+        'excluded_services_list': {'key': 'excludedServicesList', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ExcludedServicesConfig, self).__init__(**kwargs)
+        self.excluded_services_config_id = kwargs.get('excluded_services_config_id', None)
+        self.excluded_services_list = kwargs.get('excluded_services_list', None)
 
 
 class ExecuteScriptActionParameters(msrest.serialization.Model):
@@ -1568,10 +1944,13 @@ class KafkaRestProperties(msrest.serialization.Model):
 
     :param client_group_info: The information of AAD security group.
     :type client_group_info: ~azure.mgmt.hdinsight.models.ClientGroupInfo
+    :param configuration_override: The configurations that need to be overriden.
+    :type configuration_override: dict[str, str]
     """
 
     _attribute_map = {
         'client_group_info': {'key': 'clientGroupInfo', 'type': 'ClientGroupInfo'},
+        'configuration_override': {'key': 'configurationOverride', 'type': '{str}'},
     }
 
     def __init__(
@@ -1580,6 +1959,7 @@ class KafkaRestProperties(msrest.serialization.Model):
     ):
         super(KafkaRestProperties, self).__init__(**kwargs)
         self.client_group_info = kwargs.get('client_group_info', None)
+        self.configuration_override = kwargs.get('configuration_override', None)
 
 
 class LinuxOperatingSystemProfile(msrest.serialization.Model):
@@ -1632,6 +2012,148 @@ class LocalizedName(msrest.serialization.Model):
         self.localized_value = kwargs.get('localized_value', None)
 
 
+class MetricSpecifications(msrest.serialization.Model):
+    """The details of metric specifications.
+
+    :param name: The name of the metric specification.
+    :type name: str
+    :param display_name: The display name of the metric specification.
+    :type display_name: str
+    :param display_description: The display description of the metric specification.
+    :type display_description: str
+    :param unit: The unit of the metric specification.
+    :type unit: str
+    :param aggregation_type: The aggregation type of the metric specification.
+    :type aggregation_type: str
+    :param supported_aggregation_types: The supported aggregation types of the metric
+     specification.
+    :type supported_aggregation_types: list[str]
+    :param supported_time_grain_types: The supported time grain types of the metric specification.
+    :type supported_time_grain_types: list[str]
+    :param enable_regional_mdm_account: The flag indicates whether enable regional mdm account or
+     not.
+    :type enable_regional_mdm_account: bool
+    :param source_mdm_account: The source mdm account.
+    :type source_mdm_account: str
+    :param source_mdm_namespace: The source mdm namespace.
+    :type source_mdm_namespace: str
+    :param metric_filter_pattern: The metric filter pattern.
+    :type metric_filter_pattern: str
+    :param fill_gap_with_zero: The flag indicates whether filling gap with zero.
+    :type fill_gap_with_zero: bool
+    :param category: The category of the metric.
+    :type category: str
+    :param resource_id_dimension_name_override: The override name of resource id dimension name.
+    :type resource_id_dimension_name_override: str
+    :param is_internal: The flag indicates whether the metric is internal or not.
+    :type is_internal: bool
+    :param delegate_metric_name_override: The override name of delegate metric.
+    :type delegate_metric_name_override: str
+    :param dimensions: The dimensions of the metric specification.
+    :type dimensions: list[~azure.mgmt.hdinsight.models.Dimension]
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
+        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
+        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'bool'},
+        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
+        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
+        'metric_filter_pattern': {'key': 'metricFilterPattern', 'type': 'str'},
+        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
+        'category': {'key': 'category', 'type': 'str'},
+        'resource_id_dimension_name_override': {'key': 'resourceIdDimensionNameOverride', 'type': 'str'},
+        'is_internal': {'key': 'isInternal', 'type': 'bool'},
+        'delegate_metric_name_override': {'key': 'delegateMetricNameOverride', 'type': 'str'},
+        'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MetricSpecifications, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.display_description = kwargs.get('display_description', None)
+        self.unit = kwargs.get('unit', None)
+        self.aggregation_type = kwargs.get('aggregation_type', None)
+        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
+        self.supported_time_grain_types = kwargs.get('supported_time_grain_types', None)
+        self.enable_regional_mdm_account = kwargs.get('enable_regional_mdm_account', None)
+        self.source_mdm_account = kwargs.get('source_mdm_account', None)
+        self.source_mdm_namespace = kwargs.get('source_mdm_namespace', None)
+        self.metric_filter_pattern = kwargs.get('metric_filter_pattern', None)
+        self.fill_gap_with_zero = kwargs.get('fill_gap_with_zero', None)
+        self.category = kwargs.get('category', None)
+        self.resource_id_dimension_name_override = kwargs.get('resource_id_dimension_name_override', None)
+        self.is_internal = kwargs.get('is_internal', None)
+        self.delegate_metric_name_override = kwargs.get('delegate_metric_name_override', None)
+        self.dimensions = kwargs.get('dimensions', None)
+
+
+class NameAvailabilityCheckRequestParameters(msrest.serialization.Model):
+    """The request spec of checking name availability.
+
+    :param name: The resource name.
+    :type name: str
+    :param type: The resource type.
+    :type type: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NameAvailabilityCheckRequestParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+
+
+class NameAvailabilityCheckResult(msrest.serialization.Model):
+    """The response spec of checking name availability.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param name_available: This indicates whether the name is available.
+    :type name_available: bool
+    :ivar reason: The reason of the result.
+    :vartype reason: str
+    :ivar message: The related message.
+    :vartype message: str
+    """
+
+    _validation = {
+        'reason': {'readonly': True},
+        'message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NameAvailabilityCheckResult, self).__init__(**kwargs)
+        self.name_available = kwargs.get('name_available', None)
+        self.reason = None
+        self.message = None
+
+
 class NetworkProperties(msrest.serialization.Model):
     """The network properties.
 
@@ -1665,11 +2187,14 @@ class Operation(msrest.serialization.Model):
     :type name: str
     :param display: The object that represents the operation.
     :type display: ~azure.mgmt.hdinsight.models.OperationDisplay
+    :param properties: The operation properties.
+    :type properties: ~azure.mgmt.hdinsight.models.OperationProperties
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'properties': {'key': 'properties', 'type': 'OperationProperties'},
     }
 
     def __init__(
@@ -1679,6 +2204,7 @@ class Operation(msrest.serialization.Model):
         super(Operation, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.display = kwargs.get('display', None)
+        self.properties = kwargs.get('properties', None)
 
 
 class OperationDisplay(msrest.serialization.Model):
@@ -1690,12 +2216,15 @@ class OperationDisplay(msrest.serialization.Model):
     :type resource: str
     :param operation: The operation type: read, write, delete, etc.
     :type operation: str
+    :param description: Localized friendly description for the operation.
+    :type description: str
     """
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
         'resource': {'key': 'resource', 'type': 'str'},
         'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
     def __init__(
@@ -1706,6 +2235,7 @@ class OperationDisplay(msrest.serialization.Model):
         self.provider = kwargs.get('provider', None)
         self.resource = kwargs.get('resource', None)
         self.operation = kwargs.get('operation', None)
+        self.description = kwargs.get('description', None)
 
 
 class OperationListResult(msrest.serialization.Model):
@@ -1731,28 +2261,23 @@ class OperationListResult(msrest.serialization.Model):
         self.next_link = kwargs.get('next_link', None)
 
 
-class OperationResource(msrest.serialization.Model):
-    """The azure async operation response.
+class OperationProperties(msrest.serialization.Model):
+    """The details of operation.
 
-    :param status: The async operation state. Possible values include: "InProgress", "Succeeded",
-     "Failed".
-    :type status: str or ~azure.mgmt.hdinsight.models.AsyncOperationState
-    :param error: The operation error information.
-    :type error: ~azure.mgmt.hdinsight.models.Errors
+    :param service_specification: The specification of the service.
+    :type service_specification: ~azure.mgmt.hdinsight.models.ServiceSpecification
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'Errors'},
+        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(OperationResource, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.error = kwargs.get('error', None)
+        super(OperationProperties, self).__init__(**kwargs)
+        self.service_specification = kwargs.get('service_specification', None)
 
 
 class OsProfile(msrest.serialization.Model):
@@ -1772,38 +2297,6 @@ class OsProfile(msrest.serialization.Model):
     ):
         super(OsProfile, self).__init__(**kwargs)
         self.linux_operating_system_profile = kwargs.get('linux_operating_system_profile', None)
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
 
 
 class QuotaCapability(msrest.serialization.Model):
@@ -1907,6 +2400,8 @@ class Role(msrest.serialization.Model):
     :type min_instance_count: int
     :param target_instance_count: The instance count of the cluster.
     :type target_instance_count: int
+    :param vm_group_name: The name of the virtual machine group.
+    :type vm_group_name: str
     :param autoscale_configuration: The autoscale configurations.
     :type autoscale_configuration: ~azure.mgmt.hdinsight.models.Autoscale
     :param hardware_profile: The hardware profile.
@@ -1919,18 +2414,22 @@ class Role(msrest.serialization.Model):
     :type data_disks_groups: list[~azure.mgmt.hdinsight.models.DataDisksGroups]
     :param script_actions: The list of script actions on the role.
     :type script_actions: list[~azure.mgmt.hdinsight.models.ScriptAction]
+    :param encrypt_data_disks: Indicates whether encrypt the data disks.
+    :type encrypt_data_disks: bool
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
         'target_instance_count': {'key': 'targetInstanceCount', 'type': 'int'},
+        'vm_group_name': {'key': 'VMGroupName', 'type': 'str'},
         'autoscale_configuration': {'key': 'autoscale', 'type': 'Autoscale'},
         'hardware_profile': {'key': 'hardwareProfile', 'type': 'HardwareProfile'},
         'os_profile': {'key': 'osProfile', 'type': 'OsProfile'},
         'virtual_network_profile': {'key': 'virtualNetworkProfile', 'type': 'VirtualNetworkProfile'},
         'data_disks_groups': {'key': 'dataDisksGroups', 'type': '[DataDisksGroups]'},
         'script_actions': {'key': 'scriptActions', 'type': '[ScriptAction]'},
+        'encrypt_data_disks': {'key': 'encryptDataDisks', 'type': 'bool'},
     }
 
     def __init__(
@@ -1941,12 +2440,14 @@ class Role(msrest.serialization.Model):
         self.name = kwargs.get('name', None)
         self.min_instance_count = kwargs.get('min_instance_count', None)
         self.target_instance_count = kwargs.get('target_instance_count', None)
+        self.vm_group_name = kwargs.get('vm_group_name', None)
         self.autoscale_configuration = kwargs.get('autoscale_configuration', None)
         self.hardware_profile = kwargs.get('hardware_profile', None)
         self.os_profile = kwargs.get('os_profile', None)
         self.virtual_network_profile = kwargs.get('virtual_network_profile', None)
         self.data_disks_groups = kwargs.get('data_disks_groups', None)
         self.script_actions = kwargs.get('script_actions', None)
+        self.encrypt_data_disks = kwargs.get('encrypt_data_disks', False)
 
 
 class RuntimeScriptAction(msrest.serialization.Model):
@@ -2252,8 +2753,8 @@ class SecurityProfile(msrest.serialization.Model):
     :type cluster_users_group_d_ns: list[str]
     :param aadds_resource_id: The resource ID of the user's Azure Active Directory Domain Service.
     :type aadds_resource_id: str
-    :param msi_resource_id: User assigned identity that has permissions to read and create cluster-
-     related artifacts in the user's AADDS.
+    :param msi_resource_id: User assigned identity that has permissions to read and create
+     cluster-related artifacts in the user's AADDS.
     :type msi_resource_id: str
     """
 
@@ -2288,6 +2789,25 @@ class SecurityProfile(msrest.serialization.Model):
         self.cluster_users_group_d_ns = kwargs.get('cluster_users_group_d_ns', None)
         self.aadds_resource_id = kwargs.get('aadds_resource_id', None)
         self.msi_resource_id = kwargs.get('msi_resource_id', None)
+
+
+class ServiceSpecification(msrest.serialization.Model):
+    """The specification of the service.
+
+    :param metric_specifications: The metric specifications.
+    :type metric_specifications: list[~azure.mgmt.hdinsight.models.MetricSpecifications]
+    """
+
+    _attribute_map = {
+        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecifications]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServiceSpecification, self).__init__(**kwargs)
+        self.metric_specifications = kwargs.get('metric_specifications', None)
 
 
 class SshProfile(msrest.serialization.Model):
@@ -2348,6 +2868,10 @@ class StorageAccount(msrest.serialization.Model):
     :param msi_resource_id: The managed identity (MSI) that is allowed to access the storage
      account, only to be specified for Azure Data Lake Storage Gen 2.
     :type msi_resource_id: str
+    :param saskey: The shared access signature key.
+    :type saskey: str
+    :param fileshare: The file share name.
+    :type fileshare: str
     """
 
     _attribute_map = {
@@ -2358,6 +2882,8 @@ class StorageAccount(msrest.serialization.Model):
         'key': {'key': 'key', 'type': 'str'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'msi_resource_id': {'key': 'msiResourceId', 'type': 'str'},
+        'saskey': {'key': 'saskey', 'type': 'str'},
+        'fileshare': {'key': 'fileshare', 'type': 'str'},
     }
 
     def __init__(
@@ -2372,6 +2898,8 @@ class StorageAccount(msrest.serialization.Model):
         self.key = kwargs.get('key', None)
         self.resource_id = kwargs.get('resource_id', None)
         self.msi_resource_id = kwargs.get('msi_resource_id', None)
+        self.saskey = kwargs.get('saskey', None)
+        self.fileshare = kwargs.get('fileshare', None)
 
 
 class StorageProfile(msrest.serialization.Model):
@@ -2391,6 +2919,33 @@ class StorageProfile(msrest.serialization.Model):
     ):
         super(StorageProfile, self).__init__(**kwargs)
         self.storageaccounts = kwargs.get('storageaccounts', None)
+
+
+class UpdateClusterIdentityCertificateParameters(msrest.serialization.Model):
+    """The update cluster identity certificate request parameters.
+
+    :param application_id: The application id.
+    :type application_id: str
+    :param certificate: The certificate in base64 encoded format.
+    :type certificate: str
+    :param certificate_password: The password of the certificate.
+    :type certificate_password: str
+    """
+
+    _attribute_map = {
+        'application_id': {'key': 'applicationId', 'type': 'str'},
+        'certificate': {'key': 'certificate', 'type': 'str'},
+        'certificate_password': {'key': 'certificatePassword', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UpdateClusterIdentityCertificateParameters, self).__init__(**kwargs)
+        self.application_id = kwargs.get('application_id', None)
+        self.certificate = kwargs.get('certificate', None)
+        self.certificate_password = kwargs.get('certificate_password', None)
 
 
 class UpdateGatewaySettingsParameters(msrest.serialization.Model):
@@ -2429,9 +2984,9 @@ class Usage(msrest.serialization.Model):
     :param unit: The type of measurement for usage.
     :type unit: str
     :param current_value: The current usage.
-    :type current_value: int
+    :type current_value: long
     :param limit: The maximum allowed usage.
-    :type limit: int
+    :type limit: long
     :ivar name: The details about the localizable name of the used resource.
     :vartype name: ~azure.mgmt.hdinsight.models.LocalizedName
     """
@@ -2442,8 +2997,8 @@ class Usage(msrest.serialization.Model):
 
     _attribute_map = {
         'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'int'},
-        'limit': {'key': 'limit', 'type': 'int'},
+        'current_value': {'key': 'currentValue', 'type': 'long'},
+        'limit': {'key': 'limit', 'type': 'long'},
         'name': {'key': 'name', 'type': 'LocalizedName'},
     }
 
@@ -2477,6 +3032,37 @@ class UsagesListResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
+class ValidationErrorInfo(msrest.serialization.Model):
+    """The validation error information.
+
+    :param code: The error code.
+    :type code: str
+    :param message: The error message.
+    :type message: str
+    :param error_resource: The error resource.
+    :type error_resource: str
+    :param message_arguments: The message arguments.
+    :type message_arguments: list[str]
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'error_resource': {'key': 'errorResource', 'type': 'str'},
+        'message_arguments': {'key': 'messageArguments', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ValidationErrorInfo, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.error_resource = kwargs.get('error_resource', None)
+        self.message_arguments = kwargs.get('message_arguments', None)
+
+
 class VersionsCapability(msrest.serialization.Model):
     """The version capability.
 
@@ -2504,7 +3090,7 @@ class VersionSpec(msrest.serialization.Model):
     :param display_name: The display name.
     :type display_name: str
     :param is_default: Whether or not the version is the default version.
-    :type is_default: str
+    :type is_default: bool
     :param component_versions: The component version property.
     :type component_versions: dict[str, str]
     """
@@ -2512,7 +3098,7 @@ class VersionSpec(msrest.serialization.Model):
     _attribute_map = {
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
-        'is_default': {'key': 'isDefault', 'type': 'str'},
+        'is_default': {'key': 'isDefault', 'type': 'bool'},
         'component_versions': {'key': 'componentVersions', 'type': '{str}'},
     }
 
@@ -2563,8 +3149,16 @@ class VmSizeCompatibilityFilter(msrest.serialization.Model):
     :type node_types: list[str]
     :param cluster_versions: The list of cluster versions.
     :type cluster_versions: list[str]
-    :param vmsizes: The list of virtual machine sizes.
-    :type vmsizes: list[str]
+    :param os_type: The list of OS types.
+    :type os_type: list[str]
+    :param vm_sizes: The list of virtual machine sizes.
+    :type vm_sizes: list[str]
+    :param esp_applied: Whether apply for ESP cluster. 'true' means only for ESP, 'false' means
+     only for non-ESP, null or empty string or others mean for both.
+    :type esp_applied: str
+    :param compute_isolation_supported: Whether support compute isolation. 'true' means only for
+     ComputeIsolationEnabled, 'false' means only for regular cluster.
+    :type compute_isolation_supported: str
     """
 
     _attribute_map = {
@@ -2573,7 +3167,10 @@ class VmSizeCompatibilityFilter(msrest.serialization.Model):
         'cluster_flavors': {'key': 'ClusterFlavors', 'type': '[str]'},
         'node_types': {'key': 'NodeTypes', 'type': '[str]'},
         'cluster_versions': {'key': 'ClusterVersions', 'type': '[str]'},
-        'vmsizes': {'key': 'vmsizes', 'type': '[str]'},
+        'os_type': {'key': 'OsType', 'type': '[str]'},
+        'vm_sizes': {'key': 'VMSizes', 'type': '[str]'},
+        'esp_applied': {'key': 'ESPApplied', 'type': 'str'},
+        'compute_isolation_supported': {'key': 'ComputeIsolationSupported', 'type': 'str'},
     }
 
     def __init__(
@@ -2586,14 +3183,17 @@ class VmSizeCompatibilityFilter(msrest.serialization.Model):
         self.cluster_flavors = kwargs.get('cluster_flavors', None)
         self.node_types = kwargs.get('node_types', None)
         self.cluster_versions = kwargs.get('cluster_versions', None)
-        self.vmsizes = kwargs.get('vmsizes', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.vm_sizes = kwargs.get('vm_sizes', None)
+        self.esp_applied = kwargs.get('esp_applied', None)
+        self.compute_isolation_supported = kwargs.get('compute_isolation_supported', None)
 
 
 class VmSizeCompatibilityFilterV2(msrest.serialization.Model):
     """This class represent a single filter object that defines a multidimensional set. The dimensions of this set are Regions, ClusterFlavors, NodeTypes and ClusterVersions. The constraint should be defined based on the following: FilterMode (Exclude vs Include), VMSizes (the vm sizes in affect of exclusion/inclusion) and the ordering of the Filters. Later filters override previous settings if conflicted.
 
     :param filter_mode: The filtering mode. Effectively this can enabling or disabling the VM sizes
-     in a particular set. Possible values include: "Exclude", "Include".
+     in a particular set. Possible values include: "Exclude", "Include", "Recommend", "Default".
     :type filter_mode: str or ~azure.mgmt.hdinsight.models.FilterMode
     :param regions: The list of regions under the effect of the filter.
     :type regions: list[str]
@@ -2631,6 +3231,65 @@ class VmSizeCompatibilityFilterV2(msrest.serialization.Model):
         self.cluster_versions = kwargs.get('cluster_versions', None)
         self.os_type = kwargs.get('os_type', None)
         self.vm_sizes = kwargs.get('vm_sizes', None)
+
+
+class VmSizeProperty(msrest.serialization.Model):
+    """The vm size property.
+
+    :param name: The vm size name.
+    :type name: str
+    :param cores: The number of cores that the vm size has.
+    :type cores: int
+    :param data_disk_storage_tier: The data disk storage tier of the vm size.
+    :type data_disk_storage_tier: str
+    :param label: The label of the vm size.
+    :type label: str
+    :param max_data_disk_count: The max data disk count of the vm size.
+    :type max_data_disk_count: long
+    :param memory_in_mb: The memory whose unit is MB of the vm size.
+    :type memory_in_mb: long
+    :param supported_by_virtual_machines: This indicates this vm size is supported by virtual
+     machines or not.
+    :type supported_by_virtual_machines: bool
+    :param supported_by_web_worker_roles: The indicates this vm size is supported by web worker
+     roles or not.
+    :type supported_by_web_worker_roles: bool
+    :param virtual_machine_resource_disk_size_in_mb: The virtual machine resource disk size whose
+     unit is MB of the vm size.
+    :type virtual_machine_resource_disk_size_in_mb: long
+    :param web_worker_resource_disk_size_in_mb: The web worker resource disk size whose unit is MB
+     of the vm size.
+    :type web_worker_resource_disk_size_in_mb: long
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'cores': {'key': 'cores', 'type': 'int'},
+        'data_disk_storage_tier': {'key': 'dataDiskStorageTier', 'type': 'str'},
+        'label': {'key': 'label', 'type': 'str'},
+        'max_data_disk_count': {'key': 'maxDataDiskCount', 'type': 'long'},
+        'memory_in_mb': {'key': 'memoryInMb', 'type': 'long'},
+        'supported_by_virtual_machines': {'key': 'supportedByVirtualMachines', 'type': 'bool'},
+        'supported_by_web_worker_roles': {'key': 'supportedByWebWorkerRoles', 'type': 'bool'},
+        'virtual_machine_resource_disk_size_in_mb': {'key': 'virtualMachineResourceDiskSizeInMb', 'type': 'long'},
+        'web_worker_resource_disk_size_in_mb': {'key': 'webWorkerResourceDiskSizeInMb', 'type': 'long'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VmSizeProperty, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.cores = kwargs.get('cores', None)
+        self.data_disk_storage_tier = kwargs.get('data_disk_storage_tier', None)
+        self.label = kwargs.get('label', None)
+        self.max_data_disk_count = kwargs.get('max_data_disk_count', None)
+        self.memory_in_mb = kwargs.get('memory_in_mb', None)
+        self.supported_by_virtual_machines = kwargs.get('supported_by_virtual_machines', None)
+        self.supported_by_web_worker_roles = kwargs.get('supported_by_web_worker_roles', None)
+        self.virtual_machine_resource_disk_size_in_mb = kwargs.get('virtual_machine_resource_disk_size_in_mb', None)
+        self.web_worker_resource_disk_size_in_mb = kwargs.get('web_worker_resource_disk_size_in_mb', None)
 
 
 class VmSizesCapability(msrest.serialization.Model):

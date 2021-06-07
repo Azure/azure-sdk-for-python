@@ -11,13 +11,39 @@ from asynctestcase import AsyncDocumentTranslationTest
 from preparer import DocumentTranslationPreparer, \
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 from azure.ai.translation.document.aio import DocumentTranslationClient
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 
 class TestTranslation(AsyncDocumentTranslationTest):
+
+    @pytest.mark.live_test_only
+    @DocumentTranslationPreparer()
+    async def test_active_directory_auth_async(self):
+        token = self.generate_oauth_token()
+        endpoint = self.get_oauth_endpoint()
+        client = DocumentTranslationClient(endpoint, token)
+        # prepare containers and test data
+        blob_data = b'This is some text'
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
+        target_container_sas_url = self.create_target_container()
+
+        # prepare translation inputs
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url=source_container_sas_url,
+                targets=[
+                    TranslationTarget(
+                        target_url=target_container_sas_url,
+                        language_code="fr"
+                    )
+                ]
+            )
+        ]
+
+        # submit translation and test
+        await self._begin_and_validate_translation_async(client, translation_inputs, 1, "fr")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -40,8 +66,8 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
-        await self._submit_and_validate_translation_job_async(client, translation_inputs, 1)
+        # submit translation and test
+        await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -69,8 +95,8 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
-        await self._submit_and_validate_translation_job_async(client, translation_inputs)
+        # submit translation and test
+        await self._begin_and_validate_translation_async(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -104,8 +130,8 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
-        await self._submit_and_validate_translation_job_async(client, translation_inputs, 2)
+        # submit translation and test
+        await self._begin_and_validate_translation_async(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -130,8 +156,8 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
-        await self._submit_and_validate_translation_job_async(client, translation_inputs, 1)
+        # submit translation and test
+        await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -156,8 +182,8 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        # submit job and test
-        await self._submit_and_validate_translation_job_async(client, translation_inputs, 1)
+        # submit translation and test
+        await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -179,11 +205,10 @@ class TestTranslation(AsyncDocumentTranslationTest):
         ]
 
         with pytest.raises(HttpResponseError) as e:
-            job = await client.create_translation_job(translation_inputs)
-            job = await client.wait_until_done(job.id)
+            poller = await client.begin_translation(translation_inputs)
+            result = await poller.result()
         assert e.value.error.code == "InvalidDocumentAccessLevel"
 
-    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/17914")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_bad_input_target(self, client):
@@ -205,9 +230,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
         ]
 
         with pytest.raises(HttpResponseError) as e:
-            job = await client.create_translation_job(translation_inputs)
-            job = await client.wait_until_done(job.id)
-        assert e.value.error.code == "InvalidDocumentAccessLevel"
+            poller = await client.begin_translation(translation_inputs)
+            result = await poller.result()
+        assert e.value.error.code == "InvalidTargetDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -233,9 +258,11 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        job = await client.create_translation_job(translation_inputs)
-        job = await client.wait_until_done(job.id)
-        self._validate_translation_job(job, status="Succeeded", total=1, succeeded=1)
+        poller = await client.begin_translation(translation_inputs)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+        async for document in result:
+            self._validate_doc_status(document, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -257,14 +284,13 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        job = await client.create_translation_job(translation_inputs)
-        job = await client.wait_until_done(job.id)
-        self._validate_translation_job(job, status="Failed", total=1, failed=1)
+        poller = await client.begin_translation(translation_inputs)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Failed", total=1, failed=1)
 
-        doc_status = client.list_all_document_statuses(job.id)
-        doc = await doc_status.__anext__()
-        assert doc.status == "Failed"
-        assert doc.error.code == "TargetFileAlreadyExists"
+        async for doc in result:
+            assert doc.status == "Failed"
+            assert doc.error.code == "TargetFileAlreadyExists"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -286,12 +312,11 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        job = await client.create_translation_job(translation_inputs)
-        job = await client.wait_until_done(job.id)
-        self._validate_translation_job(job, status="Succeeded", total=2, failed=1)
+        poller = await client.begin_translation(translation_inputs)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=2, failed=1)
 
-        doc_statuses = client.list_all_document_statuses(job.id)
-        async for doc in doc_statuses:
+        async for doc in result:
             if doc.status == "Failed":
                 assert doc.error.code == "TargetFileAlreadyExists"
 
@@ -315,11 +340,105 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        job = await client.create_translation_job(translation_inputs)
-        job = await client.wait_until_done(job.id)
-        self._validate_translation_job(job, status="Failed", total=1, failed=1)
+        poller = await client.begin_translation(translation_inputs)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Failed", total=1, failed=1)
 
-        doc_status = client.list_all_document_statuses(job.id)
-        doc = await doc_status.__anext__()
-        assert doc.status == "Failed"
-        assert doc.error.code == "WrongDocumentEncoding"
+        async for doc in result:
+            assert doc.status == "Failed"
+            assert doc.error.code == "WrongDocumentEncoding"
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    async def test_overloaded_inputs(self, client):
+        # prepare containers and test data
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
+        target_container_sas_url = self.create_target_container()
+        target_container_sas_url_2 = self.create_target_container()
+
+        # prepare translation inputs
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url=source_container_sas_url,
+                targets=[
+                    TranslationTarget(
+                        target_url=target_container_sas_url,
+                        language_code="es"
+                    )
+                ]
+            )
+        ]
+
+
+        # positional
+        poller = await client.begin_translation(translation_inputs)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+
+        # keyword
+        translation_inputs[0].targets[0].target_url = target_container_sas_url_2
+        poller = await client.begin_translation(inputs=translation_inputs)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    async def test_overloaded_single_input(self, client):
+        # prepare containers and test data
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
+        target_container_sas_url = self.create_target_container()
+        target_container_sas_url_2 = self.create_target_container()
+
+        # positional
+        poller = await client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+
+        # keyword
+        poller = await client.begin_translation(source_url=source_container_sas_url, target_url=target_container_sas_url_2, target_language_code="es")
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    async def test_overloaded_bad_input(self, client):
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url="container",
+                targets=[
+                    TranslationTarget(
+                        target_url="container",
+                        language_code="es"
+                    )
+                ]
+            )
+        ]
+
+        with pytest.raises(ValueError):
+            await client.begin_translation("container")
+
+        with pytest.raises(ValueError):
+            await client.begin_translation("container", "container")
+
+        with pytest.raises(ValueError):
+            await client.begin_translation(source_url=translation_inputs)
+
+        with pytest.raises(ValueError):
+            await client.begin_translation(inputs="container")
+
+    @pytest.mark.live_test_only
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    async def test_translation_continuation_token(self, client):
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
+        target_container_sas_url = self.create_target_container()
+
+        initial_poller = await client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
+        cont_token = initial_poller.continuation_token()
+
+        poller = await client.begin_translation(None, continuation_token=cont_token)
+        result = await poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+        async for doc in result:
+            self._validate_doc_status(doc, target_language="es")
+        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

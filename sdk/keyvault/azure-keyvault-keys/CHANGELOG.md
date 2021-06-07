@@ -1,10 +1,17 @@
 # Release History
 
 ## 4.4.0b5 (Unreleased)
+### Changed
+- Key Vault API version 7.2 is now the default
 
+### Added
+- `KeyClient` has a `create_oct_key` method for creating symmetric keys
+
+### Breaking Changes
+- `parse_key_vault_key_id` and `KeyVaultResourceId` have been replaced by a
+  `KeyVaultKeyIdentifier` class, which can be initialized with a key ID
 
 ## 4.4.0b4 (2021-04-06)
-
 ### Added
 - `CryptographyClient` can perform AES-CBCPAD encryption and decryption locally
   ([#17762](https://github.com/Azure/azure-sdk-for-python/pull/17762))
