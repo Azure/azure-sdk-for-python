@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Any, Optional, Dict, TYPE_CHECKING
+from typing import Any, Dict, TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
