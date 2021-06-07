@@ -1432,7 +1432,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def set_legal_hold(self, legal_hold, **kwargs):
-        # type: (**Any) -> Dict[str, str]
+        # type: (**Any) -> Dict[str, Union[str, datetime, bool]]
         """The Set Legal Hold operation sets a legal hold on the blob.
 
         .. versionadded:: 12.10.0

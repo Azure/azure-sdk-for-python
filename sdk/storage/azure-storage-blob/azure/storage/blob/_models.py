@@ -358,7 +358,8 @@ class ContainerProperties(DictMixin):
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
-        props.is_immutable_storage_with_versioning_enabled = generated.properties.is_immutable_storage_with_versioning_enabled
+        props.is_immutable_storage_with_versioning_enabled = \
+            generated.properties.is_immutable_storage_with_versioning_enabled
         props.deleted = generated.deleted
         props.version = generated.version
         props.has_legal_hold = generated.properties.has_legal_hold
@@ -527,6 +528,27 @@ class BlobProperties(DictMixin):
         Key value pair of tags on this blob.
 
         .. versionadded:: 12.4.0
+
+    :ivar ~datetime.datetime immutability_policy_expiry_time:
+        Specifies the date time when the blobs immutability policy is set to expire.
+        Currently this parameter of upload_blob() API is for BlockBlob only.
+
+        .. versionadded:: 12.10.0
+            This was introduced in API version '2020-10-02'.
+
+    :ivar str immutability_policy_mode:
+        Specifies the immutability policy mode to set on the blob.
+        Currently this parameter of upload_blob() API is for BlockBlob only.
+
+        .. versionadded:: 12.10.0
+            This was introduced in API version '2020-10-02'.
+
+    :ivar bool legal_hold:
+        Specified if a legal hold should be set on the blob.
+        Currently this parameter of upload_blob() API is for BlockBlob only.
+
+        .. versionadded:: 12.10.0
+            This was introduced in API version '2020-10-02'.
 
     """
 
