@@ -1,35 +1,125 @@
-[![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=master)
+# Azure Communication SIP routing Package client library for Python
 
-# Azure Template Package client library for Python
+This package contains a Python SDK for Azure Communication Services for SIP.
+Read more about Azure Communication Services [here](https://docs.microsoft.com/azure/communication-services/overview).
 
-This template package matches necessary patterns that the development team has established to create a unified sdk functional from Python 2.7 onwards. The packages contained herein can be installed singly or as part of the `azure` namespace. Any other introductory text should go here.
+This package has been tested with Python 2.7, 3.6, 3.7 and 3.8.
 
-This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8
-
-For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all
+For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all.
 
 # Getting started
 
-For a rich example of a well formatted readme, please check [here.](https://github.com/Azure/azure-sdk/blob/master/docs/policies/README-TEMPLATE.md) In addition, this is an [example readme](https://github.com/Azure/azure-sdk/blob/master/docs/policies/README-EXAMPLE.md) that should be emulated. Note that the top-level sections in this template align with that of the [template.](https://github.com/Azure/azure-sdk/blob/master/docs/policies/README-TEMPLATE.md)
+### Prerequisites
+
+- Python 2.7, or 3.6 or later is required to use this package.
+- A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
+- You must have a phone number configured that is associated with an Azure subscription
+
+### Install the package
+
+Install the Azure Communication SIP client library for Python with [pip](https://pypi.org/project/pip/):
+
+```bash
+pip install azure-communication-siprouting
+```
 
 # Key concepts
 
-Bullet point list of your library's main concepts.
+Azure Communication SIP package is used to do the following:
+
+- Retrieve SIP configuration
+- Update SIP configuration
 
 # Examples
 
-Examples of some of the key concepts for your library.
+The following section provides several code snippets covering some of the most common SIP configuration tasks, including:
+
+- [Client Initialization](#client-initialization)
+- [Retrieve SIP configuration](#retrieve-sip-configuration)
+- [Update SIP configuration](#update-sip-configuration)
+- [Update SIP trunks](#update-sip-trunks)
+- [Update SIP routes](#update-sip-routes)
+
+
+### Client Initialization: {#client-initialization}
+
+Initialize client with the service endpoint and azure credentials:
+
+```python
+from azure.communication.siprouting import SIPRoutingClient
+from azure.identity import DefaultAzureCredential
+
+# To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
+# AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
+endpoint = "https://<RESOURCE_NAME>.communication.azure.com"
+sip_client = SIPRoutingClient(endpoint,DefaultAzureCredential())
+```
+
+Or initialize the client from connection string:
+
+```python
+from azure.communication.siprouting import SIPRoutingClient
+
+connection_string = "endpoint=ENDPOINT;accessKey=KEY"
+sip_client = SIPRoutingClient.from_connection_string(connection_string)
+```
+
+### Retrieve SIP configuration: {#retrieve-sip-configuration}
+
+Get the current SIP configuration:
+
+```python
+result = sip_client.get_sip_configuration()
+print(result.trunks)
+print(result.routes)
+```
+
+### Update SIP configuration: {#update-sip-configuration}
+
+Set new SIP configuration trunks and routes:
+
+```python
+result = sip_client.update_sip_configuration(NEW_TRUNKS_CONFIGURATION,NEW_ROUTES_CONFIGURATION)
+```
+
+### Update SIP trunks: {#update-sip-trunks}
+
+Set new SIP configuration trunks:
+
+```python
+result = sip_client.update_sip_trunks(NEW_TRUNKS_CONFIGURATION)
+```
+
+### Update SIP routes: {#update-sip-routes}
+
+Set new SIP configuration routes:
+
+```python
+result = sip_client.update_sip_routes(NEW_ROUTES_CONFIGURATION)
+```
 
 # Troubleshooting
 
-Running into issues? This section should contain details as to what to do there.
+The SIP configuration client will raise exceptions defined in [Azure Core][azure_core].
 
 # Next steps
 
-More sample code should go here, along with links out to the appropriate example tests.
+Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/communication/azure-communication-siprouting/sample) directory for detailed examples of how to use this library.
 
-# Contributing
+## Provide Feedback
 
-If you encounter any bugs or have suggestions, please file an issue in the [Issues](<https://github.com/Azure/azure-sdk-for-python/issues>) section of the project.
+If you encounter any bugs or have suggestions, please file an issue in the [Issues](https://github.com/Azure/azure-sdk-for-python/issues) section of the project.
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
+## Contributing
+
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
+
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the
+PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+<!-- LINKS -->
+[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md

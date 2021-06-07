@@ -11,6 +11,7 @@ import pytest
 from azure.communication.siprouting.aio import SIPRoutingClient
 from azure.core.credentials import AccessToken
 from azure.communication.siprouting._generated.models import Trunk, TrunkRoute
+from testcases.fake_token_credential import FakeTokenCredential
 
 try:
     from unittest.mock import Mock, patch
@@ -33,7 +34,7 @@ class TestSIPRoutingClientAsync(aiounittest.AsyncTestCase):
         return response
 
     def get_simple_test_client(self):
-        return SIPRoutingClient("https://endpoint", AccessToken("Fake Token", 0))
+        return SIPRoutingClient("https://endpoint", FakeTokenCredential())
 
     def setUp(self):
         sip_trunk = Trunk(sip_signaling_port=4001)
@@ -74,10 +75,10 @@ class TestSIPRoutingClientAsync(aiounittest.AsyncTestCase):
 
     @pytest.mark.asyncio
     @patch("azure.communication.siprouting._generated.aio._azure_communication_sip_routing_service.AzureCommunicationSIPRoutingService.patch_sip_configuration")
-    async def test_update_sip_trunk_configuration(self, mock):
+    async def test_update_sip_configurationn(self, mock):
         test_client = self.get_simple_test_client()
 
-        await test_client.update_sip_trunk_configuration(
+        await test_client.update_sip_configuration(
             self.test_trunks, self.test_routes)
 
         self.assertEqual(mock.call_args[1]['body'].trunks, self.test_trunks)
@@ -85,28 +86,28 @@ class TestSIPRoutingClientAsync(aiounittest.AsyncTestCase):
 
     @pytest.mark.asyncio
     @patch("azure.communication.siprouting._generated.aio._azure_communication_sip_routing_service.AzureCommunicationSIPRoutingService.patch_sip_configuration")
-    async def test_update_pstn_gateways(self, mock):
+    async def test_update_sip_trunks(self, mock):
         test_client = self.get_simple_test_client()
 
-        await test_client.update_pstn_gateways(self.test_trunks)
+        await test_client.update_sip_trunks(self.test_trunks)
 
         self.assertEqual(mock.call_args[1]['body'].trunks, self.test_trunks)
 
     @pytest.mark.asyncio
     @patch("azure.communication.siprouting._generated.aio._azure_communication_sip_routing_service.AzureCommunicationSIPRoutingService.patch_sip_configuration")
-    async def test_update_routing_settings(self, mock):
+    async def test_update_sip_routes(self, mock):
         test_client = self.get_simple_test_client()
 
-        await test_client.update_routing_settings(self.test_routes)
+        await test_client.update_sip_routes(self.test_routes)
 
         self.assertEqual(mock.call_args[1]['body'].routes, self.test_routes)
 
     @pytest.mark.asyncio
-    async def test_update_sip_trunk_configuration_no_online_pstn_gateways_raises_value_error(self):
+    async def test_update_sip_configuration_no_sip_trunks_raises_value_error(self):
         test_client = self.get_simple_test_client()
 
         try:
-            await test_client.update_sip_trunk_configuration(None, self.test_routes)
+            await test_client.update_sip_configuration(None, self.test_routes)
             raised = False
         except ValueError:
             raised = True
@@ -114,11 +115,11 @@ class TestSIPRoutingClientAsync(aiounittest.AsyncTestCase):
         self.assertTrue(raised)
 
     @pytest.mark.asyncio
-    async def test_update_sip_trunk_configuration_no_online_pstn_routing_settings_raises_value_error(self):
+    async def test_update_sip_configuration_no_sip_routes_raises_value_error(self):
         test_client = self.get_simple_test_client()
 
         try:
-            await test_client.update_sip_trunk_configuration(self.test_trunks, None)
+            await test_client.update_sip_configuration(self.test_trunks, None)
             raised = False
         except ValueError:
             raised = True
@@ -126,22 +127,22 @@ class TestSIPRoutingClientAsync(aiounittest.AsyncTestCase):
         self.assertTrue(raised)
 
     @pytest.mark.asyncio
-    async def test_update_pstn_gateways_no_gateways_raises_value_error(self):
+    async def test_update_sip_trunks_no_gateways_raises_value_error(self):
         test_client = self.get_simple_test_client()
 
         try:
-            await test_client.update_pstn_gateways(None)
+            await test_client.update_sip_trunks(None)
         except ValueError:
             raised = True
 
         self.assertTrue(raised)
 
     @pytest.mark.asyncio
-    async def test_update_routing_settings_no_routting_raises_value_error(self):
+    async def test_update_sip_routes_no_routting_raises_value_error(self):
         test_client = self.get_simple_test_client()
 
         try:
-            await test_client.update_routing_settings(None)
+            await test_client.update_sip_routes(None)
         except ValueError:
             raised = True
 
