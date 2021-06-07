@@ -46,7 +46,7 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Cluster":
         """Gets a Service Fabric cluster resource.
 
@@ -93,7 +93,7 @@ class ClustersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Cluster', pipeline_response)
@@ -109,7 +109,7 @@ class ClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         parameters: "_models.Cluster",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Cluster":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
         error_map = {
@@ -147,7 +147,7 @@ class ClustersOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -167,7 +167,7 @@ class ClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         parameters: "_models.Cluster",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Cluster"]:
         """Creates or updates a Service Fabric cluster resource.
 
@@ -181,8 +181,8 @@ class ClustersOperations:
         :type parameters: ~azure.mgmt.servicefabric.models.Cluster
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Cluster or the result of cls(response)
@@ -240,7 +240,7 @@ class ClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         parameters: "_models.ClusterUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Cluster":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
         error_map = {
@@ -278,7 +278,7 @@ class ClustersOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -298,7 +298,7 @@ class ClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         parameters: "_models.ClusterUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Cluster"]:
         """Updates the configuration of a Service Fabric cluster resource.
 
@@ -313,8 +313,8 @@ class ClustersOperations:
         :type parameters: ~azure.mgmt.servicefabric.models.ClusterUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Cluster or the result of cls(response)
@@ -371,7 +371,7 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a Service Fabric cluster resource.
 
@@ -417,7 +417,7 @@ class ClustersOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -428,7 +428,7 @@ class ClustersOperations:
     async def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ClusterListResult":
         """Gets the list of Service Fabric cluster resources created in the specified resource group.
 
@@ -472,7 +472,7 @@ class ClustersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ClusterListResult', pipeline_response)
@@ -485,7 +485,7 @@ class ClustersOperations:
 
     async def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ClusterListResult":
         """Gets the list of Service Fabric cluster resources created in the specified subscription.
 
@@ -526,7 +526,7 @@ class ClustersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ClusterListResult', pipeline_response)
