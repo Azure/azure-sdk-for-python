@@ -47,7 +47,7 @@ class ResourcesOperations:
         self,
         source_resource_group_name: str,
         parameters: "_models.ResourcesMoveInfo",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -93,7 +93,7 @@ class ResourcesOperations:
         self,
         source_resource_group_name: str,
         parameters: "_models.ResourcesMoveInfo",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Move resources from one resource group to another. The resources being moved should all be in
         the same resource group.
@@ -104,8 +104,8 @@ class ResourcesOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.ResourcesMoveInfo
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -158,7 +158,7 @@ class ResourcesOperations:
         filter: Optional[str] = None,
         expand: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceListResult"]:
         """Get all of the resources under a subscription.
 
@@ -243,7 +243,8 @@ class ResourcesOperations:
         parent_resource_path: str,
         resource_type: str,
         resource_name: str,
-        **kwargs
+        api_version: str,
+        **kwargs: Any
     ) -> bool:
         """Checks whether resource exists.
 
@@ -257,6 +258,8 @@ class ResourcesOperations:
         :type resource_type: str
         :param resource_name: Resource identity.
         :type resource_name: str
+        :param api_version:
+        :type api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: bool, or the result of cls(response)
         :rtype: bool
@@ -267,7 +270,6 @@ class ResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-02-01"
 
         # Construct URL
         url = self.check_existence.metadata['url']  # type: ignore
@@ -309,7 +311,8 @@ class ResourcesOperations:
         parent_resource_path: str,
         resource_type: str,
         resource_name: str,
-        **kwargs
+        api_version: str,
+        **kwargs: Any
     ) -> None:
         """Delete resource and all of its resources.
 
@@ -323,6 +326,8 @@ class ResourcesOperations:
         :type resource_type: str
         :param resource_name: Resource identity.
         :type resource_name: str
+        :param api_version:
+        :type api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -333,7 +338,6 @@ class ResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-02-01"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -374,8 +378,9 @@ class ResourcesOperations:
         parent_resource_path: str,
         resource_type: str,
         resource_name: str,
+        api_version: str,
         parameters: "_models.GenericResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GenericResource":
         """Create a resource.
 
@@ -389,6 +394,8 @@ class ResourcesOperations:
         :type resource_type: str
         :param resource_name: Resource identity.
         :type resource_name: str
+        :param api_version:
+        :type api_version: str
         :param parameters: Create or update resource parameters.
         :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.GenericResource
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -401,7 +408,6 @@ class ResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -456,15 +462,15 @@ class ResourcesOperations:
         parent_resource_path: str,
         resource_type: str,
         resource_name: str,
+        api_version: str,
         parameters: "_models.GenericResource",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.GenericResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.GenericResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -517,8 +523,9 @@ class ResourcesOperations:
         parent_resource_path: str,
         resource_type: str,
         resource_name: str,
+        api_version: str,
         parameters: "_models.GenericResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.GenericResource"]:
         """Updates a resource.
 
@@ -533,12 +540,14 @@ class ResourcesOperations:
         :type resource_type: str
         :param resource_name: The name of the resource to update.
         :type resource_name: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param parameters: Parameters for updating the resource.
         :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.GenericResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either GenericResource or the result of cls(response)
@@ -559,6 +568,7 @@ class ResourcesOperations:
                 parent_resource_path=parent_resource_path,
                 resource_type=resource_type,
                 resource_name=resource_name,
+                api_version=api_version,
                 parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -604,7 +614,8 @@ class ResourcesOperations:
         parent_resource_path: str,
         resource_type: str,
         resource_name: str,
-        **kwargs
+        api_version: str,
+        **kwargs: Any
     ) -> "_models.GenericResource":
         """Returns a resource belonging to a resource group.
 
@@ -618,6 +629,8 @@ class ResourcesOperations:
         :type resource_type: str
         :param resource_name: Resource identity.
         :type resource_name: str
+        :param api_version:
+        :type api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GenericResource, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.GenericResource
@@ -628,7 +641,6 @@ class ResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-02-01"
         accept = "application/json"
 
         # Construct URL

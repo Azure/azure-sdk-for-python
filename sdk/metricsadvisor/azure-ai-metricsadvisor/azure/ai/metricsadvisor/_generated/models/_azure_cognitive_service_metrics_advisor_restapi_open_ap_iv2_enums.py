@@ -76,22 +76,44 @@ class AnomalyValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ANOMALY = "Anomaly"
     NOT_ANOMALY = "NotAnomaly"
 
+class AuthenticationTypeEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """authentication type for corresponding data source
+    """
+
+    BASIC = "Basic"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    AZURE_SQL_CONNECTION_STRING = "AzureSQLConnectionString"
+    DATA_LAKE_GEN2_SHARED_KEY = "DataLakeGen2SharedKey"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SERVICE_PRINCIPAL_IN_KV = "ServicePrincipalInKV"
+
 class ChangePointValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     AUTO_DETECT = "AutoDetect"
     CHANGE_POINT = "ChangePoint"
     NOT_CHANGE_POINT = "NotChangePoint"
 
+class DataSourceCredentialType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of data source credential
+    """
+
+    AZURE_SQL_CONNECTION_STRING = "AzureSQLConnectionString"
+    DATA_LAKE_GEN2_SHARED_KEY = "DataLakeGen2SharedKey"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SERVICE_PRINCIPAL_IN_KV = "ServicePrincipalInKV"
+
 class DataSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """data source type
+    """
 
     AZURE_APPLICATION_INSIGHTS = "AzureApplicationInsights"
     AZURE_BLOB = "AzureBlob"
     AZURE_COSMOS_DB = "AzureCosmosDB"
     AZURE_DATA_EXPLORER = "AzureDataExplorer"
     AZURE_DATA_LAKE_STORAGE_GEN2 = "AzureDataLakeStorageGen2"
+    AZURE_EVENT_HUBS = "AzureEventHubs"
+    AZURE_LOG_ANALYTICS = "AzureLogAnalytics"
     AZURE_TABLE = "AzureTable"
-    ELASTICSEARCH = "Elasticsearch"
-    HTTP_REQUEST = "HttpRequest"
     INFLUX_DB = "InfluxDB"
     MONGO_DB = "MongoDB"
     MY_SQL = "MySql"
@@ -107,6 +129,8 @@ class Direction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UP = "Up"
 
 class EntityStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """data feed status
+    """
 
     ACTIVE = "Active"
     PAUSED = "Paused"
@@ -137,6 +161,8 @@ class FillMissingPointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NO_FILLING = "NoFilling"
 
 class Granularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """granularity of the time series
+    """
 
     YEARLY = "Yearly"
     MONTHLY = "Monthly"
@@ -224,6 +250,13 @@ class TimeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ANOMALY_TIME = "AnomalyTime"
     CREATED_TIME = "CreatedTime"
     MODIFIED_TIME = "ModifiedTime"
+
+class ValueType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """data used to implement value filter
+    """
+
+    VALUE = "Value"
+    MEAN = "Mean"
 
 class ViewMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """data feed access mode, default is Private

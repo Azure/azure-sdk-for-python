@@ -261,7 +261,6 @@ class AppConfigurationClientTest(AzureTestCase):
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
 
-    @pytest.mark.skip("3 != 2, three items are returned")
     @app_config_decorator
     def test_list_configuration_settings_only_key(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
         client = self.create_aad_client(appconfiguration_endpoint_string)
@@ -278,7 +277,6 @@ class AppConfigurationClientTest(AzureTestCase):
         assert len(items) == 1
         assert all(x.key and not x.label and x.content_type for x in items)
 
-    @pytest.mark.skip("ResourceExistsError: Operation returned an invalid status 'Precondition Failed'")
     @app_config_decorator
     def test_list_configuration_settings_reserved_chars(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
         client = self.create_aad_client(appconfiguration_endpoint_string)
@@ -288,20 +286,19 @@ class AppConfigurationClientTest(AzureTestCase):
         resered_char_kv = client.add_configuration_setting(
             resered_char_kv
         )
-        self._delete_setting(client, resered_char_kv)
         escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
         items = list(client.list_configuration_settings(
             label_filter=escaped_label
         ))
         assert len(items) == 1
         assert all(x.label == LABEL_RESERVED_CHARS for x in items)
+        client.delete_configuration_setting(resered_char_kv.key)
 
-    @pytest.mark.skip("Bad Request")
     @app_config_decorator
     def test_list_configuration_settings_contains(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         items = list(client.list_configuration_settings(
-            label_filter="*" + LABEL + "*"
+            label_filter=LABEL + "*"
         ))
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
@@ -388,7 +385,6 @@ class AppConfigurationClientTest(AzureTestCase):
         assert len(items) >= 1
         assert all(x.key == KEY for x in items)
 
-    @pytest.mark.skip("Operation returned an invalid status 'Internal Server Error'")
     @app_config_decorator
     def test_list_revisions_fields(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
         client = self.create_aad_client(appconfiguration_endpoint_string)

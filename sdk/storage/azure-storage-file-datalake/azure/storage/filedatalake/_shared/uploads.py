@@ -477,6 +477,13 @@ class SubStream(IOBase):
                             raise IOError("Stream failed to seek to the desired location.")
                         buffer_from_stream = self._wrapped_stream.read(current_max_buffer_size)
                 else:
+                    absolute_position = self._stream_begin_index + self._position
+                    # It's possible that there's connection problem during data transfer,
+                    # so when we retry we don't want to read from current position of wrapped stream,
+                    # instead we should seek to where we want to read from.
+                    if self._wrapped_stream.tell() != absolute_position:
+                        self._wrapped_stream.seek(absolute_position, SEEK_SET)
+
                     buffer_from_stream = self._wrapped_stream.read(current_max_buffer_size)
 
             if buffer_from_stream:

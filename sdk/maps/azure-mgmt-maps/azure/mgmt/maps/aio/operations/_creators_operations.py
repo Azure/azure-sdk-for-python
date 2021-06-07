@@ -63,7 +63,7 @@ class CreatorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-01-preview"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -96,7 +96,7 @@ class CreatorsOperations:
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -105,7 +105,7 @@ class CreatorsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -121,7 +121,7 @@ class CreatorsOperations:
         resource_group_name: str,
         account_name: str,
         creator_name: str,
-        creator_create_parameters: "_models.CreatorCreateParameters",
+        creator_resource: "_models.Creator",
         **kwargs
     ) -> "_models.Creator":
         """Create or update a Maps Creator resource. Creator resource will manage Azure resources required
@@ -134,8 +134,8 @@ class CreatorsOperations:
         :type account_name: str
         :param creator_name: The name of the Maps Creator instance.
         :type creator_name: str
-        :param creator_create_parameters: The new or updated parameters for the Creator resource.
-        :type creator_create_parameters: ~azure.mgmt.maps.models.CreatorCreateParameters
+        :param creator_resource: The new or updated parameters for the Creator resource.
+        :type creator_resource: ~azure.mgmt.maps.models.Creator
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Creator, or the result of cls(response)
         :rtype: ~azure.mgmt.maps.models.Creator
@@ -146,7 +146,7 @@ class CreatorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-01-preview"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -170,7 +170,7 @@ class CreatorsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(creator_create_parameters, 'CreatorCreateParameters')
+        body_content = self._serialize.body(creator_resource, 'Creator')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -178,7 +178,7 @@ class CreatorsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -222,7 +222,7 @@ class CreatorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-01-preview"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -254,7 +254,7 @@ class CreatorsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Creator', pipeline_response)
@@ -290,7 +290,7 @@ class CreatorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-01-preview"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         # Construct URL
@@ -317,7 +317,7 @@ class CreatorsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -350,7 +350,7 @@ class CreatorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-01-preview"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         # Construct URL
@@ -377,7 +377,7 @@ class CreatorsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Creator', pipeline_response)

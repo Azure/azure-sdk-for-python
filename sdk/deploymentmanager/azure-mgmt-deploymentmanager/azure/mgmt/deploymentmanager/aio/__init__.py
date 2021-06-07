@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._deployment_manager_client import DeploymentManagerClient
-__all__ = ['DeploymentManagerClient']
+from ._azure_deployment_manager import AzureDeploymentManager
+__all__ = ['AzureDeploymentManager']

@@ -165,7 +165,8 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             BODY
         )
         return result.result()
-    
+
+    @unittest.skip('skip test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network(self, resource_group):
 

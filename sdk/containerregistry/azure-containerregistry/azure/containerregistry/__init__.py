@@ -7,28 +7,34 @@
 # --------------------------------------------------------------------------
 
 from ._container_registry_client import ContainerRegistryClient
-from ._container_repository_client import ContainerRepositoryClient
+from ._container_repository import ContainerRepository
 from ._models import (
-    ContentPermissions,
-    DeletedRepositoryResult,
-    RegistryArtifactOrderBy,
-    RegistryArtifactProperties,
+    ArtifactArchitecture,
+    ArtifactOperatingSystem,
+    ContentProperties,
+    DeleteRepositoryResult,
+    ManifestOrder,
+    ArtifactManifestProperties,
     RepositoryProperties,
-    TagOrderBy,
-    TagProperties,
+    TagOrder,
+    ArtifactTagProperties,
 )
+from ._registry_artifact import RegistryArtifact
 from ._version import VERSION
 
 __version__ = VERSION
 
 __all__ = [
+    "ArtifactArchitecture",
+    "ArtifactOperatingSystem",
     "ContainerRegistryClient",
-    "ContainerRepositoryClient",
-    "ContentPermissions",
-    "DeletedRepositoryResult",
-    "RegistryArtifactOrderBy",
-    "RegistryArtifactProperties",
+    "ContainerRepository",
+    "ContentProperties",
+    "DeleteRepositoryResult",
+    "RegistryArtifact",
+    "ManifestOrder",
+    "ArtifactManifestProperties",
     "RepositoryProperties",
-    "TagOrderBy",
-    "TagProperties",
+    "TagOrder",
+    "ArtifactTagProperties",
 ]

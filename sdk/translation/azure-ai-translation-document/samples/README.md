@@ -5,7 +5,7 @@ languages:
 products:
   - azure
   - azure-cognitive-services
-  - azure-document-translation
+  - azure-translator
 urlFragment: documenttranslation-samples
 ---
 
@@ -14,7 +14,7 @@ urlFragment: documenttranslation-samples
 These code samples show common scenario operations with the Azure Document Translation client library.
 The async versions of the samples require Python 3.6 or later.
 
-You can authenticate your client with a Document Translation API key:
+You can authenticate your client with a Document Translation API key or through Azure Active Directory with a token credential from [azure-identity][azure_identity]:
 * See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases.
 
 These sample programs show common scenarios for the Document Translation client's offerings.

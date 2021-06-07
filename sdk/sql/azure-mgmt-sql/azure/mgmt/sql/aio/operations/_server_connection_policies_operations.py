@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class ServerConnectionPoliciesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,10 +44,10 @@ class ServerConnectionPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        connection_policy_name: Union[str, "models.ConnectionPolicyName"],
-        parameters: "models.ServerConnectionPolicy",
-        **kwargs
-    ) -> "models.ServerConnectionPolicy":
+        connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+        parameters: "_models.ServerConnectionPolicy",
+        **kwargs: Any
+    ) -> "_models.ServerConnectionPolicy":
         """Creates or updates the server's connection policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -64,7 +64,7 @@ class ServerConnectionPoliciesOperations:
         :rtype: ~azure.mgmt.sql.models.ServerConnectionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerConnectionPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerConnectionPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -119,9 +119,9 @@ class ServerConnectionPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        connection_policy_name: Union[str, "models.ConnectionPolicyName"],
-        **kwargs
-    ) -> "models.ServerConnectionPolicy":
+        connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+        **kwargs: Any
+    ) -> "_models.ServerConnectionPolicy":
         """Gets the server's secure connection policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -136,7 +136,7 @@ class ServerConnectionPoliciesOperations:
         :rtype: ~azure.mgmt.sql.models.ServerConnectionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerConnectionPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerConnectionPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

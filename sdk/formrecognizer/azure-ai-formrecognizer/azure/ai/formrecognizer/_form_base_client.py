@@ -20,9 +20,9 @@ class FormRecognizerClientBase(object):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         self._endpoint = endpoint
         self._credential = credential
-        self._api_version = kwargs.pop(
-            "api_version", FormRecognizerApiVersion.V2_1_PREVIEW
-        )
+        self._api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
+        if self._api_version.startswith("v"):  # v2.0 released with this option
+            self._api_version = self._api_version[1:]
         validate_api_version(self._api_version)
 
         authentication_policy = get_authentication_policy(credential)
@@ -42,7 +42,15 @@ class FormRecognizerClientBase(object):
             }
         )
         http_logging_policy.allowed_query_params.update(
-            {"includeTextDetails", "locale", "language", "includeKeys", "op", "pages"}
+            {
+                "includeTextDetails",
+                "locale",
+                "language",
+                "includeKeys",
+                "op",
+                "pages",
+                "readingOrder",
+            }
         )
 
         self._client = FormRecognizer(

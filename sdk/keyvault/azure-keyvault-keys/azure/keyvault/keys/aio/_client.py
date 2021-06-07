@@ -15,9 +15,8 @@ from .. import DeletedKey, JsonWebKey, KeyVaultKey, KeyProperties
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from datetime import datetime
     from azure.core.async_paging import AsyncItemPaged
-    from typing import Any, Optional, List, Union
+    from typing import Any, Optional, Union
     from .. import KeyType
 
 
@@ -53,11 +52,12 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of the new key.
         :param key_type: The type of key to create
         :type key_type: ~azure.keyvault.keys.KeyType or str
-        :keyword int size: RSA key size in bits, for example 2048, 3072, or 4096. Applies only to RSA keys. To
-         create an RSA key, consider using :func:`create_rsa_key` instead.
+        :keyword int size: Key size in bits. Applies only to RSA and symmetric keys. Consider using
+         :func:`create_rsa_key` or :func:`create_oct_key` instead.
         :keyword curve: Elliptic curve name. Applies only to elliptic curve keys. Defaults to the NIST P-256
          elliptic curve. To create an elliptic curve key, consider using :func:`create_ec_key` instead.
         :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str
+        :keyword int public_exponent: The RSA public exponent to use. Applies only to RSA keys created in a Managed HSM.
         :keyword key_operations: Allowed key operations
         :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
@@ -92,7 +92,8 @@ class KeyClient(AsyncKeyVaultClientBase):
             key_attributes=attributes,
             key_ops=kwargs.pop("key_operations", None),
             tags=kwargs.pop("tags", None),
-            curve=kwargs.pop("curve", None)
+            curve=kwargs.pop("curve", None),
+            public_exponent=kwargs.pop("public_exponent", None)
         )
 
         bundle = await self._client.create_key(
@@ -112,6 +113,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param str name: The name for the new key.
         :keyword int size: Key size in bits, for example 2048, 3072, or 4096.
+        :keyword int public_exponent: The RSA public exponent to use. Applies only to RSA keys created in a Managed HSM.
         :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
          Defaults to ``False``.
         :keyword key_operations: Allowed key operations
@@ -168,6 +170,38 @@ class KeyClient(AsyncKeyVaultClientBase):
         """
         hsm = kwargs.pop("hardware_protected", False)
         return await self.create_key(name, key_type="EC-HSM" if hsm else "EC", **kwargs)
+
+    @distributed_trace_async
+    async def create_oct_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
+        """Create a new octet sequence (symmetric) key or, if `name` is already in use, create a new version of the key.
+
+        Requires the keys/create permission.
+
+        :param str name: The name for the new key.
+        :keyword int size: Key size in bits, for example 128, 192, or 256.
+        :keyword key_operations: Allowed key operations.
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
+        :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
+         Defaults to ``False``.
+        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
+        :returns: The created key
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example:
+            .. literalinclude:: ../tests/test_samples_keys_async.py
+                :start-after: [START create_oct_key]
+                :end-before: [END create_oct_key]
+                :language: python
+                :caption: Create an octet sequence (symmetric) key
+                :dedent: 8
+        """
+        hsm = kwargs.pop("hardware_protected", False)
+        return await self.create_key(name, key_type="oct-HSM" if hsm else "oct", **kwargs)
 
     @distributed_trace_async
     async def delete_key(self, name: str, **kwargs: "Any") -> DeletedKey:

@@ -2,27 +2,22 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
-from azure.keyvault.keys import KeyClient, parse_key_vault_key_id
-from devtools_testutils import PowerShellPreparer
+from azure.keyvault.keys import KeyVaultKeyIdentifier
 
 from _shared.test_case import KeyVaultTestCase
+from _test_case import KeysTestCase
 
 
-class TestParseId(KeyVaultTestCase):
-    def create_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(KeyClient)
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
-
-    @PowerShellPreparer("keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
-    def test_parse_key_id_with_version(self, azure_keyvault_url):
-        client = self.create_client(azure_keyvault_url)
+class TestParseId(KeysTestCase, KeyVaultTestCase):
+    def test_parse_key_id_with_version(self):
+        client = self.create_key_client(self.vault_url)
         key_name = self.get_resource_name("key")
         # create key
         created_key = client.create_rsa_key(key_name)
 
         # [START parse_key_vault_key_id]
         key = client.get_key(key_name)
-        parsed_key_id = parse_key_vault_key_id(key.id)
+        parsed_key_id = KeyVaultKeyIdentifier(key.id)
 
         print(parsed_key_id.name)
         print(parsed_key_id.vault_url)
@@ -37,7 +32,7 @@ class TestParseId(KeyVaultTestCase):
 
 def test_parse_key_id_with_pending_version():
     source_id = "https://keyvault-name.vault.azure.net/keys/key-name/pending"
-    parsed_key_id = parse_key_vault_key_id(source_id)
+    parsed_key_id = KeyVaultKeyIdentifier(source_id)
 
     assert parsed_key_id.name == "key-name"
     assert parsed_key_id.vault_url == "https://keyvault-name.vault.azure.net"
@@ -47,7 +42,7 @@ def test_parse_key_id_with_pending_version():
 
 def test_parse_deleted_key_id():
     source_id = "https://keyvault-name.vault.azure.net/deletedkeys/deleted-key"
-    parsed_key_id = parse_key_vault_key_id(source_id)
+    parsed_key_id = KeyVaultKeyIdentifier(source_id)
 
     assert parsed_key_id.name == "deleted-key"
     assert parsed_key_id.vault_url == "https://keyvault-name.vault.azure.net"

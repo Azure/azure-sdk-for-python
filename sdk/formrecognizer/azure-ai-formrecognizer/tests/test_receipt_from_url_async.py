@@ -235,30 +235,36 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
     async def test_receipt_multipage_url(self, client):
 
         async with client:
-            poller = await client.begin_recognize_receipts_from_url(self.multipage_url_pdf, include_field_elements=True)
+            poller = await client.begin_recognize_receipts_from_url(self.multipage_receipt_url_pdf, include_field_elements=True)
             result = await poller.result()
 
-        self.assertEqual(len(result), 3)
+        self.assertEqual(len(result), 2)
         receipt = result[0]
-        # self.assertEqual(receipt.fields.get("MerchantAddress").value, '123 Hobbit Lane 567 Main St. Redmond, WA Redmond, WA') FIXME
-        self.assertEqual(receipt.fields.get("MerchantName").value, 'Bilbo Baggins')
-        self.assertEqual(receipt.fields.get("MerchantPhoneNumber").value, '+15555555555')
-        self.assertEqual(receipt.fields.get("Subtotal").value, 300.0)
-        self.assertEqual(receipt.fields.get("Total").value, 430.0)
+        self.assertEqual(receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond, WA 98052')
+        self.assertEqual(receipt.fields.get("MerchantName").value, 'Contoso')
+        self.assertEqual(receipt.fields.get("MerchantPhoneNumber").value, '+19876543210')
+        self.assertEqual(receipt.fields.get("Subtotal").value, 11.7)
+        self.assertEqual(receipt.fields.get("Tax").value, 1.17)
+        self.assertEqual(receipt.fields.get("Tip").value, 1.623)
+        self.assertEqual(receipt.fields.get("Total").value, 14.52)
+        self.assertEqual(receipt.fields.get("TransactionDate").value, date(year=2019, month=6, day=10))
+        self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
         self.assertEqual(receipt.page_range.first_page_number, 1)
         self.assertEqual(receipt.page_range.last_page_number, 1)
         self.assertFormPagesHasValues(receipt.pages)
         receipt_type = receipt.fields.get("ReceiptType")
         self.assertIsNotNone(receipt_type.confidence)
         self.assertEqual(receipt_type.value, 'Itemized')
-        receipt = result[2]
-        # self.assertEqual(receipt.fields.get("MerchantAddress").value, '123 Hobbit Lane 567 Main St. Redmond, WA Redmond, WA') FIXME
-        # self.assertEqual(receipt.fields.get("MerchantName").value, 'Frodo Baggins') FIXME
-        self.assertEqual(receipt.fields.get("MerchantPhoneNumber").value, '+15555555555')
-        self.assertEqual(receipt.fields.get("Subtotal").value, 3000.0)
-        # self.assertEqual(receipt.fields.get("Total").value, 1000.0) FIXME
-        self.assertEqual(receipt.page_range.first_page_number, 3)
-        self.assertEqual(receipt.page_range.last_page_number, 3)
+        receipt = result[1]
+        self.assertEqual(receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond, WA 98052')
+        self.assertEqual(receipt.fields.get("MerchantName").value, 'Contoso')
+        self.assertEqual(receipt.fields.get("Subtotal").value, 1098.99)
+        self.assertEqual(receipt.fields.get("Tax").value, 104.4)
+        self.assertEqual(receipt.fields.get("Total").value, 1203.39)
+        self.assertEqual(receipt.fields.get("TransactionDate").value, date(year=2019, month=6, day=10))
+        self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
+        self.assertEqual(receipt.page_range.first_page_number, 2)
+        self.assertEqual(receipt.page_range.last_page_number, 2)
         self.assertFormPagesHasValues(receipt.pages)
         receipt_type = receipt.fields.get("ReceiptType")
         self.assertIsNotNone(receipt_type.confidence)
@@ -278,7 +284,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
         async with client:
             poller = await client.begin_recognize_receipts_from_url(
-                self.multipage_url_pdf,
+                self.multipage_receipt_url_pdf,
                 include_field_elements=True,
                 cls=callback
             )
@@ -293,8 +299,6 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
         # check hardcoded values
         for receipt, actual in zip(returned_model, actual):
-            if not actual.fields:  # second page is blank
-                continue
 
             # check dict values
             self.assertFormFieldsTransformCorrect(receipt.fields, actual.fields, read_results)
@@ -342,7 +346,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="en-US")
-        assert "'locale' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+        assert "'locale' is only available for API version V2_1 and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

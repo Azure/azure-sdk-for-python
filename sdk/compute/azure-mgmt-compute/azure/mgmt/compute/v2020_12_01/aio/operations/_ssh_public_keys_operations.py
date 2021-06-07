@@ -43,7 +43,7 @@ class SshPublicKeysOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SshPublicKeysGroupListResult"]:
         """Lists all of the SSH public keys in the subscription. Use the nextLink property in the response
         to get the next page of SSH public keys.
@@ -111,7 +111,7 @@ class SshPublicKeysOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SshPublicKeysGroupListResult"]:
         """Lists all of the SSH public keys in the specified resource group. Use the nextLink property in
         the response to get the next page of SSH public keys.
@@ -184,7 +184,7 @@ class SshPublicKeysOperations:
         resource_group_name: str,
         ssh_public_key_name: str,
         parameters: "_models.SshPublicKeyResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SshPublicKeyResource":
         """Creates a new SSH public key resource.
 
@@ -254,7 +254,7 @@ class SshPublicKeysOperations:
         resource_group_name: str,
         ssh_public_key_name: str,
         parameters: "_models.SshPublicKeyUpdateResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SshPublicKeyResource":
         """Updates a new SSH public key resource.
 
@@ -319,7 +319,7 @@ class SshPublicKeysOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete an SSH public key.
 
@@ -372,7 +372,7 @@ class SshPublicKeysOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SshPublicKeyResource":
         """Retrieves information about an SSH public key.
 
@@ -430,7 +430,7 @@ class SshPublicKeysOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SshPublicKeyGenerateKeyPairResult":
         """Generates and returns a public/private key pair and populates the SSH public key resource with
         the public key. The length of the key will be 3072 bits. This operation can only be performed

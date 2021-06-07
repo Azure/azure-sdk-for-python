@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ElasticPoolActivitiesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,8 +46,8 @@ class ElasticPoolActivitiesOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.ElasticPoolActivityListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ElasticPoolActivityListResult"]:
         """Returns elastic pool activities.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -62,7 +62,7 @@ class ElasticPoolActivitiesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ElasticPoolActivityListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ElasticPoolActivityListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ElasticPoolActivityListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

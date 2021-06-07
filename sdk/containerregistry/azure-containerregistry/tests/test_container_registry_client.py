@@ -6,27 +6,22 @@
 import pytest
 import six
 
-from devtools_testutils import AzureTestCase
-
-from azure.containerregistry import (
-    ContainerRegistryClient,
-    DeletedRepositoryResult,
-)
+from azure.containerregistry import DeleteRepositoryResult
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline.transport import RequestsTransport
 
 from testcase import ContainerRegistryTestClass
-from constants import TO_BE_DELETED
+from constants import TO_BE_DELETED, HELLO_WORLD
 from preparer import acr_preparer
 
 
 class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
-    def test_list_repositories(self, containerregistry_endpoint):
+    def test_list_repository_names(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
 
-        repositories = client.list_repositories()
+        repositories = client.list_repository_names()
         assert isinstance(repositories, ItemPaged)
 
         count = 0
@@ -40,12 +35,12 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert count > 0
 
     @acr_preparer()
-    def test_list_repositories_by_page(self, containerregistry_endpoint):
+    def test_list_repository_names_by_page(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
         results_per_page = 2
         total_pages = 0
 
-        repository_pages = client.list_repositories(results_per_page=results_per_page)
+        repository_pages = client.list_repository_names(results_per_page=results_per_page)
 
         prev = None
         for page in repository_pages.by_page():
@@ -62,19 +57,16 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
-        repository = self.get_resource_name("repo")
-        self.import_repo(
-            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repository
-        )
+        self.import_image(HELLO_WORLD, [TO_BE_DELETED])
         client = self.create_registry_client(containerregistry_endpoint)
 
-        result = client.delete_repository(repository)
-        assert isinstance(result, DeletedRepositoryResult)
-        assert result.deleted_registry_artifact_digests is not None
+        result = client.delete_repository(TO_BE_DELETED)
+        assert isinstance(result, DeleteRepositoryResult)
+        assert result.deleted_manifests is not None
         assert result.deleted_tags is not None
 
-        for repo in client.list_repositories():
-            if repo == repository:
+        for repo in client.list_repository_names():
+            if repo == TO_BE_DELETED:
                 raise ValueError("Repository not deleted")
 
     @acr_preparer()
@@ -89,13 +81,13 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         transport = RequestsTransport()
         client = self.create_registry_client(containerregistry_endpoint, transport=transport)
         with client:
-            for r in client.list_repositories():
+            for r in client.list_repository_names():
                 pass
             assert transport.session is not None
 
-            with client.get_repository_client("hello-world") as repo_client:
+            with client.get_repository(HELLO_WORLD) as repo_client:
                 assert transport.session is not None
 
-            for r in client.list_repositories():
+            for r in client.list_repository_names():
                 pass
             assert transport.session is not None

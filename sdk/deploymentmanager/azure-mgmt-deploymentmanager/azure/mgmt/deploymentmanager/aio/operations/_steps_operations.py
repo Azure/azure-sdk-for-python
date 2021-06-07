@@ -45,7 +45,7 @@ class StepsOperations:
         resource_group_name: str,
         step_name: str,
         step_info: Optional["_models.StepResource"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StepResource":
         """Creates or updates a rollout step with the given step properties.
 
@@ -115,7 +115,7 @@ class StepsOperations:
         self,
         resource_group_name: str,
         step_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StepResource":
         """Gets the step.
 
@@ -175,7 +175,7 @@ class StepsOperations:
         self,
         resource_group_name: str,
         step_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the step.
 
@@ -231,8 +231,7 @@ class StepsOperations:
     async def list(
         self,
         resource_group_name: str,
-        resource_group_name1: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.StepResource"]:
         """Lists the steps in a resource group.
 
@@ -240,8 +239,6 @@ class StepsOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param resource_group_name1: The name of the resource group. The name is case insensitive.
-        :type resource_group_name1: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of StepResource, or the result of cls(response)
         :rtype: list[~azure.mgmt.deploymentmanager.models.StepResource]
@@ -253,7 +250,6 @@ class StepsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-11-01-preview"
-        api_version = "2019-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -261,14 +257,11 @@ class StepsOperations:
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name1", resource_group_name1, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers

@@ -109,7 +109,7 @@ except (SyntaxError, ImportError):
     from ._models import WaitStepAttributes  # type: ignore
     from ._models import WaitStepProperties  # type: ignore
 
-from ._deployment_manager_client_enums import (
+from ._azure_deployment_manager_enums import (
     DeploymentMode,
     RestAuthLocation,
     RestAuthType,

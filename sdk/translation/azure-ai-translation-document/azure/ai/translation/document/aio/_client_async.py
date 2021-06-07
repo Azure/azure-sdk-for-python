@@ -4,18 +4,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, List
+from typing import Any, List, Union, TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from .._generated.aio import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from .._user_agent import USER_AGENT
 from .._generated.models import (
-    BatchStatusDetail as _BatchStatusDetail,
+    TranslationStatus as _TranslationStatus,
 )
 from .._models import (
     JobStatusResult,
@@ -23,14 +21,17 @@ from .._models import (
     FileFormat,
     DocumentStatusResult
 )
+from .._helpers import get_http_logging_policy, convert_datetime, get_authentication_policy
 from .._polling import TranslationPolling
-COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
+if TYPE_CHECKING:
+    from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class DocumentTranslationClient(object):
 
     def __init__(
-            self, endpoint: str, credential: "AzureKeyCredential", **kwargs: Any
+            self, endpoint: str, credential: Union["AzureKeyCredential", "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         """DocumentTranslationClient is your interface to the Document Translation service.
         Use the client to translate whole documents while preserving source document
@@ -38,9 +39,11 @@ class DocumentTranslationClient(object):
 
         :param str endpoint: Supported Document Translation endpoint (protocol and hostname, for example:
             https://<resource-name>.cognitiveservices.azure.com/).
-        :param credential: Credential needed for the client to connect to Azure.
-            Currently only API key authentication is supported.
-        :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
+        :param credential: Credentials needed for the client to connect to Azure.
+            This is an instance of AzureKeyCredential if using an API key or a token
+            credential from :mod:`azure.identity`.
+        :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
+            :class:`~azure.core.credentials.TokenCredential`
         :keyword api_version:
             The API version of the service to use for requests. It defaults to the latest service version.
             Setting to an older version may result in reduced feature compatibility.
@@ -54,22 +57,26 @@ class DocumentTranslationClient(object):
                 :language: python
                 :dedent: 4
                 :caption: Creating the DocumentTranslationClient with an endpoint and API key.
+
+            .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+                :start-after: [START create_dt_client_with_aad_async]
+                :end-before: [END create_dt_client_with_aad_async]
+                :language: python
+                :dedent: 4
+                :caption: Creating the DocumentTranslationClient with a token credential.
         """
         self._endpoint = endpoint
         self._credential = credential
         self._api_version = kwargs.pop('api_version', None)
 
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
-        authentication_policy = AzureKeyCredentialPolicy(
-            name=COGNITIVE_KEY_HEADER, credential=credential
-        )
+        authentication_policy = get_authentication_policy(credential)
         self._client = _BatchDocumentTranslationClient(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             api_version=self._api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
+            http_logging_policy=get_http_logging_policy(),
             **kwargs
         )
 
@@ -112,7 +119,7 @@ class DocumentTranslationClient(object):
         """
 
         # submit translation job
-        response_headers = await self._client.document_translation._submit_batch_request_initial(  # pylint: disable=protected-access
+        response_headers = await self._client.document_translation._start_translation_initial(  # pylint: disable=protected-access
             # pylint: disable=protected-access
             inputs=DocumentTranslationInput._to_generated_list(inputs),
             cls=lambda pipeline_response, _, response_headers: response_headers,
@@ -145,7 +152,7 @@ class DocumentTranslationClient(object):
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
-        job_status = await self._client.document_translation.get_operation_status(job_id, **kwargs)
+        job_status = await self._client.document_translation.get_translation_status(job_id, **kwargs)
         # pylint: disable=protected-access
         return JobStatusResult._from_generated(job_status)
 
@@ -164,7 +171,7 @@ class DocumentTranslationClient(object):
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
-        await self._client.document_translation.cancel_operation(job_id, **kwargs)
+        await self._client.document_translation.cancel_translation(job_id, **kwargs)
 
     @distributed_trace_async
     async def wait_until_done(self, job_id, **kwargs):
@@ -189,13 +196,13 @@ class DocumentTranslationClient(object):
                 :dedent: 4
                 :caption: Create a translation job and wait until it is done.
         """
-        pipeline_response = await self._client.document_translation.get_operation_status(
+        pipeline_response = await self._client.document_translation.get_translation_status(
             job_id,
             cls=lambda pipeline_response, _, response_headers: pipeline_response
         )
 
         def callback(raw_response):
-            detail = self._client._deserialize(_BatchStatusDetail, raw_response)  # pylint: disable=protected-access
+            detail = self._client._deserialize(_TranslationStatus, raw_response)  # pylint: disable=protected-access
             return JobStatusResult._from_generated(detail)  # pylint: disable=protected-access
 
         poller = AsyncLROPoller(
@@ -215,6 +222,17 @@ class DocumentTranslationClient(object):
         # type: (**Any) -> AsyncItemPaged[JobStatusResult]
         """List all the submitted translation jobs under the Document Translation resource.
 
+        :keyword int top: the total number of jobs to return (across all pages) from all submitted jobs.
+        :keyword int skip: the number of jobs to skip (from beginning of the all submitted jobs).
+            By default, we sort by all submitted jobs descendingly by start time.
+        :keyword int results_per_page: is the number of jobs returned per page.
+        :keyword list[str] job_ids: job ids to filter by.
+        :keyword list[str] statuses: job statuses to filter by.
+        :keyword Union[str, datetime.datetime] created_after: get jobs created after certain datetime.
+        :keyword Union[str, datetime.datetime] created_before: get jobs created before certain datetime.
+        :keyword list[str] order_by: the sorting query for the jobs returned.
+            format: ["parm1 asc/desc", "parm2 asc/desc", ...]
+            (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
         :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.translation.document.JobStatusResult`]
         :rtype: ~azure.core.paging.AsyncItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -229,6 +247,13 @@ class DocumentTranslationClient(object):
                 :caption: List all submitted jobs under the resource.
         """
 
+        created_after = kwargs.pop("created_after", None)
+        created_before = kwargs.pop("created_before", None)
+        created_after = convert_datetime(created_after) if created_after else None
+        created_before = convert_datetime(created_before) if created_before else None
+        results_per_page = kwargs.pop("results_per_page", None)
+        job_ids = kwargs.pop("job_ids", None)
+
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
             return JobStatusResult._from_generated(generated_model)
@@ -238,17 +263,32 @@ class DocumentTranslationClient(object):
             lambda job_statuses: [_convert_from_generated_model(job_status) for job_status in job_statuses]
         )
 
-        return self._client.document_translation.get_operations(
+        return self._client.document_translation.get_translations_status(
             cls=model_conversion_function,
+            maxpagesize=results_per_page,
+            created_date_time_utc_start=created_after,
+            created_date_time_utc_end=created_before,
+            ids=job_ids,
             **kwargs
         )
 
     @distributed_trace
     def list_all_document_statuses(self, job_id, **kwargs):
         # type: (str, **Any) -> AsyncItemPaged[DocumentStatusResult]
-        """List all the document statuses under a translation job.
+        """List all the document statuses for a given translation job.
 
-        :param str job_id: The translation job ID.
+        :param str job_id: ID of translation job to list documents for.
+        :keyword int top: the total number of documents to return (across all pages).
+        :keyword int skip: the number of documents to skip (from beginning).
+            By default, we sort by all documents descendingly by start time.
+        :keyword int results_per_page: is the number of documents returned per page.
+        :keyword list[str] document_ids: document IDs to filter by.
+        :keyword list[str] statuses: document statuses to filter by.
+        :keyword Union[str, datetime.datetime] translated_after: get document translated after certain datetime.
+        :keyword Union[str, datetime.datetime] translated_before: get document translated before certain datetime.
+        :keyword list[str] order_by: the sorting query for the documents.
+            format: ["parm1 asc/desc", "parm2 asc/desc", ...]
+            (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
         :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.translation.document.DocumentStatusResult`]
         :rtype: ~azure.core.paging.AsyncItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -262,6 +302,12 @@ class DocumentTranslationClient(object):
                 :dedent: 8
                 :caption: List all the document statuses under the translation job.
         """
+        translated_after = kwargs.pop("translated_after", None)
+        translated_before = kwargs.pop("translated_before", None)
+        translated_after = convert_datetime(translated_after) if translated_after else None
+        translated_before = convert_datetime(translated_before) if translated_before else None
+        results_per_page = kwargs.pop("results_per_page", None)
+        document_ids = kwargs.pop("document_ids", None)
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
@@ -272,9 +318,13 @@ class DocumentTranslationClient(object):
             lambda doc_statuses: [_convert_from_generated_model(doc_status) for doc_status in doc_statuses]
         )
 
-        return self._client.document_translation.get_operation_documents_status(
+        return self._client.document_translation.get_documents_status(
             id=job_id,
             cls=model_conversion_function,
+            maxpagesize=results_per_page,
+            created_date_time_utc_start=translated_after,
+            created_date_time_utc_end=translated_before,
+            ids=document_ids,
             **kwargs
         )
 
@@ -303,7 +353,7 @@ class DocumentTranslationClient(object):
         :rtype: List[FileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        glossary_formats = await self._client.document_translation.get_glossary_formats(**kwargs)
+        glossary_formats = await self._client.document_translation.get_supported_glossary_formats(**kwargs)
         # pylint: disable=protected-access
         return FileFormat._from_generated_list(glossary_formats.value)
 
@@ -316,6 +366,6 @@ class DocumentTranslationClient(object):
         :rtype: List[FileFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        document_formats = await self._client.document_translation.get_document_formats(**kwargs)
+        document_formats = await self._client.document_translation.get_supported_document_formats(**kwargs)
         # pylint: disable=protected-access
         return FileFormat._from_generated_list(document_formats.value)

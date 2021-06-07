@@ -7,18 +7,18 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repos6ce51658/_tags/tag6ce51658
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "repo6ce51658", "Action": "metadata_read"}]}]}'
+        "repository", "Name": "repos6ce51658", "Action": "metadata_read"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '215'
+      content-length: '216'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:54:38 GMT
+      date: Wed, 28 Apr 2021 22:22:50 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -27,7 +27,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    url: https://fake_url.azurecr.io/acr/v1/repos6ce51658/_tags/tag6ce51658
 - request:
     body:
       access_token: REDACTED
@@ -46,11 +46,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:54:39 GMT
+      date: Wed, 28 Apr 2021 22:22:51 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.966667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.65'
     status:
       code: 200
       message: OK
@@ -59,7 +59,7 @@ interactions:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
-      scope: repository:repo6ce51658:metadata_read
+      scope: repository:repos6ce51658:metadata_read
       service: fake_url.azurecr.io
     headers:
       Accept:
@@ -74,11 +74,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:54:39 GMT
+      date: Wed, 28 Apr 2021 22:22:51 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.95'
+      x-ms-ratelimit-remaining-calls-per-second: '166.633333'
     status:
       code: 200
       message: OK
@@ -91,20 +91,20 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repos6ce51658/_tags/tag6ce51658
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "repo6ce51658", "tag":
-        {"name": "to_be_deleted", "digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
-        "createdTime": "2021-04-07T12:54:28.7529146Z", "lastUpdateTime": "2021-04-07T12:54:28.7529146Z",
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "repos6ce51658", "tag":
+        {"name": "tag6ce51658", "digest": "sha256:f2266cbfc127c960fd30e76b7c792dc23b588c0db76233517e1891a4e357d519",
+        "createdTime": "2021-04-28T22:17:10.2570329Z", "lastUpdateTime": "2021-04-28T22:17:10.2570329Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '388'
+      content-length: '387'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:54:39 GMT
+      date: Wed, 28 Apr 2021 22:22:51 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -112,7 +112,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    url: https://fake_url.azurecr.io/acr/v1/repos6ce51658/_tags/tag6ce51658
 - request:
     body: null
     headers:
@@ -121,18 +121,18 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repos6ce51658/_tags/tag6ce51658
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "repo6ce51658", "Action": "delete"}]}]}'
+        "repository", "Name": "repos6ce51658", "Action": "delete"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '208'
+      content-length: '209'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:54:40 GMT
+      date: Wed, 28 Apr 2021 22:22:51 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -141,39 +141,12 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
-- request:
-    body:
-      access_token: REDACTED
-      grant_type: access_token
-      service: fake_url.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
-  response:
-    body:
-      string: '{"refresh_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:54:40 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.933333'
-    status:
-      code: 200
-      message: OK
-    url: https://fake_url.azurecr.io/oauth2/exchange
+    url: https://fake_url.azurecr.io/acr/v1/repos6ce51658/_tags/tag6ce51658
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
-      scope: repository:repo6ce51658:delete
+      scope: repository:repos6ce51658:delete
       service: fake_url.azurecr.io
     headers:
       Accept:
@@ -188,11 +161,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:54:40 GMT
+      date: Wed, 28 Apr 2021 22:22:51 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.916667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.616667'
     status:
       code: 200
       message: OK
@@ -205,7 +178,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repos6ce51658/_tags/tag6ce51658
   response:
     body:
       string: ''
@@ -213,17 +186,17 @@ interactions:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '0'
-      date: Wed, 07 Apr 2021 12:54:40 GMT
+      date: Wed, 28 Apr 2021 22:22:52 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-int-docker-content-digest: sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24
-      x-ms-ratelimit-remaining-calls-per-second: '32.000000'
+      x-ms-int-docker-content-digest: sha256:f2266cbfc127c960fd30e76b7c792dc23b588c0db76233517e1891a4e357d519
+      x-ms-ratelimit-remaining-calls-per-second: '8.000000'
     status:
       code: 202
       message: Accepted
-    url: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    url: https://fake_url.azurecr.io/acr/v1/repos6ce51658/_tags/tag6ce51658
 - request:
     body: null
     headers:
@@ -232,18 +205,18 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repos6ce51658/_tags/tag6ce51658
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "repo6ce51658", "Action": "metadata_read"}]}]}'
+        "repository", "Name": "repos6ce51658", "Action": "metadata_read"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '215'
+      content-length: '216'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:54:46 GMT
+      date: Wed, 28 Apr 2021 22:22:57 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -252,39 +225,12 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
-- request:
-    body:
-      access_token: REDACTED
-      grant_type: access_token
-      service: fake_url.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
-  response:
-    body:
-      string: '{"refresh_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:54:46 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.1'
-    status:
-      code: 200
-      message: OK
-    url: https://fake_url.azurecr.io/oauth2/exchange
+    url: https://fake_url.azurecr.io/acr/v1/repos6ce51658/_tags/tag6ce51658
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
-      scope: repository:repo6ce51658:metadata_read
+      scope: repository:repos6ce51658:metadata_read
       service: fake_url.azurecr.io
     headers:
       Accept:
@@ -299,11 +245,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:54:46 GMT
+      date: Wed, 28 Apr 2021 22:22:57 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.6'
     status:
       code: 200
       message: OK
@@ -316,7 +262,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repos6ce51658/_tags/tag6ce51658
   response:
     body:
       string: '{"errors": [{"code": "TAG_UNKNOWN", "message": "the specified tag does
@@ -326,7 +272,7 @@ interactions:
       connection: keep-alive
       content-length: '81'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:54:46 GMT
+      date: Wed, 28 Apr 2021 22:22:57 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -334,5 +280,5 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    url: https://fake_url.azurecr.io/acr/v1/repos6ce51658/_tags/tag6ce51658
 version: 1

@@ -33,7 +33,7 @@ def sample_create_data_feed():
     # [START create_data_feed]
     from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
     from azure.ai.metricsadvisor.models import (
-        SQLServerDataFeed,
+        SqlServerDataFeedSource,
         DataFeedSchema,
         DataFeedMetric,
         DataFeedDimension,
@@ -53,7 +53,7 @@ def sample_create_data_feed():
 
     data_feed = client.create_data_feed(
         name="My data feed",
-        source=SQLServerDataFeed(
+        source=SqlServerDataFeedSource(
             connection_string=sql_server_connection_string,
             query=query,
         ),

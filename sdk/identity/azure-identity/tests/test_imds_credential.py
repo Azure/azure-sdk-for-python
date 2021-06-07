@@ -4,16 +4,17 @@
 # ------------------------------------
 import json
 import time
-from azure.core.credentials import AccessToken
 
+from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
+
 from azure.identity import CredentialUnavailableError
-from azure.identity._constants import Endpoints
-from azure.identity._credentials.managed_identity import ImdsCredential
-import pytest
+from azure.identity._credentials.imds import ImdsCredential, IMDS_URL, PIPELINE_SETTINGS
 from azure.identity._internal.user_agent import USER_AGENT
+import pytest
 
 from helpers import mock, mock_response, Request, validating_transport
+from recorded_test_case import RecordedTestCase
 
 
 def test_no_scopes():
@@ -81,7 +82,7 @@ def test_retries():
     )
     mock_send = mock.Mock(return_value=mock_response)
 
-    total_retries = ImdsCredential._create_config().retry_policy.total_retries
+    total_retries = PIPELINE_SETTINGS["retry_total"]
 
     for status_code in (404, 429, 500):
         mock_send.reset_mock()
@@ -145,9 +146,9 @@ def test_identity_config():
     scope = "scope"
     transport = validating_transport(
         requests=[
-            Request(base_url=Endpoints.IMDS),
+            Request(base_url=IMDS_URL),
             Request(
-                base_url=Endpoints.IMDS,
+                base_url=IMDS_URL,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "resource": scope, param_name: param_value},
@@ -173,3 +174,19 @@ def test_identity_config():
     token = credential.get_token(scope)
 
     assert token == expected_token
+
+
+@pytest.mark.usefixtures("record_imds_test")
+class RecordedTests(RecordedTestCase):
+    def test_system_assigned(self):
+        credential = ImdsCredential()
+        token = credential.get_token(self.scope)
+        assert token.token
+        assert isinstance(token.expires_on, int)
+
+    @pytest.mark.usefixtures("user_assigned_identity_client_id")
+    def test_user_assigned(self):
+        credential = ImdsCredential(client_id=self.user_assigned_identity_client_id)
+        token = credential.get_token(self.scope)
+        assert token.token
+        assert isinstance(token.expires_on, int)

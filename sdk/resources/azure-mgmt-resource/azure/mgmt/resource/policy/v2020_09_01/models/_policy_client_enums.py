@@ -30,36 +30,51 @@ class AliasPathAttributes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The attributes of the token that the alias path is referring to.
     """
 
-    NONE = "None"  #: The token that the alias path is referring to has no attributes.
-    MODIFIABLE = "Modifiable"  #: The token that the alias path is referring to is modifiable by policies with 'modify' effect.
+    #: The token that the alias path is referring to has no attributes.
+    NONE = "None"
+    #: The token that the alias path is referring to is modifiable by policies with 'modify' effect.
+    MODIFIABLE = "Modifiable"
 
 class AliasPathTokenType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the token that the alias path is referring to.
     """
 
-    NOT_SPECIFIED = "NotSpecified"  #: The token type is not specified.
-    ANY = "Any"  #: The token type can be anything.
-    STRING = "String"  #: The token type is string.
-    OBJECT = "Object"  #: The token type is object.
-    ARRAY = "Array"  #: The token type is array.
-    INTEGER = "Integer"  #: The token type is integer.
-    NUMBER = "Number"  #: The token type is number.
-    BOOLEAN = "Boolean"  #: The token type is boolean.
+    #: The token type is not specified.
+    NOT_SPECIFIED = "NotSpecified"
+    #: The token type can be anything.
+    ANY = "Any"
+    #: The token type is string.
+    STRING = "String"
+    #: The token type is object.
+    OBJECT = "Object"
+    #: The token type is array.
+    ARRAY = "Array"
+    #: The token type is integer.
+    INTEGER = "Integer"
+    #: The token type is number.
+    NUMBER = "Number"
+    #: The token type is boolean.
+    BOOLEAN = "Boolean"
 
 class AliasPatternType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of alias pattern
     """
 
-    NOT_SPECIFIED = "NotSpecified"  #: NotSpecified is not allowed.
-    EXTRACT = "Extract"  #: Extract is the only allowed value.
+    #: NotSpecified is not allowed.
+    NOT_SPECIFIED = "NotSpecified"
+    #: Extract is the only allowed value.
+    EXTRACT = "Extract"
 
 class AliasType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the alias.
     """
 
-    NOT_SPECIFIED = "NotSpecified"  #: Alias type is unknown (same as not providing alias type).
-    PLAIN_TEXT = "PlainText"  #: Alias value is not secret.
-    MASK = "Mask"  #: Alias value is secret.
+    #: Alias type is unknown (same as not providing alias type).
+    NOT_SPECIFIED = "NotSpecified"
+    #: Alias value is not secret.
+    PLAIN_TEXT = "PlainText"
+    #: Alias value is secret.
+    MASK = "Mask"
 
 class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
@@ -74,15 +89,20 @@ class EnforcementMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The policy assignment enforcement mode. Possible values are Default and DoNotEnforce.
     """
 
-    DEFAULT = "Default"  #: The policy effect is enforced during resource creation or update.
-    DO_NOT_ENFORCE = "DoNotEnforce"  #: The policy effect is not enforced during resource creation or update.
+    #: The policy effect is enforced during resource creation or update.
+    DEFAULT = "Default"
+    #: The policy effect is not enforced during resource creation or update.
+    DO_NOT_ENFORCE = "DoNotEnforce"
 
 class ExemptionCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The policy exemption category. Possible values are Waiver and Mitigated.
     """
 
-    WAIVER = "Waiver"  #: This category of exemptions usually means the scope is not applicable for the policy.
-    MITIGATED = "Mitigated"  #: This category of exemptions usually means the mitigation actions have been applied to the scope.
+    #: This category of exemptions usually means the scope is not applicable for the policy.
+    WAIVER = "Waiver"
+    #: This category of exemptions usually means the mitigation actions have been applied to the
+    #: scope.
+    MITIGATED = "Mitigated"
 
 class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The data type of the parameter.
@@ -110,5 +130,8 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     resource.
     """
 
-    SYSTEM_ASSIGNED = "SystemAssigned"  #: Indicates that a system assigned identity is associated with the resource.
-    NONE = "None"  #: Indicates that no identity is associated with the resource or that the existing identity should be removed.
+    #: Indicates that a system assigned identity is associated with the resource.
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    #: Indicates that no identity is associated with the resource or that the existing identity should
+    #: be removed.
+    NONE = "None"

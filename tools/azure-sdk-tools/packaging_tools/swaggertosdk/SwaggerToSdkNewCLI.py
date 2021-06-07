@@ -16,7 +16,7 @@ from .SwaggerToSdkCore import (
     get_readme_files_from_git_object,
     build_file_content,
     solve_relative_path,
-    this_conf_will_generate_for_this_pr
+    this_conf_will_generate_for_this_pr,
 )
 from .autorest_tools import (
     execute_simple_command,
@@ -37,9 +37,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def move_wrapper_files_or_dirs(src_root, dst_root, global_conf, local_conf):
-    """Save wrapper files somewhere for replace them after generation.
-    """
-    src_relative_path = local_conf.get('output_dir', '')
+    """Save wrapper files somewhere for replace them after generation."""
+    src_relative_path = local_conf.get("output_dir", "")
     src_abs_path = Path(src_root, src_relative_path)
     dst_abs_path = Path(dst_root, src_relative_path)
 
@@ -58,7 +57,7 @@ def move_wrapper_files_or_dirs(src_root, dst_root, global_conf, local_conf):
 
 
 def delete_extra_files(sdk_root, global_conf, local_conf):
-    src_relative_path = local_conf.get('output_dir', '')
+    src_relative_path = local_conf.get("output_dir", "")
     src_abs_path = Path(sdk_root, src_relative_path)
 
     delete_files_or_dirs = merge_options(global_conf, local_conf, "delete_filesOrDirs") or []
@@ -77,27 +76,33 @@ def move_autorest_files(client_generated_path, sdk_root, global_conf, local_conf
     This is one only if output_dir is set, otherwise it's considered generated in place
     and does not required moving
     """
-    dest = local_conf.get('output_dir', None)
+    dest = local_conf.get("output_dir", None)
     if not dest:
         return
     destination_folder = get_local_path_dir(sdk_root, dest)
 
-    generated_relative_base_directory = local_conf.get('generated_relative_base_directory') or \
-        global_conf.get('generated_relative_base_directory')
+    generated_relative_base_directory = local_conf.get("generated_relative_base_directory") or global_conf.get(
+        "generated_relative_base_directory"
+    )
 
     if generated_relative_base_directory:
-        client_possible_path = [elt for elt in client_generated_path.glob(generated_relative_base_directory) if elt.is_dir()]
+        client_possible_path = [
+            elt for elt in client_generated_path.glob(generated_relative_base_directory) if elt.is_dir()
+        ]
         try:
             client_generated_path = client_possible_path.pop()
         except IndexError:
-            err_msg = "Incorrect generated_relative_base_directory folder: {}\n".format(generated_relative_base_directory)
-            err_msg += "Base folders were: : {}\n".format([f.relative_to(client_generated_path) for f in client_generated_path.iterdir()])
+            err_msg = "Incorrect generated_relative_base_directory folder: {}\n".format(
+                generated_relative_base_directory
+            )
+            err_msg += "Base folders were: : {}\n".format(
+                [f.relative_to(client_generated_path) for f in client_generated_path.iterdir()]
+            )
             _LOGGER.critical(err_msg)
             raise ValueError(err_msg)
         if client_possible_path:
             err_msg = "generated_relative_base_directory parameter is ambiguous: {} {}".format(
-                client_generated_path,
-                client_possible_path
+                client_generated_path, client_possible_path
             )
             _LOGGER.critical(err_msg)
             raise ValueError(err_msg)
@@ -109,11 +114,11 @@ def move_autorest_files(client_generated_path, sdk_root, global_conf, local_conf
 
 
 def write_build_file(sdk_root, local_conf):
-    build_dir = local_conf.get('build_dir')
+    build_dir = local_conf.get("build_dir")
     if build_dir:
         build_folder = get_local_path_dir(sdk_root, build_dir)
         build_file = Path(build_folder, "build.json")
-        with open(build_file, 'w') as build_fd:
+        with open(build_file, "w") as build_fd:
             json.dump(build_file_content(), build_fd, indent=2)
 
 
@@ -130,8 +135,7 @@ def execute_after_script(sdk_root, global_conf, local_conf):
 def get_local_path_dir(root, relative_path):
     build_folder = Path(root, relative_path)
     if not build_folder.is_dir():
-        err_msg = "Folder does not exist or is not accessible: {}".format(
-            build_folder)
+        err_msg = "Folder does not exist or is not accessible: {}".format(build_folder)
         _LOGGER.critical(err_msg)
         raise ValueError(err_msg)
     return build_folder
@@ -141,11 +145,13 @@ def build_project(temp_dir, project, absolute_markdown_path, sdk_folder, global_
     absolute_generated_path = Path(temp_dir, project)
     absolute_save_path = Path(temp_dir, "save")
     move_wrapper_files_or_dirs(sdk_folder, absolute_save_path, global_conf, local_conf)
-    generate_code(absolute_markdown_path,
-                  global_conf,
-                  local_conf,
-                  absolute_generated_path if "output_dir" in local_conf else None,
-                  autorest_bin)
+    generate_code(
+        absolute_markdown_path,
+        global_conf,
+        local_conf,
+        absolute_generated_path if "output_dir" in local_conf else None,
+        autorest_bin,
+    )
     move_autorest_files(absolute_generated_path, sdk_folder, global_conf, local_conf)
     move_wrapper_files_or_dirs(absolute_save_path, sdk_folder, global_conf, local_conf)
     delete_extra_files(sdk_folder, global_conf, local_conf)
@@ -157,15 +163,21 @@ def build_libraries(config, skip_callback, restapi_git_folder, sdk_repo, temp_di
     """Main method of the the file"""
 
     global_conf = config["meta"]
-    global_conf["autorest_options"] = solve_relative_path(global_conf.get("autorest_options", {}), sdk_repo.working_tree_dir)
+    global_conf["autorest_options"] = solve_relative_path(
+        global_conf.get("autorest_options", {}), sdk_repo.working_tree_dir
+    )
     global_conf["envs"] = solve_relative_path(global_conf.get("envs", {}), sdk_repo.working_tree_dir)
-    global_conf["advanced_options"] = solve_relative_path(global_conf.get("advanced_options", {}), sdk_repo.working_tree_dir)
+    global_conf["advanced_options"] = solve_relative_path(
+        global_conf.get("advanced_options", {}), sdk_repo.working_tree_dir
+    )
 
     for project, local_conf in config.get("projects", {}).items():
         if skip_callback(project, local_conf):
             _LOGGER.info("Skip project %s", project)
             continue
-        local_conf["autorest_options"] = solve_relative_path(local_conf.get("autorest_options", {}), sdk_repo.working_tree_dir)
+        local_conf["autorest_options"] = solve_relative_path(
+            local_conf.get("autorest_options", {}), sdk_repo.working_tree_dir
+        )
 
         markdown_relative_path, optional_relative_paths = get_input_paths(global_conf, local_conf)
         _LOGGER.info(f"Markdown input: {markdown_relative_path}")
@@ -175,24 +187,24 @@ def build_libraries(config, skip_callback, restapi_git_folder, sdk_repo, temp_di
         if markdown_relative_path:
             absolute_markdown_path = Path(restapi_git_folder, markdown_relative_path).resolve()
         if optional_relative_paths:
-            local_conf.setdefault('autorest_options', {})['input-file'] = [
-                Path(restapi_git_folder, input_path).resolve()
-                for input_path
-                in optional_relative_paths
+            local_conf.setdefault("autorest_options", {})["input-file"] = [
+                Path(restapi_git_folder, input_path).resolve() for input_path in optional_relative_paths
             ]
 
         sdk_folder = sdk_repo.working_tree_dir
-        build_project(
-            temp_dir,
-            project,
-            absolute_markdown_path,
-            sdk_folder,
-            global_conf,
-            local_conf,
-            autorest_bin
-        )
+        build_project(temp_dir, project, absolute_markdown_path, sdk_folder, global_conf, local_conf, autorest_bin)
 
-def generate_sdk_from_git_object(git_object, branch_name, restapi_git_id, sdk_git_id, base_branch_names, *, fallback_base_branch_name="master", sdk_tag=None):
+
+def generate_sdk_from_git_object(
+    git_object,
+    branch_name,
+    restapi_git_id,
+    sdk_git_id,
+    base_branch_names,
+    *,
+    fallback_base_branch_name="master",
+    sdk_tag=None,
+):
     """Generate SDK from a commit or a PR object.
 
     git_object is the initial commit/PR from the RestAPI repo. If git_object is a PR, prefer to checkout Github PR "merge_commit_sha"
@@ -215,17 +227,17 @@ def generate_sdk_from_git_object(git_object, branch_name, restapi_git_id, sdk_gi
         sdk_tag = sdk_git_id
 
     try:  # Checkout the sha if commit obj
-        branched_rest_api_id = restapi_git_id+'@'+git_object.sha
+        branched_rest_api_id = restapi_git_id + "@" + git_object.sha
         pr_number = None
     except (AttributeError, TypeError):  # This is a PR, don't clone the fork but "base" repo and PR magic commit
         if git_object.merge_commit_sha:
-            branched_rest_api_id = git_object.base.repo.full_name+'@'+git_object.merge_commit_sha
+            branched_rest_api_id = git_object.base.repo.full_name + "@" + git_object.merge_commit_sha
         else:
             branched_rest_api_id = git_object.base.repo.full_name
         pr_number = git_object.number
 
     # Always clone SDK from fallback branch that is required to exist
-    branched_sdk_git_id = sdk_git_id+'@'+fallback_base_branch_name
+    branched_sdk_git_id = sdk_git_id + "@" + fallback_base_branch_name
 
     # I don't know if the destination branch exists, try until it works
     config = None
@@ -251,8 +263,9 @@ def generate_sdk_from_git_object(git_object, branch_name, restapi_git_id, sdk_gi
         clone_dir = Path(temp_dir) / Path(global_conf.get("advanced_options", {}).get("clone_dir", "sdk"))
         _LOGGER.info("Clone dir will be: %s", clone_dir)
 
-        with manage_git_folder(gh_token, Path(temp_dir) / Path("rest"), branched_rest_api_id, pr_number=pr_number) as restapi_git_folder, \
-            manage_git_folder(gh_token, clone_dir, branched_sdk_git_id) as sdk_folder:
+        with manage_git_folder(
+            gh_token, Path(temp_dir) / Path("rest"), branched_rest_api_id, pr_number=pr_number
+        ) as restapi_git_folder, manage_git_folder(gh_token, clone_dir, branched_sdk_git_id) as sdk_folder:
 
             readme_files_infered = get_readme_files_from_git_object(git_object, restapi_git_folder)
             _LOGGER.info("Readmes files infered from PR: %s ", readme_files_infered)
@@ -264,23 +277,23 @@ def generate_sdk_from_git_object(git_object, branch_name, restapi_git_id, sdk_gi
             sdk_repo = Repo(str(sdk_folder))
 
             for base_branch in base_branch_names:
-                _LOGGER.info('Checkout and create %s', base_branch)
+                _LOGGER.info("Checkout and create %s", base_branch)
                 checkout_and_create_branch(sdk_repo, base_branch)
 
-            _LOGGER.info('Try to checkout destination branch %s', branch_name)
+            _LOGGER.info("Try to checkout destination branch %s", branch_name)
             try:
                 sdk_repo.git.checkout(branch_name)
-                _LOGGER.info('The branch exists.')
+                _LOGGER.info("The branch exists.")
             except GitCommandError:
-                _LOGGER.info('Destination branch does not exists')
+                _LOGGER.info("Destination branch does not exists")
                 # Will be created by do_commit
 
             configure_user(gh_token, sdk_repo)
 
             # Look for configuration in Readme
-            _LOGGER.info('Extract conf from Readmes for target: %s', sdk_git_id)
+            _LOGGER.info("Extract conf from Readmes for target: %s", sdk_git_id)
             extract_conf_from_readmes(readme_files_infered, restapi_git_folder, sdk_tag, config)
-            _LOGGER.info('End of extraction')
+            _LOGGER.info("End of extraction")
 
             def skip_callback(project, local_conf):
                 # We know "project" is based on Path in "readme_files_infered"
@@ -289,23 +302,23 @@ def generate_sdk_from_git_object(git_object, branch_name, restapi_git_id, sdk_gi
                 # Might be a regular project
                 markdown_relative_path, optional_relative_paths = get_input_paths(global_conf, local_conf)
                 if not (
-                        markdown_relative_path in readme_files_infered or
-                        any(input_file in readme_files_infered for input_file in optional_relative_paths)):
+                    markdown_relative_path in readme_files_infered
+                    or any(input_file in readme_files_infered for input_file in optional_relative_paths)
+                ):
                     _LOGGER.info(f"In project {project} no files involved in this commit")
                     return True
                 return False
 
-            build_libraries(config, skip_callback, restapi_git_folder,
-                            sdk_repo, temp_dir, autorest_bin)
+            build_libraries(config, skip_callback, restapi_git_folder, sdk_repo, temp_dir, autorest_bin)
 
             try:
-                commit_for_sha = git_object.commit   # Commit
+                commit_for_sha = git_object.commit  # Commit
             except AttributeError:
                 commit_for_sha = list(git_object.get_commits())[-1].commit  # PR
             message = message_template + "\n\n" + commit_for_sha.message
             commit_sha = do_commit(sdk_repo, message, branch_name, commit_for_sha.sha)
             if commit_sha:
                 for base_branch in base_branch_names:
-                    sdk_repo.git.push('origin', base_branch, set_upstream=True)
-                sdk_repo.git.push('origin', branch_name, set_upstream=True)
+                    sdk_repo.git.push("origin", base_branch, set_upstream=True)
+                sdk_repo.git.push("origin", branch_name, set_upstream=True)
                 return "https://github.com/{}/commit/{}".format(sdk_git_id, commit_sha)

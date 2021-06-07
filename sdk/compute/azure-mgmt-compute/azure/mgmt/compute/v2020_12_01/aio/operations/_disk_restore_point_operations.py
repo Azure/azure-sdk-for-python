@@ -47,7 +47,7 @@ class DiskRestorePointOperations:
         restore_point_collection_name: str,
         vm_restore_point_name: str,
         disk_restore_point_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiskRestorePoint":
         """Get disk restorePoint resource.
 
@@ -117,7 +117,7 @@ class DiskRestorePointOperations:
         resource_group_name: str,
         restore_point_collection_name: str,
         vm_restore_point_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiskRestorePointList"]:
         """Lists diskRestorePoints under a vmRestorePoint.
 

@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class SyncMembersOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -56,7 +56,7 @@ class SyncMembersOperations(object):
         sync_member_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SyncMember"
+        # type: (...) -> "_models.SyncMember"
         """Gets a sync member.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -75,12 +75,12 @@ class SyncMembersOperations(object):
         :rtype: ~azure.mgmt.sql.models.SyncMember
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SyncMember"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SyncMember"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -126,16 +126,16 @@ class SyncMembersOperations(object):
         database_name,  # type: str
         sync_group_name,  # type: str
         sync_member_name,  # type: str
-        parameters,  # type: "models.SyncMember"
+        parameters,  # type: "_models.SyncMember"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.SyncMember"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.SyncMember"]]
+        # type: (...) -> Optional["_models.SyncMember"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SyncMember"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -191,10 +191,10 @@ class SyncMembersOperations(object):
         database_name,  # type: str
         sync_group_name,  # type: str
         sync_member_name,  # type: str
-        parameters,  # type: "models.SyncMember"
+        parameters,  # type: "_models.SyncMember"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.SyncMember"]
+        # type: (...) -> LROPoller["_models.SyncMember"]
         """Creates or updates a sync member.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -212,8 +212,8 @@ class SyncMembersOperations(object):
         :type parameters: ~azure.mgmt.sql.models.SyncMember
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either SyncMember or the result of cls(response)
@@ -221,7 +221,7 @@ class SyncMembersOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SyncMember"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SyncMember"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -249,7 +249,16 @@ class SyncMembersOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
+            'syncMemberName': self._serialize.url("sync_member_name", sync_member_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -278,7 +287,7 @@ class SyncMembersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -337,8 +346,8 @@ class SyncMembersOperations(object):
         :type sync_member_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -370,7 +379,16 @@ class SyncMembersOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
+            'syncMemberName': self._serialize.url("sync_member_name", sync_member_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -391,16 +409,16 @@ class SyncMembersOperations(object):
         database_name,  # type: str
         sync_group_name,  # type: str
         sync_member_name,  # type: str
-        parameters,  # type: "models.SyncMember"
+        parameters,  # type: "_models.SyncMember"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.SyncMember"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.SyncMember"]]
+        # type: (...) -> Optional["_models.SyncMember"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SyncMember"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -453,10 +471,10 @@ class SyncMembersOperations(object):
         database_name,  # type: str
         sync_group_name,  # type: str
         sync_member_name,  # type: str
-        parameters,  # type: "models.SyncMember"
+        parameters,  # type: "_models.SyncMember"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.SyncMember"]
+        # type: (...) -> LROPoller["_models.SyncMember"]
         """Updates an existing sync member.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -474,8 +492,8 @@ class SyncMembersOperations(object):
         :type parameters: ~azure.mgmt.sql.models.SyncMember
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either SyncMember or the result of cls(response)
@@ -483,7 +501,7 @@ class SyncMembersOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SyncMember"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SyncMember"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -511,7 +529,16 @@ class SyncMembersOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
+            'syncMemberName': self._serialize.url("sync_member_name", sync_member_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -533,7 +560,7 @@ class SyncMembersOperations(object):
         sync_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SyncMemberListResult"]
+        # type: (...) -> Iterable["_models.SyncMemberListResult"]
         """Lists sync members in the given sync group.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -550,12 +577,12 @@ class SyncMembersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.SyncMemberListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SyncMemberListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SyncMemberListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -618,7 +645,7 @@ class SyncMembersOperations(object):
         sync_member_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SyncFullSchemaPropertiesListResult"]
+        # type: (...) -> Iterable["_models.SyncFullSchemaPropertiesListResult"]
         """Gets a sync member database schema.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -637,12 +664,12 @@ class SyncMembersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.SyncFullSchemaPropertiesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SyncFullSchemaPropertiesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SyncFullSchemaPropertiesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -712,7 +739,7 @@ class SyncMembersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._refresh_member_schema_initial.metadata['url']  # type: ignore
@@ -771,8 +798,8 @@ class SyncMembersOperations(object):
         :type sync_member_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -804,7 +831,16 @@ class SyncMembersOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
+            'syncMemberName': self._serialize.url("sync_member_name", sync_member_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

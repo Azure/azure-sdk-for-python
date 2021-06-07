@@ -4,19 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
 from uuid import UUID
 import logging
 import datetime
 
-from azure.core.exceptions import ResourceExistsError
+import six
 
 from ._entity import EntityProperty, EdmType, TableEntity
 from ._common_conversion import _decode_base64_to_bytes, TZ_UTC
-from ._error import TableErrorCode
-
-if TYPE_CHECKING:
-    from azure.core.exceptions import AzureError
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,18 +20,6 @@ try:
     from urllib.parse import quote
 except ImportError:
     from urllib2 import quote  # type: ignore
-
-if TYPE_CHECKING:
-    from typing import (  # pylint: disable=ungrouped-imports
-        Union,
-        Optional,
-        Any,
-        Iterable,
-        Dict,
-        List,
-        Type,
-        Tuple,
-    )
 
 
 class TablesEntityDatetime(datetime.datetime):
@@ -62,30 +45,18 @@ def get_enum_value(value):
         return value
 
 
-def _deserialize_table_creation(response, _, headers):
-    if response.status_code == 204:
-        error_code = TableErrorCode.table_already_exists
-        error = ResourceExistsError(
-            message="Table already exists\nRequestId:{}\nTime:{}\nErrorCode:{}".format(
-                headers["x-ms-request-id"], headers["Date"], error_code
-            ),
-            response=response,
-        )
-        error.error_code = error_code
-        error.additional_info = {}
-        raise error
-    return headers
-
-
 def _from_entity_binary(value):
-    return EntityProperty(_decode_base64_to_bytes(value))
+    # type: (str) -> EntityProperty
+    return _decode_base64_to_bytes(value)
 
 
 def _from_entity_int32(value):
-    return EntityProperty(int(value))
+    # type: (str) -> EntityProperty
+    return int(value)
 
 
 def _from_entity_int64(value):
+    # type: (str) -> EntityProperty
     return EntityProperty(int(value), EdmType.INT64)
 
 
@@ -125,8 +96,10 @@ def _from_entity_guid(value):
 
 
 def _from_entity_str(value):
-    return EntityProperty(value=value, type=EdmType.STRING)
-
+    # type: (str) -> EntityProperty
+    if isinstance(six.binary_type):
+        return value.decode('utf-8')
+    return value
 
 _EDM_TYPES = [
     EdmType.BINARY,
@@ -194,9 +167,6 @@ def _convert_to_entity(entry_element):
 
     # Timestamp is a known property
     timestamp = properties.pop("Timestamp", None)
-    if timestamp:
-        # entity['Timestamp'] = _from_entity_datetime(timestamp)
-        entity["Timestamp"] = timestamp
 
     for name, value in properties.items():
         mtype = edmtypes.get(name)
@@ -233,9 +203,8 @@ def _convert_to_entity(entry_element):
     etag = odata.get("etag")
     if timestamp and not etag:
         etag = "W/\"datetime'" + url_quote(timestamp) + "'\""
-    entity["etag"] = etag
 
-    entity._set_metadata()  # pylint: disable=protected-access
+    entity._metadata = {'etag': etag, 'timestamp': timestamp}  # pylint: disable=protected-access
     return entity
 
 
@@ -280,11 +249,11 @@ def _return_headers_and_deserialized(
 def _return_context_and_deserialized(
     response, deserialized, response_headers
 ):  # pylint: disable=unused-argument
-    return response.http_response.location_mode, deserialized, response_headers
+    return response.context['location_mode'], deserialized, response_headers
 
 
 def _trim_service_metadata(metadata):
-    # type: (dict[str,str] -> None)
+    # type: (dict[str,str]) -> None
     return {
         "date": metadata.pop("date", None),
         "etag": metadata.pop("etag", None),

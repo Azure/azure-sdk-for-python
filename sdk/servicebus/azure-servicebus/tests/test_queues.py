@@ -88,7 +88,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT5S')
     def test_github_issue_6178(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
@@ -104,7 +104,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             _logger.debug(message.enqueued_time_utc)
                             _logger.debug(message._lock_expired)
                             receiver.complete_message(message)
-                            time.sleep(40)
+                            time.sleep(10)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -265,7 +265,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
     def test_queue_by_queue_client_conn_str_receive_handler_receiveanddelete(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         
         with ServiceBusClient.from_connection_string(
@@ -301,7 +301,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             assert len(messages) == 10
             assert not receiver._running
-            time.sleep(30)
+            time.sleep(10)
     
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, 
@@ -1066,10 +1066,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 content = str(uuid.uuid4())
                 message_id = uuid.uuid4()
                 message = ServiceBusMessage(content)
-                message.time_to_live = timedelta(seconds=30)
+                message.time_to_live = timedelta(seconds=15)
                 sender.send_messages(message)
     
-            time.sleep(30)
+            time.sleep(15)
             with sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=5) as receiver:
                 messages = receiver.receive_messages(5, max_wait_time=10)
             assert not messages
@@ -1206,7 +1206,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
     def test_queue_message_receive_and_delete(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         
         with ServiceBusClient.from_connection_string(
@@ -1233,7 +1233,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with pytest.raises(ValueError):
                     receiver.renew_message_lock(message)
     
-            time.sleep(30)
+            time.sleep(10)
     
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.receive_messages(max_wait_time=10)
@@ -1263,6 +1263,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.to = 'to'
                     message.reply_to = 'reply_to'
                     message.time_to_live = timedelta(seconds=60)
+                    assert message._amqp_properties.absolute_expiry_time == message._amqp_properties.creation_time + message._amqp_header.time_to_live
 
                     yield message
 
@@ -2375,3 +2376,45 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         sender.schedule_messages(message_dict, scheduled_enqueue_time)
                     with pytest.raises(TypeError):
                         sender.schedule_messages(list_message_dicts, scheduled_enqueue_time)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_queue_receive_iterator_resume_after_link_detach(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+
+        def hack_iter_next_mock_error(self):
+            self._open()
+            # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
+            if self.execution_times == 1:
+                from uamqp.errors import LinkDetach
+                from uamqp.constants import ErrorCodes
+                self.execution_times += 1
+                self.error_raised = True
+                raise LinkDetach(ErrorCodes.LinkDetachForced)
+            else:
+                self.execution_times += 1
+            if not self._message_iter:
+                self._message_iter = self._handler.receive_messages_iter()
+            uamqp_message = next(self._message_iter)
+            message = self._build_message(uamqp_message)
+            return message
+
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(
+                    [ServiceBusMessage("test1"), ServiceBusMessage("test2"), ServiceBusMessage("test3")]
+                )
+            with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
+                receiver.execution_times = 0
+                receiver.error_raised = False
+                receiver._iter_next = types.MethodType(hack_iter_next_mock_error, receiver)
+                res = []
+                for msg in receiver:
+                    receiver.complete_message(msg)
+                    res.append(msg)
+                assert len(res) == 3
+                assert receiver.error_raised
+                assert receiver.execution_times >= 4  # at least 1 failure and 3 successful receiving iterator

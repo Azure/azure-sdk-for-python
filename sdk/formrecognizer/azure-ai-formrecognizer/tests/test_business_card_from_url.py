@@ -199,15 +199,15 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
-        # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
-        # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
+        # The phone number values are not getting normalized to a phone number type. Just assert on text.
+        self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
+        self.assertEqual(business_card.fields.get("MobilePhones").value[0].value_data.text, "+44 (0) 7911 123456")
 
-        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
-        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("WorkPhones").value), 1)
+        self.assertEqual(business_card.fields.get("WorkPhones").value[0].value_data.text, "+44 (0) 20 9876 5432")
 
-        # self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
-        # self.assertEqual(business_card.fields.get("Faxes").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
+        self.assertEqual(business_card.fields.get("Faxes").value[0].value_data.text, "+44 (0) 20 6789 2345")
 
         self.assertEqual(len(business_card.fields.get("Addresses").value), 1)
         self.assertEqual(business_card.fields.get("Addresses").value[0].value, "2 Kingdom Street Paddington, London, W2 6BD")
@@ -238,9 +238,8 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com")
 
-        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
-        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
-        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
+        self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "+14257793479")
 
         business_card = result[1]
         self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
@@ -260,15 +259,15 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
-        # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
-        # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
+        # The phone number values are not getting normalized to a phone number type. Just assert on text.
+        self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
+        self.assertEqual(business_card.fields.get("MobilePhones").value[0].value_data.text, "+44 (0) 7911 123456")
 
-        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
-        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("WorkPhones").value), 1)
+        self.assertEqual(business_card.fields.get("WorkPhones").value[0].value_data.text, "+44 (0) 20 9876 5432")
 
-        # self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
-        # self.assertEqual(business_card.fields.get("Faxes").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
+        self.assertEqual(business_card.fields.get("Faxes").value[0].value_data.text, "+44 (0) 20 6789 2345")
 
         self.assertEqual(len(business_card.fields.get("Addresses").value), 1)
         self.assertEqual(business_card.fields.get("Addresses").value[0].value, "2 Kingdom Street Paddington, London, W2 6BD")
@@ -309,15 +308,15 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
-        # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
-        # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
+        # The phone number values are not getting normalized to a phone number type. Just assert on text.
+        self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
+        self.assertEqual(business_card.fields.get("MobilePhones").value[0].value_data.text, "+44 (0) 7911 123456")
 
-        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
-        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("WorkPhones").value), 1)
+        self.assertEqual(business_card.fields.get("WorkPhones").value[0].value_data.text, "+44 (0) 20 9876 5432")
 
-        # self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
-        # self.assertEqual(business_card.fields.get("Faxes").value[0].value, "https://www.contoso.com/")
+        self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
+        self.assertEqual(business_card.fields.get("Faxes").value[0].value_data.text, "+44 (0) 20 6789 2345")
 
         self.assertEqual(len(business_card.fields.get("Addresses").value), 1)
         self.assertEqual(business_card.fields.get("Addresses").value[0].value, "2 Kingdom Street Paddington, London, W2 6BD")
@@ -342,7 +341,7 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
     def test_business_card_v2(self, client):
         with pytest.raises(ValueError) as e:
             client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
-        assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+        assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1 and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

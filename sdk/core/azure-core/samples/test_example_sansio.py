@@ -173,7 +173,7 @@ def example_on_exception():
     request = HttpRequest("GET", "https://bing.com")
     # [START on_exception]
     try:
-        response = policy.next.send(request)
+        response = policy.on_request(request)
     except Exception:
         if not policy.on_exception(request):
             raise

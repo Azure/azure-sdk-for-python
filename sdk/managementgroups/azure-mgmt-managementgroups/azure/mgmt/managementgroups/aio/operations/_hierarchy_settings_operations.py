@@ -43,7 +43,7 @@ class HierarchySettingsOperations:
     async def list(
         self,
         group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HierarchySettingsList":
         """Gets all the hierarchy settings defined at the Management Group level. Settings can only be set
         on the root Management Group of the hierarchy.
@@ -60,7 +60,7 @@ class HierarchySettingsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         # Construct URL
@@ -84,7 +84,7 @@ class HierarchySettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HierarchySettingsList', pipeline_response)
@@ -98,7 +98,7 @@ class HierarchySettingsOperations:
     async def get(
         self,
         group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HierarchySettings":
         """Gets the hierarchy settings defined at the Management Group level. Settings can only be set on
         the root Management Group of the hierarchy.
@@ -115,7 +115,7 @@ class HierarchySettingsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         # Construct URL
@@ -139,7 +139,7 @@ class HierarchySettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HierarchySettings', pipeline_response)
@@ -154,7 +154,7 @@ class HierarchySettingsOperations:
         self,
         group_id: str,
         create_tenant_settings_request: "_models.CreateOrUpdateSettingsRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HierarchySettings":
         """Creates or updates the hierarchy settings defined at the Management Group level.
 
@@ -172,7 +172,7 @@ class HierarchySettingsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -201,7 +201,7 @@ class HierarchySettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HierarchySettings', pipeline_response)
@@ -216,7 +216,7 @@ class HierarchySettingsOperations:
         self,
         group_id: str,
         create_tenant_settings_request: "_models.CreateOrUpdateSettingsRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HierarchySettings":
         """Updates the hierarchy settings defined at the Management Group level.
 
@@ -234,7 +234,7 @@ class HierarchySettingsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -263,7 +263,7 @@ class HierarchySettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HierarchySettings', pipeline_response)
@@ -277,7 +277,7 @@ class HierarchySettingsOperations:
     async def delete(
         self,
         group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the hierarchy settings defined at the Management Group level.
 
@@ -293,7 +293,7 @@ class HierarchySettingsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         # Construct URL
@@ -317,7 +317,7 @@ class HierarchySettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

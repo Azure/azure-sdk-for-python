@@ -45,7 +45,7 @@ class CloudServiceOperatingSystemsOperations:
         self,
         location: str,
         os_version_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OSVersion":
         """Gets properties of a guest operating system version that can be specified in the XML service
         configuration (.cscfg) for a cloud service.
@@ -103,7 +103,7 @@ class CloudServiceOperatingSystemsOperations:
     def list_os_versions(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OSVersionListResult"]:
         """Gets a list of all guest operating system versions available to be specified in the XML service
         configuration (.cscfg) for a cloud service. Use nextLink property in the response to get the
@@ -176,7 +176,7 @@ class CloudServiceOperatingSystemsOperations:
         self,
         location: str,
         os_family_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OSFamily":
         """Gets properties of a guest operating system family that can be specified in the XML service
         configuration (.cscfg) for a cloud service.
@@ -234,7 +234,7 @@ class CloudServiceOperatingSystemsOperations:
     def list_os_families(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OSFamilyListResult"]:
         """Gets a list of all guest operating system families available to be specified in the XML service
         configuration (.cscfg) for a cloud service. Use nextLink property in the response to get the
