@@ -133,5 +133,3 @@ class EventGridSerializationTests(AzureMgmtTestCase):
         val = "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners"
         assert SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenerEventName == val
         assert SystemEventNames.ServiceBusDeadletterMessagesAvailableWithNoListenersEventName == val
-        assert 'ServiceBusDeadletterMessagesAvailableWithNoListenersEventName' in dir(SystemEventNames)
-        assert 'ServiceBusDeadletterMessagesAvailableWithNoListenerEventName' not in dir(SystemEventNames) 
