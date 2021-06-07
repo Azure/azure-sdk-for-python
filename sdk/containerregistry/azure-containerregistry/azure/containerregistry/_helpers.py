@@ -116,7 +116,7 @@ def _parse_exp_time(raw_token):
         padding = len(value) % 4
         if padding > 0:
             value += "=" * padding
-        byte_value = base64.urlsafe_b64decode(value).decode("utf-8")
+        byte_value = base64.b64decode(value).decode("utf-8")
         web_token = json.loads(byte_value)
         return web_token.get("exp", time.time())
 
