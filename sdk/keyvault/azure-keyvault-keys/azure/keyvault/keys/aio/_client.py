@@ -173,8 +173,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def create_oct_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
-        """Create a new octet sequence (symmetric) key or, if ``name`` is already in use, create a new version of the
-        key.
+        """Create a new octet sequence (symmetric) key or, if ``name`` is in use, create a new version of the key.
 
         Requires the keys/create permission.
 

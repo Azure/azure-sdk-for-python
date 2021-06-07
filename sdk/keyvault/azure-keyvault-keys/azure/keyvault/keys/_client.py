@@ -177,8 +177,7 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def create_oct_key(self, name, **kwargs):
         # type: (str, **Any) -> KeyVaultKey
-        """Create a new octet sequence (symmetric) key or, if ``name`` is already in use, create a new version of the
-        key.
+        """Create a new octet sequence (symmetric) key or, if ``name`` is in use, create a new version of the key.
 
         Requires the keys/create permission.
 
