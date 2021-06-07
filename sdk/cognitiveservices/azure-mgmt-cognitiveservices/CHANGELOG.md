@@ -1,5 +1,28 @@
 # Release History
 
+## 7.0.0 (2021-06-03)
+
+**Features**
+
+  - Model PrivateEndpointConnectionProperties has a new parameter provisioning_state
+  - Model PrivateLinkServiceConnectionState has a new parameter actions_required
+  - Model UserOwnedStorage has a new parameter identity_client_id
+  - Model KeyVaultProperties has a new parameter identity_client_id
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model PrivateEndpointConnection has a new parameter etag
+  - Model PrivateEndpointConnection has a new parameter location
+  - Added operation AccountsOperations.get
+  - Added operation AccountsOperations.list_usages
+  - Added operation group DeletedAccountsOperations
+
+**Breaking changes**
+
+  - Operation PrivateEndpointConnectionsOperations.create_or_update has a new signature
+  - Model PrivateLinkServiceConnectionState no longer has parameter action_required
+  - Removed operation AccountsOperations.get_usages
+  - Removed operation AccountsOperations.get_properties
+  - Model Sku has a new signature
+
 ## 6.3.0 (2020-10-09)
 
 **Features**

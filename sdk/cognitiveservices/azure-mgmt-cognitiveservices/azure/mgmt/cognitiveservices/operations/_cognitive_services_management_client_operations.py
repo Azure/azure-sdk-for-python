@@ -10,7 +10,8 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 import uuid
 
@@ -34,12 +35,11 @@ class CognitiveServicesManagementClientOperationsMixin(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CheckSkuAvailabilityResultList or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityResultList or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: SkuAvailabilityListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cognitiveservices.models.SkuAvailabilityListResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cognitiveservices.models.ErrorResponseException>`
         """
         parameters = models.CheckSkuAvailabilityParameter(skus=skus, kind=kind, type=type)
 
@@ -74,13 +74,11 @@ class CognitiveServicesManagementClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('CheckSkuAvailabilityResultList', response)
+            deserialized = self._deserialize('SkuAvailabilityListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -102,12 +100,11 @@ class CognitiveServicesManagementClientOperationsMixin(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CheckDomainAvailabilityResult or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.mgmt.cognitiveservices.models.CheckDomainAvailabilityResult or
+        :return: DomainAvailability or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cognitiveservices.models.DomainAvailability or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cognitiveservices.models.ErrorResponseException>`
         """
         parameters = models.CheckDomainAvailabilityParameter(subdomain_name=subdomain_name, type=type)
 
@@ -141,13 +138,11 @@ class CognitiveServicesManagementClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('CheckDomainAvailabilityResult', response)
+            deserialized = self._deserialize('DomainAvailability', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

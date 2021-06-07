@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class PrivateLinkResourcesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2017-04-18".
+    :ivar api_version: The API version to use for this operation. Constant value: "2021-04-30".
     """
 
     models = models
@@ -35,7 +34,7 @@ class PrivateLinkResourcesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-18"
+        self.api_version = "2021-04-30"
 
         self.config = config
 
@@ -59,7 +58,8 @@ class PrivateLinkResourcesOperations(object):
         :rtype:
          ~azure.mgmt.cognitiveservices.models.PrivateLinkResourceListResult or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cognitiveservices.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.list.metadata['url']
@@ -89,9 +89,7 @@ class PrivateLinkResourcesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

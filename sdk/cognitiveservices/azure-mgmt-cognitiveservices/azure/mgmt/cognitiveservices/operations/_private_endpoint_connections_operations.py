@@ -11,7 +11,8 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -25,7 +26,7 @@ class PrivateEndpointConnectionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2017-04-18".
+    :ivar api_version: The API version to use for this operation. Constant value: "2021-04-30".
     """
 
     models = models
@@ -35,7 +36,7 @@ class PrivateEndpointConnectionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-18"
+        self.api_version = "2021-04-30"
 
         self.config = config
 
@@ -60,7 +61,7 @@ class PrivateEndpointConnectionsOperations(object):
          ~azure.mgmt.cognitiveservices.models.PrivateEndpointConnectionListResult
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.cognitiveservices.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.list.metadata['url']
@@ -90,7 +91,7 @@ class PrivateEndpointConnectionsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -124,7 +125,8 @@ class PrivateEndpointConnectionsOperations(object):
         :return: PrivateEndpointConnection or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.cognitiveservices.models.PrivateEndpointConnection
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cognitiveservices.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -155,9 +157,7 @@ class PrivateEndpointConnectionsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -170,33 +170,10 @@ class PrivateEndpointConnectionsOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}'}
 
-    def create_or_update(
-            self, resource_group_name, account_name, private_endpoint_connection_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Update the state of specified private endpoint connection associated
-        with the Cognitive Services account.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param account_name: The name of Cognitive Services account.
-        :type account_name: str
-        :param private_endpoint_connection_name: The name of the private
-         endpoint connection associated with the Cognitive Services Account
-        :type private_endpoint_connection_name: str
-        :param properties: Resource properties.
-        :type properties:
-         ~azure.mgmt.cognitiveservices.models.PrivateEndpointConnectionProperties
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: PrivateEndpointConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cognitiveservices.models.PrivateEndpointConnection
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        properties1 = models.PrivateEndpointConnection(properties=properties)
+    def _create_or_update_initial(
+            self, resource_group_name, account_name, private_endpoint_connection_name, properties=None, location=None, custom_headers=None, raw=False, **operation_config):
+        properties1 = models.PrivateEndpointConnection(properties=properties, location=location)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -230,13 +207,14 @@ class PrivateEndpointConnectionsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 202]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+
         if response.status_code == 200:
+            deserialized = self._deserialize('PrivateEndpointConnection', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('PrivateEndpointConnection', response)
 
         if raw:
@@ -244,12 +222,11 @@ class PrivateEndpointConnectionsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}'}
 
-    def delete(
-            self, resource_group_name, account_name, private_endpoint_connection_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified private endpoint connection associated with the
-        Cognitive Services account.
+    def create_or_update(
+            self, resource_group_name, account_name, private_endpoint_connection_name, properties=None, location=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Update the state of specified private endpoint connection associated
+        with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -259,15 +236,58 @@ class PrivateEndpointConnectionsOperations(object):
         :param private_endpoint_connection_name: The name of the private
          endpoint connection associated with the Cognitive Services Account
         :type private_endpoint_connection_name: str
+        :param properties: Resource properties.
+        :type properties:
+         ~azure.mgmt.cognitiveservices.models.PrivateEndpointConnectionProperties
+        :param location: The location of the private endpoint connection
+        :type location: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         PrivateEndpointConnection or
+         ClientRawResponse<PrivateEndpointConnection> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cognitiveservices.models.PrivateEndpointConnection]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cognitiveservices.models.PrivateEndpointConnection]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cognitiveservices.models.ErrorResponseException>`
         """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
+            properties=properties,
+            location=location,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('PrivateEndpointConnection', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}'}
+
+
+    def _delete_initial(
+            self, resource_group_name, account_name, private_endpoint_connection_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -295,12 +315,57 @@ class PrivateEndpointConnectionsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 202, 204]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def delete(
+            self, resource_group_name, account_name, private_endpoint_connection_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes the specified private endpoint connection associated with the
+        Cognitive Services account.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account.
+        :type account_name: str
+        :param private_endpoint_connection_name: The name of the private
+         endpoint connection associated with the Cognitive Services Account
+        :type private_endpoint_connection_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cognitiveservices.models.ErrorResponseException>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}'}

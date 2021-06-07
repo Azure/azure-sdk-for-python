@@ -15,18 +15,37 @@ from enum import Enum
 class SkuTier(str, Enum):
 
     free = "Free"
+    basic = "Basic"
     standard = "Standard"
     premium = "Premium"
+    enterprise = "Enterprise"
+
+
+class ResourceIdentityType(str, Enum):
+
+    none = "None"
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
 
 
 class ProvisioningState(str, Enum):
 
+    accepted = "Accepted"
     creating = "Creating"
-    resolving_dns = "ResolvingDNS"
-    moving = "Moving"
     deleting = "Deleting"
-    succeeded = "Succeeded"
+    moving = "Moving"
     failed = "Failed"
+    succeeded = "Succeeded"
+    resolving_dns = "ResolvingDNS"
 
 
 class NetworkRuleAction(str, Enum):
@@ -46,20 +65,20 @@ class PrivateEndpointServiceConnectionStatus(str, Enum):
     pending = "Pending"
     approved = "Approved"
     rejected = "Rejected"
-    disconnected = "Disconnected"
+
+
+class PrivateEndpointConnectionProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    creating = "Creating"
+    deleting = "Deleting"
+    failed = "Failed"
 
 
 class PublicNetworkAccess(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
-
-
-class IdentityType(str, Enum):
-
-    none = "None"
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
 
 
 class KeyName(str, Enum):
@@ -97,3 +116,15 @@ class ResourceSkuRestrictionsReasonCode(str, Enum):
 
     quota_id = "QuotaId"
     not_available_for_subscription = "NotAvailableForSubscription"
+
+
+class Origin(str, Enum):
+
+    user = "user"
+    system = "system"
+    usersystem = "user,system"
+
+
+class ActionType(str, Enum):
+
+    internal = "Internal"
