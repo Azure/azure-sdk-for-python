@@ -89,7 +89,7 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
 
 
 def _is_cosmos_endpoint(url):
-    if ".table.cosmodb." in url.hostname:
+    if ".table.cosmosdb." in url.hostname:
         return True
     if ".table.cosmos." in url.hostname:
         return True
