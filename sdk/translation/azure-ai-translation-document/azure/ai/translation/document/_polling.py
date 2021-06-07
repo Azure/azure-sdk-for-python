@@ -13,7 +13,7 @@ from azure.core.polling.base_polling import (
     _as_json,
     BadResponse,
     OperationFailed,
-    _raise_if_bad_http_status_and_method
+    _raise_if_bad_http_status_and_method,
 )
 
 from azure.core.exceptions import HttpResponseError, ODataV4Format
@@ -38,43 +38,50 @@ _FAILED = frozenset(["validationfailed"])
 
 
 class DocumentTranslationLROPoller(LROPoller):
-    """A custom poller implementation for Document Translation.
-    """
+    """A custom poller implementation for Document Translation. Call `result()` on the poller to return
+    a pageable of :class:`~azure.ai.translation.document.DocumentStatusResult`."""
 
     @property
     def id(self):
         # type: () -> str
         """The ID for the translation operation
 
-        :return: str
+        :rtype: str
         """
         if self._polling_method._current_body:  # pylint: disable=protected-access
-            return self._polling_method._current_body.id  # pylint: disable=protected-access
-        return self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
+            return (
+                self._polling_method._current_body.id  # pylint: disable=protected-access
+            )
+        return (
+            self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
+        )
 
     @property
     def details(self):
         # type: () -> TranslationStatusResult
         """The details for the translation operation
 
-        :return: ~azure.ai.translation.document.TranslationStatusResult
+        :rtype: ~azure.ai.translation.document.TranslationStatusResult
         """
-        return TranslationStatusResult._from_generated(self._polling_method._current_body)  # pylint: disable=protected-access
+        return TranslationStatusResult._from_generated(  # pylint: disable=protected-access
+            self._polling_method._current_body  # pylint: disable=protected-access
+        )
 
     @classmethod
     def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
         # type: (DocumentTranslationLROPollingMethod, str, **Any) -> DocumentTranslationLROPoller
 
-        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
-            continuation_token, **kwargs
-        )
+        (
+            client,
+            initial_response,
+            deserialization_callback,
+        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
 
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
 class DocumentTranslationLROPollingMethod(LROBasePolling):
-    """A custom polling method implementation for Document Translation.
-    """
+    """A custom polling method implementation for Document Translation."""
 
     def __init__(self, *args, **kwargs):
         self._cont_token_response = kwargs.pop("cont_token_response")
@@ -87,7 +94,9 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
 
     def _get_id_from_headers(self):
         # type: () -> str
-        return self._pipeline_response.http_response.headers["Operation-Location"].split("/batches/")[1]
+        return self._pipeline_response.http_response.headers[
+            "Operation-Location"
+        ].split("/batches/")[1]
 
     def finished(self):
         """Is this polling finished?
@@ -118,12 +127,16 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
         try:
             client = kwargs["client"]
         except KeyError:
-            raise ValueError("Need kwarg 'client' to be recreated from continuation_token")
+            raise ValueError(
+                "Need kwarg 'client' to be recreated from continuation_token"
+            )
 
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError:
-            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
+            raise ValueError(
+                "Need kwarg 'deserialization_callback' to be recreated from continuation_token"
+            )
 
         return client, self._cont_token_response, deserialization_callback
 
@@ -152,13 +165,11 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
 
 
 class TranslationPolling(OperationResourcePolling):
-    """Implements a Location polling.
-    """
+    """Implements a Location polling."""
 
     def can_poll(self, pipeline_response):
         # type: (PipelineResponseType) -> bool
-        """Answer if this polling method could be used.
-        """
+        """Answer if this polling method could be used."""
         response = pipeline_response.http_response
         can_poll = self._operation_location_header in response.headers
         if can_poll:
@@ -191,7 +202,9 @@ class TranslationPolling(OperationResourcePolling):
             if status:
                 return self._map_nonstandard_statuses(status, body)
             raise BadResponse("No status found in body")
-        raise BadResponse("The response from long running operation does not contain a body.")
+        raise BadResponse(
+            "The response from long running operation does not contain a body."
+        )
 
     # pylint: disable=R0201
     def _map_nonstandard_statuses(self, status, body):
