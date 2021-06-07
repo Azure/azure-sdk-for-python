@@ -156,6 +156,7 @@ class FormRecognizerTest(AzureTestCase):
         self.label_table_variable_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_variable_rows1.pdf")
         self.label_table_fixed_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf")
         self.multipage_receipt_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipage_receipt.pdf")
+        self.invoice_no_sub_line_item = self.get_blob_url(testing_container_sas_url, "testingdata", "ErrorImage.tiff")
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
