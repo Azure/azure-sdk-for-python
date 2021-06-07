@@ -123,7 +123,8 @@ class DocumentTranslationClient(object):
         """Begin translating the document(s) in your source container to your target container
         in the given language. To perform a single translation from source to target, pass the `source_url`,
         `target_url`, and `target_language_code` parameters. To pass multiple inputs for translation, including
-         other translation options, pass the `inputs` parameter as a list of DocumentTranslationInput.
+        other translation options, pass the `inputs` parameter as a list of
+        :class:`~azure.ai.translation.document.DocumentTranslationInput`.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
@@ -243,13 +244,15 @@ class DocumentTranslationClient(object):
         :keyword int results_per_page: is the number of operations returned per page.
         :keyword list[str] translation_ids: translation operations ids to filter by.
         :keyword list[str] statuses: translation operation statuses to filter by.
-        :keyword Union[str, datetime.datetime] created_after: get operations created after certain datetime.
-        :keyword Union[str, datetime.datetime] created_before: get operations created before certain datetime.
+        :keyword created_after: get operations created after certain datetime.
+        :paramtype created_after: Union[str, datetime.datetime]
+        :keyword created_before: get operations created before certain datetime.
+        :paramtype created_before: Union[str, datetime.datetime]
         :keyword list[str] order_by: the sorting query for the operations returned.
             format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
-        :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.translation.document.TranslationStatusResult`]
-        :rtype: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.translation.document.TranslationStatusResult`]
+        :return: A pageable of TranslationStatusResult.
+        :rtype: ~azure.core.paging.ItemPaged[TranslationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -301,13 +304,15 @@ class DocumentTranslationClient(object):
         :keyword int results_per_page: is the number of documents returned per page.
         :keyword list[str] document_ids: document IDs to filter by.
         :keyword list[str] statuses: document statuses to filter by.
-        :keyword Union[str, datetime.datetime] translated_after: get document translated after certain datetime.
-        :keyword Union[str, datetime.datetime] translated_before: get document translated before certain datetime.
+        :keyword translated_after: get document translated after certain datetime.
+        :paramtype translated_after: Union[str, datetime.datetime]
+        :keyword translated_before: get document translated before certain datetime.
+        :paramtype translated_before: Union[str, datetime.datetime]
         :keyword list[str] order_by: the sorting query for the documents.
             format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
-        :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.translation.document.DocumentStatusResult`]
-        :rtype: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.translation.document.DocumentStatusResult`]
+        :return: A pageable of DocumentStatusResult.
+        :rtype: ~azure.core.paging.ItemPaged[DocumentStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:

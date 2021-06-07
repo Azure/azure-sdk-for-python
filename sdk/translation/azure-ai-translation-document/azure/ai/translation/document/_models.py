@@ -256,8 +256,6 @@ class TranslationStatusResult(
     :vartype error: ~azure.ai.translation.document.DocumentTranslationError
     :ivar int documents_total_count: Number of translations to be made on documents in the operation.
     :ivar int documents_failed_count: Number of documents that failed translation.
-        More details can be found by calling the :func:`~DocumentTranslationClient.list_all_document_statuses`
-        client method.
     :ivar int documents_succeeded_count: Number of successful translations on documents.
     :ivar int documents_in_progress_count: Number of translations on documents in progress.
     :ivar int documents_not_yet_started_count: Number of documents that have not yet started being translated.

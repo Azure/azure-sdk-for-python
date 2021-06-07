@@ -38,14 +38,15 @@ _FAILED = frozenset(["validationfailed"])
 
 
 class DocumentTranslationLROPoller(LROPoller):
-    """A custom poller implementation for Document Translation."""
+    """A custom poller implementation for Document Translation. Call `result()` on the poller to return
+    a pageable of :class:`~azure.ai.translation.document.DocumentStatusResult`."""
 
     @property
     def id(self):
         # type: () -> str
         """The ID for the translation operation
 
-        :return: str
+        :rtype: str
         """
         if self._polling_method._current_body:  # pylint: disable=protected-access
             return (
@@ -60,7 +61,7 @@ class DocumentTranslationLROPoller(LROPoller):
         # type: () -> TranslationStatusResult
         """The details for the translation operation
 
-        :return: ~azure.ai.translation.document.TranslationStatusResult
+        :rtype: ~azure.ai.translation.document.TranslationStatusResult
         """
         return TranslationStatusResult._from_generated(  # pylint: disable=protected-access
             self._polling_method._current_body  # pylint: disable=protected-access

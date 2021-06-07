@@ -9,7 +9,7 @@ FILE: sample_list_translations_with_filters_async.py
 
 DESCRIPTION:
     This sample demonstrates how to list all the submitted translation operations for the resource
-    using different kind of filters/sorting/paging options
+    using different kind of filters/sorting/paging options.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
