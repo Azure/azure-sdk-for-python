@@ -550,7 +550,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def import_key(self, name: str, key: JsonWebKey, **kwargs: "Any") -> KeyVaultKey:
-        """Import a key created externally. 
+        """Import a key created externally.
 
         Requires keys/import permission. If ``name`` is already in use, the key will be imported as a new version.
 
