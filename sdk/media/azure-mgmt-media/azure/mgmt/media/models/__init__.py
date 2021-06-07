@@ -12,6 +12,7 @@
 try:
     from ._models_py3 import AacAudio
     from ._models_py3 import AbsoluteClipTime
+    from ._models_py3 import AccessControl
     from ._models_py3 import AccountEncryption
     from ._models_py3 import AccountFilter
     from ._models_py3 import AkamaiAccessControl
@@ -105,6 +106,7 @@ try:
     from ._models_py3 import JpgFormat
     from ._models_py3 import JpgImage
     from ._models_py3 import JpgLayer
+    from ._models_py3 import KeyDelivery
     from ._models_py3 import KeyVaultProperties
     from ._models_py3 import Layer
     from ._models_py3 import ListContainerSasInput
@@ -128,6 +130,7 @@ try:
     from ._models_py3 import LogSpecification
     from ._models_py3 import MediaService
     from ._models_py3 import MediaServiceIdentity
+    from ._models_py3 import MediaServiceUpdate
     from ._models_py3 import MetricDimension
     from ._models_py3 import MetricSpecification
     from ._models_py3 import Mp4Format
@@ -192,6 +195,7 @@ try:
 except (SyntaxError, ImportError):
     from ._models import AacAudio
     from ._models import AbsoluteClipTime
+    from ._models import AccessControl
     from ._models import AccountEncryption
     from ._models import AccountFilter
     from ._models import AkamaiAccessControl
@@ -285,6 +289,7 @@ except (SyntaxError, ImportError):
     from ._models import JpgFormat
     from ._models import JpgImage
     from ._models import JpgLayer
+    from ._models import KeyDelivery
     from ._models import KeyVaultProperties
     from ._models import Layer
     from ._models import ListContainerSasInput
@@ -308,6 +313,7 @@ except (SyntaxError, ImportError):
     from ._models import LogSpecification
     from ._models import MediaService
     from ._models import MediaServiceIdentity
+    from ._models import MediaServiceUpdate
     from ._models import MetricDimension
     from ._models import MetricSpecification
     from ._models import Mp4Format
@@ -388,9 +394,11 @@ from ._azure_media_services_enums import (
     CreatedByType,
     MetricUnit,
     MetricAggregationType,
+    ActionType,
     StorageAccountType,
     StorageAuthentication,
     AccountEncryptionKeyType,
+    DefaultAction,
     ManagedIdentityType,
     PrivateEndpointConnectionProvisioningState,
     PrivateEndpointServiceConnectionStatus,
@@ -443,6 +451,7 @@ from ._azure_media_services_enums import (
 __all__ = [
     'AacAudio',
     'AbsoluteClipTime',
+    'AccessControl',
     'AccountEncryption',
     'AccountFilter',
     'AkamaiAccessControl',
@@ -536,6 +545,7 @@ __all__ = [
     'JpgFormat',
     'JpgImage',
     'JpgLayer',
+    'KeyDelivery',
     'KeyVaultProperties',
     'Layer',
     'ListContainerSasInput',
@@ -559,6 +569,7 @@ __all__ = [
     'LogSpecification',
     'MediaService',
     'MediaServiceIdentity',
+    'MediaServiceUpdate',
     'MetricDimension',
     'MetricSpecification',
     'Mp4Format',
@@ -638,9 +649,11 @@ __all__ = [
     'CreatedByType',
     'MetricUnit',
     'MetricAggregationType',
+    'ActionType',
     'StorageAccountType',
     'StorageAuthentication',
     'AccountEncryptionKeyType',
+    'DefaultAction',
     'ManagedIdentityType',
     'PrivateEndpointConnectionProvisioningState',
     'PrivateEndpointServiceConnectionStatus',

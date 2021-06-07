@@ -195,6 +195,29 @@ class AbsoluteClipTime(ClipTime):
         self.odatatype = '#Microsoft.Media.AbsoluteClipTime'
 
 
+class AccessControl(Model):
+    """AccessControl.
+
+    :param default_action: The behavior for IP access control in Key Delivery.
+     Possible values include: 'Allow', 'Deny'
+    :type default_action: str or ~azure.mgmt.media.models.DefaultAction
+    :param ip_allow_list: The IP allow list for access control in Key
+     Delivery. If the default action is set to 'Allow', the IP allow list must
+     be empty.
+    :type ip_allow_list: list[str]
+    """
+
+    _attribute_map = {
+        'default_action': {'key': 'defaultAction', 'type': 'str'},
+        'ip_allow_list': {'key': 'ipAllowList', 'type': '[str]'},
+    }
+
+    def __init__(self, *, default_action=None, ip_allow_list=None, **kwargs) -> None:
+        super(AccessControl, self).__init__(**kwargs)
+        self.default_action = default_action
+        self.ip_allow_list = ip_allow_list
+
+
 class AccountEncryption(Model):
     """AccountEncryption.
 
@@ -4255,6 +4278,22 @@ class JpgLayer(Layer):
         self.odatatype = '#Microsoft.Media.JpgLayer'
 
 
+class KeyDelivery(Model):
+    """KeyDelivery.
+
+    :param access_control: The access control properties for Key Delivery.
+    :type access_control: ~azure.mgmt.media.models.AccessControl
+    """
+
+    _attribute_map = {
+        'access_control': {'key': 'accessControl', 'type': 'AccessControl'},
+    }
+
+    def __init__(self, *, access_control=None, **kwargs) -> None:
+        super(KeyDelivery, self).__init__(**kwargs)
+        self.access_control = access_control
+
+
 class KeyVaultProperties(Model):
     """KeyVaultProperties.
 
@@ -5031,6 +5070,9 @@ class MediaService(TrackedResource):
      ~azure.mgmt.media.models.StorageAuthentication
     :param encryption: The account encryption properties.
     :type encryption: ~azure.mgmt.media.models.AccountEncryption
+    :param key_delivery: The Key Delivery properties for Media Services
+     account.
+    :type key_delivery: ~azure.mgmt.media.models.KeyDelivery
     :param identity: The Managed Identity for the Media Services account.
     :type identity: ~azure.mgmt.media.models.MediaServiceIdentity
     :ivar system_data: The system metadata relating to this resource.
@@ -5056,16 +5098,18 @@ class MediaService(TrackedResource):
         'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
         'storage_authentication': {'key': 'properties.storageAuthentication', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
+        'key_delivery': {'key': 'properties.keyDelivery', 'type': 'KeyDelivery'},
         'identity': {'key': 'identity', 'type': 'MediaServiceIdentity'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, *, location: str, tags=None, storage_accounts=None, storage_authentication=None, encryption=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, storage_accounts=None, storage_authentication=None, encryption=None, key_delivery=None, identity=None, **kwargs) -> None:
         super(MediaService, self).__init__(tags=tags, location=location, **kwargs)
         self.media_service_id = None
         self.storage_accounts = storage_accounts
         self.storage_authentication = storage_authentication
         self.encryption = encryption
+        self.key_delivery = key_delivery
         self.identity = identity
         self.system_data = None
 
@@ -5104,6 +5148,56 @@ class MediaServiceIdentity(Model):
         self.type = type
         self.principal_id = None
         self.tenant_id = None
+
+
+class MediaServiceUpdate(Model):
+    """A Media Services account update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :ivar media_service_id: The Media Services account ID.
+    :vartype media_service_id: str
+    :param storage_accounts: The storage accounts for this resource.
+    :type storage_accounts: list[~azure.mgmt.media.models.StorageAccount]
+    :param storage_authentication: Possible values include: 'System',
+     'ManagedIdentity'
+    :type storage_authentication: str or
+     ~azure.mgmt.media.models.StorageAuthentication
+    :param encryption: The account encryption properties.
+    :type encryption: ~azure.mgmt.media.models.AccountEncryption
+    :param key_delivery: The Key Delivery properties for Media Services
+     account.
+    :type key_delivery: ~azure.mgmt.media.models.KeyDelivery
+    :param identity: The Managed Identity for the Media Services account.
+    :type identity: ~azure.mgmt.media.models.MediaServiceIdentity
+    """
+
+    _validation = {
+        'media_service_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'media_service_id': {'key': 'properties.mediaServiceId', 'type': 'str'},
+        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
+        'storage_authentication': {'key': 'properties.storageAuthentication', 'type': 'str'},
+        'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
+        'key_delivery': {'key': 'properties.keyDelivery', 'type': 'KeyDelivery'},
+        'identity': {'key': 'identity', 'type': 'MediaServiceIdentity'},
+    }
+
+    def __init__(self, *, tags=None, storage_accounts=None, storage_authentication=None, encryption=None, key_delivery=None, identity=None, **kwargs) -> None:
+        super(MediaServiceUpdate, self).__init__(**kwargs)
+        self.tags = tags
+        self.media_service_id = None
+        self.storage_accounts = storage_accounts
+        self.storage_authentication = storage_authentication
+        self.encryption = encryption
+        self.key_delivery = key_delivery
+        self.identity = identity
 
 
 class MetricDimension(Model):
@@ -5166,6 +5260,15 @@ class MetricSpecification(Model):
     :type supported_aggregation_types: list[str]
     :ivar dimensions: The metric dimensions.
     :vartype dimensions: list[~azure.mgmt.media.models.MetricDimension]
+    :ivar enable_regional_mdm_account: Indicates whether regional MDM account
+     is enabled.
+    :vartype enable_regional_mdm_account: bool
+    :ivar source_mdm_account: The source MDM account.
+    :vartype source_mdm_account: str
+    :ivar source_mdm_namespace: The source MDM namespace.
+    :vartype source_mdm_namespace: str
+    :ivar supported_time_grain_types: The supported time grain types.
+    :vartype supported_time_grain_types: list[str]
     """
 
     _validation = {
@@ -5176,6 +5279,10 @@ class MetricSpecification(Model):
         'aggregation_type': {'readonly': True},
         'lock_aggregation_type': {'readonly': True},
         'dimensions': {'readonly': True},
+        'enable_regional_mdm_account': {'readonly': True},
+        'source_mdm_account': {'readonly': True},
+        'source_mdm_namespace': {'readonly': True},
+        'supported_time_grain_types': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5187,6 +5294,10 @@ class MetricSpecification(Model):
         'lock_aggregation_type': {'key': 'lockAggregationType', 'type': 'str'},
         'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'bool'},
+        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
+        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
+        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
     }
 
     def __init__(self, *, supported_aggregation_types=None, **kwargs) -> None:
@@ -5199,6 +5310,10 @@ class MetricSpecification(Model):
         self.lock_aggregation_type = None
         self.supported_aggregation_types = supported_aggregation_types
         self.dimensions = None
+        self.enable_regional_mdm_account = None
+        self.source_mdm_account = None
+        self.source_mdm_namespace = None
+        self.supported_time_grain_types = None
 
 
 class MultiBitrateFormat(Format):
@@ -5355,6 +5470,11 @@ class Operation(Model):
     :type origin: str
     :param properties: Operation properties format.
     :type properties: ~azure.mgmt.media.models.Properties
+    :param is_data_action: Whether the operation applies to data-plane.
+    :type is_data_action: bool
+    :param action_type: Indicates the action type. Possible values include:
+     'Internal'
+    :type action_type: str or ~azure.mgmt.media.models.ActionType
     """
 
     _validation = {
@@ -5366,14 +5486,18 @@ class Operation(Model):
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'Properties'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, display=None, origin: str=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, name: str, display=None, origin: str=None, properties=None, is_data_action: bool=None, action_type=None, **kwargs) -> None:
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
         self.origin = origin
         self.properties = properties
+        self.is_data_action = is_data_action
+        self.action_type = action_type
 
 
 class OperationDisplay(Model):
