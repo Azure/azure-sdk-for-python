@@ -1,22 +1,22 @@
 # Devtools Testutils
 
 ## Objects in this package for use with Azure Testing
-* [`AzureMgmtTestCase`](azure_mgmt_testcase): Base class for Management plane test classes
-* [`AzureMgmtPreparer`](azure_mgmt_preparer): Base class for Management-plane resource preparers
-* [`AzureTestCase`](azure_testcase): Base class for data plane test classes
-* [`is_live`](is_live): Helper method for determining whether a test run is in live or playback mode
-* [`get_region_override`](get_region_override): Helper method for determining resource region
-* [`FakeResource`](fake_resource):
-* [`ResourceGroupPreparer`](rg_preparer):
-* [`RandomNameResourceGroupPreparer`](random_name_rg_preparer):
-* [`CachedResourceGroupPreparer`](cached_rg_preparer):
-* [`FakeStorageAccount`](fake_storage_account):
-* [`StorageAccountPreparer`](storage_account_preparer):
-* [`CachedStorageAccountPreparer`](cached_storage_account_preparer):
-* [`KeyVaultPreparer`](kv_preparer):
-* [`PowerShellPreparer`](powershell_preparer): Abstract preparer for delivering secrets from environment variables to individual tests
-* [`RetryCounter`](retry_counter): Object for counting retries on a request. (Used by Storage)
-* [`ResponseCallback`](response_callback): Object for mocking response callbacks. (Used by Storage)
+* [`AzureMgmtTestCase`][azure_mgmt_testcase]: Base class for Management plane test classes
+* [`AzureMgmtPreparer`][azure_mgmt_preparer]: Base class for Management-plane resource preparers
+* [`AzureTestCase`][azure_testcase]: Base class for data plane test classes
+* [`is_live`][is_live]: Helper method for determining whether a test run is in live or playback mode
+* [`get_region_override`][get_region_override]: Helper method for determining resource region
+* [`FakeResource`][fake_resource]:
+* [`ResourceGroupPreparer`][rg_preparer]:
+* [`RandomNameResourceGroupPreparer`][random_name_rg_preparer]:
+* [`CachedResourceGroupPreparer`][cached_rg_preparer]:
+* [`FakeStorageAccount`][fake_storage_account]:
+* [`StorageAccountPreparer`][storage_account_preparer]:
+* [`CachedStorageAccountPreparer`][cached_storage_account_preparer]:
+* [`KeyVaultPreparer`][kv_preparer]:
+* [`PowerShellPreparer`][powershell_preparer]: Abstract preparer for delivering secrets from environment variables to individual tests
+* [`RetryCounter`][retry_counter]: Object for counting retries on a request.
+* [`ResponseCallback`][response_callback]: Object for mocking response callbacks.
 
 
 <!-- LINKS -->
