@@ -98,7 +98,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @overload
     def begin_translation(self, source_url, target_url, target_language_code, **kwargs):
-        # type: (str, str, str, **Any) -> DocumentTranslationPoller[ItemPaged[DocumentStatusResult]]
+        # type: (str, str, str, **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatusResult]]
         pass
 
     @overload
