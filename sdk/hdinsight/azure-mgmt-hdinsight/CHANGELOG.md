@@ -1,5 +1,39 @@
 # Release History
 
+## 3.0.0 (2021-06-03)
+
+**Features**
+
+  - Model VmSizeCompatibilityFilter has a new parameter vm_sizes
+  - Model VmSizeCompatibilityFilter has a new parameter compute_isolation_supported
+  - Model VmSizeCompatibilityFilter has a new parameter os_type
+  - Model VmSizeCompatibilityFilter has a new parameter esp_applied
+  - Model CapabilitiesResult has a new parameter vmsizes
+  - Model CapabilitiesResult has a new parameter vmsize_filters
+  - Model KafkaRestProperties has a new parameter configuration_override
+  - Model StorageAccount has a new parameter saskey
+  - Model StorageAccount has a new parameter fileshare
+  - Model Role has a new parameter vm_group_name
+  - Model ApplicationGetHttpsEndpoint has a new parameter private_ip_address
+  - Added operation LocationsOperations.validate_cluster_create_request
+  - Added operation LocationsOperations.check_name_availability
+  - Added operation LocationsOperations.get_azure_async_operation_status
+  - Added operation ApplicationsOperations.get_azure_async_operation_status
+  - Added operation ExtensionsOperations.get_azure_monitor_status
+  - Added operation ExtensionsOperations.disable_azure_monitor
+  - Added operation ExtensionsOperations.enable_azure_monitor
+  - Added operation ExtensionsOperations.get_azure_async_operation_status
+  - Added operation ClustersOperations.update_identity_certificate
+  - Added operation ClustersOperations.get_azure_async_operation_status
+  - Added operation VirtualMachinesOperations.get_async_operation_status
+  - Added operation ScriptActionsOperations.get_execution_async_operation_status
+
+**Breaking changes**
+
+  - Model VmSizeCompatibilityFilter no longer has parameter vmsizes
+  - Model CapabilitiesResult no longer has parameter vm_size_filters
+  - Model CapabilitiesResult no longer has parameter vm_sizes
+
 ## 2.2.0 (2021-01-25)
 
 **Features**
