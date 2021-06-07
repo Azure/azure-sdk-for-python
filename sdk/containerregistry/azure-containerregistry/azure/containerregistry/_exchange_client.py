@@ -4,18 +4,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Any
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from ._generated import ContainerRegistry
-from ._helpers import _parse_challenge
+from ._helpers import _parse_challenge, _parse_exp_time
 from ._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
-    from typing import Dict, Any, List
 
 
 class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):
@@ -44,18 +43,18 @@ class ACRExchangeClient(object):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self.credential_scope = "https://management.core.windows.net/.default"
+        self.credential_scope = kwargs.get("authentication_scope", "https://management.core.windows.net/.default")
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
-            credential_scopes=kwargs.pop("credential_scopes", self.credential_scope),
+            credential_scopes=self.credential_scope,
             **kwargs
         )
         self._credential = credential
         self._refresh_token = None
-        self._last_refresh_time = 0
+        self._expiration_time = 0
 
     def get_acr_access_token(self, challenge, **kwargs):
         # type: (str, Dict[str, Any]) -> str
@@ -67,9 +66,9 @@ class ACRExchangeClient(object):
 
     def get_refresh_token(self, service, **kwargs):
         # type: (str, Dict[str, Any]) -> str
-        if not self._refresh_token or time.time() - self._last_refresh_time > 300:
+        if not self._refresh_token or self._expiration_time - time.time() > 300:
             self._refresh_token = self.exchange_aad_token_for_refresh_token(service, **kwargs)
-            self._last_refresh_time = time.time()
+            self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
     def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):

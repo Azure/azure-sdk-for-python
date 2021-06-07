@@ -7,7 +7,7 @@ import functools
 from typing import (
     Optional,
     Dict,
-    Any,
+    List,
     TYPE_CHECKING
 )
 
@@ -17,19 +17,18 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .. import LocationMode
 from .._base_client import parse_connection_str
 from .._generated.models import TableServiceProperties
 from .._models import service_stats_deserialize, service_properties_deserialize
 from .._error import _process_table_error
-from .._models import TableItem
+from .._models import TableItem, LocationMode
 from .._serialize import _parameter_filter_substitution
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncTablesBaseClient, AsyncTransportWrapper
 from ._models import TablePropertiesPaged
 
 if TYPE_CHECKING:
-    from .._models import CorsRule, Metrics, TableAnalyticsLogging
+    from .._models import TableCorsRule, TableMetrics, TableAnalyticsLogging
 
 
 class TableServiceClient(AsyncTablesBaseClient):
@@ -46,10 +45,13 @@ class TableServiceClient(AsyncTablesBaseClient):
         The URL to the table service endpoint. Any other entities included
         in the URL path (e.g. table) will be discarded. This URL can be optionally
         authenticated with a SAS token.
-    :param str credential:
+    :keyword credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
-        shared access key.
+        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential
+        or AzureSasCredential from azure-core.
+    :paramtype credential:
+        :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+        :class:`~azure.core.credentials.AzureSasCredential`
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.
@@ -101,12 +103,12 @@ class TableServiceClient(AsyncTablesBaseClient):
         return cls(endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def get_service_stats(self, **kwargs) -> Dict[str, Any]:
+    async def get_service_stats(self, **kwargs) -> Dict[str, object]:
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
         :return: Dictionary of service stats
-        :rtype: :class:`~azure.data.tables.models.TableServiceStats`
+        :rtype: Dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         try:
@@ -125,7 +127,7 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableServiceProperties, or the result of cls(response)
-        :rtype: :class:`~azure.data.tables.models.TableServiceProperties`
+        :rtype: Dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -138,27 +140,30 @@ class TableServiceClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def set_service_properties(
         self,
+        *,
         analytics_logging: Optional['TableAnalyticsLogging'] = None,
-        hour_metrics: Optional['Metrics'] = None,
-        minute_metrics: Optional['Metrics'] = None,
-        cors: Optional['CorsRule'] = None,
+        hour_metrics: Optional['TableMetrics'] = None,
+        minute_metrics: Optional['TableMetrics'] = None,
+        cors: Optional[List['TableCorsRule']] = None,
         **kwargs
     ) -> None:
         """Sets properties for an account's Table service endpoint,
          including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :param analytics_logging: Properties for analytics
-        :type analytics_logging: ~azure.data.tables.TableAnalyticsLogging
-        :param hour_metrics: Hour level metrics
-        :type hour_metrics: ~azure.data.tables.Metrics
-        :param minute_metrics: Minute level metrics
-        :type minute_metrics: ~azure.data.tables.Metrics
-        :param cors: Cross-origin resource sharing rules
-        :type cors: ~azure.data.tables.CorsRule
+        :keyword analytics_logging: Properties for analytics
+        :paramtype analytics_logging: ~azure.data.tables.TableAnalyticsLogging
+        :keyword hour_metrics: Hour level metrics
+        :paramtype hour_metrics: ~azure.data.tables.TableMetrics
+        :keyword minute_metrics: Minute level metrics
+        :paramtype minute_metrics: ~azure.data.tables.TableMetrics
+        :keyword cors: Cross-origin resource sharing rules
+        :paramtype cors: List[~azure.data.tables.TableCorsRule]
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        if cors:
+            cors = [c._to_generated() for c in cors]  # pylint:disable=protected-access
         props = TableServiceProperties(
             logging=analytics_logging,
             hour_metrics=hour_metrics,

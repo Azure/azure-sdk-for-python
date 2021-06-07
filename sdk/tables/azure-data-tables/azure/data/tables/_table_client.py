@@ -38,7 +38,7 @@ from ._table_batch import TableBatchOperations
 from ._models import (
     TableEntityPropertiesPaged,
     UpdateMode,
-    AccessPolicy,
+    TableAccessPolicy,
     TransactionOperation,
     TableItem
 )
@@ -59,11 +59,10 @@ class TableClient(TablesBaseClient):
     :ivar str url: The full URL to the Tables account.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint,  # type: str
         table_name,  # type: str
-        credential=None,  # type: Union[AzureNamedKeyCredential, AzureSasCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -71,12 +70,11 @@ class TableClient(TablesBaseClient):
 
         :param str endpoint: A URL to an Azure Tables account.
         :param str table_name: The table name.
-        :param credential:
+        :keyword credential:
             The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string or an account shared access
-            key.
-        :type credential:
+            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential
+            or AzureSasCredential from azure-core.
+        :paramtype credential:
             :class:`~azure.core.credentials.AzureNamedKeyCredential` or
             :class:`~azure.core.credentials.AzureSasCredential`
         :returns: None
@@ -85,7 +83,7 @@ class TableClient(TablesBaseClient):
             raise ValueError("Please specify a table name.")
         _validate_table_name(table_name)
         self.table_name = table_name
-        super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
+        super(TableClient, self).__init__(endpoint, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -123,16 +121,18 @@ class TableClient(TablesBaseClient):
         return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @classmethod
-    def from_table_url(cls, table_url, credential=None, **kwargs):
-        # type: (str, Optional[Any], Any) -> TableClient
+    def from_table_url(cls, table_url, **kwargs):
+        # type: (str, Any) -> TableClient
         """A client to interact with a specific Table.
 
         :param str table_url: The full URI to the table, including SAS token if used.
-        :param credential:
+        :keyword credential:
             The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string, an account
-            shared access key.
-        :type credential: str
+            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential
+            or AzureSasCredential from azure-core.
+        :paramtype credential:
+            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+            :class:`~azure.core.credentials.AzureSasCredential`
         :returns: A table client.
         :rtype: :class:`~azure.data.tables.TableClient`
         """
@@ -163,18 +163,18 @@ class TableClient(TablesBaseClient):
             raise ValueError(
                 "Invalid URL. Please provide a URL with a valid table name"
             )
-        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
+        return cls(endpoint, table_name=table_name, **kwargs)
 
     @distributed_trace
     def get_table_access_policy(
         self, **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str,AccessPolicy]
+        # type: (...) -> Dict[str, TableAccessPolicy]
         """Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: Dict[str, :class:`~azure.data.tables.AccessPolicy`]
+        :rtype: Dict[str, :class:`~azure.data.tables.TableAccessPolicy`]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -187,19 +187,19 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}  # type: ignore
+        return {s.id: s.access_policy or TableAccessPolicy() for s in identifiers}  # type: ignore
 
     @distributed_trace
     def set_table_access_policy(
         self,
-        signed_identifiers,  # type: Dict[str,AccessPolicy]
+        signed_identifiers,  # type: Dict[str, TableAccessPolicy]
         **kwargs
     ):
         # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
         :param signed_identifiers: Access policies to set for the table
-        :type signed_identifiers: Dict[str, :class:`~azure.data.tables.AccessPolicy`]
+        :type signed_identifiers: Dict[str, :class:`~azure.data.tables.TableAccessPolicy`]
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`

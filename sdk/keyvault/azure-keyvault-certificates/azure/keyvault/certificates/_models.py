@@ -643,7 +643,8 @@ class CertificatePolicy(object):
     :paramtype enhanced_key_usage: list[str]
     :keyword key_usage: List of key usages.
     :paramtype key_usage: list[str or ~azure.keyvault.certificates.KeyUsageType]
-    :keyword content_type: The media type (MIME type) of the secret backing the certificate.
+    :keyword content_type: The media type (MIME type) of the secret backing the certificate.  If not specified,
+        :attr:`CertificateContentType.pkcs12` is assumed.
     :paramtype content_type: str or ~azure.keyvault.certificates.CertificateContentType
     :keyword int validity_in_months: The duration that the certificate is valid in months.
     :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime

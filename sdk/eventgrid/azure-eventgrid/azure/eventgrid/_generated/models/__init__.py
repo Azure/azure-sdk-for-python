@@ -37,6 +37,21 @@ try:
     from ._models_py3 import AcsSmsDeliveryReportReceivedEventData
     from ._models_py3 import AcsSmsEventBaseProperties
     from ._models_py3 import AcsSmsReceivedEventData
+    from ._models_py3 import AgriFoodFarmingApplicationDataChangedEventData
+    from ._models_py3 import AgriFoodFarmingBoundaryChangedEventData
+    from ._models_py3 import AgriFoodFarmingCropChangedEventData
+    from ._models_py3 import AgriFoodFarmingCropVarietyChangedEventData
+    from ._models_py3 import AgriFoodFarmingFarmChangedEventData
+    from ._models_py3 import AgriFoodFarmingFarmOperationDataIngestionJobStatusChangedEventData
+    from ._models_py3 import AgriFoodFarmingFarmerChangedEventData
+    from ._models_py3 import AgriFoodFarmingFieldChangedEventData
+    from ._models_py3 import AgriFoodFarmingHarvestDataChangedEventData
+    from ._models_py3 import AgriFoodFarmingPlantingDataChangedEventData
+    from ._models_py3 import AgriFoodFarmingSatelliteDataIngestionJobStatusChangedEventData
+    from ._models_py3 import AgriFoodFarmingSeasonChangedEventData
+    from ._models_py3 import AgriFoodFarmingSeasonalFieldChangedEventData
+    from ._models_py3 import AgriFoodFarmingTillageDataChangedEventData
+    from ._models_py3 import AgriFoodFarmingWeatherDataIngestionJobStatusChangedEventData
     from ._models_py3 import AppConfigurationKeyValueDeletedEventData
     from ._models_py3 import AppConfigurationKeyValueModifiedEventData
     from ._models_py3 import AppEventTypeDetail
@@ -66,21 +81,6 @@ try:
     from ._models_py3 import DeviceTwinProperties
     from ._models_py3 import EventGridEvent
     from ._models_py3 import EventHubCaptureFileCreatedEventData
-    from ._models_py3 import FarmBeatsApplicationDataChangedEventData
-    from ._models_py3 import FarmBeatsBoundaryChangedEventData
-    from ._models_py3 import FarmBeatsCropChangedEventData
-    from ._models_py3 import FarmBeatsCropVarietyChangedEventData
-    from ._models_py3 import FarmBeatsFarmChangedEventData
-    from ._models_py3 import FarmBeatsFarmOperationDataIngestionJobStatusChangedEventData
-    from ._models_py3 import FarmBeatsFarmerChangedEventData
-    from ._models_py3 import FarmBeatsFieldChangedEventData
-    from ._models_py3 import FarmBeatsHarvestDataChangedEventData
-    from ._models_py3 import FarmBeatsPlantingDataChangedEventData
-    from ._models_py3 import FarmBeatsSatelliteDataIngestionJobStatusChangedEventData
-    from ._models_py3 import FarmBeatsSeasonChangedEventData
-    from ._models_py3 import FarmBeatsSeasonalFieldChangedEventData
-    from ._models_py3 import FarmBeatsTillageDataChangedEventData
-    from ._models_py3 import FarmBeatsWeatherDataIngestionJobStatusChangedEventData
     from ._models_py3 import IotHubDeviceConnectedEventData
     from ._models_py3 import IotHubDeviceCreatedEventData
     from ._models_py3 import IotHubDeviceDeletedEventData
@@ -217,6 +217,21 @@ except (SyntaxError, ImportError):
     from ._models import AcsSmsDeliveryReportReceivedEventData  # type: ignore
     from ._models import AcsSmsEventBaseProperties  # type: ignore
     from ._models import AcsSmsReceivedEventData  # type: ignore
+    from ._models import AgriFoodFarmingApplicationDataChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingBoundaryChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingCropChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingCropVarietyChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingFarmChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingFarmOperationDataIngestionJobStatusChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingFarmerChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingFieldChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingHarvestDataChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingPlantingDataChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingSatelliteDataIngestionJobStatusChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingSeasonChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingSeasonalFieldChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingTillageDataChangedEventData  # type: ignore
+    from ._models import AgriFoodFarmingWeatherDataIngestionJobStatusChangedEventData  # type: ignore
     from ._models import AppConfigurationKeyValueDeletedEventData  # type: ignore
     from ._models import AppConfigurationKeyValueModifiedEventData  # type: ignore
     from ._models import AppEventTypeDetail  # type: ignore
@@ -246,21 +261,6 @@ except (SyntaxError, ImportError):
     from ._models import DeviceTwinProperties  # type: ignore
     from ._models import EventGridEvent  # type: ignore
     from ._models import EventHubCaptureFileCreatedEventData  # type: ignore
-    from ._models import FarmBeatsApplicationDataChangedEventData  # type: ignore
-    from ._models import FarmBeatsBoundaryChangedEventData  # type: ignore
-    from ._models import FarmBeatsCropChangedEventData  # type: ignore
-    from ._models import FarmBeatsCropVarietyChangedEventData  # type: ignore
-    from ._models import FarmBeatsFarmChangedEventData  # type: ignore
-    from ._models import FarmBeatsFarmOperationDataIngestionJobStatusChangedEventData  # type: ignore
-    from ._models import FarmBeatsFarmerChangedEventData  # type: ignore
-    from ._models import FarmBeatsFieldChangedEventData  # type: ignore
-    from ._models import FarmBeatsHarvestDataChangedEventData  # type: ignore
-    from ._models import FarmBeatsPlantingDataChangedEventData  # type: ignore
-    from ._models import FarmBeatsSatelliteDataIngestionJobStatusChangedEventData  # type: ignore
-    from ._models import FarmBeatsSeasonChangedEventData  # type: ignore
-    from ._models import FarmBeatsSeasonalFieldChangedEventData  # type: ignore
-    from ._models import FarmBeatsTillageDataChangedEventData  # type: ignore
-    from ._models import FarmBeatsWeatherDataIngestionJobStatusChangedEventData  # type: ignore
     from ._models import IotHubDeviceConnectedEventData  # type: ignore
     from ._models import IotHubDeviceCreatedEventData  # type: ignore
     from ._models import IotHubDeviceDeletedEventData  # type: ignore
@@ -368,16 +368,16 @@ except (SyntaxError, ImportError):
     from ._models import WebSlotSwapWithPreviewStartedEventData  # type: ignore
 
 from ._event_grid_publisher_client_enums import (
+    AgriFoodFarmingJobStatus,
+    AgriFoodFarmingResourceActionType,
     AppAction,
     AppServicePlanAction,
     AsyncStatus,
     CommunicationCloudEnvironmentModel,
-    JobStatus,
     MediaJobErrorCategory,
     MediaJobErrorCode,
     MediaJobRetry,
     MediaJobState,
-    ResourceActionType,
     StampKind,
 )
 
@@ -412,6 +412,21 @@ __all__ = [
     'AcsSmsDeliveryReportReceivedEventData',
     'AcsSmsEventBaseProperties',
     'AcsSmsReceivedEventData',
+    'AgriFoodFarmingApplicationDataChangedEventData',
+    'AgriFoodFarmingBoundaryChangedEventData',
+    'AgriFoodFarmingCropChangedEventData',
+    'AgriFoodFarmingCropVarietyChangedEventData',
+    'AgriFoodFarmingFarmChangedEventData',
+    'AgriFoodFarmingFarmOperationDataIngestionJobStatusChangedEventData',
+    'AgriFoodFarmingFarmerChangedEventData',
+    'AgriFoodFarmingFieldChangedEventData',
+    'AgriFoodFarmingHarvestDataChangedEventData',
+    'AgriFoodFarmingPlantingDataChangedEventData',
+    'AgriFoodFarmingSatelliteDataIngestionJobStatusChangedEventData',
+    'AgriFoodFarmingSeasonChangedEventData',
+    'AgriFoodFarmingSeasonalFieldChangedEventData',
+    'AgriFoodFarmingTillageDataChangedEventData',
+    'AgriFoodFarmingWeatherDataIngestionJobStatusChangedEventData',
     'AppConfigurationKeyValueDeletedEventData',
     'AppConfigurationKeyValueModifiedEventData',
     'AppEventTypeDetail',
@@ -441,21 +456,6 @@ __all__ = [
     'DeviceTwinProperties',
     'EventGridEvent',
     'EventHubCaptureFileCreatedEventData',
-    'FarmBeatsApplicationDataChangedEventData',
-    'FarmBeatsBoundaryChangedEventData',
-    'FarmBeatsCropChangedEventData',
-    'FarmBeatsCropVarietyChangedEventData',
-    'FarmBeatsFarmChangedEventData',
-    'FarmBeatsFarmOperationDataIngestionJobStatusChangedEventData',
-    'FarmBeatsFarmerChangedEventData',
-    'FarmBeatsFieldChangedEventData',
-    'FarmBeatsHarvestDataChangedEventData',
-    'FarmBeatsPlantingDataChangedEventData',
-    'FarmBeatsSatelliteDataIngestionJobStatusChangedEventData',
-    'FarmBeatsSeasonChangedEventData',
-    'FarmBeatsSeasonalFieldChangedEventData',
-    'FarmBeatsTillageDataChangedEventData',
-    'FarmBeatsWeatherDataIngestionJobStatusChangedEventData',
     'IotHubDeviceConnectedEventData',
     'IotHubDeviceCreatedEventData',
     'IotHubDeviceDeletedEventData',
@@ -561,15 +561,15 @@ __all__ = [
     'WebSlotSwapStartedEventData',
     'WebSlotSwapWithPreviewCancelledEventData',
     'WebSlotSwapWithPreviewStartedEventData',
+    'AgriFoodFarmingJobStatus',
+    'AgriFoodFarmingResourceActionType',
     'AppAction',
     'AppServicePlanAction',
     'AsyncStatus',
     'CommunicationCloudEnvironmentModel',
-    'JobStatus',
     'MediaJobErrorCategory',
     'MediaJobErrorCode',
     'MediaJobRetry',
     'MediaJobState',
-    'ResourceActionType',
     'StampKind',
 ]

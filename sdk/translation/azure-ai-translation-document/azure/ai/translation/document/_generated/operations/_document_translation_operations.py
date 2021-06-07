@@ -9,12 +9,12 @@ import datetime
 from typing import TYPE_CHECKING
 import warnings
 
+from ..._polling import DocumentTranslationLROPollingMethod, DocumentTranslationLROPoller
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling
+from azure.core.polling import NoPolling, PollingMethod
 
 from .. import models as _models
 
@@ -108,7 +108,7 @@ class DocumentTranslationOperations(object):
         inputs,  # type: List["_models.BatchRequest"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[None]
+        # type: (...) -> DocumentTranslationLROPoller[None]
         """Submit a document translation request to the Document Translation service.
 
         Use this API to submit a bulk (batch) translation request to the Document Translation service.
@@ -130,12 +130,12 @@ class DocumentTranslationOperations(object):
         :type inputs: list[~azure.ai.translation.document.models.BatchRequest]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling.
+        :keyword polling: By default, your polling method will be DocumentTranslationLROPollingMethod.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of DocumentTranslationLROPoller that returns either None or the result of cls(response)
+        :rtype: ~..._polling.DocumentTranslationLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -163,18 +163,18 @@ class DocumentTranslationOperations(object):
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
-        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = DocumentTranslationLROPollingMethod(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return DocumentTranslationLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return DocumentTranslationLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_start_translation.metadata = {'url': '/batches'}  # type: ignore
 
     def get_translations_status(
