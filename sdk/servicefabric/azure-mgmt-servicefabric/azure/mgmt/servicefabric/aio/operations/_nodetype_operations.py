@@ -19,8 +19,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class Operations:
-    """Operations async operations.
+class NodetypeOperations:
+    """NodetypeOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -59,7 +59,7 @@ class Operations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2020-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

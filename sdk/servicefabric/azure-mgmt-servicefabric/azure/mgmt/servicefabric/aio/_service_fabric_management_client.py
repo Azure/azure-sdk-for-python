@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -19,12 +20,15 @@ from ._configuration import ServiceFabricManagementClientConfiguration
 from .operations import ClustersOperations
 from .operations import ClusterVersionsOperations
 from .operations import Operations
+from .operations import ApplicationOperations
 from .operations import ApplicationTypesOperations
 from .operations import ApplicationTypeVersionsOperations
 from .operations import ApplicationsOperations
 from .operations import ServicesOperations
 from .operations import ManagedClustersOperations
+from .operations import ManagedclusterOperations
 from .operations import ManagedClusterVersionsOperations
+from .operations import NodetypeOperations
 from .operations import NodeTypesOperations
 from .. import models
 
@@ -38,6 +42,8 @@ class ServiceFabricManagementClient(object):
     :vartype cluster_versions: azure.mgmt.servicefabric.aio.operations.ClusterVersionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.servicefabric.aio.operations.Operations
+    :ivar application: ApplicationOperations operations
+    :vartype application: azure.mgmt.servicefabric.aio.operations.ApplicationOperations
     :ivar application_types: ApplicationTypesOperations operations
     :vartype application_types: azure.mgmt.servicefabric.aio.operations.ApplicationTypesOperations
     :ivar application_type_versions: ApplicationTypeVersionsOperations operations
@@ -48,8 +54,12 @@ class ServiceFabricManagementClient(object):
     :vartype services: azure.mgmt.servicefabric.aio.operations.ServicesOperations
     :ivar managed_clusters: ManagedClustersOperations operations
     :vartype managed_clusters: azure.mgmt.servicefabric.aio.operations.ManagedClustersOperations
+    :ivar managedcluster: ManagedclusterOperations operations
+    :vartype managedcluster: azure.mgmt.servicefabric.aio.operations.ManagedclusterOperations
     :ivar managed_cluster_versions: ManagedClusterVersionsOperations operations
     :vartype managed_cluster_versions: azure.mgmt.servicefabric.aio.operations.ManagedClusterVersionsOperations
+    :ivar nodetype: NodetypeOperations operations
+    :vartype nodetype: azure.mgmt.servicefabric.aio.operations.NodetypeOperations
     :ivar node_types: NodeTypesOperations operations
     :vartype node_types: azure.mgmt.servicefabric.aio.operations.NodeTypesOperations
     :param credential: Credential needed for the client to connect to Azure.
@@ -83,6 +93,8 @@ class ServiceFabricManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.application = ApplicationOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.application_types = ApplicationTypesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.application_type_versions = ApplicationTypeVersionsOperations(
@@ -93,10 +105,31 @@ class ServiceFabricManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.managed_clusters = ManagedClustersOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.managedcluster = ManagedclusterOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.managed_cluster_versions = ManagedClusterVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.nodetype = NodetypeOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.node_types = NodeTypesOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()

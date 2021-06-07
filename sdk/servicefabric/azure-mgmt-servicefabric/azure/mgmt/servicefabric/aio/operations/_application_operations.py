@@ -19,8 +19,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class Operations:
-    """Operations async operations.
+class ApplicationOperations:
+    """ApplicationOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
