@@ -152,7 +152,7 @@ Cosmos DB SQL language allows you to [get subitems by using the FROM clause](htt
 
 ## Max Item Count
 
-This is a parameter of the `query_items` method, an integer indicating the maximum number of items to be returned per page. The `-1` value can be specified to let the service determine the optimal item count. This is the recommended configuration value, and the default behavior of this SDK when it is not informed. 
+This is a parameter of the query_items method, an integer indicating the maximum number of items to be returned per page. The `None` value can be specified to let the service determine the optimal item count. This is the recommended configuration value, and the default behavior of this SDK when it is not set.
 
 However, in this version of the Python SDK, 4.x, if you want to force default behavior, you should use `None` instead of `-1`. Please be aware that previous versions of this SDK have a different behavior. We may change this situation in future versions.
 
