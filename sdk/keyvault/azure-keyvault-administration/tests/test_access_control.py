@@ -101,7 +101,7 @@ class AccessControlTests(KeyVaultTestCase):
         assert len(matching_definitions) == 1
 
         # get custom role definition
-        definition = client.get_role_definition(scope=scope, definition_name=definition_name)
+        definition = client.get_role_definition(scope=scope, name=definition_name)
         assert_role_definitions_equal(definition, updated_definition)
 
         # delete custom role definition
@@ -120,7 +120,7 @@ class AccessControlTests(KeyVaultTestCase):
         principal_id = self.get_service_principal_id()
         name = self.get_replayable_uuid("some-uuid")
 
-        created = client.create_role_assignment(scope, definition.id, principal_id, assignment_name=name)
+        created = client.create_role_assignment(scope, definition.id, principal_id, name=name)
         assert created.name == name
         assert created.properties.principal_id == principal_id
         assert created.properties.role_definition_id == definition.id

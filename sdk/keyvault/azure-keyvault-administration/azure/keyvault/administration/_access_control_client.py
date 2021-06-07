@@ -40,11 +40,11 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :param str definition_id: ID of the role's definition
         :param str principal_id: Azure Active Directory object ID of the principal which will be assigned the role. The
             principal can be a user, service principal, or security group.
-        :keyword assignment_name: a name for the role assignment. Must be a UUID.
-        :paramtype assignment_name: str or uuid.UUID
+        :keyword name: a name for the role assignment. Must be a UUID.
+        :paramtype name: str or uuid.UUID
         :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
-        assignment_name = kwargs.pop("assignment_name", None) or uuid4()
+        name = kwargs.pop("name", None) or uuid4()
 
         create_parameters = self._client.role_assignments.models.RoleAssignmentCreateParameters(
             properties=self._client.role_assignments.models.RoleAssignmentProperties(
@@ -54,45 +54,45 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         assignment = self._client.role_assignments.create(
             vault_base_url=self._vault_url,
             scope=scope,
-            role_assignment_name=str(assignment_name),
+            role_assignment_name=str(name),
             parameters=create_parameters,
             **kwargs
         )
         return KeyVaultRoleAssignment._from_generated(assignment)
 
     @distributed_trace
-    def delete_role_assignment(self, scope, assignment_name, **kwargs):
+    def delete_role_assignment(self, scope, name, **kwargs):
         # type: (Union[str, KeyVaultRoleScope], Union[str, UUID], **Any) -> None
         """Delete a role assignment.
 
         :param scope: the assignment's scope, for example "/", "/keys", or "/keys/<specific key identifier>"
             :class:`KeyVaultRoleScope` defines common broad scopes. Specify a narrower scope as a string.
         :type scope: str or KeyVaultRoleScope
-        :param assignment_name: the assignment's name.
-        :type assignment_name: str or uuid.UUID
+        :param name: the role assignment's name.
+        :type name: str or uuid.UUID
         :returns: None
         """
         try:
             self._client.role_assignments.delete(
-                vault_base_url=self._vault_url, scope=scope, role_assignment_name=str(assignment_name), **kwargs
+                vault_base_url=self._vault_url, scope=scope, role_assignment_name=str(name), **kwargs
             )
         except ResourceNotFoundError:
             pass
 
     @distributed_trace
-    def get_role_assignment(self, scope, assignment_name, **kwargs):
+    def get_role_assignment(self, scope, name, **kwargs):
         # type: (Union[str, KeyVaultRoleScope], Union[str, UUID], **Any) -> KeyVaultRoleAssignment
         """Get a role assignment.
 
         :param scope: the assignment's scope, for example "/", "/keys", or "/keys/<specific key identifier>"
             :class:`KeyVaultRoleScope` defines common broad scopes. Specify a narrower scope as a string.
         :type scope: str or KeyVaultRoleScope
-        :param assignment_name: the assignment's name.
-        :type assignment_name: str or uuid.UUID
+        :param name: the role assignment's name.
+        :type name: str or uuid.UUID
         :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
         assignment = self._client.role_assignments.get(
-            vault_base_url=self._vault_url, scope=scope, role_assignment_name=str(assignment_name), **kwargs
+            vault_base_url=self._vault_url, scope=scope, role_assignment_name=str(name), **kwargs
         )
         return KeyVaultRoleAssignment._from_generated(assignment)
 
@@ -167,37 +167,37 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         return KeyVaultRoleDefinition._from_generated(definition)
 
     @distributed_trace
-    def get_role_definition(self, scope, definition_name, **kwargs):
+    def get_role_definition(self, scope, name, **kwargs):
         # type: (Union[str, KeyVaultRoleScope], Union[str, UUID], **Any) -> KeyVaultRoleDefinition
         """Get the specified role definition.
 
         :param scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
             Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.GLOBAL.
         :type scope: str or KeyVaultRoleScope
-        :param definition_name: the role definition's name.
-        :type definition_name: str or uuid.UUID
+        :param name: the role definition's name.
+        :type name: str or uuid.UUID
         :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
         """
         definition = self._client.role_definitions.get(
-            vault_base_url=self._vault_url, scope=scope, role_definition_name=str(definition_name), **kwargs
+            vault_base_url=self._vault_url, scope=scope, role_definition_name=str(name), **kwargs
         )
         return KeyVaultRoleDefinition._from_generated(definition)
 
     @distributed_trace
-    def delete_role_definition(self, scope, definition_name, **kwargs):
+    def delete_role_definition(self, scope, name, **kwargs):
         # type: (Union[str, KeyVaultRoleScope], Union[str, UUID], **Any) -> None
         """Deletes a custom role definition.
 
         :param scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
             Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.GLOBAL.
         :type scope: str or KeyVaultRoleScope
-        :param definition_name: the role definition's name.
-        :type definition_name: str or uuid.UUID
+        :param name: the role definition's name.
+        :type name: str or uuid.UUID
         :returns: None
         """
         try:
             self._client.role_definitions.delete(
-                vault_base_url=self._vault_url, scope=scope, role_definition_name=str(definition_name), **kwargs
+                vault_base_url=self._vault_url, scope=scope, role_definition_name=str(name), **kwargs
             )
         except ResourceNotFoundError:
             pass
