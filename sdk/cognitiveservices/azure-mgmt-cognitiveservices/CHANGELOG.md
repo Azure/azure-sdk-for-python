@@ -1,5 +1,39 @@
 # Release History
 
+## 12.0.0 (2021-06-03)
+
+**Features**
+
+  - Model UserOwnedStorage has a new parameter identity_client_id
+  - Model Sku has a new parameter family
+  - Model Sku has a new parameter capacity
+  - Model Sku has a new parameter size
+  - Model PrivateEndpointConnection has a new parameter location
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model PrivateEndpointConnection has a new parameter etag
+  - Model PrivateEndpointConnectionProperties has a new parameter provisioning_state
+  - Model KeyVaultProperties has a new parameter identity_client_id
+  - Model PrivateLinkServiceConnectionState has a new parameter actions_required
+  - Added operation PrivateEndpointConnectionsOperations.begin_create_or_update
+  - Added operation PrivateEndpointConnectionsOperations.begin_delete
+  - Added operation AccountsOperations.list_usages
+  - Added operation AccountsOperations.begin_delete
+  - Added operation AccountsOperations.get
+  - Added operation AccountsOperations.begin_create
+  - Added operation AccountsOperations.begin_update
+  - Added operation group DeletedAccountsOperations
+
+**Breaking changes**
+
+  - Model PrivateLinkServiceConnectionState no longer has parameter action_required
+  - Removed operation PrivateEndpointConnectionsOperations.create_or_update
+  - Removed operation PrivateEndpointConnectionsOperations.delete
+  - Removed operation AccountsOperations.delete
+  - Removed operation AccountsOperations.create
+  - Removed operation AccountsOperations.get_usages
+  - Removed operation AccountsOperations.update
+  - Removed operation AccountsOperations.get_properties
+
 ## 11.0.0 (2020-12-22)
 
 **Features**
