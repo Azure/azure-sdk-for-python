@@ -171,8 +171,12 @@ class AsyncPipelineClient(PipelineClientBase):
 
     async def _make_pipeline_call(self, request, stream, **kwargs):
         """Want to get rid of this code and use pipeline.run immediately"""
+        try:
+            request = request._internal_request
+        except AttributeError:
+            pass
         pipeline_response = await self._pipeline.run(
-            request._internal_request, stream=stream, **kwargs  # pylint: disable=protected-access
+            request, stream=stream, **kwargs  # pylint: disable=protected-access
         )
         return AsyncHttpResponse(
             request=request,

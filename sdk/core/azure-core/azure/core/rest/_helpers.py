@@ -107,23 +107,8 @@ def _set_content_type_header(header_value, internal_request):
 def _set_content_body(content, internal_request):
     headers = internal_request.headers
     content_type = headers.get("Content-Type")
-    if _is_stream_or_str_bytes(content):
-        # stream will be bytes / str, or iterator of bytes / str
-        internal_request.set_streamed_data_body(content)
-        if isinstance(content, (str, bytes)) and content:
-            _set_content_length_header(
-                "Content-Length",
-                str(len(cast(str, internal_request.data))),
-                internal_request
-            )
-            if isinstance(content, six.string_types):
-                _set_content_type_header("text/plain", internal_request)
-            else:
-                _set_content_type_header("application/octet-stream", internal_request)
-        elif isinstance(content, collections.Iterable):
-            _set_content_length_header("Transfer-Encoding", "chunked", internal_request)
-            _set_content_type_header("application/octet-stream", internal_request)
-    elif isinstance(content, ET.Element):
+
+    if isinstance(content, ET.Element):
         # XML body
         internal_request.set_xml_body(content)
         _set_content_type_header("application/xml", internal_request)
@@ -140,12 +125,28 @@ def _set_content_body(content, internal_request):
             str(len(cast(str, internal_request.data))),
             internal_request
         )
+    elif _is_stream_or_str_bytes(content):
+        # stream will be bytes / str, or iterator of bytes / str
+        internal_request.set_streamed_data_body(content)
+        if isinstance(content, (str, bytes)) and content:
+            _set_content_length_header(
+                "Content-Length",
+                str(len(cast(str, internal_request.data))),
+                internal_request
+            )
+            if isinstance(content, six.string_types):
+                _set_content_type_header("text/plain", internal_request)
+            else:
+                _set_content_type_header("application/octet-stream", internal_request)
+        elif isinstance(content, collections.Iterable):
+            _set_content_length_header("Transfer-Encoding", "chunked", internal_request)
+            _set_content_type_header("application/octet-stream", internal_request)
     else:
         # Other body
         internal_request.data = content
     internal_request.headers = headers
 
-def _verify_and_data_object(key, value):
+def _verify_data_object(key, value):
     if not isinstance(key, str):
         raise TypeError(
             "Invalid type for data key. Expected str, got {}: {}".format(
@@ -170,21 +171,20 @@ def _set_body(content, data, files, json, internal_request):
         _set_content_type_header("application/json", internal_request)
     elif files or data:
         if data:
-            internal_request.data = {f: d for f, d in data.items() if d is not None}
-        if files:
-            internal_request.files = {
-                f: internal_request._format_data(d)  # pylint: disable=protected-access
-                for f, d in files.items() if d is not None
-            }
+            _set_content_type_header("application/x-www-form-urlencoded", internal_request)
+        internal_request.set_formdata_body(data or files)
         if data and not files:
             _set_content_type_header("application/x-www-form-urlencoded", internal_request)
         if data and files:
+            internal_request.files = {
+                f: internal_request._format_data(d) for f, d in data.items() if d is not None
+            }
             for f, d in internal_request.data.items():
                 if isinstance(d, list):
                     for item in d:
-                        _verify_and_data_object(f, item)
+                        _verify_data_object(f, item)
                 else:
-                    _verify_and_data_object(f, d)
+                    _verify_data_object(f, d)
 
 def _parse_lines_from_text(text):
     # largely taken from httpx's LineDecoder code

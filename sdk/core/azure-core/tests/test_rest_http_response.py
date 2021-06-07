@@ -11,6 +11,7 @@ import io
 import pytest
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import HttpResponseError
+import xml.etree.ElementTree as ET
 
 @pytest.fixture
 def send_request(client):
@@ -239,5 +240,43 @@ def test_multipart_encode_non_seekable_filelike(send_request):
         "POST",
         "http://localhost:5000/multipart/non-seekable-filelike",
         files=files,
+    )
+    send_request(request)
+
+def test_get_xml_basic(send_request):
+    request = HttpRequest(
+        "GET",
+        "http://localhost:5000/xml/basic",
+    )
+    response = send_request(request)
+    parsed_xml = ET.fromstring(response.text)
+    assert parsed_xml.tag == 'slideshow'
+    attributes = parsed_xml.attrib
+    assert attributes['title'] == "Sample Slide Show"
+    assert attributes['date'] == "Date of publication"
+    assert attributes['author'] == "Yours Truly"
+
+def test_put_xml_basic(send_request):
+
+    basic_body = """<?xml version='1.0' encoding='UTF-8'?>
+<slideshow
+        title="Sample Slide Show"
+        date="Date of publication"
+        author="Yours Truly">
+    <slide type="all">
+        <title>Wake up to WonderWidgets!</title>
+    </slide>
+    <slide type="all">
+        <title>Overview</title>
+        <item>Why WonderWidgets are great</item>
+        <item></item>
+        <item>Who buys WonderWidgets</item>
+    </slide>
+</slideshow>"""
+
+    request = HttpRequest(
+        "PUT",
+        "http://localhost:5000/xml/basic",
+        content=ET.fromstring(basic_body),
     )
     send_request(request)
