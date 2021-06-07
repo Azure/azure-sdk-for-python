@@ -95,8 +95,8 @@ class BackupClientTests(KeyVaultTestCase):
         assert_successful_operation(backup_status)
 
         # restore the key
-        restore_poller = await backup_client.begin_selective_key_restore(
-            key_name, backup_status.folder_url, sas_token
+        restore_poller = await backup_client.begin_restore(
+            backup_status.folder_url, sas_token, key_name=key_name
         )
 
         # check restore status and result
@@ -136,7 +136,7 @@ async def test_continuation_token():
     backup_client._client = mock_generated_client
     await backup_client.begin_restore("storage uri", "sas", continuation_token=expected_token)
     await backup_client.begin_backup("storage uri", "sas", continuation_token=expected_token)
-    await backup_client.begin_selective_key_restore("storage uri", "sas", "key", continuation_token=expected_token)
+    await backup_client.begin_restore("storage uri", "sas", key_name="key", continuation_token=expected_token)
 
     for method in mock_methods:
         assert method.call_count == 1
