@@ -5,6 +5,7 @@
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
 from ._models import KeyVaultRoleAssignment, KeyVaultRoleDefinition
@@ -71,10 +72,12 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :type assignment_name: str or uuid.UUID
         :returns: None
         """
-        self._client.role_assignments.delete(
-            vault_base_url=self._vault_url, scope=scope, role_assignment_name=str(assignment_name), **kwargs
-        )
-        return
+        try:
+            self._client.role_assignments.delete(
+                vault_base_url=self._vault_url, scope=scope, role_assignment_name=str(assignment_name), **kwargs
+            )
+        except ResourceNotFoundError:
+            pass
 
     @distributed_trace
     def get_role_assignment(self, scope, assignment_name, **kwargs):
@@ -192,10 +195,12 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :type definition_name: str or uuid.UUID
         :returns: None
         """
-        self._client.role_definitions.delete(
-            vault_base_url=self._vault_url, scope=scope, role_definition_name=str(definition_name), **kwargs
-        )
-        return
+        try:
+            self._client.role_definitions.delete(
+                vault_base_url=self._vault_url, scope=scope, role_definition_name=str(definition_name), **kwargs
+            )
+        except ResourceNotFoundError:
+            pass
 
     @distributed_trace
     def list_role_definitions(self, scope, **kwargs):

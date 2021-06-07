@@ -5,6 +5,7 @@
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -74,10 +75,12 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :type assignment_name: str or uuid.UUID
         :returns: None
         """
-        await self._client.role_assignments.delete(
-            vault_base_url=self._vault_url, scope=scope, role_assignment_name=str(assignment_name), **kwargs
-        )
-        return
+        try:
+            await self._client.role_assignments.delete(
+                vault_base_url=self._vault_url, scope=scope, role_assignment_name=str(assignment_name), **kwargs
+            )
+        except ResourceNotFoundError:
+            pass
 
     @distributed_trace_async
     async def get_role_assignment(
@@ -200,10 +203,12 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :type definition_name: str or uuid.UUID
         :returns: None
         """
-        definition = await self._client.role_definitions.delete(
-            vault_base_url=self._vault_url, scope=scope, role_definition_name=str(definition_name), **kwargs
-        )
-        return KeyVaultRoleDefinition._from_generated(definition)
+        try:
+            await self._client.role_definitions.delete(
+                vault_base_url=self._vault_url, scope=scope, role_definition_name=str(definition_name), **kwargs
+            )
+        except ResourceNotFoundError:
+            pass
 
     @distributed_trace
     def list_role_definitions(
