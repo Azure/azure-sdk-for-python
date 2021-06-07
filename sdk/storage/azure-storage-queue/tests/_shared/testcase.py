@@ -53,7 +53,7 @@ except ImportError:
 
 import pytest
 
-from .service_versions import ServiceVersion, LATEST_SERVICE_VERSION
+from .service_versions import service_version_map
 
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
@@ -314,7 +314,7 @@ class StorageTestCase(AzureMgmtTestCase):
         return FakeTokenCredential()
 
     def _get_service_version(self, **kwargs):
-        env_version = os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION", LATEST_SERVICE_VERSION)
+        env_version = service_version_map.get(os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION"), "LATEST")
         return kwargs.pop("service_version", env_version)
 
     def create_storage_client(self, client, *args, **kwargs):
