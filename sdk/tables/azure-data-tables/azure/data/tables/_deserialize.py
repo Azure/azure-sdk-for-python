@@ -91,6 +91,11 @@ def clean_up_dotnet_timestamps(value):
     return value[0]
 
 
+def deserialize_iso(value):
+    if not value:
+        return value
+    return _from_entity_datetime(value)
+
 
 def _from_entity_guid(value):
     return UUID(value)
