@@ -3,12 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import six
 
 import base64
 import json
-from msrest.serialization import TZ_UTC
 from datetime import datetime
+from msrest.serialization import TZ_UTC
+import six
 
 from azure.core.credentials import AccessToken
 from ._datetime_utils import convert_datetime_to_utc_int

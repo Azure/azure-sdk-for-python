@@ -8,8 +8,9 @@ import hashlib
 import urllib
 import base64
 import hmac
-from azure.core.pipeline.policies import SansIOHTTPPolicy
 from datetime import datetime
+
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 
 class HMACCredentialsPolicy(SansIOHTTPPolicy):

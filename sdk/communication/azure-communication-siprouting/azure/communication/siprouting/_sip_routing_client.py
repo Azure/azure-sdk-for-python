@@ -16,7 +16,7 @@ from ._generated._azure_communication_sip_routing_service import (
 )
 from ._generated.models import SipConfiguration, Trunk, TrunkRoute
 from ._authentication._client_utils import parse_connection_str, get_authentication_policy
-from ._authentication._user_credential import CommunicationTokenCredential
+from ._authentication._user_credential import CommunicationTokenCredential # pylint: disable=unused-import
 from ._version import SDK_MONIKER
 
 
