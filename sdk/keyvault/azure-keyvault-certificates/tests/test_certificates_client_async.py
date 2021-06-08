@@ -27,6 +27,7 @@ from azure.keyvault.certificates import (
     WellKnownIssuerNames
 )
 from azure.keyvault.certificates.aio import CertificateClient
+from azure.keyvault.certificates._client import NO_SAN_OR_SUBJECT
 import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
@@ -701,18 +702,12 @@ async def test_policy_expected_errors_for_create_cert():
     with pytest.raises(ValueError) as ex:
         policy = CertificatePolicy()
         await client.create_certificate("...", policy=policy)
-    assert "issuer" in str(ex.value)
-    assert "subject" in str(ex.value)
+    assert str(ex.value) == NO_SAN_OR_SUBJECT
 
     with pytest.raises(ValueError) as ex:
         policy = CertificatePolicy(issuer_name=WellKnownIssuerNames.self)
         await client.create_certificate("...", policy=policy)
-    assert "subject" in str(ex.value)
-
-    with pytest.raises(ValueError) as ex:
-        policy = CertificatePolicy(subject="...")
-        await client.create_certificate("...", policy=policy)
-    assert "issuer" in str(ex.value)
+    assert str(ex.value) == NO_SAN_OR_SUBJECT
 
 
 def test_service_headers_allowed_in_logs():

@@ -23,7 +23,7 @@ from .. import (
     IssuerProperties,
 )
 from ._polling_async import CreateCertificatePollerAsync
-from .._client import SAN_SUBJECT_ERROR_MESSAGE
+from .._client import NO_SAN_OR_SUBJECT
 from .._shared import AsyncKeyVaultClientBase
 from .._shared._polling_async import AsyncDeleteRecoverPollingMethod
 from .._shared.exceptions import error_map as _error_map
@@ -87,7 +87,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         if not (policy.san_emails or policy.san_user_principal_names or policy.san_dns_names or policy.subject):
-            raise ValueError(SAN_SUBJECT_ERROR_MESSAGE)
+            raise ValueError(NO_SAN_OR_SUBJECT)
 
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:

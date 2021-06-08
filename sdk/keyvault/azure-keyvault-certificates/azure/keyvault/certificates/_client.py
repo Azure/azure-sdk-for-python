@@ -35,8 +35,7 @@ if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
 
 
-SAN_SUBJECT_ERROR_MESSAGE = "You need to set either subject or one of the subject alternative names parameters in the "
-+"certificate policy"
+NO_SAN_OR_SUBJECT = "You need to set either subject or one of the subject alternative names parameters in the policy"
 
 
 class CertificateClient(KeyVaultClientBase):
@@ -100,7 +99,7 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         if not (policy.san_emails or policy.san_user_principal_names or policy.san_dns_names or policy.subject):
-            raise ValueError(SAN_SUBJECT_ERROR_MESSAGE)
+            raise ValueError(NO_SAN_OR_SUBJECT)
 
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
