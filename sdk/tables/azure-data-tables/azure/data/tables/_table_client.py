@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, TYPE_CHECKING, Union, List, Tuple, Dict, Mapping, Iterable, overload
+from typing import Optional, Any, TYPE_CHECKING, Union, List, Tuple, Dict, Mapping, Iterable, overload, cast
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -187,8 +187,8 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error)
-        output = {}
-        for identifier in identifiers:
+        output = {}  # type: Dict[str, Optional[TableAccessPolicy]]
+        for identifier in cast(List[SignedIdentifier], identifiers):
             if identifier.access_policy:
                 output[identifier.id] = TableAccessPolicy(
                     start=deserialize_iso(identifier.access_policy.start),
