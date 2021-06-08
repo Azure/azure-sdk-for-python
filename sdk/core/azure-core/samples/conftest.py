@@ -23,7 +23,16 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import pytest
 import sys
+
+@pytest.fixture(scope="session")
+def testserver():
+    # dummy testserver for now
+    # pytest.ini needs to be in root bc we run pytest on the pipelines with just "pytest"
+    # because of this, samples conftest needs its own def of testserver.
+    # plan to change the samples tests to use testserver as well, so it's not always going to be a gross dummy fixture
+    yield
 
 # Ignore collection of async tests for Python 2
 collect_ignore = []
