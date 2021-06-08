@@ -58,7 +58,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
 
         :param str folder_url: URL for the blob storage resource, including the path to the blob holding the
             backup. This would be the `folder_url` of a :class:`KeyVaultBackupOperation` returned by
-            :func:`begin_backup` or :func:`get_backup_status`, for example
+            :func:`begin_backup`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :keyword str continuation_token: a continuation token to restart polling from a saved state
@@ -93,26 +93,4 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             continuation_token=continuation_token,
             polling=polling,
             **kwargs
-        )
-
-    async def get_backup_status(self, job_id: str, **kwargs: "Any") -> "KeyVaultBackupOperation":
-        """Returns the status of a full backup operation.
-
-        :param str job_id: The job ID returned as part of the backup request
-        :returns: The full backup operation status as a :class:`KeyVaultBackupOperation`
-        :rtype: ~azure.keyvault.administration.KeyVaultBackupOperation
-        """
-        return await self._client.full_backup_status(
-            vault_base_url=self._vault_url, job_id=job_id, cls=KeyVaultBackupOperation._wrap_generated, **kwargs
-        )
-
-    async def get_restore_status(self, job_id: str, **kwargs: "Any") -> "KeyVaultRestoreOperation":
-        """Returns the status of a restore operation.
-
-        :param str job_id: The ID returned as part of the restore request
-        :returns: The restore operation status as a :class:`KeyVaultRestoreOperation`
-        :rtype: ~azure.keyvault.administration.KeyVaultRestoreOperation
-        """
-        return await self._client.restore_status(
-            vault_base_url=self._vault_url, job_id=job_id, cls=KeyVaultRestoreOperation._wrap_generated, **kwargs
         )
