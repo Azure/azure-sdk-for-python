@@ -18,13 +18,13 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration
-from .operations import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin
+from ._configuration import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2Configuration
+from .operations import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin
 from . import models
 
 
-class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin):
-    """Azure Cognitive Service Metrics Advisor REST API (OpenAPI v2).
+class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2(MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin):
+    """Microsoft Azure Metrics Advisor REST API (OpenAPI v2).
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -40,7 +40,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(AzureCognitiveServiceM
     ):
         # type: (...) -> None
         base_url = '{endpoint}/metricsadvisor/v1.0'
-        self._config = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration(credential, endpoint, **kwargs)
+        self._config = MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2Configuration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -72,7 +72,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(AzureCognitiveServiceM
         self._client.close()
 
     def __enter__(self):
-        # type: () -> AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2
+        # type: () -> MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2
         self._client.__enter__()
         return self
 
