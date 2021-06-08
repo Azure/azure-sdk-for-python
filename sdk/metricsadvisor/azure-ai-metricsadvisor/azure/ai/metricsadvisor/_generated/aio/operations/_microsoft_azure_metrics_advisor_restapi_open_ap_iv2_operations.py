@@ -18,7 +18,7 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
+class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
 
     async def get_active_series_count(
         self,

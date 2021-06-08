@@ -16,13 +16,13 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration
-from .operations import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin
+from ._configuration import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2Configuration
+from .operations import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin
 from .. import models
 
 
-class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin):
-    """Azure Cognitive Service Metrics Advisor REST API (OpenAPI v2).
+class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2(MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin):
+    """Microsoft Azure Metrics Advisor REST API (OpenAPI v2).
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
@@ -37,7 +37,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(AzureCognitiveServiceM
         **kwargs: Any
     ) -> None:
         base_url = '{endpoint}/metricsadvisor/v1.0'
-        self._config = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration(credential, endpoint, **kwargs)
+        self._config = MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2Configuration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -66,7 +66,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(AzureCognitiveServiceM
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2":
+    async def __aenter__(self) -> "MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2":
         await self._client.__aenter__()
         return self
 
