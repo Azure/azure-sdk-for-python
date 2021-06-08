@@ -30,9 +30,6 @@ from azure.security.attestation import (
     TokenValidationOptions,
     AttestationData)
 
-from dotenv import load_dotenv, find_dotenv
-load_dotenv(find_dotenv())
-
 _open_enclave_report = ("AQAAAAIAAADkEQAAAAAAAAMAAg" +
     "AAAAAABQAKAJOacjP3nEyplAoNs5V_Bgc42MPzGo7hPWS_h-3tExJrAAAAABERAwX_g" +
     "AYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAAAAAA" +

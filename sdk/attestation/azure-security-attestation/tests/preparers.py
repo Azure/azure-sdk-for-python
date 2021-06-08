@@ -12,7 +12,8 @@ from devtools_testutils import PowerShellPreparer
 
 
 AttestationPreparer = functools.partial(
-            PowerShellPreparer, "attestation",
+            PowerShellPreparer,
+            "attestation",
 #            attestation_azure_authority_host='xxx',
 #            attestation_resource_group='yyyy',
 #            attestation_subscription_id='xxx',
