@@ -34,7 +34,7 @@ class TestAzureAttestationToken(object):
         key = self._create_rsa_key()
         cert = self._create_x509_certificate(key, u'test certificate')
 
-        certificate = load_pem_x509_certificate(cert)
+        certificate = load_pem_x509_certificate(cert, backend=default_backend)
         assert certificate.subject==x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'test certificate')])
 
     def test_create_signer_ecds(self):
@@ -43,7 +43,7 @@ class TestAzureAttestationToken(object):
         eckey = self._create_ecds_key()
         certificate = self._create_x509_certificate(eckey, u'attestation.test')
 
-        certificate = load_pem_x509_certificate(certificate)
+        certificate = load_pem_x509_certificate(certificate, backend=default_backend)
         assert certificate.subject== x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'attestation.test')])
 
     def test_create_unsecured_token(self):
