@@ -1,9 +1,12 @@
 # Release History
 
-## 4.3.0 (Unreleased)
+## 4.3.0 (2021-06-09)
 
   **New Features**
-  - Added new event names related to farm beats and blob inventory to the `SystemEventNames` enum.
+  - Added new event names related to azure farming and blob inventory to the `SystemEventNames` enum.
+
+  **Bug Fixes**
+  - Replaced the `ServiceBusDeadletterMessagesAvailableWithNoListenerEventName` with the right value.
 
 ## 4.2.0 (2021-05-12)
 
