@@ -1,5 +1,8 @@
 # Release History
 
+## 1.7.0b2 (Unreleased)
+
+
 ## 1.7.0b1 (2021-06-08)
 Beginning with this release, this library requires Python 2.7 or 3.6+.
 
