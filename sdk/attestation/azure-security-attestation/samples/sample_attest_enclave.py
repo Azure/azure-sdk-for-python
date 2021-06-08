@@ -215,7 +215,7 @@ issuancerules {
                 return False
 
             # Check the subject of the signing certificate used to validate the token.
-            certificate = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
+            certificate = cryptography.x509.load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
             if certificate.subject.rfc4514_string() != "CN="+self.shared_url:
                 print("Certificate subject {} does not match expected subject {}".format(certificate.subject, self.shared_url))
                 return False

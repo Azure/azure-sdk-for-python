@@ -1,5 +1,18 @@
 # Release History
 
+## 1.0.0b5 (Unreleased)
+
+### Breaking Changes
+
+- TPM attestation takes a JSON string parameter and returns a JSON string parameter.
+  - `TPMAttestationRequest` and `TPMAttestationResponse` type were removed.
+- 'confirmation' attribute removed from `AttestationResult` type.
+- The `AttestationSigningKey` type was removed, replaced with a `signing_key` and
+ `signing_certificate` kwargs parameter.
+- All certificates and keys acceptend and returned by the SDK are now PEM encoded
+  strings instead of DER encoded arrays of bytes for easier manipulation and
+  interoperability.
+
 ## 1.0.0b4 (2021-06-08)
 
 ### Features Added

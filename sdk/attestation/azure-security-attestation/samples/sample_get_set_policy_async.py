@@ -43,7 +43,7 @@ import base64
 import json
 import os
 from cryptography.hazmat.backends import default_backend
-from cryptography.x509 import load_der_x509_certificate
+from cryptography.x509 import load_pem_x509_certificate
 from dotenv import find_dotenv, load_dotenv
 import base64
 import asyncio
@@ -54,11 +54,10 @@ from azure.security.attestation.aio import (
 from azure.security.attestation import (
     AttestationType,
     AttestationData,
-    AttestationSigningKey,
     CertificateModification)
 
 from sample_collateral import sample_open_enclave_report, sample_runtime_data
-from sample_utils import write_banner, create_rsa_key, create_x509_certificate, create_client_credentials_async
+from sample_utils import write_banner, create_rsa_key, create_x509_certificate, create_client_credentials_async, pem_from_base64
 
 class AttestationClientPolicySamples(object):
     def __init__(self):
@@ -66,8 +65,8 @@ class AttestationClientPolicySamples(object):
         self.aad_url = os.environ.get("ATTESTATION_AAD_URL")
         self.isolated_url = os.environ.get("ATTESTATION_ISOLATED_URL")
         if self.isolated_url:
-            self.isolated_certificate = base64.b64decode(os.getenv("ATTESTATION_ISOLATED_SIGNING_CERTIFICATE"))
-            self.isolated_key = base64.b64decode(os.getenv("ATTESTATION_ISOLATED_SIGNING_KEY"))
+            self.isolated_certificate = pem_from_base64(os.getenv("ATTESTATION_ISOLATED_SIGNING_CERTIFICATE"), "CERTIFICATE")
+            self.isolated_key = pem_from_base64(os.getenv("ATTESTATION_ISOLATED_SIGNING_KEY"), "PRIVATE KEY")
         self._credentials = create_client_credentials_async()
 
     async def close(self):
@@ -147,7 +146,8 @@ class AttestationClientPolicySamples(object):
             # Set a minimal policy.
             set_result=await admin_client.set_policy(AttestationType.SGX_ENCLAVE, 
                 """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
-                signing_key=AttestationSigningKey(rsa_key, cert))
+                signing_key=rsa_key,
+                signing_certificate=cert)
             print("Policy Set Resolution: ", set_result.value.policy_resolution)
             print("Resulting policy signer should match the input certificate:")
             print("Policy Signer: ", base64.b64encode(set_result.value.policy_signer.certificates[0]).decode('ascii'))
@@ -158,16 +158,21 @@ class AttestationClientPolicySamples(object):
             await admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
 
     async def reset_policy_aad_secured(self):
-        """ Set a secured attestation policy on an AAD mode instance"""
+        """ Set a secured attestation policy on an AAD mode instance, specifying
+        a default signing key and certificate to be used for all policy operations.
+        """
         write_banner("reset_policy_aad_secured")
         print("Set Secured Policy on an AAD mode attestation instance.")
-        async with self._create_admin_client(self.aad_url) as admin_client:
+        rsa_key = create_rsa_key()
+        cert = create_x509_certificate(rsa_key, u'TestCertificate')
 
-            rsa_key = create_rsa_key()
-            cert = create_x509_certificate(rsa_key, u'TestCertificate')
+        # Create an administrative client, specifying a default key and certificate.
+        # The key and certificate will be used for subsequent policy operations.
+        async with self._create_admin_client(self.aad_url, 
+            signing_key=rsa_key, 
+            signing_certificate=cert) as admin_client:
 
-            set_result=await admin_client.reset_policy(AttestationType.SGX_ENCLAVE, 
-                signing_key=AttestationSigningKey(rsa_key, cert))
+            set_result=await admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
             print("Policy Set Resolution: ", set_result.value.policy_resolution)
 
     async def get_policy_isolated(self):
@@ -194,7 +199,8 @@ class AttestationClientPolicySamples(object):
 
             set_result=await admin_client.set_policy(AttestationType.SGX_ENCLAVE, 
                 """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
-                signing_key=AttestationSigningKey(self.isolated_key, self.isolated_certificate))
+                signing_key=self.isolated_key,
+                signing_certificate=self.isolated_certificate)
             print("Policy Set Resolution: ", set_result.value.policy_resolution)
             print("Resulting policy signer should match the input certificate:")
             print("Policy Signer: ", base64.b64encode(set_result.value.policy_signer.certificates[0]).decode('ascii'))
@@ -203,9 +209,8 @@ class AttestationClientPolicySamples(object):
             print("Reset the attestation policy to the default now to avoid side effects.")
             # Reset the policy now that we're done.
             await admin_client.reset_policy(AttestationType.SGX_ENCLAVE, 
-                signing_key=AttestationSigningKey(
-                    self.isolated_key,
-                    self.isolated_certificate))
+                signing_key= self.isolated_key,
+                signing_certificate= self.isolated_certificate)
 
 
     async def get_policy_management_certificates(self):
@@ -248,7 +253,8 @@ class AttestationClientPolicySamples(object):
             # Add the new certificate to the list.
             add_result = await admin_client.add_policy_management_certificate(
                 new_certificate,
-                AttestationSigningKey(self.isolated_key, self.isolated_certificate))
+                signing_key=self.isolated_key,
+                signing_certificate=self.isolated_certificate)
             if add_result.value.certificate_resolution != CertificateModification.IS_PRESENT:
                 raise Exception("Certificate was not added!")
 
@@ -258,7 +264,7 @@ class AttestationClientPolicySamples(object):
             print("Isolated instance now has", len(get_result.value), "certificates - should be 2")
 
             for cert_der in get_result.value:
-                cert = load_der_x509_certificate(cert_der[0], default_backend())
+                cert = load_pem_x509_certificate(cert_der[0], default_backend())
                 print("certificate subject: ", cert.subject)
 
             # The signing certificate for the isolated instance should be
@@ -286,7 +292,8 @@ class AttestationClientPolicySamples(object):
             # [BEGIN remove_policy_management_certificate]
             remove_result = await admin_client.remove_policy_management_certificate(
                 new_certificate,
-                AttestationSigningKey(self.isolated_key, self.isolated_certificate))
+                signing_key=self.isolated_key,
+                signing_certificate=self.isolated_certificate)
 
             if remove_result.value.certificate_resolution != CertificateModification.IS_ABSENT:
                 raise Exception("Certificate was not removed!")

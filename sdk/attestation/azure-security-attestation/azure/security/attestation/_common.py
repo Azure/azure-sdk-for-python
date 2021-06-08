@@ -6,6 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
+from cryptography.hazmat.backends import default_backend
+
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
+from cryptography.x509.base import load_pem_x509_certificate
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -29,3 +36,46 @@ class Base64Url:
         # type(str)->bytes
         padding_added = encoded + "=" * ((len(encoded)* -1) % 4)
         return base64.urlsafe_b64decode(padding_added.encode('utf-8'))
+
+class PemUtils:
+    """ PEM encoding utilities.
+    """
+
+    @staticmethod
+    def pem_from_base64(base64_value, header_type):
+        # type: (str, str) -> str
+        pem = '-----BEGIN ' + header_type + '-----\n'
+        while base64_value != '':
+            pem += base64_value[:64] + '\n'
+            base64_value = base64_value[64:]
+        pem += '-----END ' + header_type + '-----\n'
+        return pem.encode('utf-8')
+
+class SigningKeyUtils:
+
+    @staticmethod
+    def validate_signing_keys(signing_key_pem, certificate_pem):
+        # type (str, str) -> cryptography.hazmat.primatives.asymmetric.ec | cryptography.hazmat.primatives.asymmetric.rsa, Certificate
+
+        # Start by making sure that both signing key and certificate are present.
+        if signing_key_pem and not certificate_pem:
+            raise ValueError("signing_key cannot be specified without signing_certificate.")
+        if certificate_pem and not signing_key_pem:
+            raise ValueError("signing_certificate cannot be specified without signing_key.")
+
+        # Verify that the key and certificate are validly PEM encoded.
+        signing_key = serialization.load_pem_private_key(signing_key_pem, password=None, backend=default_backend())
+        certificate = load_pem_x509_certificate(certificate_pem, backend=default_backend())
+
+        # We only support ECDS and RSA keys in the MAA service.
+        if (not isinstance(signing_key, RSAPrivateKey) and not isinstance(signing_key, EllipticCurvePrivateKey)):
+            raise ValueError("Signing keys must be either ECDS or RSA keys.")
+
+        # Ensure that the public key in the certificate matches the public key of the key.
+        cert_public_key = certificate.public_key().public_bytes(
+            Encoding.PEM, PublicFormat.SubjectPublicKeyInfo)
+        key_public_key = signing_key.public_key().public_bytes(
+            Encoding.PEM, PublicFormat.SubjectPublicKeyInfo)
+        if cert_public_key != key_public_key:
+            raise ValueError("Signing key must match certificate public key")
+        return signing_key, certificate

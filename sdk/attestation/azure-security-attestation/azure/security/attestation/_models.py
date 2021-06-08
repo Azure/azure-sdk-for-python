@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives import serialization
 
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.hashes import SHA256
-from ._common import Base64Url
+from ._common import Base64Url, PemUtils, SigningKeyUtils
 from ._generated.models import (
     PolicyResult as GeneratedPolicyResult, 
     AttestationResult as GeneratedAttestationResult,
@@ -24,7 +24,7 @@ from typing import Any, Callable, Dict, List, Type, TypeVar, Generic, Union
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
-from cryptography.x509 import Certificate, load_der_x509_certificate
+from cryptography.x509 import Certificate, load_pem_x509_certificate
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, RSAPublicKey
 from json import JSONDecoder, JSONEncoder
 from datetime import datetime
@@ -39,15 +39,15 @@ class AttestationSigner(object):
         Certificates representing an X.509 certificate chain. The first of these
         certificates will be used to sign an :class:`AttestationToken`.
 
-    :type certificates: list[bytes] 
+    :type certificates: list[str] 
 
     :param str key_id: A string which identifies a signing key, See 
         `RFC 7517 Section 4.5 <https://tools.ietf.org/html/rfc7517#section-4.5>`_
 
     """
     def __init__(self, certificates, key_id, **kwargs):
-        # type: (list[bytes], str, Any) -> None
-        self.certificates = [base64.b64decode(cert) for cert in certificates]
+        # type: (list[str], str, Any) -> None
+        self.certificates = [PemUtils.pem_from_base64(cert, 'CERTIFICATE') for cert in certificates]
         self.key_id = key_id
 
     @classmethod
@@ -56,6 +56,7 @@ class AttestationSigner(object):
         if not generated:
             return cls
         return cls(generated.x5_c, generated.kid)
+
 
 class PolicyCertificatesModificationResult(object):
     """The result of a policy certificate modification.
@@ -91,7 +92,7 @@ class PolicyResult(object):
         reset call.
     :type policy_resolution: azure.security.attestation.PolicyModification
     :param policy_signer: If the call to `set_policy` or `reset_policy`
-        had a :class:`AttestationSigningKey` parameter, this will be the certificate
+        had a `signing_certificate` parameter, this will be the certificate
         which was specified in this parameter.
     :type policy_signer: azure.security.attestation.AttestationSigner
     :param str policy_token_hash: The hash of the complete JSON Web Signature
@@ -122,8 +123,6 @@ class AttestationResult(object):
         """
         :keyword issuer: Entity which issued the attestation token.
         :paramtype issuer: str
-        :keyword confirmation: Confirmation claim for the token.
-        :paramtype confirmation: dict
         :keyword unique_identifier: Unique identifier for the token.
         :paramtype unique_identifier: str
         :keyword nonce: Returns the input `nonce` attribute passed to the `attest` API.
@@ -162,7 +161,6 @@ class AttestationResult(object):
     
         """
         self._issuer = kwargs.pop("issuer", None) #type:Union[str, None]
-        self._confirmation = kwargs.pop("confirmation", None) #type:Union[dict, None]
         self._unique_identifier = kwargs.pop("unique_identifier", None) #type:Union[str, None]
         self._nonce = kwargs.pop("nonce", None) #type:Union[str, None]
         self._version = kwargs.pop("version", None) #type:Union[str, None]
@@ -185,7 +183,6 @@ class AttestationResult(object):
         #type:(GeneratedAttestationResult) -> AttestationResult
         return AttestationResult(
             issuer=generated.iss,
-            confirmation=generated.cnf,
             unique_identifier=generated.jti,
             nonce=generated.nonce,
             version=generated.version,
@@ -220,21 +217,6 @@ class AttestationResult(object):
         return self._issuer
 
     @property
-    def confirmation(self):
-        #type:() -> Union[str, None]
-        """ Returns the confirmation claim for the attestation token.
-
-        If present, the confirmation property can be used to identify a proof of
-        possession of a key.
-        
-        See `RFC 7800 Section 3.1 <https://www.rfc-editor.org/rfc/rfc7800.html#section-3.1>`_ for details.
-
-        :rtype: str or None
-
-        """
-        return self._confirmation
-
-    @property
     def unique_id(self):
         #type:() -> Union[str, None]
         """ Returns a unique ID claim for the attestation token.
@@ -247,7 +229,7 @@ class AttestationResult(object):
         :rtype: str or None
 
         """
-        return self._confirmation
+        return self._unique_identifier
 
     @property
     def nonce(self):
@@ -506,56 +488,39 @@ class TokenValidationOptions(object):
         self.validation_slack = kwargs.get('validation_slack', 0.5)  # type:float
 
 
-class AttestationSigningKey(object):
-    """ Represents a signing key used by the attestation service.
-
-    Typically the signing key used by the service consists of two components: An RSA or ECDS private key and an X.509 Certificate wrapped around
-    the public key portion of the private key.
-
-    :param bytes signing_key_der: The RSA or ECDS signing key to sign the token supplied to the customer DER encoded.
-    :param bytes certificate_der: A DER encoded X.509 Certificate whose public key matches the signing_key's public key.
-
-    """
-
-    def __init__(self, signing_key_der, certificate_der):
-    # type: (bytes, bytes) -> None
-        signing_key = serialization.load_der_private_key(signing_key_der, password=None, backend=default_backend())
-        certificate = load_der_x509_certificate(certificate_der, backend=default_backend())
-
-        self._signing_key = signing_key
-        self._certificate = certificate
-
-        # We only support ECDS and RSA keys in the MAA service.
-        if (not isinstance(signing_key, RSAPrivateKey) and not isinstance(signing_key, EllipticCurvePrivateKey)):
-            raise ValueError("Signing keys must be either ECDS or RSA keys.")
-
-        # Ensure that the public key in the certificate matches the public key of the key.
-        cert_public_key = certificate.public_key().public_bytes(
-            Encoding.PEM, PublicFormat.SubjectPublicKeyInfo)
-        key_public_key = signing_key.public_key().public_bytes(
-            Encoding.PEM, PublicFormat.SubjectPublicKeyInfo)
-        if cert_public_key != key_public_key:
-            raise ValueError("Signing key must match certificate public key")
-
-
 class AttestationToken(Generic[T]):
     """ Represents a token returned from the attestation service.
 
     :keyword Any body: The body of the newly created token, if provided.
-    :keyword signer: If specified, the key used to sign the token.
-        If the `signer` property is not specified, the token created is unsecured.
-    :paramtype signer: azure.security.attestation.AttestationSigningKey
+    :keyword str signing_key: If specified, the PEM encoded key used to sign the
+        token.
+    :keyword str signing_certificate: If specified, the PEM encoded certificate
+        used to sign the token.
+    :keyword key: If specified the key to be used to sign the token.
+    :keyword certificate: If specified, the certificate to be used to sign the token.
+
     :keyword str token: If no body or signer is provided, the string representation of the token.
     :keyword Type body_type: The underlying type of the body of the 'token' parameter, used to deserialize the underlying body when parsing the token.
+
+    If the `signing_key` and `signing_certificate` properties are not specified, the token created is unsecured.
+
     """
 
     def __init__(self, **kwargs):
         token = kwargs.get('token')
         if token is None:
-            body = kwargs.get('body')  # type: Any
-            signer = kwargs.get('signer')  # type: AttestationSigningKey
-            if signer:
-                token = self._create_secured_jwt(body, signer)
+            body = kwargs.pop('body', None)  # type: Any
+            signing_key = kwargs.pop('signing_key', None)  # type: str
+            signing_certificate = kwargs.pop('signing_certificate', None)  # type: str
+            if signing_key or signing_certificate:
+                if 'key' in kwargs or 'certificate' in kwargs:
+                    raise ValueError("Cannot specify both signing_key and key or certificate and signing_certificate")
+                [key, certificate] = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
+            else:
+                key = kwargs.pop('key', None)
+                certificate = kwargs.pop('certificate', None)
+            if key:
+                token = self._create_secured_jwt(body, key=key, certificate=certificate)
             else:
                 token = self._create_unsecured_jwt(body)
 
@@ -823,7 +788,7 @@ class AttestationToken(Generic[T]):
         signed_data = Base64Url.encode(
             self.header_bytes)+'.'+Base64Url.encode(self.body_bytes)
         for signer in candidate_certificates:
-            cert = load_der_x509_certificate(signer.certificates[0], backend=default_backend())
+            cert = load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
             signer_key = cert.public_key()
             # Try to verify the signature with this candidate.
             # If it doesn't work, try the next signer.
@@ -889,24 +854,29 @@ class AttestationToken(Generic[T]):
         return return_value
 
     @staticmethod
-    def _create_secured_jwt(body, signer):
-        # type: (Any, AttestationSigningKey) -> str
+    def _create_secured_jwt(body, **kwargs):
+        # type: (Any, **Any) -> str
         """ Return a secured JWT expressing the body, secured with the specified signing key.
         :param Any body: The body of the token to be serialized.
-        :param signer: the certificate and key to sign the token.
-        :type signer: AttestationSigningKey
+        :keyword key: Signing key used to sign the token.
+        :kwtype key: cryptography.hazmat.primatives.asymmetric.ec or cryptography.hazmat.primatives.asymmetric.rsa
+        :keyword certificate: Certificate to be transmitted to attestation service 
+            used to validate the token.
+        :kwtype certificate: Certificate
         """
+        key = kwargs.pop('key', None)
+        certificate = kwargs.pop('certificate', None)
+
         header = {
-            "alg": "RSA256" if isinstance(signer._signing_key, RSAPrivateKey) else "ECDH256",
+            "alg": "RSA256" if isinstance(key, RSAPrivateKey) else "ECDH256",
             "jwk": {
                 "x5c": [
-                    base64.b64encode(signer._certificate.public_bytes(
-                        Encoding.DER)).decode('utf-8')
+                    base64.b64encode(certificate.public_bytes(Encoding.DER)).decode('ascii')
                 ]
             }
         }
         json_header = JSONEncoder().encode(header)
-        return_value = Base64Url.encode(json_header.encode('utf-8'))
+        return_value = Base64Url.encode(json_header.encode('ascii'))
 
         try:
             body = body.serialize()
@@ -919,13 +889,13 @@ class AttestationToken(Generic[T]):
         return_value += Base64Url.encode(json_body.encode('utf-8'))
 
         # Now we want to sign the return_value.
-        if isinstance(signer._signing_key, RSAPrivateKey):
-            signature = signer._signing_key.sign(
+        if isinstance(key, RSAPrivateKey):
+            signature = key.sign(
                 return_value.encode('utf-8'),
                 algorithm=SHA256(),
                 padding=padding.PKCS1v15())
         else:
-            signature = signer._signing_key.sign(
+            signature = key.sign(
                 return_value.encode('utf-8'),
                 algorithm=SHA256())
         # And finally append the base64url encoded signature.
@@ -933,7 +903,7 @@ class AttestationToken(Generic[T]):
         return_value += Base64Url.encode(signature)
         return return_value
 
-class AttestationTokenValidationException(Exception):
+class AttestationTokenValidationException(ValueError):
     """ Thrown when an attestation token validation fails.
 
     :param str message: Message for caller describing the reason for the failure.
@@ -955,24 +925,3 @@ class AttestationResponse(Generic[T]):
         # type (AttestationToken, T) -> None
         self.token = token #type: AttestationToken
         self.value = value #type: T
-
-class TpmAttestationRequest(object):
-    """ Represents a request for TPM attestation.
-
-    :param bytes data: The data sent to the Attestation Service in
-        the parameter to :meth:`azure.security.attestation.AttestationClient.attest_tpm`.
-    """
-    def __init__(self, data):
-        #type (bytes) -> None
-        self.data = data
-   
-class TpmAttestationResponse(object):
-    """ Represents a request for TPM attestation.
-
-    :param bytes data: The data received from the Attestation Service in
-        response to a call to :meth:`azure.security.attestation.AttestationClient.attest_tpm`.
-    """
-    def __init__(self, data):
-        #type (bytes) -> None
-        self.data = data
-

@@ -30,8 +30,6 @@ from .._models import (
     AttestationResponse,
     AttestationResult,
     AttestationData,
-    TpmAttestationRequest,
-    TpmAttestationResponse,
     AttestationTokenValidationException)
 import base64
 from threading import Lock
@@ -203,20 +201,20 @@ class AttestationClient(object):
     @distributed_trace_async
     async def attest_tpm(
         self, 
-        request, #type: TpmAttestationRequest
+        request, #type: str
         **kwargs #type: Any
-        ): #type: (...) -> TpmAttestationResponse
+        ): #type: (...) -> str
         """ Attest a TPM based enclave.
 
         See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
 
         :param request: Incoming request to send to the TPM attestation service.
-        :type request: azure.security.attestation.TpmAttestationRequest 
+        :type request: str
         :returns: A structure containing the response from the TPM attestation.
-        :rtype: azure.security.attestation.TpmAttestationResponse
+        :rtype: str
         """
-        response = await self._client.attestation.attest_tpm(request.data, **kwargs)
-        return TpmAttestationResponse(response.data)
+        response = await self._client.attestation.attest_tpm(request.encode('ascii'), **kwargs)
+        return response.data.decode('ascii')
 
     async def _get_signers(self, **kwargs: Any): #type: (Any) -> list[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.

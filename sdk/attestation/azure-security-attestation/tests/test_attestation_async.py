@@ -22,7 +22,6 @@ from azure.security.attestation.aio import (
     AttestationAdministrationClient)
 from azure.security.attestation import(
     AttestationType,
-    TpmAttestationRequest,
     AttestationData,
     TokenValidationOptions)
 import cryptography
@@ -139,8 +138,6 @@ _runtime_data = ("CiAgICAgICAgewogI" +
     "ICB9CiAgICAgICAgfQogICAgICAgIA")
 
 class AsyncAzureAttestationTest(AzureTestCase):
-    def __init__(self, *args, **kwargs):
-        super(AsyncAzureAttestationTest, self).__init__(*args, **kwargs)
 
     @AttestationPreparer()
     @AzureTestCase.await_prepared_test
@@ -176,7 +173,7 @@ class AsyncAzureAttestationTest(AzureTestCase):
         attest_client = self.shared_client(attestation_location_short_name)
         signers = await attest_client.get_signing_certificates()
         for signer in signers:
-            cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
+            cryptography.x509.load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
 
     @AttestationPreparer()
     async def test_aad_getsigningcertificatesasync(self, attestation_aad_url):
@@ -184,7 +181,7 @@ class AsyncAzureAttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_aad_url)
         signers = await attest_client.get_signing_certificates()
         for signer in signers:
-            cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
+            cryptography.x509.load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
 
     @AttestationPreparer()
     async def test_isolated_getsigningcertificatesasync(self, attestation_isolated_url):
@@ -192,7 +189,7 @@ class AsyncAzureAttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_isolated_url)
         signers = await attest_client.get_signing_certificates()
         for signer in signers:
-            cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
+            cryptography.x509.load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
 
 
 
@@ -291,10 +288,10 @@ class AsyncAzureAttestationTest(AzureTestCase):
         basic_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
         await admin_client.set_policy(AttestationType.TPM, basic_policy)
 
-        encoded_payload = json.dumps({ "payload": { "type": "aikcert" } }).encode("ascii")
-        tpm_response = await client.attest_tpm(TpmAttestationRequest(encoded_payload))
+        encoded_payload = json.dumps({ "payload": { "type": "aikcert" } })
+        tpm_response = await client.attest_tpm(encoded_payload)
 
-        decoded_response = json.loads(tpm_response.data)
+        decoded_response = json.loads(tpm_response)
         assert decoded_response["payload"] is not None
         payload = decoded_response["payload"]
         assert payload["challenge"] is not None

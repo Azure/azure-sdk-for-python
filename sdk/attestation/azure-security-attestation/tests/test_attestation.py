@@ -28,10 +28,10 @@ from azure.security.attestation import (
     AttestationAdministrationClient,
     AttestationType,
     TokenValidationOptions,
-    TpmAttestationRequest,
-    TpmAttestationResponse,
     AttestationData)
 
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
 
 _open_enclave_report = ("AQAAAAIAAADkEQAAAAAAAAMAAg" +
     "AAAAAABQAKAJOacjP3nEyplAoNs5V_Bgc42MPzGo7hPWS_h-3tExJrAAAAABERAwX_g" +
@@ -144,6 +144,7 @@ class AttestationTest(AzureTestCase):
     @AttestationPreparer()
     @pytest.mark.live_test_only
     def test_shared_getopenidmetadata(self, attestation_location_short_name):
+        print("In getopenidmetadata test")
         attest_client = self.shared_client(attestation_location_short_name)
         open_id_metadata = attest_client.get_openidmetadata()
         assert open_id_metadata["response_types_supported"] is not None
@@ -174,7 +175,7 @@ class AttestationTest(AzureTestCase):
         attest_client = self.shared_client(attestation_location_short_name)
         signers = attest_client.get_signing_certificates()
         for signer in signers:
-            x5c = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
+            cryptography.x509.load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
 
     @AttestationPreparer()
     def test_aad_getsigningcertificates(self, attestation_aad_url):
@@ -182,7 +183,7 @@ class AttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_aad_url)
         signers = attest_client.get_signing_certificates()
         for signer in signers:
-            cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
+            cryptography.x509.load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
 
     @AttestationPreparer()
     def test_isolated_getsigningcertificates(self, attestation_isolated_url):
@@ -190,7 +191,7 @@ class AttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_isolated_url)
         signers = attest_client.get_signing_certificates()
         for signer in signers:
-            cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
+            cryptography.x509.load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
 
     def _test_attest_open_enclave(self, client_uri):
         #type: (str) -> None
@@ -287,10 +288,10 @@ class AttestationTest(AzureTestCase):
         basic_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
         admin_client.set_policy(AttestationType.TPM, basic_policy)
 
-        encoded_payload = json.dumps({ "payload": { "type": "aikcert" } }).encode("ascii")
-        tpm_response = client.attest_tpm(TpmAttestationRequest(encoded_payload))
+        encoded_payload = json.dumps({ "payload": { "type": "aikcert" } })
+        tpm_response = client.attest_tpm(encoded_payload)
 
-        decoded_response = json.loads(tpm_response.data)
+        decoded_response = json.loads(tpm_response)
         assert decoded_response["payload"] is not None
         payload = decoded_response["payload"]
         assert payload["challenge"] is not None

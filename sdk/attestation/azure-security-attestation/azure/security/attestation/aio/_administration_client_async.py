@@ -7,6 +7,8 @@
 from typing import Dict, List, Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
+from cryptography.hazmat.primitives import serialization
+from cryptography.x509.base import load_pem_x509_certificate
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -29,11 +31,11 @@ from .._models import (
     AttestationSigner, 
     AttestationToken, 
     AttestationResponse, 
-    AttestationSigningKey, 
     PolicyCertificatesModificationResult,
     PolicyResult,
     AttestationTokenValidationException
 )
+from .._common import SigningKeyUtils, PemUtils
 import base64
 from azure.core.tracing.decorator_async import distributed_trace_async
 from threading import Lock
@@ -45,6 +47,10 @@ class AttestationAdministrationClient(object):
     :param str instance_url: base url of the service
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :keyword str signing_key: PEM encoded signing key to be used for all
+        operations.
+    :keyword str signing_certificate: PEM encoded X.509 certificate to be used for all
+        operations.
     :keyword AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
     :keyword AsyncHttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
@@ -65,6 +71,15 @@ class AttestationAdministrationClient(object):
         self._client = AzureAttestationRestClient(credential, instance_url, **kwargs)
         self._statelock = Lock()
         self._signing_certificates = None
+
+        self._signing_key = None
+        self._signing_certificate = None
+
+        signing_key = kwargs.pop('signing_key', None)
+        signing_certificate = kwargs.pop('signing_certificate', None)
+        if (signing_key or signing_certificate):
+            self._signing_key, self._signing_certificate = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
+
 
     @distributed_trace_async
     async def get_policy(
@@ -100,7 +115,6 @@ class AttestationAdministrationClient(object):
         self, 
         attestation_type, #type: AttestationType
         attestation_policy, #type: str
-        signing_key=None, #type:AttestationSigningKey
         **kwargs #type: Any
         ): #type: (...) -> AttestationResponse[PolicyResult]
         """ Sets the attestation policy for the specified attestation type.
@@ -109,9 +123,10 @@ class AttestationAdministrationClient(object):
             which to set the policy.
         :type attestation_type: azure.security.attestation.AttestationType
         :param str attestation_policy: Attestation policy to be set.
-        :param signing_key: Signing key to be
+        :keyword str signing_key: PEM encoded signing key to be
             used to sign the policy before sending it to the service.
-        :type signing_key: azure.security.attestation.AttestationSigningKey 
+        :keyword str signing_certificate: PEM encoded X509 certificate sent to the 
+            attestation service to validate the attestation policy.
         :return: Attestation service response encapsulating a :class:`PolicyResult`.
         :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyResult]
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
@@ -125,10 +140,18 @@ class AttestationAdministrationClient(object):
             parameter does not need to be provided.
 
         """
+        signing_key = kwargs.pop('signing_key', None)
+        signing_certificate = kwargs.pop('signing_certificate', None)
+        if (signing_key or signing_certificate):
+            key, certificate = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
+        else:
+            key = self._signing_key
+            certificate = self._signing_certificate
 
         policy_token = AttestationToken[GeneratedStoredAttestationPolicy](
             body=GeneratedStoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
-            signer=signing_key,
+            key=key,
+            certificate=certificate,
             body_type=GeneratedStoredAttestationPolicy)
         policyResult = await self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.serialize(), **kwargs)
         token = AttestationToken[GeneratedPolicyResult](token=policyResult.token,
@@ -143,7 +166,6 @@ class AttestationAdministrationClient(object):
     async def reset_policy(
         self, 
         attestation_type, #type: AttestationType
-        signing_key=None, #type: AttestationSigningKey
         **kwargs #type: Any
         ): #type: (...) -> AttestationResponse[PolicyResult]
         """ Resets the attestation policy for the specified attestation type to the default value.
@@ -152,10 +174,10 @@ class AttestationAdministrationClient(object):
             which to set the policy.
         :type attestation_type: azure.security.attestation.AttestationType
         :param str attestation_policy: Attestation policy to be reset.
-        :param signing_key: Signing key to be
+        :keyword str signing_key: PEM encoded signing key to be
             used to sign the policy before sending it to the service.
-
-        :type signing_key: azure.security.attestation.AttestationSigningKey
+        :keyword str signing_certificate: PEM encoded X509 certificate sent to the 
+            attestation service to validate the attestation policy.
 
         :return: Attestation service response encapsulating a :class:`PolicyResult`.
         :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyResult]
@@ -169,9 +191,17 @@ class AttestationAdministrationClient(object):
             If the attestation instance is in *AAD* mode, then the `signing_key` 
             parameter does not need to be provided.
         """
-        policy_token = AttestationToken(
-            body=None,
-            signer=signing_key)
+        signing_key = kwargs.pop('signing_key', None)
+        signing_certificate = kwargs.pop('signing_certificate', None)
+        if (signing_key or signing_certificate):
+            key, certificate = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
+        else:
+            key = self._signing_key
+            certificate = self._signing_certificate
+
+
+        policy_token = AttestationToken(body=None, key=key, certificate=certificate)
+
         policyResult = await self._client.policy.reset(attestation_type=attestation_type, policy_jws=policy_token.serialize(), **kwargs)
         token = AttestationToken[GeneratedPolicyResult](token=policyResult.token,
             body_type=GeneratedPolicyResult)
@@ -193,7 +223,7 @@ class AttestationAdministrationClient(object):
         attestation service instance is in Isolated mode.
 
         :return: Attestation service response 
-            encapsulating a list of DER encoded X.509 certificate chains.
+            encapsulating a list of PEM encoded X.509 certificate chains.
         :rtype: azure.security.attestation.AttestationResponse[list[list[bytes]]]
         """
 
@@ -209,7 +239,7 @@ class AttestationAdministrationClient(object):
         cert_list = token.get_body()
 
         for key in cert_list.policy_certificates.keys:
-            key_certs = [base64.b64decode(cert) for cert in key.x5_c]
+            key_certs = [PemUtils.pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
             certificates.append(key_certs)
         return AttestationResponse(token, certificates)
 
@@ -217,7 +247,6 @@ class AttestationAdministrationClient(object):
     async def add_policy_management_certificate(
         self, 
         certificate_to_add, #type: bytes
-        signing_key, #type: AttestationSigningKey
         **kwargs #type: Any
         ): #type: (...) -> AttestationResponse[PolicyCertificatesModificationResult]
         """ Adds a new policy management certificate to the set of policy management certificates for the instance.
@@ -226,6 +255,10 @@ class AttestationAdministrationClient(object):
             the list of attestation policy management certificates.
         :param azure.security.attestation.AttestationSigningKey signing_key: Signing Key representing one of 
             the *existing* attestation signing certificates.
+        :keyword str signing_key: PEM encoded signing key to be
+            used to sign the policy before sending it to the service.
+        :keyword str signing_certificate: PEM encoded X509 certificate sent to the 
+            attestation service to validate the attestation policy.
         :return: Attestation service response 
             encapsulating the status of the add request.
 
@@ -245,11 +278,26 @@ class AttestationAdministrationClient(object):
         certificate.
 
         """
-        key=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add).decode('ascii')])
-        add_body = AttestationCertificateManagementBody(policy_certificate=key)
+        signing_key = kwargs.pop('signing_key', None)
+        signing_certificate = kwargs.pop('signing_certificate', None)
+        if (signing_key or signing_certificate):
+            key, certificate = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
+        else:
+            key = self._signing_key
+            certificate = self._signing_certificate
+
+        if not key or not certificate:
+            raise ValueError("A signing certificate and key must be provided to add_policy_management_certificate.")
+
+        # Verify that the provided certificate is a valid PEM encoded X.509 certificate
+        certificate_to_add = load_pem_x509_certificate(certificate_to_add)
+
+        jwk=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add.public_bytes(serialization.Encoding.DER)).decode('ascii')])
+        add_body = AttestationCertificateManagementBody(policy_certificate=jwk)
         cert_add_token = AttestationToken[AttestationCertificateManagementBody](
             body=add_body,
-            signer=signing_key,
+            key=key,
+            certificate=certificate,
             body_type=AttestationCertificateManagementBody)
 
         cert_response = await self._client.policy_certificates.add(cert_add_token.serialize(), **kwargs)
@@ -264,15 +312,16 @@ class AttestationAdministrationClient(object):
     async def remove_policy_management_certificate(
         self, 
         certificate_to_add, #type: bytes
-        signing_key, #type: AttestationSigningKey
         **kwargs #type: Any
         ): #type: (...) -> AttestationResponse[PolicyCertificatesModificationResult]
         """ Removes a new policy management certificate to the set of policy management certificates for the instance.
 
         :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
             the list of attestation policy management certificates.
-        :param azure.security.attestation.AttestationSigningKey signing_key: Signing Key representing one of 
-            the *existing* attestation signing certificates.
+        :keyword str signing_key: PEM encoded signing key to be
+            used to sign the policy before sending it to the service.
+        :keyword str signing_certificate: PEM encoded X509 certificate sent to the 
+            attestation service to validate the attestation policy.
         :return: Attestation service response 
             encapsulating a list of DER encoded X.509 certificate chains.
         :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyCertificatesModificationResult]
@@ -291,11 +340,26 @@ class AttestationAdministrationClient(object):
         certificate.
         
         """
-        key=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add).decode('ascii')])
-        add_body = AttestationCertificateManagementBody(policy_certificate=key)
+        signing_key = kwargs.pop('signing_key', None)
+        signing_certificate = kwargs.pop('signing_certificate', None)
+        if (signing_key or signing_certificate):
+            key, certificate = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
+        else:
+            key = self._signing_key
+            certificate = self._signing_certificate
+
+        if not key or not certificate:
+            raise ValueError("A signing certificate and key must be provided to remove_policy_management_certificate.")
+
+        # Verify that the provided certificate is a valid PEM encoded X.509 certificate
+        certificate_to_add = load_pem_x509_certificate(certificate_to_add)
+
+        jwk=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add.public_bytes(serialization.Encoding.DER)).decode('ascii')])
+        add_body = AttestationCertificateManagementBody(policy_certificate=jwk)
         cert_add_token = AttestationToken[AttestationCertificateManagementBody](
             body=add_body,
-            signer=signing_key,
+            key=key,
+            certificate=certificate,
             body_type=AttestationCertificateManagementBody)
 
         cert_response = await self._client.policy_certificates.remove(cert_add_token.serialize(), **kwargs)

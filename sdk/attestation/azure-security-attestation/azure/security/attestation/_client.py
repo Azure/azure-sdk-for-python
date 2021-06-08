@@ -29,9 +29,7 @@ from ._models import (
     AttestationToken,
     AttestationResponse,
     AttestationResult,
-    AttestationData,
-    TpmAttestationRequest,
-    TpmAttestationResponse)
+    AttestationData)
 import base64
 from azure.core.tracing.decorator import distributed_trace
 from threading import Lock
@@ -225,7 +223,7 @@ class AttestationClient(object):
 
     @distributed_trace
     def attest_tpm(self, request, **kwargs):
-        #type:(TpmAttestationRequest, **Any) -> TpmAttestationResponse
+        #type:(str, **Any) -> str
         """ Attest a TPM based enclave.
 
         See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
@@ -235,8 +233,9 @@ class AttestationClient(object):
         :returns: A structure containing the response from the TPM attestation.
         :rtype: azure.security.attestation.TpmAttestationResponse
         """
-        response = self._client.attestation.attest_tpm(request.data, **kwargs)
-        return TpmAttestationResponse(response.data)
+
+        response = self._client.attestation.attest_tpm(request.encode('ascii'), **kwargs)
+        return response.data.decode('ascii')
 
     def _get_signers(self, **kwargs):
         # type:(Any) -> list[AttestationSigner]

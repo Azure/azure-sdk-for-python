@@ -36,16 +36,16 @@ def create_rsa_key(): #type() -> RSAPrivateKey
     Create an RSA Asymmetric 2048 bit key.
     """
     return rsa.generate_private_key(65537, 2048, backend=default_backend()).private_bytes(
-        serialization.Encoding.DER,
+        serialization.Encoding.PEM,
         serialization.PrivateFormat.PKCS8,
         serialization.NoEncryption())
 
-def create_x509_certificate(key_der, subject_name): #type(Union[EllipticCurvePrivateKey,RSAPrivateKey], str) -> Certificate
+def create_x509_certificate(key_pem, subject_name): #type(str, str) -> Certificate
     """
     Given an RSA or ECDS private key, create a self-signed X.509 certificate
     with the specified subject name signed with that key.
     """
-    signing_key = serialization.load_der_private_key(key_der, password=None, backend=default_backend())
+    signing_key = serialization.load_pem_private_key(key_pem, password=None, backend=default_backend())
     builder = CertificateBuilder()
     builder = builder.subject_name(x509.Name([
         x509.NameAttribute(NameOID.COMMON_NAME, subject_name),
@@ -61,7 +61,7 @@ def create_x509_certificate(key_der, subject_name): #type(Union[EllipticCurvePri
     builder = builder.public_key(signing_key.public_key())
     builder = builder.add_extension(SubjectAlternativeName([x509.DNSName(subject_name)]), critical=False)
     builder = builder.add_extension(BasicConstraints(ca=False, path_length=None), critical=True)
-    return builder.sign(private_key=signing_key, algorithm=hashes.SHA256(), backend=default_backend()).public_bytes(serialization.Encoding.DER)
+    return builder.sign(private_key=signing_key, algorithm=hashes.SHA256(), backend=default_backend()).public_bytes(serialization.Encoding.PEM)
 
 def create_client_credentials():
     #type:() -> 'azure.identity.ClientSecretCredentials'
@@ -98,3 +98,12 @@ def create_client_credentials_async():
         tenant_id=tenant_id,
         client_id=client_id,
         client_secret=secret)
+
+def pem_from_base64(base64_value, header_type):
+    # type: (str, str) -> str
+    pem = '-----BEGIN ' + header_type + '-----\n'
+    while base64_value != '':
+        pem += base64_value[:64] + '\n'
+        base64_value = base64_value[64:]
+    pem += '-----END ' + header_type + '-----\n'
+    return pem.encode('utf-8')
