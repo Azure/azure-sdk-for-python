@@ -407,7 +407,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         kwargs['blob_settings'] = self._config
         kwargs['max_concurrency'] = max_concurrency
         kwargs['encryption_options'] = encryption_options
-        kwargs['immutability_policy_expiry'] = kwargs.pop('immutability_policy_expiry_time', None)
 
         if blob_type == BlobType.BlockBlob:
             kwargs['client'] = self._client.block_blob

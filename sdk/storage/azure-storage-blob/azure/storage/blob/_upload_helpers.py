@@ -79,7 +79,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
         blob_headers = kwargs.pop('blob_headers', None)
         tier = kwargs.pop('standard_blob_tier', None)
         blob_tags_string = kwargs.pop('blob_tags_string', None)
-        immutability_policy_expiry = kwargs.pop('immutability_policy_expiry', None)
+        immutability_policy_expiry = kwargs.pop('immutability_policy_expiry_time', None)
         immutability_policy_mode = kwargs.pop('immutability_policy_mode', None)
         legal_hold = kwargs.pop('legal_hold', None)
 
