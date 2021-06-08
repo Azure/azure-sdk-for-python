@@ -36,7 +36,6 @@ class PowerShellPreparer(AzureMgmtPreparer):
         self.real_values = {}
         self._set_secrets(**kwargs)
         self._backup_preparers = preparers
-        load_dotenv(find_dotenv())
 
     def _set_secrets(self, **kwargs):
         keys = kwargs.keys()
@@ -57,6 +56,7 @@ class PowerShellPreparer(AzureMgmtPreparer):
             os.environ["AZURE_CLIENT_SECRET"] = os.environ["{}_CLIENT_SECRET".format(self.directory.upper())]
 
     def create_resource(self, name, **kwargs):
+        load_dotenv(find_dotenv())
 
         if self.is_live:
             self._set_mgmt_settings_real_values()
