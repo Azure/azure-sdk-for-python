@@ -17,8 +17,8 @@ from typing import (
 import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
-from ._generated._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2 \
-    import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _Client
+from ._generated._microsoft_azure_metrics_advisor_restapi_open_ap_iv2 \
+    import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _Client
 from ._generated.models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
     AzureApplicationInsightsDataFeed as _AzureApplicationInsightsDataFeed,
