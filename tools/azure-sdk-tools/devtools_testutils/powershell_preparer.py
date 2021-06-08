@@ -9,7 +9,7 @@ import os
 from . import AzureMgmtPreparer
 from .resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
-
+from dotenv import load_dotenv, find_dotenv
 
 class PowerShellPreparer(AzureMgmtPreparer):
     def __init__(
@@ -36,6 +36,7 @@ class PowerShellPreparer(AzureMgmtPreparer):
         self.real_values = {}
         self._set_secrets(**kwargs)
         self._backup_preparers = preparers
+        load_dotenv(find_dotenv())
 
     def _set_secrets(self, **kwargs):
         keys = kwargs.keys()
