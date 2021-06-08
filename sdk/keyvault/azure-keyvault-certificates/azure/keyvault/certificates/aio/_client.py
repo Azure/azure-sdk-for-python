@@ -62,17 +62,20 @@ class CertificateClient(AsyncKeyVaultClientBase):
         an :class:`~azure.core.exceptions.HttpResponseError`
 
         :param str certificate_name: The name of the certificate.
-        :param policy: The management policy for the certificate.
+        :param policy: The management policy for the certificate. Either subject or one of the subject alternative
+            name properties are required.
         :type policy:
-         ~azure.keyvault.certificates.CertificatePolicy
+            ~azure.keyvault.certificates.CertificatePolicy
         :keyword bool enabled: Whether the certificate is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :returns: A coroutine for the creation of the certificate. Awaiting the coroutine
-         returns the created KeyVaultCertificate if creation is successful, the CertificateOperation if not.
+            returns the created KeyVaultCertificate if creation is successful, the CertificateOperation if not.
         :rtype: ~azure.keyvault.certificates.KeyVaultCertificate or
-         ~azure.keyvault.certificates.CertificateOperation
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+            ~azure.keyvault.certificates.CertificateOperation
+        :raises:
+            :class:`ValueError` if the certificate policy is invalid,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors.
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates_async.py
@@ -82,6 +85,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :caption: Create a certificate
                 :dedent: 8
         """
+        if not (
+            policy.issuer_name and
+            (policy.san_emails or policy.san_user_principal_names or policy.san_dns_names or policy.subject)
+        ):
+            raise ValueError("You need to set an issuer and either subject or one of the subject alternative names " +
+                            "parameters in the certificate policy")
+
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5

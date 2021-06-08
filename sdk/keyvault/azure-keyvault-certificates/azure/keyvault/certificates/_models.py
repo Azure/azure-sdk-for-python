@@ -618,17 +618,28 @@ class CertificateOperation(object):
 class CertificatePolicy(object):
     """Management policy for a certificate.
 
-    :param str issuer_name: Name of the referenced issuer object or reserved names; for example,
-        'Self' or 'Unknown"
+    :param Optional[str] issuer_name: Optional, but required for
+        :func:`~azure.keyvault.certificates.CertificateClient.begin_create_certificate` and
+        :func:`~azure.keyvault.certificates.aio.CertificateClient.create_certificate`. Name of the referenced issuer
+        object or reserved names; for example, :attr:`~azure.keyvault.certificates.WellKnownIssuerNames.self` or
+        :attr:`~azure.keyvault.certificates.WellKnownIssuerNames.unknown`
     :keyword str subject: The subject name of the certificate. Should be a valid X509
-        distinguished name. Either subject or one of the subject alternative name parameters
-        are required.
+        distinguished name. Either subject or one of the subject alternative name parameters are required for
+        :func:`~azure.keyvault.certificates.CertificateClient.begin_create_certificate` and
+        :func:`~azure.keyvault.certificates.aio.CertificateClient.create_certificate`. This will be parsed from the
+        certificate provided to :func:`~azure.keyvault.certificates.CertificateClient.import_certificate`.
     :keyword Iterable[str] san_emails: Subject alternative emails of the X509 object. Either
-        subject or one of the subject alternative name parameters are required.
+        subject or one of the subject alternative name parameters are required for
+        :func:`~azure.keyvault.certificates.CertificateClient.begin_create_certificate` and
+        :func:`~azure.keyvault.certificates.aio.CertificateClient.create_certificate`.
     :keyword Iterable[str] san_dns_names: Subject alternative DNS names of the X509 object. Either
-        subject or one of the subject alternative name parameters are required.
+        subject or one of the subject alternative name parameters are required for
+        :func:`~azure.keyvault.certificates.CertificateClient.begin_create_certificate` and
+        :func:`~azure.keyvault.certificates.aio.CertificateClient.create_certificate`.
     :keyword Iterable[str] san_user_principal_names: Subject alternative user principal names of the X509 object.
-        Either subject or one of the subject alternative name parameters are required.
+        Either subject or one of the subject alternative name parameters are required for
+        :func:`~azure.keyvault.certificates.CertificateClient.begin_create_certificate` and
+        :func:`~azure.keyvault.certificates.aio.CertificateClient.create_certificate`.
     :keyword bool exportable: Indicates if the private key can be exported. For valid values,
         see KeyType.
     :keyword key_type: The type of key pair to be used for the certificate.
@@ -659,7 +670,7 @@ class CertificatePolicy(object):
     # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
-        issuer_name,  # type: str
+        issuer_name=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -681,12 +692,6 @@ class CertificatePolicy(object):
         self._san_emails = kwargs.pop("san_emails", None) or None
         self._san_dns_names = kwargs.pop("san_dns_names", None) or None
         self._san_user_principal_names = kwargs.pop("san_user_principal_names", None) or None
-
-        if not (
-            self._san_emails or self._san_user_principal_names or self._san_dns_names or self._subject
-        ):
-            raise ValueError("You need to set either subject or one of the subject alternative names " +
-                            "parameters")
 
     @classmethod
     def get_default(cls):
