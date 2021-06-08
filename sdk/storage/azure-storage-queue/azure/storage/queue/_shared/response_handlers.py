@@ -86,13 +86,10 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
 
 def process_storage_error(storage_error):
     raise_error = HttpResponseError
-    # If the status code is 200 or 204 then it has already been deserialized.
-    if storage_error.response.status_code in [200, 204]:
-        raise storage_error
     serialized = False
     # If it is one of those three then it has been serialized prior by the generated layer.
-    if isinstance(storage_error, (ResourceNotFoundError, ClientAuthenticationError, ResourceExistsError)):
-        raise_error = type(storage_error)
+    if isinstance(storage_error, (PartialBatchErrorException,
+                                  ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError)):
         serialized = True
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
@@ -100,11 +97,13 @@ def process_storage_error(storage_error):
     error_dict = {}
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
+        # If it is an XML response
         if isinstance(error_body, Element):
             error_dict = {
                 child.tag.lower(): child.text
                 for child in error_body
             }
+        # If it is a JSON response
         elif isinstance(error_body, dict):
             error_dict = error_body.get('error', {})
         elif not error_code:
@@ -113,6 +112,7 @@ def process_storage_error(storage_error):
                     type(error_body)))
             error_dict = {'message': str(error_body)}
 
+        # If we extracted from a Json or XML response
         if error_dict:
             error_code = error_dict.get('code')
             error_message = error_dict.get('message')
@@ -121,7 +121,7 @@ def process_storage_error(storage_error):
         pass
 
     try:
-        # This check would be unnecessary if we have already serialized the error.
+        # This check would be unnecessary if we have already serialized the error
         if error_code and not serialized:
             error_code = StorageErrorCode(error_code)
             if error_code in [StorageErrorCode.condition_not_met,
@@ -151,8 +151,10 @@ def process_storage_error(storage_error):
                               StorageErrorCode.share_being_deleted]:
                 raise_error = ResourceExistsError
     except ValueError:
+        # Got an unknown error code
         pass
 
+    # Error message should include all the error properties
     try:
         error_message += "\nErrorCode:{}".format(error_code.value)
     except AttributeError:
@@ -160,11 +162,19 @@ def process_storage_error(storage_error):
     for name, info in additional_data.items():
         error_message += "\n{}:{}".format(name, info)
 
-    error = raise_error(message=error_message, response=storage_error.response)
+    # No need to create an instance if it has already been serialized by the generated layer
+    if serialized:
+        storage_error.message = error_message
+        error = storage_error
+    else:
+        error = raise_error(message=error_message, response=storage_error.response)
+    # Ensure these properties are stored in the error instance as well (not just the error message)
     error.error_code = error_code
     error.additional_info = additional_data
+    # error.args is what's surfaced on the traceback - show error message in all cases
+    error.args = (error.message,)
     if sys.version_info >= (3,):
-        # `from None` prevents us from double printing the exception.
+        # `from None` prevents us from double printing the exception (suppresses generated layer error context)
         raise error from None
     else:
         raise error
