@@ -14,9 +14,9 @@ from azure.core.tracing.decorator import distributed_trace
 from ._generated._azure_communication_sip_routing_service import (
     AzureCommunicationSIPRoutingService,
 )
-from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._generated.models import SipConfiguration, Trunk, TrunkRoute
-from ._shared.user_credential import CommunicationTokenCredential
+from ._authentication._client_utils import parse_connection_str, get_authentication_policy
+from ._authentication._user_credential import CommunicationTokenCredential
 from ._version import SDK_MONIKER
 
 
@@ -27,13 +27,13 @@ class SIPRoutingClient(object):
     :param endpoint: The endpoint url for Azure Communication Service resource.
     :type endpoint: str
     :param credential: The credentials with which to authenticate.
-    :type credential: CommunicationTokenCredential
+    :type credential: CommunicationTokenCredential or str
     """
 
     def __init__(
         self,
         endpoint,  # type: str
-        credential,  # type: CommunicationTokenCredential
+        credential,  # type: CommunicationTokenCredential or str
         **kwargs  # type: any
     ):  # type: (...) -> SIPRoutingClient
 

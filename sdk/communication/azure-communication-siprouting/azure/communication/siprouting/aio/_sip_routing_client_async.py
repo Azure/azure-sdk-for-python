@@ -13,9 +13,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio._azure_communication_sip_routing_service import (
     AzureCommunicationSIPRoutingService,
 )
-from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._generated.models import SipConfiguration, Trunk, TrunkRoute
-from .._shared.user_credential import CommunicationTokenCredential
+from .._authentication._client_utils import parse_connection_str, get_authentication_policy
+from .._authentication._user_credential_async import CommunicationTokenCredential
 from .._version import SDK_MONIKER
 
 

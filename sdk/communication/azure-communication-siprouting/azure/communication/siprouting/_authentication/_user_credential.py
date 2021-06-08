@@ -5,19 +5,17 @@
 # --------------------------------------------------------------------------
 from threading import Lock, Condition
 from datetime import timedelta
-from typing import ( # pylint: disable=unused-import
-    cast,
-    Tuple,
-)
 
-from .utils import get_current_utc_as_int
-from .user_token_refresh_options import CommunicationTokenRefreshOptions
+from ._datetime_utils import get_current_utc_as_int
+from ._user_token_refresh_options import CommunicationTokenRefreshOptions
 
 
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
-    :param str token: The token used to authenticate to an Azure Communication service
-    :keyword token_refresher: The token refresher to provide capacity to fetch fresh token
+
+    :param token: The token used to authenticate to an Azure Communication service
+    :type token: str
+    :keyword token_refresher: The async token refresher to provide capacity to fetch fresh token
     :raises: TypeError
     """
 
@@ -37,7 +35,7 @@ class CommunicationTokenCredential(object):
 
     def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type (*str, **Any) -> AccessToken
-        """The value of the configured token.
+        """Returns value of the configured token.
         :rtype: ~azure.core.credentials.AccessToken
         """
 

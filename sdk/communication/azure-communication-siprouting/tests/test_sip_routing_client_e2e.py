@@ -7,24 +7,21 @@
 import os
 
 from testcases.communication_testcase import CommunicationTestCase
-from testcases.request_replacer_processor import RequestReplacerProcessor
+from testcases.uri_replacer_processor import URIReplacerProcessor
 from azure.communication.siprouting import SIPRoutingClient
 
 
 class TestSIPRoutingClientE2E(CommunicationTestCase):
     def __init__(self, method_name):
         super(TestSIPRoutingClientE2E, self).__init__(method_name)
-        os.environ[
-            "COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING"
-        ] = "endpoint=https://resource3.int.communication.azure.net/;accesskey=ot8jPBj4/+uWeh0mLH88/RpTz46gcCZf879nTZ+UH2GsYWHVfX75i78sYxL3aAdVpv+jkd/kcpYs15LN2GPIMg=="
-
+        
     def setUp(self):
         super(TestSIPRoutingClientE2E, self).setUp()
 
         self._sip_routing_client = SIPRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=self._get_http_logging_policy()
         )
-        self.recording_processors.extend([RequestReplacerProcessor()])
+        self.recording_processors.extend([URIReplacerProcessor()])
 
     def test_get_sip_configuration(self):
         raised = False

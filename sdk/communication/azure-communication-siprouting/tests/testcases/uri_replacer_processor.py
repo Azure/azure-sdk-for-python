@@ -7,7 +7,7 @@ import re
 
 from azure_devtools.scenario_tests import RecordingProcessor
 
-class RequestReplacerProcessor(RecordingProcessor):
+class URIReplacerProcessor(RecordingProcessor):
     def __init__(self, keys=None, replacement="sanitized"):
         self._keys = keys if keys else []
         self._replacement = replacement
@@ -19,3 +19,12 @@ class RequestReplacerProcessor(RecordingProcessor):
             request.uri,
         )
         return request
+
+    def process_response(self, response):
+        if 'url' in response :
+            response['url'] = re.sub(
+                "https://([^/?])*.communication",
+                "https://sanitized.communication",
+                response['url'],
+            )
+        return response

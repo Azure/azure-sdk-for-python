@@ -9,18 +9,27 @@ import urllib
 import base64
 import hmac
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from .utils import get_current_utc_time
+from datetime import datetime
+
 
 class HMACCredentialsPolicy(SansIOHTTPPolicy):
     """Implementation of HMAC authentication policy.
+
+    :param host: host URL.
+    :type host: str
+    :param access_key: Access key for authentication.
+    :type access_key: str
+    :param decode_url: Flag to decode URL query
+    :type decode_url: bool
     """
 
-    def __init__(self,
-            host, # type: str
-            access_key, # type: str
-            decode_url=False # type: bool
-        ):
-        # type: (...) -> None
+    def __init__(
+        self,
+        host,  # type: str
+        access_key,  # type: str
+        decode_url=False,  # type: bool
+    ):
+        # type: (...) -> HMACCredentialsPolicy
 
         super(HMACCredentialsPolicy, self).__init__()
 
@@ -33,9 +42,9 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         self._access_key = access_key
         self._decode_url = decode_url
 
-    def _compute_hmac(self,
-            value # type: str
-        ):
+    def _compute_hmac(
+        self, value  # type: str
+    ):
         decoded_secret = base64.b64decode(self._access_key)
         digest = hmac.new(
             decoded_secret, value.encode("utf-8"), hashlib.sha256
@@ -47,14 +56,15 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         verb = request.http_request.method.upper()
 
         # Get the path and query from url, which looks like https://host/path/query
-        query_url = str(request.http_request.url[len(self._host) + 8:])
+        query_url = str(request.http_request.url[len(self._host) + 8 :])
 
         if self._decode_url:
             query_url = urllib.parse.unquote(query_url)
 
         signed_headers = "date;host;x-ms-content-sha256"
 
-        utc_now = get_current_utc_time()
+        utc_now = str(datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
+
         if request.http_request.body is None:
             request.http_request.body = ""
         content_digest = hashlib.sha256(
@@ -80,8 +90,10 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
             "Date": utc_now,
             "x-ms-content-sha256": content_hash,
             "x-ms-return-client-request-id": "true",
-            "Authorization": "HMAC-SHA256 SignedHeaders=" +\
-                signed_headers + "&Signature=" + signature,
+            "Authorization": "HMAC-SHA256 SignedHeaders="
+            + signed_headers
+            + "&Signature="
+            + signature,
         }
 
         request.http_request.headers.update(signature_header)
@@ -89,4 +101,5 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         return request
 
     def on_request(self, request):
+        """Override of on_request function."""
         self._sign_request(request)

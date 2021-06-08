@@ -7,16 +7,13 @@
 import os
 
 from testcases.async_communication_testcase import AsyncCommunicationTestCase
-from testcases.request_replacer_processor import RequestReplacerProcessor
+from testcases.uri_replacer_processor import URIReplacerProcessor
 from azure.communication.siprouting.aio import SIPRoutingClient
 
 
 class TestSIPRoutingClientE2EAsync(AsyncCommunicationTestCase):
     def __init__(self, method_name):
         super(TestSIPRoutingClientE2EAsync, self).__init__(method_name)
-        os.environ[
-            "COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING"
-        ] = "endpoint=https://resource3.int.communication.azure.net/;accesskey=ot8jPBj4/+uWeh0mLH88/RpTz46gcCZf879nTZ+UH2GsYWHVfX75i78sYxL3aAdVpv+jkd/kcpYs15LN2GPIMg=="
 
     def setUp(self):
         super(TestSIPRoutingClientE2EAsync, self).setUp()
@@ -24,12 +21,10 @@ class TestSIPRoutingClientE2EAsync(AsyncCommunicationTestCase):
         self._sip_routing_client = SIPRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=self._get_http_logging_policy()
         )
-        self.recording_processors.extend([RequestReplacerProcessor()])
+        self.recording_processors.extend([URIReplacerProcessor()])
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_get_sip_configuration(self):
-        raised = False
-
         async with self._sip_routing_client as client:
             configuration = await client.get_sip_configuration()
             assert configuration.trunks is not None, "Configuration returned no trunks."

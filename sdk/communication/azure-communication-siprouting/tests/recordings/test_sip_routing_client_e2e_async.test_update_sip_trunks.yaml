@@ -32,5 +32,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://resource3.int.communication.azure.net/sip?api-version=2021-05-01-preview
+    url: https://sanitized.communication.azure.net/sip?api-version=2021-05-01-preview
 version: 1

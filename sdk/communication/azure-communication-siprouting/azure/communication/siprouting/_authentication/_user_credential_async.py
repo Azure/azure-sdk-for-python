@@ -5,19 +5,17 @@
 # --------------------------------------------------------------------------
 from asyncio import Condition, Lock
 from datetime import timedelta
-from typing import (  # pylint: disable=unused-import
-    cast,
-    Tuple,
-    Any
-)
+from typing import Any  # pylint: disable=unused-import
 
-from .utils import get_current_utc_as_int
-from .user_token_refresh_options import CommunicationTokenRefreshOptions
+from ._datetime_utils import get_current_utc_as_int
+from ._user_token_refresh_options import CommunicationTokenRefreshOptions
 
 
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
-    :param str token: The token used to authenticate to an Azure Communication service
+
+    :param token: The token used to authenticate to an Azure Communication service
+    :type token: str
     :keyword token_refresher: The async token refresher to provide capacity to fetch fresh token
     :raises: TypeError
     """
@@ -25,17 +23,20 @@ class CommunicationTokenCredential(object):
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
 
     def __init__(self, token: str, **kwargs: Any):
-        token_refresher = kwargs.pop('token_refresher', None)
-        communication_token_refresh_options = CommunicationTokenRefreshOptions(token=token,
-                                                                               token_refresher=token_refresher)
+        token_refresher = kwargs.pop("token_refresher", None)
+        communication_token_refresh_options = CommunicationTokenRefreshOptions(
+            token=token, token_refresher=token_refresher
+        )
         self._token = communication_token_refresh_options.get_token()
-        self._token_refresher = communication_token_refresh_options.get_token_refresher()
+        self._token_refresher = (
+            communication_token_refresh_options.get_token_refresher()
+        )
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
 
     async def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type (*str, **Any) -> AccessToken
-        """The value of the configured token.
+        """Returns value of the configured token.
         :rtype: ~azure.core.credentials.AccessToken
         """
         if not self._token_refresher or not self._token_expiring():
@@ -55,7 +56,6 @@ class CommunicationTokenCredential(object):
                     should_this_thread_refresh = True
                     self._some_thread_refreshing = True
                     break
-
 
         if should_this_thread_refresh:
             try:
@@ -79,8 +79,12 @@ class CommunicationTokenCredential(object):
         await self._lock.acquire()
 
     def _token_expiring(self):
-        return self._token.expires_on - get_current_utc_as_int() <\
-            timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES).total_seconds()
+        return (
+            self._token.expires_on - get_current_utc_as_int()
+            < timedelta(
+                minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES
+            ).total_seconds()
+        )
 
     def _is_currenttoken_valid(self):
         return get_current_utc_as_int() < self._token.expires_on
