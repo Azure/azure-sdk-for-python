@@ -214,59 +214,19 @@ class KeyVaultRoleDefinition(object):
         )
 
 
-class _Operation(object):
-    def __init__(self, **kwargs):
-        self.status = kwargs.get("status", None)
-        self.status_details = kwargs.get("status_details", None)
-        self.error = kwargs.get("error", None)
-        self.start_time = kwargs.get("start_time", None)
-        self.end_time = kwargs.get("end_time", None)
-        self.job_id = kwargs.get("job_id", None)
+class KeyVaultBackupOperation(object):
+    """A Key Vault full backup operation"""
+
+    def __init__(self, folder_url, **kwargs):
+        # type: (str, **Any) -> None
+        self._folder_url = folder_url
+
+    @property
+    def folder_url(self):
+        # type: () -> str
+        """URL of the Azure Blob Storage container containing the backup"""
+        return self._folder_url
 
     @classmethod
-    def _wrap_generated(cls, response, deserialized_operation, response_headers):  # pylint:disable=unused-argument
-        return cls(**deserialized_operation.__dict__)
-
-
-class KeyVaultBackupOperation(_Operation):
-    """A Key Vault full backup operation.
-
-    :ivar str status: status of the backup operation
-    :ivar str status_details: more details of the operation's status
-    :ivar error: Error encountered, if any, during the operation
-    :type error: ~key_vault_client.models.Error
-    :ivar datetime.datetime start_time: UTC start time of the operation
-    :ivar datetime.datetime end_time: UTC end time of the operation
-    :ivar str job_id: identifier for the operation
-    :ivar str folder_url: URL of the Azure blob storage container which contains the backup
-    """
-
-    def __init__(self, **kwargs):
-        self.folder_url = kwargs.pop("azure_storage_blob_container_uri", None)
-        super(KeyVaultBackupOperation, self).__init__(**kwargs)
-
-
-class KeyVaultRestoreOperation(_Operation):
-    """A Key Vault restore operation.
-
-    :ivar str status: status of the operation
-    :ivar str status_details: more details of the operation's status
-    :ivar error: Error encountered, if any, during the operation
-    :type error: ~key_vault_client.models.Error
-    :ivar datetime.datetime start_time: UTC start time of the operation
-    :ivar datetime.datetime end_time: UTC end time of the operation
-    :ivar str job_id: identifier for the operation
-    """
-
-
-class KeyVaultSelectiveKeyRestoreOperation(_Operation):
-    """A Key Vault operation restoring a single key.
-
-    :ivar str status: status of the operation
-    :ivar str status_details: more details of the operation's status
-    :ivar error: Error encountered, if any, during the operation
-    :type error: ~key_vault_client.models.Error
-    :ivar datetime.datetime start_time: UTC start time of the operation
-    :ivar datetime.datetime end_time: UTC end time of the operation
-    :ivar str job_id: identifier for the operation
-    """
+    def _from_generated(cls, response, deserialized_operation, response_headers):  # pylint:disable=unused-argument
+        return cls(deserialized_operation.azure_storage_blob_container_uri)

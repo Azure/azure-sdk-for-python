@@ -9,7 +9,7 @@ from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
 from .._internal import AsyncKeyVaultClientBase, parse_folder_url
 from .._internal.polling import KeyVaultBackupClientPolling
-from .._models import KeyVaultBackupOperation, KeyVaultRestoreOperation, KeyVaultSelectiveKeyRestoreOperation
+from .._models import KeyVaultBackupOperation
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
@@ -43,7 +43,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         return await self._client.begin_full_backup(
             vault_base_url=self._vault_url,
             azure_storage_blob_container_uri=sas_parameter,
-            cls=KeyVaultBackupOperation._wrap_generated,
+            cls=KeyVaultBackupOperation._from_generated,
             continuation_token=kwargs.pop("continuation_token", None),
             polling=AsyncLROBasePolling(
                 lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
@@ -51,9 +51,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-    async def begin_restore(
-        self, folder_url: str, sas_token: str, **kwargs: "Any"
-    ) -> "AsyncLROPoller[KeyVaultRestoreOperation]":
+    async def begin_restore(self, folder_url: str, sas_token: str, **kwargs: "Any") -> "AsyncLROPoller":
         """Restore a Key Vault backup.
 
         This method restores either a complete Key Vault backup or when ``key_name`` has a value, a single key.
@@ -65,7 +63,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :keyword str continuation_token: a continuation token to restart polling from a saved state
         :keyword str key_name: name of a single key in the backup. When set, only this key will be restored.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.administration.KeyVaultRestoreOperation]
+        :rtype: ~azure.core.polling.AsyncLROPoller
         """
         # AsyncLROBasePolling passes its kwargs to pipeline.run(), so we remove unexpected args before constructing it
         continuation_token = kwargs.pop("continuation_token", None)

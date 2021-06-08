@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from azure.core.polling.base_polling import LROBasePolling
 
-from ._models import KeyVaultBackupOperation, KeyVaultRestoreOperation, KeyVaultSelectiveKeyRestoreOperation
+from ._models import KeyVaultBackupOperation
 from ._internal import KeyVaultClientBase, parse_folder_url
 from ._internal.polling import KeyVaultBackupClientPolling
 
@@ -43,14 +43,14 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         return self._client.begin_full_backup(
             vault_base_url=self._vault_url,
             azure_storage_blob_container_uri=sas_parameter,
-            cls=KeyVaultBackupOperation._wrap_generated,
+            cls=KeyVaultBackupOperation._from_generated,
             continuation_token=kwargs.pop("continuation_token", None),
             polling=LROBasePolling(lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs),
             **kwargs
         )
 
     def begin_restore(self, folder_url, sas_token, **kwargs):
-        # type: (str, str, **Any) -> LROPoller[KeyVaultRestoreOperation]
+        # type: (str, str, **Any) -> LROPoller
         """Restore a Key Vault backup.
 
         This method restores either a complete Key Vault backup or when ``key_name`` has a value, a single key.
