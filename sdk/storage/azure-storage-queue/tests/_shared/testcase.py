@@ -314,7 +314,7 @@ class StorageTestCase(AzureMgmtTestCase):
         return FakeTokenCredential()
 
     def _get_service_version(self, **kwargs):
-        env_version = service_version_map.get(os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION"), "LATEST")
+        env_version = service_version_map.get(os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION","LATEST"))
         return kwargs.pop("service_version", env_version)
 
     def create_storage_client(self, client, *args, **kwargs):
