@@ -391,6 +391,25 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
+        def callback(resp):
+            assert resp.raw_response
+            tasks = resp.raw_response['tasks']
+            assert tasks['completed'] == 5
+            assert tasks['inProgress'] == 0
+            assert tasks['failed'] == 0
+            assert tasks['total'] == 5
+            num_tasks = 0
+            for key, task in tasks.items():
+                if "Tasks" in key:
+                    num_tasks += 1
+                    assert len(task) == 1
+                    task_stats = task[0]['results']['statistics']
+                    assert task_stats['documentsCount'] == 4
+                    assert task_stats['validDocumentsCount'] == 4
+                    assert task_stats['erroneousDocumentsCount'] == 0
+                    assert task_stats['transactionsCount'] == 4
+            assert num_tasks == 5
+
         async with client:
             response = await (await client.begin_analyze_actions(
                 docs,
@@ -402,7 +421,8 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     AnalyzeSentimentAction(model_version="latest")
                 ],
                 show_stats=True,
-                polling_interval=self._interval()
+                polling_interval=self._interval(),
+                raw_response_hook=callback,
             )).result()
 
             action_results = []
