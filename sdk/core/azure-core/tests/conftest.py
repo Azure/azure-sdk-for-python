@@ -23,13 +23,36 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import pytest
+import signal
+import os
+import subprocess
 import sys
+
+def start_testserver():
+    cmd = "FLASK_APP=coretestserver flask run"
+    if os.name == 'nt': #On windows, subprocess creation works without being in the shell
+        return subprocess.Popen(cmd.format("set"))
+
+    return subprocess.Popen(cmd, shell=True, preexec_fn=os.setsid) #On linux, have to set shell=True
+
+def terminate_testserver(process):
+    if os.name == 'nt':
+        process.kill()
+    else:
+        os.killpg(os.getpgid(process.pid), signal.SIGTERM)  # Send the signal to all the process groups
+
+@pytest.fixture(scope="session")
+def testserver():
+    """Start the Autorest testserver."""
+    server = start_testserver()
+    yield
+    # terminate_testserver(server)
 
 # Ignore collection of async tests for Python 2
 collect_ignore = []
 if sys.version_info < (3, 5):
     collect_ignore.append("async_tests")
-
 
 # If opencensus is loadable while doing these tests, register an empty tracer to avoid this:
 # https://github.com/census-instrumentation/opencensus-python/issues/442
