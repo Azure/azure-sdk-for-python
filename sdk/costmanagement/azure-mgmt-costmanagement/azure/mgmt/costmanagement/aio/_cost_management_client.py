@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -16,11 +17,13 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import CostManagementClientConfiguration
+from .operations import SettingsOperations
 from .operations import ViewsOperations
 from .operations import AlertsOperations
 from .operations import ForecastOperations
 from .operations import DimensionsOperations
 from .operations import QueryOperations
+from .operations import GenerateReservationDetailsReportOperations
 from .operations import Operations
 from .operations import ExportsOperations
 from .. import models
@@ -29,6 +32,8 @@ from .. import models
 class CostManagementClient(object):
     """CostManagementClient.
 
+    :ivar settings: SettingsOperations operations
+    :vartype settings: azure.mgmt.costmanagement.aio.operations.SettingsOperations
     :ivar views: ViewsOperations operations
     :vartype views: azure.mgmt.costmanagement.aio.operations.ViewsOperations
     :ivar alerts: AlertsOperations operations
@@ -39,6 +44,8 @@ class CostManagementClient(object):
     :vartype dimensions: azure.mgmt.costmanagement.aio.operations.DimensionsOperations
     :ivar query: QueryOperations operations
     :vartype query: azure.mgmt.costmanagement.aio.operations.QueryOperations
+    :ivar generate_reservation_details_report: GenerateReservationDetailsReportOperations operations
+    :vartype generate_reservation_details_report: azure.mgmt.costmanagement.aio.operations.GenerateReservationDetailsReportOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.costmanagement.aio.operations.Operations
     :ivar exports: ExportsOperations operations
@@ -46,6 +53,7 @@ class CostManagementClient(object):
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -61,8 +69,11 @@ class CostManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.settings = SettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.views = ViewsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.alerts = AlertsOperations(
@@ -73,10 +84,26 @@ class CostManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.query = QueryOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.generate_reservation_details_report = GenerateReservationDetailsReportOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.exports = ExportsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        http_request.url = self._client.format_url(http_request.url)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()
