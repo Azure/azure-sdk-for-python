@@ -44,7 +44,7 @@ class LocationBasedPerformanceTierOperations:
     def list(
         self,
         location_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PerformanceTierListResult"]:
         """List all the performance tiers at specified location in a given subscription.
 

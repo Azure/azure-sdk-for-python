@@ -46,7 +46,7 @@ class WaitStatisticsOperations:
         resource_group_name: str,
         server_name: str,
         wait_statistics_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WaitStatistic":
         """Retrieve wait statistics for specified identifier.
 
@@ -108,7 +108,7 @@ class WaitStatisticsOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.WaitStatisticsInput",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WaitStatisticsResultList"]:
         """Retrieve wait statistics for specified aggregation window.
 

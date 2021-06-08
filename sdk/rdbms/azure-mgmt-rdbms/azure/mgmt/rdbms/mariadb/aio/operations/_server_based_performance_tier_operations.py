@@ -45,7 +45,7 @@ class ServerBasedPerformanceTierOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PerformanceTierListResult"]:
         """List all the performance tiers for a MariaDB server.
 

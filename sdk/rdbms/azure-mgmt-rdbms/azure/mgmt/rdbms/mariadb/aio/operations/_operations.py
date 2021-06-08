@@ -42,7 +42,7 @@ class Operations:
 
     async def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationListResult":
         """Lists all of the available REST API operations.
 

@@ -43,7 +43,7 @@ class CheckNameAvailabilityOperations:
     async def execute(
         self,
         name_availability_request: "_models.NameAvailabilityRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NameAvailability":
         """Check the availability of name for resource.
 
