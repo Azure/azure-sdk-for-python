@@ -696,18 +696,16 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
 
 @pytest.mark.asyncio
 async def test_policy_expected_errors_for_create_cert():
-    """An issuer name, and either a subject or subject alternative name property, are required for creation"""
+    """Either a subject or subject alternative name property are required for creating a certificate"""
     client = CertificateClient("...", object())
 
-    with pytest.raises(ValueError) as ex:
+    with pytest.raises(ValueError, match=NO_SAN_OR_SUBJECT):
         policy = CertificatePolicy()
         await client.create_certificate("...", policy=policy)
-    assert str(ex.value) == NO_SAN_OR_SUBJECT
 
-    with pytest.raises(ValueError) as ex:
+    with pytest.raises(ValueError, match=NO_SAN_OR_SUBJECT):
         policy = CertificatePolicy(issuer_name=WellKnownIssuerNames.self)
         await client.create_certificate("...", policy=policy)
-    assert str(ex.value) == NO_SAN_OR_SUBJECT
 
 
 def test_service_headers_allowed_in_logs():
