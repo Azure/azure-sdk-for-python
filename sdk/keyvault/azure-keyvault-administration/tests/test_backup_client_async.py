@@ -17,8 +17,6 @@ import pytest
 from _shared.helpers_async import get_completed_future
 from _shared.test_case_async import KeyVaultTestCase
 from blob_container_preparer import BlobContainerPreparer
-from test_backup_client import assert_in_progress_operation
-from test_backup_client import assert_successful_operation
 
 
 @pytest.mark.usefixtures("managed_hsm")
@@ -50,27 +48,11 @@ class BackupClientTests(KeyVaultTestCase):
         # backup the vault
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
         backup_poller = await backup_client.begin_backup(container_uri, sas_token)
-
-        # check backup status and result
-        job_id = backup_poller.polling_method().resource().job_id
-        backup_status = await backup_client.get_backup_status(job_id)
-        assert_in_progress_operation(backup_status)
         backup_operation = await backup_poller.result()
-        assert_successful_operation(backup_operation)
-        backup_status = await backup_client.get_backup_status(job_id)
-        assert_successful_operation(backup_status)
 
         # restore the backup
-        restore_poller = await backup_client.begin_restore(backup_status.folder_url, sas_token)
-
-        # check restore status and result
-        job_id = restore_poller.polling_method().resource().job_id
-        restore_status = await backup_client.get_restore_status(job_id)
-        assert_in_progress_operation(restore_status)
-        restore_operation = await restore_poller.result()
-        assert_successful_operation(restore_operation)
-        restore_status = await backup_client.get_restore_status(job_id)
-        assert_successful_operation(restore_status)
+        restore_poller = await backup_client.begin_restore(backup_operation.folder_url, sas_token)
+        await restore_poller.wait()
 
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
     @StorageAccountPreparer(random_name_enabled=True)
@@ -84,29 +66,11 @@ class BackupClientTests(KeyVaultTestCase):
         # backup the vault
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
         backup_poller = await backup_client.begin_backup(container_uri, sas_token)
-
-        # check backup status and result
-        job_id = backup_poller.polling_method().resource().job_id
-        backup_status = await backup_client.get_backup_status(job_id)
-        assert_in_progress_operation(backup_status)
         backup_operation = await backup_poller.result()
-        assert_successful_operation(backup_operation)
-        backup_status = await backup_client.get_backup_status(job_id)
-        assert_successful_operation(backup_status)
 
         # restore the key
-        restore_poller = await backup_client.begin_restore(
-            backup_status.folder_url, sas_token, key_name=key_name
-        )
-
-        # check restore status and result
-        job_id = restore_poller.polling_method().resource().job_id
-        restore_status = await backup_client.get_restore_status(job_id)
-        assert_in_progress_operation(restore_status)
-        restore_operation = await restore_poller.result()
-        assert_successful_operation(restore_operation)
-        restore_status = await backup_client.get_restore_status(job_id)
-        assert_successful_operation(restore_status)
+        restore_poller = await backup_client.begin_restore(backup_operation.folder_url, sas_token, key_name=key_name)
+        await restore_poller.wait()
 
         # delete the key
         await self._poll_until_no_exception(key_client.delete_key, key_name, expected_exception=ResourceExistsError)
