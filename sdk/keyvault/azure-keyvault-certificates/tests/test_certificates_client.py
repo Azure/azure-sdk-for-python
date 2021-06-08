@@ -696,6 +696,11 @@ def test_policy_expected_errors_for_create_cert():
         client.begin_create_certificate("...", policy=policy)
     assert "subject" in str(ex.value)
 
+    with pytest.raises(ValueError) as ex:
+        policy = CertificatePolicy(subject="...")
+        client.begin_create_certificate("...", policy=policy)
+    assert "issuer" in str(ex.value)
+
 def test_service_headers_allowed_in_logs():
     service_headers = {"x-ms-keyvault-network-info", "x-ms-keyvault-region", "x-ms-keyvault-service-version"}
     client = CertificateClient("...", object())
