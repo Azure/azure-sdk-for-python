@@ -47,7 +47,7 @@ def testserver():
     """Start the Autorest testserver."""
     server = start_testserver()
     yield
-    # terminate_testserver(server)
+    terminate_testserver(server)
 
 # Ignore collection of async tests for Python 2
 collect_ignore = []
