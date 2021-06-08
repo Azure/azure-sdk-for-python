@@ -23,7 +23,7 @@ from .._entity import TableEntity
 from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
 from .._models import TableAccessPolicy, TableItem
 from .._serialize import serialize_iso, _parameter_filter_substitution
-from .._deserialize import _return_headers_and_deserialized
+from .._deserialize import deserialize_iso, _return_headers_and_deserialized
 from .._error import (
     _process_table_error,
     _validate_table_name,
@@ -177,10 +177,17 @@ class TableClient(AsyncTablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error)
-        return {
-            s.id: s.access_policy or None
-            for s in identifiers  # type: ignore
-        }
+        output = {}
+        for identifier in identifiers:
+            if identifier.access_policy:
+                output[identifier.id] = TableAccessPolicy(
+                    start=deserialize_iso(identifier.access_policy.start),
+                    expiry=deserialize_iso(identifier.access_policy.expiry),
+                    permission=identifier.access_policy.permission
+                )
+            else:
+                output[identifier.id] = None
+        return output
 
     @distributed_trace_async
     async def set_table_access_policy(

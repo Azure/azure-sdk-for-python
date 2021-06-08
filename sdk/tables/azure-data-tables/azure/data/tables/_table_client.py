@@ -33,7 +33,7 @@ from ._generated.models import (
 from ._serialize import _get_match_headers, _add_entity_properties
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._serialize import serialize_iso, _parameter_filter_substitution
-from ._deserialize import _return_headers_and_deserialized
+from ._deserialize import deserialize_iso, _return_headers_and_deserialized
 from ._table_batch import TableBatchOperations
 from ._models import (
     TableEntityPropertiesPaged,
@@ -187,7 +187,17 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error)
-        return {s.id: s.access_policy or None for s in identifiers}  # type: ignore
+        output = {}
+        for identifier in identifiers:
+            if identifier.access_policy:
+                output[identifier.id] = TableAccessPolicy(
+                    start=deserialize_iso(identifier.access_policy.start),
+                    expiry=deserialize_iso(identifier.access_policy.expiry),
+                    permission=identifier.access_policy.permission
+                )
+            else:
+                output[identifier.id] = None
+        return output
 
     @distributed_trace
     def set_table_access_policy(
