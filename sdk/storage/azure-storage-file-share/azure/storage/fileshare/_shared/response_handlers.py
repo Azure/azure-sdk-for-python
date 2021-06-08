@@ -175,7 +175,7 @@ def process_storage_error(storage_error):
     error.args = (error.message,)
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
-        eval("raise error from None")
+        exec("raise error from None")
     except SyntaxError:
         raise error
 
