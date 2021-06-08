@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import logging
+import sys
 from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
@@ -195,5 +196,8 @@ def process_storage_error(storage_error):
                         continuation_token=storage_error.continuation_token)
     error.error_code = error_code
     error.additional_info = additional_data
-    # `from None` prevents us from double printing the exception.
-    raise error from None
+    if sys.version_info >= (3,):
+        # `from None` prevents us from double printing the exception.
+        raise error from None
+    else:
+        raise error

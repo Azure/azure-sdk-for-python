@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import sys
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
     TYPE_CHECKING
@@ -162,8 +163,11 @@ def process_storage_error(storage_error):
     error = raise_error(message=error_message, response=storage_error.response)
     error.error_code = error_code
     error.additional_info = additional_data
-    # `from None` prevents us from double printing the exception.
-    raise error from None
+    if sys.version_info >= (3,):
+        # `from None` prevents us from double printing the exception.
+        raise error from None
+    else:
+        raise error
 
 
 def parse_to_internal_user_delegation_key(service_user_delegation_key):
