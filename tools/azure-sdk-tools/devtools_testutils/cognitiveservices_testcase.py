@@ -62,7 +62,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
         if self.is_live:
             self.client = self.create_mgmt_client(CognitiveServicesManagementClient)
             group = self._get_resource_group(**kwargs)
-            cogsci_account = self.client.accounts.create(
+            cogsci_account = self.client.accounts.begin_create(
                 group.name,
                 name,
                 account={
@@ -71,7 +71,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
                     "kind": self.kind,
                     "properties": {"custom_sub_domain_name": self.custom_subdomain_name},
                 },
-            )
+            ).result()
             time.sleep(10)  # it takes a few seconds to create a cognitive services account
             self.resource = cogsci_account
             self.cogsci_key = self.client.accounts.list_keys(group.name, name).key1
@@ -114,7 +114,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
     def remove_resource(self, name, **kwargs):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
-            self.client.accounts.delete(group.name, name)
+            self.client.accounts.begin_delete(group.name, name).wait()
 
     def _get_resource_group(self, **kwargs):
         try:
