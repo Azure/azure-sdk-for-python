@@ -173,10 +173,10 @@ def process_storage_error(storage_error):
     error.additional_info = additional_data
     # error.args is what's surfaced on the traceback - show error message in all cases
     error.args = (error.message,)
-    if sys.version_info >= (3,):
+    try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
         raise error from None
-    else:
+    except SyntaxError:
         raise error
 
 
