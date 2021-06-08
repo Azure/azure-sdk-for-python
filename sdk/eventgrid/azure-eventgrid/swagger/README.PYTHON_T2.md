@@ -30,7 +30,6 @@ input-file:
     - https://github.com/Azure/azure-rest-api-specs/blob/master/specification/eventgrid/data-plane/Microsoft.Storage/stable/2018-01-01/Storage.json
     - https://github.com/Azure/azure-rest-api-specs/blob/master/specification/eventgrid/data-plane/Microsoft.Web/stable/2018-01-01/Web.json
     - https://github.com/Azure/azure-rest-api-specs/blob/master/specification/eventgrid/data-plane/Microsoft.PolicyInsights/stable/2018-01-01/PolicyInsights.json
-    - https://github.com/Azure/azure-rest-api-specs/blob/master/specification/eventgrid/data-plane/Microsoft.AgFoodPlatform/stable/2018-01-01/AzureFarmBeats.json
 
 python: true
 v3: true
