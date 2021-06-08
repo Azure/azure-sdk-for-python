@@ -3,6 +3,7 @@
     "suppressions": [
         {
             "placeholder": [
+                "password",
                 "XxxxXxxxXXXxxxXXXXxxxxXXxxxXxxx",
                 "HusH_Sec4et",
                 "myPassw0rd",
