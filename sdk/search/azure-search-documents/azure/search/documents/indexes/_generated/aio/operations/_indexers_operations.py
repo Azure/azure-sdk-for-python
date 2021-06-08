@@ -43,7 +43,7 @@ class IndexersOperations:
         self,
         indexer_name: str,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Resets the change tracking state associated with an indexer.
 
@@ -65,7 +65,7 @@ class IndexersOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -104,7 +104,7 @@ class IndexersOperations:
         self,
         indexer_name: str,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Runs an indexer on-demand.
 
@@ -126,7 +126,7 @@ class IndexersOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -168,7 +168,7 @@ class IndexersOperations:
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SearchIndexer":
         """Creates a new indexer or updates an indexer if it already exists.
 
@@ -199,7 +199,7 @@ class IndexersOperations:
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         prefer = "return=representation"
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -257,7 +257,7 @@ class IndexersOperations:
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Deletes an indexer.
 
@@ -285,7 +285,7 @@ class IndexersOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -328,7 +328,7 @@ class IndexersOperations:
         self,
         indexer_name: str,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SearchIndexer":
         """Retrieves an indexer definition.
 
@@ -350,7 +350,7 @@ class IndexersOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -392,7 +392,7 @@ class IndexersOperations:
         self,
         select: Optional[str] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.ListIndexersResult":
         """Lists all indexers available for a search service.
 
@@ -416,7 +416,7 @@ class IndexersOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -459,7 +459,7 @@ class IndexersOperations:
         self,
         indexer: "_models.SearchIndexer",
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SearchIndexer":
         """Creates a new indexer.
 
@@ -481,7 +481,7 @@ class IndexersOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -527,7 +527,7 @@ class IndexersOperations:
         self,
         indexer_name: str,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SearchIndexerStatus":
         """Returns the current status and execution history of an indexer.
 
@@ -549,7 +549,7 @@ class IndexersOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL

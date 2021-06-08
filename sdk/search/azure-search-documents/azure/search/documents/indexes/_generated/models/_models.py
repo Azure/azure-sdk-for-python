@@ -1071,6 +1071,82 @@ class CustomEntityLookupSkill(SearchIndexerSkill):
         self.global_default_fuzzy_edit_distance = kwargs.get('global_default_fuzzy_edit_distance', None)
 
 
+class LexicalNormalizer(msrest.serialization.Model):
+    """Base type for normalizers.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the normalizer.
+    :type odata_type: str
+    :param name: Required. The name of the normalizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters. It cannot end in '.microsoft' nor '.lucene', nor be named
+     'asciifolding', 'standard', 'lowercase', 'uppercase', or 'elision'.
+    :type name: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LexicalNormalizer, self).__init__(**kwargs)
+        self.odata_type = kwargs['odata_type']
+        self.name = kwargs['name']
+
+
+class CustomNormalizer(LexicalNormalizer):
+    """Allows you to configure normalization for filterable, sortable, and facetable fields, which by default operate with strict matching. This is a user-defined configuration consisting of at least one or more filters, which modify the token that is stored.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the normalizer.
+    :type odata_type: str
+    :param name: Required. The name of the normalizer. It must only contain letters, digits,
+     spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
+     limited to 128 characters. It cannot end in '.microsoft' nor '.lucene', nor be named
+     'asciifolding', 'standard', 'lowercase', 'uppercase', or 'elision'.
+    :type name: str
+    :param token_filters: A list of token filters used to filter out or modify the input token. For
+     example, you can specify a lowercase filter that converts all characters to lowercase. The
+     filters are run in the order in which they are listed.
+    :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
+    :param char_filters: A list of character filters used to prepare input text before it is
+     processed. For instance, they can replace certain characters or symbols. The filters are run in
+     the order in which they are listed.
+    :type char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'token_filters': {'key': 'tokenFilters', 'type': '[str]'},
+        'char_filters': {'key': 'charFilters', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CustomNormalizer, self).__init__(**kwargs)
+        self.token_filters = kwargs.get('token_filters', None)
+        self.char_filters = kwargs.get('char_filters', None)
+
+
 class DataChangeDetectionPolicy(msrest.serialization.Model):
     """Base type for data change detection policies.
 
@@ -1403,7 +1479,7 @@ class DocumentExtractionSkill(SearchIndexerSkill):
      'contentAndMetadata' if not defined.
     :type data_to_extract: str
     :param configuration: A dictionary of configurations for the skill.
-    :type configuration: dict[str, any]
+    :type configuration: dict[str, object]
     """
 
     _validation = {
@@ -1728,7 +1804,7 @@ class FieldMappingFunction(msrest.serialization.Model):
     :type name: str
     :param parameters: A dictionary of parameter name/value pairs to pass to the function. Each
      value must be of a primitive type.
-    :type parameters: dict[str, any]
+    :type parameters: dict[str, object]
     """
 
     _validation = {
@@ -2062,7 +2138,7 @@ class IndexingParametersConfiguration(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
+    :type additional_properties: dict[str, object]
     :param parsing_mode: Represents the parsing mode for indexing from an Azure blob data source.
      Possible values include: "default", "text", "delimitedText", "json", "jsonArray", "jsonLines".
      Default value: "default".
@@ -3942,6 +4018,11 @@ class SearchField(msrest.serialization.Model):
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
      "whitespace".
     :type index_analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :param normalizer: The name of the normalizer to use for the field. This option can be used
+     only with fields with filterable, sortable, or facetable enabled. Once the normalizer is
+     chosen, it cannot be changed for the field. Must be null for complex fields. Possible values
+     include: "asciifolding", "elision", "lowercase", "standard", "uppercase".
+    :type normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :param synonym_maps: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
      supported. Assigning a synonym map to a field ensures that query terms targeting that field are
@@ -3970,6 +4051,7 @@ class SearchField(msrest.serialization.Model):
         'analyzer': {'key': 'analyzer', 'type': 'str'},
         'search_analyzer': {'key': 'searchAnalyzer', 'type': 'str'},
         'index_analyzer': {'key': 'indexAnalyzer', 'type': 'str'},
+        'normalizer': {'key': 'normalizer', 'type': 'str'},
         'synonym_maps': {'key': 'synonymMaps', 'type': '[str]'},
         'fields': {'key': 'fields', 'type': '[SearchField]'},
     }
@@ -3990,6 +4072,7 @@ class SearchField(msrest.serialization.Model):
         self.analyzer = kwargs.get('analyzer', None)
         self.search_analyzer = kwargs.get('search_analyzer', None)
         self.index_analyzer = kwargs.get('index_analyzer', None)
+        self.normalizer = kwargs.get('normalizer', None)
         self.synonym_maps = kwargs.get('synonym_maps', None)
         self.fields = kwargs.get('fields', None)
 
@@ -4021,6 +4104,8 @@ class SearchIndex(msrest.serialization.Model):
     :type token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
     :param char_filters: The character filters for the index.
     :type char_filters: list[~azure.search.documents.indexes.models.CharFilter]
+    :param normalizers: The normalizers for the index.
+    :type normalizers: list[~azure.search.documents.indexes.models.LexicalNormalizer]
     :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
@@ -4055,6 +4140,7 @@ class SearchIndex(msrest.serialization.Model):
         'tokenizers': {'key': 'tokenizers', 'type': '[LexicalTokenizer]'},
         'token_filters': {'key': 'tokenFilters', 'type': '[TokenFilter]'},
         'char_filters': {'key': 'charFilters', 'type': '[CharFilter]'},
+        'normalizers': {'key': 'normalizers', 'type': '[LexicalNormalizer]'},
         'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
         'similarity': {'key': 'similarity', 'type': 'Similarity'},
         'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
@@ -4075,6 +4161,7 @@ class SearchIndex(msrest.serialization.Model):
         self.tokenizers = kwargs.get('tokenizers', None)
         self.token_filters = kwargs.get('token_filters', None)
         self.char_filters = kwargs.get('char_filters', None)
+        self.normalizers = kwargs.get('normalizers', None)
         self.encryption_key = kwargs.get('encryption_key', None)
         self.similarity = kwargs.get('similarity', None)
         self.e_tag = kwargs.get('e_tag', None)
