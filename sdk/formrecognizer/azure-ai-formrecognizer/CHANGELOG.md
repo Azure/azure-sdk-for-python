@@ -1,7 +1,10 @@
 # Release History
 
-## 3.1.1 (Unreleased)
+## 3.1.1 (2021-06-08)
 
+**Bug Fixes**
+
+- Handles invoices that do not have sub-line item fields detected.
 
 ## 3.1.0 (2021-05-26)
 
