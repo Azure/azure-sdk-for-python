@@ -8,6 +8,7 @@ import logging
 from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
+from xml.etree.ElementTree import Element
 
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import HttpResponseError, DecodeError, ResourceModifiedError, ClientAuthenticationError, \
@@ -113,24 +114,41 @@ def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argu
 
 def process_storage_error(storage_error):
     raise_error = HttpResponseError
+    serialized = False
+    # If it is one of those three then it has been serialized prior by the generated layer.
+    if isinstance(storage_error, (ResourceNotFoundError, ClientAuthenticationError, ResourceExistsError)):
+        raise_error = type(storage_error)
+        serialized = True
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
     additional_data = {}
+    error_dict = {}
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
-        if error_body:
-            for info in error_body:
-                if info == 'code':
-                    error_code = error_body[info]
-                elif info == 'message':
-                    error_message = error_body[info]
-                else:
-                    additional_data[info] = error_body[info]
+        if isinstance(error_body, Element):
+            error_dict = {
+                child.tag.lower(): child.text
+                for child in error_body
+            }
+        elif isinstance(error_body, dict):
+            error_dict = error_body.get('error', {})
+        elif not error_code:
+            _LOGGER.warning(
+                'Unexpected return type {} from ContentDecodePolicy.deserialize_from_http_generics.'.format(
+                    type(error_body)))
+            error_dict = {'message': str(error_body)}
+
+        if error_dict:
+            error_code = error_dict.get('code')
+            error_message = error_dict.get('message')
+            additional_data = {k: v for k, v in error_dict.items() if k not in {'code', 'message'}}
+
     except DecodeError:
         pass
 
     try:
-        if error_code:
+        # This check would be unnecessary if we have already serialized the error.
+        if error_code and not serialized:
             error_code = StorageErrorCode(error_code)
             if error_code in [StorageErrorCode.condition_not_met]:
                 raise_error = ResourceModifiedError
@@ -177,4 +195,5 @@ def process_storage_error(storage_error):
                         continuation_token=storage_error.continuation_token)
     error.error_code = error_code
     error.additional_info = additional_data
-    raise error
+    # `from None` prevents us from double printing the exception.
+    raise error from None

@@ -86,6 +86,11 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
 
 def process_storage_error(storage_error):
     raise_error = HttpResponseError
+    serialized = False
+    # If it is one of those three then it has been serialized prior by the generated layer.
+    if isinstance(storage_error, (ResourceNotFoundError, ClientAuthenticationError, ResourceExistsError)):
+        raise_error = type(storage_error)
+        serialized = True
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
     additional_data = {}
@@ -101,7 +106,8 @@ def process_storage_error(storage_error):
             error_dict = error_body.get('error', {})
         elif not error_code:
             _LOGGER.warning(
-                f'Unexpected return type {type(error_body)} from ContentDecodePolicy.deserialize_from_http_generics.')
+                'Unexpected return type {} from ContentDecodePolicy.deserialize_from_http_generics.'.format(
+                    type(error_body)))
             error_dict = {'message': str(error_body)}
 
         if error_dict:
@@ -112,7 +118,8 @@ def process_storage_error(storage_error):
         pass
 
     try:
-        if error_code:
+        # This check would be unnecessary if we have already serialized the error.
+        if error_code and not serialized:
             error_code = StorageErrorCode(error_code)
             if error_code in [StorageErrorCode.condition_not_met,
                               StorageErrorCode.blob_overwritten]:
@@ -154,7 +161,8 @@ def process_storage_error(storage_error):
     error = raise_error(message=error_message, response=storage_error.response)
     error.error_code = error_code
     error.additional_info = additional_data
-    error.raise_with_traceback()
+    # `from None` prevents us from double printing the exception.
+    raise error from None
 
 
 def parse_to_internal_user_delegation_key(service_user_delegation_key):
