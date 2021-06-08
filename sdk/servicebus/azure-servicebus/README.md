@@ -380,6 +380,14 @@ It would also manifest when trying to take action (such as completing a message)
 - Enable `azure.servicebus` logger to collect traces from the library.
 - Enable `uamqp` logger to collect traces from the underlying uAMQP library.
 - Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
+- There may be cases where you consider the `uamqp` logging to be too verbose. To suppress unnecessary logging, add the following snippet to the top of your code:
+```python
+import logging
+uamqp_logger = logging.getLogger('uamqp')
+# The logging levels below may need to be changed based on the logging that you want to suppress.
+logging.basicConfig(level=logging.WARNING)
+uamqp_logger.setLevel(logging.ERROR)
+```
 
 ### Timeouts
 
