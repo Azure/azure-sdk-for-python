@@ -383,10 +383,14 @@ It would also manifest when trying to take action (such as completing a message)
 - There may be cases where you consider the `uamqp` logging to be too verbose. To suppress unnecessary logging, add the following snippet to the top of your code:
 ```python
 import logging
-uamqp_logger = logging.getLogger('uamqp')
+
 # The logging levels below may need to be changed based on the logging that you want to suppress.
-logging.basicConfig(level=logging.WARNING)
+uamqp_logger = logging.getLogger('uamqp')
 uamqp_logger.setLevel(logging.ERROR)
+
+# or even further fine-grained control, suppressing the warnings in uamqp.connection module
+uamqp_connection_logger = logging.getLogger('uamqp.connection')
+uamqp_connection_logger.setLevel(logging.ERROR)
 ```
 
 ### Timeouts
