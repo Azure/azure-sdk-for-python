@@ -5,6 +5,7 @@ This is the last version to support Python 3.5. The next version will require Py
 ### Changed
 - Key Vault API version 7.2 is now the default
 - Updated minimum `msrest` version to 0.6.21
+- The `issuer_name` parameter for `CertificatePolicy` is now optional
 
 ### Added
 - Added class `KeyVaultCertificateIdentifier` that parses out a full ID returned by Key Vault,
