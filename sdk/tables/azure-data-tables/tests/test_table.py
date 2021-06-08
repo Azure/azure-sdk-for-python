@@ -325,11 +325,11 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             assert acl['null'] is None
             assert acl['empty'] is None
             assert acl['partial'] is not None
-            assert acl['partial'].permission is 'r'
+            assert acl['partial'].permission == 'r'
             assert acl['partial'].expiry is None
             assert acl['partial'].start is None
             assert acl['full'] is not None
-            assert acl['full'].permission is 'r'
+            assert acl['full'].permission == 'r'
             self._assert_policy_datetime(dt, acl['full'].expiry)
             self._assert_policy_datetime(dt, acl['full'].start)
 
@@ -344,7 +344,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             assert acl['null'] is None
             assert acl['partial'] is None
             assert acl['full'] is not None
-            assert acl['full'].permission is 'r'
+            assert acl['full'].permission == 'r'
             self._assert_policy_datetime(dt, acl['full'].expiry)
             self._assert_policy_datetime(dt, acl['full'].start)
         finally:
