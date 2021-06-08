@@ -43,7 +43,7 @@ class DeploymentsOperations:
     def get_all_deployments(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfDeployments"]:
         """Gets a list of deployments.
 
@@ -119,7 +119,7 @@ class DeploymentsOperations:
     async def get_deployment(
         self,
         deployment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Deployment":
         """Gets the properties of a deployment.
 
@@ -173,7 +173,7 @@ class DeploymentsOperations:
         self,
         deployment_id: str,
         deployment: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Deployment":
         """Creates or updates a deployment.
 
@@ -233,7 +233,7 @@ class DeploymentsOperations:
     async def delete_deployment(
         self,
         deployment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a deployment.
 
@@ -281,7 +281,7 @@ class DeploymentsOperations:
     async def get_deployment_status(
         self,
         deployment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentStatus":
         """Gets the status of a deployment including a breakdown of how many devices in the deployment are
         in progress, completed, or failed.
@@ -336,7 +336,7 @@ class DeploymentsOperations:
         self,
         deployment_id: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfDeploymentDeviceStates"]:
         """Gets a list of devices in a deployment along with their state. Useful for getting a list of
         failed devices.
@@ -417,7 +417,7 @@ class DeploymentsOperations:
     async def cancel_deployment(
         self,
         deployment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Deployment":
         """Cancels a deployment.
 
@@ -472,7 +472,7 @@ class DeploymentsOperations:
     async def retry_deployment(
         self,
         deployment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Deployment":
         """Retries a deployment with failed devices.
 

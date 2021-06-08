@@ -42,7 +42,7 @@ class DevicesOperations:
 
     def get_all_device_classes(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfDeviceClasses"]:
         """Gets a list of all device classes (unique combinations of device manufacturer and model) for
         all devices connected to Device Update for IoT Hub.
@@ -114,7 +114,7 @@ class DevicesOperations:
     async def get_device_class(
         self,
         device_class_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeviceClass":
         """Gets the properties of a device class.
 
@@ -167,7 +167,7 @@ class DevicesOperations:
     def get_device_class_device_ids(
         self,
         device_class_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfStrings"]:
         """Gets a list of device identifiers in a device class.
 
@@ -242,7 +242,7 @@ class DevicesOperations:
     def get_device_class_installable_updates(
         self,
         device_class_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfUpdateIds"]:
         """Gets a list of installable updates for a device class.
 
@@ -317,7 +317,7 @@ class DevicesOperations:
     def get_all_devices(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfDevices"]:
         """Gets a list of devices connected to Device Update for IoT Hub.
 
@@ -392,7 +392,7 @@ class DevicesOperations:
     async def get_device(
         self,
         device_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Device":
         """Gets the device properties and latest deployment status for a device connected to Device Update
         for IoT Hub.
@@ -445,7 +445,7 @@ class DevicesOperations:
 
     async def get_update_compliance(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.UpdateCompliance":
         """Gets the breakdown of how many devices are on their latest update, have new updates available,
         or are in progress receiving new updates.
@@ -495,7 +495,7 @@ class DevicesOperations:
 
     def get_all_device_tags(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfDeviceTags"]:
         """Gets a list of available group device tags for all devices connected to Device Update for IoT
         Hub.
@@ -567,7 +567,7 @@ class DevicesOperations:
     async def get_device_tag(
         self,
         tag_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeviceTag":
         """Gets a count of how many devices have a device tag.
 
@@ -619,7 +619,7 @@ class DevicesOperations:
 
     def get_all_groups(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfGroups"]:
         """Gets a list of all device groups.
 
@@ -690,7 +690,7 @@ class DevicesOperations:
     async def get_group(
         self,
         group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Group":
         """Gets the properties of a group.
 
@@ -744,7 +744,7 @@ class DevicesOperations:
         self,
         group_id: str,
         group: "_models.Group",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Group":
         """Create or update a device group.
 
@@ -804,7 +804,7 @@ class DevicesOperations:
     async def delete_group(
         self,
         group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a device group.
 
@@ -852,7 +852,7 @@ class DevicesOperations:
     async def get_group_update_compliance(
         self,
         group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.UpdateCompliance":
         """Get group update compliance information such as how many devices are on their latest update,
         how many need new updates, and how many are in progress on receiving a new update.
@@ -907,7 +907,7 @@ class DevicesOperations:
         self,
         group_id: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PageableListOfUpdatableDevices"]:
         """Get the best available updates for a group and a count of how many devices need each update.
 
