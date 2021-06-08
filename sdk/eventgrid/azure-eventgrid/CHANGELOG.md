@@ -1,6 +1,6 @@
 # Release History
 
-## 4.3.0 (2021-06-08)
+## 4.3.0 (2021-06-09)
 
   **New Features**
   - Added new event names related to azure farming and blob inventory to the `SystemEventNames` enum.
