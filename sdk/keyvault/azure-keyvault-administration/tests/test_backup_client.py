@@ -10,6 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ResourceExistsError
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
+from azure.keyvault.administration._internal import HttpChallengeCache
 from azure.keyvault.administration import KeyVaultBackupClient, KeyVaultBackupOperation
 from azure.keyvault.administration._internal import parse_folder_url
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -32,6 +33,11 @@ class BackupClientTests(KeyVaultTestCase):
             playback = urlparse(self.managed_hsm["playback_url"])
             self.scrubber.register_name_pair(real.netloc, playback.netloc)
         super(BackupClientTests, self).setUp(*args, **kwargs)
+
+    def tearDown(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        super(KeyVaultTestCase, self).tearDown()
 
     @property
     def credential(self):
