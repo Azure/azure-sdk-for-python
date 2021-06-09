@@ -14,7 +14,7 @@ from .._internal import AsyncKeyVaultClientBase
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Any, Optional, Union
+    from typing import Any, Union
     from uuid import UUID
     from azure.core.async_paging import AsyncItemPaged
     from .._enums import KeyVaultRoleScope
