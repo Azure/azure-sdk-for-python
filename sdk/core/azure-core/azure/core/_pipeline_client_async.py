@@ -29,7 +29,7 @@ from collections.abc import Iterable
 from typing import Any, Awaitable
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
-from .pipeline.transport._base import PipelineClientBase
+from .pipeline.transport._base import PipelineClientBase, PipelineResponse
 from .pipeline.policies import (
     ContentDecodePolicy,
     DistributedTracingPolicy,
@@ -171,6 +171,7 @@ class AsyncPipelineClient(PipelineClientBase):
 
     async def _make_pipeline_call(self, request, stream, **kwargs):
         """Want to get rid of this code and use pipeline.run immediately"""
+        return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
         try:
             request = request._internal_request
         except AttributeError:
@@ -178,6 +179,8 @@ class AsyncPipelineClient(PipelineClientBase):
         pipeline_response = await self._pipeline.run(
             request, stream=stream, **kwargs  # pylint: disable=protected-access
         )
+        if return_pipeline_response:
+            return pipeline_response
         return AsyncHttpResponse(
             request=request,
             _internal_response=pipeline_response.http_response,
@@ -199,4 +202,6 @@ class AsyncPipelineClient(PipelineClientBase):
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
         wrapped = self._make_pipeline_call(request, stream=stream, **kwargs)
+        if isinstance(wrapped, PipelineResponse):
+            return wrapped
         return _AsyncContextManager(wrapped=wrapped)
