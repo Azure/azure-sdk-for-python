@@ -183,11 +183,14 @@ class PipelineClient(PipelineClientBase):
         :rtype: ~azure.core.rest.HttpResponse
         # """
         stream = kwargs.get("stream", False)
+        cls = kwargs.pop("_cls", None)
         try:
             request = request._internal_request
         except AttributeError:
             pass
         pipeline_response = self._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
+        if cls:
+            return pipeline_response
         response = HttpResponse(
             request=request,
             _internal_response=pipeline_response.http_response,
