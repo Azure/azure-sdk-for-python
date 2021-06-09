@@ -142,16 +142,15 @@ class AttestationAdministrationClient(object):
         """
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
-        if (signing_key or signing_certificate):
-            key, certificate = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
-        else:
-            key = self._signing_key
-            certificate = self._signing_certificate
+        if not signing_key:
+            signing_key = self._signing_key
+        if not signing_certificate:
+            signing_certificate = self._signing_certificate
 
         policy_token = AttestationToken[GeneratedStoredAttestationPolicy](
             body=GeneratedStoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
-            key=key,
-            certificate=certificate,
+            signing_key=signing_key,
+            signing_certificate=signing_certificate,
             body_type=GeneratedStoredAttestationPolicy)
         policyResult = await self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.serialize(), **kwargs)
         token = AttestationToken[GeneratedPolicyResult](token=policyResult.token,
@@ -193,14 +192,12 @@ class AttestationAdministrationClient(object):
         """
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
-        if (signing_key or signing_certificate):
-            key, certificate = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
-        else:
-            key = self._signing_key
-            certificate = self._signing_certificate
+        if not signing_key:
+            signing_key = self._signing_key
+        if not signing_certificate:
+            signing_certificate = self._signing_certificate
 
-
-        policy_token = AttestationToken(body=None, key=key, certificate=certificate)
+        policy_token = AttestationToken(body=None, signing_key=signing_key, signing_certificate=signing_certificate)
 
         policyResult = await self._client.policy.reset(attestation_type=attestation_type, policy_jws=policy_token.serialize(), **kwargs)
         token = AttestationToken[GeneratedPolicyResult](token=policyResult.token,
@@ -280,13 +277,12 @@ class AttestationAdministrationClient(object):
         """
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
-        if (signing_key or signing_certificate):
-            key, certificate = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
-        else:
-            key = self._signing_key
-            certificate = self._signing_certificate
+        if not signing_key:
+            signing_key = self._signing_key
+        if not signing_certificate:
+            signing_certificate = self._signing_certificate
 
-        if not key or not certificate:
+        if not signing_key or not signing_certificate:
             raise ValueError("A signing certificate and key must be provided to add_policy_management_certificate.")
 
         # Verify that the provided certificate is a valid PEM encoded X.509 certificate
@@ -296,8 +292,8 @@ class AttestationAdministrationClient(object):
         add_body = AttestationCertificateManagementBody(policy_certificate=jwk)
         cert_add_token = AttestationToken[AttestationCertificateManagementBody](
             body=add_body,
-            key=key,
-            certificate=certificate,
+            signing_key=signing_key,
+            signing_certificate=signing_certificate,
             body_type=AttestationCertificateManagementBody)
 
         cert_response = await self._client.policy_certificates.add(cert_add_token.serialize(), **kwargs)
@@ -342,13 +338,12 @@ class AttestationAdministrationClient(object):
         """
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
-        if (signing_key or signing_certificate):
-            key, certificate = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
-        else:
-            key = self._signing_key
-            certificate = self._signing_certificate
+        if not signing_key:
+            signing_key = self._signing_key
+        if not signing_certificate:
+            signing_certificate = self._signing_certificate
 
-        if not key or not certificate:
+        if not signing_key or not signing_certificate:
             raise ValueError("A signing certificate and key must be provided to remove_policy_management_certificate.")
 
         # Verify that the provided certificate is a valid PEM encoded X.509 certificate
@@ -358,8 +353,8 @@ class AttestationAdministrationClient(object):
         add_body = AttestationCertificateManagementBody(policy_certificate=jwk)
         cert_add_token = AttestationToken[AttestationCertificateManagementBody](
             body=add_body,
-            key=key,
-            certificate=certificate,
+            signing_key=signing_key,
+            signing_certificate=signing_certificate,
             body_type=AttestationCertificateManagementBody)
 
         cert_response = await self._client.policy_certificates.remove(cert_add_token.serialize(), **kwargs)

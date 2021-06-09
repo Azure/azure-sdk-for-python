@@ -527,9 +527,9 @@ class AttestationToken(Generic[T]):
     """ Represents a token returned from the attestation service.
 
     :keyword Any body: The body of the newly created token, if provided.
-    :keyword str signing_key: If specified, the PEM encoded key used to sign the
+    :keyword bytes signing_key: If specified, the PEM encoded key used to sign the
         token.
-    :keyword str signing_certificate: If specified, the PEM encoded certificate
+    :keyword bytes signing_certificate: If specified, the PEM encoded certificate
         used to sign the token.
     :keyword key: If specified the key to be used to sign the token.
     :keyword certificate: If specified, the certificate to be used to sign the token.
@@ -547,13 +547,17 @@ class AttestationToken(Generic[T]):
             body = kwargs.pop('body', None)  # type: Any
             signing_key = kwargs.pop('signing_key', None)  # type: str
             signing_certificate = kwargs.pop('signing_certificate', None)  # type: str
+            key = None
             if signing_key or signing_certificate:
-                if 'key' in kwargs or 'certificate' in kwargs:
-                    raise ValueError("Cannot specify both signing_key and key or certificate and signing_certificate")
-                [key, certificate] = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
-            else:
-                key = kwargs.pop('key', None) # type: RSAPrivateKey | EllipticCurvePrivateKey
-                certificate = kwargs.pop('certificate', None) # type: Certificate
+                if isinstance(signing_key, bytes) or isinstance(signing_certificate, bytes):
+                    [key, certificate] = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
+                else:
+                    if not isinstance(signing_certificate, Certificate):
+                        raise ValueError("signing_certificate must be a string or Certificate")
+                    if not isinstance(signing_key, RSAPrivateKey) and not isinstance(signing_key, EllipticCurvePrivateKey):
+                        raise ValueError("signing_ must be a string or Private Key")
+                    key = signing_key
+                    certificate = signing_certificate
             if key:
                 token = self._create_secured_jwt(body, key=key, certificate=certificate)
             else:
