@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import pytest
 import os
 import time
 import datetime
@@ -61,7 +60,7 @@ class OperationLocationReplacer(RecordingProcessor):
         except (KeyError, ValueError):
             return response
 
-@pytest.mark.skip
+
 class DocumentTranslationTest(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
