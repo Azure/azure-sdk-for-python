@@ -6,6 +6,7 @@
 - `KeyVaultAccessControlClient.delete_role_assignment` and
   `.delete_role_definition` no longer raise an error  when the resource to be
   deleted is not found
+- Raised minimum azure-core version to 1.11.0
 
 ### Added
 - `KeyVaultAccessControlClient.set_role_definition` accepts an optional
