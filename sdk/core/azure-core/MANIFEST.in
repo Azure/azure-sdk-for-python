@@ -4,4 +4,4 @@ include azure/__init__.py
 recursive-include samples *.py *.md
 recursive-include doc *.rst
 include azure/core/py.typed
-
+include LICENSE.md
