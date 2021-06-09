@@ -856,10 +856,12 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         """
         path_prefix = kwargs.pop('path_prefix', None)
         timeout = kwargs.pop('timeout', None)
+        results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
             showonly=ListBlobsIncludeItem.deleted,
             timeout=timeout,
             **kwargs)
         return AsyncItemPaged(
-            command, prefix=path_prefix, page_iterator_class=DeletedPathPropertiesPaged, **kwargs)
+            command, prefix=path_prefix, page_iterator_class=DeletedPathPropertiesPaged,
+            results_per_page=results_per_page, **kwargs)
