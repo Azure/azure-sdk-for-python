@@ -69,6 +69,37 @@ class ErrorCodeValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
     NOT_FOUND = "NotFound"
 
+class HealthcareEntityCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Healthcare Entity Category.
+    """
+
+    BODY_STRUCTURE = "BODY_STRUCTURE"
+    AGE = "AGE"
+    GENDER = "GENDER"
+    EXAMINATION_NAME = "EXAMINATION_NAME"
+    DATE = "DATE"
+    DIRECTION = "DIRECTION"
+    FREQUENCY = "FREQUENCY"
+    MEASUREMENT_VALUE = "MEASUREMENT_VALUE"
+    MEASUREMENT_UNIT = "MEASUREMENT_UNIT"
+    RELATIONAL_OPERATOR = "RELATIONAL_OPERATOR"
+    TIME = "TIME"
+    GENE_OR_PROTEIN = "GENE_OR_PROTEIN"
+    VARIANT = "VARIANT"
+    ADMINISTRATIVE_EVENT = "ADMINISTRATIVE_EVENT"
+    CARE_ENVIRONMENT = "CARE_ENVIRONMENT"
+    HEALTHCARE_PROFESSION = "HEALTHCARE_PROFESSION"
+    DIAGNOSIS = "DIAGNOSIS"
+    SYMPTOM_OR_SIGN = "SYMPTOM_OR_SIGN"
+    CONDITION_QUALIFIER = "CONDITION_QUALIFIER"
+    MEDICATION_CLASS = "MEDICATION_CLASS"
+    MEDICATION_NAME = "MEDICATION_NAME"
+    DOSAGE = "DOSAGE"
+    MEDICATION_FORM = "MEDICATION_FORM"
+    MEDICATION_ROUTE = "MEDICATION_ROUTE"
+    FAMILY_RELATION = "FAMILY_RELATION"
+    TREATMENT_NAME = "TREATMENT_NAME"
+
 class InnerErrorCodeValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Error code.
     """
@@ -307,7 +338,6 @@ class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REJECTED = "rejected"
     CANCELLED = "cancelled"
     CANCELLING = "cancelling"
-    PARTIALLY_COMPLETED = "partiallyCompleted"
 
 class StringIndexType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

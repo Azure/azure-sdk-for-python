@@ -7,14 +7,12 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AnalysisInput
     from ._models_py3 import AnalyzeBatchInput
+    from ._models_py3 import AnalyzeJobDisplayName
+    from ._models_py3 import AnalyzeJobErrorsAndStatistics
     from ._models_py3 import AnalyzeJobMetadata
     from ._models_py3 import AnalyzeJobState
-    from ._models_py3 import Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1
-    from ._models_py3 import Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1
-    from ._models_py3 import Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1
-    from ._models_py3 import Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1
-    from ._models_py3 import ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1
     from ._models_py3 import DetectedLanguage
     from ._models_py3 import DocumentEntities
     from ._models_py3 import DocumentError
@@ -27,24 +25,30 @@ try:
     from ._models_py3 import EntitiesResult
     from ._models_py3 import EntitiesTask
     from ._models_py3 import EntitiesTaskParameters
+    from ._models_py3 import EntitiesTaskResult
     from ._models_py3 import Entity
     from ._models_py3 import EntityLinkingResult
     from ._models_py3 import EntityLinkingTask
     from ._models_py3 import EntityLinkingTaskParameters
+    from ._models_py3 import EntityLinkingTaskResult
     from ._models_py3 import ErrorResponse
     from ._models_py3 import HealthcareAssertion
     from ._models_py3 import HealthcareEntity
     from ._models_py3 import HealthcareEntityLink
+    from ._models_py3 import HealthcareEntityProperties
     from ._models_py3 import HealthcareJobState
+    from ._models_py3 import HealthcareLinkingProperties
     from ._models_py3 import HealthcareRelation
     from ._models_py3 import HealthcareRelationEntity
     from ._models_py3 import HealthcareResult
+    from ._models_py3 import HealthcareTaskResult
     from ._models_py3 import InnerError
     from ._models_py3 import JobDescriptor
     from ._models_py3 import JobManifest
     from ._models_py3 import JobManifestTasks
     from ._models_py3 import JobMetadata
     from ._models_py3 import KeyPhraseResult
+    from ._models_py3 import KeyPhraseTaskResult
     from ._models_py3 import KeyPhrasesTask
     from ._models_py3 import KeyPhrasesTaskParameters
     from ._models_py3 import LanguageBatchInput
@@ -59,6 +63,7 @@ try:
     from ._models_py3 import PiiResult
     from ._models_py3 import PiiTask
     from ._models_py3 import PiiTaskParameters
+    from ._models_py3 import PiiTaskResult
     from ._models_py3 import RequestStatistics
     from ._models_py3 import SentenceAssessment
     from ._models_py3 import SentenceSentiment
@@ -67,12 +72,12 @@ try:
     from ._models_py3 import SentimentAnalysisTaskParameters
     from ._models_py3 import SentimentConfidenceScorePerLabel
     from ._models_py3 import SentimentResponse
+    from ._models_py3 import SentimentTaskResult
     from ._models_py3 import TargetConfidenceScoreLabel
     from ._models_py3 import TargetRelation
     from ._models_py3 import TaskState
     from ._models_py3 import TasksState
     from ._models_py3 import TasksStateTasks
-    from ._models_py3 import TasksStateTasksDetails
     from ._models_py3 import TasksStateTasksEntityLinkingTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionPiiTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionTasksItem
@@ -81,14 +86,12 @@ try:
     from ._models_py3 import TextAnalyticsError
     from ._models_py3 import TextAnalyticsWarning
 except (SyntaxError, ImportError):
+    from ._models import AnalysisInput  # type: ignore
     from ._models import AnalyzeBatchInput  # type: ignore
+    from ._models import AnalyzeJobDisplayName  # type: ignore
+    from ._models import AnalyzeJobErrorsAndStatistics  # type: ignore
     from ._models import AnalyzeJobMetadata  # type: ignore
     from ._models import AnalyzeJobState  # type: ignore
-    from ._models import Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1  # type: ignore
-    from ._models import Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1  # type: ignore
-    from ._models import Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1  # type: ignore
-    from ._models import Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1  # type: ignore
-    from ._models import ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1  # type: ignore
     from ._models import DetectedLanguage  # type: ignore
     from ._models import DocumentEntities  # type: ignore
     from ._models import DocumentError  # type: ignore
@@ -101,24 +104,30 @@ except (SyntaxError, ImportError):
     from ._models import EntitiesResult  # type: ignore
     from ._models import EntitiesTask  # type: ignore
     from ._models import EntitiesTaskParameters  # type: ignore
+    from ._models import EntitiesTaskResult  # type: ignore
     from ._models import Entity  # type: ignore
     from ._models import EntityLinkingResult  # type: ignore
     from ._models import EntityLinkingTask  # type: ignore
     from ._models import EntityLinkingTaskParameters  # type: ignore
+    from ._models import EntityLinkingTaskResult  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import HealthcareAssertion  # type: ignore
     from ._models import HealthcareEntity  # type: ignore
     from ._models import HealthcareEntityLink  # type: ignore
+    from ._models import HealthcareEntityProperties  # type: ignore
     from ._models import HealthcareJobState  # type: ignore
+    from ._models import HealthcareLinkingProperties  # type: ignore
     from ._models import HealthcareRelation  # type: ignore
     from ._models import HealthcareRelationEntity  # type: ignore
     from ._models import HealthcareResult  # type: ignore
+    from ._models import HealthcareTaskResult  # type: ignore
     from ._models import InnerError  # type: ignore
     from ._models import JobDescriptor  # type: ignore
     from ._models import JobManifest  # type: ignore
     from ._models import JobManifestTasks  # type: ignore
     from ._models import JobMetadata  # type: ignore
     from ._models import KeyPhraseResult  # type: ignore
+    from ._models import KeyPhraseTaskResult  # type: ignore
     from ._models import KeyPhrasesTask  # type: ignore
     from ._models import KeyPhrasesTaskParameters  # type: ignore
     from ._models import LanguageBatchInput  # type: ignore
@@ -133,6 +142,7 @@ except (SyntaxError, ImportError):
     from ._models import PiiResult  # type: ignore
     from ._models import PiiTask  # type: ignore
     from ._models import PiiTaskParameters  # type: ignore
+    from ._models import PiiTaskResult  # type: ignore
     from ._models import RequestStatistics  # type: ignore
     from ._models import SentenceAssessment  # type: ignore
     from ._models import SentenceSentiment  # type: ignore
@@ -141,12 +151,12 @@ except (SyntaxError, ImportError):
     from ._models import SentimentAnalysisTaskParameters  # type: ignore
     from ._models import SentimentConfidenceScorePerLabel  # type: ignore
     from ._models import SentimentResponse  # type: ignore
+    from ._models import SentimentTaskResult  # type: ignore
     from ._models import TargetConfidenceScoreLabel  # type: ignore
     from ._models import TargetRelation  # type: ignore
     from ._models import TaskState  # type: ignore
     from ._models import TasksState  # type: ignore
     from ._models import TasksStateTasks  # type: ignore
-    from ._models import TasksStateTasksDetails  # type: ignore
     from ._models import TasksStateTasksEntityLinkingTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionPiiTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionTasksItem  # type: ignore
@@ -161,6 +171,7 @@ from ._text_analytics_client_enums import (
     Conditionality,
     DocumentSentimentValue,
     ErrorCodeValue,
+    HealthcareEntityCategory,
     InnerErrorCodeValue,
     PiiCategory,
     PiiTaskParametersDomain,
@@ -174,14 +185,12 @@ from ._text_analytics_client_enums import (
 )
 
 __all__ = [
+    'AnalysisInput',
     'AnalyzeBatchInput',
+    'AnalyzeJobDisplayName',
+    'AnalyzeJobErrorsAndStatistics',
     'AnalyzeJobMetadata',
     'AnalyzeJobState',
-    'Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1',
-    'Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1',
-    'Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1',
-    'Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1',
-    'ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1',
     'DetectedLanguage',
     'DocumentEntities',
     'DocumentError',
@@ -194,24 +203,30 @@ __all__ = [
     'EntitiesResult',
     'EntitiesTask',
     'EntitiesTaskParameters',
+    'EntitiesTaskResult',
     'Entity',
     'EntityLinkingResult',
     'EntityLinkingTask',
     'EntityLinkingTaskParameters',
+    'EntityLinkingTaskResult',
     'ErrorResponse',
     'HealthcareAssertion',
     'HealthcareEntity',
     'HealthcareEntityLink',
+    'HealthcareEntityProperties',
     'HealthcareJobState',
+    'HealthcareLinkingProperties',
     'HealthcareRelation',
     'HealthcareRelationEntity',
     'HealthcareResult',
+    'HealthcareTaskResult',
     'InnerError',
     'JobDescriptor',
     'JobManifest',
     'JobManifestTasks',
     'JobMetadata',
     'KeyPhraseResult',
+    'KeyPhraseTaskResult',
     'KeyPhrasesTask',
     'KeyPhrasesTaskParameters',
     'LanguageBatchInput',
@@ -226,6 +241,7 @@ __all__ = [
     'PiiResult',
     'PiiTask',
     'PiiTaskParameters',
+    'PiiTaskResult',
     'RequestStatistics',
     'SentenceAssessment',
     'SentenceSentiment',
@@ -234,12 +250,12 @@ __all__ = [
     'SentimentAnalysisTaskParameters',
     'SentimentConfidenceScorePerLabel',
     'SentimentResponse',
+    'SentimentTaskResult',
     'TargetConfidenceScoreLabel',
     'TargetRelation',
     'TaskState',
     'TasksState',
     'TasksStateTasks',
-    'TasksStateTasksDetails',
     'TasksStateTasksEntityLinkingTasksItem',
     'TasksStateTasksEntityRecognitionPiiTasksItem',
     'TasksStateTasksEntityRecognitionTasksItem',
@@ -252,6 +268,7 @@ __all__ = [
     'Conditionality',
     'DocumentSentimentValue',
     'ErrorCodeValue',
+    'HealthcareEntityCategory',
     'InnerErrorCodeValue',
     'PiiCategory',
     'PiiTaskParametersDomain',

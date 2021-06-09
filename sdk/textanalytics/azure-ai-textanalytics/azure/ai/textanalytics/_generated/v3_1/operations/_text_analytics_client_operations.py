@@ -34,13 +34,10 @@ class TextAnalyticsClientOperationsMixin(object):
         # type: (...) -> Optional["_models.AnalyzeJobState"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AnalyzeJobState"]]
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -48,6 +45,7 @@ class TextAnalyticsClientOperationsMixin(object):
         url = self._analyze_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -71,7 +69,8 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         deserialized = None
@@ -99,7 +98,7 @@ class TextAnalyticsClientOperationsMixin(object):
         executed.
 
         :param body: Collection of documents to analyze and tasks to execute.
-        :type body: ~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeBatchInput
+        :type body: ~azure.ai.textanalytics.v3_1.models.AnalyzeBatchInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AnalyzeActionsLROPollingMethod.
@@ -107,7 +106,7 @@ class TextAnalyticsClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AnalyzeActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
-        :rtype: ~...._lro.AnalyzeActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeJobState]
+        :rtype: ~...._lro.AnalyzeActionsLROPoller[~azure.ai.textanalytics.v3_1.models.AnalyzeJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -136,6 +135,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
 
         if polling is True: polling_method = AnalyzeActionsLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -180,23 +180,22 @@ class TextAnalyticsClientOperationsMixin(object):
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeJobState, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeJobState
+        :rtype: ~azure.ai.textanalytics.v3_1.models.AnalyzeJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeJobState"]
         error_map = {
-            401: ClientAuthenticationError,
-            409: ResourceExistsError,
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        api_version = "v3.1"
         accept = "application/json, text/json"
 
         # Construct URL
         url = self.analyze_status.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -220,7 +219,8 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AnalyzeJobState', pipeline_response)
 
@@ -256,23 +256,22 @@ class TextAnalyticsClientOperationsMixin(object):
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HealthcareJobState, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.HealthcareJobState
+        :rtype: ~azure.ai.textanalytics.v3_1.models.HealthcareJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.HealthcareJobState"]
         error_map = {
-            401: ClientAuthenticationError,
-            409: ResourceExistsError,
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        api_version = "v3.1"
         accept = "application/json, text/json"
 
         # Construct URL
         url = self.health_status.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -296,7 +295,8 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('HealthcareJobState', pipeline_response)
 
@@ -314,18 +314,17 @@ class TextAnalyticsClientOperationsMixin(object):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
-            401: ClientAuthenticationError,
-            409: ResourceExistsError,
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        api_version = "v3.1"
         accept = "application/json, text/json"
 
         # Construct URL
         url = self._cancel_health_job_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -343,7 +342,8 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
@@ -398,6 +398,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
         }
 
@@ -426,15 +427,12 @@ class TextAnalyticsClientOperationsMixin(object):
         # type: (...) -> Optional["_models.HealthcareJobState"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.HealthcareJobState"]]
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
+        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -442,6 +440,7 @@ class TextAnalyticsClientOperationsMixin(object):
         url = self._health_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -468,7 +467,8 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         deserialized = None
@@ -499,14 +499,14 @@ class TextAnalyticsClientOperationsMixin(object):
         symptoms, etc) and their relations.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1.models.StringIndexType
         :param logging_opt_out: (Optional) If set to true, you opt-out of having your text input logged
          for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to
          allow for troubleshooting issues in providing you with the Text Analytics natural language
@@ -522,7 +522,7 @@ class TextAnalyticsClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AnalyzeHealthcareEntitiesLROPoller that returns either HealthcareJobState or the result of cls(response)
-        :rtype: ~...._lro.AnalyzeHealthcareEntitiesLROPoller[~azure.ai.textanalytics.v3_1_preview_5.models.HealthcareJobState]
+        :rtype: ~...._lro.AnalyzeHealthcareEntitiesLROPoller[~azure.ai.textanalytics.v3_1.models.HealthcareJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -554,6 +554,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
 
         if polling is True: polling_method = AnalyzeHealthcareEntitiesLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -588,7 +589,7 @@ class TextAnalyticsClientOperationsMixin(object):
         Analytics API</a>` for the list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
@@ -606,23 +607,20 @@ class TextAnalyticsClientOperationsMixin(object):
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntitiesResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.EntitiesResult
+        :rtype: ~azure.ai.textanalytics.v3_1.models.EntitiesResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EntitiesResult"]
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
+        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -630,6 +628,7 @@ class TextAnalyticsClientOperationsMixin(object):
         url = self.entities_recognition_general.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -658,7 +657,8 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('EntitiesResult', pipeline_response)
 
@@ -689,7 +689,7 @@ class TextAnalyticsClientOperationsMixin(object):
         list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
@@ -710,25 +710,22 @@ class TextAnalyticsClientOperationsMixin(object):
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1.models.StringIndexType
         :param pii_categories: (Optional) describes the PII categories to return.
-        :type pii_categories: list[str or ~azure.ai.textanalytics.v3_1_preview_5.models.PiiCategory]
+        :type pii_categories: list[str or ~azure.ai.textanalytics.v3_1.models.PiiCategory]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PiiResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.PiiResult
+        :rtype: ~azure.ai.textanalytics.v3_1.models.PiiResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PiiResult"]
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
+        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -736,6 +733,7 @@ class TextAnalyticsClientOperationsMixin(object):
         url = self.entities_recognition_pii.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -768,7 +766,8 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('PiiResult', pipeline_response)
 
@@ -795,7 +794,7 @@ class TextAnalyticsClientOperationsMixin(object):
         the list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
@@ -813,23 +812,20 @@ class TextAnalyticsClientOperationsMixin(object):
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntityLinkingResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.EntityLinkingResult
+        :rtype: ~azure.ai.textanalytics.v3_1.models.EntityLinkingResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EntityLinkingResult"]
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
+        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -837,6 +833,7 @@ class TextAnalyticsClientOperationsMixin(object):
         url = self.entities_linking.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -865,7 +862,8 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('EntityLinkingResult', pipeline_response)
 
@@ -891,7 +889,7 @@ class TextAnalyticsClientOperationsMixin(object):
         enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
@@ -908,20 +906,17 @@ class TextAnalyticsClientOperationsMixin(object):
         :type logging_opt_out: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyPhraseResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.KeyPhraseResult
+        :rtype: ~azure.ai.textanalytics.v3_1.models.KeyPhraseResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyPhraseResult"]
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
+        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -929,6 +924,7 @@ class TextAnalyticsClientOperationsMixin(object):
         url = self.key_phrases.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -955,7 +951,8 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyPhraseResult', pipeline_response)
 
@@ -982,7 +979,7 @@ class TextAnalyticsClientOperationsMixin(object):
         enabled languages.
 
         :param documents:
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.LanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1.models.LanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
@@ -999,20 +996,17 @@ class TextAnalyticsClientOperationsMixin(object):
         :type logging_opt_out: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LanguageResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.LanguageResult
+        :rtype: ~azure.ai.textanalytics.v3_1.models.LanguageResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LanguageResult"]
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.LanguageBatchInput(documents=documents)
+        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -1020,6 +1014,7 @@ class TextAnalyticsClientOperationsMixin(object):
         url = self.languages.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1046,7 +1041,8 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('LanguageResult', pipeline_response)
 
@@ -1074,7 +1070,7 @@ class TextAnalyticsClientOperationsMixin(object):
         (targets and assessments).
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
@@ -1095,23 +1091,20 @@ class TextAnalyticsClientOperationsMixin(object):
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SentimentResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.SentimentResponse
+        :rtype: ~azure.ai.textanalytics.v3_1.models.SentimentResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SentimentResponse"]
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
+        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -1119,6 +1112,7 @@ class TextAnalyticsClientOperationsMixin(object):
         url = self.sentiment.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1149,7 +1143,8 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SentimentResponse', pipeline_response)
 
