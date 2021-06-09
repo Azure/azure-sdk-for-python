@@ -17,7 +17,7 @@ except ImportError:
 import zlib
 import math
 import sys
-import string
+import os
 import random
 import re
 import logging
@@ -34,6 +34,7 @@ try:
 except ImportError:
     from io import StringIO
 
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.credentials import AccessToken
 from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
@@ -49,6 +50,8 @@ try:
     from devtools_testutils import mgmt_settings_real as settings
 except ImportError:
     from devtools_testutils import mgmt_settings_fake as settings
+
+from .service_versions import service_version_map
 
 import pytest
 
@@ -309,6 +312,32 @@ class StorageTestCase(AzureMgmtTestCase):
 
     def generate_fake_token(self):
         return FakeTokenCredential()
+
+    def _get_service_version(self, **kwargs):
+        env_version = service_version_map.get(os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION","LATEST"))
+        return kwargs.pop("service_version", env_version)
+
+    def create_storage_client(self, client, *args, **kwargs):
+        kwargs["api_version"] = self._get_service_version(**kwargs)
+        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
+        return client(*args, **kwargs)
+
+    def create_storage_client_from_conn_str(self, client, *args, **kwargs):
+        kwargs["api_version"] = self._get_service_version(**kwargs)
+        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
+        return client.from_connection_string(*args, **kwargs)
+
+
+class ApiVersionAssertPolicy(SansIOHTTPPolicy):
+    """
+    Assert the ApiVersion is set properly on the response
+    """
+
+    def __init__(self, api_version):
+        self.api_version = api_version
+
+    def on_request(self, request):
+        assert request.http_request.headers['x-ms-version'] == self.api_version
 
 
 def not_for_emulator(test):
