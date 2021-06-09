@@ -35,6 +35,9 @@ if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
 
 
+NO_SAN_OR_SUBJECT = "You need to set either subject or one of the subject alternative names parameters in the policy"
+
+
 class CertificateClient(KeyVaultClientBase):
     """A high-level interface for managing a vault's certificates.
 
@@ -68,17 +71,20 @@ class CertificateClient(KeyVaultClientBase):
         an :class:`~azure.core.exceptions.HttpResponseError`
 
         :param str certificate_name: The name of the certificate.
-        :param policy: The management policy for the certificate.
+        :param policy: The management policy for the certificate. Either subject or one of the subject alternative
+            name properties are required.
         :type policy:
-         ~azure.keyvault.certificates.CertificatePolicy
+            ~azure.keyvault.certificates.CertificatePolicy
         :keyword bool enabled: Whether the certificate is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :returns: An LROPoller for the create certificate operation. Waiting on the poller
-         gives you the certificate if creation is successful, the CertificateOperation if not.
+            gives you the certificate if creation is successful, the CertificateOperation if not.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.KeyVaultCertificate or
-         ~azure.keyvault.certificates.CertificateOperation]
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+            ~azure.keyvault.certificates.CertificateOperation]
+        :raises:
+            :class:`ValueError` if the certificate policy is invalid,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors.
 
         Keyword arguments
             - *enabled (bool)* - Determines whether the object is enabled.
@@ -92,11 +98,13 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Create a certificate
                 :dedent: 8
         """
+        if not (policy.san_emails or policy.san_user_principal_names or policy.san_dns_names or policy.subject):
+            raise ValueError(NO_SAN_OR_SUBJECT)
+
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
         enabled = kwargs.pop("enabled", None)
-
 
         if enabled is not None:
             attributes = self._models.CertificateAttributes(enabled=enabled)
@@ -106,7 +114,7 @@ class CertificateClient(KeyVaultClientBase):
         parameters = self._models.CertificateCreateParameters(
             certificate_policy=policy._to_certificate_policy_bundle(),
             certificate_attributes=attributes,
-            tags=kwargs.pop("tags", None)
+            tags=kwargs.pop("tags", None),
         )
 
         cert_bundle = self._client.create_certificate(
@@ -332,7 +340,6 @@ class CertificateClient(KeyVaultClientBase):
 
         return KeyVaultOperationPoller(polling_method)
 
-
     @distributed_trace
     def import_certificate(self, certificate_name, certificate_bytes, **kwargs):
         # type: (str, bytes, **Any) -> KeyVaultCertificate
@@ -459,8 +466,7 @@ class CertificateClient(KeyVaultClientBase):
             attributes = None
 
         parameters = self._models.CertificateUpdateParameters(
-            certificate_attributes=attributes,
-            tags=kwargs.pop("tags", None)
+            certificate_attributes=attributes, tags=kwargs.pop("tags", None)
         )
 
         bundle = self._client.update_certificate(
@@ -528,7 +534,8 @@ class CertificateClient(KeyVaultClientBase):
         bundle = self._client.restore_certificate(
             vault_base_url=self.vault_url,
             parameters=self._models.CertificateRestoreParameters(certificate_bundle_backup=backup),
-            error_map=_error_map, **kwargs
+            error_map=_error_map,
+            **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -795,9 +802,7 @@ class CertificateClient(KeyVaultClientBase):
             attributes = None
 
         parameters = self._models.CertificateMergeParameters(
-            x509_certificates=x509_certificates,
-            certificate_attributes=attributes,
-            tags=kwargs.pop("tags", None)
+            x509_certificates=x509_certificates, certificate_attributes=attributes, tags=kwargs.pop("tags", None)
         )
 
         bundle = self._client.merge_certificate(
@@ -884,9 +889,7 @@ class CertificateClient(KeyVaultClientBase):
         else:
             admin_details = None
         if organization_id or admin_details:
-            organization_details = self._models.OrganizationDetails(
-                id=organization_id, admin_details=admin_details
-            )
+            organization_details = self._models.OrganizationDetails(id=organization_id, admin_details=admin_details)
         else:
             organization_details = None
         if enabled is not None:
@@ -902,11 +905,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
         issuer_bundle = self._client.set_certificate_issuer(
-            vault_base_url=self.vault_url,
-            issuer_name=issuer_name,
-            parameter=parameters,
-            error_map=_error_map,
-            **kwargs
+            vault_base_url=self.vault_url, issuer_name=issuer_name, parameter=parameters, error_map=_error_map, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
@@ -951,9 +950,7 @@ class CertificateClient(KeyVaultClientBase):
         else:
             admin_details = None
         if organization_id or admin_details:
-            organization_details = self._models.OrganizationDetails(
-                id=organization_id, admin_details=admin_details
-            )
+            organization_details = self._models.OrganizationDetails(id=organization_id, admin_details=admin_details)
         else:
             organization_details = None
         if enabled is not None:
@@ -965,15 +962,11 @@ class CertificateClient(KeyVaultClientBase):
             provider=kwargs.pop("provider", None),
             credentials=issuer_credentials,
             organization_details=organization_details,
-            attributes=issuer_attributes
+            attributes=issuer_attributes,
         )
 
         issuer_bundle = self._client.update_certificate_issuer(
-            vault_base_url=self.vault_url,
-            issuer_name=issuer_name,
-            parameter=parameters,
-            error_map=_error_map,
-            **kwargs
+            vault_base_url=self.vault_url, issuer_name=issuer_name, parameter=parameters, error_map=_error_map, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
