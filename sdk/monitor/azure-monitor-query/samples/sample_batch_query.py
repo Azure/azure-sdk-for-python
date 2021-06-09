@@ -16,6 +16,7 @@ credential  = ClientSecretCredential(
 
 client = LogsQueryClient(credential)
 
+# [START send_batch_query]
 requests = [
     LogsQueryRequest(
         query="AzureActivity | summarize count()",
@@ -45,3 +46,5 @@ for response in response.responses:
         for table in body.tables:
             df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
             print(df)
+
+# [END send_batch_query]
