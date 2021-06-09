@@ -108,6 +108,8 @@ time-stamped data. Each set of metric values is a time series with the following
 
 ### Get logs for a query
 
+This sample shows getting a log query. to handle the response and view it in a tabular form, the [pandas](https://pypi.org/project/pandas/) library is used. Please look at the samples if you don't want to use the pandas library.
+
 ```Python
 import os
 import pandas as pd
@@ -130,7 +132,12 @@ where TimeGenerated > ago(12h) |
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
 # returns LogsQueryResults 
-response = client.query(os.environ['LOG_WORKSPACE_ID'], query)
+response = client.query(
+    os.environ['LOG_WORKSPACE_ID'],
+    query,
+    start_time=datetime(2021, 6, 2),
+    end_time=datetime.now()
+    )
 
 if not response.tables:
     print("No results for the query")
@@ -141,6 +148,8 @@ for table in response.tables:
 ```
 
 ### Get Logs for multiple queries
+
+This sample shows sending multiple queries at the same time using batch query API. For each query, a `LogQueryRequest` object can be used. Alternatively, a dictionary can be used as well.
 
 ```Python
 import os
@@ -160,13 +169,14 @@ client = LogsQueryClient(credential)
 requests = [
     LogsQueryRequest(
         query="AzureActivity | summarize count()",
-        timespan="PT1H",
+        duration="PT1H",
         workspace= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsQueryRequest(
         query= """AppRequests | take 10  |
             summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
-        timespan="PT1H",
+        duration="PT1H",
+        start_time=datetime(2021, 6, 2),
         workspace= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsQueryRequest(
@@ -188,6 +198,8 @@ for response in response.responses:
 
 ### Get logs with server timeout
 
+This sample shows setting a server timeout in seconds. A GateWay timeout is raised if the query takes more time than the mentioned timeout. The default is 180 seconds and can be set uptio 10 minutes (600 seconds).
+
 ```Python
 import os
 import pandas as pd
@@ -205,16 +217,14 @@ client = LogsQueryClient(credential)
 
 response = client.query(
     os.environ['LOG_WORKSPACE_ID'],
-    "Perf | summarize count() by bin(TimeGenerated, 4h) | render barchart title='24H Perf events'",
-    server_timeout=10,
+    "range x from 1 to 10000000000 step 1 | count",
+    server_timeout=1,
     )
-
-for table in response.tables:
-    df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
-    print(df)
 ```
 
 ### Get Metrics
+
+This example shows getting the metrics for an EventGrid subscription. The resource URI is that of an eventgrid topic.
 
 ```Python
 import os
@@ -229,7 +239,20 @@ credential  = ClientSecretCredential(
     )
 
 client = MetricsQueryClient(credential)
-response = client.query(os.environ['METRICS_RESOURCE_URI'], metric_names=["Microsoft.CognitiveServices/accounts"])
+
+metrics_uri = os.environ['METRICS_RESOURCE_URI']
+response = client.query(
+    metrics_uri,
+    metric_names=["PublishSuccessCount"],
+    start_time=datetime(2021, 5, 25),
+    duration='P1D'
+    )
+
+for metric in response.metrics:
+    print(metric.name)
+    for time_series_element in metric.timeseries:
+        for metric_value in time_series_element.data:
+            print(metric_value.time_stamp)
 ```
 
 ## Troubleshooting
@@ -268,9 +291,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [azure_cli_link]: https://pypi.org/project/azure-cli/
 [python-query-src]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-query/
-[python-query-pypi]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-query/
-[python-query-product-docs]: https://docs.microsoft.com/rest/api/monitor/metrics
-[python-query-ref-docs]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-query/
+[python-query-pypi]: https://aka.ms/azsdk-python-monitor-query-pypi
+[python-query-product-docs]: https://docs.microsoft.com/azure/azure-monitor/
+[python-query-ref-docs]: https://docs.microsoft.com/python/api/overview/azure/?view=azure-python
 [python-query-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/monitor/azure-monitor-query/samples
 [python-query-changelog]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/monitor/azure-monitor-query/CHANGELOG.md
 [pip]: https://pypi.org/project/pip/

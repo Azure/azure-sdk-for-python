@@ -7,7 +7,7 @@ from datetime import datetime
 from azure.monitor.query import LogsQueryClient
 from azure.identity import ClientSecretCredential
 
-
+# [START client_auth_with_token_cred]
 credential  = ClientSecretCredential(
         client_id = os.environ['AZURE_CLIENT_ID'],
         client_secret = os.environ['AZURE_CLIENT_SECRET'],
@@ -15,9 +15,11 @@ credential  = ClientSecretCredential(
     )
 
 client = LogsQueryClient(credential)
+# [END client_auth_with_token_cred]
 
 # Response time trend 
 # request duration over the last 12 hours. 
+# [START send_logs_query]
 query = """AppRequests | 
 where TimeGenerated > ago(12h) | 
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
@@ -31,7 +33,7 @@ if not response.tables:
 for table in response.tables:
     df = pd.DataFrame(table.rows, columns=[col.name for col in table.columns])
     print(df)
-
+# [END send_logs_query]
 """
     TimeGenerated                                        _ResourceId          avgRequestDuration
 0   2021-05-27T08:40:00Z  /subscriptions/faa080af-c1d8-40ad-9cce-e1a450c...  27.307699999999997
