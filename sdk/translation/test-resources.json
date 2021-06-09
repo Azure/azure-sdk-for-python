@@ -77,7 +77,7 @@
         },
         "targetResourceId": {
             "type": "string",
-            "defaultValue": "[resourceId('2cd617ea-1866-46b1-90e3-fffb087ebf9b', concat('rg-', parameters('baseName')), 'Microsoft.Storage/storageAccounts', parameters('blobStorageAccount'))]"
+            "defaultValue": "[resourceId('Microsoft.Storage/storageAccounts', parameters('blobStorageAccount'))]"
         },
         "targetContainerName_1": {
             "type": "string",
