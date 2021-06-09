@@ -28,6 +28,7 @@ from devtools_testutils import (
     StorageAccountPreparer,
     FakeResource,
 )
+from devtools_testutils.storage import StorageTestCase
 from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError, create_random_name
 try:
     from cStringIO import StringIO      # Python 2
@@ -63,33 +64,33 @@ os.environ['AZURE_TEST_RUN_LIVE'] = os.environ.get('AZURE_TEST_RUN_LIVE', None) 
 os.environ['AZURE_SKIP_LIVE_RECORDING'] = os.environ.get('AZURE_SKIP_LIVE_RECORDING', None) or SKIP_LIVE_RECORDING
 
 
-class FakeTokenCredential(object):
-    """Protocol for classes able to provide OAuth tokens.
-    :param str scopes: Lets you specify the type of access needed.
-    """
-    def __init__(self):
-        self.token = AccessToken("YOU SHALL NOT PASS", 0)
-        self.get_token_count = 0
+# class FakeTokenCredential(object):
+#     """Protocol for classes able to provide OAuth tokens.
+#     :param str scopes: Lets you specify the type of access needed.
+#     """
+#     def __init__(self):
+#         self.token = AccessToken("YOU SHALL NOT PASS", 0)
+#         self.get_token_count = 0
 
-    def get_token(self, *args):
-        self.get_token_count += 1
-        return self.token
+#     def get_token(self, *args):
+#         self.get_token_count += 1
+#         return self.token
 
 
-class XMSRequestIDBody(RecordingProcessor):
-    """This process is used for Storage batch call only, to avoid the echo policy.
-    """
-    def process_response(self, response):
-        content_type = None
-        for key, value in response.get('headers', {}).items():
-            if key.lower() == 'content-type':
-                content_type = (value[0] if isinstance(value, list) else value).lower()
-                break
+# class XMSRequestIDBody(RecordingProcessor):
+#     """This process is used for Storage batch call only, to avoid the echo policy.
+#     """
+#     def process_response(self, response):
+#         content_type = None
+#         for key, value in response.get('headers', {}).items():
+#             if key.lower() == 'content-type':
+#                 content_type = (value[0] if isinstance(value, list) else value).lower()
+#                 break
 
-        if content_type and 'multipart/mixed' in content_type:
-            response['body']['string'] = re.sub(b"x-ms-client-request-id: [a-f0-9-]+\r\n", b"", response['body']['string'])
+#         if content_type and 'multipart/mixed' in content_type:
+#             response['body']['string'] = re.sub(b"x-ms-client-request-id: [a-f0-9-]+\r\n", b"", response['body']['string'])
 
-        return response
+#         return response
 
 
 class GlobalStorageAccountPreparer(AzureMgmtPreparer):
@@ -153,191 +154,191 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
         }
 
 
-class StorageTestCase(AzureMgmtTestCase):
+# class StorageTestCase(AzureMgmtTestCase):
 
-    def __init__(self, *args, **kwargs):
-        super(StorageTestCase, self).__init__(*args, **kwargs)
-        self.replay_processors.append(XMSRequestIDBody())
-        self.logger = logging.getLogger('azure.storage')
-        self.configure_logging()
+#     def __init__(self, *args, **kwargs):
+#         super(StorageTestCase, self).__init__(*args, **kwargs)
+#         self.replay_processors.append(XMSRequestIDBody())
+#         self.logger = logging.getLogger('azure.storage')
+#         self.configure_logging()
 
-    def connection_string(self, account, key):
-        return "DefaultEndpointsProtocol=https;AcCounTName=" + account.name + ";AccOuntKey=" + str(key) + ";EndpoIntSuffix=core.windows.net"
+#     def connection_string(self, account, key):
+#         return "DefaultEndpointsProtocol=https;AcCounTName=" + account.name + ";AccOuntKey=" + str(key) + ";EndpoIntSuffix=core.windows.net"
 
-    def account_url(self, storage_account, storage_type):
-        """Return an url of storage account.
+#     def account_url(self, storage_account, storage_type):
+#         """Return an url of storage account.
 
-        :param str storage_account: Storage account name
-        :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
-        """
-        try:
-            if storage_type == "blob":
-                return storage_account.primary_endpoints.blob.rstrip("/")
-            if storage_type == "queue":
-                return storage_account.primary_endpoints.queue.rstrip("/")
-            if storage_type == "file":
-                return storage_account.primary_endpoints.file.rstrip("/")
-            else:
-                raise ValueError("Unknown storage type {}".format(storage_type))
-        except AttributeError: # Didn't find "primary_endpoints"
-            return 'https://{}.{}.core.windows.net'.format(storage_account, storage_type)
+#         :param str storage_account: Storage account name
+#         :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
+#         """
+#         try:
+#             if storage_type == "blob":
+#                 return storage_account.primary_endpoints.blob.rstrip("/")
+#             if storage_type == "queue":
+#                 return storage_account.primary_endpoints.queue.rstrip("/")
+#             if storage_type == "file":
+#                 return storage_account.primary_endpoints.file.rstrip("/")
+#             else:
+#                 raise ValueError("Unknown storage type {}".format(storage_type))
+#         except AttributeError: # Didn't find "primary_endpoints"
+#             return 'https://{}.{}.core.windows.net'.format(storage_account, storage_type)
 
-    def configure_logging(self):
-        enable_logging = ENABLE_LOGGING
+#     def configure_logging(self):
+#         enable_logging = ENABLE_LOGGING
 
-        self.enable_logging() if enable_logging else self.disable_logging()
+#         self.enable_logging() if enable_logging else self.disable_logging()
 
-    def enable_logging(self):
-        handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-        self.logger.handlers = [handler]
-        self.logger.setLevel(logging.DEBUG)
-        self.logger.propagate = True
-        self.logger.disabled = False
+#     def enable_logging(self):
+#         handler = logging.StreamHandler()
+#         handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+#         self.logger.handlers = [handler]
+#         self.logger.setLevel(logging.DEBUG)
+#         self.logger.propagate = True
+#         self.logger.disabled = False
 
-    def disable_logging(self):
-        self.logger.propagate = False
-        self.logger.disabled = True
-        self.logger.handlers = []
+#     def disable_logging(self):
+#         self.logger.propagate = False
+#         self.logger.disabled = True
+#         self.logger.handlers = []
 
-    def sleep(self, seconds):
-        if self.is_live:
-            time.sleep(seconds)
+#     def sleep(self, seconds):
+#         if self.is_live:
+#             time.sleep(seconds)
 
-    def get_random_bytes(self, size):
-        # recordings don't like random stuff. making this more
-        # deterministic.
-        return b'a'*size
+#     def get_random_bytes(self, size):
+#         # recordings don't like random stuff. making this more
+#         # deterministic.
+#         return b'a'*size
 
-    def get_random_text_data(self, size):
-        '''Returns random unicode text data exceeding the size threshold for
-        chunking blob upload.'''
-        checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xffffffff
-        rand = random.Random(checksum)
-        text = u''
-        words = [u'hello', u'world', u'python', u'啊齄丂狛狜']
-        while (len(text) < size):
-            index = int(rand.random()*(len(words) - 1))
-            text = text + u' ' + words[index]
+#     def get_random_text_data(self, size):
+#         '''Returns random unicode text data exceeding the size threshold for
+#         chunking blob upload.'''
+#         checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xffffffff
+#         rand = random.Random(checksum)
+#         text = u''
+#         words = [u'hello', u'world', u'python', u'啊齄丂狛狜']
+#         while (len(text) < size):
+#             index = int(rand.random()*(len(words) - 1))
+#             text = text + u' ' + words[index]
 
-        return text
+#         return text
 
-    @staticmethod
-    def _set_test_proxy(service, settings):
-        if settings.USE_PROXY:
-            service.set_proxy(
-                settings.PROXY_HOST,
-                settings.PROXY_PORT,
-                settings.PROXY_USER,
-                settings.PROXY_PASSWORD,
-            )
+#     @staticmethod
+#     def _set_test_proxy(service, settings):
+#         if settings.USE_PROXY:
+#             service.set_proxy(
+#                 settings.PROXY_HOST,
+#                 settings.PROXY_PORT,
+#                 settings.PROXY_USER,
+#                 settings.PROXY_PASSWORD,
+#             )
 
-    def assertNamedItemInContainer(self, container, item_name, msg=None):
-        def _is_string(obj):
-            if sys.version_info >= (3,):
-                return isinstance(obj, str)
-            else:
-                return isinstance(obj, basestring)
-        for item in container:
-            if _is_string(item):
-                if item == item_name:
-                    return
-            elif isinstance(item, dict):
-                if item_name == item['name']:
-                    return
-            elif item.name == item_name:
-                return
-            elif hasattr(item, 'snapshot') and item.snapshot == item_name:
-                return
-
-
-        standardMsg = '{0} not found in {1}'.format(
-            repr(item_name), [str(c) for c in container])
-        self.fail(self._formatMessage(msg, standardMsg))
-
-    def assertNamedItemNotInContainer(self, container, item_name, msg=None):
-        for item in container:
-            if item.name == item_name:
-                standardMsg = '{0} unexpectedly found in {1}'.format(
-                    repr(item_name), repr(container))
-                self.fail(self._formatMessage(msg, standardMsg))
-
-    def assert_upload_progress(self, size, max_chunk_size, progress, unknown_size=False):
-        '''Validates that the progress chunks align with our chunking procedure.'''
-        index = 0
-        total = None if unknown_size else size
-        small_chunk_size = size % max_chunk_size
-        self.assertEqual(len(progress), math.ceil(size / max_chunk_size))
-        for i in progress:
-            self.assertTrue(i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size)
-            self.assertEqual(i[1], total)
-
-    def assert_download_progress(self, size, max_chunk_size, max_get_size, progress):
-        '''Validates that the progress chunks align with our chunking procedure.'''
-        if size <= max_get_size:
-            self.assertEqual(len(progress), 1)
-            self.assertTrue(progress[0][0], size)
-            self.assertTrue(progress[0][1], size)
-        else:
-            small_chunk_size = (size - max_get_size) % max_chunk_size
-            self.assertEqual(len(progress), 1 + math.ceil((size - max_get_size) / max_chunk_size))
-
-            self.assertTrue(progress[0][0], max_get_size)
-            self.assertTrue(progress[0][1], size)
-            for i in progress[1:]:
-                self.assertTrue(i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size)
-                self.assertEqual(i[1], size)
-
-    def generate_oauth_token(self):
-        if self.is_live:
-            from azure.identity import ClientSecretCredential
-            return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
-            )
-        return self.generate_fake_token()
-
-    def generate_sas_token(self):
-        fake_key = 'a'*30 + 'b'*30
-
-        return '?' + generate_account_sas(
-            account_name = 'test', # name of the storage account
-            account_key = fake_key, # key for the storage account
-            resource_types = ResourceTypes(object=True),
-            permission = AccountSasPermissions(read=True,list=True),
-            start = datetime.now() - timedelta(hours = 24),
-            expiry = datetime.now() + timedelta(days = 8)
-        )
-
-    def generate_fake_token(self):
-        return FakeTokenCredential()
-
-    def _get_service_version(self, **kwargs):
-        env_version = service_version_map.get(os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION","LATEST"))
-        return kwargs.pop("service_version", env_version)
-
-    def create_storage_client(self, client, *args, **kwargs):
-        kwargs["api_version"] = self._get_service_version(**kwargs)
-        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
-        return client(*args, **kwargs)
-
-    def create_storage_client_from_conn_str(self, client, *args, **kwargs):
-        kwargs["api_version"] = self._get_service_version(**kwargs)
-        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
-        return client.from_connection_string(*args, **kwargs)
+#     def assertNamedItemInContainer(self, container, item_name, msg=None):
+#         def _is_string(obj):
+#             if sys.version_info >= (3,):
+#                 return isinstance(obj, str)
+#             else:
+#                 return isinstance(obj, basestring)
+#         for item in container:
+#             if _is_string(item):
+#                 if item == item_name:
+#                     return
+#             elif isinstance(item, dict):
+#                 if item_name == item['name']:
+#                     return
+#             elif item.name == item_name:
+#                 return
+#             elif hasattr(item, 'snapshot') and item.snapshot == item_name:
+#                 return
 
 
-class ApiVersionAssertPolicy(SansIOHTTPPolicy):
-    """
-    Assert the ApiVersion is set properly on the response
-    """
+#         standardMsg = '{0} not found in {1}'.format(
+#             repr(item_name), [str(c) for c in container])
+#         self.fail(self._formatMessage(msg, standardMsg))
 
-    def __init__(self, api_version):
-        self.api_version = api_version
+#     def assertNamedItemNotInContainer(self, container, item_name, msg=None):
+#         for item in container:
+#             if item.name == item_name:
+#                 standardMsg = '{0} unexpectedly found in {1}'.format(
+#                     repr(item_name), repr(container))
+#                 self.fail(self._formatMessage(msg, standardMsg))
 
-    def on_request(self, request):
-        assert request.http_request.headers['x-ms-version'] == self.api_version
+#     def assert_upload_progress(self, size, max_chunk_size, progress, unknown_size=False):
+#         '''Validates that the progress chunks align with our chunking procedure.'''
+#         index = 0
+#         total = None if unknown_size else size
+#         small_chunk_size = size % max_chunk_size
+#         self.assertEqual(len(progress), math.ceil(size / max_chunk_size))
+#         for i in progress:
+#             self.assertTrue(i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size)
+#             self.assertEqual(i[1], total)
+
+#     def assert_download_progress(self, size, max_chunk_size, max_get_size, progress):
+#         '''Validates that the progress chunks align with our chunking procedure.'''
+#         if size <= max_get_size:
+#             self.assertEqual(len(progress), 1)
+#             self.assertTrue(progress[0][0], size)
+#             self.assertTrue(progress[0][1], size)
+#         else:
+#             small_chunk_size = (size - max_get_size) % max_chunk_size
+#             self.assertEqual(len(progress), 1 + math.ceil((size - max_get_size) / max_chunk_size))
+
+#             self.assertTrue(progress[0][0], max_get_size)
+#             self.assertTrue(progress[0][1], size)
+#             for i in progress[1:]:
+#                 self.assertTrue(i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size)
+#                 self.assertEqual(i[1], size)
+
+#     def generate_oauth_token(self):
+#         if self.is_live:
+#             from azure.identity import ClientSecretCredential
+#             return ClientSecretCredential(
+#                 self.get_settings_value("TENANT_ID"),
+#                 self.get_settings_value("CLIENT_ID"),
+#                 self.get_settings_value("CLIENT_SECRET"),
+#             )
+#         return self.generate_fake_token()
+
+#     def generate_sas_token(self):
+#         fake_key = 'a'*30 + 'b'*30
+
+#         return '?' + generate_account_sas(
+#             account_name = 'test', # name of the storage account
+#             account_key = fake_key, # key for the storage account
+#             resource_types = ResourceTypes(object=True),
+#             permission = AccountSasPermissions(read=True,list=True),
+#             start = datetime.now() - timedelta(hours = 24),
+#             expiry = datetime.now() + timedelta(days = 8)
+#         )
+
+#     def generate_fake_token(self):
+#         return FakeTokenCredential()
+
+#     def _get_service_version(self, **kwargs):
+#         env_version = service_version_map.get(os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION","LATEST"))
+#         return kwargs.pop("service_version", env_version)
+
+#     def create_storage_client(self, client, *args, **kwargs):
+#         kwargs["api_version"] = self._get_service_version(**kwargs)
+#         kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
+#         return client(*args, **kwargs)
+
+#     def create_storage_client_from_conn_str(self, client, *args, **kwargs):
+#         kwargs["api_version"] = self._get_service_version(**kwargs)
+#         kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
+#         return client.from_connection_string(*args, **kwargs)
+
+
+# class ApiVersionAssertPolicy(SansIOHTTPPolicy):
+#     """
+#     Assert the ApiVersion is set properly on the response
+#     """
+
+#     def __init__(self, api_version):
+#         self.api_version = api_version
+
+#     def on_request(self, request):
+#         assert request.http_request.headers['x-ms-version'] == self.api_version
 
 
 def not_for_emulator(test):
