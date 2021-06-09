@@ -46,7 +46,7 @@ class SkillsetsOperations:
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SearchIndexerSkillset":
         """Creates a new skillset in a search service or updates the skillset if it already exists.
 
@@ -78,7 +78,7 @@ class SkillsetsOperations:
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         prefer = "return=representation"
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -136,7 +136,7 @@ class SkillsetsOperations:
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Deletes a skillset in a search service.
 
@@ -164,7 +164,7 @@ class SkillsetsOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -207,7 +207,7 @@ class SkillsetsOperations:
         self,
         skillset_name: str,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SearchIndexerSkillset":
         """Retrieves a skillset in a search service.
 
@@ -229,7 +229,7 @@ class SkillsetsOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -271,7 +271,7 @@ class SkillsetsOperations:
         self,
         select: Optional[str] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.ListSkillsetsResult":
         """List all skillsets in a search service.
 
@@ -295,7 +295,7 @@ class SkillsetsOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -338,7 +338,7 @@ class SkillsetsOperations:
         self,
         skillset: "_models.SearchIndexerSkillset",
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SearchIndexerSkillset":
         """Creates a new skillset in a search service.
 
@@ -360,7 +360,7 @@ class SkillsetsOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
