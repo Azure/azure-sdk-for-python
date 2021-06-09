@@ -27,7 +27,6 @@ from .._configuration import AttestationClientConfiguration
 from .._models import (
     AttestationSigner,
     AttestationToken,
-    AttestationResponse,
     AttestationResult,
     AttestationData,
     AttestationTokenValidationException)
@@ -102,7 +101,7 @@ class AttestationClient(object):
         inittime_data=None, #type: AttestationData
         runtime_data=None, #type: AttestationData
         **kwargs #type:Any
-        ): #type: (...) -> AttestationResponse[AttestationResult]
+        ): #type: (...) -> AttestationResult
         """ Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
@@ -118,7 +117,7 @@ class AttestationClient(object):
         :paramtype draft_policy: str
 
         :return: Attestation service response encapsulating an :class:`AttestationResult`.
-        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.AttestationResult]
+        :rtype: azure.security.attestation.AttestationResult
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
@@ -145,7 +144,7 @@ class AttestationClient(object):
             body_type=GeneratedAttestationResult)
         if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
             raise AttestationTokenValidationException("Attestation Token Validation Failed")
-        return AttestationResponse[AttestationResult](token, AttestationResult._from_generated(token.get_body()))
+        return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace_async
     async def attest_open_enclave(
@@ -154,7 +153,7 @@ class AttestationClient(object):
         inittime_data=None, #type: AttestationData
         runtime_data=None, #type: AttestationData
         **kwargs #type: Any
-        ): #type: (...) -> AttestationResponse[AttestationResult]
+        ): #type: (...) -> AttestationResult
         """ Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
@@ -170,7 +169,7 @@ class AttestationClient(object):
 
         :paramtype draft_policy: str
         :return: Attestation service response encapsulating an :class:`AttestationResult`.
-        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.AttestationResult]
+        :rtype: azure.security.attestation.AttestationResult
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
@@ -196,7 +195,7 @@ class AttestationClient(object):
             body_type=GeneratedAttestationResult)
         if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
             raise AttestationTokenValidationException("Attestation Token Validation Failed")
-        return AttestationResponse[AttestationResult](token, AttestationResult._from_generated(token.get_body()))
+        return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace_async
     async def attest_tpm(

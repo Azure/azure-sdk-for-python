@@ -48,16 +48,16 @@ class PolicyGetSetTests(AzureTestCase):
     def test_shared_get_policy_sgx(self, attestation_location_short_name):
         attest_client = self.shared_admin_client(attestation_location_short_name)
         policy_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        print('Shared policy: ', policy_response.value)
-        assert(policy_response.value.startswith('version'))
+        print('Shared policy: ', policy_response.policy)
+        assert(policy_response.policy.startswith('version'))
         print('Token: ', policy_response.token)
 
     @AttestationPreparer()
     def test_shared_get_policy_openenclave(self, attestation_location_short_name):
         attest_client = self.shared_admin_client(attestation_location_short_name)
         policy_response = attest_client.get_policy(AttestationType.OPEN_ENCLAVE)
-        print('Shared policy: ', policy_response.value)
-        assert(policy_response.value.startswith('version'))
+        print('Shared policy: ', policy_response.policy)
+        assert(policy_response.policy.startswith('version'))
         print('Token: ', policy_response.token)
 
 
@@ -65,16 +65,16 @@ class PolicyGetSetTests(AzureTestCase):
     def test_isolated_get_policy_sgx(self, attestation_isolated_url):
         attest_client = self.create_admin_client(attestation_isolated_url)
         policy_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        print('Shared policy: ', policy_response.value)
-        assert(policy_response.value.startswith('version'))
+        print('Shared policy: ', policy_response.policy)
+        assert(policy_response.policy.startswith('version'))
         print('Token: ', policy_response.token)
 
     @AttestationPreparer()
     def test_aad_get_policy_sgx(self, attestation_aad_url):
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        print('Shared policy: ', policy_response.value)
-        assert(policy_response.value.startswith('version'))
+        print('Shared policy: ', policy_response.policy)
+        assert(policy_response.policy.startswith('version'))
         print('Token: ', policy_response.token)
 
     @AttestationPreparer()
@@ -84,14 +84,14 @@ class PolicyGetSetTests(AzureTestCase):
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE, attestation_policy)
         policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert policy_get_response.value == attestation_policy
+        assert policy_get_response.policy == attestation_policy
 
         expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy))
         hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
         hasher.update(expected_policy.serialize().encode('utf-8'))
         expected_hash = hasher.finalize()
 
-        assert expected_hash == policy_set_response.value.policy_token_hash
+        assert expected_hash == policy_set_response.policy_token_hash
 
     @AttestationPreparer()
     def test_aad_reset_policy_sgx_unsecured(self, attestation_aad_url):
@@ -99,8 +99,8 @@ class PolicyGetSetTests(AzureTestCase):
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.reset_policy(AttestationType.SGX_ENCLAVE)
 
-        assert None == policy_set_response.value.policy_token_hash
-        assert policy_set_response.value.policy_resolution == PolicyModification.REMOVED
+        assert None == policy_set_response.policy_token_hash
+        assert policy_set_response.policy_resolution == PolicyModification.REMOVED
 
     @AttestationPreparer()
     @pytest.mark.live_test_only
@@ -111,8 +111,8 @@ class PolicyGetSetTests(AzureTestCase):
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.reset_policy(AttestationType.SGX_ENCLAVE, signing_key=key, signing_certificate=signing_certificate)
 
-        assert None == policy_set_response.value.policy_token_hash
-        assert policy_set_response.value.policy_resolution == PolicyModification.REMOVED
+        assert None == policy_set_response.policy_token_hash
+        assert policy_set_response.policy_resolution == PolicyModification.REMOVED
 
 
 
@@ -130,7 +130,7 @@ class PolicyGetSetTests(AzureTestCase):
             signing_key=key,
             signing_certificate=signing_certificate)
         policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert policy_get_response.value == attestation_policy
+        assert policy_get_response.policy == attestation_policy
 
         expected_policy = AttestationToken(
             body=StoredAttestationPolicy(attestation_policy),
@@ -140,7 +140,7 @@ class PolicyGetSetTests(AzureTestCase):
         hasher.update(expected_policy.serialize().encode('utf-8'))
         expected_hash = hasher.finalize()
 
-        assert expected_hash == policy_set_response.value.policy_token_hash
+        assert expected_hash == policy_set_response.policy_token_hash
 
 
     @AttestationPreparer()
@@ -157,7 +157,7 @@ class PolicyGetSetTests(AzureTestCase):
             signing_key=key,
             signing_certificate=signing_certificate)
         policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert policy_get_response.value == attestation_policy
+        assert policy_get_response.policy == attestation_policy
 
         expected_policy = AttestationToken(
             body=StoredAttestationPolicy(attestation_policy), 
@@ -167,7 +167,7 @@ class PolicyGetSetTests(AzureTestCase):
         hasher.update(expected_policy.serialize().encode('utf-8'))
         expected_hash = hasher.finalize()
 
-        assert expected_hash == policy_set_response.value.policy_token_hash
+        assert expected_hash == policy_set_response.policy_token_hash
 
     @AttestationPreparer()
     @pytest.mark.live_test_only
@@ -178,8 +178,8 @@ class PolicyGetSetTests(AzureTestCase):
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.reset_policy(AttestationType.SGX_ENCLAVE, signing_key=key, signing_certificate=signing_certificate)
 
-        assert None == policy_set_response.value.policy_token_hash
-        assert policy_set_response.value.policy_resolution == PolicyModification.REMOVED
+        assert None == policy_set_response.policy_token_hash
+        assert policy_set_response.policy_resolution == PolicyModification.REMOVED
 
 
     def _test_get_policy_management_certificates(self, base_uri, expected_certificate):
@@ -231,11 +231,11 @@ class PolicyGetSetTests(AzureTestCase):
 
         # Add a new certificate.
         result = admin_client.add_policy_management_certificate(pem_certificate_to_add)
-        assert result.value.certificate_resolution == CertificateModification.IS_PRESENT
+        assert result.certificate_resolution == CertificateModification.IS_PRESENT
 
         # Add it again - this should be ok.
         result = admin_client.add_policy_management_certificate(pem_certificate_to_add, signing_key=pem_signing_key, signing_certificate=pem_signing_cert)
-        assert result.value.certificate_resolution == CertificateModification.IS_PRESENT
+        assert result.certificate_resolution == CertificateModification.IS_PRESENT
 
         # Ensure that the new certificate is present. 
         # We'll leverage the get certificates test to validate this.
@@ -243,11 +243,11 @@ class PolicyGetSetTests(AzureTestCase):
 
         # Now remove the certificate we just added.
         result = admin_client.remove_policy_management_certificate(pem_certificate_to_add)
-        assert result.value.certificate_resolution == CertificateModification.IS_ABSENT
+        assert result.certificate_resolution == CertificateModification.IS_ABSENT
 
         # Remove it again, this should be ok.
         result = admin_client.remove_policy_management_certificate(pem_certificate_to_add)
-        assert result.value.certificate_resolution == CertificateModification.IS_ABSENT
+        assert result.certificate_resolution == CertificateModification.IS_ABSENT
 
         # The set of certificates should now just contain the original isolated certificate.
         self._test_get_policy_management_certificates(attestation_isolated_url, pem_signing_cert)

@@ -198,18 +198,29 @@ class AttestationTest(AzureTestCase):
         response = attest_client.attest_open_enclave(
                 oe_report,
                 runtime_data=AttestationData(runtime_data, is_json=False))
-        assert response.value.enclave_held_data == runtime_data
-        assert response.value.sgx_collateral is not None
+        assert response.enclave_held_data == runtime_data
+        assert response.sgx_collateral is not None
 
         #Now do the validation again, this time specifying runtime data as JSON.
         response = attest_client.attest_open_enclave(oe_report, runtime_data=AttestationData(runtime_data, is_json=True))
         # Because the runtime data is JSON, enclave_held_data will be empty.
-        assert response.value.enclave_held_data == None
-        assert response.value.runtime_claims.get('jwk') is not None
-        assert response.value.runtime_claims['jwk']['crv']=='P-256'
-        assert response.value.sgx_collateral is not None
+        assert response.enclave_held_data == None
+        assert response.runtime_claims.get('jwk') is not None
+        assert response.runtime_claims['jwk']['crv']=='P-256'
+        assert response.sgx_collateral is not None
 
-        assert response.token.get_body().iss == response.value.issuer
+        assert response.token.get_body().iss == response.issuer
+
+        response = attest_client.attest_open_enclave(
+            oe_report,
+            runtime_data=AttestationData(runtime_data),
+            draft_policy="""version=1.0; authorizationrules{=> permit();}; issuancerules{};"""
+        )
+        assert response.enclave_held_data == None
+        assert response.runtime_claims.get('jwk') is not None
+        assert response.runtime_claims['jwk']['crv']=='P-256'
+        assert response.sgx_collateral is not None
+        assert response.token.algorithm == "none"
 
 
     @AttestationPreparer()
@@ -236,24 +247,24 @@ class AttestationTest(AzureTestCase):
         runtime_data = Base64Url.decode(_runtime_data)
         response = attest_client.attest_sgx_enclave(
             quote, runtime_data=AttestationData(runtime_data, is_json=False))
-        assert response.value.enclave_held_data == runtime_data
-        assert response.value.sgx_collateral is not None
+        assert response.enclave_held_data == runtime_data
+        assert response.sgx_collateral is not None
 
         #Now do the validation again, this time specifying runtime data as JSON.
         response = attest_client.attest_sgx_enclave(quote, runtime_data=AttestationData(runtime_data, is_json=True))
         # Because the runtime data is JSON, enclave_held_data will be empty.
-        assert response.value.enclave_held_data == None
-        assert response.value.runtime_claims.get('jwk') is not None
-        assert response.value.runtime_claims['jwk']['crv']=='P-256'
-        assert response.value.sgx_collateral is not None
+        assert response.enclave_held_data == None
+        assert response.runtime_claims.get('jwk') is not None
+        assert response.runtime_claims['jwk']['crv']=='P-256'
+        assert response.sgx_collateral is not None
 
         #And try #3, this time letting the AttestationData type figure it out.
         response = attest_client.attest_sgx_enclave(quote, runtime_data=AttestationData(runtime_data))
         # Because the runtime data is JSON, enclave_held_data will be empty.
-        assert response.value.enclave_held_data == None
-        assert response.value.runtime_claims.get('jwk') is not None
-        assert response.value.runtime_claims['jwk']['crv']=='P-256'
-        assert response.value.sgx_collateral is not None
+        assert response.enclave_held_data == None
+        assert response.runtime_claims.get('jwk') is not None
+        assert response.runtime_claims['jwk']['crv']=='P-256'
+        assert response.sgx_collateral is not None
 
 
     @AttestationPreparer()
@@ -334,6 +345,7 @@ class AttestationTest(AzureTestCase):
                 validate_token=True,
                 validate_signature=True,
                 validate_issuer=self.is_live,
+                validation_slack=1,
                 issuer=base_uri,
                 validate_expiration=self.is_live))
         return attest_client
@@ -352,6 +364,7 @@ class AttestationTest(AzureTestCase):
                 validate_signature=True,
                 validate_issuer=self.is_live,
                 issuer=base_uri,
+                validation_slack=1,
                 validate_expiration=self.is_live),
             **kwargs)
         return attest_client

@@ -20,7 +20,7 @@ from .._generated.aio import AzureAttestationRestClient
 from .._generated.models import (
     AttestationType, 
     PolicyResult as GeneratedPolicyResult, 
-    PolicyCertificatesResult, 
+    PolicyCertificatesResult as GeneratedPolicyCertificatesResult, 
     JSONWebKey, 
     AttestationCertificateManagementBody, 
     StoredAttestationPolicy as GeneratedStoredAttestationPolicy,
@@ -30,9 +30,9 @@ from .._configuration import AttestationClientConfiguration
 from .._models import (
     AttestationSigner, 
     AttestationToken, 
-    AttestationResponse, 
     PolicyCertificatesModificationResult,
-    PolicyResult,
+    PolicyCertificatesResult,
+    AttestationPolicyResult,
     AttestationTokenValidationException
 )
 from .._common import SigningKeyUtils, PemUtils
@@ -86,13 +86,13 @@ class AttestationAdministrationClient(object):
         self,
         attestation_type, #type: AttestationType
         **kwargs: Any
-        ) -> AttestationResponse[str]:
+        ) -> AttestationPolicyResult:
         """ Retrieves the attestation policy for a specified attestation type.
 
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to retrieve the policy.
         :return: Attestation service response encapsulating a string attestation policy.
-        :rtype: azure.security.attestation.AttestationResponse[str]
+        :rtype: azure.security.attestation.AttestationPolicyResult
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
         """
@@ -108,7 +108,7 @@ class AttestationAdministrationClient(object):
             if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
                 raise AttestationTokenValidationException("Token Validation of get_policy API failed.")
 
-        return AttestationResponse[str](token, actual_policy.decode('utf-8'))
+        return AttestationPolicyResult._from_generated(None, token, actual_policy.decode('utf-8'))
 
     @distributed_trace_async
     async def set_policy(
@@ -116,7 +116,7 @@ class AttestationAdministrationClient(object):
         attestation_type, #type: AttestationType
         attestation_policy, #type: str
         **kwargs #type: Any
-        ): #type: (...) -> AttestationResponse[PolicyResult]
+        ): #type: (...) -> AttestationPolicyResult
         """ Sets the attestation policy for the specified attestation type.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
@@ -160,14 +160,14 @@ class AttestationAdministrationClient(object):
             if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
                 raise AttestationTokenValidationException("Token Validation of set_policy API failed.")
 
-        return AttestationResponse[PolicyResult](token, PolicyResult._from_generated(token.get_body()))
+        return AttestationPolicyResult._from_generated(token.get_body(), token, None)
 
     @distributed_trace_async
     async def reset_policy(
         self, 
         attestation_type, #type: AttestationType
         **kwargs #type: Any
-        ): #type: (...) -> AttestationResponse[PolicyResult]
+        ): #type: (...) -> AttestationPolicyResult
         """ Resets the attestation policy for the specified attestation type to the default value.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
@@ -209,14 +209,14 @@ class AttestationAdministrationClient(object):
             if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
                 raise AttestationTokenValidationException("Token Validation of reset_policy API failed.")
 
-        return AttestationResponse[PolicyResult](token, PolicyResult._from_generated(token.get_body()))
+        return AttestationPolicyResult._from_generated(token.get_body(), token, None)
 
 
     @distributed_trace_async
     async def get_policy_management_certificates(
         self, 
         **kwargs #type: Any
-        ): #type: (...) -> AttestationResponse[list[list[bytes]]]
+        ): #type: (...) -> PolicyCertificatesResult
         """ Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only be non-empty if the
@@ -224,13 +224,13 @@ class AttestationAdministrationClient(object):
 
         :return: Attestation service response 
             encapsulating a list of PEM encoded X.509 certificate chains.
-        :rtype: azure.security.attestation.AttestationResponse[list[list[bytes]]]
+        :rtype: PolicyCertificateResult
         """
 
         cert_response = await self._client.policy_certificates.get(**kwargs)
-        token = AttestationToken[PolicyCertificatesResult](
+        token = AttestationToken[GeneratedPolicyCertificatesResult](
             token=cert_response.token,
-            body_type=PolicyCertificatesResult)
+            body_type=GeneratedPolicyCertificatesResult)
         if self._config.token_validation_options.validate_token:
             if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
                 raise AttestationTokenValidationException("Token Validation of PolicyCertificates API failed.")
@@ -241,14 +241,14 @@ class AttestationAdministrationClient(object):
         for key in cert_list.policy_certificates.keys:
             key_certs = [PemUtils.pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
             certificates.append(key_certs)
-        return AttestationResponse(token, certificates)
+        return PolicyCertificatesResult(token, certificates)
 
     @distributed_trace_async
     async def add_policy_management_certificate(
         self, 
         certificate_to_add, #type: bytes
         **kwargs #type: Any
-        ): #type: (...) -> AttestationResponse[PolicyCertificatesModificationResult]
+        ): #type: (...) -> PolicyCertificatesModificationResult
         """ Adds a new policy management certificate to the set of policy management certificates for the instance.
 
         :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
@@ -306,14 +306,14 @@ class AttestationAdministrationClient(object):
         if self._config.token_validation_options.validate_token:
             if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
                 raise Exception("Token Validation of PolicyCertificate Add API failed.")
-        return AttestationResponse[PolicyCertificatesModificationResult](token, PolicyCertificatesModificationResult._from_generated(token.get_body()))
+        return PolicyCertificatesModificationResult._from_generated(token.get_body(), token)
 
     @distributed_trace_async
     async def remove_policy_management_certificate(
         self, 
         certificate_to_add, #type: bytes
         **kwargs #type: Any
-        ): #type: (...) -> AttestationResponse[PolicyCertificatesModificationResult]
+        ): #type: (...) -> PolicyCertificatesModificationResult
         """ Removes a new policy management certificate to the set of policy management certificates for the instance.
 
         :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
@@ -368,7 +368,7 @@ class AttestationAdministrationClient(object):
         if self._config.token_validation_options.validate_token:
             if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
                 raise AttestationTokenValidationException("Token Validation of PolicyCertificate Remove API failed.")
-        return AttestationResponse[PolicyCertificatesModificationResult](token, PolicyCertificatesModificationResult._from_generated(token.get_body()))
+        return PolicyCertificatesModificationResult._from_generated(token.get_body(), token)
 
     async def _get_signers(
         self,

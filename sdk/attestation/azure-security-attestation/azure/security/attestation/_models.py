@@ -15,6 +15,7 @@ from ._generated.models import (
     PolicyResult as GeneratedPolicyResult, 
     AttestationResult as GeneratedAttestationResult,
     StoredAttestationPolicy as GeneratedStoredAttestationPolicy,
+    PolicyCertificatesModificationResult as GeneratedPolicyCertificatesModificationResult,
     JSONWebKey,
     CertificateModification,
     AttestationType,
@@ -23,6 +24,7 @@ from ._generated.models import (
 from typing import Any, Callable, Dict, List, Type, TypeVar, Generic, Union
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from cryptography.x509 import Certificate, load_pem_x509_certificate
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, RSAPublicKey
@@ -67,24 +69,31 @@ class PolicyCertificatesModificationResult(object):
      "IsPresent", "IsAbsent".
     :type certificate_resolution: str or
      ~azure.security.attestation._generated.models.CertificateModification
+    :param token: Attestation token returned by the attestation service.
+    :type token: AttestationToken
     """
 
-    def __init__(self, certificate_thumbprint, certificate_resolution):
-        #type:(str, CertificateModification)->None
+    def __init__(self, certificate_thumbprint, certificate_resolution, token):
+        #type:(str, CertificateModification, AttestationToken)->None
         self.certificate_thumbprint = certificate_thumbprint
         self.certificate_resolution = certificate_resolution
+        self.token = token
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated, token):
+        #type: (GeneratedPolicyCertificatesModificationResult, AttestationToken) -> PolicyCertificatesModificationResult
         if not generated:
             return cls
-        return cls(generated.certificate_thumbprint, generated.certificate_resolution)
+        return cls(generated.certificate_thumbprint, generated.certificate_resolution, token)
 
-class PolicyResult(object):
-    """ PolicyResult represents the result of a :meth:`azure.security.attestation.AttestationAdministrationClient.set_policy` 
-    or :meth:`azure.security.attestation.AttestationAdministrationClient.reset_policy`  API call.
+class AttestationPolicyResult(object):
+    """ AttestationPolicyResult represents the result of a 
+    :meth:`azure.security.attestation.AttestationAdministrationClient.get_policy`,
+    :meth:`azure.security.attestation.AttestationAdministrationClient.set_policy` 
+    or :meth:`azure.security.attestation.AttestationAdministrationClient.reset_policy`
+    API call.
 
-    The `PolicyResult` class is returned as the body of an attestation token from
+    The `AttestationPolicyResult` class is returned as the body of an attestation token from
     the attestation service. It can be used to ensure that the attestation service
     received the policy object sent from the client without alteration.
     
@@ -97,20 +106,34 @@ class PolicyResult(object):
     :type policy_signer: azure.security.attestation.AttestationSigner
     :param str policy_token_hash: The hash of the complete JSON Web Signature
         presented to the `set_policy` or `reset_policy` API.
+    :param str policy: Attestation policy for :meth:`azure.security.attestation.AttestationAdministrationClient.get_policy` results.
+    :param token: Attestation Token returned from the attestation service.
+    :type token: AttestationToken
 
     """
-    def __init__(self, policy_resolution, policy_signer, policy_token_hash):
-        #type:(PolicyModification, JSONWebKey, str) -> None
-        self.policy_resolution = policy_resolution
-        self.policy_signer = AttestationSigner._from_generated(policy_signer)
-        self.policy_token_hash = policy_token_hash
+    def __init__(self, token, policy_resolution, policy_signer, policy_token_hash, policy):
+        #type:(AttestationToken, PolicyModification, JSONWebKey, str, str) -> None
+        self.token = token
+        if policy:
+            self.policy = policy
+        else:
+            self.policy_resolution = policy_resolution
+            self.policy_signer = AttestationSigner._from_generated(policy_signer)
+            self.policy_token_hash = policy_token_hash
 
     @classmethod
-    def _from_generated(cls, generated):
-        #type:(GeneratedPolicyResult)->PolicyResult
-        if not generated:
-            return cls(None, None, None)
-        return cls(generated.policy_resolution, generated.policy_signer, generated.policy_token_hash)
+    def _from_generated(cls, generated, token, policyText):
+        #type:(GeneratedPolicyResult, AttestationToken, str)->AttestationPolicyResult
+        if not token:
+            raise ValueError("Token parameter must be provided.")
+        # If we have a generated policy result or policy text, return that.
+        if generated:
+            return cls(token, generated.policy_resolution, generated.policy_signer, generated.policy_token_hash, None)
+
+        if policyText:
+            return cls(token, None, None, None, policyText)
+            
+        return cls(None, None, None, None, None)
 
 class AttestationResult(object):
     """ An AttestationResult represents the claims returned from the attestation
@@ -124,9 +147,9 @@ class AttestationResult(object):
         :keyword issuer: Entity which issued the attestation token.
         :paramtype issuer: str
         :keyword unique_identifier: Unique identifier for the token.
-        :paramtype unique_identifier: str
+        :paramtype unique_identifier: str or None
         :keyword nonce: Returns the input `nonce` attribute passed to the `attest` API.
-        :paramtype nonce: str
+        :paramtype nonce: str or None
         :keyword version: Version of the token. Must be "1.0"
         :paramtype version: str
         :keyword runtime_claims: Runtime claims passed in from the caller of the attest API.
@@ -134,14 +157,14 @@ class AttestationResult(object):
         :keyword inittime_claims: Inittime claims passed in from the caller of the attest API.
         :paramtype inittime_claims: dict
         :keyword enclave_held_data: Runtime data passed in from the caller of the attest API.
-        :paramtype enclave_held_data: bytes
+        :paramtype enclave_held_data: bytes or None
         :keyword policy_claims: Attestation claims issued by policies.
-        :paramtype policy_claims: dict
+        :paramtype policy_claims: dict or None
         :keyword verifier_type: Verifier which generated this token.
         :paramtype verifier_type: str
         :keyword policy_signer: If the policy which processed the request is signed, 
             this will be the certificate which signed the policy.
-        :paramtype policy_signer: azure.security.attestation.AttestationSigner
+        :paramtype policy_signer: azure.security.attestation.AttestationSigner or None
         :keyword policy_hash: The hash of the policy which processed the attestation 
             evidence.
         :paramtype policy_hash: str
@@ -160,27 +183,28 @@ class AttestationResult(object):
         :paramtype sgx_collateral: dict
     
         """
-        self._issuer = kwargs.pop("issuer", None) #type:Union[str, None]
+        self._issuer = kwargs.pop("issuer") #type:Union[str, None]
         self._unique_identifier = kwargs.pop("unique_identifier", None) #type:Union[str, None]
         self._nonce = kwargs.pop("nonce", None) #type:Union[str, None]
-        self._version = kwargs.pop("version", None) #type:Union[str, None]
+        self._version = kwargs.pop("version") #type:str
         self._runtime_claims = kwargs.pop("runtime_claims", None) #type:Union[dict, None]
         self._inittime_claims = kwargs.pop("inittime_claims", None) #type:Union[dict, None]
         self._policy_claims = kwargs.pop("policy_claims", None) #type:Union[dict, None]
-        self._verifier_type = kwargs.pop("verifier_type", None) #type:Union[str. None]
+        self._verifier_type = kwargs.pop("verifier_type") #type:str
         self._policy_signer = kwargs.pop("policy_signer", None) #type:Union[AttestationSigner, None]
-        self._policy_hash = kwargs.pop("policy_hash", None) #type:Union[str, None]
-        self._is_debuggable = kwargs.pop("is_debuggable", None) #type:Union[bool, None]
-        self._product_id = kwargs.pop("product_id", None) #type:Union[int, None]
-        self._mr_enclave = kwargs.pop("mr_enclave", None) #type:Union[str, None]
-        self._mr_signer = kwargs.pop("mr_signer", None) #type:Union[str, None]
-        self._svn = kwargs.pop("svn", None) #type:Union[int, None]
+        self._policy_hash = kwargs.pop("policy_hash") #type:str
+        self._is_debuggable = kwargs.pop("is_debuggable") #type:bool
+        self._product_id = kwargs.pop("product_id") #type:int
+        self._mr_enclave = kwargs.pop("mr_enclave") #type:str
+        self._mr_signer = kwargs.pop("mr_signer") #type:str
+        self._svn = kwargs.pop("svn") #type:int
         self._enclave_held_data = kwargs.pop("enclave_held_data", None) #type:Union[bytes, None]
-        self._sgx_collateral = kwargs.pop("sgx_collateral", None) #type:Union[dict, None]
+        self._sgx_collateral = kwargs.pop("sgx_collateral") #type:dict
+        self._token = kwargs.pop("token") #type:AttestationToken
 
     @classmethod
-    def _from_generated(cls, generated):
-        #type:(GeneratedAttestationResult) -> AttestationResult
+    def _from_generated(cls, generated, token):
+        #type:(GeneratedAttestationResult, AttestationToken) -> AttestationResult
         return AttestationResult(
             issuer=generated.iss,
             unique_identifier=generated.jti,
@@ -198,11 +222,22 @@ class AttestationResult(object):
             mr_signer=generated.mr_signer,
             svn=generated.svn,
             enclave_held_data=generated.enclave_held_data,
-            sgx_collateral=generated.sgx_collateral)
+            sgx_collateral=generated.sgx_collateral,
+            token=token)
+
+    @property
+    def token(self):
+        #type: () -> AttestationToken
+        """ Returns the token containing the attestation result returned
+        by the attestation service.
+
+        :rtype: AttestationToken
+        """
+        return self._token
 
     @property
     def issuer(self):
-        #type:() -> Union[str, None]
+        #type:() -> str
         """ Returns the issuer of the attestation token.
 
         The issuer for the token MUST be the same as the `instance_uri` associated
@@ -242,16 +277,16 @@ class AttestationResult(object):
 
     @property
     def version(self):
-        #type:() -> Union[str, None]
+        #type:() -> str
         """ Returns the version of the information returned in the token.
 
-        :rtype: str or None
+        :rtype: str
         """
         return self._version
 
     @property
     def runtime_claims(self):
-        #type:() -> Dict[str, Any]
+        #type:() -> Union[Dict[str, Any], None]
         """ Returns the runtime claims in the token.
 
         This value will match the input `runtime_data` property to the 
@@ -268,7 +303,7 @@ class AttestationResult(object):
 
     @property
     def inittime_claims(self):
-        #type:() -> Dict[str, Any]
+        #type:() -> Union[Dict[str, Any], None]
         """ Returns the inittime claims in the token.
 
         This value will match the input `inittime_data` property to the 
@@ -285,7 +320,7 @@ class AttestationResult(object):
 
     @property
     def policy_claims(self):
-        #type:() -> Dict[str, Any]
+        #type:() -> Union[Dict[str, Any], None]
         """ Returns the claims for the token generated by attestation policy.
 
         :rtype: dict[str, Any] or None
@@ -295,10 +330,10 @@ class AttestationResult(object):
 
     @property
     def verifier_type(self):
-        #type:() -> Union[str, None]
+        #type:() -> str
         """ Returns the verifier which generated this attestation token.
 
-        :rtype: str or None
+        :rtype: str
         """
         return self._verifier_type
 
@@ -316,58 +351,58 @@ class AttestationResult(object):
 
     @property
     def policy_hash(self):
-        #type:() -> Union[str, None]
+        #type:() -> str
         """ Returns the base64url encoded SHA256 hash of the Base64Url encoded
         attestation policy which was applied when generating this token.
 
-        :rtype: str or None
+        :rtype: str
         """
         return self._policy_hash
 
     @property
     def is_debuggable(self):
-        #type:() -> Union[bool, None]
+        #type:() -> bool
         """ Returns "True" if the source evidence being attested indicates
         that the TEE has debugging enabled.
 
-        :rtype: bool or None
+        :rtype: bool
         """
         return self._is_debuggable
 
     @property
     def product_id(self):
-        #type:() -> Union[float, None]
+        #type:() -> float
         """ Returns the product id associated with the SGX enclave being attested.
 
-        :rtype: float or None
+        :rtype: float
 
         """
         return self._product_id
 
     @property
     def mr_enclave(self):
-        #type:() -> Union[str, None]
+        #type:() -> str
         """ Returns HEX encoded `mr-enclave` value of the SGX enclave being attested.
 
-        :rtype: str or None
+        :rtype: str
         """
         return self._mr_enclave
 
     @property
     def mr_signer(self):
-        #type:() -> Union[str, None]
+        #type:() -> str
         """ Returns HEX encoded `mr-signer` value of the SGX enclave being attested.
 
-        :rtype: str or None
+        :rtype: str
         """
         return self._mr_signer
 
     @property
     def svn(self):
-        #type:() -> Union[int, None]
+        #type:() -> int
         """ Returns the `svn` value of the SGX enclave being attested.
 
-        :rtype: int or None
+        :rtype: int
         """
         return self._svn
 
@@ -388,13 +423,13 @@ class AttestationResult(object):
 
     @property
     def sgx_collateral(self):
-        #type:() -> Union[Dict[str, Any], None]
+        #type:() -> Dict[str, Any]
         """ Returns a set of information describing the complete set of inputs
         to the `oe_verify_evidence`
 
-        :rtype: dict[str, Any] or None
-
+        :rtype: dict[str, Any]
         """
+
         return self._sgx_collateral
 
         # Deprecated fields.
@@ -517,8 +552,8 @@ class AttestationToken(Generic[T]):
                     raise ValueError("Cannot specify both signing_key and key or certificate and signing_certificate")
                 [key, certificate] = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
             else:
-                key = kwargs.pop('key', None)
-                certificate = kwargs.pop('certificate', None)
+                key = kwargs.pop('key', None) # type: RSAPrivateKey | EllipticCurvePrivateKey
+                certificate = kwargs.pop('certificate', None) # type: Certificate
             if key:
                 token = self._create_secured_jwt(body, key=key, certificate=certificate)
             else:
@@ -912,16 +947,31 @@ class AttestationTokenValidationException(ValueError):
         self.message = message
         super(AttestationTokenValidationException, self).__init__(self.message)
         
+class AttestationPolicyResult_NEW(object):
+    """ Represents a response from the :func:`AttestationAdministrationClient::get_policy` API.
 
-class AttestationResponse(Generic[T]):
+    :param token: Attestation Token returned from the service.
+    :type token: azure.security.attestation.AttestationToken
+    :param value: Value of the body of the attestation token.
+    :type value: str
+    """
+    def __init__(self, token, value):
+        # type (AttestationToken, str) -> None
+        self.token = token #type: AttestationToken
+        self.value = value #type: str
+
+class PolicyCertificatesResult(object):
     """ Represents a response from the attestation service.
 
     :param token: Attestation Token returned from the service.
     :type token: azure.security.attestation.AttestationToken
     :param value: Value of the body of the attestation token.
-    :type value: T
+    :type value: list[list[str]]
+
+    Returns the attestation token returned from the service and the list of
+    certificate chains which should be used to sign attestation policy requests.
     """
     def __init__(self, token, value):
-        # type (AttestationToken, T) -> None
+        # type (AttestationToken, list[list[str]) -> None
         self.token = token #type: AttestationToken
-        self.value = value #type: T
+        self.value = value #type: list[list[str]]

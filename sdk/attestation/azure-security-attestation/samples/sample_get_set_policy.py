@@ -51,6 +51,7 @@ import os
 from cryptography.x509.base import load_pem_x509_certificate
 from dotenv import find_dotenv, load_dotenv
 import base64
+import pprint
 
 
 from azure.security.attestation import (
@@ -58,6 +59,8 @@ from azure.security.attestation import (
     AttestationType,
     AttestationClient,
     AttestationData,
+    StoredAttestationPolicy,
+    AttestationToken,
     CertificateModification)
 
 from sample_collateral import sample_open_enclave_report, sample_runtime_data
@@ -85,7 +88,7 @@ class AttestationClientPolicySamples(object):
         print("Retrieve an unsecured Policy on an AAD mode attestation instance.")
         with self._create_admin_client(self.aad_url) as admin_client:
             get_result = admin_client.get_policy(AttestationType.SGX_ENCLAVE)
-            print("SGX Policy is: ", get_result.value)
+            print("SGX Policy is: ", get_result.policy)
 
     def set_policy_aad_unsecured(self):
         """
@@ -112,10 +115,10 @@ issuancerules {
     """
 
             set_result = admin_client.set_policy(AttestationType.OPEN_ENCLAVE, new_policy)
-            print("Policy Set result: ", set_result.value.policy_resolution)
+            print("Policy Set result: ", set_result.policy_resolution)
 
             get_result = admin_client.get_policy(AttestationType.OPEN_ENCLAVE)
-            if new_policy != get_result.value:
+            if new_policy != get_result.policy:
                 print("Policy does not match set policy.")
             # Attest an OpenEnclave using the new policy.
             self._attest_open_enclave(self.aad_url)
@@ -129,7 +132,7 @@ issuancerules {
         print("Reset an unsecured Policy on an AAD mode attestation instance.")
         with self._create_admin_client(self.aad_url) as admin_client:
             set_result = admin_client.reset_policy(AttestationType.OPEN_ENCLAVE)
-            print("Policy reset result: ", set_result.value.policy_resolution)
+            print("Policy reset result: ", set_result.policy_resolution)
 
     def set_policy_aad_secured(self):
         """
@@ -151,14 +154,67 @@ issuancerules {
                 """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
                 signing_key=rsa_key,
                 signing_certificate=cert)
-            print("Policy Set Resolution: ", set_result.value.policy_resolution)
+            print("Policy Set Resolution: ", set_result.policy_resolution)
             print("Resulting policy signer should match the input certificate:")
-            print("Policy Signer: ", base64.b64encode(set_result.value.policy_signer.certificates[0]).decode('ascii'))
+            print("Policy Signer: ", base64.b64encode(set_result.policy_signer.certificates[0]).decode('ascii'))
             print("Certificate:   ", base64.b64encode(cert).decode('ascii'))
             # [END set_secured_policy]
 
             # Reset the policy now that we're done.
             admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
+
+    def set_policy_validate_hash(self):
+        """
+        Sets a signed attestation policy and validates the signing certificate and
+        policy hash after the `set_policy` API returns.
+        """
+
+        write_banner("set_policy_aad_secured")
+        print("Set Secured Policy on an AAD mode attestation instance.")
+        with self._create_admin_client(self.aad_url) as admin_client:
+            # Create an RSA Key and wrap an X.509 certificate around
+            # the public key for that certificate.
+            rsa_key = create_rsa_key()
+            cert = create_x509_certificate(rsa_key, u'TestCertificate')
+
+            # [START validate_policy_hash]
+            # Set a minimal policy.
+            policy_to_set="""
+version= 1.0;
+authorizationrules{=> permit();};
+issuancerules {};
+"""
+            set_result=admin_client.set_policy(AttestationType.SGX_ENCLAVE, 
+                policy_to_set,
+                signing_key=rsa_key,
+                signing_certificate=cert)
+            print("Policy Set Resolution: ", set_result.policy_resolution)
+            print("Resulting policy signer should match the input certificate:")
+            print("Policy Signer: ", set_result.policy_signer.certificates[0].decode('ascii'))
+            print("Certificate:   ", cert.decode('ascii'))
+
+            # Create an Attestation Token object representing the stored
+            # attestation policy.
+            expected_policy = AttestationToken(
+                body=StoredAttestationPolicy(policy_to_set), 
+                signing_key=rsa_key,
+                signing_certificate=cert)
+
+            # Generate the Sha256 hash of the attestation token.
+            hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
+            hasher.update(expected_policy.serialize().encode('utf-8'))
+            expected_hash = hasher.finalize()
+
+            print("Expected hash should match returned hash.")
+            print("Expected hash: ", expected_hash)
+            print("Returned hash: ", set_result.policy_token_hash)
+
+            # [END validate_policy_hash]
+
+            # Reset the policy now that we're done.
+            admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
+
+            
 
     def reset_policy_aad_secured(self):
         """ Set a secured attestation policy on an AAD mode instance"""
@@ -171,7 +227,7 @@ issuancerules {
             set_result=admin_client.reset_policy(AttestationType.SGX_ENCLAVE, 
                 signing_key=rsa_key,
                 signing_certificate=cert)
-            print("Policy Set Resolution: ", set_result.value.policy_resolution)
+            print("Policy Set Resolution: ", set_result.policy_resolution)
 
     def get_policy_isolated(self):
         """
@@ -181,7 +237,7 @@ issuancerules {
         print("Retrieve an unsecured Policy on an Isolated mode attestation instance.")
         with self._create_admin_client(self.isolated_url) as admin_client:
             get_result = admin_client.get_policy(AttestationType.SGX_ENCLAVE)
-            print("SGX Policy is: ", get_result.value)
+            print("SGX Policy is: ", get_result.policy)
 
     def set_policy_isolated_secured(self):
         """
@@ -201,9 +257,9 @@ issuancerules {
                 signing_certificate=self.isolated_certificate) as admin_client:
             set_result=admin_client.set_policy(AttestationType.SGX_ENCLAVE, 
                 """version= 1.0;authorizationrules{=> permit();};issuancerules {};""")
-            print("Policy Set Resolution: ", set_result.value.policy_resolution)
+            print("Policy Set Resolution: ", set_result.policy_resolution)
             print("Resulting policy signer should match the input certificate:")
-            print("Policy Signer: ", base64.b64encode(set_result.value.policy_signer.certificates[0]).decode('ascii'))
+            print("Policy Signer: ", base64.b64encode(set_result.policy_signer.certificates[0]).decode('ascii'))
             print("Certificate:   ", base64.b64encode(self.isolated_certificate).decode('ascii'))
 
             print("Reset the attestation policy to the default now to avoid side effects.")
@@ -253,7 +309,7 @@ issuancerules {
                 new_certificate,
                 signing_key=self.isolated_key,
                 signing_certificate=self.isolated_certificate)
-            if add_result.value.certificate_resolution != CertificateModification.IS_PRESENT:
+            if add_result.certificate_resolution != CertificateModification.IS_PRESENT:
                 raise Exception("Certificate was not added!")
 
             # [END add_policy_management_certificate]
@@ -293,7 +349,7 @@ issuancerules {
                 signing_key=self.isolated_key, 
                 signing_certificate=self.isolated_certificate)
 
-            if remove_result.value.certificate_resolution != CertificateModification.IS_ABSENT:
+            if remove_result.certificate_resolution != CertificateModification.IS_ABSENT:
                 raise Exception("Certificate was not removed!")
             # [END remove_policy_management_certificate]
 
@@ -326,6 +382,7 @@ if __name__ == "__main__":
         sample.set_policy_aad_unsecured()
         sample.reset_policy_aad_unsecured()
         sample.set_policy_aad_secured()
+        sample.set_policy_validate_hash()
         sample.reset_policy_aad_secured()
         sample.set_policy_isolated_secured()
         sample.get_policy_management_certificates()

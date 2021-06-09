@@ -6,16 +6,17 @@
 
 from ._client import AttestationClient
 from ._administration_client import AttestationAdministrationClient
-from ._models import (AttestationResponse,
+from ._models import (
     AttestationSigner,
     AttestationToken, 
     AttestationData, 
-    PolicyResult, 
+    AttestationPolicyResult, 
     AttestationResult, 
     AttestationTokenValidationException,
     PolicyCertificatesModificationResult,
     AttestationType,
     PolicyModification,
+    PolicyCertificatesResult,
     StoredAttestationPolicy,
     CertificateModification)
 from ._configuration import TokenValidationOptions
@@ -28,12 +29,12 @@ __all__ = [
     'AttestationType',
     'AttestationToken',
     'AttestationSigner',
-    'AttestationResponse',
+    'AttestationPolicyResult',
+    'PolicyCertificatesResult',
     'AttestationResult',
     'AttestationData',
     'TokenValidationOptions',
     'StoredAttestationPolicy',
-    'PolicyResult',
     'CertificateModification',
     'PolicyModification',
     'PolicyCertificatesModificationResult',

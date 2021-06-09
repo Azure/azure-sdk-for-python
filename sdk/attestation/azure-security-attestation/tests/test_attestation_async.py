@@ -201,18 +201,18 @@ class AsyncAzureAttestationTest(AzureTestCase):
         response = await attest_client.attest_open_enclave(
                 oe_report,
                 runtime_data=AttestationData(runtime_data, is_json=False))
-        assert response.value.enclave_held_data == runtime_data
-        assert response.value.sgx_collateral is not None
+        assert response.enclave_held_data == runtime_data
+        assert response.sgx_collateral is not None
 
         #Now do the validation again, this time specifying runtime data as JSON.
         response = await attest_client.attest_open_enclave(oe_report, runtime_data=AttestationData(runtime_data, is_json=True))
         # Because the runtime data is JSON, enclave_held_data will be empty.
-        assert response.value.enclave_held_data == None
-        assert response.value.runtime_claims.get('jwk') is not None
-        assert response.value.runtime_claims['jwk']['crv']=='P-256'
-        assert response.value.sgx_collateral is not None
+        assert response.enclave_held_data == None
+        assert response.runtime_claims.get('jwk') is not None
+        assert response.runtime_claims['jwk']['crv']=='P-256'
+        assert response.sgx_collateral is not None
 
-        assert response.token.get_body().iss == response.value.issuer
+        assert response.token.get_body().iss == response.issuer
 
 
     @AttestationPreparer()
@@ -239,24 +239,24 @@ class AsyncAzureAttestationTest(AzureTestCase):
         runtime_data = Base64Url.decode(_runtime_data)
         response = await attest_client.attest_sgx_enclave(
             quote, runtime_data=AttestationData(runtime_data, is_json=False))
-        assert response.value.enclave_held_data == runtime_data
-        assert response.value.sgx_collateral is not None
+        assert response.enclave_held_data == runtime_data
+        assert response.sgx_collateral is not None
 
         #Now do the validation again, this time specifying runtime data as JSON.
         response = await attest_client.attest_sgx_enclave(quote, runtime_data=AttestationData(runtime_data, is_json=True))
         # Because the runtime data is JSON, enclave_held_data will be empty.
-        assert response.value.enclave_held_data == None
-        assert response.value.runtime_claims.get('jwk') is not None
-        assert response.value.runtime_claims['jwk']['crv']=='P-256'
-        assert response.value.sgx_collateral is not None
+        assert response.enclave_held_data == None
+        assert response.runtime_claims.get('jwk') is not None
+        assert response.runtime_claims['jwk']['crv']=='P-256'
+        assert response.sgx_collateral is not None
 
         #And try #3, this time letting the AttestationData type figure it out.
         response = await attest_client.attest_sgx_enclave(quote, runtime_data=AttestationData(runtime_data))
         # Because the runtime data is JSON, enclave_held_data will be empty.
-        assert response.value.enclave_held_data == None
-        assert response.value.runtime_claims.get('jwk') is not None
-        assert response.value.runtime_claims['jwk']['crv']=='P-256'
-        assert response.value.sgx_collateral is not None
+        assert response.enclave_held_data == None
+        assert response.runtime_claims.get('jwk') is not None
+        assert response.runtime_claims['jwk']['crv']=='P-256'
+        assert response.sgx_collateral is not None
 
 
     @AttestationPreparer()

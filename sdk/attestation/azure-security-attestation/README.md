@@ -195,7 +195,8 @@ Under the covers, the SetPolicy APIs create a [JSON Web Token][json_web_token] b
 ```python
     policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,
         attestation_policy,
-        signing_key=AttestationSigningKey(key, signing_certificate))
+        signing_key=key,
+        signing_certificate=signing_certificate))
     policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
     assert policy_get_response.value == attestation_policy
 ```
@@ -228,12 +229,13 @@ To verify the hash, clients can generate an attestation token and verify the has
     # Service matches the hash of an attestation token created locally.
     expected_policy = AttestationToken(
         body=StoredAttestationPolicy(attestation_policy),
-        signer=AttestationSigningKey(key, signing_certificate))
+        signing_key=key,
+        signing_certificate=signing_certificate)
     hasher = hashes.Hash(hashes.SHA256())
     hasher.update(expected_policy.serialize().encode('utf-8'))
     expected_hash = hasher.finalize()
 
-    assert expected_hash == policy_set_response.value.policy_token_hash
+    assert expected_hash == policy_set_response.policy_token_hash
 ```
 
 ### Attest SGX Enclave
@@ -271,8 +273,8 @@ This example assumes that you have an existing `AttestationClient` object which 
     response = attest_client.attest_sgx_enclave(
             quote,
             runtime_data=AttestationData(runtime_data, is_json=False))
-    assert response.value.enclave_held_data == runtime_data
-    assert response.value.sgx_collateral is not None
+    assert response.enclave_held_data == runtime_data
+    assert response.sgx_collateral is not None
 
     # At this point, the EnclaveHeldData field in the attestationResult.Value 
     # property will hold the input binaryRuntimeData.
@@ -296,7 +298,7 @@ Use `get_signing_certificates` to retrieve the certificates which can be used to
 ```python
     signers = attest_client.get_signing_certificates()
     for signer in signers:
-        cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0], backend=default_backend())
+        cert = cryptography.x509.load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
         print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 ```
 

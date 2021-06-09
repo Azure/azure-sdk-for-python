@@ -80,7 +80,7 @@ class AttestationClientPolicySamples(object):
         print("Retrieve an unsecured Policy on an AAD mode attestation instance.")
         async with self._create_admin_client(self.aad_url) as admin_client:
             get_result = await admin_client.get_policy(AttestationType.SGX_ENCLAVE)
-            print("SGX Policy is: ", get_result.value)
+            print("SGX Policy is: ", get_result.policy)
 
 
     async def set_policy_aad_unsecured(self):
@@ -108,10 +108,10 @@ class AttestationClientPolicySamples(object):
     """
 
             set_result = await admin_client.set_policy(AttestationType.OPEN_ENCLAVE, new_policy)
-            print("Policy Set result: ", set_result.value.policy_resolution)
+            print("Policy Set result: ", set_result.policy_resolution)
 
             get_result = await admin_client.get_policy(AttestationType.OPEN_ENCLAVE)
-            if new_policy != get_result.value:
+            if new_policy != get_result.policy:
                 print("Policy does not match set policy.")
             # Attest an OpenEnclave using the new policy.
             await self._attest_open_enclave(self.aad_url)
@@ -125,7 +125,7 @@ class AttestationClientPolicySamples(object):
         async with self._create_admin_client(self.aad_url) as admin_client:
 
             set_result = await admin_client.reset_policy(AttestationType.OPEN_ENCLAVE)
-            print("Policy reset result: ", set_result.value.policy_resolution)
+            print("Policy reset result: ", set_result.policy_resolution)
 
     async def set_policy_aad_secured(self):
         """
@@ -148,9 +148,9 @@ class AttestationClientPolicySamples(object):
                 """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
                 signing_key=rsa_key,
                 signing_certificate=cert)
-            print("Policy Set Resolution: ", set_result.value.policy_resolution)
+            print("Policy Set Resolution: ", set_result.policy_resolution)
             print("Resulting policy signer should match the input certificate:")
-            print("Policy Signer: ", base64.b64encode(set_result.value.policy_signer.certificates[0]).decode('ascii'))
+            print("Policy Signer: ", base64.b64encode(set_result.policy_signer.certificates[0]).decode('ascii'))
             print("Certificate:   ", base64.b64encode(cert).decode('ascii'))
             # [END set_secured_policy]
 
@@ -173,7 +173,7 @@ class AttestationClientPolicySamples(object):
             signing_certificate=cert) as admin_client:
 
             set_result=await admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
-            print("Policy Set Resolution: ", set_result.value.policy_resolution)
+            print("Policy Set Resolution: ", set_result.policy_resolution)
 
     async def get_policy_isolated(self):
         """
@@ -183,7 +183,7 @@ class AttestationClientPolicySamples(object):
         print("Retrieve an unsecured Policy on an Isolated mode attestation instance.")
         async with self._create_admin_client(self.isolated_url) as admin_client:
             get_result = await admin_client.get_policy(AttestationType.SGX_ENCLAVE)
-            print("SGX Policy is: ", get_result.value)
+            print("SGX Policy is: ", get_result.policy)
 
     async def set_policy_isolated_secured(self):
         """
@@ -201,9 +201,9 @@ class AttestationClientPolicySamples(object):
                 """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
                 signing_key=self.isolated_key,
                 signing_certificate=self.isolated_certificate)
-            print("Policy Set Resolution: ", set_result.value.policy_resolution)
+            print("Policy Set Resolution: ", set_result.policy_resolution)
             print("Resulting policy signer should match the input certificate:")
-            print("Policy Signer: ", base64.b64encode(set_result.value.policy_signer.certificates[0]).decode('ascii'))
+            print("Policy Signer: ", base64.b64encode(set_result.policy_signer.certificates[0]).decode('ascii'))
             print("Certificate:   ", base64.b64encode(self.isolated_certificate).decode('ascii'))
 
             print("Reset the attestation policy to the default now to avoid side effects.")
@@ -255,7 +255,7 @@ class AttestationClientPolicySamples(object):
                 new_certificate,
                 signing_key=self.isolated_key,
                 signing_certificate=self.isolated_certificate)
-            if add_result.value.certificate_resolution != CertificateModification.IS_PRESENT:
+            if add_result.certificate_resolution != CertificateModification.IS_PRESENT:
                 raise Exception("Certificate was not added!")
 
             # [END add_policy_management_certificate]
@@ -295,7 +295,7 @@ class AttestationClientPolicySamples(object):
                 signing_key=self.isolated_key,
                 signing_certificate=self.isolated_certificate)
 
-            if remove_result.value.certificate_resolution != CertificateModification.IS_ABSENT:
+            if remove_result.certificate_resolution != CertificateModification.IS_ABSENT:
                 raise Exception("Certificate was not removed!")
             # [END remove_policy_management_certificate]
 

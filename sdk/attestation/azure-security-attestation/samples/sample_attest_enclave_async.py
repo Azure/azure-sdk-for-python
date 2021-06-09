@@ -84,7 +84,7 @@ class AttestationClientAttestationSamples(object):
             response = await attest_client.attest_sgx_enclave(
                 quote, runtime_data=AttestationData(runtime_data, is_json=False))
 
-        print("Issuer of token is: ", response.value.issuer)
+        print("Issuer of token is: ", response.issuer)
         # [END attest_sgx_enclave_shared]
 
     async def attest_open_enclave_shared(self):
@@ -101,7 +101,7 @@ class AttestationClientAttestationSamples(object):
             response = await attest_client.attest_open_enclave(
                 oe_report, runtime_data=AttestationData(runtime_data))
 
-        print("Issuer of token is: ", response.value.issuer)
+        print("Issuer of token is: ", response.issuer)
         # [END attest_open_enclave_shared]
 
     async def attest_open_enclave_with_draft_policy(self):
@@ -138,7 +138,7 @@ class AttestationClientAttestationSamples(object):
                 draft_policy=draft_policy)
 
             print("Token algorithm", response.token.algorithm)
-            print("Issuer of token is: ", response.value.issuer)
+            print("Issuer of token is: ", response.issuer)
         # [END attest_open_enclave_shared_draft]
 
     async def attest_open_enclave_with_draft_failing_policy(self):
@@ -226,7 +226,7 @@ issuancerules {
             response = await attest_client.attest_open_enclave(
                 oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
 
-        print("Issuer of token is: ", response.value.issuer)
+        print("Issuer of token is: ", response.issuer)
         # [END attest_open_enclave_shared_with_options]
 
     def _create_client(self, base_url, **kwargs):

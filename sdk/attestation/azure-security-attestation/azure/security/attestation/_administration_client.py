@@ -21,7 +21,7 @@ from ._generated import AzureAttestationRestClient
 from ._generated.models import (
     AttestationType, 
     PolicyResult as GeneratedPolicyResult, 
-    PolicyCertificatesResult, 
+    PolicyCertificatesResult as GeneratedPolicyCertificatesResult, 
     JSONWebKey, 
     AttestationCertificateManagementBody, 
     StoredAttestationPolicy as GeneratedStoredAttestationPolicy,
@@ -31,9 +31,9 @@ from ._configuration import AttestationClientConfiguration
 from ._models import (
     AttestationSigner, 
     AttestationToken, 
-    AttestationResponse, 
     PolicyCertificatesModificationResult,
-    PolicyResult,
+    AttestationPolicyResult,
+    PolicyCertificatesResult,
     AttestationTokenValidationException
 )
 import base64
@@ -46,6 +46,9 @@ from cryptography.x509 import load_pem_x509_certificate
 class AttestationAdministrationClient(object):
     """Provides administrative APIs for managing an instance of the Attestation Service.
 
+    The :class:`~AttestationAdministrationClient` object implements the policy 
+    management and policy certificate management functions.
+
     :param instance_url: base url of the service
     :type instance_url: str
     :param credential: Credentials for the caller used to interact with the service.
@@ -57,6 +60,22 @@ class AttestationAdministrationClient(object):
     :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
     :keyword HttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
+
+    If the `signing_key` and `signing_certificate` parameters
+    are provided, they will be applied to the following APIs:
+
+    * :py:func:`set_policy`
+    * :py:func:`reset_policy`
+    * :py:func:`add_policy_management_certificate`
+    * :py:func:`remove_policy_management_certificate`
+
+    .. note:: 
+        The `signing_key` and `signing_certificate` parameters are a pair. If one 
+        is present, the other must also be provided. In addition, the public key
+        in the `signing_key` and the public key in the `signing_certificate` must
+        match to ensure that the `signing_certificate` can be used to validate an
+        object signed by `signing_key`.
+
     """
 
     def __init__(
@@ -92,11 +111,15 @@ class AttestationAdministrationClient(object):
         
         :type attestation_type: azure.security.attestation.AttestationType 
 
-        :return: Attestation service response encapsulating a string attestation policy.
+        :return: Attestation Policy Result, containing a `property` attribute which
+            contains the text attestation policy.
 
-        :rtype: azure.security.attestation.AttestationResponse[str]
+        :rtype: azure.security.attestation.AttesationPolicyResult
 
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
+
+        ..note:
+            The Azure Attestation Policy language is defined `here <https://docs.microsoft.com/azure/attestation/author-sign-policy>`
 
         """
         
@@ -111,11 +134,11 @@ class AttestationAdministrationClient(object):
             if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
                 raise AttestationTokenValidationException("Token Validation of get_policy API failed.")
 
-        return AttestationResponse[str](token, actual_policy.decode('utf-8'))
+        return AttestationPolicyResult._from_generated(None, token, actual_policy.decode('utf-8'))
 
     @distributed_trace
     def set_policy(self, attestation_type, attestation_policy, **kwargs): 
-        #type:(AttestationType, str, **Any) -> AttestationResponse[PolicyResult]
+        #type:(AttestationType, str, **Any) -> AttestationPolicyResult
         """ Sets the attestation policy for the specified attestation type.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
@@ -166,11 +189,11 @@ class AttestationAdministrationClient(object):
             if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
                 raise AttestationTokenValidationException("Token Validation of set_policy API failed.")
 
-        return AttestationResponse[PolicyResult](token, PolicyResult._from_generated(token.get_body()))
+        return AttestationPolicyResult._from_generated(token.get_body(), token, None)
 
     @distributed_trace
     def reset_policy(self, attestation_type, **kwargs): 
-        #type:(AttestationType, **dict[str, Any]) -> AttestationResponse[PolicyResult]
+        #type:(AttestationType, **dict[str, Any]) -> AttestationPolicyResult
         """ Resets the attestation policy for the specified attestation type to the default value.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
@@ -219,12 +242,12 @@ class AttestationAdministrationClient(object):
             if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
                 raise AttestationTokenValidationException("Token Validation of reset_policy API failed.")
 
-        return AttestationResponse[PolicyResult](token, PolicyResult._from_generated(token.get_body()))
+        return AttestationPolicyResult._from_generated(token.get_body(), token, None)
 
 
     @distributed_trace
     def get_policy_management_certificates(self, **kwargs):
-        #type:(**Any) -> AttestationResponse[list[list[bytes]]]
+        #type:(**Any) -> PolicyCertificatesResult
         """ Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only be non-empty if the
@@ -236,9 +259,9 @@ class AttestationAdministrationClient(object):
         """
 
         cert_response = self._client.policy_certificates.get(**kwargs)
-        token = AttestationToken[PolicyCertificatesResult](
+        token = AttestationToken[GeneratedPolicyCertificatesResult](
             token=cert_response.token,
-            body_type=PolicyCertificatesResult)
+            body_type=GeneratedPolicyCertificatesResult)
         if self._config.token_validation_options.validate_token:
             if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
                 raise Exception("Token Validation of PolicyCertificates API failed.")
@@ -249,11 +272,11 @@ class AttestationAdministrationClient(object):
         for key in cert_list.policy_certificates.keys:
             key_certs = [PemUtils.pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
             certificates.append(key_certs)
-        return AttestationResponse(token, certificates)
+        return PolicyCertificatesResult(token, certificates)
 
     @distributed_trace
     def add_policy_management_certificate(self, certificate_to_add, **kwargs):
-        #type:(str, **Any) -> AttestationResponse[PolicyCertificatesModificationResult]
+        #type:(str, **Any) -> PolicyCertificatesModificationResult
         """ Adds a new policy management certificate to the set of policy management certificates for the instance.
 
         :param str certificate_to_add: PEM encoded X.509 certificate to add to 
@@ -307,11 +330,11 @@ class AttestationAdministrationClient(object):
         if self._config.token_validation_options.validate_token:
             if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
                 raise Exception("Token Validation of PolicyCertificate Add API failed.")
-        return AttestationResponse[PolicyCertificatesModificationResult](token, PolicyCertificatesModificationResult._from_generated(token.get_body()))
+        return PolicyCertificatesModificationResult._from_generated(token.get_body(), token)
 
     @distributed_trace
     def remove_policy_management_certificate(self, certificate_to_add, **kwargs):
-        #type:(bytes, **Any) -> AttestationResponse[PolicyCertificatesModificationResult]
+        #type:(bytes, **Any) -> PolicyCertificatesModificationResult
         """ Removes a new policy management certificate to the set of policy management certificates for the instance.
 
         :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
@@ -364,7 +387,7 @@ class AttestationAdministrationClient(object):
         if self._config.token_validation_options.validate_token:
             if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
                 raise Exception("Token Validation of PolicyCertificate Remove API failed.")
-        return AttestationResponse[PolicyCertificatesModificationResult](token, PolicyCertificatesModificationResult._from_generated(token.get_body()))
+        return PolicyCertificatesModificationResult._from_generated(token.get_body(), token)
 
     def _get_signers(self, **kwargs):
         #type(**Any) -> List[AttestationSigner]

@@ -55,6 +55,19 @@ class SigningKeyUtils:
 
     @staticmethod
     def validate_signing_keys(signing_key_pem, certificate_pem):
+        """ Validates the attestation signing key and certificates specified.
+
+        :param str signing_key_pem: PEM encoded EC or RSA signing key.
+        :param str certificate_pem: PEM encoded X.509 certificate.
+        :return: Returns the decoded signing key and certificate
+        :rtype: RSAPrivateKey or ElilipticCurvePrivateKey, Certificate
+
+        The validate_signing_keys method decodes the signing key and certificate
+        and verifies that the public key associated with the certificate and the
+        signing key are the same key. 
+        
+        :staticmethod:
+        """
         # type (str, str) -> cryptography.hazmat.primatives.asymmetric.ec | cryptography.hazmat.primatives.asymmetric.rsa, Certificate
 
         # Start by making sure that both signing key and certificate are present.

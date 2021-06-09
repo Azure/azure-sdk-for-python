@@ -12,6 +12,8 @@
 - All certificates and keys acceptend and returned by the SDK are now PEM encoded
   strings instead of DER encoded arrays of bytes for easier manipulation and
   interoperability.
+- Removed `AttestationResponse` type, token value merged into `AttestationResult`,
+  `PolicyResult`, etc.
 
 ## 1.0.0b4 (2021-06-08)
 

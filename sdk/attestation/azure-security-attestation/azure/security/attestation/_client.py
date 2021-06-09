@@ -27,7 +27,6 @@ from ._configuration import AttestationClientConfiguration
 from ._models import (
     AttestationSigner,
     AttestationToken,
-    AttestationResponse,
     AttestationResult,
     AttestationData)
 import base64
@@ -73,6 +72,13 @@ class AttestationClient(object):
         #type:(Dict[str, Any]) -> Any
         """ Retrieves the OpenID metadata configuration document for this attestation instance.
 
+        The metadata configuration document is defined in the `OpenID Connect Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>` specification.
+
+        The attestation service currently returns the following fields:
+        * issuer
+        * jwks_uri
+        * claims_supported
+
         :return: OpenID metadata configuration
         :rtype: Any
         """
@@ -99,7 +105,7 @@ class AttestationClient(object):
 
     @distributed_trace
     def attest_sgx_enclave(self, quote, inittime_data=None, runtime_data=None, **kwargs):
-        # type:(bytes, AttestationData, AttestationData, Dict[str, Any]) -> AttestationResponse[AttestationResult]
+        # type:(bytes, AttestationData, AttestationData, Dict[str, Any]) -> AttestationResult
         """ Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
@@ -117,7 +123,7 @@ class AttestationClient(object):
 
         :return: Attestation service response encapsulating an :class:`AttestationResult`.
         
-        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.AttestationResult]
+        :rtype: azure.security.attestation.AttestationResult
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
@@ -152,11 +158,11 @@ class AttestationClient(object):
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)
         token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
-        return AttestationResponse[AttestationResult](token, AttestationResult._from_generated(token.get_body()))
+        return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace
     def attest_open_enclave(self, report, inittime_data=None, runtime_data=None, **kwargs):
-        # type:(bytes, AttestationData, AttestationData, Dict[str, Any]) -> AttestationResponse[AttestationResult]
+        # type:(bytes, AttestationData, AttestationData, Dict[str, Any]) -> AttestationResult
         """ Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
@@ -164,17 +170,15 @@ class AttestationClient(object):
         :type inittime_data: azure.security.attestation.AttestationData 
         :param runtime_data: Data presented at the time that the open_enclave report was created.
         :type runtime_data: azure.security.attestation.AttestationData 
-        :keyword draft_policy: "draft" or "experimental" policy to be used with
+        :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
 
-        :paramtype draft_policy: str
-
         :return: Attestation service response encapsulating an :class:`AttestationResult`.
 
-        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.AttestationResult]
+        :rtype: azure.security.attestation.AttestationResult
 
         .. admonition:: Example: Simple OpenEnclave attestation.
 
@@ -219,7 +223,7 @@ class AttestationClient(object):
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)
         token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
-        return AttestationResponse[AttestationResult](token, AttestationResult._from_generated(token.get_body()))
+        return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace
     def attest_tpm(self, request, **kwargs):
@@ -228,10 +232,9 @@ class AttestationClient(object):
 
         See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
 
-        :param request: Incoming request to send to the TPM attestation service.
-        :type request: azure.security.attestation.TpmAttestationRequest
+        :param str request: Incoming request to send to the TPM attestation service.
         :returns: A structure containing the response from the TPM attestation.
-        :rtype: azure.security.attestation.TpmAttestationResponse
+        :rtype: str
         """
 
         response = self._client.attestation.attest_tpm(request.encode('ascii'), **kwargs)

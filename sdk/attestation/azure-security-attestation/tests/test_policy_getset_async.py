@@ -46,14 +46,14 @@ class AsyncPolicyGetSetTests(AzureTestCase):
     async def test_shared_get_policy_sgx(self, attestation_location_short_name):
         attest_client = self.shared_admin_client(attestation_location_short_name)
         policy_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert(policy_response.value.startswith('version'))
+        assert(policy_response.policy.startswith('version'))
         print('Token: ', policy_response.token)
 
     @AttestationPreparer()
     async def test_shared_get_policy_openenclave(self, attestation_location_short_name):
         attest_client = self.shared_admin_client(attestation_location_short_name)
         policy_response = await attest_client.get_policy(AttestationType.OPEN_ENCLAVE)
-        assert(policy_response.value.startswith('version'))
+        assert(policy_response.policy.startswith('version'))
         print('Token: ', policy_response.token)
 
 
@@ -61,13 +61,13 @@ class AsyncPolicyGetSetTests(AzureTestCase):
     async def test_isolated_get_policy_sgx(self, attestation_isolated_url):
         attest_client = self.create_admin_client(attestation_isolated_url)
         policy_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert(policy_response.value.startswith('version'))
+        assert(policy_response.policy.startswith('version'))
 
     @AttestationPreparer()
     async def test_aad_get_policy_sgx(self, attestation_aad_url):
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert(policy_response.value.startswith('version'))
+        assert(policy_response.policy.startswith('version'))
 
     @AttestationPreparer()
     async def test_aad_set_policy_sgx_unsecured(self, attestation_aad_url):
@@ -76,14 +76,14 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = await attest_client.set_policy(AttestationType.SGX_ENCLAVE, attestation_policy)
         policy_get_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert policy_get_response.value == attestation_policy
+        assert policy_get_response.policy == attestation_policy
 
         expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy))
         hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
         hasher.update(expected_policy.serialize().encode('utf-8'))
         expected_hash = hasher.finalize()
 
-        assert expected_hash == policy_set_response.value.policy_token_hash
+        assert expected_hash == policy_set_response.policy_token_hash
 
     @AttestationPreparer()
     async def test_aad_reset_policy_sgx_unsecured(self, attestation_aad_url):
@@ -91,8 +91,8 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = await attest_client.reset_policy(AttestationType.SGX_ENCLAVE)
 
-        assert None == policy_set_response.value.policy_token_hash
-        assert policy_set_response.value.policy_resolution == PolicyModification.REMOVED
+        assert None == policy_set_response.policy_token_hash
+        assert policy_set_response.policy_resolution == PolicyModification.REMOVED
 
     @AttestationPreparer()
     @pytest.mark.live_test_only
@@ -103,8 +103,8 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = await attest_client.reset_policy(AttestationType.SGX_ENCLAVE, signing_key=key, signing_certificate=signing_certificate)
 
-        assert None == policy_set_response.value.policy_token_hash
-        assert policy_set_response.value.policy_resolution == PolicyModification.REMOVED
+        assert None == policy_set_response.policy_token_hash
+        assert policy_set_response.policy_resolution == PolicyModification.REMOVED
 
 
 
@@ -122,7 +122,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
             signing_key=key,
             signing_certificate=signing_certificate)
         policy_get_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert policy_get_response.value == attestation_policy
+        assert policy_get_response.policy == attestation_policy
 
         expected_policy = AttestationToken(
             body=StoredAttestationPolicy(attestation_policy),
@@ -132,7 +132,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         hasher.update(expected_policy.serialize().encode('utf-8'))
         expected_hash = hasher.finalize()
 
-        assert expected_hash == policy_set_response.value.policy_token_hash
+        assert expected_hash == policy_set_response.policy_token_hash
 
 
     @AttestationPreparer()
@@ -149,7 +149,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
             signing_key=key,
             signing_certificate=decoded_cert)
         policy_get_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert policy_get_response.value == attestation_policy
+        assert policy_get_response.policy == attestation_policy
 
         expected_policy = AttestationToken(
             body=StoredAttestationPolicy(attestation_policy),
@@ -159,7 +159,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         hasher.update(expected_policy.serialize().encode('utf-8'))
         expected_hash = hasher.finalize()
 
-        assert expected_hash == policy_set_response.value.policy_token_hash
+        assert expected_hash == policy_set_response.policy_token_hash
 
     @AttestationPreparer()
     @pytest.mark.live_test_only
@@ -173,8 +173,8 @@ class AsyncPolicyGetSetTests(AzureTestCase):
             signing_key=key, 
             signing_certificate=signing_certificate)
 
-        assert None == policy_set_response.value.policy_token_hash
-        assert policy_set_response.value.policy_resolution == PolicyModification.REMOVED
+        assert None == policy_set_response.policy_token_hash
+        assert policy_set_response.policy_resolution == PolicyModification.REMOVED
 
 
     async def _test_get_policy_management_certificates(self, base_uri, pem_expected_certificate):
@@ -227,11 +227,11 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         # Add a new certificate.
         result = await admin_client.add_policy_management_certificate(pem_certificate_to_add)
 
-        assert result.value.certificate_resolution == CertificateModification.IS_PRESENT
+        assert result.certificate_resolution == CertificateModification.IS_PRESENT
 
         # Add it again - this should be ok.
         result = await admin_client.add_policy_management_certificate(pem_certificate_to_add)
-        assert result.value.certificate_resolution == CertificateModification.IS_PRESENT
+        assert result.certificate_resolution == CertificateModification.IS_PRESENT
 
         # Ensure that the new certificate is present. 
         # We'll leverage the get certificates test to validate this.
@@ -241,14 +241,14 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         result =await  admin_client.remove_policy_management_certificate(pem_certificate_to_add,
             signing_key=key,
             signing_certificate=signing_certificate)
-        assert result.value.certificate_resolution == CertificateModification.IS_ABSENT
+        assert result.certificate_resolution == CertificateModification.IS_ABSENT
 
         # Remove it again, this should be ok.
         result = await admin_client.remove_policy_management_certificate(
             pem_certificate_to_add,
             signing_key=key,
             signing_certificate=signing_certificate)
-        assert result.value.certificate_resolution == CertificateModification.IS_ABSENT
+        assert result.certificate_resolution == CertificateModification.IS_ABSENT
 
         # The set of certificates should now just contain the original isolated certificate (PEM encoded :))
         await self._test_get_policy_management_certificates(attestation_isolated_url, signing_certificate)
