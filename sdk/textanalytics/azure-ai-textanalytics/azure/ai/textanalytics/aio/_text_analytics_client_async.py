@@ -385,7 +385,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'entities_recognition_pii'" in str(error):
                 raise ValueError(
-                    "'recognize_pii_entities' endpoint is only available for API version V3_1_PREVIEW and up"
+                    "'recognize_pii_entities' endpoint is only available for API version V3_1 and up"
                 )
             raise error
         except HttpResponseError as error:
@@ -587,7 +587,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             aspect-based sentiment analysis). If set to true, the returned
             :class:`~azure.ai.textanalytics.SentenceSentiment` objects
             will have property `mined_opinions` containing the result of this analysis. Only available for
-            API version v3.1-preview and up.
+            API version v3.1 and up.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -610,7 +610,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
-        .. versionadded:: v3.1-preview
+        .. versionadded:: v3.1
             The *show_opinion_mining* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
@@ -660,14 +660,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except TypeError as error:
             if "opinion_mining" in str(error):
                 raise ValueError(
-                    "'show_opinion_mining' is only available for API version v3.1-preview and up"
+                    "'show_opinion_mining' is only available for API version v3.1 and up"
                 )
             raise error
         except HttpResponseError as error:
             process_http_response_error(error)
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
-        healthcare_result = self._client.models(api_version="v3.1-preview.5").HealthcareJobState.deserialize(
+        healthcare_result = self._client.models(api_version="v3.1").HealthcareJobState.deserialize(
             raw_response
         )
         return healthcare_paged_result(
@@ -781,7 +781,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
-                    "'begin_analyze_healthcare_entities' endpoint is only available for API version V3_1_PREVIEW and up"
+                    "'begin_analyze_healthcare_entities' endpoint is only available for API version V3_1 and up"
                 )
             raise error
 
@@ -789,7 +789,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
-        analyze_result = self._client.models(api_version="v3.1-preview.5").AnalyzeJobState.deserialize(
+        analyze_result = self._client.models(api_version="v3.1").AnalyzeJobState.deserialize(
             raw_response
         )
         return analyze_paged_result(
@@ -857,7 +857,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = self._client.models(api_version="v3.1-preview.5").MultiLanguageBatchInput(
+        docs = self._client.models(api_version="v3.1").MultiLanguageBatchInput(
             documents=_validate_input(documents, "language", language)
         )
         show_stats = kwargs.pop("show_stats", False)
@@ -868,7 +868,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         task_order = [_determine_action_type(action) for action in actions]
 
         try:
-            analyze_tasks = self._client.models(api_version='v3.1-preview.5').JobManifestTasks(
+            analyze_tasks = self._client.models(api_version='v3.1').JobManifestTasks(
                 entity_recognition_tasks=[
                     t.to_generated() for t in
                     [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_ENTITIES]
@@ -893,7 +893,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.ANALYZE_SENTIMENT]
                 ]
             )
-            analyze_body = self._client.models(api_version='v3.1-preview.5').AnalyzeBatchInput(
+            analyze_body = self._client.models(api_version='v3.1').AnalyzeBatchInput(
                 display_name=display_name,
                 tasks=analyze_tasks,
                 analysis_input=docs
@@ -916,7 +916,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
-                    "'begin_analyze_actions' endpoint is only available for API version V3_1_PREVIEW and up"
+                    "'begin_analyze_actions' endpoint is only available for API version V3_1 and up"
                 )
             raise error
 

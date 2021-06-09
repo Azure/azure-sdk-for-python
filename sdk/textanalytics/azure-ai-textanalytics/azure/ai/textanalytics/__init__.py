@@ -48,7 +48,7 @@ from ._models import (
     HealthcareEntityAssertion,
     AnalyzeSentimentAction
 )
-from ._generated.v3_1_preview_5.models import (
+from ._generated.v3_1.models import (
     PiiCategory as PiiEntityCategoryType,
     RelationType as HealthcareEntityRelationType,
     Conditionality as EntityConditionality,

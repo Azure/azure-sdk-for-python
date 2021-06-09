@@ -11,7 +11,7 @@ from ._generated.models import (
 )
 
 from ._generated.v3_0 import models as _v3_0_models
-from ._generated.v3_1_preview_5 import models as _latest_preview_models
+from ._generated.v3_1 import models as _latest_preview_models
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
@@ -171,7 +171,7 @@ class RecognizePiiEntitiesResult(DictMixin):
     :vartype entities:
         list[~azure.ai.textanalytics.PiiEntity]
     :ivar str redacted_text: Returns the text of the input document with all of the PII information
-        redacted out. Only returned for API versions v3.1-preview and up.
+        redacted out. Only returned for API versions v3.1 and up.
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -181,7 +181,7 @@ class RecognizePiiEntitiesResult(DictMixin):
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizePiiEntitiesResult.
-    .. versionadded:: v3.1-preview
+    .. versionadded:: v3.1
         The *redacted_text* parameter.
     """
 
@@ -387,15 +387,15 @@ class CategorizedEntity(DictMixin):
     :vartype subcategory: str
     :ivar int length: The entity text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints
-        by default. Only returned for API versions v3.1-preview and up.
+        by default. Only returned for API versions v3.1 and up.
     :ivar int offset: The entity text offset from the start of the document.
         The value depends on the value of the `string_index_type` parameter
         set in the original request, which is UnicodeCodePoints by default. Only returned for
-        API versions v3.1-preview and up.
+        API versions v3.1 and up.
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
-    .. versionadded:: v3.1-preview
+    .. versionadded:: v3.1
         The *offset* property.
     """
 
@@ -938,8 +938,8 @@ class LinkedEntity(DictMixin):
     :vartype data_source: str
     :ivar str bing_entity_search_api_id: Bing Entity Search unique identifier of the recognized entity.
         Use in conjunction with the Bing Entity Search SDK to fetch additional relevant information.
-        Only available for API version v3.1-preview and up.
-    .. versionadded:: v3.1-preview
+        Only available for API version v3.1 and up.
+    .. versionadded:: v3.1
         The *bing_entity_search_api_id* property.
     """
 
@@ -990,13 +990,13 @@ class LinkedEntityMatch(DictMixin):
     :ivar text: Entity text as appears in the request.
     :ivar int length: The linked entity match text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints by default.
-        Only returned for API versions v3.1-preview and up.
+        Only returned for API versions v3.1 and up.
     :ivar int offset: The linked entity match text offset from the start of the document.
         The value depends on the value of the `string_index_type` parameter
         set in the original request, which is UnicodeCodePoints by default.
-        Only returned for API versions v3.1-preview and up.
+        Only returned for API versions v3.1 and up.
     :vartype text: str
-    .. versionadded:: v3.1-preview
+    .. versionadded:: v3.1
         The *offset* property.
     """
 
@@ -1112,19 +1112,19 @@ class SentenceSentiment(DictMixin):
         ~azure.ai.textanalytics.SentimentConfidenceScores
     :ivar int length: The sentence text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints
-        by default. Only returned for API versions v3.1-preview and up.
+        by default. Only returned for API versions v3.1 and up.
     :ivar int offset: The sentence text offset from the start of the document.
         The value depends on the value of the `string_index_type` parameter
         set in the original request, which is UnicodeCodePoints by default. Only returned for
-        API versions v3.1-preview and up.
+        API versions v3.1 and up.
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in the sentence "The food is good, but the service is bad", we would
         mine the two opinions "food is good" and "service is bad". Only returned
         if `show_opinion_mining` is set to True in the call to `analyze_sentiment` and
-        api version is v3.1-preview and up.
+        api version is v3.1 and up.
     :vartype mined_opinions:
         list[~azure.ai.textanalytics.MinedOpinion]
-    .. versionadded:: v3.1-preview
+    .. versionadded:: v3.1
         The *offset* and *mined_opinions* properties.
     """
 
