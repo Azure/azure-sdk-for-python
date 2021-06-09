@@ -32,10 +32,6 @@ extends:
   parameters:
     ServiceDirectory: appconfiguration
     VerifyAutorest: true
-    BeforeTestSteps: 
-      - pwsh:
-          Write-Host "I am here. I am alive."
-        displayName: Test Insertion of BeforeTest Step
     Artifacts:
     - name: azure-appconfiguration
       safeName: azureappconfiguration
