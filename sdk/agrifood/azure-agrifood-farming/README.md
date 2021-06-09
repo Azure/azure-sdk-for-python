@@ -33,7 +33,7 @@ provide an instance of the desired credential type obtained from the
 [azure-identity][azure_identity_credentials] library.
 
 To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][azure_identity_pip] and
-enable AAD authentication on your FarmBeats resource. If you followed our installation docs when creating the FarmBeats 
+enable AAD authentication on your FarmBeats resource. If you followed the [installation docs][install_farmbeats] when creating the FarmBeats 
 resource, this is already covered.
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
