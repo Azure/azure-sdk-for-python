@@ -3,17 +3,18 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
+from six import with_metaclass
 
+from azure.core import CaseInsensitiveEnumMeta
 
-class KeyVaultRoleScope(str, Enum):
+class KeyVaultRoleScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Collection of well known role scopes. This list is not exhaustive."""
 
     GLOBAL = "/"  #: use this if you want role assignments to apply to everything on the resource
-
     KEYS = "/keys"  #: use this if you want role assignments to apply to all keys
 
 
-class KeyVaultDataAction(str, Enum):
+class KeyVaultDataAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Supported permissions for data actions."""
 
     #: Read HSM key metadata.
