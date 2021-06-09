@@ -91,6 +91,8 @@ def process_storage_error(storage_error):
     if isinstance(storage_error, (PartialBatchErrorException,
                                   ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError)):
         serialized = True
+        if not storage_error.response:
+            raise storage_error
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
     additional_data = {}

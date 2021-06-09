@@ -119,6 +119,8 @@ def process_storage_error(storage_error):
     # If it is one of those three then it has been serialized prior by the generated layer.
     if isinstance(storage_error, (ResourceNotFoundError, ClientAuthenticationError, ResourceExistsError)):
         serialized = True
+        if not storage_error.response:
+            raise storage_error
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
     additional_data = {}
