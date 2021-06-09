@@ -22,7 +22,7 @@ class SearchClientOperationsMixin:
     async def get_service_statistics(
         self,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.ServiceStatistics":
         """Gets service level statistics for a search service.
 
@@ -42,7 +42,7 @@ class SearchClientOperationsMixin:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL

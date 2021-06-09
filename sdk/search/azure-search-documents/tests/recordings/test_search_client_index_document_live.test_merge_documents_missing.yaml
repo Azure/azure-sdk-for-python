@@ -14,9 +14,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30
+    uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"value":[{"key":"1000","status":false,"errorMessage":"Document not
@@ -29,9 +29,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 20 May 2021 16:47:08 GMT
+      - Sat, 08 May 2021 06:01:09 GMT
       elapsed-time:
-      - '106'
+      - '85'
       expires:
       - '-1'
       odata-version:
@@ -41,7 +41,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 03625455-b98b-11eb-bec8-a0481ca055a9
+      - c810bfb9-afc2-11eb-93c7-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -59,9 +59,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
+    uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30-Preview
   response:
     body:
       string: "\uFEFF10"
@@ -73,9 +73,9 @@ interactions:
       content-type:
       - text/plain
       date:
-      - Thu, 20 May 2021 16:47:11 GMT
+      - Sat, 08 May 2021 06:01:12 GMT
       elapsed-time:
-      - '4'
+      - '3'
       expires:
       - '-1'
       odata-version:
@@ -85,7 +85,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 05739913-b98b-11eb-a96c-a0481ca055a9
+      - ca2dd8ad-afc2-11eb-a89b-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -103,9 +103,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
+    uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30-Preview
   response:
     body:
       string: ''
@@ -115,15 +115,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 20 May 2021 16:47:11 GMT
+      - Sat, 08 May 2021 06:01:12 GMT
       elapsed-time:
-      - '5'
+      - '3'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 0582308d-b98b-11eb-bc61-a0481ca055a9
+      - ca421e4c-afc2-11eb-86f2-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -139,9 +139,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
+    uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"4","hotelName":"Express Rooms","description":"Pretty good
@@ -154,9 +154,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 20 May 2021 16:47:11 GMT
+      - Sat, 08 May 2021 06:01:12 GMT
       elapsed-time:
-      - '10'
+      - '9'
       expires:
       - '-1'
       odata-version:
@@ -166,7 +166,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 058feb52-b98b-11eb-9f18-a0481ca055a9
+      - ca579c05-afc2-11eb-9cd1-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
