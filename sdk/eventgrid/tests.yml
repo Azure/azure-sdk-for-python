@@ -24,5 +24,7 @@ stages:
         EG_DOMAIN_TOPIC_HOSTNAME: $(python-sdk-test-domain-topic-hostname-eg)
         EVENTGRID_SAS: $(python-sdk-test-eg-sas)
         DOMAIN_NAME: $(python-sdk-test-eg-domain-name)
+        SERVICE_BUS_CONNECTION_STR: $(python-sb-livetest-service-connection-str)
+        STORAGE_QUEUE_NAME: $(python-storage-queue-name)
         CUSTOM_SCHEMA_ACCESS_KEY: $(python-sdk-test-eg-custom-schema-access-key)
         CUSTOM_SCHEMA_TOPIC_HOSTNAME: $(python-sdk-test-custom-schema-topic-hostname)
