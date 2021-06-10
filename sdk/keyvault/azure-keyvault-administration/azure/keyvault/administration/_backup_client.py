@@ -9,7 +9,7 @@ from azure.core.polling.base_polling import LROBasePolling
 
 from ._models import KeyVaultBackupOperation
 from ._internal import KeyVaultClientBase, parse_folder_url
-from ._internal.polling import KeyVaultBackupClientPolling
+from ._internal.polling import KeyVaultBackupClientPolling, KeyVaultBackupClientPollingMethod
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
@@ -45,7 +45,9 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             azure_storage_blob_container_uri=sas_parameter,
             cls=KeyVaultBackupOperation._from_generated,
             continuation_token=kwargs.pop("continuation_token", None),
-            polling=LROBasePolling(lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs),
+            polling=KeyVaultBackupClientPollingMethod(
+                lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
+            ),
             **kwargs
         )
 
