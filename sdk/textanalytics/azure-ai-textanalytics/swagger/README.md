@@ -87,3 +87,14 @@ directive:
       $["x-python-custom-default-polling-method-sync"] = "...._lro.AnalyzeHealthcareEntitiesLROPollingMethod";
       $["x-python-custom-default-polling-method-async"] = ".....aio._lro_async.AsyncAnalyzeHealthcareEntitiesLROPollingMethod";
 ```
+
+### Override parameterizing the ApiVersion
+
+```yaml $(tag) == 'release_3_1'
+directive:
+  - from: swagger-document
+    where: '$["x-ms-parameterized-host"]'
+    transform: >
+      $["hostTemplate"] = "{Endpoint}/text/analytics/v3.1";
+      $["parameters"] = [{"$ref": "#/parameters/Endpoint"}];
+```

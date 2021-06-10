@@ -32,7 +32,6 @@ class TextAnalyticsClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -40,7 +39,6 @@ class TextAnalyticsClientOperationsMixin:
         url = self._analyze_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -129,7 +127,6 @@ class TextAnalyticsClientOperationsMixin:
 
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
 
         if polling is True: polling_method = AsyncAnalyzeActionsLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -181,14 +178,12 @@ class TextAnalyticsClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "v3.1"
         accept = "application/json, text/json"
 
         # Construct URL
         url = self.analyze_status.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -256,14 +251,12 @@ class TextAnalyticsClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "v3.1"
         accept = "application/json, text/json"
 
         # Construct URL
         url = self.health_status.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -308,14 +301,12 @@ class TextAnalyticsClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "v3.1"
         accept = "application/json, text/json"
 
         # Construct URL
         url = self._cancel_health_job_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -388,7 +379,6 @@ class TextAnalyticsClientOperationsMixin:
 
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
         }
 
@@ -421,7 +411,6 @@ class TextAnalyticsClientOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -429,7 +418,6 @@ class TextAnalyticsClientOperationsMixin:
         url = self._health_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -542,7 +530,6 @@ class TextAnalyticsClientOperationsMixin:
 
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
 
         if polling is True: polling_method = AsyncAnalyzeHealthcareEntitiesLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -607,7 +594,6 @@ class TextAnalyticsClientOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -615,7 +601,6 @@ class TextAnalyticsClientOperationsMixin:
         url = self.entities_recognition_general.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -711,7 +696,6 @@ class TextAnalyticsClientOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -719,7 +703,6 @@ class TextAnalyticsClientOperationsMixin:
         url = self.entities_recognition_pii.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -810,7 +793,6 @@ class TextAnalyticsClientOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -818,7 +800,6 @@ class TextAnalyticsClientOperationsMixin:
         url = self.entities_linking.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -900,7 +881,6 @@ class TextAnalyticsClientOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -908,7 +888,6 @@ class TextAnalyticsClientOperationsMixin:
         url = self.key_phrases.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -989,7 +968,6 @@ class TextAnalyticsClientOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.LanguageBatchInput(documents=documents)
-        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -997,7 +975,6 @@ class TextAnalyticsClientOperationsMixin:
         url = self.languages.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1086,7 +1063,6 @@ class TextAnalyticsClientOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        api_version = "v3.1"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -1094,7 +1070,6 @@ class TextAnalyticsClientOperationsMixin:
         url = self.sentiment.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

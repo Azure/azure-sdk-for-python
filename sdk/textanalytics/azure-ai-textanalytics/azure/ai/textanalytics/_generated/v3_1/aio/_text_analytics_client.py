@@ -37,7 +37,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
         endpoint: str,
         **kwargs: Any
     ) -> None:
-        base_url = '{Endpoint}/text/analytics/{ApiVersion}'
+        base_url = '{Endpoint}/text/analytics/v3.1'
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -57,7 +57,6 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         path_format_arguments = {
-            'ApiVersion': self._serialize.url("api_version", api_version, 'str', skip_quote=True),
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)

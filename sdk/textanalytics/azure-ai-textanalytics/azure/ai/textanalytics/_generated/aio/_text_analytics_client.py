@@ -73,7 +73,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
         if api_version == 'v3.0':
             base_url = '{Endpoint}/text/analytics/v3.0'
         elif api_version == 'v3.1':
-            base_url = '{Endpoint}/text/analytics/{ApiVersion}'
+            base_url = '{Endpoint}/text/analytics/v3.1'
         else:
             raise ValueError("API version {} is not available".format(api_version))
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)

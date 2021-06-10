@@ -46,7 +46,6 @@ class TextAnalyticsClientConfiguration(Configuration):
 
         self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "v3.1"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://cognitiveservices.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'ai-textanalytics/{}'.format(VERSION))
         self._configure(**kwargs)
