@@ -81,7 +81,7 @@ class SigningKeyUtils:
         certificate = load_pem_x509_certificate(certificate_pem.encode('utf-8'), backend=default_backend())
 
         # We only support ECDS and RSA keys in the MAA service.
-        if (not isinstance(signing_key, RSAPrivateKey) and not isinstance(signing_key, EllipticCurvePrivateKey)):
+        if not isinstance(signing_key, RSAPrivateKey) and not isinstance(signing_key, EllipticCurvePrivateKey):
             raise ValueError("Signing keys must be either ECDS or RSA keys.")
 
         # Ensure that the public key in the certificate matches the public key of the key.

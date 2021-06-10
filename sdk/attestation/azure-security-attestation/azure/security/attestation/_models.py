@@ -702,7 +702,7 @@ class AttestationToken(Generic[T]):
         return self._token
 
     def validate_token(self, signers=None, **kwargs):
-        # type: (TokenValidationOptions, list[AttestationSigner], **Any) -> bool
+        # type: (list[AttestationSigner], **Any) -> bool
         """ Validate the attestation token based on the options specified in the
          :class:`TokenValidationOptions`.
         
@@ -728,40 +728,26 @@ class AttestationToken(Generic[T]):
         :raises: azure.security.attestation.AttestationTokenValidationException
         """
 
-        class ValidationOptions(object):
-            def __init__(self, **kwargs):
-                self.validate_token = kwargs.get('validate_token', True) #type: bool
-                self.validation_callback = kwargs.get('validation_callback', None) #type: Callable[[AttestationToken, AttestationSigner], bool]
-                self.validate_signature = kwargs.get('validate_signature', True)  #type: bool
-                self.validate_expiration = kwargs.get('validate_expiration', True) #type: bool
-                self.validate_not_before = kwargs.get('validate_not_before', True) #type: bool
-                self.validate_issuer = kwargs.get('validate_issuer', False) #type: bool
-                self.issuer = kwargs.get('issuer') #type: str
-                # We assume a default validation slack of a half second to allow for a small
-                # amount of timer drift.
-                self.validation_slack = kwargs.get('validation_slack', 0.5) #type:float
-
-        options = ValidationOptions(**kwargs)
-
-        if not options.validate_token:
-            self._validate_static_properties(options)
-            if (options.validation_callback is not None):
-                options.validation_callback(self, None)
+        if not kwargs.get('validate_token', True):
+            self._validate_static_properties(**kwargs)
+            if 'validation_callback' in kwargs:
+                kwargs.get('validation_callback')(self, None)
             return True
 
         signer = None
-        if self.algorithm != 'none' and options.validate_signature:
+        if self.algorithm != 'none' and kwargs.get('validate_signature', True):
             # validate the signature for the token.
             candidate_certificates = self._get_candidate_signing_certificates(
                 signers)
             signer = self._validate_signature(candidate_certificates)
-            if (signer is None):
+            if signer is None:
                 raise AttestationTokenValidationException(
                     "Could not find the certificate used to sign the token.")
-        self._validate_static_properties(options)
+        self._validate_static_properties(**kwargs)
 
-        if (options.validation_callback is not None):
-            if options.validation_callback(self, signer):
+        if 'validation_callback' in kwargs:
+            callback = kwargs.get('validation_callback')
+            if callback(self, signer):
                 return True
             raise AttestationTokenValidationException("User validation callback failed the validation request.")
 
@@ -785,16 +771,16 @@ class AttestationToken(Generic[T]):
         desired_key_id = self.key_id
         if desired_key_id is not None:
             for signer in signing_certificates:
-                if (signer.key_id == desired_key_id):
+                if signer.key_id == desired_key_id:
                     candidates.append(signer)
                     break
             # If we didn't find a matching key ID in the supplied certificates,
             # try the JWS header to see if there might be a corresponding key.
-            if (len(candidates) == 0):
+            if len(candidates) == 0:
                 jwk = self._json_web_key()
                 if jwk is not None:
                     if jwk.kid  == desired_key_id:
-                        if (jwk.x5_c):
+                        if jwk.x5_c:
                             signers = jwk.x5_c
                         candidates.append(AttestationSigner(
                             signers, desired_key_id))
@@ -844,25 +830,25 @@ class AttestationToken(Generic[T]):
                 raise AttestationTokenValidationException("Could not verify signature of attestation token.")
         return None
 
-    def _validate_static_properties(self, options):
-        # type:(TokenValidationOptions) -> bool
+    def _validate_static_properties(self, **kwargs):
+        # type:(Any, **Any) -> bool
         """ Validate the static properties in the attestation token.
         """
         if self._body:
             time_now = datetime.now()
-            if options.validate_expiration and self.expiration_time is not None:
-                if (time_now > self.expiration_time):
+            if kwargs.get('validate_expiration', True) and self.expiration_time is not None:
+                if time_now > self.expiration_time:
                     delta = time_now - self.expiration_time
-                    if delta.total_seconds() > options.validation_slack:
+                    if delta.total_seconds() > kwargs.get('validation_slack', 0.5):
                         raise AttestationTokenValidationException(u'Token is expired. Now: {}, Not Before: {}'.format(time_now.isoformat(), self.not_before_time.isoformat()))
-            if options.validate_not_before and hasattr(self, 'not_before_time') and self.not_before_time is not None:
-                if (time_now < self.not_before_time):
+            if kwargs.get('validate_not_before', True) and hasattr(self, 'not_before_time') and self.not_before_time is not None:
+                if time_now < self.not_before_time:
                     delta = self.not_before_time - time_now
-                    if delta.total_seconds() > options.validation_slack:
+                    if delta.total_seconds() > kwargs.get('validation_slack', 0.5):
                         raise AttestationTokenValidationException(u'Token is not yet valid. Now: {}, Not Before: {}'.format(time_now.isoformat(), self.not_before_time.isoformat()))
-            if options.validate_issuer and hasattr(self, 'issuer') and self.issuer is not None:
-                if (options.issuer != self.issuer):
-                    raise AttestationTokenValidationException(u'Issuer in token: {} is not the expected issuer: {}.'.format(self.issuer, options.issuer))
+            if kwargs.get('validate_issuer', False) and hasattr(self, 'issuer') and self.issuer is not None:
+                if kwargs.get('issuer', None) != self.issuer:
+                    raise AttestationTokenValidationException(u'Issuer in token: {} is not the expected issuer: {}.'.format(self.issuer,kwargs.get('issuer', None)))
         return True
 
     @staticmethod

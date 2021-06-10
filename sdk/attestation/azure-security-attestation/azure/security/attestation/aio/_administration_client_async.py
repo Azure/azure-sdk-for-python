@@ -44,9 +44,9 @@ from threading import Lock
 class AttestationAdministrationClient(object):
     """Provides administrative APIs for managing an instance of the Attestation Service.
 
-    :param str endpoint: The attestation instance base URI, for example https://mytenant.attest.azure.net.
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :param str endpoint: The attestation instance base URI, for example https://mytenant.attest.azure.net.
     :keyword str signing_key: PEM encoded signing key to be used for all
         operations.
     :keyword str signing_certificate: PEM encoded X.509 certificate to be used for all
@@ -62,7 +62,7 @@ class AttestationAdministrationClient(object):
     def __init__(
         self,
         credential, #type: AsyncTokenCredential
-        endpoint, #type: str
+        endpoint,
         **kwargs #type: Any
     ): #type: (...) -> None
         if not credential:
@@ -77,7 +77,7 @@ class AttestationAdministrationClient(object):
 
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
-        if (signing_key or signing_certificate):
+        if signing_key or signing_certificate:
             self._signing_key, self._signing_certificate = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
 
 
@@ -458,7 +458,7 @@ class AttestationAdministrationClient(object):
         """
 
         with self._statelock:
-            if (self._signing_certificates == None):
+            if self._signing_certificates == None:
                 signing_certificates = await self._client.signing_certificates.get(**kwargs)
                 self._signing_certificates = []
                 for key in signing_certificates.keys:

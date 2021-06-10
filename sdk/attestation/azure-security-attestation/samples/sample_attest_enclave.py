@@ -232,7 +232,7 @@ issuancerules {
 
     def _create_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationClient
-        return AttestationClient(self._credentials, endpoint=base_url, **kwargs)
+        return AttestationClient(self._credentials, base_url, **kwargs)
 
     def __enter__(self):
         return self

@@ -190,7 +190,7 @@ class PolicyGetSetTests(AzureTestCase):
             for signer in policy_signers.value:
                 # the signer is an X.509 certificate chain, look at the first certificate
                 # to see if it's our signing certificate.
-                if (signer[0] == expected_certificate):
+                if signer[0] == expected_certificate:
                     found_cert = True
                     break
             assert found_cert

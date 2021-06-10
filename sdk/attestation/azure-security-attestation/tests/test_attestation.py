@@ -340,13 +340,13 @@ class AttestationTest(AzureTestCase):
         attest_client = self.create_client_from_credential(AttestationClient,
             credential=credential,
             endpoint=base_uri,
-                validate_token=True,
-                validate_signature=True,
-                validate_issuer=self.is_live,
-                validation_slack=1,
-                issuer=base_uri,
-                validate_expiration=self.is_live,
-                **kwargs)
+            validate_token=True,
+            validate_signature=True,
+            validate_issuer=self.is_live,
+            validation_slack=1,
+            issuer=base_uri,
+            validate_expiration=self.is_live,
+            **kwargs)
         return attest_client
 
     def create_adminclient(self, base_uri, **kwargs): 

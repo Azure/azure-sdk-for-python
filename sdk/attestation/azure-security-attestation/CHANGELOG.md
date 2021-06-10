@@ -18,6 +18,7 @@
   keyword arguments on the various APIs which take token parameters.
 * Renamed `instance_url` parameter to the constructors to `endpoint` to be consistent
   with other APIs.
+* Many optional fields in `AttestationResult` were made non-optional.
 
 ## 1.0.0b4 (2021-06-08)
 

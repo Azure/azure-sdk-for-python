@@ -40,9 +40,9 @@ class AttestationClient(object):
     """An AttestationClient object enables access to the Attestation family of APIs provided
       by the attestation service.
 
-    :param str endpoint: The attestation instance base URI, for example https://mytenant.attest.azure.net.
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :param str endpoint: The attestation instance base URI, for example https://mytenant.attest.azure.net.
     :keyword ~azure.core.pipeline.AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
     :keyword ~azure.core.pipeline.transport.AsyncHttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[~azure.core.pipeline.policies.AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
