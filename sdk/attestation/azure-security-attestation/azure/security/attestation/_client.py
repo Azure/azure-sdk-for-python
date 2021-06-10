@@ -163,8 +163,7 @@ class AttestationClient(object):
         options.update(**kwargs)
 
         if options.get("validate_token", True):
-            if not token.validate_token(self._get_signers(**kwargs), **options):
-                raise AttestationTokenValidationException("Could not validate token returned for the attest_sgx_enclave API")
+            token._validate_token(self._get_signers(**kwargs), **options)
 
         return AttestationResult._from_generated(token.get_body(), token)
 
@@ -235,8 +234,7 @@ class AttestationClient(object):
         options.update(**kwargs)
 
         if options.get("validate_token", True):
-            if not token.validate_token(self._get_signers(**kwargs), **options):
-                raise AttestationTokenValidationException("Could not validate token returned for the attest_open_enclave API")
+            token._validate_token(self._get_signers(**kwargs), **options)
         return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace

@@ -77,7 +77,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
 
         expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy))
         hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
-        hasher.update(expected_policy.serialize().encode('utf-8'))
+        hasher.update(expected_policy.to_jwt_string().encode('utf-8'))
         expected_hash = hasher.finalize()
 
         assert expected_hash == policy_set_response.policy_token_hash
@@ -126,7 +126,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
             signing_key=key,
             signing_certificate=signing_certificate)
         hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
-        hasher.update(expected_policy.serialize().encode('utf-8'))
+        hasher.update(expected_policy.to_jwt_string().encode('utf-8'))
         expected_hash = hasher.finalize()
 
         assert expected_hash == policy_set_response.policy_token_hash
@@ -153,7 +153,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
             signing_key=key,
             signing_certificate=decoded_cert)
         hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
-        hasher.update(expected_policy.serialize().encode('utf-8'))
+        hasher.update(expected_policy.to_jwt_string().encode('utf-8'))
         expected_hash = hasher.finalize()
 
         assert expected_hash == policy_set_response.policy_token_hash

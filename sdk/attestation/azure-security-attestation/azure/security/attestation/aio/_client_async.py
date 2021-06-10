@@ -116,8 +116,10 @@ class AttestationClient(object):
             before applying the policy document via the set_policy API
         :paramtype draft_policy: str
         :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
-        :keyword validation_callback: Callback to allow clients to perform custom validation of the token.
-        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], bool]
+        :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
+            if the token is invalid, the `validation_callback` function should throw 
+            an exception.
+        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -157,8 +159,7 @@ class AttestationClient(object):
         options.update(**kwargs)
 
         if options.get("validate_token", True):
-            if not token.validate_token(await self._get_signers(**kwargs), **options):
-                raise AttestationTokenValidationException("Could not validate token returned for the attest_sgx_enclave API")
+            token._validate_token(await self._get_signers(**kwargs), **options)
         return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace_async
@@ -184,8 +185,10 @@ class AttestationClient(object):
 
         :paramtype draft_policy: str
         :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
-        :keyword validation_callback: Callback to allow clients to perform custom validation of the token.
-        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], bool]
+    :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
+        if the token is invalid, the `validation_callback` function should throw 
+        an exception.
+        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -223,8 +226,7 @@ class AttestationClient(object):
         options.update(**kwargs)
 
         if options.get("validate_token", True):
-            if not token.validate_token(await self._get_signers(**kwargs), **options):
-                raise AttestationTokenValidationException("Could not validate token returned for the attest_open_enclave API")
+            token._validate_token(await self._get_signers(**kwargs), **options)
         return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace_async

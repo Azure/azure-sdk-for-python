@@ -202,7 +202,7 @@ issuancerules {};
 
             # Generate the Sha256 hash of the attestation token.
             hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
-            hasher.update(expected_policy.serialize().encode('utf-8'))
+            hasher.update(expected_policy.to_jwt_string().encode('utf-8'))
             expected_hash = hasher.finalize()
 
             print("Expected hash should match returned hash.")

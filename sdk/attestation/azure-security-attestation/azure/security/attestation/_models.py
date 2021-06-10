@@ -693,7 +693,7 @@ class AttestationToken(Generic[T]):
         jwk = self._header.get('jwk')
         return JSONWebKey.deserialize(jwk)
 
-    def serialize(self):
+    def to_jwt_string(self):
         #type:() -> str
         """ Returns a string serializing the JSON Web Token
         
@@ -701,8 +701,8 @@ class AttestationToken(Generic[T]):
         """
         return self._token
 
-    def validate_token(self, signers=None, **kwargs):
-        # type: (list[AttestationSigner], **Any) -> bool
+    def _validate_token(self, signers=None, **kwargs):
+        # type: (list[AttestationSigner], **Any) -> None
         """ Validate the attestation token based on the options specified in the
          :class:`TokenValidationOptions`.
         
@@ -713,8 +713,10 @@ class AttestationToken(Generic[T]):
             consider the signers as potential signatories for the token, otherwise
             it will consider attributes in the header of the token.
         :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
-        :keyword validation_callback: Callback to allow clients to perform custom validation of the token.
-        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], bool]
+        :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
+            if the token is invalid, the `validation_callback` function should throw 
+            an exception.
+        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -722,8 +724,6 @@ class AttestationToken(Generic[T]):
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
-        :return bool: Returns True if the token successfully validated, False 
-            otherwise. 
 
         :raises: azure.security.attestation.AttestationTokenValidationException
         """
@@ -732,7 +732,6 @@ class AttestationToken(Generic[T]):
             self._validate_static_properties(**kwargs)
             if 'validation_callback' in kwargs:
                 kwargs.get('validation_callback')(self, None)
-            return True
 
         signer = None
         if self.algorithm != 'none' and kwargs.get('validate_signature', True):
@@ -746,12 +745,8 @@ class AttestationToken(Generic[T]):
         self._validate_static_properties(**kwargs)
 
         if 'validation_callback' in kwargs:
-            callback = kwargs.get('validation_callback')
-            if callback(self, signer):
-                return True
-            raise AttestationTokenValidationException("User validation callback failed the validation request.")
+            kwargs.get('validation_callback')(self, signer)
 
-        return True
 
     def get_body(self):
         # type: () -> T

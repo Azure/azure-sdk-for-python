@@ -24,8 +24,10 @@ class AttestationClientConfiguration(Configuration):
     attributes.
 
     :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
-    :keyword validation_callback: Callback to allow clients to perform custom validation of the token.
-    :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], bool]
+    :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
+        if the token is invalid, the `validation_callback` function should throw 
+        an exception.
+    :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], None]
     :keyword bool validate_signature: if True, validate the signature of the token being validated.
     :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
     :keyword str issuer: Expected issuer, used if validate_issuer is true.
