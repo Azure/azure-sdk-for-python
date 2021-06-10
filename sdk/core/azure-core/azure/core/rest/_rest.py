@@ -24,19 +24,24 @@
 #
 # --------------------------------------------------------------------------
 import cgi
+import collections
 from json import loads
 
-from typing import TYPE_CHECKING, ContextManager
+from typing import TYPE_CHECKING
 
-from azure.core.pipeline.transport import (
-    HttpRequest as _PipelineTransportHttpRequest,
-)
 from azure.core.exceptions import HttpResponseError
 
+from .._utils import _case_insensitive_dict
+
 from ._helpers import (
-    _set_body,
-    _lookup_encoding,
-    _parse_lines_from_text,
+    RequestNotReadError,
+    ResponseClosedError,
+    ResponseNotReadError,
+    StreamConsumedError,
+    lookup_encoding,
+    SyncByteStream,
+    RequestHelper,
+    parse_lines_from_text,
 )
 
 if TYPE_CHECKING:
@@ -46,7 +51,7 @@ if TYPE_CHECKING:
         Any,
         Iterator,
         Union,
-        Callable,
+        Dict,
     )
     from ._helpers import HeadersType
     ByteStream = Iterable[bytes]
@@ -54,7 +59,6 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport._base import (
         HttpResponse as _PipelineTransportHttpResponse
     )
-    from azure.core.pipeline import Pipeline
 
 
 
@@ -94,28 +98,28 @@ class HttpRequest(object):
     def __init__(self, method, url, **kwargs):
         # type: (str, str, Any) -> None
 
-        data = kwargs.pop("data", None)
-        content = kwargs.pop("content", None)
-        json = kwargs.pop("json", None)
-        files = kwargs.pop("files", None)
-
-        self._internal_request = kwargs.pop("_internal_request", _PipelineTransportHttpRequest(
-            method=method,
-            url=url,
-            headers=kwargs.pop("headers", None),
-        ))
+        self.url = url
+        self.method = method
+        self.headers = _case_insensitive_dict(kwargs.pop("headers", None))
+        helper = RequestHelper()
         params = kwargs.pop("params", None)
-
         if params:
-            self._internal_request.format_parameters(params)
+            self.url = helper.format_parameters(self.url, params)
 
-        _set_body(
-            content=content,
-            data=data,
-            files=files,
-            json=json,
-            internal_request=self._internal_request
+        headers, self._content = helper.set_body(
+            content=kwargs.pop("content", None),
+            data=kwargs.pop("data", None),
+            files=kwargs.pop("files", None),
+            json=kwargs.pop("json", None),
         )
+        self._read_content = False
+        self._update_headers(_case_insensitive_dict(headers))
+
+        # we just return content in the case of 'data' or 'files'
+        if not isinstance(self._content, SyncByteStream):
+            self._read_content = True
+        if isinstance(self._content, helper.byte_stream):
+            self.read()
 
         if kwargs:
             raise TypeError(
@@ -124,48 +128,57 @@ class HttpRequest(object):
                 )
             )
 
-    def _set_content_length_header(self):
-        method_check = self._internal_request.method.lower() in ["put", "post", "patch"]
-        content_length_unset = "Content-Length" not in self._internal_request.headers
-        if method_check and content_length_unset:
-            self._internal_request.headers["Content-Length"] = str(len(self._internal_request.data))
-
-    @property
-    def url(self):
-        # type: (...) -> str
-        return self._internal_request.url
-
-    @url.setter
-    def url(self, val):
-        # type: (str) -> None
-        self._internal_request.url = val
-
-    @property
-    def method(self):
-        # type: (...) -> str
-        return self._internal_request.method
-
-    @property
-    def headers(self):
-        # type: (...) -> HeadersType
-        return self._internal_request.headers
+    def _update_headers(self, default_headers):
+        # type: (Dict[str, str]) -> None
+        for name, value in default_headers.items():
+            if name == "Transfer-Encoding" and "Content-Length" in self.headers:
+                continue
+            self.headers.setdefault(name, value)
 
     @property
     def content(self):
         # type: (...) -> Any
         """Gets the request content.
         """
-        return self._internal_request.data or self._internal_request.files
+        if not self._read_content:
+            raise RequestNotReadError()
+        return self._content
+
+    def read(self):
+        # type: (...) -> bytes
+        if not self._read_content:
+            if not isinstance(self._content, collections.Iterable):
+                raise TypeError("read() should only be called on sync streams.")
+            self._content = b"".join(self._content)
+            self._read_content = True
+        return self._content
 
     def __repr__(self):
-        return self._internal_request.__repr__()
-
-    def __deepcopy__(self, memo=None):
-        return HttpRequest(
-            self.method,
-            self.url,
-            _internal_request=self._internal_request.__deepcopy__(memo)
+        # type: (...) -> str
+        return "<HttpRequest [{}], url: '{}'>".format(
+            self.method, self.url
         )
+
+    @property
+    def _data(self):
+        try:
+            return self._content._data  # pylint: disable=protected-access
+        except AttributeError:
+            return self._content
+
+    @property
+    def _files(self):
+        try:
+            return self._content._files  # pylint: disable=protected-access
+        except AttributeError:
+            return None
+
+    # def __deepcopy__(self, memo=None):
+    #     return HttpRequest(
+    #         self.method,
+    #         self.url,
+    #         _internal_request=self._internal_request.__deepcopy__(memo)
+    #     )
 
 class HttpResponse(object):
     """Class for HttpResponse.
@@ -247,7 +260,7 @@ class HttpResponse(object):
             return None
         _, params = cgi.parse_header(content_type)
         encoding = params.get('charset') # -> utf-8
-        if encoding is None or not _lookup_encoding(encoding):
+        if encoding is None or not lookup_encoding(encoding):
             return None
         return encoding
 
@@ -399,7 +412,7 @@ class HttpResponse(object):
     def iter_lines(self, chunk_size=None):
         # type: (int) -> Iterator[str]
         for text in self.iter_text(chunk_size):
-            lines = _parse_lines_from_text(text)
+            lines = parse_lines_from_text(text)
             for line in lines:
                 yield line
 
@@ -419,29 +432,3 @@ class HttpResponse(object):
             yield raw_bytes
 
         self._close_stream()
-
-########################### ERRORS SECTION #################################
-
-class StreamConsumedError(Exception):
-    def __init__(self):
-        message = (
-            "You are attempting to read or stream content that has already been streamed. "
-            "You have likely already consumed this stream, so it can not be accessed anymore."
-        )
-        super(StreamConsumedError, self).__init__(message)
-
-class ResponseClosedError(Exception):
-    def __init__(self):
-        message = (
-            "You can not try to read or stream this response's content, since the "
-            "response has been closed."
-        )
-        super(ResponseClosedError, self).__init__(message)
-
-class ResponseNotReadError(Exception):
-
-    def __init__(self):
-        message = (
-            "You have not read in the response's bytes yet. Call response.read() first."
-        )
-        super(ResponseNotReadError, self).__init__(message)

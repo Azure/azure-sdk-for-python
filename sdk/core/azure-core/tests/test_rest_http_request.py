@@ -9,8 +9,19 @@
 import io
 import pytest
 import sys
+import collections
 from typing import Generator
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, RequestNotReadError, ResponseClosedError
+
+@pytest.fixture
+def assert_iterator_body():
+    def _comparer(request, final_value):
+        with pytest.raises(RequestNotReadError):
+            request.content
+        read_bytes = request.read()
+        assert read_bytes == final_value
+        assert request.content == final_value
+    return _comparer
 
 def test_request_repr():
     request = HttpRequest("GET", "http://example.org")
@@ -25,24 +36,26 @@ def test_content_length_header():
     assert request.headers["Content-Length"] == "8"
 
 
-def test_iterable_content():
+def test_iterable_content(assert_iterator_body):
     class Content:
         def __iter__(self):
             yield b"test 123"  # pragma: nocover
 
     request = HttpRequest("POST", "http://example.org", content=Content())
-    assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
+    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert_iterator_body(request, b"test 123")
 
 
-def test_generator_with_transfer_encoding_header():
+def test_generator_with_transfer_encoding_header(assert_iterator_body):
     def content():
         yield b"test 123"  # pragma: nocover
 
     request = HttpRequest("POST", "http://example.org", content=content())
-    assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
+    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert_iterator_body(request, b"test 123")
 
 
-def test_generator_with_content_length_header():
+def test_generator_with_content_length_header(assert_iterator_body):
     def content():
         yield b"test 123"  # pragma: nocover
 
@@ -50,7 +63,8 @@ def test_generator_with_content_length_header():
     request = HttpRequest(
         "POST", "http://example.org", content=content(), headers=headers
     )
-    assert request.headers == {"Content-Length": "8", "Content-Type": "application/octet-stream"}
+    assert request.headers == {"Content-Length": "8"}
+    assert_iterator_body(request, b"test 123")
 
 
 def test_url_encoded_data():
@@ -64,7 +78,7 @@ def test_json_encoded_data():
     request = HttpRequest("POST", "http://example.org", json={"test": 123})
 
     assert request.headers["Content-Type"] == "application/json"
-    assert request.content == '{"test": 123}'
+    assert request.content == b'{"test": 123}'
 
 
 def test_headers():
@@ -101,68 +115,71 @@ def test_override_accept_encoding_header():
 """Test request body"""
 def test_empty_content():
     request = HttpRequest("GET", "http://example.org")
-    assert request.content == None
+    assert request.content == b""
 
 def test_string_content():
     request = HttpRequest("PUT", "http://example.org", content="Hello, world!")
     assert request.headers == {"Content-Length": "13", "Content-Type": "text/plain"}
-    assert request.content == "Hello, world!"
+    assert request.content == b"Hello, world!"
 
     # Support 'data' for compat with requests.
     request = HttpRequest("PUT", "http://example.org", data="Hello, world!")
 
     assert request.headers == {"Content-Length": "13", "Content-Type": "text/plain"}
-    assert request.content == "Hello, world!"
+    assert request.content == b"Hello, world!"
 
     # content length should not be set for GET requests
 
     request = HttpRequest("GET", "http://example.org", data="Hello, world!")
 
-    assert request.headers == {"Content-Type": "text/plain"}
-    assert request.content == "Hello, world!"
+    assert request.headers == {"Content-Length": "13", "Content-Type": "text/plain"}
+    assert request.content == b"Hello, world!"
 
 @pytest.mark.skipif(sys.version_info < (3, 0),
                     reason="In 2.7, b'' is the same as a string, so will have text/plain content type")
 def test_bytes_content():
     request = HttpRequest("PUT", "http://example.org", content=b"Hello, world!")
-    assert request.headers == {"Content-Length": "13", "Content-Type": "application/octet-stream"}
+    assert request.headers == {"Content-Length": "13"}
     assert request.content == b"Hello, world!"
 
     # Support 'data' for compat with requests.
     request = HttpRequest("PUT", "http://example.org", data=b"Hello, world!")
 
-    assert request.headers == {"Content-Length": "13", "Content-Type": "application/octet-stream"}
+    assert request.headers == {"Content-Length": "13"}
     assert request.content == b"Hello, world!"
 
-    # content length should not be set for GET requests
+    # should still be set regardless of method
 
     request = HttpRequest("GET", "http://example.org", data=b"Hello, world!")
 
-    assert request.headers == {"Content-Type": "application/octet-stream"}
+    assert request.headers == {"Content-Length": "13"}
     assert request.content == b"Hello, world!"
 
-def test_iterator_content():
+def test_iterator_content(assert_iterator_body):
     # NOTE: in httpx, content reads out the actual value. Don't do that (yet) in azure rest
     def hello_world():
         yield b"Hello, "
         yield b"world!"
 
     request = HttpRequest("POST", url="http://example.org", content=hello_world())
+    assert isinstance(request._content, collections.Iterable)
 
-    assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
-    assert isinstance(request.content, Generator)
+    assert_iterator_body(request, b"Hello, world!")
+    assert request.headers == {"Transfer-Encoding": "chunked"}
 
     # Support 'data' for compat with requests.
     request = HttpRequest("POST", url="http://example.org", data=hello_world())
+    assert isinstance(request._content, collections.Iterable)
 
-    assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
-    assert isinstance(request.content, Generator)
+    assert_iterator_body(request, b"Hello, world!")
+    assert request.headers == {"Transfer-Encoding": "chunked"}
 
-    # transfer encoding should not be set for GET requests
+    # transfer encoding should still be set for GET requests
     request = HttpRequest("GET", url="http://example.org", data=hello_world())
+    assert isinstance(request._content, collections.Iterable)
 
-    assert request.headers == {"Content-Type": "application/octet-stream"}
-    assert isinstance(request.content, Generator)
+    assert_iterator_body(request, b"Hello, world!")
+    assert request.headers == {"Transfer-Encoding": "chunked"}
 
 
 def test_json_content():
@@ -172,7 +189,7 @@ def test_json_content():
         "Content-Length": "19",
         "Content-Type": "application/json",
     }
-    assert request.content == '{"Hello": "world!"}'
+    assert request.content == b'{"Hello": "world!"}'
 
 def test_urlencoded_content():
     # NOTE: not adding content length setting and content testing bc we're not adding content length in the rest code
@@ -194,7 +211,7 @@ def test_multipart_invalid_key(key):
             data=data,
             files=files,
         )
-    assert "Invalid type for data key" in str(e.value)
+    assert "Invalid type for data name" in str(e.value)
     assert repr(key) in str(e.value)
 
 
@@ -211,7 +228,7 @@ def test_multipart_invalid_key_binary_string():
             data=data,
             files=files,
         )
-    assert "Invalid type for data key" in str(e.value)
+    assert "Invalid type for data name" in str(e.value)
     assert repr(b"abc") in str(e.value)
 
 @pytest.mark.parametrize(("value"), (1, 2.3, [None, "abc"], {None: "abc"}))
@@ -229,26 +246,14 @@ def test_empty_request():
     assert request.headers == {}
     assert not request.content # in core, we don't convert urlencoded dict to bytes representation in content
 
-def test_generator_with_transfer_encoding_header():
+def test_read_content(assert_iterator_body):
     def content():
-        yield b'test 123'
-    request = HttpRequest(
-        "POST",
-        "http://localhost:3000/foo/bar",
-        content=content(),
-    )
-    assert request.headers["Transfer-Encoding"] == "chunked"
+        yield b"test 123"
 
-def test_generator_with_content_length_header():
-    def content():
-        yield b"test 123"  # pragma: nocover
-
-    headers = {"Content-Length": "8"}
-    request = HttpRequest(
-        "POST", "http://localhost:3000/foo/bar", content=content(), headers=headers
-    )
-    assert not request.headers.get("Transfer-Encoding")
-    assert request.headers["Content-Length"] == "8"
+    request = HttpRequest("POST", "http://example.org", content=content())
+    assert_iterator_body(request, b"test 123")
+    # in this case, request._data is what we end up passing to the requests transport
+    assert isinstance(request._data, collections.Iterable)
 
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
 # def test_multipart_multiple_files_single_input_content():

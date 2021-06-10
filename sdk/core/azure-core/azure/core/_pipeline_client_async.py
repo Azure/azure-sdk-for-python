@@ -173,7 +173,7 @@ class AsyncPipelineClient(PipelineClientBase):
         """Want to get rid of this code and use pipeline.run immediately"""
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
         try:
-            request = request._internal_request
+            request = request
         except AttributeError:
             pass
         pipeline_response = await self._pipeline.run(

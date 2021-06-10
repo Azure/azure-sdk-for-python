@@ -608,10 +608,12 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
         response_encoding = request.context.get('response_encoding')
 
-        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(
+        deserialized = self.deserialize_from_http_generics(
             response.http_response,
             response_encoding
         )
+        response.context[self.CONTEXT_NAME] = deserialized
+        response.http_response._json = deserialized
 
 
 class ProxyPolicy(SansIOHTTPPolicy):

@@ -24,31 +24,30 @@
 #
 # --------------------------------------------------------------------------
 
-from ._helpers import HttpVerbs
+from ._helpers import (
+    RequestNotReadError,
+    ResponseNotReadError,
+    StreamConsumedError,
+    ResponseClosedError,
+)
 try:
     from ._rest_py3 import (
         HttpRequest,
         HttpResponse,
-        StreamConsumedError,
-        ResponseNotReadError,
-        ResponseClosedError,
     )
 except (SyntaxError, ImportError):
     from ._rest import (  # type: ignore
         HttpRequest,
         HttpResponse,
-        StreamConsumedError,
-        ResponseNotReadError,
-        ResponseClosedError,
     )
 
 __all__ = [
-    "HttpVerbs",
     "HttpRequest",
     "HttpResponse",
     "StreamConsumedError",
     "ResponseNotReadError",
     "ResponseClosedError",
+    "RequestNotReadError",
 ]
 
 try:

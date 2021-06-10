@@ -23,9 +23,11 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import collections
 import codecs
 from enum import Enum
+from inspect import isgenerator
+from json import dumps
+import collections
 from typing import (
     Optional,
     Union,
@@ -34,13 +36,17 @@ from typing import (
     List,
     Tuple,
     IO,
-    cast,
+    Any,
+    Dict,
+    Iterable,
+    Iterator,
 )
 import xml.etree.ElementTree as ET
 import six
-from azure.core.pipeline.transport import (
-    HttpRequest as _PipelineTransportHttpRequest,
-)
+try:
+    from urlparse import urlparse  # type: ignore
+except ImportError:
+    from urllib.parse import urlparse
 
 ################################### TYPES SECTION #########################
 
@@ -64,6 +70,8 @@ FilesType = Union[
     Sequence[Tuple[str, FileType]]
 ]
 
+ContentTypeBase = Union[str, bytes, Iterable[bytes]]
+
 class HttpVerbs(str, Enum):
     GET = "GET"
     PUT = "PUT"
@@ -73,84 +81,127 @@ class HttpVerbs(str, Enum):
     DELETE = "DELETE"
     MERGE = "MERGE"
 
-########################### UTILS SECTION #################################
+########################### ERRORS SECTION #################################
 
-def _is_stream_or_str_bytes(content):
-    return isinstance(content, (str, bytes)) or any(
-        hasattr(content, attr) for attr in ["read", "__iter__", "__aiter__"]
-    )
-
-def _lookup_encoding(encoding):
-    # type: (str) -> bool
-    # including check for whether encoding is known taken from httpx
-    try:
-        codecs.lookup(encoding)
-        return True
-    except LookupError:
-        return False
-
-def _set_content_length_header(header_name, header_value, internal_request):
-    # type: (str, str, _PipelineTransportHttpRequest) -> None
-    valid_methods = ["put", "post", "patch"]
-    content_length_headers = ["Content-Length", "Transfer-Encoding"]
-    if (
-        internal_request.method.lower() in valid_methods and
-        not any([c for c in content_length_headers if c in internal_request.headers])
-    ):
-        internal_request.headers[header_name] = header_value
-
-def _set_content_type_header(header_value, internal_request):
-    # type: (str, _PipelineTransportHttpRequest) -> None
-    if not internal_request.headers.get("Content-Type"):
-        internal_request.headers["Content-Type"] = header_value
-
-def _set_content_body(content, internal_request):
-    headers = internal_request.headers
-    content_type = headers.get("Content-Type")
-
-    if isinstance(content, ET.Element):
-        # XML body
-        internal_request.set_xml_body(content)
-        _set_content_type_header("application/xml", internal_request)
-        _set_content_length_header(
-            "Content-Length",
-            str(len(cast(ET.Element, internal_request.data))),
-            internal_request
+class StreamConsumedError(Exception):
+    def __init__(self):
+        message = (
+            "You are attempting to read or stream content that has already been streamed. "
+            "You have likely already consumed this stream, so it can not be accessed anymore."
         )
-    elif content_type and content_type.startswith("text/"):
-        # Text body
-        internal_request.set_text_body(content)
-        _set_content_length_header(
-            "Content-Length",
-            str(len(cast(str, internal_request.data))),
-            internal_request
+        super(StreamConsumedError, self).__init__(message)
+
+class ResponseClosedError(Exception):
+    def __init__(self):
+        message = (
+            "You can not try to read or stream this response's content, since the "
+            "response has been closed."
         )
-    elif _is_stream_or_str_bytes(content):
-        # stream will be bytes / str, or iterator of bytes / str
-        internal_request.set_streamed_data_body(content)
-        if isinstance(content, (str, bytes)) and content:
-            _set_content_length_header(
-                "Content-Length",
-                str(len(cast(str, internal_request.data))),
-                internal_request
+        super(ResponseClosedError, self).__init__(message)
+
+class ResponseNotReadError(Exception):
+
+    def __init__(self):
+        message = (
+            "You have not read in the response's bytes yet. Call response.read() first."
+        )
+        super(ResponseNotReadError, self).__init__(message)
+
+class RequestNotReadError(Exception):
+
+    def __init__(self):
+        message = (
+            "You have not read in the request's bytes yet. Call request.read() first."
+        )
+        super(RequestNotReadError, self).__init__(message)
+
+########################### STREAM SECTION #################################
+
+class SyncByteStream(object):
+    def __init__(self, stream):
+        self._data = stream  # naming it data bc this is what requests / aiohttp are interested in
+
+    def __iter__(self):
+        raise NotImplementedError()
+
+    def close(self):
+        """Close the stream"""
+
+    def read(self):
+        # type: () -> bytes
+        """Read the stream"""
+
+class ByteStream(SyncByteStream):
+    def __init__(self, stream):
+        # type: (bytes) -> None
+        super(ByteStream, self).__init__(stream)
+        self._stream = stream
+
+    def __iter__(self):
+        # type: () -> Iterator[bytes]
+        yield self._stream
+
+class IteratorByteStream(SyncByteStream):
+    def __init__(self, stream):
+        # type: (Iterable[bytes]) -> None
+        super(IteratorByteStream, self).__init__(stream)
+        self._stream = stream
+        self._is_stream_consumed = False
+        self._is_generator = isgenerator(stream)
+
+    def __iter__(self):
+        # type: () -> Iterator[bytes]
+        if self._is_stream_consumed and self._is_generator:
+            raise StreamConsumedError()
+
+        self._is_stream_consumed = True
+        for part in self._stream:
+            yield part
+
+def to_bytes(value):
+    # type: (Union[str, bytes]) -> bytes
+    return value.encode("utf-8") if isinstance(value, six.string_types) else value
+
+class MultipartDataField(object):
+    def __init__(self, name, value):
+        if not isinstance(name, str):
+            raise TypeError(
+                "Invalid type for data name. Expected str, got {}: {}".format(
+                    type(name), name
+                )
             )
-            if isinstance(content, six.string_types):
-                _set_content_type_header("text/plain", internal_request)
-            else:
-                _set_content_type_header("application/octet-stream", internal_request)
-        elif isinstance(content, collections.Iterable):
-            _set_content_length_header("Transfer-Encoding", "chunked", internal_request)
-            _set_content_type_header("application/octet-stream", internal_request)
-    else:
-        # Other body
-        internal_request.data = content
-    internal_request.headers = headers
+        if not isinstance(value, (str, bytes)):
+            raise TypeError(
+                "Invalid type for data value. Expected str or bytes, got {}: {}".format(
+                    type(value), value
+                )
+        )
+        self.name = name
+        self.value = value
+        self._headers = None
+        self._data = None
 
-def _verify_data_object(key, value):
-    if not isinstance(key, str):
+    def render_data(self):
+        # type: () -> bytes
+        if self._data is None:
+            self._data = to_bytes(self.value)
+        return self._data
+
+    def render(self):
+        # type: () -> Iterator[bytes]
+        yield self.render_data()
+
+
+class MultipartFileField(object):
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+def _validate_single(name, value):
+    if not isinstance(name, str):
         raise TypeError(
-            "Invalid type for data key. Expected str, got {}: {}".format(
-                type(key), key
+            "Invalid type for data name. Expected str, got {}: {}".format(
+                type(name), name
             )
         )
     if not isinstance(value, (str, bytes)):
@@ -160,33 +211,166 @@ def _verify_data_object(key, value):
             )
     )
 
-def _set_body(content, data, files, json, internal_request):
-    if data is not None and not isinstance(data, dict):
-        content = data
-        data = None
-    if content is not None:
-        _set_content_body(content, internal_request)
-    elif json is not None:
-        internal_request.set_json_body(json)
-        _set_content_type_header("application/json", internal_request)
-    elif files or data:
-        if data:
-            _set_content_type_header("application/x-www-form-urlencoded", internal_request)
-        internal_request.set_formdata_body(data or files)
-        if data and not files:
-            _set_content_type_header("application/x-www-form-urlencoded", internal_request)
-        if data and files:
-            internal_request.files = {
-                f: internal_request._format_data(d) for f, d in data.items() if d is not None
-            }
-            for f, d in internal_request.data.items():
-                if isinstance(d, list):
-                    for item in d:
-                        _verify_data_object(f, item)
-                else:
-                    _verify_data_object(f, d)
+def _validate(data):
+    for name, value in data.items():
+        if isinstance(value, list):
+            for item in value:
+                _validate_single(name=name, value=item)
+        else:
+            _validate_single(name, value)
 
-def _parse_lines_from_text(text):
+class MultipartHolder():
+    def __init__(self, data, files):
+        # type: (dict, FileType) -> None
+        _validate(data)
+        self._data = data
+        self._files = files
+
+########################### HELPER SECTION #################################
+
+def _verify_data_object(name, value):
+    if not isinstance(name, str):
+        raise TypeError(
+            "Invalid type for data name. Expected str, got {}: {}".format(
+                type(name), name
+            )
+        )
+    if value is not None and not isinstance(value, (str, bytes, int, float)):
+        raise TypeError(
+            f"Invalid type for value. Expected primitive type, got {type(value)}: {value!r}"
+        )
+
+def set_multipart_body(data, files):
+    return {}, MultipartHolder(data=data, files=files)
+
+def set_urlencoded_body(data):
+    body = {}
+    for f, d in data.items():
+        if not d:
+            continue
+        if isinstance(d, list):
+            for item in d:
+                _verify_data_object(f, item)
+        else:
+            _verify_data_object(f, d)
+        body[f] = d
+    return {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }, body
+
+class RequestHelper(object):
+
+    @property
+    def byte_stream(self):
+        return ByteStream
+
+    @property
+    def iterator_byte_stream(self):
+        return IteratorByteStream
+
+    def set_xml_body(self, content):
+        headers = {}
+        bytes_content = ET.tostring(content, encoding="utf-8")
+        body = bytes_content.replace(b"encoding='utf8'", b"encoding='utf-8'")
+        if body:
+            headers["Content-Length"] = str(len(body))
+        return headers, self.byte_stream(body)
+
+    def _shared_set_content_body(self, content):
+        # type: (Any) -> Tuple[Dict[str, str], Optional[SyncByteStream]]
+        headers = {}
+
+        if isinstance(content, ET.Element):
+            # XML body
+            return self.set_xml_body(content)
+        if isinstance(content, (str, bytes)):
+            headers = {}
+            if isinstance(content, six.string_types):
+                body = content.encode("utf-8")
+                headers["Content-Type"] = "text/plain"
+            else:
+                body = content
+            if body:
+                headers["Content-Length"] = str(len(body))
+            return headers, self.byte_stream(body)
+        if isinstance(content, collections.Iterable):
+            return {"Transfer-Encoding": "chunked"}, self.iterator_byte_stream(content)
+        return headers, None
+
+    def set_content_body(self, content):
+        headers, body = self._shared_set_content_body(content)
+        if body:
+            return headers, body
+        raise TypeError(
+            "Unexpected type for 'content': '{}'. ".format(type(content)) +
+            "We expect 'content' to either be str, bytes, or an Iterable"
+        )
+
+    def set_json_body(self, json):
+        # type: (Any) -> Tuple[Dict[str, str], ByteStream]
+        body = dumps(json).encode("utf-8")
+        return {
+            "Content-Type": "application/json",
+            "Content-Length": str(len(body))
+        }, self.byte_stream(body)
+
+
+
+    def set_body(self, content, data, files, json):
+        # type: (ContentTypeBase, dict, FilesType, Any) -> Tuple[Dict[str, str], SyncByteStream]
+        if data is not None and not isinstance(data, dict):
+            # should we warn?
+            return self.set_content_body(data)
+        if content is not None:
+            return self.set_content_body(content)
+        if json is not None:
+            return self.set_json_body(json)
+        if files:
+            return set_multipart_body(data or {}, files)
+        if data:
+            return set_urlencoded_body(data)
+        return {}, self.byte_stream(b"")
+
+    @staticmethod
+    def format_parameters(url, params):
+        """Format parameters into a valid query string.
+        It's assumed all parameters have already been quoted as
+        valid URL strings.
+
+        :param dict params: A dictionary of parameters.
+        """
+        query = urlparse(url).query
+        if query:
+            url = url.partition("?")[0]
+            existing_params = {
+                p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]
+            }
+            params.update(existing_params)
+        query_params = []
+        for k, v in params.items():
+            if isinstance(v, list):
+                for w in v:
+                    if w is None:
+                        raise ValueError("Query parameter {} cannot be None".format(k))
+                    query_params.append("{}={}".format(k, w))
+            else:
+                if v is None:
+                    raise ValueError("Query parameter {} cannot be None".format(k))
+                query_params.append("{}={}".format(k, v))
+        query = "?" + "&".join(query_params)
+        url += query
+        return url
+
+def lookup_encoding(encoding):
+    # type: (str) -> bool
+    # including check for whether encoding is known taken from httpx
+    try:
+        codecs.lookup(encoding)
+        return True
+    except LookupError:
+        return False
+
+def parse_lines_from_text(text):
     # largely taken from httpx's LineDecoder code
     lines = []
     last_chunk_of_text = ""

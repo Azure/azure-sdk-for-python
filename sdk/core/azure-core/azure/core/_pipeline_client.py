@@ -184,10 +184,6 @@ class PipelineClient(PipelineClientBase):
         # """
         stream = kwargs.get("stream", False)
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        try:
-            request = request._internal_request
-        except AttributeError:
-            pass
         pipeline_response = self._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         if return_pipeline_response:
             return pipeline_response
