@@ -10,14 +10,14 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from .._generated.aio._azure_communication_sip_routing_service import (
-    AzureCommunicationSIPRoutingService,
-)
 from azure.communication.siprouting._generated.models import (
     SipConfiguration,
     SipConfigurationPatch,
     TrunkPatch,
     TrunkRoute,
+)
+from .._generated.aio._azure_communication_sip_routing_service import (
+    AzureCommunicationSIPRoutingService,
 )
 from .._authentication._client_utils import (
     parse_connection_str,

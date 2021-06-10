@@ -10,23 +10,24 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
 
 from azure.core.tracing.decorator import distributed_trace
-
-from ._generated._azure_communication_sip_routing_service import (
-    AzureCommunicationSIPRoutingService,
-)
 from azure.communication.siprouting._generated.models import (
     SipConfiguration,
     SipConfigurationPatch,
     TrunkPatch,
     TrunkRoute,
 )
+
+from ._generated._azure_communication_sip_routing_service import (
+    AzureCommunicationSIPRoutingService,
+)
+
 from ._authentication._client_utils import (
     parse_connection_str,
     get_authentication_policy,
 )
 from ._authentication._user_credential import (
-    CommunicationTokenCredential,
-)  # pylint: disable=unused-import
+    CommunicationTokenCredential,  # pylint: disable=unused-import
+)
 from ._version import SDK_MONIKER
 
 
