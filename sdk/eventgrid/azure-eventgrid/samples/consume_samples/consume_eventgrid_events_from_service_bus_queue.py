@@ -19,7 +19,7 @@ import os
 import json
 
 # all types of EventGridEvents below produce same DeserializedEvent
-connection_str = os.environ['SERVICE_BUS_CONN_STR']
+connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connection_str) as sb_client:
