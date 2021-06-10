@@ -7,10 +7,13 @@ stages:
       BuildTargetingString: azure-eventgrid*
       TestSamples: true
       EnvVars:
+        AZURE_STORAGE_CONNECTION_STRING: $(python-storage-blob-connection-string)
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        EVENT_HUB_CONN_STR: $(python-eh-livetest-event-hub-conn-str)
+        EVENT_HUB_NAME: $(python-eh-livetest-event-hub-name)
         EG_ACCESS_KEY: $(python-sdk-test-eg-access-key)
         EG_TOPIC_HOSTNAME: $(python-sdk-test-eg-topic-hostname)
         CLOUD_ACCESS_KEY: $(python-sdk-test-eg-cloud-access-key)
