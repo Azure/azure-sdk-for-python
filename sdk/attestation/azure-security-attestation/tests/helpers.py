@@ -18,4 +18,4 @@ class PemUtils:
             pem += base64_value[:64] + '\n'
             base64_value = base64_value[64:]
         pem += '-----END ' + header_type + '-----\n'
-        return pem.encode('utf-8')
+        return pem

@@ -33,7 +33,6 @@ from helpers import PemUtils
 from azure.security.attestation import (
     AttestationAdministrationClient,
     AttestationType,
-    TokenValidationOptions,
     StoredAttestationPolicy,
     AttestationToken,
     PolicyModification,
@@ -260,13 +259,12 @@ class PolicyGetSetTests(AzureTestCase):
             credential = self.get_credential(AttestationAdministrationClient)
             attest_client = self.create_client_from_credential(AttestationAdministrationClient,
                 credential=credential,
-                instance_url=base_uri,
-                token_validation_options = TokenValidationOptions(
-                    validate_token=True,
-                    validate_signature=True,
-                    validate_issuer=self.is_live,
-                    issuer=base_uri,
-                    validate_expiration=self.is_live),
+                endpoint=base_uri,
+                validate_token=True,
+                validate_signature=True,
+                validate_issuer=self.is_live,
+                issuer=base_uri,
+                validate_expiration=self.is_live,
                 **kwargs)
             return attest_client
 

@@ -172,7 +172,7 @@ Creates an instance of the Attestation Client at uri `endpoint`.
 ```python
         attest_client = AttestationClient(
             credential=DefaultAzureCredential(), 
-            instance_url=base_uri)
+            endpoint=base_uri)
 ```
 
 ### Get attestation policy
@@ -298,7 +298,7 @@ Use `get_signing_certificates` to retrieve the certificates which can be used to
 ```python
     signers = attest_client.get_signing_certificates()
     for signer in signers:
-        cert = cryptography.x509.load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
+        cert = cryptography.x509.load_pem_x509_certificate(signer.certificates[0].encode('ascii'), backend=default_backend())
         print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 ```
 

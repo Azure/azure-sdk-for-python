@@ -24,7 +24,6 @@ import base64
 import pytest
 from azure.security.attestation import (
     AttestationToken,
-    TokenValidationOptions,
     AttestationTokenValidationException)
 
 
@@ -34,7 +33,7 @@ class TestAzureAttestationToken(object):
         key = self._create_rsa_key()
         cert = self._create_x509_certificate(key, u'test certificate')
 
-        certificate = load_pem_x509_certificate(cert, backend=default_backend())
+        certificate = load_pem_x509_certificate(cert.encode('ascii'), backend=default_backend())
         assert certificate.subject==x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'test certificate')])
 
     def test_create_signer_ecds(self):
@@ -43,7 +42,7 @@ class TestAzureAttestationToken(object):
         eckey = self._create_ecds_key()
         certificate = self._create_x509_certificate(eckey, u'attestation.test')
 
-        certificate = load_pem_x509_certificate(certificate, backend=default_backend())
+        certificate = load_pem_x509_certificate(certificate.encode('ascii'), backend=default_backend())
         assert certificate.subject== x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'attestation.test')])
 
     def test_create_unsecured_token(self):
@@ -90,9 +89,7 @@ class TestAzureAttestationToken(object):
             assert signer.certificates[0]==cert
             return True
 
-        options = TokenValidationOptions(validation_callback = callback)
-        
-        assert token.validate_token(options)
+        assert token.validate_token(validation_callback = callback)
         assert callback_invoked
 
 
@@ -110,9 +107,8 @@ class TestAzureAttestationToken(object):
             assert signer.certificates[0]==cert
             return False
 
-        options = TokenValidationOptions(validation_callback = callback)
         with pytest.raises(AttestationTokenValidationException):
-            assert token.validate_token(options) is False
+            assert token.validate_token(validation_callback = callback) is False
 
 
     # Verify that the token expiration checks work correctly.
@@ -143,29 +139,28 @@ class TestAzureAttestationToken(object):
         # Specify 40 seconds of slack, so we're within the slack.
         # Token validation should start succeeding now because the slack
         # lets it work.
-        token_options=TokenValidationOptions(validation_slack=40)
-        assert expired_token.validate_token(token_options) is True
-        assert early_token.validate_token(token_options) is True
+        assert expired_token.validate_token(validation_slack=40) is True
+        assert early_token.validate_token(validation_slack=40) is True
 
 
     # Helper functions to create keys and certificates wrapping those keys.
     @staticmethod
-    def _create_ecds_key(): #type() -> EllipticCurvePrivateKey
+    def _create_ecds_key(): #type() -> str
         return ec.generate_private_key(ec.SECP256R1(), backend=default_backend()).private_bytes(
             serialization.Encoding.PEM,
             serialization.PrivateFormat.PKCS8,
-            serialization.NoEncryption())
+            serialization.NoEncryption()).decode('ascii')
 
     @staticmethod
-    def _create_rsa_key(): #type() -> EllipticCurvePrivateKey
+    def _create_rsa_key(): #type() -> str
         return rsa.generate_private_key(65537, 2048, backend=default_backend()).private_bytes(
             serialization.Encoding.PEM,
             serialization.PrivateFormat.PKCS8,
-            serialization.NoEncryption())
+            serialization.NoEncryption()).decode('ascii')
 
     @staticmethod
-    def _create_x509_certificate(key_der, subject_name): #type(Union[EllipticCurvePrivateKey,RSAPrivateKey], str) -> Certificate
-        signing_key = serialization.load_pem_private_key(key_der, password=None, backend=default_backend())
+    def _create_x509_certificate(key_pem, subject_name): #type(str, str) -> str
+        signing_key = serialization.load_pem_private_key(key_pem.encode('utf-8'), password=None, backend=default_backend())
         builder = CertificateBuilder()
         builder = builder.subject_name(x509.Name([
             x509.NameAttribute(NameOID.COMMON_NAME, subject_name),
@@ -181,4 +176,4 @@ class TestAzureAttestationToken(object):
         builder = builder.public_key(signing_key.public_key())
         builder = builder.add_extension(SubjectAlternativeName([x509.DNSName(subject_name)]), critical=False)
         builder = builder.add_extension(BasicConstraints(ca=False, path_length=None), critical=True)
-        return builder.sign(private_key=signing_key, algorithm=hashes.SHA256(), backend=default_backend()).public_bytes(serialization.Encoding.PEM)
+        return builder.sign(private_key=signing_key, algorithm=hashes.SHA256(), backend=default_backend()).public_bytes(serialization.Encoding.PEM).decode('ascii')

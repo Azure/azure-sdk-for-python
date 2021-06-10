@@ -28,7 +28,7 @@ from ._models import (
     AttestationSigner,
     AttestationToken,
     AttestationResult,
-    AttestationData)
+    AttestationData, AttestationTokenValidationException)
 import base64
 from azure.core.tracing.decorator import distributed_trace
 from threading import Lock
@@ -38,7 +38,7 @@ class AttestationClient(object):
     """An AttestationClient object enables access to the Attestation family of APIs provided
       by the attestation service.
 
-    :param str instance_url: base url of the service
+    :param str endpoint: The attestation instance base URI, for example https://mytenant.attest.azure.net.
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: :class:`~azure.core.credentials.TokenCredential`
     :keyword pipeline: If omitted, the standard pipeline is used.
@@ -55,15 +55,15 @@ class AttestationClient(object):
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        instance_url,  # type: str
+        endpoint,  # type: str
         **kwargs  # type: Any
     ):
         # type: (TokenCredential, str, Any) -> None
 
         if not credential:
             raise ValueError("Missing credential.")
-        self._config = AttestationClientConfiguration(credential, instance_url, **kwargs)
-        self._client = AzureAttestationRestClient(credential, instance_url, **kwargs)
+        self._config = AttestationClientConfiguration(**kwargs)
+        self._client = AzureAttestationRestClient(credential, endpoint, **kwargs)
         self._statelock = Lock()
         self._signing_certificates = None
 
@@ -157,7 +157,15 @@ class AttestationClient(object):
         result = self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)
-        token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
+
+        # Merge our existing config options with the options for this API call. 
+        options = self._config._args.copy()
+        options.update(**kwargs)
+
+        if options.get("validate_token", True):
+            if not token.validate_token(self._get_signers(**kwargs), **options):
+                raise AttestationTokenValidationException("Could not validate token returned for the attest_sgx_enclave API")
+
         return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace
@@ -222,7 +230,13 @@ class AttestationClient(object):
         result = self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)
-        token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
+        # Merge our existing config options with the options for this API call. 
+        options = self._config._args.copy()
+        options.update(**kwargs)
+
+        if options.get("validate_token", True):
+            if not token.validate_token(self._get_signers(**kwargs), **options):
+                raise AttestationTokenValidationException("Could not validate token returned for the attest_open_enclave API")
         return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace

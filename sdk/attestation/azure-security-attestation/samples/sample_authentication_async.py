@@ -83,7 +83,7 @@ class AttestationClientCreateSamples(object):
 
         async with ClientSecretCredential(
             tenant_id=tenant_id, client_id=client_id, client_secret=secret) as credentials, AttestationClient(
-                credentials, instance_url=self.aad_url) as client:
+                credentials, endpoint=self.aad_url) as client:
             print("Retrieve OpenID metadata from: ", self.aad_url)
             openid_metadata = await client.get_openidmetadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])
@@ -117,7 +117,7 @@ class AttestationClientCreateSamples(object):
 
         async with ClientSecretCredential(
             tenant_id=tenant_id, client_id=client_id, client_secret=secret) as credentials, AttestationClient(
-                credentials, instance_url=self.aad_url) as client:
+                credentials, endpoint=self.aad_url) as client:
             print("Retrieve OpenID metadata from: ", shared_url)
             openid_metadata = await client.get_openidmetadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])

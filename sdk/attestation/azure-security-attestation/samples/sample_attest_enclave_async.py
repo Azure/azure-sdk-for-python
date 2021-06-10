@@ -52,7 +52,6 @@ from azure.security.attestation.aio import (
     AttestationClient)
 
 from azure.security.attestation import (
-    TokenValidationOptions,
     AttestationData)
 
 from sample_collateral import sample_open_enclave_report, sample_runtime_data
@@ -212,7 +211,7 @@ issuancerules {
                 return False
 
             # Check the subject of the signing certificate used to validate the token.
-            certificate = cryptography.x509.load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
+            certificate = cryptography.x509.load_pem_x509_certificate(signer.certificates[0].encode('ascii'), backend=default_backend())
             if certificate.subject != x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, self.shared_url)]):
                 print("Certificate subject {} does not match expected subject {}".format(certificate.subject, self.shared_url))
                 return False
@@ -221,8 +220,7 @@ issuancerules {
             return True
 
         async with self._create_client(self.shared_url,
-            token_validation_options=TokenValidationOptions(
-                validation_callback=validate_token)) as attest_client:
+                validation_callback=validate_token) as attest_client:
             response = await attest_client.attest_open_enclave(
                 oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
 
@@ -231,7 +229,7 @@ issuancerules {
 
     def _create_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationClient
-        return AttestationClient(self._credentials, instance_url=base_url, **kwargs)
+        return AttestationClient(self._credentials, endpoint=base_url, **kwargs)
 
     async def __aenter__(self):
         return self

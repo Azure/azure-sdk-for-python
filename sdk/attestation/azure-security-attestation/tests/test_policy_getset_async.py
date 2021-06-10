@@ -21,8 +21,6 @@ from typing import ByteString
 import unittest
 from cryptography.hazmat.primitives import hashes
 from devtools_testutils import AzureTestCase, PowerShellPreparer
-import functools
-import cryptography.x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 import base64
@@ -34,7 +32,6 @@ from azure.security.attestation.aio import (
     AttestationAdministrationClient)
 from azure.security.attestation import (
     AttestationType,
-    TokenValidationOptions,
     StoredAttestationPolicy,
     AttestationToken,
     PolicyModification,
@@ -261,13 +258,12 @@ class AsyncPolicyGetSetTests(AzureTestCase):
             credential = self.get_credential(AttestationAdministrationClient, is_async=True)
             attest_client = self.create_client_from_credential(AttestationAdministrationClient,
                 credential=credential,
-                instance_url=base_uri,
-                token_validation_options = TokenValidationOptions(
-                    validate_token=True,
-                    validate_signature=True,
-                    validate_issuer=self.is_live,
-                    issuer=base_uri,
-                    validate_expiration=self.is_live),
+                endpoint=base_uri,
+                validate_token=True,
+                validate_signature=True,
+                validate_issuer=self.is_live,
+                issuer=base_uri,
+                validate_expiration=self.is_live,
                 **kwargs)
             return attest_client
 

@@ -156,8 +156,8 @@ issuancerules {
                 signing_certificate=cert)
             print("Policy Set Resolution: ", set_result.policy_resolution)
             print("Resulting policy signer should match the input certificate:")
-            print("Policy Signer: ", base64.b64encode(set_result.policy_signer.certificates[0]).decode('ascii'))
-            print("Certificate:   ", base64.b64encode(cert).decode('ascii'))
+            print("Policy Signer: ", set_result.policy_signer.certificates[0])
+            print("Certificate:   ", cert)
             # [END set_secured_policy]
 
             # Reset the policy now that we're done.
@@ -190,8 +190,8 @@ issuancerules {};
                 signing_certificate=cert)
             print("Policy Set Resolution: ", set_result.policy_resolution)
             print("Resulting policy signer should match the input certificate:")
-            print("Policy Signer: ", set_result.policy_signer.certificates[0].decode('ascii'))
-            print("Certificate:   ", cert.decode('ascii'))
+            print("Policy Signer: ", set_result.policy_signer.certificates[0])
+            print("Certificate:   ", cert)
 
             # Create an Attestation Token object representing the stored
             # attestation policy.
@@ -259,8 +259,8 @@ issuancerules {};
                 """version= 1.0;authorizationrules{=> permit();};issuancerules {};""")
             print("Policy Set Resolution: ", set_result.policy_resolution)
             print("Resulting policy signer should match the input certificate:")
-            print("Policy Signer: ", base64.b64encode(set_result.policy_signer.certificates[0]).decode('ascii'))
-            print("Certificate:   ", base64.b64encode(self.isolated_certificate).decode('ascii'))
+            print("Policy Signer: ", set_result.policy_signer.certificates[0])
+            print("Certificate:   ", self.isolated_certificate)
 
             print("Reset the attestation policy to the default now to avoid side effects.")
             # Reset the policy now that we're done.
@@ -285,8 +285,8 @@ issuancerules {};
             # the configured isolated_signing_certificate.
             #
             # Note that the certificate list returned is an array of certificate chains.
-            actual_cert = base64.b64encode(get_result.value[0][0]).decode('ascii')
-            isolated_cert = base64.b64encode(self.isolated_certificate).decode('ascii')
+            actual_cert = get_result.value[0][0]
+            isolated_cert = self.isolated_certificate
             print("Actual Cert:   ", actual_cert)
             print("Isolated Cert: ", isolated_cert)
             assert actual_cert == isolated_cert
@@ -318,24 +318,24 @@ issuancerules {};
             print("Isolated instance now has", len(get_result.value), "certificates - should be 2")
 
             for cert_pem in get_result.value:
-                cert = load_pem_x509_certificate(cert_pem[0], default_backend())
+                cert = load_pem_x509_certificate(cert_pem[0].encode('ascii'), default_backend())
                 print("certificate subject: ", cert.subject)
 
             # The signing certificate for the isolated instance should be
             # the configured isolated_signing_certificate.
             #
             # Note that the certificate list returned is an array of certificate chains.
-            actual_cert0 = base64.b64encode(get_result.value[0][0]).decode('ascii')
-            isolated_cert = base64.b64encode(self.isolated_certificate).decode('ascii')
+            actual_cert0 = get_result.value[0][0]
+            isolated_cert = self.isolated_certificate
             print("Actual Cert 0:   ", actual_cert0)
             print("Isolated Cert: ", isolated_cert)
             if actual_cert0 != isolated_cert:
                 raise Exception("Unexpected certificate mismatch.")
 
             found_cert = False
-            expected_cert = base64.b64encode(new_certificate).decode('ascii')
+            expected_cert = new_certificate
             for cert_der in get_result.value:
-                actual_cert1 = base64.b64encode(cert_der[0]).decode('ascii')
+                actual_cert1 = cert_der[0]
                 if actual_cert1 == expected_cert:
                     found_cert = True
             if not found_cert:
@@ -364,11 +364,11 @@ issuancerules {};
 
     def _create_admin_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationAdministrationClient
-        return AttestationAdministrationClient(self._credentials, instance_url=base_url, **kwargs)
+        return AttestationAdministrationClient(self._credentials, endpoint=base_url, **kwargs)
 
     def _create_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationClient
-        return AttestationClient(self._credentials, instance_url=base_url, **kwargs)
+        return AttestationClient(self._credentials, endpoint=base_url, **kwargs)
 
     def __enter__(self):
         return self

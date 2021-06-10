@@ -30,6 +30,7 @@ from cryptography.x509 import Certificate, load_pem_x509_certificate
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, RSAPublicKey
 from json import JSONDecoder, JSONEncoder
 from datetime import datetime
+from six import string_types
 
 T = TypeVar('T')
 
@@ -495,34 +496,6 @@ class AttestationData(object):
             except Exception:
                 self._is_json = False
 
-class TokenValidationOptions(object):
-    """ Validation options for an Attestation Token object.
-
-    :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
-    :keyword validation_callback: Callback to allow clients to perform custom validation of the token.
-    :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], bool]
-    :keyword bool validate_signature: if True, validate the signature of the token being validated.
-    :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
-    :keyword str issuer: Expected issuer, used if validate_issuer is true.
-    :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
-    :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
-    """
-
-    def __init__(self, **kwargs):
-        #type: (**Any) -> None
-
-        self.validate_token = kwargs.get('validate_token', True)  # type: bool
-        self.validation_callback = kwargs.get('validation_callback') # type:Callable[[AttestationToken, AttestationSigner], bool]
-        self.validate_signature = kwargs.get('validate_signature', True)  # type:bool
-        self.validate_expiration = kwargs.get('validate_expiration', True)  # type:bool
-        self.validate_not_before = kwargs.get('validate_not_before', True)  # type:bool
-        self.validate_issuer = kwargs.get('validate_issuer', False)  # type:bool
-        self.issuer = kwargs.get('issuer')  # type:str
-        # We assume a default validation slack of a half second to allow for a small
-        # amount of timer drift.
-        self.validation_slack = kwargs.get('validation_slack', 0.5)  # type:float
-
-
 class AttestationToken(Generic[T]):
     """ Represents a token returned from the attestation service.
 
@@ -549,7 +522,7 @@ class AttestationToken(Generic[T]):
             signing_certificate = kwargs.pop('signing_certificate', None)  # type: str
             key = None
             if signing_key or signing_certificate:
-                if isinstance(signing_key, bytes) or isinstance(signing_certificate, bytes):
+                if isinstance(signing_key, string_types) or isinstance(signing_certificate, string_types):
                     [key, certificate] = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
                 else:
                     if not isinstance(signing_certificate, Certificate):
@@ -728,8 +701,8 @@ class AttestationToken(Generic[T]):
         """
         return self._token
 
-    def validate_token(self, options=None, signers=None):
-        # type: (TokenValidationOptions, list[AttestationSigner]) -> bool
+    def validate_token(self, signers=None, **kwargs):
+        # type: (TokenValidationOptions, list[AttestationSigner], **Any) -> bool
         """ Validate the attestation token based on the options specified in the
          :class:`TokenValidationOptions`.
         
@@ -739,14 +712,37 @@ class AttestationToken(Generic[T]):
             If the signers parameter is specified, validate_token will only 
             consider the signers as potential signatories for the token, otherwise
             it will consider attributes in the header of the token.
+        :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
+        :keyword validation_callback: Callback to allow clients to perform custom validation of the token.
+        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], bool]
+        :keyword bool validate_signature: if True, validate the signature of the token being validated.
+        :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
+        :keyword str issuer: Expected issuer, used if validate_issuer is true.
+        :keyword float validation_slack: Slack time for validation - tolerance applied 
+            to help account for clock drift between the issuer and the current machine.
+        :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
+        :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
         :return bool: Returns True if the token successfully validated, False 
             otherwise. 
 
         :raises: azure.security.attestation.AttestationTokenValidationException
         """
-        if (options is None):
-            options = TokenValidationOptions(
-                validate_token=True, validate_signature=True, validate_expiration=True)
+
+        class ValidationOptions(object):
+            def __init__(self, **kwargs):
+                self.validate_token = kwargs.get('validate_token', True) #type: bool
+                self.validation_callback = kwargs.get('validation_callback', None) #type: Callable[[AttestationToken, AttestationSigner], bool]
+                self.validate_signature = kwargs.get('validate_signature', True)  #type: bool
+                self.validate_expiration = kwargs.get('validate_expiration', True) #type: bool
+                self.validate_not_before = kwargs.get('validate_not_before', True) #type: bool
+                self.validate_issuer = kwargs.get('validate_issuer', False) #type: bool
+                self.issuer = kwargs.get('issuer') #type: str
+                # We assume a default validation slack of a half second to allow for a small
+                # amount of timer drift.
+                self.validation_slack = kwargs.get('validation_slack', 0.5) #type:float
+
+        options = ValidationOptions(**kwargs)
+
         if not options.validate_token:
             self._validate_static_properties(options)
             if (options.validation_callback is not None):
@@ -827,7 +823,7 @@ class AttestationToken(Generic[T]):
         signed_data = Base64Url.encode(
             self.header_bytes)+'.'+Base64Url.encode(self.body_bytes)
         for signer in candidate_certificates:
-            cert = load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
+            cert = load_pem_x509_certificate(signer.certificates[0].encode('ascii'), backend=default_backend())
             signer_key = cert.public_key()
             # Try to verify the signature with this candidate.
             # If it doesn't work, try the next signer.

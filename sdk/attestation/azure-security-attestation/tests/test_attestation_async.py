@@ -22,8 +22,7 @@ from azure.security.attestation.aio import (
     AttestationAdministrationClient)
 from azure.security.attestation import(
     AttestationType,
-    AttestationData,
-    TokenValidationOptions)
+    AttestationData)
 import cryptography
 import cryptography.x509
 from cryptography.hazmat.backends import default_backend
@@ -173,7 +172,7 @@ class AsyncAzureAttestationTest(AzureTestCase):
         attest_client = self.shared_client(attestation_location_short_name)
         signers = await attest_client.get_signing_certificates()
         for signer in signers:
-            cryptography.x509.load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
+            cryptography.x509.load_pem_x509_certificate(signer.certificates[0].encode('ascii'), backend=default_backend())
 
     @AttestationPreparer()
     async def test_aad_getsigningcertificatesasync(self, attestation_aad_url):
@@ -181,7 +180,7 @@ class AsyncAzureAttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_aad_url)
         signers = await attest_client.get_signing_certificates()
         for signer in signers:
-            cryptography.x509.load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
+            cryptography.x509.load_pem_x509_certificate(signer.certificates[0].encode('ascii'), backend=default_backend())
 
     @AttestationPreparer()
     async def test_isolated_getsigningcertificatesasync(self, attestation_isolated_url):
@@ -189,7 +188,7 @@ class AsyncAzureAttestationTest(AzureTestCase):
         attest_client = self.create_client(attestation_isolated_url)
         signers = await attest_client.get_signing_certificates()
         for signer in signers:
-            cryptography.x509.load_pem_x509_certificate(signer.certificates[0], backend=default_backend())
+            cryptography.x509.load_pem_x509_certificate(signer.certificates[0].encode('ascii'), backend=default_backend())
 
 
 
@@ -327,13 +326,12 @@ class AsyncAzureAttestationTest(AzureTestCase):
         credential = self.get_credential(AttestationClient, is_async=True)
         attest_client = self.create_client_from_credential(AttestationClient,
             credential=credential,
-            instance_url=base_uri,
-            token_validation_options = TokenValidationOptions(
-                validate_token=True,
-                validate_signature=True,
-                validate_issuer=self.is_live,
-                issuer=base_uri,
-                validate_expiration=self.is_live),
+            endpoint=base_uri,
+            validate_token=True,
+            validate_signature=True,
+            validate_issuer=self.is_live,
+            issuer=base_uri,
+            validate_expiration=self.is_live,
             **kwargs)
         return attest_client
 
@@ -345,13 +343,12 @@ class AsyncAzureAttestationTest(AzureTestCase):
         credential = self.get_credential(AttestationAdministrationClient, is_async=True)
         attest_client = self.create_client_from_credential(AttestationAdministrationClient,
             credential=credential,
-            instance_url=base_uri,
-            token_validation_options = TokenValidationOptions(
-                validate_token=True,
-                validate_signature=True,
-                validate_issuer=self.is_live,
-                issuer=base_uri,
-                validate_expiration=self.is_live),
+            endpoint=base_uri,
+            validate_token=True,
+            validate_signature=True,
+            validate_issuer=self.is_live,
+            issuer=base_uri,
+            validate_expiration=self.is_live,
             **kwargs)
         return attest_client
         

@@ -40,7 +40,7 @@ class AttestationClient(object):
     """An AttestationClient object enables access to the Attestation family of APIs provided
       by the attestation service.
 
-    :param str instance_url: base url of the service
+    :param str endpoint: The attestation instance base URI, for example https://mytenant.attest.azure.net.
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
     :keyword ~azure.core.pipeline.AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
@@ -53,13 +53,13 @@ class AttestationClient(object):
     def __init__(
         self,
         credential,  # type: 'AsyncTokenCredential'
-        instance_url, #type: str
+        endpoint, #type: str
         **kwargs #type: Any
     ): #type: (...) -> None
         if not credential:
             raise ValueError("Missing credential.")
-        self._config = AttestationClientConfiguration(credential, instance_url, **kwargs)
-        self._client = AzureAttestationRestClient(credential, instance_url, **kwargs)
+        self._config = AttestationClientConfiguration(**kwargs)
+        self._client = AzureAttestationRestClient(credential, endpoint, **kwargs)
         self._statelock = Lock()
         self._signing_certificates = None
 
@@ -115,6 +115,16 @@ class AttestationClient(object):
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API
         :paramtype draft_policy: str
+        :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
+        :keyword validation_callback: Callback to allow clients to perform custom validation of the token.
+        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], bool]
+        :keyword bool validate_signature: if True, validate the signature of the token being validated.
+        :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
+        :keyword str issuer: Expected issuer, used if validate_issuer is true.
+        :keyword float validation_slack: Slack time for validation - tolerance applied 
+            to help account for clock drift between the issuer and the current machine.
+        :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
+        :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
 
         :return: Attestation service response encapsulating an :class:`AttestationResult`.
         :rtype: azure.security.attestation.AttestationResult
@@ -142,8 +152,13 @@ class AttestationClient(object):
         result = await self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)
-        if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
-            raise AttestationTokenValidationException("Attestation Token Validation Failed")
+        # Merge our existing config options with the options for this API call. 
+        options = self._config._args.copy()
+        options.update(**kwargs)
+
+        if options.get("validate_token", True):
+            if not token.validate_token(await self._get_signers(**kwargs), **options):
+                raise AttestationTokenValidationException("Could not validate token returned for the attest_sgx_enclave API")
         return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace_async
@@ -168,6 +183,16 @@ class AttestationClient(object):
             before applying the policy document via the set_policy API.
 
         :paramtype draft_policy: str
+        :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
+        :keyword validation_callback: Callback to allow clients to perform custom validation of the token.
+        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], bool]
+        :keyword bool validate_signature: if True, validate the signature of the token being validated.
+        :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
+        :keyword str issuer: Expected issuer, used if validate_issuer is true.
+        :keyword float validation_slack: Slack time for validation - tolerance applied 
+            to help account for clock drift between the issuer and the current machine.
+        :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
+        :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
         :return: Attestation service response encapsulating an :class:`AttestationResult`.
         :rtype: azure.security.attestation.AttestationResult
 
@@ -193,8 +218,13 @@ class AttestationClient(object):
         result = await self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)
-        if not token.validate_token(self._config.token_validation_options, await self._get_signers(**kwargs)):
-            raise AttestationTokenValidationException("Attestation Token Validation Failed")
+        # Merge our existing config options with the options for this API call. 
+        options = self._config._args.copy()
+        options.update(**kwargs)
+
+        if options.get("validate_token", True):
+            if not token.validate_token(await self._get_signers(**kwargs), **options):
+                raise AttestationTokenValidationException("Could not validate token returned for the attest_open_enclave API")
         return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace_async

@@ -49,7 +49,7 @@ class PemUtils:
             pem += base64_value[:64] + '\n'
             base64_value = base64_value[64:]
         pem += '-----END ' + header_type + '-----\n'
-        return pem.encode('utf-8')
+        return pem
 
 class SigningKeyUtils:
 
@@ -77,8 +77,8 @@ class SigningKeyUtils:
             raise ValueError("signing_certificate cannot be specified without signing_key.")
 
         # Verify that the key and certificate are validly PEM encoded.
-        signing_key = serialization.load_pem_private_key(signing_key_pem, password=None, backend=default_backend())
-        certificate = load_pem_x509_certificate(certificate_pem, backend=default_backend())
+        signing_key = serialization.load_pem_private_key(signing_key_pem.encode('utf-8'), password=None, backend=default_backend())
+        certificate = load_pem_x509_certificate(certificate_pem.encode('utf-8'), backend=default_backend())
 
         # We only support ECDS and RSA keys in the MAA service.
         if (not isinstance(signing_key, RSAPrivateKey) and not isinstance(signing_key, EllipticCurvePrivateKey)):

@@ -19,7 +19,6 @@ from ._models import (
     PolicyCertificatesResult,
     StoredAttestationPolicy,
     CertificateModification)
-from ._configuration import TokenValidationOptions
 from ._version import VERSION
 
 __version__ = VERSION
@@ -33,7 +32,6 @@ __all__ = [
     'PolicyCertificatesResult',
     'AttestationResult',
     'AttestationData',
-    'TokenValidationOptions',
     'StoredAttestationPolicy',
     'CertificateModification',
     'PolicyModification',
