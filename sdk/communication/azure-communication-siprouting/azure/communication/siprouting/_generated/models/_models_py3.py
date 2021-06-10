@@ -13,7 +13,9 @@ import msrest.serialization
 
 
 class CommunicationError(msrest.serialization.Model):
-    """Represents the Communication Services error.
+    """The Communication Services error.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -21,17 +23,20 @@ class CommunicationError(msrest.serialization.Model):
     :type code: str
     :param message: Required. The error message.
     :type message: str
-    :param target: The error target.
-    :type target: str
-    :param details: Further details about specific errors that led to this error.
-    :type details: list[~azure.communication.siprouting.models.CommunicationError]
-    :param innererror: Represents the Communication Services error.
-    :type innererror: ~azure.communication.siprouting.models.CommunicationError
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: Further details about specific errors that led to this error.
+    :vartype details: list[~azure.communication.siprouting.models.CommunicationError]
+    :ivar inner_error: The inner error if any.
+    :vartype inner_error: ~azure.communication.siprouting.models.CommunicationError
     """
 
     _validation = {
         'code': {'required': True},
         'message': {'required': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'inner_error': {'readonly': True},
     }
 
     _attribute_map = {
@@ -39,7 +44,7 @@ class CommunicationError(msrest.serialization.Model):
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
         'details': {'key': 'details', 'type': '[CommunicationError]'},
-        'innererror': {'key': 'innererror', 'type': 'CommunicationError'},
+        'inner_error': {'key': 'innererror', 'type': 'CommunicationError'},
     }
 
     def __init__(
@@ -47,25 +52,22 @@ class CommunicationError(msrest.serialization.Model):
         *,
         code: str,
         message: str,
-        target: Optional[str] = None,
-        details: Optional[List["CommunicationError"]] = None,
-        innererror: Optional["CommunicationError"] = None,
         **kwargs
     ):
         super(CommunicationError, self).__init__(**kwargs)
         self.code = code
         self.message = message
-        self.target = target
-        self.details = details
-        self.innererror = innererror
+        self.target = None
+        self.details = None
+        self.inner_error = None
 
 
 class CommunicationErrorResponse(msrest.serialization.Model):
-    """Represents the Communication Services error response.
+    """The Communication Services error.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param error: Required. Represents the Communication Services error.
+    :param error: Required. The Communication Services error.
     :type error: ~azure.communication.siprouting.models.CommunicationError
     """
 
@@ -117,6 +119,33 @@ Call is then directed into route's first available trunk, based on the order in 
         self.routes = routes
 
 
+class SipConfigurationPatch(msrest.serialization.Model):
+    """Represents a SIP configuration patch.
+
+    :param trunks: SIP trunks for routing calls.
+     Map key is trunk's FQDN (1-249 characters).
+    :type trunks: dict[str, ~azure.communication.siprouting.models.TrunkPatch]
+    :param routes: Trunk routes for routing calls.
+    :type routes: list[~azure.communication.siprouting.models.TrunkRoute]
+    """
+
+    _attribute_map = {
+        'trunks': {'key': 'trunks', 'type': '{TrunkPatch}'},
+        'routes': {'key': 'routes', 'type': '[TrunkRoute]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        trunks: Optional[Dict[str, "TrunkPatch"]] = None,
+        routes: Optional[List["TrunkRoute"]] = None,
+        **kwargs
+    ):
+        super(SipConfigurationPatch, self).__init__(**kwargs)
+        self.trunks = trunks
+        self.routes = routes
+
+
 class Trunk(msrest.serialization.Model):
     """Represents a SIP trunk for routing calls. See RFC 4904.
 
@@ -144,6 +173,27 @@ class Trunk(msrest.serialization.Model):
         self.sip_signaling_port = sip_signaling_port
 
 
+class TrunkPatch(msrest.serialization.Model):
+    """Represents a SIP trunk patch.
+
+    :param sip_signaling_port: Gets or sets SIP signaling port of the trunk.
+    :type sip_signaling_port: int
+    """
+
+    _attribute_map = {
+        'sip_signaling_port': {'key': 'sipSignalingPort', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        sip_signaling_port: Optional[int] = None,
+        **kwargs
+    ):
+        super(TrunkPatch, self).__init__(**kwargs)
+        self.sip_signaling_port = sip_signaling_port
+
+
 class TrunkRoute(msrest.serialization.Model):
     """Represents a trunk route for routing calls.
 
@@ -156,7 +206,7 @@ class TrunkRoute(msrest.serialization.Model):
     :param number_pattern: Required. Gets or sets regex number pattern for routing calls. .NET
      regex format is supported.
      The regex should match only digits with an optional '+' prefix without spaces.
-     I.e. "^\+[1-9][0-9]{3,23}$".
+     I.e. "^+[1-9][0-9]{3,23}$".
     :type number_pattern: str
     :param trunks: Gets or sets list of SIP trunks for routing calls. Trunks are represented as
      FQDN.

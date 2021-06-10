@@ -14,15 +14,24 @@ from azure.core.tracing.decorator import distributed_trace
 from ._generated._azure_communication_sip_routing_service import (
     AzureCommunicationSIPRoutingService,
 )
-from ._generated.models import SipConfiguration, Trunk, TrunkRoute
-from ._authentication._client_utils import parse_connection_str, get_authentication_policy
-from ._authentication._user_credential import CommunicationTokenCredential # pylint: disable=unused-import
+from azure.communication.siprouting._generated.models import (
+    SipConfiguration,
+    SipConfigurationPatch,
+    TrunkPatch,
+    TrunkRoute,
+)
+from ._authentication._client_utils import (
+    parse_connection_str,
+    get_authentication_policy,
+)
+from ._authentication._user_credential import (
+    CommunicationTokenCredential,
+)  # pylint: disable=unused-import
 from ._version import SDK_MONIKER
 
 
 class SIPRoutingClient(object):
     """A client to interact with the AzureCommunicationService SIP routing gateway.
-
     This client provides operations to retrieve and update SIP routing configuration.
     :param endpoint: The endpoint url for Azure Communication Service resource.
     :type endpoint: str
@@ -66,8 +75,7 @@ class SIPRoutingClient(object):
         **kwargs  # type: any
     ):  # type: (...) -> SIPRoutingClient
         """Factory method for creating client from connection string.
-
-        : param connection_string: Connection string containing endpoint and credentials
+        : param connection_string: Connection string containing endpoint and credentials.
         : type connection_string: str
         : returns: The newly created client.
         : rtype: ~SIPRoutingClient
@@ -81,7 +89,6 @@ class SIPRoutingClient(object):
         self, **kwargs  # type: any
     ):  # type: (...) -> SipConfiguration
         """Returns current SIP routing configuration.
-
         : returns: Current SIP routing configuration.
         : rtype: ~SipConfiguration
         """
@@ -95,18 +102,15 @@ class SIPRoutingClient(object):
     @distributed_trace
     def update_sip_configuration(
         self,
-        sip_trunks,  # type: dict[str,Trunk]
+        sip_trunks,  # type: dict[str,TrunkPatch]
         sip_routes,  # type: list[TrunkRoute]
         **kwargs  # type: any
     ):  # type: (...) -> SipConfiguration
         """Updates SIP routing configuration with new SIP trunks and trunk routes.
-
         : param sip_trunks: SIP trunks for routing calls
         : type trunks: dict[str, ~Trunk]
         : param sip_routes: Trunk routes for routing calls. Route's name is used as the key.
         : type routes: list[~TrunkRoute]
-
-        : type connection_string: str
         : returns: Updated SIP configuration.
         : rtype: ~SipConfiguration
         : raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -118,7 +122,7 @@ class SIPRoutingClient(object):
         if not sip_routes:
             raise ValueError("SIP routes can not be null")
 
-        updated_sip_configuration = SipConfiguration(
+        updated_sip_configuration = SipConfigurationPatch(
             trunks=sip_trunks, routes=sip_routes
         )
         return self._rest_service.patch_sip_configuration(
@@ -128,7 +132,7 @@ class SIPRoutingClient(object):
     @distributed_trace
     def update_sip_trunks(
         self,
-        sip_trunks,  # type: dict[str,Trunk]
+        sip_trunks,  # type: dict[str,TrunkPatch]
         **kwargs  # type: any
     ):  # type: (...) -> SipConfiguration
         """Updates SIP routing configuration with new SIP trunks.
@@ -143,7 +147,7 @@ class SIPRoutingClient(object):
         if not sip_trunks:
             raise ValueError("SIP trunks can not be null")
 
-        updated_sip_configuration = SipConfiguration(trunks=sip_trunks)
+        updated_sip_configuration = SipConfigurationPatch(trunks=sip_trunks)
         return self._rest_service.patch_sip_configuration(
             body=updated_sip_configuration, **kwargs
         )
@@ -155,7 +159,6 @@ class SIPRoutingClient(object):
         **kwargs  # type: any
     ):  # type: (...) -> SipConfiguration
         """Updates SIP routing configuration with new SIP trunk routes.
-
         : param sip_routes: Trunk routes for routing calls. Route's name is used as the key.
         : type routes: list[~TrunkRoute]
         : returns: Updated SIP configuration.
@@ -166,7 +169,7 @@ class SIPRoutingClient(object):
         if not sip_routes:
             raise ValueError("SIP routes can not be null")
 
-        updated_sip_configuration = SipConfiguration(routes=sip_routes)
+        updated_sip_configuration = SipConfigurationPatch(routes=sip_routes)
         return self._rest_service.patch_sip_configuration(
             body=updated_sip_configuration, **kwargs
         )

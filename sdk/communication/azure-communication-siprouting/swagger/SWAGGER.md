@@ -1,28 +1,21 @@
+# Azure Communication Configuration for Python
+
 > see https://aka.ms/autorest
 
-This is the AutoRest configuration file for the API-NAME.
+### Setup
+```ps
+npm install -g autorest
+```
 
----
-## Getting Started
-To build the SDK for API-NAME, simply install autorest and in this folder, run:
+### Generation
+```ps
+cd <swagger-folder>
+autorest SWAGGER.md
+```
 
-> `autorest`
-
-To see additional help and options, run:
-
-> `autorest --help`
----
-
-## Configuration for generating APIs
-
-...insert-some-meanigful-notes-here...
-
----
-#### Basic Information
-These are the global settings for the API.
-
+### Settings
 ``` yaml
-input-file: swagger.json
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/15d66311cc2b64f04692fdf021d1b235b538e1bc/specification/communication/data-plane/SipRouting/readme.md
 tag: package-sip-2021-05-01
 output-folder: ../azure/communication/siprouting/_generated
 namespace: azure.communication.siprouting

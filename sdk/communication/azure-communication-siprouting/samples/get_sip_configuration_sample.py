@@ -17,7 +17,6 @@ USAGE:
 """
 
 import os
-
 from azure.communication.siprouting import SIPRoutingClient
 
 class GetSIPConfigurationSample(object):
