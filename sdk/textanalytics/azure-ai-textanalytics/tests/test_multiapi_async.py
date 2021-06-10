@@ -16,7 +16,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_default_api_version(self, client):
-        assert "v3.1-preview.5" in client._client._client._base_url
+        assert "v3.1" in client._client._client._base_url
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
@@ -25,5 +25,5 @@ class TestRecognizeEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW})
-    def test_v3_1_preview_api_version(self, client):
-        assert "v3.1-preview.5" in client._client._client._base_url
+    def test_v3_1_api_version(self, client):
+        assert "v3.1" in client._client._client._base_url

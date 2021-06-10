@@ -573,7 +573,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         with pytest.raises(ValueError) as excinfo:
             client.recognize_pii_entities(["this should fail"])
 
-        assert "'recognize_pii_entities' endpoint is only available for API version V3_1_PREVIEW and up" in str(excinfo.value)
+        assert "'recognize_pii_entities' endpoint is only available for API version V3_1 and up" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -634,7 +634,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     def test_string_index_type_explicit_fails_v3(self, client):
         with pytest.raises(ValueError) as excinfo:
             client.recognize_pii_entities(["this should fail"], string_index_type="UnicodeCodePoint")
-        assert "'string_index_type' is only available for API version V3_1_PREVIEW and up" in str(excinfo.value)
+        assert "'string_index_type' is only available for API version V3_1 and up" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
