@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
 from .._internal import AsyncKeyVaultClientBase, parse_folder_url
+from .._internal.async_polling import KeyVaultAsyncBackupClientPollingMethod
 from .._internal.polling import KeyVaultBackupClientPolling
 from .._models import KeyVaultBackupOperation
 
@@ -45,7 +46,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             azure_storage_blob_container_uri=sas_parameter,
             cls=KeyVaultBackupOperation._from_generated,
             continuation_token=kwargs.pop("continuation_token", None),
-            polling=AsyncLROBasePolling(
+            polling=KeyVaultAsyncBackupClientPollingMethod(
                 lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
             ),
             **kwargs

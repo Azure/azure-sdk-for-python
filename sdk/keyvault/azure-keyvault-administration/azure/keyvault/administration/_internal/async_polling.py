@@ -2,65 +2,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
-
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.polling.base_polling import (
     BadResponse,
     BadStatus,
     HttpResponseError,
-    LROBasePolling,
     OperationFailed,
-    OperationResourcePolling,
     _raise_if_bad_http_status_and_method
 )
 
-if TYPE_CHECKING:
-    from typing import Union
-    from azure.core.pipeline import PipelineResponse
-    from azure.core.pipeline.transport import (
-        HttpResponse,
-        AsyncHttpResponse,
-        HttpRequest,
-    )
 
-    ResponseType = Union[HttpResponse, AsyncHttpResponse]
-    PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
-
-
-class KeyVaultBackupClientPolling(OperationResourcePolling):
-    def __init__(self):
-        super(KeyVaultBackupClientPolling, self).__init__(operation_location_header="azure-asyncoperation")
-
-    def can_poll(self, pipeline_response, **kwargs):
-        """Answer if this polling method could be used.
-        """
-        if kwargs.get("continuation_url"):
-            return True
-        response = pipeline_response.http_response
-        return self._operation_location_header in response.headers
-
-    def set_initial_status(self, pipeline_response, **kwargs):
-        # type: (PipelineResponseType) -> str
-        """Process first response after initiating long running operation.
-
-        :param azure.core.pipeline.PipelineResponse response: initial REST call response.
-        """
-        self._request = pipeline_response.http_response.request
-        response = pipeline_response.http_response
-
-        self._async_url = kwargs.get("continuation_url")
-        if self._async_url is None:
-            self._set_async_url_if_present(response)
-
-        if response.status_code in {200, 201, 202, 204} and self._async_url:
-            return "InProgress"
-        raise OperationFailed("Operation failed or canceled")
-
-    def get_final_get_url(self, pipeline_response):
-        return None
-
-
-class KeyVaultBackupClientPollingMethod(LROBasePolling):
+class KeyVaultAsyncBackupClientPollingMethod(AsyncLROBasePolling):
     def initialize(self, client, initial_response, deserialization_callback):
         """Set the initial status of this LRO.
 
@@ -129,24 +81,24 @@ class KeyVaultBackupClientPollingMethod(LROBasePolling):
         """
         if pipeline_response is None:
             return None
-        return super(KeyVaultBackupClientPollingMethod, self)._parse_resource(pipeline_response)
+        return super(KeyVaultAsyncBackupClientPollingMethod, self)._parse_resource(pipeline_response)
 
     def _extract_delay(self):
         if self._continuation_url:
             return 0
-        return super(KeyVaultBackupClientPollingMethod, self)._extract_delay()
+        return super(KeyVaultAsyncBackupClientPollingMethod, self)._extract_delay()
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO.
         """
         if self._continuation_url:
-            self._pipeline_response = self.request_status(self._continuation_url)
+            self._pipeline_response = await self.request_status(self._continuation_url)
         else:
-            self._pipeline_response = self.request_status(self._operation.get_polling_url())
+            self._pipeline_response = await self.request_status(self._operation.get_polling_url())
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    def request_status(self, status_link):
+    async def request_status(self, status_link):
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.
@@ -160,6 +112,6 @@ class KeyVaultBackupClientPollingMethod(LROBasePolling):
             # Re-inject 'x-ms-client-request-id' while polling
             if "request_id" not in self._operation_config:
                 self._operation_config["request_id"] = self._get_request_id()
-        return self._client._pipeline.run(  # pylint: disable=protected-access
+        return await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **self._operation_config
         )
