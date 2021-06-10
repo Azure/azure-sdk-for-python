@@ -137,11 +137,9 @@ The client provides operations for:
 
 ### Translation Input
 
-To begin translating your documents, pass a list of `DocumentTranslationInput` into the `begin_translation` client method.
-Constructing a `DocumentTranslationInput` requires that you pass the SAS URLs to your source and target containers (or files)
-and the target language(s) for translation.
+Input to the `begin_translation` client method can be provided in two different ways:
 
-A single source container with documents can be translated to a different language:
+1) A single source container with documents can be translated to a different language:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -151,7 +149,7 @@ document_translation_client = DocumentTranslationClient("<endpoint>", AzureKeyCr
 poller = document_translation_client.begin_translation("<sas_url_to_source>", "<sas_url_to_target>", "<target_language_code>")
 ```
 
-Or multiple different sources can be provided each with their own targets.
+2) Or multiple different sources can be provided each with their own targets.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -240,7 +238,7 @@ for document in result:
     if document.status == "Succeeded":
         print("Source document location: {}".format(document.source_document_url))
         print("Translated document location: {}".format(document.translated_document_url))
-        print("Translated to language: {}\n".format(document.translate_to))
+        print("Translated to language: {}\n".format(document.translated_to))
     else:
         print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
 ```
@@ -308,7 +306,7 @@ document_translation_client = DocumentTranslationClient(endpoint, credential)
 operations = document_translation_client.list_all_translation_statuses()  # type: ItemPaged[TranslationStatusResult]
 
 for operation in operations:
-    print("ID: {}".format(operation.id))
+    print("\nID: {}".format(operation.id))
     print("Status: {}".format(operation.status))
     print("Created on: {}".format(operation.created_on))
     print("Last updated on: {}".format(operation.last_updated_on))

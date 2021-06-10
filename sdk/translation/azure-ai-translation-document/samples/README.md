@@ -31,7 +31,7 @@ These sample programs show common scenarios for the Document Translation client'
 ## Prerequisites
 * Python 2.7, or 3.6 or later is required to use this package (3.6 or later if using asyncio)
 * You must have an [Azure subscription][azure_subscription] and an
-[Azure Translation account][azure_document_translation_account] to run these samples.
+[Azure Translator account][azure_document_translation_account] to run these samples.
 
 ## Setup
 
@@ -40,7 +40,7 @@ These sample programs show common scenarios for the Document Translation client'
 ```bash
 pip install azure-ai-translation-document --pre
 ```
-For more information about how the versioning story of the SDK corresponds to the versioning story of the service's API, see [here][versioning_story_readme].
+For more information about how the versioning of the SDK corresponds to the versioning of the service's API, see [here][versioning_story_readme].
 
 2. Clone or download this sample repository
 3. Open the sample folder in Visual Studio Code or your IDE of choice.

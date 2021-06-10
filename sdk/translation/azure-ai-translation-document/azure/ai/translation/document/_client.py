@@ -7,12 +7,14 @@
 import json
 from typing import Any, TYPE_CHECKING, List, Union, overload
 from azure.core.tracing.decorator import distributed_trace
-from ._generated import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
+from ._generated import (
+    BatchDocumentTranslationClient as _BatchDocumentTranslationClient,
+)
 from ._models import (
     TranslationStatusResult,
     DocumentStatusResult,
     DocumentTranslationInput,
-    FileFormat
+    FileFormat,
 )
 from ._user_agent import USER_AGENT
 from ._polling import TranslationPolling, DocumentTranslationLROPollingMethod
@@ -21,8 +23,9 @@ from ._helpers import (
     convert_datetime,
     get_authentication_policy,
     get_translation_input,
-    POLLING_INTERVAL
+    POLLING_INTERVAL,
 )
+
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -30,7 +33,6 @@ if TYPE_CHECKING:
 
 
 class DocumentTranslationClient(object):  # pylint: disable=r0205
-
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         """DocumentTranslationClient is your interface to the Document Translation service.
@@ -67,7 +69,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """
         self._endpoint = endpoint
         self._credential = credential
-        self._api_version = kwargs.pop('api_version', None)
+        self._api_version = kwargs.pop("api_version", None)
 
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
@@ -98,7 +100,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @overload
     def begin_translation(self, source_url, target_url, target_language_code, **kwargs):
-        # type: (str, str, str, **Any) -> DocumentTranslationPoller[ItemPaged[DocumentStatusResult]]
+        # type: (str, str, str, **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatusResult]]
         pass
 
     @overload
@@ -106,11 +108,14 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         # type: (List[DocumentTranslationInput], **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatusResult]]
         pass
 
-    def begin_translation(self, *args, **kwargs):  # pylint: disable=client-method-missing-type-annotations
+    def begin_translation(
+        self, *args, **kwargs
+    ):  # pylint: disable=client-method-missing-type-annotations
         """Begin translating the document(s) in your source container to your target container
         in the given language. To perform a single translation from source to target, pass the `source_url`,
         `target_url`, and `target_language_code` parameters. To pass multiple inputs for translation, including
-         other translation options, pass the `inputs` parameter as a list of DocumentTranslationInput.
+        other translation options, pass the `inputs` parameter as a list of
+        :class:`~azure.ai.translation.document.DocumentTranslationInput`.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
@@ -153,7 +158,8 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             return self.list_all_document_statuses(translation_status["id"])
 
         polling_interval = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval  # pylint: disable=protected-access
+            "polling_interval",
+            self._client._config.polling_interval,  # pylint: disable=protected-access
         )
 
         pipeline_response = None
@@ -168,11 +174,10 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             inputs=inputs if not continuation_token else None,
             polling=DocumentTranslationLROPollingMethod(
                 timeout=polling_interval,
-                lro_algorithms=[
-                    TranslationPolling()
-                ],
+                lro_algorithms=[TranslationPolling()],
                 cont_token_response=pipeline_response,
-                **kwargs),
+                **kwargs
+            ),
             cls=callback,
             continuation_token=continuation_token,
             **kwargs
@@ -192,8 +197,12 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
-        translation_status = self._client.document_translation.get_translation_status(translation_id, **kwargs)
-        return TranslationStatusResult._from_generated(translation_status)  # pylint: disable=protected-access
+        translation_status = self._client.document_translation.get_translation_status(
+            translation_id, **kwargs
+        )
+        return TranslationStatusResult._from_generated(  # pylint: disable=protected-access
+            translation_status
+        )
 
     @distributed_trace
     def cancel_translation(self, translation_id, **kwargs):
@@ -223,13 +232,15 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :keyword int results_per_page: is the number of operations returned per page.
         :keyword list[str] translation_ids: translation operations ids to filter by.
         :keyword list[str] statuses: translation operation statuses to filter by.
-        :keyword Union[str, datetime.datetime] created_after: get operations created after certain datetime.
-        :keyword Union[str, datetime.datetime] created_before: get operations created before certain datetime.
+        :keyword created_after: get operations created after certain datetime.
+        :paramtype created_after: Union[str, datetime.datetime]
+        :keyword created_before: get operations created before certain datetime.
+        :paramtype created_before: Union[str, datetime.datetime]
         :keyword list[str] order_by: the sorting query for the operations returned.
             format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
-        :return: ~azure.core.paging.ItemPaged[:class:`~azure.ai.translation.document.TranslationStatusResult`]
-        :rtype: ~azure.core.paging.ItemPaged[:class:`~azure.ai.translation.document.TranslationStatusResult`]
+        :return: A pageable of TranslationStatusResult.
+        :rtype: ~azure.core.paging.ItemPaged[TranslationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -248,14 +259,19 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         results_per_page = kwargs.pop("results_per_page", None)
         translation_ids = kwargs.pop("translation_ids", None)
 
-        def _convert_from_generated_model(generated_model):  # pylint: disable=protected-access
-            return TranslationStatusResult._from_generated(generated_model)  # pylint: disable=protected-access
+        def _convert_from_generated_model(
+            generated_model,
+        ):  # pylint: disable=protected-access
+            return TranslationStatusResult._from_generated(
+                generated_model
+            )  # pylint: disable=protected-access
 
         model_conversion_function = kwargs.pop(
             "cls",
             lambda translation_statuses: [
                 _convert_from_generated_model(status) for status in translation_statuses
-            ])
+            ],
+        )
 
         return self._client.document_translation.get_translations_status(
             cls=model_conversion_function,
@@ -278,13 +294,15 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :keyword int results_per_page: is the number of documents returned per page.
         :keyword list[str] document_ids: document IDs to filter by.
         :keyword list[str] statuses: document statuses to filter by.
-        :keyword Union[str, datetime.datetime] translated_after: get document translated after certain datetime.
-        :keyword Union[str, datetime.datetime] translated_before: get document translated before certain datetime.
+        :keyword translated_after: get document translated after certain datetime.
+        :paramtype translated_after: Union[str, datetime.datetime]
+        :keyword translated_before: get document translated before certain datetime.
+        :paramtype translated_before: Union[str, datetime.datetime]
         :keyword list[str] order_by: the sorting query for the documents.
             format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
-        :return: ~azure.core.paging.ItemPaged[:class:`~azure.ai.translation.document.DocumentStatusResult`]
-        :rtype: ~azure.core.paging.ItemPaged[:class:`~azure.ai.translation.document.DocumentStatusResult`]
+        :return: A pageable of DocumentStatusResult.
+        :rtype: ~azure.core.paging.ItemPaged[DocumentStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -298,20 +316,26 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """
         translated_after = kwargs.pop("translated_after", None)
         translated_before = kwargs.pop("translated_before", None)
-        translated_after = convert_datetime(translated_after) if translated_after else None
-        translated_before = convert_datetime(translated_before) if translated_before else None
+        translated_after = (
+            convert_datetime(translated_after) if translated_after else None
+        )
+        translated_before = (
+            convert_datetime(translated_before) if translated_before else None
+        )
         results_per_page = kwargs.pop("results_per_page", None)
         document_ids = kwargs.pop("document_ids", None)
 
-
         def _convert_from_generated_model(generated_model):
-            return DocumentStatusResult._from_generated(generated_model)  # pylint: disable=protected-access
+            return DocumentStatusResult._from_generated(  # pylint: disable=protected-access
+                generated_model
+            )
 
         model_conversion_function = kwargs.pop(
             "cls",
             lambda doc_statuses: [
                 _convert_from_generated_model(doc_status) for doc_status in doc_statuses
-            ])
+            ],
+        )
 
         return self._client.document_translation.get_documents_status(
             id=translation_id,
@@ -336,10 +360,11 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """
 
         document_status = self._client.document_translation.get_document_status(
-            translation_id,
-            document_id,
-            **kwargs)
-        return DocumentStatusResult._from_generated(document_status)  # pylint: disable=protected-access
+            translation_id, document_id, **kwargs
+        )
+        return DocumentStatusResult._from_generated(  # pylint: disable=protected-access
+            document_status
+        )
 
     @distributed_trace
     def get_glossary_formats(self, **kwargs):
@@ -351,8 +376,12 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        glossary_formats = self._client.document_translation.get_supported_glossary_formats(**kwargs)
-        return FileFormat._from_generated_list(glossary_formats.value)  # pylint: disable=protected-access
+        glossary_formats = (
+            self._client.document_translation.get_supported_glossary_formats(**kwargs)
+        )
+        return FileFormat._from_generated_list(  # pylint: disable=protected-access
+            glossary_formats.value
+        )
 
     @distributed_trace
     def get_document_formats(self, **kwargs):
@@ -364,5 +393,9 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        document_formats = self._client.document_translation.get_supported_document_formats(**kwargs)
-        return FileFormat._from_generated_list(document_formats.value)  # pylint: disable=protected-access
+        document_formats = (
+            self._client.document_translation.get_supported_document_formats(**kwargs)
+        )
+        return FileFormat._from_generated_list(  # pylint: disable=protected-access
+            document_formats.value
+        )

@@ -29,6 +29,10 @@ DefaultAzureCredential.
   * The caller provided `validation_callback` now must throw exceptions on invalid
   tokens rather than returning `False`.
 
+### Key Bugs Fixed
+
+### Fixed
+
 ## 1.0.0b4 (2021-06-08)
 
 ### Features Added

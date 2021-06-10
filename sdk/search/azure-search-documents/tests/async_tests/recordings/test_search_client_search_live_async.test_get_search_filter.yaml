@@ -10,36 +10,36 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchd523181c.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
+    uri: https://searchd523181c.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
   response:
     body:
       string: !!binary |
         H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
         VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
-        uc4/evS9X/zR79nkWT2dj5tpVdMnO+NP7+88uP9gf/TRvGrz8kW2oE8/On23qvOmSV9V1aL5aPTR
-        LG+mdbFqi2pJ376s87a9Ti+qapbyW9RimrX5RVVf09dP1rOLvP3ol4xu3du0Wlav2+ya4IQ9/WRe
-        X6erarUus1q6Sotl2lZXS2p6qy73xvcf7u0d7HwadnlSrZdtfd0Uszz9Nj4neGHXr7PLPF2vqLP0
-        /s7vnlbn52lbZ7MCX2elINOM0/RZnefpd4tnxSi9qPOsTcuKEKNG6ZIQSWeEK/AdpefrskzfFu10
-        ntNfV1kzz+v0F6az+jqvR+ne/t0HabNeraq6HaWT6qoslhdpVpb5Nb1atEtMxzRftvRStpylCxrd
-        mJCmvm4mwgDdT6rF+XX6ssymOUEKh3+8rFogeNMkf/+X/D+3bKcKXgIAAA==
+        uc4/evS9X/zR79nkWT2dj5tpVdMnu+Odvb37B/sPRx/NqzYvX2QL+vSj03erOm+a9FVVLZqPRh/N
+        8mZaF6u2qJb07cs6b9vr9KKqZim/RS2mWZtfVPU1ff1kPbvI249+yejWvU2rZfW6za4JTtjTT+b1
+        dbqqVusyq6WrtFimbXW1pKa36nJvfO/g3t6De5+GXZ5U62VbXzfFLE+/jc8JXtj16+wyT9cr6iy9
+        v/O7p9X5edrW2azA11kpyDTjNH1W53n63eJZMUov6jxr07IixKhRuiRE0hnhCnxH6fm6LNO3RTud
+        5/TXVdbM8zr9hemsvs7rUbq3f/dB2qxXq6puR+mkuiqL5UWalWV+Ta8W7RLTMc2XLb2ULWfpgkY3
+        JqSpr5uJMED3k2pxfp2+LLNpTpDC4R8vqxYI3jTJ3/8l/w87XRrPXgIAAA==
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-length: '442'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:21:58 GMT
-      elapsed-time: '158'
+      date: Sat, 08 May 2021 06:26:50 GMT
+      elapsed-time: '75'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: e0f0c739-b98f-11eb-8739-a0481ca055a9
+      request-id: 5ee70187-afc6-11eb-b408-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchd523181c.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
+    url: https://searchd523181c.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
 version: 1

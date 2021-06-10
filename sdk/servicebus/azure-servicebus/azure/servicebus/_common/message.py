@@ -124,6 +124,7 @@ class ServiceBusMessage(
             self.partition_key = kwargs.pop("partition_key", None)
 
     def __str__(self):
+        # type: () -> str
         return str(self.raw_amqp_message)
 
     def __repr__(self):
@@ -730,8 +731,6 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
     """
     A Service Bus Message received from service side.
 
-    :ivar raw_amqp_message: Advanced usage only. The internal AMQP message payload that is sent or received.
-    :vartype raw_amqp_message: ~azure.servicebus.amqp.AmqpAnnotatedMessage
     :ivar auto_renew_error: Error when AutoLockRenewer is used and it fails to renew the message lock.
     :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
 

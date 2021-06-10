@@ -354,8 +354,23 @@ class TestAnalyze(TextAnalyticsTest):
     def test_show_stats_and_model_version_multiple_tasks(self, client):
 
         def callback(resp):
-            if resp.raw_response:
-                a = "b"
+            assert resp.raw_response
+            tasks = resp.raw_response['tasks']
+            assert tasks['completed'] == 5
+            assert tasks['inProgress'] == 0
+            assert tasks['failed'] == 0
+            assert tasks['total'] == 5
+            num_tasks = 0
+            for key, task in tasks.items():
+                if "Tasks" in key:
+                    num_tasks += 1
+                    assert len(task) == 1
+                    task_stats = task[0]['results']['statistics']
+                    assert task_stats['documentsCount'] == 4
+                    assert task_stats['validDocumentsCount'] == 4
+                    assert task_stats['erroneousDocumentsCount'] == 0
+                    assert task_stats['transactionsCount'] == 4
+            assert num_tasks == 5
 
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},

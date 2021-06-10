@@ -23,7 +23,7 @@ from ._generated.models import (
     SeriesIdentity,
     FeedbackDimensionFilter,
 )
-from ._generated import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _Client
+from ._generated import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _Client
 from ._helpers import convert_to_sub_feedback, convert_datetime, get_authentication_policy
 from .models._models import (
     AnomalyIncident,

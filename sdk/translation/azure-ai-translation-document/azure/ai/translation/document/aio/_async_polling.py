@@ -8,7 +8,7 @@ from typing import Any, Tuple, TypeVar
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.base_polling import (
     OperationFailed,
-    _raise_if_bad_http_status_and_method
+    _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from .._generated.models import TranslationStatus
@@ -20,45 +20,52 @@ _FAILED = frozenset(["validationfailed"])
 
 
 class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
-    """An async custom poller implementation for Document Translation.
-    """
+    """An async custom poller implementation for Document Translation. Call `result()` on the poller to return
+    a pageable of :class:`~azure.ai.translation.document.DocumentStatusResult`."""
 
     @property
     def id(self) -> str:
         """The ID for the translation operation
 
-        :return: str
+        :rtype: str
         """
         if self._polling_method._current_body:  # pylint: disable=protected-access
-            return self._polling_method._current_body.id  # pylint: disable=protected-access
-        return self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
+            return (
+                self._polling_method._current_body.id  # pylint: disable=protected-access
+            )
+        return (
+            self._polling_method._get_id_from_headers()  # pylint: disable=protected-access
+        )
 
     @property
     def details(self) -> TranslationStatusResult:
         """The details for the translation operation
 
-        :return: ~azure.ai.translation.document.TranslationStatusResult
+        :rtype: ~azure.ai.translation.document.TranslationStatusResult
         """
-        return TranslationStatusResult._from_generated(self._polling_method._current_body)  # pylint: disable=protected-access
+        return TranslationStatusResult._from_generated(  # pylint: disable=protected-access
+            self._polling_method._current_body  # pylint: disable=protected-access
+        )
 
     @classmethod
     def from_continuation_token(
-            cls,
-            polling_method: "AsyncDocumentTranslationLROPollingMethod",
-            continuation_token: str,
-            **kwargs: Any
+        cls,
+        polling_method: "AsyncDocumentTranslationLROPollingMethod",
+        continuation_token: str,
+        **kwargs: Any
     ) -> "AsyncDocumentTranslationLROPoller":
 
-        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
-            continuation_token, **kwargs
-        )
+        (
+            client,
+            initial_response,
+            deserialization_callback,
+        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
 
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
 class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
-    """A custom polling method implementation for Document Translation.
-    """
+    """A custom polling method implementation for Document Translation."""
 
     def __init__(self, *args, **kwargs):
         self._cont_token_response = kwargs.pop("cont_token_response")
@@ -69,7 +76,9 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         return TranslationStatus.deserialize(self._pipeline_response)
 
     def _get_id_from_headers(self) -> str:
-        return self._pipeline_response.http_response.headers["Operation-Location"].split("/batches/")[1]
+        return self._pipeline_response.http_response.headers[
+            "Operation-Location"
+        ].split("/batches/")[1]
 
     def finished(self):
         """Is this polling finished?
@@ -98,12 +107,16 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         try:
             client = kwargs["client"]
         except KeyError:
-            raise ValueError("Need kwarg 'client' to be recreated from continuation_token")
+            raise ValueError(
+                "Need kwarg 'client' to be recreated from continuation_token"
+            )
 
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError:
-            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
+            raise ValueError(
+                "Need kwarg 'deserialization_callback' to be recreated from continuation_token"
+            )
 
         return client, self._cont_token_response, deserialization_callback
 

@@ -9,6 +9,8 @@
   `TableAccessPolicy`, `TableMetrics`, `TableRetentionPolicy`, `TableCorsRule`
 * All parameters for `TableServiceClient.set_service_properties` are now keyword-only.
 * The `credential` parameter for all Clients is now keyword-only.
+* The method `TableClient.get_access_policy` will now return `None` where previously it returned an "empty" access policy object.
+* Timestamp properties on `TableAccessPolicy` instances returned from `TableClient.get_access_policy` will now be deserialized to `datetime` instances.
 
 **Fixes**
 * Fixed support for Cosmos emulator endpoint, via URL/credential or connection string.

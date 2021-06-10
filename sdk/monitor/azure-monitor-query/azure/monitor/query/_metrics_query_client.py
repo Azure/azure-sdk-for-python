@@ -28,6 +28,15 @@ class MetricsQueryClient(object):
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://management.azure.com'.
     :paramtype endpoint: str
+
+    .. admonition:: Example:
+
+    .. literalinclude:: ../samples/sample_metrics_query_client.py
+        :start-after: [START metrics_client_auth_with_token_cred]
+        :end-before: [END metrics_client_auth_with_token_cred]
+        :language: python
+        :dedent: 0
+        :caption: Creating the MetricsQueryClient with a TokenCredential.
     """
 
     def __init__(self, credential, **kwargs):
@@ -91,6 +100,15 @@ class MetricsQueryClient(object):
         :return: Response, or the result of cls(response)
         :rtype: ~azure.monitor.query.MetricsResult
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_metrics_query_client.py
+            :start-after: [START send_metrics_query]
+            :end-before: [END send_metrics_query]
+            :language: python
+            :dedent: 0
+            :caption: Get a response for a single Metrics Query
         """
         start = kwargs.pop('start_time', None)
         end = kwargs.pop('end_time', None)
