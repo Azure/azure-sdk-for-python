@@ -20,7 +20,7 @@ To use this package, you must have:
 
 ### Install the package
 
-Install the Azure Farmbeats client library for Python with [pip][pip]:
+Install the Azure FarmBeats client library for Python with [pip][pip]:
 
 ```bash
 pip install azure-agrifood-farming
