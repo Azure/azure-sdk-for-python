@@ -8,6 +8,12 @@ parameters:
   - name: TestMarkArgument
     type: string
     default: ''
+  - name: BeforeTestSteps
+    type: object
+    default: []
+  - name: AfterTestSteps
+    type: object
+    default: []
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
@@ -110,3 +116,7 @@ jobs:
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          
+          - ${{ each step in parameters.BeforeTestSteps }}:
+            -  ${{ step }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}
