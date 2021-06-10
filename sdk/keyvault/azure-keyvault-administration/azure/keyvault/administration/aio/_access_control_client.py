@@ -124,15 +124,15 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
     ) -> "KeyVaultRoleDefinition":
         """Creates or updates a custom role definition.
 
-        To update a role definition, provide the ``definition_name`` of the existing definition.
+        To update a role definition, specify the definition's ``name``.
 
         :param scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
             Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.GLOBAL.
         :type scope: str or KeyVaultRoleScope
-        :keyword definition_name: the unique role definition name. Unless a UUID is provided, a new role definition
-            will be created with a generated unique name. Providing the unique name of an existing role definition will
-            update that role definition.
-        :paramtype definition_name: str or uuid.UUID
+        :keyword name: the role definition's name, a UUID. When this argument has a value, the client will create a new
+            role definition with this name or update an existing role definition, if one exists with the given name.
+            When this argument has no value, a new role definition will be created with a generated name.
+        :paramtype name: str or uuid.UUID
         :keyword str role_name: the role's display name. If unspecified when creating or updating a role definition, the
             role name will be set to an empty string.
         :keyword str description: a description of the role definition. If unspecified when creating or updating a role
@@ -166,7 +166,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         definition = await self._client.role_definitions.create_or_update(
             vault_base_url=self._vault_url,
             scope=scope,
-            role_definition_name=str(kwargs.pop("definition_name", None) or uuid4()),
+            role_definition_name=str(kwargs.pop("name", None) or uuid4()),
             parameters=parameters,
             **kwargs
         )

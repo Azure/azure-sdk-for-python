@@ -79,7 +79,7 @@ class AccessControlTests(KeyVaultTestCase):
         permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         created_definition = await client.set_role_definition(
             scope=scope,
-            definition_name=definition_name,
+            name=definition_name,
             role_name=role_name,
             description="test",
             permissions=permissions
@@ -97,7 +97,7 @@ class AccessControlTests(KeyVaultTestCase):
             KeyVaultPermission(data_actions=[], not_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
         ]
         updated_definition = await client.set_role_definition(
-            scope=scope, definition_name=definition_name, permissions=permissions
+            scope=scope, name=definition_name, permissions=permissions
         )
         assert updated_definition.role_name == ""
         assert updated_definition.description == ""
