@@ -63,42 +63,6 @@ def create_x509_certificate(key_pem, subject_name): #type(str, str) -> str
     builder = builder.add_extension(BasicConstraints(ca=False, path_length=None), critical=True)
     return builder.sign(private_key=signing_key, algorithm=hashes.SHA256(), backend=default_backend()).public_bytes(serialization.Encoding.PEM).decode('ascii')
 
-def create_client_credentials():
-    #type:() -> 'azure.identity.ClientSecretCredentials'
-
-    tenant_id = os.getenv("ATTESTATION_TENANT_ID")
-    client_id = os.getenv("ATTESTATION_CLIENT_ID")
-    secret = os.getenv("ATTESTATION_CLIENT_SECRET")
-
-    if not tenant_id or not client_id or not secret:
-        raise Exception("Must provide client credentials.")
-
-    # Create azure-identity class
-    from azure.identity import ClientSecretCredential
-
-    return ClientSecretCredential(
-        tenant_id=tenant_id,
-        client_id=client_id,
-        client_secret=secret)
-
-def create_client_credentials_async():
-    #type:() -> 'azure.identity.aio.ClientSecretCredentials'
-
-    tenant_id = os.getenv("ATTESTATION_TENANT_ID")
-    client_id = os.getenv("ATTESTATION_CLIENT_ID")
-    secret = os.getenv("ATTESTATION_CLIENT_SECRET")
-
-    if not tenant_id or not client_id or not secret:
-        raise Exception("Must provide client credentials.")
-
-    # Create azure-identity class
-    from azure.identity.aio import ClientSecretCredential
-
-    return ClientSecretCredential(
-        tenant_id=tenant_id,
-        client_id=client_id,
-        client_secret=secret)
-
 def pem_from_base64(base64_value, header_type):
     # type: (str, str) -> str
     pem = '-----BEGIN ' + header_type + '-----\n'

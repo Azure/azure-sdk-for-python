@@ -2,6 +2,12 @@
 
 ## 1.0.0b5 (Unreleased)
 
+API Review changes.
+
+### Features Added
+Sample cleanup - instead of using `ClientSecretCredentials`, the samples now use
+DefaultAzureCredential.
+
 ### Breaking Changes
 
 * TPM attestation takes a JSON string parameter and returns a JSON string parameter.
@@ -19,6 +25,9 @@
 * Renamed `instance_url` parameter to the constructors to `endpoint` to be consistent
   with other APIs.
 * Many optional fields in `AttestationResult` were made non-optional.
+* `AttestationToken._validate_token` is made internal-only, and now returns `None`.
+  * The caller provided `validation_callback` now must throw exceptions on invalid
+  tokens rather than returning `False`.
 
 ## 1.0.0b4 (2021-06-08)
 

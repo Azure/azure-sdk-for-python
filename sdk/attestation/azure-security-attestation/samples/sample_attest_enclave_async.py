@@ -36,6 +36,7 @@ additional token validations as a part of the `attest_sgx_enclave` API call.
 
 from logging import fatal
 from typing import Any, ByteString, Dict
+from azure.identity.aio import DefaultAzureCredential
 from cryptography.hazmat.backends import default_backend
 from cryptography import x509
 from  cryptography.x509 import NameOID
@@ -55,17 +56,16 @@ from azure.security.attestation import (
     AttestationData)
 
 from sample_collateral import sample_open_enclave_report, sample_runtime_data
-from sample_utils import write_banner, create_client_credentials_async
+from sample_utils import write_banner
 
 class AttestationClientAttestationSamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         shared_short_name  = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
         self.shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
-        self._credentials = create_client_credentials_async()
 
     async def close(self):
-        await self._credentials.close()
+        pass
 
     async def attest_sgx_enclave_shared(self):
         """
@@ -79,7 +79,7 @@ class AttestationClientAttestationSamples(object):
 
         # [START attest_sgx_enclave_shared]
         print('\nAttest SGX enclave using {}'.format(self.shared_url))
-        async with self._create_client(self.shared_url) as attest_client:
+        async with DefaultAzureCredential() as credential, AttestationClient(credential, self.shared_url) as attest_client:
             response = await attest_client.attest_sgx_enclave(
                 quote, runtime_data=AttestationData(runtime_data, is_json=False))
 
@@ -96,7 +96,7 @@ class AttestationClientAttestationSamples(object):
 
         # [START attest_open_enclave_shared]
         print('Attest Open enclave using ', self.shared_url)
-        async with self._create_client(self.shared_url) as attest_client:
+        async with DefaultAzureCredential() as credential, AttestationClient(credential, self.shared_url) as attest_client:
             response = await attest_client.attest_open_enclave(
                 oe_report, runtime_data=AttestationData(runtime_data))
 
@@ -131,7 +131,7 @@ class AttestationClientAttestationSamples(object):
         """
         print('Attest Open enclave using ', self.shared_url)
         print('Using draft policy:', draft_policy)
-        async with self._create_client(self.shared_url) as attest_client:
+        async with DefaultAzureCredential() as credential, AttestationClient(credential, self.shared_url) as attest_client:
             response = await attest_client.attest_open_enclave(
                 oe_report, runtime_data=AttestationData(runtime_data, is_json=False),
                 draft_policy=draft_policy)
@@ -167,7 +167,7 @@ issuancerules {
         print('Attest Open enclave using ', self.shared_url)
         print('Using draft policy which will fail.:', draft_policy)
         try:
-            async with self._create_client(self.shared_url) as attest_client:
+            async with DefaultAzureCredential() as credential, AttestationClient(credential, self.shared_url) as attest_client:
                 await attest_client.attest_open_enclave(
                     oe_report, runtime_data=AttestationData(runtime_data, is_json=False),
                     draft_policy=draft_policy)
@@ -219,17 +219,15 @@ issuancerules {
             print("Token passes validation checks.")
             return True
 
-        async with self._create_client(self.shared_url,
-                validation_callback=validate_token) as attest_client:
-            response = await attest_client.attest_open_enclave(
-                oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
+        async with DefaultAzureCredential() as credential, AttestationClient(
+            credential,
+            self.shared_url,
+            validation_callback=validate_token) as attest_client:
+                response = await attest_client.attest_open_enclave(
+                    oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
 
         print("Issuer of token is: ", response.issuer)
         # [END attest_open_enclave_shared_with_options]
-
-    def _create_client(self, base_url, **kwargs):
-        #type:(str, Dict[str, Any]) -> AttestationClient
-        return AttestationClient(self._credentials, base_url, **kwargs)
 
     async def __aenter__(self):
         return self

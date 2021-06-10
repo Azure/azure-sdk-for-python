@@ -69,20 +69,12 @@ class AttestationClientCreateSamples(object):
         write_banner("create_attestation_client_aad")
         # [START client_create]
 
-        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
-        client_id = os.getenv("ATTESTATION_CLIENT_ID")
-        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
-
-        if not tenant_id or not client_id or not secret:
-            raise Exception("Must provide client credentials.")
-
         # Create azure-identity class
-        from azure.identity.aio import ClientSecretCredential
+        from azure.identity.aio import DefaultAzureCredential
 
         from azure.security.attestation.aio import AttestationClient
 
-        async with ClientSecretCredential(
-            tenant_id=tenant_id, client_id=client_id, client_secret=secret) as credentials, AttestationClient(
+        async with DefaultAzureCredential() as credentials, AttestationClient(
                 credentials, endpoint=self.aad_url) as client:
             print("Retrieve OpenID metadata from: ", self.aad_url)
             openid_metadata = await client.get_openidmetadata()
@@ -99,24 +91,16 @@ class AttestationClientCreateSamples(object):
 
         write_banner("create_attestation_client_shared")
         # [START sharedclient_create]
-        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
-        client_id = os.getenv("ATTESTATION_CLIENT_ID")
-        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
 
-        if not tenant_id or not client_id or not secret:
-            raise Exception("Must provide client credentials.")
-
-        # Create azure-identity class
-        from azure.identity.aio import ClientSecretCredential
-
+        # Import default credential and Attestation client
+        from azure.identity.aio import DefaultAzureCredential
         from azure.security.attestation.aio import AttestationClient
 
         shared_short_name = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
         shared_url = 'https://shared' + shared_short_name + \
             '.' + shared_short_name + '.attest.azure.net'
 
-        async with ClientSecretCredential(
-            tenant_id=tenant_id, client_id=client_id, client_secret=secret) as credentials, AttestationClient(
+        async with DefaultAzureCredential() as credentials, AttestationClient(
                 credentials, self.aad_url) as client:
             print("Retrieve OpenID metadata from: ", shared_url)
             openid_metadata = await client.get_openidmetadata()

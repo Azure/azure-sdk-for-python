@@ -30,6 +30,7 @@ USAGE:
 
 from datetime import datetime, timedelta
 import os
+from azure.identity._credentials.default import DefaultAzureCredential
 from dotenv import find_dotenv, load_dotenv
 import base64
 from sample_utils import write_banner
@@ -46,7 +47,6 @@ class AttestationClientCreateSamples(object):
         self.shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
 
     def close(self):
-        # self._credentials.close()
         pass
         
 
@@ -55,21 +55,13 @@ class AttestationClientCreateSamples(object):
 
         write_banner("create_attestation_client_aad")
         # [START client_create]
-        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
-        client_id = os.getenv("ATTESTATION_CLIENT_ID")
-        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
-
-        if not tenant_id or not client_id or not secret:
-            raise Exception("Must provide client credentials.")
 
         # Create azure-identity class
-        from azure.identity import ClientSecretCredential
-        credentials = ClientSecretCredential(tenant_id=tenant_id, client_id=client_id, client_secret=secret)
+        from azure.security.attestation import AttestationClient
+        from azure.identity import DefaultAzureCredential
 
         # And now create an AttestationClient.
-        from azure.security.attestation import AttestationClient
-
-        with AttestationClient(credentials, self.aad_url) as client:
+        with AttestationClient(DefaultAzureCredential(), self.aad_url) as client:
             print("Retrieve OpenID metadata from: ", self.aad_url)
             openid_metadata = client.get_openidmetadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])
@@ -82,22 +74,12 @@ class AttestationClientCreateSamples(object):
         write_banner("create_attestation_client_shared")
         # [START sharedclient_create]
         from azure.security.attestation import AttestationClient
+        from azure.identity import DefaultAzureCredential
 
         shared_short_name  = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
         shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
 
-        tenant_id = os.getenv("ATTESTATION_TENANT_ID")
-        client_id = os.getenv("ATTESTATION_CLIENT_ID")
-        secret = os.getenv("ATTESTATION_CLIENT_SECRET")
-
-        if not tenant_id or not client_id or not secret:
-            raise Exception("Must provide client credentials.")
-
-        # Create azure-identity class
-        from azure.identity import ClientSecretCredential
-        credentials = ClientSecretCredential(tenant_id=tenant_id, client_id=client_id, client_secret=secret)
-
-        with AttestationClient(credentials, shared_url) as client:
+        with AttestationClient(DefaultAzureCredential(), shared_url) as client:
             print("Retrieve OpenID metadata from: ", shared_url)
             openid_metadata = client.get_openidmetadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])

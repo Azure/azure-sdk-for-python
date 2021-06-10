@@ -39,6 +39,7 @@ which are used to set attestation policy on isolated mode attestation service in
 import datetime 
 from logging import fatal
 from typing import Any, ByteString, Dict
+from azure.identity._credentials.default import DefaultAzureCredential
 from cryptography.hazmat.backends import default_backend
 from cryptography import x509
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -64,7 +65,7 @@ from azure.security.attestation import (
     CertificateModification)
 
 from sample_collateral import sample_open_enclave_report, sample_runtime_data
-from sample_utils import create_rsa_key, create_x509_certificate, write_banner, create_client_credentials, pem_from_base64
+from sample_utils import create_rsa_key, create_x509_certificate, write_banner, pem_from_base64
 
 class AttestationClientPolicySamples(object):
     def __init__(self):
@@ -74,11 +75,9 @@ class AttestationClientPolicySamples(object):
         if self.isolated_url:
             self.isolated_certificate = pem_from_base64(os.getenv("ATTESTATION_ISOLATED_SIGNING_CERTIFICATE"), 'CERTIFICATE')
             self.isolated_key = pem_from_base64(os.getenv("ATTESTATION_ISOLATED_SIGNING_KEY"), 'PRIVATE KEY')
-        self._credentials = create_client_credentials()
     def close(self):
         # self._credentials.close()
         pass
-
 
     def get_policy_aad(self):
         """
@@ -364,11 +363,11 @@ issuancerules {};
 
     def _create_admin_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationAdministrationClient
-        return AttestationAdministrationClient(self._credentials, base_url, **kwargs)
+        return AttestationAdministrationClient(DefaultAzureCredential(), base_url, **kwargs)
 
     def _create_client(self, base_url, **kwargs):
         #type:(str, Dict[str, Any]) -> AttestationClient
-        return AttestationClient(self._credentials, base_url, **kwargs)
+        return AttestationClient(DefaultAzureCredential(), base_url, **kwargs)
 
     def __enter__(self):
         return self
