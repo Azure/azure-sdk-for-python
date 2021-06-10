@@ -39,7 +39,7 @@ from ._models import (
 import base64
 from azure.core.tracing.decorator import distributed_trace
 from threading import Lock, Thread
-from ._common import SigningKeyUtils, PemUtils
+from ._common import SigningKeyUtils, PemUtils, merge_validation_args
 from cryptography.x509 import load_pem_x509_certificate
 
 
@@ -133,17 +133,19 @@ class AttestationAdministrationClient(object):
             The Azure Attestation Policy language is defined `here <https://docs.microsoft.com/azure/attestation/author-sign-policy>`
 
         """
-        
+        # Merge our existing config options with the options for this API call. 
+        # Note that this must be done before calling into the implementation
+        # layer because the implementation layer doesn't like keyword args that
+        # it doesn't expect :(.
+        options = merge_validation_args(self._config._args, kwargs)
+
+
         policyResult = self._client.policy.get(attestation_type, **kwargs)
         token = AttestationToken[GeneratedPolicyResult](token=policyResult.token, body_type=GeneratedPolicyResult)
         token_body = token.get_body()
         stored_policy = AttestationToken[GeneratedStoredAttestationPolicy](token=token_body.policy, body_type=GeneratedStoredAttestationPolicy)
 
         actual_policy = stored_policy.get_body().attestation_policy #type: bytes
-
-       # Merge our existing config options with the options for this API call. 
-        options = self._config._args.copy()
-        options.update(**kwargs)
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
@@ -207,12 +209,16 @@ class AttestationAdministrationClient(object):
             signing_key=signing_key,
             signing_certificate=signing_certificate,
             body_type=GeneratedStoredAttestationPolicy)
+
+        # Merge our existing config options with the options for this API call. 
+        # Note that this must be done before calling into the implementation
+        # layer because the implementation layer doesn't like keyword args that
+        # it doesn't expect :(.
+        options = merge_validation_args(self._config._args, kwargs)
+
         policyResult = self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.to_jwt_string(), **kwargs)
         token = AttestationToken[GeneratedPolicyResult](token=policyResult.token,
             body_type=GeneratedPolicyResult)
-       # Merge our existing config options with the options for this API call. 
-        options = self._config._args.copy()
-        options.update(**kwargs)
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
@@ -274,12 +280,16 @@ class AttestationAdministrationClient(object):
             body=None,
             signing_key=signing_key,
             signing_certificate=signing_certificate)
+
+        # Merge our existing config options with the options for this API call. 
+        # Note that this must be done before calling into the implementation
+        # layer because the implementation layer doesn't like keyword args that
+        # it doesn't expect :(.
+        options = merge_validation_args(self._config._args, kwargs)
+
         policyResult = self._client.policy.reset(attestation_type=attestation_type, policy_jws=policy_token.to_jwt_string(), **kwargs)
         token = AttestationToken[GeneratedPolicyResult](token=policyResult.token,
             body_type=GeneratedPolicyResult)
-       # Merge our existing config options with the options for this API call. 
-        options = self._config._args.copy()
-        options.update(**kwargs)
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
@@ -312,13 +322,16 @@ class AttestationAdministrationClient(object):
         :rtype: azure.security.attestation.AttestationResponse[list[list[bytes]]]
         """
 
+        # Merge our existing config options with the options for this API call. 
+        # Note that this must be done before calling into the implementation
+        # layer because the implementation layer doesn't like keyword args that
+        # it doesn't expect :(.
+        options = merge_validation_args(self._config._args, kwargs)
+
         cert_response = self._client.policy_certificates.get(**kwargs)
         token = AttestationToken[GeneratedPolicyCertificatesResult](
             token=cert_response.token,
             body_type=GeneratedPolicyCertificatesResult)
-       # Merge our existing config options with the options for this API call. 
-        options = self._config._args.copy()
-        options.update(**kwargs)
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
@@ -392,19 +405,22 @@ class AttestationAdministrationClient(object):
             signing_certificate=signing_certificate,
             body_type=AttestationCertificateManagementBody)
 
+        # Merge our existing config options with the options for this API call. 
+        # Note that this must be done before calling into the implementation
+        # layer because the implementation layer doesn't like keyword args that
+        # it doesn't expect :(.
+        options = merge_validation_args(self._config._args, kwargs)
+
         cert_response = self._client.policy_certificates.add(cert_add_token.to_jwt_string(), **kwargs)
         token = AttestationToken[GeneratedPolicyCertificatesModificationResult](token=cert_response.token,
             body_type=GeneratedPolicyCertificatesModificationResult)
-       # Merge our existing config options with the options for this API call. 
-        options = self._config._args.copy()
-        options.update(**kwargs)
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
         return PolicyCertificatesModificationResult._from_generated(token.get_body(), token)
 
     @distributed_trace
-    def remove_policy_management_certificate(self, certificate_to_add, **kwargs):
+    def remove_policy_management_certificate(self, certificate_to_remove, **kwargs):
         #type:(bytes, **Any) -> PolicyCertificatesModificationResult
         """ Removes a new policy management certificate to the set of policy management certificates for the instance.
 
@@ -452,22 +468,24 @@ class AttestationAdministrationClient(object):
             signing_certificate = self._signing_certificate
 
         # Verify that the provided certificate is a valid PEM encoded X.509 certificate
-        certificate_to_add = load_pem_x509_certificate(certificate_to_add.encode('ascii'))
+        certificate_to_remove = load_pem_x509_certificate(certificate_to_remove.encode('ascii'))
 
-        jwk=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add.public_bytes(serialization.Encoding.DER)).decode('ascii')])
+        jwk=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_remove.public_bytes(serialization.Encoding.DER)).decode('ascii')])
         add_body = AttestationCertificateManagementBody(policy_certificate=jwk)
         cert_add_token = AttestationToken[AttestationCertificateManagementBody](
             body=add_body,
             signing_key=signing_key,
             signing_certificate=signing_certificate,
             body_type=AttestationCertificateManagementBody)
+        # Merge our existing config options with the options for this API call. 
+        # Note that this must be done before calling into the implementation
+        # layer because the implementation layer doesn't like keyword args that
+        # it doesn't expect :(.
+        options = merge_validation_args(self._config._args, kwargs)
 
         cert_response = self._client.policy_certificates.remove(cert_add_token.to_jwt_string(), **kwargs)
         token = AttestationToken[GeneratedPolicyCertificatesModificationResult](token=cert_response.token,
             body_type=GeneratedPolicyCertificatesModificationResult)
-       # Merge our existing config options with the options for this API call. 
-        options = self._config._args.copy()
-        options.update(**kwargs)
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)

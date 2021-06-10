@@ -54,7 +54,6 @@ from azure.security.attestation.aio import (
     AttestationClient)
 from azure.security.attestation import (
     AttestationType,
-    AttestationData,
     CertificateModification)
 
 from sample_collateral import sample_open_enclave_report, sample_runtime_data
@@ -307,7 +306,7 @@ class AttestationClientPolicySamples(object):
         print('Attest open enclave using ', client_uri)
         async with DefaultAzureCredential() as credential, AttestationClient(credential, client_uri) as attest_client:
             await attest_client.attest_open_enclave(
-                oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
+                oe_report, runtime_data=runtime_data)
             print("Successfully attested enclave.")
 
     async def __aenter__(self):

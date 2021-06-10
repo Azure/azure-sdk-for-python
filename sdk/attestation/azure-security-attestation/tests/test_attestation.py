@@ -26,8 +26,7 @@ import json
 from azure.security.attestation import (
     AttestationClient,
     AttestationAdministrationClient,
-    AttestationType,
-    AttestationData)
+    AttestationType)
 
 _open_enclave_report = ("AQAAAAIAAADkEQAAAAAAAAMAAg" +
     "AAAAAABQAKAJOacjP3nEyplAoNs5V_Bgc42MPzGo7hPWS_h-3tExJrAAAAABERAwX_g" +
@@ -194,32 +193,35 @@ class AttestationTest(AzureTestCase):
         attest_client = self.create_client(client_uri)
         oe_report = Base64Url.decode(_open_enclave_report)
         runtime_data = Base64Url.decode(_runtime_data)
-        response = attest_client.attest_open_enclave(
-                oe_report,
-                runtime_data=AttestationData(runtime_data, is_json=False))
+        response,_ = attest_client.attest_open_enclave(
+            oe_report,
+            runtime_data=runtime_data)
         assert response.enclave_held_data == runtime_data
         assert response.sgx_collateral is not None
 
         #Now do the validation again, this time specifying runtime data as JSON.
-        response = attest_client.attest_open_enclave(oe_report, runtime_data=AttestationData(runtime_data, is_json=True))
+        response, token = attest_client.attest_open_enclave(
+            oe_report,
+            runtime_json=runtime_data)
         # Because the runtime data is JSON, enclave_held_data will be empty.
         assert response.enclave_held_data == None
         assert response.runtime_claims.get('jwk') is not None
         assert response.runtime_claims['jwk']['crv']=='P-256'
         assert response.sgx_collateral is not None
 
-        assert response.token.get_body().iss == response.issuer
+        assert token.get_body().iss == response.issuer
 
-        response = attest_client.attest_open_enclave(
+        response, token = attest_client.attest_open_enclave(
             oe_report,
-            runtime_data=AttestationData(runtime_data),
+            runtime_json=runtime_data,
             draft_policy="""version=1.0; authorizationrules{=> permit();}; issuancerules{};"""
         )
         assert response.enclave_held_data == None
         assert response.runtime_claims.get('jwk') is not None
         assert response.runtime_claims['jwk']['crv']=='P-256'
         assert response.sgx_collateral is not None
-        assert response.token.algorithm == "none"
+        # When a draft policy is applied, the token is unsecured.
+        assert token.algorithm == "none"
 
 
     @AttestationPreparer()
@@ -244,26 +246,23 @@ class AttestationTest(AzureTestCase):
         # Convert the OE report into an SGX quote by stripping off the first 16 bytes.
         quote = oe_report[16:]
         runtime_data = Base64Url.decode(_runtime_data)
-        response = attest_client.attest_sgx_enclave(
-            quote, runtime_data=AttestationData(runtime_data, is_json=False))
+        response,_ = attest_client.attest_sgx_enclave(quote, runtime_data=runtime_data)
         assert response.enclave_held_data == runtime_data
         assert response.sgx_collateral is not None
 
         #Now do the validation again, this time specifying runtime data as JSON.
-        response = attest_client.attest_sgx_enclave(quote, runtime_data=AttestationData(runtime_data, is_json=True))
+        response,_ = attest_client.attest_sgx_enclave(quote, runtime_json=runtime_data)
         # Because the runtime data is JSON, enclave_held_data will be empty.
         assert response.enclave_held_data == None
         assert response.runtime_claims.get('jwk') is not None
         assert response.runtime_claims['jwk']['crv']=='P-256'
         assert response.sgx_collateral is not None
 
-        #And try #3, this time letting the AttestationData type figure it out.
-        response = attest_client.attest_sgx_enclave(quote, runtime_data=AttestationData(runtime_data))
-        # Because the runtime data is JSON, enclave_held_data will be empty.
-        assert response.enclave_held_data == None
-        assert response.runtime_claims.get('jwk') is not None
-        assert response.runtime_claims['jwk']['crv']=='P-256'
-        assert response.sgx_collateral is not None
+        # Call into the attest API asking it to *not* validate the token.
+        response,_ = attest_client.attest_sgx_enclave(
+            quote, 
+            runtime_data=runtime_data,
+            validate_token=False)
 
 
     @AttestationPreparer()

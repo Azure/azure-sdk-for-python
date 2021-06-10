@@ -92,3 +92,18 @@ class SigningKeyUtils:
         if cert_public_key != key_public_key:
             raise ValueError("Signing key must match certificate public key")
         return signing_key, certificate
+
+def merge_validation_args(existing_options, kwargs):
+    #type(Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
+    options = existing_options.copy()
+    options.update(**kwargs)
+    kwargs.pop('validate_token', True)
+    kwargs.pop('validation_callback', None)
+    kwargs.pop('validate_signature', True)
+    kwargs.pop('validate_expiration', True)
+    kwargs.pop('validate_not_before', True)
+    kwargs.pop('validate_issuer', False)
+    kwargs.pop('issuer', None)
+    kwargs.pop('validation_slack', 0.5)
+
+    return options

@@ -8,8 +8,7 @@ from ._client import AttestationClient
 from ._administration_client import AttestationAdministrationClient
 from ._models import (
     AttestationSigner,
-    AttestationToken, 
-    AttestationData, 
+    AttestationToken,
     AttestationPolicyResult, 
     AttestationResult, 
     AttestationTokenValidationException,
@@ -31,7 +30,6 @@ __all__ = [
     'AttestationPolicyResult',
     'PolicyCertificatesResult',
     'AttestationResult',
-    'AttestationData',
     'StoredAttestationPolicy',
     'CertificateModification',
     'PolicyModification',

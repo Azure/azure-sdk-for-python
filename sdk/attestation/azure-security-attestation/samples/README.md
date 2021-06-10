@@ -37,7 +37,6 @@ Shared | No | Yes | Yes (default always)| No | No | No
 AAD | Yes | Yes | Yes | Yes | Optional | No
 Isolated | Yes| Yes | Yes | Yes | Yes | Yes
 
-
 ### Shared Mode
 
 Each region in which the MAA service operates has a "shared" attestation instance
@@ -83,8 +82,8 @@ variables have been set by the user:
     region.
 * ATTESTATION_ISOLATED_SIGNING_CERTIFICATE - The DER encoded form of the signing
     certificate used to create an isolated attestation instance, Base64 encoded.
-* ATTESTATION_ISOLATED_SIGNING_KEY - The DER encoded of an RSA Private key, which
-    was used to create an isolated attestation service instance.
+* ATTESTATION_ISOLATED_SIGNING_KEY - The DER encoded of an RSA Private key,
+    Base64 encoded, which was used to create an isolated attestation service instance.
 
 The tests also assume that the currently logged on user is authorized to call
 into the attestation service instance because they use [DefaultAzureCredential](https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python) for authorization.
@@ -129,7 +128,7 @@ rules for attestation operations.
 
 The following is an example of an attestation policy document for an SGX enclave:
 
-```
+```text
 version= 1.0;
 authorizationrules
 {

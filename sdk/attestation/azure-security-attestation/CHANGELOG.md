@@ -5,6 +5,7 @@
 API Review changes.
 
 ### Features Added
+
 Sample cleanup - instead of using `ClientSecretCredentials`, the samples now use
 DefaultAzureCredential.
 
@@ -28,6 +29,48 @@ DefaultAzureCredential.
 * `AttestationToken._validate_token` is made internal-only, and now returns `None`.
   * The caller provided `validation_callback` now must throw exceptions on invalid
   tokens rather than returning `False`.
+* Removed the `AttestationData` type, instead the `attest_xxx` APIs take two sets
+  of parameters: `inittime_data` and `inittime_json` and `runtime_data` and `runtime_json`.
+  if the `_json` value is set, the value of the parameter is an array of UTF8 encoded
+  JSON values, if the `_data` value is set, the value of the parameter is an array
+  of bytes.
+* The `attest_open_enclave` and `attest_sgx_enclave` APIs now return a
+  `Tuple[AttestationResult, AttestationToken]`. This allows callers to access both
+  the attestation claims and the original token separately.
+
+To call into the attest APIs if you care about the attestation result and token,
+you can write:
+
+```python
+result, token = attest_client.attest_open_enclave(
+    oe_report, runtime_data=runtime_data,
+    draft_policy=draft_policy)
+```
+
+If you only care about the result, you can write any of the following:
+
+```python
+result, _ = attest_client.attest_open_enclave(
+    oe_report, runtime_data=runtime_data,
+    draft_policy=draft_policy)
+```
+
+or
+
+```python
+result = attest_client.attest_open_enclave(
+    oe_report, runtime_data=runtime_data,
+    draft_policy=draft_policy)[0]
+```
+
+or
+
+```python
+response = attest_client.attest_open_enclave(
+    oe_report, runtime_data=runtime_data,
+    draft_policy=draft_policy)
+result = response[0]
+```
 
 ### Key Bugs Fixed
 

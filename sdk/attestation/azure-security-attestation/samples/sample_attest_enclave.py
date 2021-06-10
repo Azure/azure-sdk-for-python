@@ -51,8 +51,7 @@ from dotenv import find_dotenv, load_dotenv
 import base64
 
 from azure.security.attestation import (
-    AttestationClient,
-    AttestationData)
+    AttestationClient)
 
 from sample_collateral import sample_open_enclave_report, sample_runtime_data
 from sample_utils import write_banner
@@ -82,8 +81,8 @@ class AttestationClientAttestationSamples(object):
         print()
         print('Attest SGX enclave using ', self.shared_url)
         with AttestationClient(DefaultAzureCredential(), self.shared_url) as attest_client:
-            response = attest_client.attest_sgx_enclave(
-                quote, runtime_data=AttestationData(runtime_data, is_json=False))
+            response, _ = attest_client.attest_sgx_enclave(
+                quote, runtime_data=runtime_data)
 
             print("Issuer of token is: ", response.issuer)
         # [END attest_sgx_enclave_shared]
@@ -100,8 +99,8 @@ class AttestationClientAttestationSamples(object):
         print()
         print('Attest Open enclave using ', self.shared_url)
         with AttestationClient(DefaultAzureCredential(), self.shared_url) as attest_client:
-            response = attest_client.attest_open_enclave(
-                oe_report, runtime_data=AttestationData(runtime_data))
+            response, _ = attest_client.attest_open_enclave(
+                oe_report, runtime_json=runtime_data)
 
             print("Issuer of token is: ", response.issuer)
         # [END attest_open_enclave_shared]
@@ -135,11 +134,11 @@ class AttestationClientAttestationSamples(object):
         print('Attest Open enclave using ', self.shared_url)
         print('Using draft policy:', draft_policy)
         with AttestationClient(DefaultAzureCredential(), self.shared_url) as attest_client:
-            response = attest_client.attest_open_enclave(
-                oe_report, runtime_data=AttestationData(runtime_data, is_json=False),
+            response, token = attest_client.attest_open_enclave(
+                oe_report, runtime_data=runtime_data,
                 draft_policy=draft_policy)
 
-            print("Token algorithm", response.token.algorithm)
+            print("Token algorithm", token.algorithm)
             print("Issuer of token is: ", response.issuer)
         # [END attest_open_enclave_shared_draft]
 
@@ -172,7 +171,8 @@ issuancerules {
         with AttestationClient(DefaultAzureCredential(), self.shared_url) as attest_client:
             try:
                 attest_client.attest_open_enclave(
-                    oe_report, runtime_data=AttestationData(runtime_data, is_json=False),
+                    oe_report,
+                    runtime_data=runtime_data,
                     draft_policy=draft_policy)
                 print("Unexpectedly passed attestation.")
             except HttpResponseError as err:
@@ -222,11 +222,28 @@ issuancerules {
             print("Token passes validation checks.")
             return True
 
-        with AttestationClient(DefaultAzureCredential(), self.shared_url, validation_callback=validate_token) as attest_client:
-            response = attest_client.attest_open_enclave(
-                oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
+        with AttestationClient(
+            DefaultAzureCredential(),
+            self.shared_url,
+            validation_callback=validate_token) as attest_client:
+                response, token = attest_client.attest_open_enclave(
+                    oe_report,
+                    runtime_data=runtime_data)
+
+                print("Issuer of token is: ", response.issuer)
+                print("Expiration time: ", token.expiration_time)
+
+        # Repeat the same operation, this time specifying the callback options
+        # on the attest_open_enclave call.
+        with AttestationClient(DefaultAzureCredential(), self.shared_url) as attest_client:
+            response, token = attest_client.attest_open_enclave(
+                oe_report,
+                runtime_data=runtime_data,
+                validation_callback=validate_token)
 
             print("Issuer of token is: ", response.issuer)
+            print("Expiration time: ", token.expiration_time)
+
         # [END attest_open_enclave_shared_with_options]
 
     def __enter__(self):

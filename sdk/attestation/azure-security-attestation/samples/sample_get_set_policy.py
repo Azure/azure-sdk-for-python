@@ -59,7 +59,6 @@ from azure.security.attestation import (
     AttestationAdministrationClient,
     AttestationType,
     AttestationClient,
-    AttestationData,
     StoredAttestationPolicy,
     AttestationToken,
     CertificateModification)
@@ -235,7 +234,9 @@ issuancerules {};
         write_banner("get_policy_isolated")
         print("Retrieve an unsecured Policy on an Isolated mode attestation instance.")
         with self._create_admin_client(self.isolated_url) as admin_client:
-            get_result = admin_client.get_policy(AttestationType.SGX_ENCLAVE)
+            get_result = admin_client.get_policy(AttestationType.SGX_ENCLAVE,
+            validate_issuer=True,
+            issuer=self.isolated_url)
             print("SGX Policy is: ", get_result.policy)
 
     def set_policy_isolated_secured(self):
@@ -255,7 +256,7 @@ issuancerules {};
                 signing_key=self.isolated_key,
                 signing_certificate=self.isolated_certificate) as admin_client:
             set_result=admin_client.set_policy(AttestationType.SGX_ENCLAVE, 
-                """version= 1.0;authorizationrules{=> permit();};issuancerules {};""")
+                """version= 1.0;authorizationrules{=> permit();};issuancerules {};""", validation_slack=1.0)
             print("Policy Set Resolution: ", set_result.policy_resolution)
             print("Resulting policy signer should match the input certificate:")
             print("Policy Signer: ", set_result.policy_signer.certificates[0])
@@ -277,7 +278,7 @@ issuancerules {};
         print("Get the policy management certificates for a isolated instance.")
 
         with self._create_admin_client(self.isolated_url) as admin_client:
-            get_result=admin_client.get_policy_management_certificates()
+            get_result=admin_client.get_policy_management_certificates(validation_slack=1.0)
             print("Isolated instance has", len(get_result.value), "certificates")
 
             # The signing certificate for the isolated instance should be
@@ -303,11 +304,13 @@ issuancerules {};
             new_key = create_rsa_key()
             new_certificate = create_x509_certificate(new_key, u'NewCertificateName')
 
-            # Add the new certificate to the list.
+            # Add the new certificate to the list. Specify a validation slack of
+            # 1.0 to test passing in validation parameters to this method.
             add_result = admin_client.add_policy_management_certificate(
                 new_certificate,
                 signing_key=self.isolated_key,
-                signing_certificate=self.isolated_certificate)
+                signing_certificate=self.isolated_certificate,
+                validation_slack=1.0)
             if add_result.certificate_resolution != CertificateModification.IS_PRESENT:
                 raise Exception("Certificate was not added!")
 
@@ -358,7 +361,7 @@ issuancerules {};
         print('Attest open enclave using ', client_uri)
         with self._create_client(client_uri) as attest_client:
             attest_client.attest_open_enclave(
-                oe_report, runtime_data=AttestationData(runtime_data, is_json=False))
+                oe_report, runtime_data=runtime_data)
             print("Successfully attested enclave.")
 
     def _create_admin_client(self, base_url, **kwargs):

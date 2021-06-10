@@ -201,11 +201,10 @@ class AttestationResult(object):
         self._svn = kwargs.pop("svn") #type:int
         self._enclave_held_data = kwargs.pop("enclave_held_data", None) #type:Union[bytes, None]
         self._sgx_collateral = kwargs.pop("sgx_collateral") #type:dict
-        self._token = kwargs.pop("token") #type:AttestationToken
 
     @classmethod
-    def _from_generated(cls, generated, token):
-        #type:(GeneratedAttestationResult, AttestationToken) -> AttestationResult
+    def _from_generated(cls, generated):
+        #type:(GeneratedAttestationResult) -> AttestationResult
         return AttestationResult(
             issuer=generated.iss,
             unique_identifier=generated.jti,
@@ -223,18 +222,7 @@ class AttestationResult(object):
             mr_signer=generated.mr_signer,
             svn=generated.svn,
             enclave_held_data=generated.enclave_held_data,
-            sgx_collateral=generated.sgx_collateral,
-            token=token)
-
-    @property
-    def token(self):
-        #type: () -> AttestationToken
-        """ Returns the token containing the attestation result returned
-        by the attestation service.
-
-        :rtype: AttestationToken
-        """
-        return self._token
+            sgx_collateral=generated.sgx_collateral)
 
     @property
     def issuer(self):
@@ -460,42 +448,6 @@ class StoredAttestationPolicy(object):
             return StoredAttestationPolicy("")
         return StoredAttestationPolicy(generated.attestation_policy)
 
-
-class AttestationData(object):
-    """ AttestationData represents an object passed as an input to the Attestation Service.
-
-    AttestationData comes in two forms: Binary and JSON. To distinguish between the two, when an :class:`AttestationData`
-    object is created, the caller provides an indication that the input binary data will be treated as either JSON or Binary.
-
-    If the `is_json` parameter is not provided, then the AttestationData 
-    constructor will probe the `data` parameter to determine whether the data
-    should be treated as JSON.
-
-    The AttestationData is reflected in the generated :class:`AttestationResult` in two possible ways.
-    If the `AttestationData` is Binary, then the `AttestationData` is reflected in the `AttestationResult.enclave_held_data` claim.
-    If the `AttestationData` is JSON, then the `AttestationData` is expressed as JSON in the `AttestationResult.runtime_claims` or AttestationResult.inittime_claims claim.
-
-    :param bytes data: Input data to be sent to the attestation service.
-    :param bool is_json: True if the attestation service should treat the input data as JSON.
-
-    """
-    def __init__(self, data, is_json=None):
-        # type:(bytes, bool) -> None
-        self._data = data
-
-        # If the caller thought that the input data is JSON, then respect their 
-        # choice (this allows a caller to specify JSON data as if it was not JSON).
-        if is_json is not None:
-            self._is_json = is_json
-        else:
-            # The caller didn't say if the parameter is JSON or not, try parsing it,
-            # and if it parses, assume it's JSON.
-            try:
-                json.loads(data)
-                self._is_json = True
-            except Exception:
-                self._is_json = False
-
 class AttestationToken(Generic[T]):
     """ Represents a token returned from the attestation service.
 
@@ -615,7 +567,7 @@ class AttestationToken(Generic[T]):
 
     @property
     def critical(self):
-        #type() -> # type: Optional[bool]
+        #type() -> # type: Union[bool, None]
         """ Json Web Token Header "Critical". 
         
         See `RFC 7515 Section 4.1.11 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.11>`_ for details.

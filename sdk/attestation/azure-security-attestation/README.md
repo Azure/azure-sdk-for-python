@@ -170,9 +170,9 @@ InitTime data refers to data which is used to configure the SGX enclave being at
 Creates an instance of the Attestation Client at uri `endpoint`.
 
 ```python
-        attest_client = AttestationClient(
-            credential=DefaultAzureCredential(), 
-            endpoint=base_uri)
+attest_client = AttestationClient(
+    credential=DefaultAzureCredential(), 
+    endpoint=base_uri)
 ```
 
 ### Get attestation policy
@@ -181,9 +181,9 @@ The `set_policy` method retrieves the attestation policy from the service.
 Attestation Policies are instanced on a per-attestation type basis, the `AttestationType` parameter defines the type to retrieve.
 
 ```python
-    policy_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-    print('Instance SGX policy: ', policy_response.value)
-    print('Token: ', policy_response.token)
+policy_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+print('Instance SGX policy: ', policy_response.value)
+print('Token: ', policy_response.token)
 ```
 
 ### Set an attestation policy for a specified attestation type
@@ -193,23 +193,23 @@ If the attestation service instance is running in Isolated mode, the set_policy 
 Under the covers, the SetPolicy APIs create a [JSON Web Token][json_web_token] based on the policy document and signing information which is sent to the attestation service.
 
 ```python
-    policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,
-        attestation_policy,
-        signing_key=key,
-        signing_certificate=signing_certificate))
-    policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-    assert policy_get_response.value == attestation_policy
+policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,
+    attestation_policy,
+    signing_key=key,
+    signing_certificate=signing_certificate))
+policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+assert policy_get_response.value == attestation_policy
 ```
 
 If the service instance is running in AAD mode, the call to set_policy can be
 simplified:
 
 ```python
-    policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,            
-        attestation_policy)
-    # Now retrieve the policy which was just set.
-    policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-    assert policy_get_response.value == attestation_policy
+policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,            
+    attestation_policy)
+# Now retrieve the policy which was just set.
+policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+assert policy_get_response.value == attestation_policy
 ```
 
 Clients need to be able to verify that the attestation policy document was not modified before the policy document was received by the attestation service's enclave.
@@ -222,20 +222,22 @@ There are two properties provided in the [PolicyResult][attestation_policy_resul
 To verify the hash, clients can generate an attestation token and verify the hash generated from that token:
 
 ```python
-    # The set_policy API will create an AttestationToken signed with the 
-    # AttestationSigningKey  to transmit the policy. To verify that the policy
-    # specified by the caller was received by the service inside the enclave, we
-    # verify that the hash of the policy document returned from the Attestation 
-    # Service matches the hash of an attestation token created locally.
-    expected_policy = AttestationToken(
-        body=StoredAttestationPolicy(attestation_policy),
-        signing_key=key,
-        signing_certificate=signing_certificate)
-    hasher = hashes.Hash(hashes.SHA256())
-    hasher.update(expected_policy.serialize().encode('utf-8'))
-    expected_hash = hasher.finalize()
+# The set_policy API will create an AttestationToken signed with the 
+# AttestationSigningKey to transmit the policy. To verify that the policy
+# specified by the caller was received by the service inside the enclave, we
+# verify that the hash of the policy document returned from the Attestation 
+# Service matches the hash of an attestation token created locally.
+from cryptography.hazmat.primitives import hashes
 
-    assert expected_hash == policy_set_response.policy_token_hash
+expected_policy = AttestationToken(
+    body=StoredAttestationPolicy(attestation_policy),
+    signing_key=key,
+    signing_certificate=signing_certificate)
+hasher = hashes.Hash(hashes.SHA256())
+hasher.update(expected_policy.serialize().encode('utf-8'))
+expected_hash = hasher.finalize()
+
+assert expected_hash == policy_set_response.policy_token_hash
 ```
 
 ### Attest SGX Enclave
@@ -259,34 +261,34 @@ This example shows one common pattern of calling into the attestation service to
 This example assumes that you have an existing `AttestationClient` object which is configured with the base URI for your endpoint. It also assumes that you have an SGX Quote (`quote`) generated from within the SGX enclave you are attesting, and "Runtime Data" (`runtime_data`) which is referenced in the SGX Quote.
 
 ```python
-    # Collect quote and runtime data from an SGX enclave.
-    #
-    # For the "Secure Key Release" scenario, the runtime data is normally a serialized asymmetric key.
-    # When the 'quote' (attestation evidence) is created specify the SHA256 hash
-    # of the runtime data when creating the evidence.
-    #
-    # When the generated evidence is created, the hash of the runtime data is
-    #  included in the secured portion of the evidence.
-    #
-    # The Attestation service will validate that the Evidence is valid and that
-    # the SHA256 of the RuntimeData parameter is included in the evidence.
-    response = attest_client.attest_sgx_enclave(
-            quote,
-            runtime_data=AttestationData(runtime_data, is_json=False))
-    assert response.enclave_held_data == runtime_data
-    assert response.sgx_collateral is not None
+# Collect quote and runtime data from an SGX enclave.
+#
+# For the "Secure Key Release" scenario, the runtime data is normally a serialized asymmetric key.
+# When the 'quote' (attestation evidence) is created specify the SHA256 hash
+# of the runtime data when creating the evidence.
+#
+# When the generated evidence is created, the hash of the runtime data is
+#  included in the secured portion of the evidence.
+#
+# The Attestation service will validate that the Evidence is valid and that
+# the SHA256 of the RuntimeData parameter is included in the evidence.
+response = attest_client.attest_sgx_enclave(
+        quote,
+        runtime_data=AttestationData(runtime_data, is_json=False))
+assert response.enclave_held_data == runtime_data
+assert response.sgx_collateral is not None
 
-    # At this point, the EnclaveHeldData field in the attestationResult.Value 
-    # property will hold the input binaryRuntimeData.
+# At this point, the EnclaveHeldData field in the attestationResult.Value 
+# property will hold the input binaryRuntimeData.
 
-    # The token is now passed to the "relying party". The relying party will 
-    # validate that the token was issued by the Attestation Service. It then 
-    # extracts the asymmetric key from the EnclaveHeldData field. The relying
-    #  party will then Encrypt it's "key" data using the asymmetric key and 
-    # transmits it back to the enclave.
-    encryptedData = send_token_to_relying_party(attestationResult.Token)
+# The token is now passed to the "relying party". The relying party will 
+# validate that the token was issued by the Attestation Service. It then 
+# extracts the asymmetric key from the EnclaveHeldData field. The relying
+#  party will then Encrypt it's "key" data using the asymmetric key and 
+# transmits it back to the enclave.
+encryptedData = send_token_to_relying_party(attestationResult.Token)
 
-    # Now the encrypted data can be passed into the enclave which can decrypt that data.
+# Now the encrypted data can be passed into the enclave which can decrypt that data.
 ```
 
 Additional information on how to perform attestation token validation can be found in the [MAA Service Attestation Sample](https://github.com/Azure-Samples/microsoft-azure-attestation).

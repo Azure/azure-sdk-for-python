@@ -4,7 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Any, Optional, TYPE_CHECKING
+import json
+from typing import Dict, List, Any, Optional, TYPE_CHECKING, Tuple, Union
 
 from azure.core import PipelineClient
 
@@ -27,9 +28,10 @@ from ._configuration import AttestationClientConfiguration
 from ._models import (
     AttestationSigner,
     AttestationToken,
-    AttestationResult,
-    AttestationData, AttestationTokenValidationException)
-import base64
+    AttestationResult)
+from ._common import merge_validation_args
+from json import JSONDecoder
+
 from azure.core.tracing.decorator import distributed_trace
 from threading import Lock
 
@@ -104,15 +106,25 @@ class AttestationClient(object):
         return signers
 
     @distributed_trace
-    def attest_sgx_enclave(self, quote, inittime_data=None, runtime_data=None, **kwargs):
-        # type:(bytes, AttestationData, AttestationData, Dict[str, Any]) -> AttestationResult
+    def attest_sgx_enclave(self,
+        quote, #type: bytes
+        inittime_json=None, #type: bytes
+        inittime_data=None, #type: bytes
+        runtime_json=None, #type: bytes
+        runtime_data=None, #type: bytes
+        **kwargs #type: Dict[str, Any]
+        ): #type: (...) -> Tuple[AttestationResult, AttestationToken]
         """ Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
-        :param inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :type inittime_data: azure.security.attestation.AttestationData 
-        :param runtime_data: Data presented at the time that the SGX quote was created.
-        :type runtime_data: azure.security.attestation.AttestationData
+        :param bytes inittime_data: Data presented at the time that the SGX 
+            enclave was initialized.
+        :param bytes inittime_json: Data presented at the time that the SGX 
+            enclave was initialized, JSON encoded.
+        :param bytes runtime_data: Data presented at the time that the open_enclave 
+            report was created.
+        :param bytes runtime_json: Data presented at the time that the open_enclave 
+            report was created. JSON Encoded.
         :keyword draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
@@ -121,8 +133,8 @@ class AttestationClient(object):
 
         :paramtype draft_policy: str
 
-        :return: Attestation service response encapsulating an :class:`AttestationResult`.
-        
+        :return: :class:`AttestationResult` containing the claims in the returned attestation token.
+
         :rtype: azure.security.attestation.AttestationResult
 
         .. note::
@@ -140,13 +152,33 @@ class AttestationClient(object):
         For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
         """
+        if inittime_json and inittime_data:
+            raise ValueError("Cannot provide both inittime_json and inittime_data.")
+        if runtime_json and runtime_data:
+            raise ValueError("Cannot provide both runtime_data and runtime_json.")
+
+        # If the input was JSON, make sure that it's valid JSON before sending it
+        # to the service.
+        if inittime_json:
+            json.loads(inittime_json)
+
+        if runtime_json:
+            json.loads(runtime_json)
+
+
         runtime = None
         if runtime_data:
-            runtime = RuntimeData(data=runtime_data._data, data_type=DataType.JSON if runtime_data._is_json else DataType.BINARY)
+            runtime = RuntimeData(data=runtime_data, data_type=DataType.BINARY)
+
+        if runtime_json:
+            runtime = RuntimeData(data=runtime_json, data_type=DataType.JSON)
+
 
         inittime = None
         if inittime_data:
-            inittime = InitTimeData(data=inittime_data._data, data_type=DataType.JSON if inittime_data._is_json else DataType.BINARY)
+            inittime = InitTimeData(data=inittime_data, data_type=DataType.BINARY)
+        if inittime_json:
+            inittime = InitTimeData(data=inittime_data, data_type=DataType.JSON)
 
         request = AttestSgxEnclaveRequest(
             quote=quote,
@@ -154,36 +186,49 @@ class AttestationClient(object):
             runtime_data = runtime,
             draft_policy_for_attestation=kwargs.pop('draft_policy', None))
 
+        # Merge our existing config options with the options for this API call. 
+        # Note that this must be done before calling into the implementation
+        # layer because the implementation layer doesn't like keyword args that
+        # it doesn't expect :(.
+        options = merge_validation_args(self._config._args, kwargs)
+
         result = self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)
 
-        # Merge our existing config options with the options for this API call. 
-        options = self._config._args.copy()
-        options.update(**kwargs)
-
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
 
-        return AttestationResult._from_generated(token.get_body(), token)
+        return AttestationResult._from_generated(token.get_body()), token
 
     @distributed_trace
-    def attest_open_enclave(self, report, inittime_data=None, runtime_data=None, **kwargs):
-        # type:(bytes, AttestationData, AttestationData, Dict[str, Any]) -> AttestationResult
+    def attest_open_enclave(self,
+        report,
+        inittime_json=None, #type: bytes
+        inittime_data=None, #type: bytes
+        runtime_json=None, #type: bytes
+        runtime_data=None, #type: bytes
+        **kwargs #type: Dict[str, Any]
+        ): #type: (...) -> Tuple[AttestationResult, AttestationToken]
         """ Attests the validity of an Open Enclave report.
 
-        :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
-        :param inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :type inittime_data: azure.security.attestation.AttestationData 
-        :param runtime_data: Data presented at the time that the open_enclave report was created.
-        :type runtime_data: azure.security.attestation.AttestationData 
+        :param bytes report: An open_enclave report generated from an Intel(tm) 
+            SGX enclave
+        :param bytes inittime_data: Data presented at the time that the SGX 
+            enclave was initialized.
+        :param bytes inittime_json: Data presented at the time that the SGX 
+            enclave was initialized, JSON encoded.
+        :param bytes runtime_data: Data presented at the time that the open_enclave 
+            report was created.
+        :param bytes runtime_json: Data presented at the time that the open_enclave 
+            report was created. JSON Encoded.
         :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
 
-        :return: Attestation service response encapsulating an :class:`AttestationResult`.
+        :return: :class:`AttestationResult` containing the claims in the returned attestation token.
 
         :rtype: azure.security.attestation.AttestationResult
 
@@ -214,28 +259,55 @@ class AttestationClient(object):
 
         """
 
+        if inittime_json and inittime_data:
+            raise ValueError("Cannot provide both inittime_json and inittime_data.")
+        if runtime_json and runtime_data:
+            raise ValueError("Cannot provide both runtime_data and runtime_json.")
+
+        # If the input was JSON, make sure that it's valid JSON before sending it
+        # to the service.
+        if inittime_json:
+            json.loads(inittime_json)
+
+        if runtime_json:
+            json.loads(runtime_json)
+
+
+        # Now create the RuntimeData object to be sent to the service.
         runtime = None
         if runtime_data:
-            runtime = RuntimeData(data=runtime_data._data, data_type=DataType.JSON if runtime_data._is_json else DataType.BINARY)
+            runtime = RuntimeData(data=runtime_data, data_type=DataType.BINARY)
 
+        if runtime_json:
+            runtime = RuntimeData(data=runtime_json, data_type=DataType.JSON)
+
+
+        # And the InitTimeData object to be sent to the service.
         inittime = None
         if inittime_data:
-            inittime = InitTimeData(data=inittime_data._data, data_type=DataType.JSON if inittime_data._is_json else DataType.BINARY)
+            inittime = InitTimeData(data=inittime_data, data_type=DataType.BINARY)
+        if inittime_json:
+            inittime = InitTimeData(data=inittime_data, data_type=DataType.JSON)
+
         request = AttestOpenEnclaveRequest(
             report=report,
             init_time_data = inittime,
             runtime_data = runtime,
             draft_policy_for_attestation = kwargs.pop('draft_policy', None))
+
+        # Merge our existing config options with the options for this API call. 
+        # Note that this must be done before calling into the implementation
+        # layer because the implementation layer doesn't like keyword args that
+        # it doesn't expect :(.
+        options = merge_validation_args(self._config._args, kwargs)
+
         result = self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken[GeneratedAttestationResult](token=result.token,
             body_type=GeneratedAttestationResult)
-        # Merge our existing config options with the options for this API call. 
-        options = self._config._args.copy()
-        options.update(**kwargs)
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
-        return AttestationResult._from_generated(token.get_body(), token)
+        return (AttestationResult._from_generated(token.get_body()), token)
 
     @distributed_trace
     def attest_tpm(self, request, **kwargs):
