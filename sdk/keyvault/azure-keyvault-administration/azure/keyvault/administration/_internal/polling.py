@@ -85,12 +85,7 @@ class KeyVaultBackupClientPollingMethod(LROBasePolling):
             raise HttpResponseError(response=self._initial_response.http_response, error=err)
 
     def get_continuation_token(self):
-        return self._operation.get_polling_url()
-
-    def _get_request_id(self):
-        return self._pipeline_response.http_response.request.headers[
-            "x-ms-client-request-id"
-        ]
+        return self._operation.get_polling_url().http_response.headers["azure-asyncoperation"]
 
     @classmethod
     def from_continuation_token(cls, continuation_token, **kwargs):
@@ -109,18 +104,13 @@ class KeyVaultBackupClientPollingMethod(LROBasePolling):
         return client, continuation_token, deserialization_callback
 
     def request_initial_status(self, status_link):
-        """Do a simple GET to this status link.
-
-        This method re-inject 'x-ms-client-request-id'.
+        """Do a GET to this status link to obtain a pipeline response.
 
         :rtype: azure.core.pipeline.PipelineResponse
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
         request = self._client.get(status_link)
-        # Re-inject 'x-ms-client-request-id' while polling
-        # if "request_id" not in self._operation_config:
-        #     self._operation_config["request_id"] = self._get_request_id()
         return self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **self._operation_config
         )
