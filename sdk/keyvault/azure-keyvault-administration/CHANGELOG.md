@@ -21,7 +21,7 @@
   its `folder_url` property
 - Removed `RestoreOperation` and `SelectiveKeyRestoreOperation` classes
 - Removed `KeyVaultBackupClient.begin_selective_restore`. To restore a
-  single key, pass the key's name to `KeyVaultBackupClient.begin__restore`:
+  single key, pass the key's name to `KeyVaultBackupClient.begin_restore`:
   ```
   # before (4.0.0b3):
   client.begin_selective_restore(folder_url, sas_token, key_name)
