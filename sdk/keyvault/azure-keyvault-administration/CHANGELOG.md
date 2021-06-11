@@ -51,6 +51,7 @@
   and `.get_role_assignment`
 - Renamed argument `role_definition_name` to `name` in
   `KeyVaultAccessControlClient.delete_role_definition` and `.get_role_definition`
+- Renamed argument `role_scope` to `scope` in `KeyVaultAccessControlClient` methods
 
 ## 4.0.0b3 (2021-02-09)
 ### Added
