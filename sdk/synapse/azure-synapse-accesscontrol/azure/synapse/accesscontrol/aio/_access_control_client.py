@@ -10,7 +10,7 @@ from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
-from azure.synapse.accesscontrol.core.rest import AsyncHttpResponse, HttpRequest
+from azure.synapse.accesscontrol.core.rest import AsyncHttpResponse, HttpRequest, _AsyncStreamContextManager
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
@@ -73,7 +73,19 @@ class AccessControlClient(object):
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, **kwargs)
+        if kwargs.pop("stream_response", False):
+            return _AsyncStreamContextManager(
+                client=self._client._pipeline,
+                request=request_copy,
+            )
+        pipeline_response = await self._client._pipeline.run(request_copy._internal_request, **kwargs)
+        response = AsyncHttpResponse(
+            status_code=pipeline_response.http_response.status_code,
+            request=request_copy,
+            _internal_response=pipeline_response.http_response
+        )
+        await response.read()
+        return response
 
     async def close(self) -> None:
         await self._client.close()

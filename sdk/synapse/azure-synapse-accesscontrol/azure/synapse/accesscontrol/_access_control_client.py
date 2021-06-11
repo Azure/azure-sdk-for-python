@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
+from azure.synapse.accesscontrol.core.rest import _StreamContextManager
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -75,7 +76,19 @@ class AccessControlClient(object):
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, **kwargs)
+        if kwargs.pop("stream_response", False):
+            return _StreamContextManager(
+                client=self._client._pipeline,
+                request=request_copy,
+            )
+        pipeline_response = self._client._pipeline.run(request_copy._internal_request, **kwargs)
+        response = HttpResponse(
+            status_code=pipeline_response.http_response.status_code,
+            request=request_copy,
+            _internal_response=pipeline_response.http_response
+        )
+        response.read()
+        return response
 
     def close(self):
         # type: () -> None
