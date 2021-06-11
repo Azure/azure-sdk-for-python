@@ -112,6 +112,8 @@ class EventData(object):
             raise ValueError("EventData cannot be None.")
         else:
             self.message = Message(body)
+        self.message.annotations = {}
+        self.message.application_properties = {}
 
         # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
         self._raw_amqp_message = AmqpAnnotatedMessage(message=self.message)
@@ -273,6 +275,7 @@ class EventData(object):
         """
         properties = None if value is None else dict(value)
         self._raw_amqp_message.application_properties = properties
+        self.message = self._raw_amqp_message._to_outgoing_amqp_message() # pylint:disable=protected-access
 
     @property
     def system_properties(self):
