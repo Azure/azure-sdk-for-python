@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import base64
 from typing import TYPE_CHECKING
 
 from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling
@@ -50,7 +51,8 @@ class KeyVaultBackupClientPollingMethod(LROBasePolling):
             self._status = "InProgress" # assume the operation is ongoing for now so the actual status gets polled
 
     def get_continuation_token(self):
-        return self._operation.get_polling_url()
+        # type() -> str
+        return base64.b64encode(self._operation.get_polling_url().encode()).decode("ascii")
 
     @classmethod
     def from_continuation_token(cls, continuation_token, **kwargs):
@@ -66,7 +68,8 @@ class KeyVaultBackupClientPollingMethod(LROBasePolling):
         except KeyError:
             raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
 
-        return client, continuation_token, deserialization_callback
+        continuation_url = base64.b64decode(continuation_token.encode()).decode("ascii")
+        return client, continuation_url, deserialization_callback
 
     def _parse_resource(self, pipeline_response):
         # type: (PipelineResponseType) -> Optional[Any]
