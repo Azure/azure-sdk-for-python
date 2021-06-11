@@ -714,7 +714,6 @@ class TestAnalyze(TextAnalyticsTest):
                 categories_filter=[
                     PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER,
                     PiiEntityCategoryType.ABA_ROUTING_NUMBER,
-                    PiiEntityCategoryType.BRCPF_NUMBER
                 ]
             ),
         ]
@@ -730,5 +729,4 @@ class TestAnalyze(TextAnalyticsTest):
         assert action_result.document_results[0].entities[0].category == PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER
         assert action_result.document_results[1].entities[0].text == "111000025"
         assert action_result.document_results[1].entities[0].category == PiiEntityCategoryType.ABA_ROUTING_NUMBER
-        assert action_result.document_results[2].entities[0].text == "998.214.865-68"
-        assert action_result.document_results[2].entities[0].category == PiiEntityCategoryType.BRCPF_NUMBER
+        assert action_result.document_results[2].entities[0].entities == []  # No Brazilian CPF since not in categories_filter

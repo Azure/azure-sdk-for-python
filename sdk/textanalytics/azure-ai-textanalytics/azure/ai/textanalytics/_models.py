@@ -1578,6 +1578,11 @@ class RecognizePiiEntitiesAction(DictMixin):
     :ivar str model_version: The model version to use for the analysis.
     :ivar str domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
+    :ivar categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
+        the specific PII entity categories you want to filter out. For example, if you only want to filter out
+        U.S. social security numbers in a document, you can pass in
+        `[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
+    :vartype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
