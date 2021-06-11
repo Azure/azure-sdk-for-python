@@ -6,4 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.1.0"
+try:
+    from ._request_builders_py3 import build_list_request
+    from ._request_builders_py3 import build_get_request
+except (SyntaxError, ImportError):
+    from ._request_builders import build_list_request  # type: ignore
+    from ._request_builders import build_get_request  # type: ignore
+
+__all__ = [
+    'build_list_request',
+    'build_get_request',
+]

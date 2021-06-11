@@ -6,81 +6,30 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
+from azure.synapse.artifacts.core.rest import _StreamContextManager
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Dict
 
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    from azure.synapse.artifacts.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import ArtifactsClientConfiguration
-from .operations import LinkedServiceOperations
-from .operations import DatasetOperations
-from .operations import PipelineOperations
-from .operations import PipelineRunOperations
-from .operations import TriggerOperations
-from .operations import TriggerRunOperations
-from .operations import DataFlowOperations
-from .operations import DataFlowDebugSessionOperations
-from .operations import SqlScriptOperations
-from .operations import SparkJobDefinitionOperations
-from .operations import NotebookOperations
-from .operations import WorkspaceOperations
-from .operations import SqlPoolsOperations
-from .operations import BigDataPoolsOperations
-from .operations import IntegrationRuntimesOperations
-from .operations import LibraryOperations
-from .operations import WorkspaceGitRepoManagementOperations
-from . import models
 
 
 class ArtifactsClient(object):
     """ArtifactsClient.
 
-    :ivar linked_service: LinkedServiceOperations operations
-    :vartype linked_service: azure.synapse.artifacts.operations.LinkedServiceOperations
-    :ivar dataset: DatasetOperations operations
-    :vartype dataset: azure.synapse.artifacts.operations.DatasetOperations
-    :ivar pipeline: PipelineOperations operations
-    :vartype pipeline: azure.synapse.artifacts.operations.PipelineOperations
-    :ivar pipeline_run: PipelineRunOperations operations
-    :vartype pipeline_run: azure.synapse.artifacts.operations.PipelineRunOperations
-    :ivar trigger: TriggerOperations operations
-    :vartype trigger: azure.synapse.artifacts.operations.TriggerOperations
-    :ivar trigger_run: TriggerRunOperations operations
-    :vartype trigger_run: azure.synapse.artifacts.operations.TriggerRunOperations
-    :ivar data_flow: DataFlowOperations operations
-    :vartype data_flow: azure.synapse.artifacts.operations.DataFlowOperations
-    :ivar data_flow_debug_session: DataFlowDebugSessionOperations operations
-    :vartype data_flow_debug_session: azure.synapse.artifacts.operations.DataFlowDebugSessionOperations
-    :ivar sql_script: SqlScriptOperations operations
-    :vartype sql_script: azure.synapse.artifacts.operations.SqlScriptOperations
-    :ivar spark_job_definition: SparkJobDefinitionOperations operations
-    :vartype spark_job_definition: azure.synapse.artifacts.operations.SparkJobDefinitionOperations
-    :ivar notebook: NotebookOperations operations
-    :vartype notebook: azure.synapse.artifacts.operations.NotebookOperations
-    :ivar workspace: WorkspaceOperations operations
-    :vartype workspace: azure.synapse.artifacts.operations.WorkspaceOperations
-    :ivar sql_pools: SqlPoolsOperations operations
-    :vartype sql_pools: azure.synapse.artifacts.operations.SqlPoolsOperations
-    :ivar big_data_pools: BigDataPoolsOperations operations
-    :vartype big_data_pools: azure.synapse.artifacts.operations.BigDataPoolsOperations
-    :ivar integration_runtimes: IntegrationRuntimesOperations operations
-    :vartype integration_runtimes: azure.synapse.artifacts.operations.IntegrationRuntimesOperations
-    :ivar library: LibraryOperations operations
-    :vartype library: azure.synapse.artifacts.operations.LibraryOperations
-    :ivar workspace_git_repo_management: WorkspaceGitRepoManagementOperations operations
-    :vartype workspace_git_repo_management: azure.synapse.artifacts.operations.WorkspaceGitRepoManagementOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
     :type endpoint: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -94,63 +43,52 @@ class ArtifactsClient(object):
         self._config = ArtifactsClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self._deserialize = Deserializer(client_models)
 
-        self.linked_service = LinkedServiceOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.dataset = DatasetOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.pipeline = PipelineOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.pipeline_run = PipelineRunOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.trigger = TriggerOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.trigger_run = TriggerRunOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.data_flow = DataFlowOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.data_flow_debug_session = DataFlowDebugSessionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.sql_script = SqlScriptOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.spark_job_definition = SparkJobDefinitionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.notebook = NotebookOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.workspace = WorkspaceOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.sql_pools = SqlPoolsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.big_data_pools = BigDataPoolsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtimes = IntegrationRuntimesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.library = LibraryOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.workspace_git_repo_management = WorkspaceGitRepoManagementOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-
-    def _send_request(self, http_request, **kwargs):
+    def send_request(self, request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        We have helper methods to create requests specific to this service in `azure.synapse.artifacts.rest`.
+        Use these helper methods to create the request you pass to this method. See our example below:
+
+        >>> from azure.synapse.artifacts.rest import build_get_linked_services_by_workspace_request
+        >>> request = build_get_linked_services_by_workspace_request()
+        <HttpRequest [GET], url: '/linkedservices'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        For advanced cases, you can also create your own :class:`~azure.synapse.artifacts.core.rest.HttpRequest`
+        and pass it in.
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.synapse.artifacts.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.synapse.artifacts.core.rest.HttpResponse
         """
+        request_copy = deepcopy(request)
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        if kwargs.pop("stream", False):
+            return _StreamContextManager(
+                client=self._client._pipeline,
+                request=request_copy,
+            )
+        pipeline_response = self._client._pipeline.run(request_copy._internal_request, **kwargs)
+        response = HttpResponse(
+            status_code=pipeline_response.http_response.status_code,
+            request=request_copy,
+            _internal_response=pipeline_response.http_response
+        )
+        response.read()
+        return response
 
     def close(self):
         # type: () -> None
