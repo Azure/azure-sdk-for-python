@@ -2,6 +2,8 @@
 
 ## 5.1.0b8 (Unreleased)
 
+**New Features**
+- Added `catagories_filter` to `RecognizePiiEntitiesAction`
 
 ## 5.1.0b7 (2021-05-18)
 
