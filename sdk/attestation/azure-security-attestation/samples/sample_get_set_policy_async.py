@@ -223,20 +223,23 @@ class AttestationClientPolicySamples(object):
         current set of attestation signing certificates.
         """
         write_banner("get_policy_management_certificates_isolated")
+        # [BEGIN get_policy_management_certificate]
+
         print("Get the policy management certificates for a isolated instance.")
         async with DefaultAzureCredential() as credential, AttestationAdministrationClient(credential, self.isolated_url) as admin_client:
-            get_result = await admin_client.get_policy_management_certificates()
-            print("Isolated instance has", len(get_result.value), "certificates")
+            certificates,_ = await admin_client.get_policy_management_certificates()
+            print("Isolated instance has", len(certificates), "certificates")
 
-            # The signing certificate for the isolated instance should be
-            # the configured isolated_signing_certificate.
+            # An Isolated attestation instance should have at least one signing
+            # certificate which is configured when the instance is created.
             #
             # Note that the certificate list returned is an array of certificate chains.
-            actual_cert = get_result.value[0][0]
+            actual_cert = certificates[0][0]
             isolated_cert = self.isolated_certificate
             print("Actual Cert:   ", actual_cert)
             print("Isolated Cert: ", isolated_cert)
             assert actual_cert == isolated_cert
+        # [END get_policy_management_certificate]
 
     async def add_remove_policy_management_certificate(self):
         """
@@ -261,18 +264,18 @@ class AttestationClientPolicySamples(object):
 
             # [END add_policy_management_certificate]
 
-            get_result = await admin_client.get_policy_management_certificates()
-            print("Isolated instance now has", len(get_result.value), "certificates - should be 2")
+            certificates,_ = await admin_client.get_policy_management_certificates()
+            print("Isolated instance now has", len(certificates), "certificates - should be 2")
 
-            for cert_der in get_result.value:
-                cert = load_pem_x509_certificate(cert_der[0].encode('ascii'), default_backend())
+            for cert_pem in certificates:
+                cert = load_pem_x509_certificate(cert_pem[0].encode('ascii'), default_backend())
                 print("certificate subject: ", cert.subject)
 
             # The signing certificate for the isolated instance should be
             # the configured isolated_signing_certificate.
             #
             # Note that the certificate list returned is an array of certificate chains.
-            actual_cert0 = get_result.value[0][0]
+            actual_cert0 = certificates[0][0]
             isolated_cert = self.isolated_certificate
             print("Actual Cert 0:   ", actual_cert0)
             print("Isolated Cert: ", isolated_cert)
@@ -281,8 +284,8 @@ class AttestationClientPolicySamples(object):
 
             found_cert = False
             expected_cert = new_certificate
-            for cert_der in get_result.value:
-                actual_cert1 = cert_der[0]
+            for cert_pem in certificates:
+                actual_cert1 = cert_pem[0]
                 if actual_cert1 == expected_cert:
                     found_cert = True
             if not found_cert:

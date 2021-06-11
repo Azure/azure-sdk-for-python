@@ -193,13 +193,13 @@ class AttestationClient(object):
         options = merge_validation_args(self._config._args, kwargs)
 
         result = self._client.attestation.attest_sgx_enclave(request, **kwargs)
-        token = AttestationToken[GeneratedAttestationResult](token=result.token,
+        token = AttestationToken(token=result.token,
             body_type=GeneratedAttestationResult)
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
 
-        return AttestationResult._from_generated(token.get_body()), token
+        return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace
     def attest_open_enclave(self,
@@ -209,7 +209,7 @@ class AttestationClient(object):
         runtime_json=None, #type: bytes
         runtime_data=None, #type: bytes
         **kwargs #type: Dict[str, Any]
-        ): #type: (...) -> Tuple[AttestationResult, AttestationToken]
+        ): #type: (...) -> AttestationResult
         """ Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) 
@@ -302,12 +302,12 @@ class AttestationClient(object):
         options = merge_validation_args(self._config._args, kwargs)
 
         result = self._client.attestation.attest_open_enclave(request, **kwargs)
-        token = AttestationToken[GeneratedAttestationResult](token=result.token,
+        token = AttestationToken(token=result.token,
             body_type=GeneratedAttestationResult)
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
-        return (AttestationResult._from_generated(token.get_body()), token)
+        return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace
     def attest_tpm(self, request, **kwargs):

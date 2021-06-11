@@ -34,45 +34,38 @@ DefaultAzureCredential.
   if the `_json` value is set, the value of the parameter is an array of UTF8 encoded
   JSON values, if the `_data` value is set, the value of the parameter is an array
   of bytes.
-* The `attest_open_enclave` and `attest_sgx_enclave` APIs now return a
-  `Tuple[AttestationResult, AttestationToken]`. This allows callers to access both
-  the attestation claims and the original token separately.
 * The `get_policy` API now returns a `Tuple[str, AttestationToken]` to simplify
   the consumption experience.
+* The `get_policy_management_certificates` API also returns a `Tuple[list[list[string]], AttestationToken]` to simplify the consumption experience. Note that each of the entries
+in the list is a PEM encoded X.509 certificate.
 
-To call into the attest APIs if you care about the attestation result and token,
+To call into the attest APIs if you care about the attestation policy and token,
 you can write:
 
 ```python
-result, token = attest_client.attest_open_enclave(
-    oe_report, runtime_data=runtime_data,
-    draft_policy=draft_policy)
+policy, token = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
 ```
 
-If you only care about the result, you can write any of the following:
+If you only care about the policy, you can write any of the following:
 
 ```python
-result, _ = attest_client.attest_open_enclave(
-    oe_report, runtime_data=runtime_data,
-    draft_policy=draft_policy)
+policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
 ```
 
 or
 
 ```python
-result = attest_client.attest_open_enclave(
-    oe_report, runtime_data=runtime_data,
-    draft_policy=draft_policy)[0]
+policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)[0]
 ```
 
 or
 
 ```python
-response = attest_client.attest_open_enclave(
-    oe_report, runtime_data=runtime_data,
-    draft_policy=draft_policy)
-result = response[0]
+response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)[0]
+policy = response[0]
 ```
+
+* The `AttestationToken` class no longer inherits from `Generic`.
 
 ### Key Bugs Fixed
 

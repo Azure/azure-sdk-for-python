@@ -12,10 +12,9 @@ from ._models import (
     AttestationPolicyResult, 
     AttestationResult, 
     AttestationTokenValidationException,
-    AttestationPolicyCertificatesResult,
+    AttestationPolicyCertificateResult,
     AttestationType,
     PolicyModification,
-    AttestationPolicyCertificatesResult,
     StoredAttestationPolicy,
     CertificateModification)
 from ._version import VERSION
@@ -28,12 +27,11 @@ __all__ = [
     'AttestationToken',
     'AttestationSigner',
     'AttestationPolicyResult',
-    'AttestationPolicyCertificatesResult',
+    'AttestationPolicyCertificateResult',
     'AttestationResult',
     'StoredAttestationPolicy',
     'CertificateModification',
     'PolicyModification',
-    'AttestationPolicyCertificatesResult',
     'AttestationTokenValidationException',
 ]
 

@@ -177,10 +177,10 @@ class AsyncPolicyGetSetTests(AzureTestCase):
     async def _test_get_policy_management_certificates(self, base_uri, pem_expected_certificate):
         #type:(str, str) -> None
         admin_client = self.create_admin_client(base_uri)
-        policy_signers = await admin_client.get_policy_management_certificates()
+        policy_signers, _ = await admin_client.get_policy_management_certificates()
         if pem_expected_certificate is not None:
             found_cert=False
-            for signer in policy_signers.value:
+            for signer in policy_signers:
                 # the signer is an X.509 certificate chain, look at the first certificate
                 # to see if it's our signing certificate.
                 if signer[0] == pem_expected_certificate:
@@ -188,7 +188,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
                     break
             assert found_cert
         else:
-            assert len(policy_signers.value)==0
+            assert len(policy_signers)==0
 
     @AttestationPreparer()
     @pytest.mark.live_test_only

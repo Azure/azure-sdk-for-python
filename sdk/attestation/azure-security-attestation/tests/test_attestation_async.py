@@ -198,20 +198,20 @@ class AsyncAzureAttestationTest(AzureTestCase):
         attest_client = self.create_client(client_uri)
         oe_report = Base64Url.decode(_open_enclave_report)
         runtime_data = Base64Url.decode(_runtime_data)
-        response, _ = await attest_client.attest_open_enclave(
+        response = await attest_client.attest_open_enclave(
             oe_report,
             runtime_data=runtime_data)
         assert response.enclave_held_data == runtime_data
         assert response.sgx_collateral is not None
 
         # Now do the validation again, this time specifying runtime data as JSON.
-        response, token = await attest_client.attest_open_enclave(oe_report, runtime_json=runtime_data)
+        response = await attest_client.attest_open_enclave(oe_report, runtime_json=runtime_data)
         # Because the runtime data is JSON, enclave_held_data will be empty.
         assert response.enclave_held_data == None
         assert response.runtime_claims.get('jwk') is not None
         assert response.runtime_claims['jwk']['crv'] == 'P-256'
         assert response.sgx_collateral is not None
-        assert token.get_body().iss == response.issuer
+        assert response.token.get_body().iss == response.issuer
 
     @AttestationPreparer()
     async def test_shared_attest_open_enclave(self, attestation_location_short_name):
@@ -235,13 +235,12 @@ class AsyncAzureAttestationTest(AzureTestCase):
         # Convert the OE report into an SGX quote by stripping off the first 16 bytes.
         quote = oe_report[16:]
         runtime_data = Base64Url.decode(_runtime_data)
-        response, _ = await attest_client.attest_sgx_enclave(
-            quote, runtime_data=runtime_data)
+        response = await attest_client.attest_sgx_enclave(quote, runtime_data=runtime_data)
         assert response.enclave_held_data == runtime_data
         assert response.sgx_collateral is not None
 
         # Now do the validation again, this time specifying runtime data as JSON.
-        response, _ = await attest_client.attest_sgx_enclave(quote, runtime_json=runtime_data)
+        response = await attest_client.attest_sgx_enclave(quote, runtime_json=runtime_data)
         # Because the runtime data is JSON, enclave_held_data will be empty.
         assert response.enclave_held_data == None
         assert response.runtime_claims.get('jwk') is not None

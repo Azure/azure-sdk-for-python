@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Any, Optional, TYPE_CHECKING
+from typing import Dict, List, Any, Optional, TYPE_CHECKING, Tuple
 
 from azure.core import PipelineClient
 from cryptography.hazmat.primitives import serialization
@@ -30,7 +30,6 @@ from .._configuration import AttestationClientConfiguration
 from .._models import (
     AttestationSigner, 
     AttestationToken, 
-    AttestationPolicyCertificatesResult,
     AttestationPolicyCertificateResult,
     AttestationPolicyResult,
     AttestationTokenValidationException
@@ -116,9 +115,9 @@ class AttestationAdministrationClient(object):
         options = merge_validation_args(self._config._args, kwargs)
 
         policyResult = await self._client.policy.get(attestation_type, **kwargs)
-        token = AttestationToken[GeneratedPolicyResult](token=policyResult.token, body_type=GeneratedPolicyResult)
+        token = AttestationToken(token=policyResult.token, body_type=GeneratedPolicyResult)
         token_body = token.get_body()
-        stored_policy = AttestationToken[GeneratedStoredAttestationPolicy](token=token_body.policy, body_type=GeneratedStoredAttestationPolicy)
+        stored_policy = AttestationToken(token=token_body.policy, body_type=GeneratedStoredAttestationPolicy)
 
         actual_policy = stored_policy.get_body().attestation_policy #type: bytes
 
@@ -176,7 +175,7 @@ class AttestationAdministrationClient(object):
         if not signing_certificate:
             signing_certificate = self._signing_certificate
 
-        policy_token = AttestationToken[GeneratedStoredAttestationPolicy](
+        policy_token = AttestationToken(
             body=GeneratedStoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
             signing_key=signing_key,
             signing_certificate=signing_certificate,
@@ -189,7 +188,7 @@ class AttestationAdministrationClient(object):
         options = merge_validation_args(self._config._args, kwargs)
 
         policyResult = await self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.to_jwt_string(), **kwargs)
-        token = AttestationToken[GeneratedPolicyResult](token=policyResult.token,
+        token = AttestationToken(token=policyResult.token,
             body_type=GeneratedPolicyResult)
 
         if options.get("validate_token", True):
@@ -254,7 +253,7 @@ class AttestationAdministrationClient(object):
         options = merge_validation_args(self._config._args, kwargs)
 
         policyResult = await self._client.policy.reset(attestation_type=attestation_type, policy_jws=policy_token.to_jwt_string(), **kwargs)
-        token = AttestationToken[GeneratedPolicyResult](token=policyResult.token,
+        token = AttestationToken(token=policyResult.token,
             body_type=GeneratedPolicyResult)
 
         if options.get("validate_token", True):
@@ -267,7 +266,7 @@ class AttestationAdministrationClient(object):
     async def get_policy_management_certificates(
         self, 
         **kwargs #type: Any
-        ): #type: (...) -> AttestationPolicyCertificatesResult
+        ): #type: (...) -> Tuple[list[list[str]], AttestationToken]
         """ Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only be non-empty if the
@@ -285,9 +284,9 @@ class AttestationAdministrationClient(object):
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
-        :return: Attestation service response 
-            encapsulating a list of PEM encoded X.509 certificate chains.
-        :rtype: PolicyCertificatesResult
+
+        :return: A list of PEM encoded X.509 certificate chains and an attestation token.
+        :rtype: Tuple[list[list[string]], AttestationToken]
         """
 
         # Merge our existing config options with the options for this API call. 
@@ -297,7 +296,7 @@ class AttestationAdministrationClient(object):
         options = merge_validation_args(self._config._args, kwargs)
 
         cert_response = await self._client.policy_certificates.get(**kwargs)
-        token = AttestationToken[GeneratedPolicyCertificatesResult](
+        token = AttestationToken(
             token=cert_response.token,
             body_type=GeneratedPolicyCertificatesResult)
 
@@ -310,7 +309,7 @@ class AttestationAdministrationClient(object):
         for key in cert_list.policy_certificates.keys:
             key_certs = [PemUtils.pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
             certificates.append(key_certs)
-        return AttestationPolicyCertificatesResult(token, certificates)
+        return certificates, token
 
     @distributed_trace_async
     async def add_policy_management_certificate(
@@ -320,7 +319,7 @@ class AttestationAdministrationClient(object):
         ): #type: (...) -> AttestationPolicyCertificateResult
         """ Adds a new policy management certificate to the set of policy management certificates for the instance.
 
-        :param str certificate_to_remove: PEM encoded X.509 certificate to remove from 
+        :param str certificate_to_add: PEM encoded X.509 certificate to add to 
             the list of attestation policy management certificates.
         :param azure.security.attestation.AttestationSigningKey signing_key: 
             Signing Key representing one of the *existing* attestation signing 
@@ -378,7 +377,7 @@ class AttestationAdministrationClient(object):
 
         jwk=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add.public_bytes(serialization.Encoding.DER)).decode('ascii')])
         add_body = AttestationCertificateManagementBody(policy_certificate=jwk)
-        cert_add_token = AttestationToken[AttestationCertificateManagementBody](
+        cert_add_token = AttestationToken(
             body=add_body,
             signing_key=signing_key,
             signing_certificate=signing_certificate,
@@ -391,7 +390,7 @@ class AttestationAdministrationClient(object):
         options = merge_validation_args(self._config._args, kwargs)
 
         cert_response = await self._client.policy_certificates.add(cert_add_token.to_jwt_string(), **kwargs)
-        token = AttestationToken[GeneratedPolicyCertificatesModificationResult](token=cert_response.token,
+        token = AttestationToken(token=cert_response.token,
             body_type=GeneratedPolicyCertificatesModificationResult)
 
         if options.get("validate_token", True):
@@ -404,9 +403,9 @@ class AttestationAdministrationClient(object):
         certificate_to_remove, #type: bytes
         **kwargs #type: Any
         ): #type: (...) -> AttestationPolicyCertificateResult
-        """ Removes a new policy management certificate to the set of policy management certificates for the instance.
+        """ Removes a policy management certificate from the set of policy management certificates for the instance.
 
-        :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
+        :param bytes certificate_to_remove: PEM encoded X.509 certificate to remove from
             the list of attestation policy management certificates.
         :keyword str signing_key: PEM encoded signing key to be
             used to sign the policy before sending it to the service.
@@ -456,7 +455,7 @@ class AttestationAdministrationClient(object):
 
         jwk=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_remove.public_bytes(serialization.Encoding.DER)).decode('ascii')])
         add_body = AttestationCertificateManagementBody(policy_certificate=jwk)
-        cert_add_token = AttestationToken[AttestationCertificateManagementBody](
+        cert_add_token = AttestationToken(
             body=add_body,
             signing_key=signing_key,
             signing_certificate=signing_certificate,
@@ -469,7 +468,7 @@ class AttestationAdministrationClient(object):
         options = merge_validation_args(self._config._args, kwargs)
 
         cert_response = await self._client.policy_certificates.remove(cert_add_token.to_jwt_string(), **kwargs)
-        token = AttestationToken[GeneratedPolicyCertificatesModificationResult](token=cert_response.token,
+        token = AttestationToken(token=cert_response.token,
             body_type=GeneratedPolicyCertificatesModificationResult)
 
         if options.get("validate_token", True):

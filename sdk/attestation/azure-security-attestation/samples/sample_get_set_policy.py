@@ -278,14 +278,14 @@ issuancerules {};
         print("Get the policy management certificates for a isolated instance.")
 
         with self._create_admin_client(self.isolated_url) as admin_client:
-            get_result=admin_client.get_policy_management_certificates(validation_slack=1.0)
-            print("Isolated instance has", len(get_result.value), "certificates")
+            certificates, _ =admin_client.get_policy_management_certificates(validation_slack=1.0)
+            print("Isolated instance has", len(certificates), "certificates")
 
             # The signing certificate for the isolated instance should be
             # the configured isolated_signing_certificate.
             #
             # Note that the certificate list returned is an array of certificate chains.
-            actual_cert = get_result.value[0][0]
+            actual_cert = certificates[0][0]
             isolated_cert = self.isolated_certificate
             print("Actual Cert:   ", actual_cert)
             print("Isolated Cert: ", isolated_cert)
@@ -316,10 +316,10 @@ issuancerules {};
 
             # [END add_policy_management_certificate]
 
-            get_result = admin_client.get_policy_management_certificates()
-            print("Isolated instance now has", len(get_result.value), "certificates - should be 2")
+            certificates, _ = admin_client.get_policy_management_certificates()
+            print("Isolated instance now has", len(certificates), "certificates")
 
-            for cert_pem in get_result.value:
+            for cert_pem in certificates:
                 cert = load_pem_x509_certificate(cert_pem[0].encode('ascii'), default_backend())
                 print("certificate subject: ", cert.subject)
 
@@ -327,7 +327,7 @@ issuancerules {};
             # the configured isolated_signing_certificate.
             #
             # Note that the certificate list returned is an array of certificate chains.
-            actual_cert0 = get_result.value[0][0]
+            actual_cert0 = certificates[0][0]
             isolated_cert = self.isolated_certificate
             print("Actual Cert 0:   ", actual_cert0)
             print("Isolated Cert: ", isolated_cert)
@@ -336,8 +336,8 @@ issuancerules {};
 
             found_cert = False
             expected_cert = new_certificate
-            for cert_der in get_result.value:
-                actual_cert1 = cert_der[0]
+            for cert_pem in certificates:
+                actual_cert1 = cert_pem[0]
                 if actual_cert1 == expected_cert:
                     found_cert = True
             if not found_cert:

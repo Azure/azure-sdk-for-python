@@ -21,7 +21,7 @@ from ._generated.models import (
     AttestationType,
     PolicyModification
 )
-from typing import Any, Callable, Dict, List, Type, TypeVar, Generic, Union
+from typing import Any, Callable, Dict, List, Type, TypeVar, Union
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
@@ -175,6 +175,8 @@ class AttestationResult(object):
         :keyword sgx_collateral: Collateral which identifies the collateral used to 
             create the token.
         :paramtype sgx_collateral: dict
+        :keyword token: Attestation Token returned by the attestation service.
+        :paramtype token: AttestationToken
     
         """
         self._issuer = kwargs.pop("issuer") #type:Union[str, None]
@@ -194,10 +196,11 @@ class AttestationResult(object):
         self._svn = kwargs.pop("svn") #type:int
         self._enclave_held_data = kwargs.pop("enclave_held_data", None) #type:Union[bytes, None]
         self._sgx_collateral = kwargs.pop("sgx_collateral") #type:dict
+        self._token = kwargs.pop("token") #type: AttestationToken
 
     @classmethod
-    def _from_generated(cls, generated):
-        #type:(GeneratedAttestationResult) -> AttestationResult
+    def _from_generated(cls, generated, token):
+        #type:(GeneratedAttestationResult, AttestationToken) -> AttestationResult
         return AttestationResult(
             issuer=generated.iss,
             unique_identifier=generated.jti,
@@ -215,7 +218,17 @@ class AttestationResult(object):
             mr_signer=generated.mr_signer,
             svn=generated.svn,
             enclave_held_data=generated.enclave_held_data,
-            sgx_collateral=generated.sgx_collateral)
+            sgx_collateral=generated.sgx_collateral,
+            token=token)
+
+    @property
+    def token(self):
+        #type:() -> AttestationToken
+        """ Returns the attestation token returned from the service.
+
+        :rtype AttestationToken
+        """
+        return self._token
 
     @property
     def issuer(self):
@@ -441,7 +454,7 @@ class StoredAttestationPolicy(object):
             return StoredAttestationPolicy("")
         return StoredAttestationPolicy(generated.attestation_policy)
 
-class AttestationToken(Generic[T]):
+class AttestationToken(object):
     """ Represents a token returned from the attestation service.
 
     :keyword Any body: The body of the newly created token, if provided.
@@ -692,10 +705,14 @@ class AttestationToken(Generic[T]):
 
 
     def get_body(self):
-        # type: () -> T
+        # type: () -> Any
         """ Returns the body of the attestation token as an object.
 
-        :rtype: T
+        If the `body_type` parameter to :py:class:AttestationToken has a `deserialize`
+        method, :meth:get_body will call that method to convert the object from
+        the wire format for the object into the expected model type.
+
+        :rtype: Any
         """
         try:
             return self._body_type.deserialize(self._body)
@@ -870,19 +887,3 @@ class AttestationTokenValidationException(ValueError):
     def __init__(self, message):
         self.message = message
         super(AttestationTokenValidationException, self).__init__(self.message)
-        
-class AttestationPolicyCertificatesResult(object):
-    """ Represents a response from the attestation service.
-
-    :param token: Attestation Token returned from the service.
-    :type token: azure.security.attestation.AttestationToken
-    :param value: Value of the body of the attestation token.
-    :type value: list[list[str]]
-
-    Returns the attestation token returned from the service and the list of
-    certificate chains which should be used to sign attestation policy requests.
-    """
-    def __init__(self, token, value):
-        # type (AttestationToken, list[list[str]) -> None
-        self.token = token #type: AttestationToken
-        self.value = value #type: list[list[str]]

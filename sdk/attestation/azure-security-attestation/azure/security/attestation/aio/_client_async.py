@@ -134,7 +134,7 @@ class AttestationClient(object):
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
 
         :return: Attestation service response encapsulating an :class:`AttestationResult` and an :class:`AttestationToken`
-        :rtype: azure.security.attestation.AttestationResult, azure.security.attestation.AttestationToken
+        :rtype: azure.security.attestation.AttestationResult
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
@@ -184,12 +184,12 @@ class AttestationClient(object):
         options = merge_validation_args(self._config._args, kwargs)
 
         result = await self._client.attestation.attest_sgx_enclave(request, **kwargs)
-        token = AttestationToken[GeneratedAttestationResult](token=result.token,
+        token = AttestationToken(token=result.token,
             body_type=GeneratedAttestationResult)
 
         if options.get("validate_token", True):
             token._validate_token(await self._get_signers(**kwargs), **options)
-        return AttestationResult._from_generated(token.get_body()), token
+        return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace_async
     async def attest_open_enclave(
@@ -200,7 +200,7 @@ class AttestationClient(object):
         runtime_json=None, #type: bytes
         runtime_data=None, #type: bytes
         **kwargs #type: Any
-        ): #type: (...) -> Tuple[AttestationResult, AttestationToken]
+        ): #type: (...) -> AttestationResult
         """ Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
@@ -284,12 +284,12 @@ class AttestationClient(object):
         options = merge_validation_args(self._config._args, kwargs)
             
         result = await self._client.attestation.attest_open_enclave(request, **kwargs)
-        token = AttestationToken[GeneratedAttestationResult](token=result.token,
+        token = AttestationToken(token=result.token,
             body_type=GeneratedAttestationResult)
 
         if options.get("validate_token", True):
             token._validate_token(await self._get_signers(**kwargs), **options)
-        return AttestationResult._from_generated(token.get_body()), token
+        return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace_async
     async def attest_tpm(
