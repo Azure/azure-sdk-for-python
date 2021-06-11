@@ -1,0 +1,377 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsm/backup?api-version=7.2
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      www-authenticate:
+      - Bearer authorization="https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000",
+        resource="https://managedhsm.azure.net"
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-server-latency:
+      - '0'
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: '{"storageResourceUri": "https://storname.blob.core.windows.net/containerbe7dxjxuj4ise25",
+      "token": "redacted"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '233'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsm/backup?api-version=7.2
+  response:
+    body:
+      string: '{"status":"InProgress","statusDetails":null,"error":null,"startTime":1623444371,"endTime":null,"jobId":"2d408948e1ec41208a7b982598998c94","azureStorageBlobContainerUri":null}'
+    headers:
+      azure-asyncoperation:
+      - https://managedhsm/backup/2d408948e1ec41208a7b982598998c94/pending
+      cache-control:
+      - no-cache
+      content-length:
+      - '174'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 11 Jun 2021 20:46:10 GMT
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region:
+      - centralus
+      x-ms-server-latency:
+      - '2213'
+    status:
+      code: 202
+      message: ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/backup/2d408948e1ec41208a7b982598998c94/pending
+  response:
+    body:
+      string: '{"azureStorageBlobContainerUri":"https://storname.blob.core.windows.net/containerbe7dxjxuj4ise25/mhsm-mcpatinotesthsm-2021061120461128","endTime":1623444380,"error":null,"jobId":"2d408948e1ec41208a7b982598998c94","startTime":1623444371,"status":"Succeeded","statusDetails":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '294'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 11 Jun 2021 20:46:23 GMT
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-build-version:
+      - 1.0.20210520-1-d6634624-develop
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region:
+      - centralus
+      x-ms-server-latency:
+      - '2088'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/backup/2d408948e1ec41208a7b982598998c94/pending
+  response:
+    body:
+      string: '{"azureStorageBlobContainerUri":"https://storname.blob.core.windows.net/containerbe7dxjxuj4ise25/mhsm-mcpatinotesthsm-2021061120461128","endTime":1623444380,"error":null,"jobId":"2d408948e1ec41208a7b982598998c94","startTime":1623444371,"status":"Succeeded","statusDetails":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '294'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 11 Jun 2021 20:46:25 GMT
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-build-version:
+      - 1.0.20210520-1-d6634624-develop
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region:
+      - centralus
+      x-ms-server-latency:
+      - '1979'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"sasTokenParameters": {"storageResourceUri": "https://storname.blob.core.windows.net/containerbe7dxjxuj4ise25",
+      "token": "redacted"}, "folderToRestore": "mhsm-mcpatinotesthsm-2021061120461128"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '317'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://managedhsm/restore?api-version=7.2
+  response:
+    body:
+      string: '{"endTime":null,"error":null,"jobId":"f1192f26b5ee480aa7b8dc30516424b9","startTime":1623444387,"status":"InProgress","statusDetails":null}'
+    headers:
+      azure-asyncoperation:
+      - https://managedhsm/restore/f1192f26b5ee480aa7b8dc30516424b9/pending
+      cache-control:
+      - no-cache
+      content-length:
+      - '138'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 11 Jun 2021 20:46:27 GMT
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region:
+      - centralus
+      x-ms-server-latency:
+      - '2065'
+    status:
+      code: 202
+      message: ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/restore/f1192f26b5ee480aa7b8dc30516424b9/pending
+  response:
+    body:
+      string: '{"endTime":null,"error":null,"jobId":"f1192f26b5ee480aa7b8dc30516424b9","startTime":1623444387,"status":"InProgress","statusDetails":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '138'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 11 Jun 2021 20:46:39 GMT
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-build-version:
+      - 1.0.20210520-1-d6634624-develop
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region:
+      - centralus
+      x-ms-server-latency:
+      - '1976'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/restore/f1192f26b5ee480aa7b8dc30516424b9/pending
+  response:
+    body:
+      string: '{"endTime":1623444403,"error":null,"jobId":"f1192f26b5ee480aa7b8dc30516424b9","startTime":1623444387,"status":"Succeeded","statusDetails":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '143'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 11 Jun 2021 20:46:47 GMT
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-build-version:
+      - 1.0.20210520-1-d6634624-develop
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region:
+      - centralus
+      x-ms-server-latency:
+      - '3084'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/restore/f1192f26b5ee480aa7b8dc30516424b9/pending
+  response:
+    body:
+      string: '{"endTime":1623444403,"error":null,"jobId":"f1192f26b5ee480aa7b8dc30516424b9","startTime":1623444387,"status":"Succeeded","statusDetails":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '143'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 11 Jun 2021 20:46:49 GMT
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-build-version:
+      - 1.0.20210520-1-d6634624-develop
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region:
+      - centralus
+      x-ms-server-latency:
+      - '2168'
+    status:
+      code: 200
+      message: OK
+version: 1

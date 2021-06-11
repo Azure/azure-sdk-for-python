@@ -58,7 +58,26 @@ class BackupClientTests(KeyVaultTestCase):
 
         # restore the backup
         restore_poller = await backup_client.begin_restore(backup_operation.folder_url, sas_token)
-        await restore_poller.wait()
+
+        # create a new poller from a continuation token
+        token = restore_poller._polling_method.get_continuation_token()
+        rehydrated = await backup_client.begin_restore(backup_operation.folder_url, sas_token, continuation_token=token)
+
+        # check that pollers and polling methods behave as expected
+        assert restore_poller.status() == "InProgress"
+        assert not restore_poller.done() or restore_poller.polling_method().finished()
+        assert rehydrated.status() == "InProgress"
+        assert not rehydrated.done() or rehydrated.polling_method().finished()
+
+        await rehydrated.polling_method().update_status()
+        assert rehydrated.status() == "InProgress"
+        await restore_poller.polling_method().update_status()
+        assert restore_poller.status() == "InProgress"
+
+        await rehydrated.result()
+        assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
+        await restore_poller.result()
+        assert restore_poller.status() == "Succeeded" and restore_poller.polling_method().status() == "Succeeded"
 
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
     @StorageAccountPreparer(random_name_enabled=True)

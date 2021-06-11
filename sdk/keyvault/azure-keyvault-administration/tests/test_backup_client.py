@@ -61,6 +61,42 @@ class BackupClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
     @StorageAccountPreparer(random_name_enabled=True)
     @BlobContainerPreparer()
+    def test_full_backup_and_restore_rehydration(self, container_uri, sas_token):
+        # backup the vault
+        backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
+        backup_poller = backup_client.begin_backup(container_uri, sas_token)
+
+        # create a new poller from a continuation token
+        token = backup_poller._polling_method.get_continuation_token()
+        rehydrated = backup_client.begin_backup(container_uri, sas_token, continuation_token=token)
+
+        # check that pollers and polling methods behave as expected
+        assert rehydrated.status() == "InProgress"
+        assert not rehydrated.done() or rehydrated.polling_method().finished()
+
+        backup_operation = rehydrated.result()
+        assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
+        assert backup_operation.folder_url
+        backup_poller.wait()
+
+        # restore the backup
+        restore_poller = backup_client.begin_restore(backup_operation.folder_url, sas_token)
+
+        # create a new poller from a continuation token
+        token = restore_poller._polling_method.get_continuation_token()
+        rehydrated = backup_client.begin_restore(backup_operation.folder_url, sas_token, continuation_token=token)
+
+        # check that pollers and polling methods behave as expected
+        assert rehydrated.status() == "InProgress"
+        assert not rehydrated.done() or rehydrated.polling_method().finished()
+
+        rehydrated.result()
+        assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
+        restore_poller.wait()
+
+    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @StorageAccountPreparer(random_name_enabled=True)
+    @BlobContainerPreparer()
     def test_selective_key_restore(self, container_uri, sas_token):
         # create a key to selectively restore
         key_client = KeyClient(self.managed_hsm["url"], self.credential)
@@ -81,6 +117,67 @@ class BackupClientTests(KeyVaultTestCase):
         delete_poller = self._poll_until_no_exception(delete_function, ResourceExistsError)
         delete_poller.wait()
         key_client.purge_deleted_key(key_name)
+
+    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @StorageAccountPreparer(random_name_enabled=True)
+    @BlobContainerPreparer()
+    def test_backup_client_polling(self, container_uri, sas_token):
+        if not self.is_live:
+            pytest.skip("Poller requests are incompatible with vcrpy for synchronous tests")
+
+        # backup the vault
+        backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
+        backup_poller = backup_client.begin_backup(container_uri, sas_token)
+
+        # create a new poller from a continuation token
+        token = backup_poller._polling_method.get_continuation_token()
+        rehydrated = backup_client.begin_backup(container_uri, sas_token, continuation_token=token)
+
+        # check that pollers and polling methods behave as expected
+        assert backup_poller.status() == "InProgress"
+        assert not backup_poller.done() or backup_poller.polling_method().finished()
+        assert rehydrated.status() == "InProgress"
+        assert not rehydrated.done() or rehydrated.polling_method().finished()
+
+        backup_poller.polling_method().update_status()
+        assert backup_poller.status() == "InProgress"
+        rehydrated.polling_method().update_status()
+        assert rehydrated.status() == "InProgress"
+
+        backup_operation = backup_poller.result()
+        assert backup_poller.status() == "Succeeded" and backup_poller.polling_method().status() == "Succeeded"
+        rehydrated_operation = rehydrated.result()
+        assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
+        assert backup_operation.folder_url == rehydrated_operation.folder_url
+
+        # rehydrate a poller with a continuation token of a completed operation
+        late_rehydrated = backup_client.begin_backup(container_uri, sas_token, continuation_token=token)
+        assert late_rehydrated.status() == "InProgress"
+        late_rehydrated.polling_method().update_status()
+        assert late_rehydrated.status() == "Succeeded"
+
+        # restore the backup
+        restore_poller = backup_client.begin_restore(backup_operation.folder_url, sas_token)
+
+        # create a new poller from a continuation token
+        token = restore_poller._polling_method.get_continuation_token()
+        rehydrated = backup_client.begin_restore(backup_operation.folder_url, sas_token, continuation_token=token)
+
+        # check that pollers and polling methods behave as expected
+        assert restore_poller.status() == "InProgress"
+        assert not restore_poller.done() or restore_poller.polling_method().finished()
+        assert rehydrated.status() == "InProgress"
+        assert not rehydrated.done() or rehydrated.polling_method().finished()
+
+        rehydrated.polling_method().update_status()
+        assert rehydrated.status() == "InProgress"
+        restore_poller.polling_method().update_status()
+        assert restore_poller.status() == "InProgress"
+
+        rehydrated.result()
+        assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
+        restore_poller.result()
+        assert restore_poller.status() == "Succeeded" and restore_poller.polling_method().status() == "Succeeded"
 
 
 def test_continuation_token():
