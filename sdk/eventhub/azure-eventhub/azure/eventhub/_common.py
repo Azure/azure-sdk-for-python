@@ -104,7 +104,18 @@ class EventData(object):
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
         if body is None:
             raise ValueError("EventData cannot be None.")
-        self._raw_amqp_message = AmqpAnnotatedMessage(data_body=body, application_properties={}, annotations={})
+        if body and isinstance(body, list):
+            self.message = Message(body[0])
+            for more in body[1:]:
+                self.message._body.append(more)  # pylint: disable=protected-access
+        elif body is None:
+            raise ValueError("EventData cannot be None.")
+        else:
+            self.message = Message(body)
+
+        # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
+        self._raw_amqp_message = AmqpAnnotatedMessage(message=self.message)
+        self.message = self._raw_amqp_message._message  # pylint:disable=protected-access
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
         self._published_sequence_number = None
@@ -174,6 +185,7 @@ class EventData(object):
         """
         event_data = cls(body="")
         event_data._raw_amqp_message = AmqpAnnotatedMessage(message=message)
+        event_data.message = event_data._raw_amqp_message._message # pylint:disable=protected-access
         return event_data
 
     def _encode_message(self):
@@ -418,7 +430,6 @@ class EventDataBatch(object):
 
     def _load_events(self, events):
         for event_data in events:
-            print(event_data)
             try:
                 self.add(event_data)
             except ValueError:
@@ -461,11 +472,8 @@ class EventDataBatch(object):
         :rtype: None
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
-        print('in batch add')
         if isinstance(event_data, AmqpAnnotatedMessage):
             event_data = EventData._from_message(event_data._to_outgoing_amqp_message())    # pylint: disable=protected-access
-            print(type(event_data))
-            print(event_data)
 
         if self._partition_key:
             if (

@@ -339,14 +339,12 @@ class EventHubProducerClient(ClientBase):
         partition_id = kwargs.get("partition_id")
         partition_key = kwargs.get("partition_key")
 
-        print('in send')
         validate_outgoing_event_data(
             event_data_batch,
             partition_id,
             partition_key,
             self._config.enable_idempotent_partitions
         )
-        print('after validating')
 
         if isinstance(event_data_batch, EventDataBatch):
             to_send_batch = event_data_batch
@@ -365,9 +363,7 @@ class EventHubProducerClient(ClientBase):
             cast(EventHubProducer, self._producers[partition_id]).send(
                 to_send_batch, timeout=send_timeout
             )
-            print('in try')
         except (KeyError, AttributeError, EventHubError):
-            print('in except')
             self._start_producer(partition_id, send_timeout)
             cast(EventHubProducer, self._producers[partition_id]).send(
                 to_send_batch, timeout=send_timeout
