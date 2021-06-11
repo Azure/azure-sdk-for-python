@@ -135,7 +135,7 @@ class AttestationClient(object):
 
         :return: :class:`AttestationResult` containing the claims in the returned attestation token.
 
-        :rtype: azure.security.attestation.AttestationResult
+        :rtype: Tuple[azure.security.attestation.AttestationResult, azure.security.attestation.AttestationToken]
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
@@ -230,7 +230,7 @@ class AttestationClient(object):
 
         :return: :class:`AttestationResult` containing the claims in the returned attestation token.
 
-        :rtype: azure.security.attestation.AttestationResult
+        :rtype: Tuple[azure.security.attestation.AttestationResult, azure.security.attestation.AttestationToken]
 
         .. admonition:: Example: Simple OpenEnclave attestation.
 

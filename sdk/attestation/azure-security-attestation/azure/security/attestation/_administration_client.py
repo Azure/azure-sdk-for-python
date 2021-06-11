@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import List, Any, Optional, TYPE_CHECKING
+from typing import List, Any, Optional, TYPE_CHECKING, Tuple
 
 from azure.core import PipelineClient
 from cryptography.hazmat.primitives import serialization
@@ -31,9 +31,9 @@ from ._configuration import AttestationClientConfiguration
 from ._models import (
     AttestationSigner, 
     AttestationToken, 
-    PolicyCertificatesModificationResult,
     AttestationPolicyResult,
-    PolicyCertificatesResult,
+    AttestationPolicyCertificatesResult,
+    AttestationPolicyCertificateResult,
     AttestationTokenValidationException
 )
 import base64
@@ -102,7 +102,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def get_policy(self, attestation_type, **kwargs): 
-        #type(AttestationType, **Any) -> AttestationResponse[str]:
+        #type:(AttestationType, **Any) -> Tuple[str, AttestationToken]
         """ Retrieves the attestation policy for a specified attestation type.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
@@ -122,10 +122,10 @@ class AttestationAdministrationClient(object):
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
 
-        :return: Attestation Policy Result, containing a `property` attribute which
-            contains the text attestation policy.
+        :return: A tuple containing the attestation policy and the token returned 
+            by the service..
 
-        :rtype: azure.security.attestation.AttesationPolicyResult
+        :rtype: Tuple[str, AttestationToken]
 
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
@@ -150,7 +150,7 @@ class AttestationAdministrationClient(object):
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
 
-        return AttestationPolicyResult._from_generated(None, token, actual_policy.decode('utf-8'))
+        return actual_policy.decode('utf-8'), token
 
     @distributed_trace
     def set_policy(self, attestation_type, attestation_policy, **kwargs): 
@@ -181,7 +181,7 @@ class AttestationAdministrationClient(object):
 
         :return: Attestation service response encapsulating a :class:`PolicyResult`.
 
-        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyResult]
+        :rtype: azure.security.attestation.AttestationPolicyResult
 
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
@@ -223,7 +223,7 @@ class AttestationAdministrationClient(object):
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
 
-        return AttestationPolicyResult._from_generated(token.get_body(), token, None)
+        return AttestationPolicyResult._from_generated(token.get_body(), token)
 
     @distributed_trace
     def reset_policy(self, attestation_type, **kwargs): 
@@ -254,7 +254,7 @@ class AttestationAdministrationClient(object):
 
         :return: Attestation service response encapsulating a :class:`PolicyResult`.
         
-        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyResult]
+        :rtype: azure.security.attestation.AttestationPolicyResult
 
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
@@ -294,12 +294,12 @@ class AttestationAdministrationClient(object):
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
 
-        return AttestationPolicyResult._from_generated(token.get_body(), token, None)
+        return AttestationPolicyResult._from_generated(token.get_body(), token)
 
 
     @distributed_trace
     def get_policy_management_certificates(self, **kwargs):
-        #type:(**Any) -> PolicyCertificatesResult
+        #type:(**Any) -> AttestationPolicyCertificatesResult
         """ Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only be non-empty if the
@@ -319,7 +319,7 @@ class AttestationAdministrationClient(object):
 
         :return: Attestation service response 
             encapsulating a list of DER encoded X.509 certificate chains.
-        :rtype: azure.security.attestation.AttestationResponse[list[list[bytes]]]
+        :rtype: AttestationPolicyCertificatesResult
         """
 
         # Merge our existing config options with the options for this API call. 
@@ -342,11 +342,11 @@ class AttestationAdministrationClient(object):
         for key in cert_list.policy_certificates.keys:
             key_certs = [PemUtils.pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
             certificates.append(key_certs)
-        return PolicyCertificatesResult(token, certificates)
+        return AttestationPolicyCertificatesResult(token, certificates)
 
     @distributed_trace
     def add_policy_management_certificate(self, certificate_to_add, **kwargs):
-        #type:(str, **Any) -> PolicyCertificatesModificationResult
+        #type:(str, **Any) -> AttestationPolicyCertificatesResult
         """ Adds a new policy management certificate to the set of policy management certificates for the instance.
 
         :param str certificate_to_add: PEM encoded X.509 certificate to add to 
@@ -371,9 +371,9 @@ class AttestationAdministrationClient(object):
         :return: Attestation service response 
             encapsulating the status of the add request.
 
-        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyCertificatesModificationResult]
+        :rtype: azure.security.attestation.AttestationPolicyCertificatesResult
 
-        The :class:`PolicyCertificatesModificationResult` response to the 
+        The :class:`AttestationPolicyCertificatesResult` response to the 
         :meth:`add_policy_management_certificate` API contains two attributes
         of interest. 
         
@@ -417,14 +417,14 @@ class AttestationAdministrationClient(object):
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
-        return PolicyCertificatesModificationResult._from_generated(token.get_body(), token)
+        return AttestationPolicyCertificateResult._from_generated(token.get_body(), token)
 
     @distributed_trace
     def remove_policy_management_certificate(self, certificate_to_remove, **kwargs):
-        #type:(bytes, **Any) -> PolicyCertificatesModificationResult
+        #type:(bytes, **Any) -> AttestationPolicyCertificatesResult
         """ Removes a new policy management certificate to the set of policy management certificates for the instance.
 
-        :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
+        :param bytes certificate_to_remove: PEM encoded X.509 certificate to remove from 
             the list of attestation policy management certificates.
         :keyword  str signing_key: PEM encoded signing Key representing the key 
             associated with one of the *existing* attestation signing certificates.
@@ -444,9 +444,9 @@ class AttestationAdministrationClient(object):
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
         :return: Attestation service response 
             encapsulating a list of DER encoded X.509 certificate chains.
-        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyCertificatesModificationResult]
+        :rtype: azure.security.attestation.AttestationPolicyCertificateResult
 
-        The :class:`PolicyCertificatesModificationResult` response to the 
+        The :class:`AttestationPolicyCertificateResult` response to the 
         :meth:`remove_policy_management_certificate` API contains two attributes
         of interest. 
         
@@ -489,7 +489,7 @@ class AttestationAdministrationClient(object):
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
-        return PolicyCertificatesModificationResult._from_generated(token.get_body(), token)
+        return AttestationPolicyCertificateResult._from_generated(token.get_body(), token)
 
     def _get_signers(self, **kwargs):
         #type(**Any) -> List[AttestationSigner]

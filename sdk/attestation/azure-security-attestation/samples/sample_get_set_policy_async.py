@@ -78,8 +78,8 @@ class AttestationClientPolicySamples(object):
         write_banner("get_policy_aad")
         print("Retrieve an unsecured Policy on an AAD mode attestation instance.")
         async with DefaultAzureCredential() as credential, AttestationAdministrationClient(credential, self.aad_url) as admin_client:
-            get_result = await admin_client.get_policy(AttestationType.SGX_ENCLAVE)
-            print("SGX Policy is: ", get_result.policy)
+            policy, _ = await admin_client.get_policy(AttestationType.SGX_ENCLAVE)
+            print("SGX Policy is: ", policy)
 
 
     async def set_policy_aad_unsecured(self):
@@ -109,8 +109,8 @@ class AttestationClientPolicySamples(object):
             set_result = await admin_client.set_policy(AttestationType.OPEN_ENCLAVE, new_policy)
             print("Policy Set result: ", set_result.policy_resolution)
 
-            get_result = await admin_client.get_policy(AttestationType.OPEN_ENCLAVE)
-            if new_policy != get_result.policy:
+            get_policy, _ = await admin_client.get_policy(AttestationType.OPEN_ENCLAVE)
+            if new_policy != get_policy:
                 print("Policy does not match set policy.")
             # Attest an OpenEnclave using the new policy.
             await self._attest_open_enclave(self.aad_url)
@@ -183,8 +183,8 @@ class AttestationClientPolicySamples(object):
         write_banner("get_policy_isolated")
         print("Retrieve an unsecured Policy on an Isolated mode attestation instance.")
         async with DefaultAzureCredential() as credential, AttestationAdministrationClient(credential, self.isolated_url) as admin_client:
-            get_result = await admin_client.get_policy(AttestationType.SGX_ENCLAVE)
-            print("SGX Policy is: ", get_result.policy)
+            get_result, _ = await admin_client.get_policy(AttestationType.SGX_ENCLAVE)
+            print("SGX Policy is: ", get_result)
 
     async def set_policy_isolated_secured(self):
         """
@@ -225,7 +225,7 @@ class AttestationClientPolicySamples(object):
         write_banner("get_policy_management_certificates_isolated")
         print("Get the policy management certificates for a isolated instance.")
         async with DefaultAzureCredential() as credential, AttestationAdministrationClient(credential, self.isolated_url) as admin_client:
-            get_result= await admin_client.get_policy_management_certificates()
+            get_result = await admin_client.get_policy_management_certificates()
             print("Isolated instance has", len(get_result.value), "certificates")
 
             # The signing certificate for the isolated instance should be

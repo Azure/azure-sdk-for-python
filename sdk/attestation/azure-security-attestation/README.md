@@ -181,9 +181,9 @@ The `set_policy` method retrieves the attestation policy from the service.
 Attestation Policies are instanced on a per-attestation type basis, the `AttestationType` parameter defines the type to retrieve.
 
 ```python
-policy_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-print('Instance SGX policy: ', policy_response.value)
-print('Token: ', policy_response.token)
+policy, token = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+print('Instance SGX policy: ', policy)
+print('Token: ', token)
 ```
 
 ### Set an attestation policy for a specified attestation type
@@ -197,8 +197,8 @@ policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,
     attestation_policy,
     signing_key=key,
     signing_certificate=signing_certificate))
-policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-assert policy_get_response.value == attestation_policy
+new_policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+assert new_policy == attestation_policy
 ```
 
 If the service instance is running in AAD mode, the call to set_policy can be
@@ -208,8 +208,8 @@ simplified:
 policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,            
     attestation_policy)
 # Now retrieve the policy which was just set.
-policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-assert policy_get_response.value == attestation_policy
+new_policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+assert new_policy == attestation_policy
 ```
 
 Clients need to be able to verify that the attestation policy document was not modified before the policy document was received by the attestation service's enclave.

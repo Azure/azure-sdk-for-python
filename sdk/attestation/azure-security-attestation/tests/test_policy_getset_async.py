@@ -42,29 +42,29 @@ class AsyncPolicyGetSetTests(AzureTestCase):
     @AttestationPreparer()
     async def test_shared_get_policy_sgx(self, attestation_location_short_name):
         attest_client = self.shared_admin_client(attestation_location_short_name)
-        policy_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert(policy_response.policy.startswith('version'))
-        print('Token: ', policy_response.token)
+        policy, token = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        assert(policy.startswith('version'))
+        print('Token: ', token)
 
     @AttestationPreparer()
     async def test_shared_get_policy_openenclave(self, attestation_location_short_name):
         attest_client = self.shared_admin_client(attestation_location_short_name)
-        policy_response = await attest_client.get_policy(AttestationType.OPEN_ENCLAVE)
-        assert(policy_response.policy.startswith('version'))
-        print('Token: ', policy_response.token)
+        policy, token = await attest_client.get_policy(AttestationType.OPEN_ENCLAVE)
+        assert(policy.startswith('version'))
+        print('Token: ', token)
 
 
     @AttestationPreparer()
     async def test_isolated_get_policy_sgx(self, attestation_isolated_url):
         attest_client = self.create_admin_client(attestation_isolated_url)
-        policy_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert(policy_response.policy.startswith('version'))
+        policy, _ = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        assert(policy.startswith('version'))
 
     @AttestationPreparer()
     async def test_aad_get_policy_sgx(self, attestation_aad_url):
         attest_client = self.create_admin_client(attestation_aad_url)
-        policy_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert(policy_response.policy.startswith('version'))
+        policy  = (await attest_client.get_policy(AttestationType.SGX_ENCLAVE))[0]
+        assert(policy.startswith('version'))
 
     @AttestationPreparer()
     async def test_aad_set_policy_sgx_unsecured(self, attestation_aad_url):
@@ -72,8 +72,8 @@ class AsyncPolicyGetSetTests(AzureTestCase):
 
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = await attest_client.set_policy(AttestationType.SGX_ENCLAVE, attestation_policy)
-        policy_get_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert policy_get_response.policy == attestation_policy
+        new_policy, _ = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        assert new_policy == attestation_policy
 
         expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy))
         hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
@@ -118,8 +118,8 @@ class AsyncPolicyGetSetTests(AzureTestCase):
             attestation_policy,
             signing_key=key,
             signing_certificate=signing_certificate)
-        policy_get_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert policy_get_response.policy == attestation_policy
+        policy, _ = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        assert policy == attestation_policy
 
         expected_policy = AttestationToken(
             body=StoredAttestationPolicy(attestation_policy),
@@ -145,8 +145,8 @@ class AsyncPolicyGetSetTests(AzureTestCase):
             attestation_policy,
             signing_key=key,
             signing_certificate=decoded_cert)
-        policy_get_response = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert policy_get_response.policy == attestation_policy
+        policy, _ = await attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        assert policy == attestation_policy
 
         expected_policy = AttestationToken(
             body=StoredAttestationPolicy(attestation_policy),

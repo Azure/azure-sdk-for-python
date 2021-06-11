@@ -37,6 +37,8 @@ DefaultAzureCredential.
 * The `attest_open_enclave` and `attest_sgx_enclave` APIs now return a
   `Tuple[AttestationResult, AttestationToken]`. This allows callers to access both
   the attestation claims and the original token separately.
+* The `get_policy` API now returns a `Tuple[str, AttestationToken]` to simplify
+  the consumption experience.
 
 To call into the attest APIs if you care about the attestation result and token,
 you can write:

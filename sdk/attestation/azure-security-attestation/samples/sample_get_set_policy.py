@@ -85,8 +85,8 @@ class AttestationClientPolicySamples(object):
         write_banner("get_policy_aad")
         print("Retrieve an unsecured Policy on an AAD mode attestation instance.")
         with self._create_admin_client(self.aad_url) as admin_client:
-            get_result = admin_client.get_policy(AttestationType.SGX_ENCLAVE)
-            print("SGX Policy is: ", get_result.policy)
+            policy, _ = admin_client.get_policy(AttestationType.SGX_ENCLAVE)
+            print("SGX Policy is: ", policy)
 
     def set_policy_aad_unsecured(self):
         """
@@ -115,8 +115,8 @@ issuancerules {
             set_result = admin_client.set_policy(AttestationType.OPEN_ENCLAVE, new_policy)
             print("Policy Set result: ", set_result.policy_resolution)
 
-            get_result = admin_client.get_policy(AttestationType.OPEN_ENCLAVE)
-            if new_policy != get_result.policy:
+            get_result, _ = admin_client.get_policy(AttestationType.OPEN_ENCLAVE)
+            if new_policy != get_result:
                 print("Policy does not match set policy.")
             # Attest an OpenEnclave using the new policy.
             self._attest_open_enclave(self.aad_url)
@@ -234,10 +234,10 @@ issuancerules {};
         write_banner("get_policy_isolated")
         print("Retrieve an unsecured Policy on an Isolated mode attestation instance.")
         with self._create_admin_client(self.isolated_url) as admin_client:
-            get_result = admin_client.get_policy(AttestationType.SGX_ENCLAVE,
+            get_result, _ = admin_client.get_policy(AttestationType.SGX_ENCLAVE,
             validate_issuer=True,
             issuer=self.isolated_url)
-            print("SGX Policy is: ", get_result.policy)
+            print("SGX Policy is: ", get_result)
 
     def set_policy_isolated_secured(self):
         """

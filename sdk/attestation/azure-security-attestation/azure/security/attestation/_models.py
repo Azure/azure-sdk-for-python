@@ -61,7 +61,7 @@ class AttestationSigner(object):
         return cls(generated.x5_c, generated.kid)
 
 
-class PolicyCertificatesModificationResult(object):
+class AttestationPolicyCertificateResult(object):
     """The result of a policy certificate modification.
 
     :param str certificate_thumbprint: Hex encoded SHA1 Hash of the binary representation certificate
@@ -82,7 +82,7 @@ class PolicyCertificatesModificationResult(object):
 
     @classmethod
     def _from_generated(cls, generated, token):
-        #type: (GeneratedPolicyCertificatesModificationResult, AttestationToken) -> PolicyCertificatesModificationResult
+        #type: (GeneratedPolicyCertificatesModificationResult, AttestationToken) -> AttestationPolicyCertificatesResult
         if not generated:
             return cls
         return cls(generated.certificate_thumbprint, generated.certificate_resolution, token)
@@ -112,29 +112,22 @@ class AttestationPolicyResult(object):
     :type token: AttestationToken
 
     """
-    def __init__(self, token, policy_resolution, policy_signer, policy_token_hash, policy):
+    def __init__(self, token, policy_resolution, policy_signer, policy_token_hash):
         #type:(AttestationToken, PolicyModification, JSONWebKey, str, str) -> None
         self.token = token
-        if policy:
-            self.policy = policy
-        else:
-            self.policy_resolution = policy_resolution
-            self.policy_signer = AttestationSigner._from_generated(policy_signer)
-            self.policy_token_hash = policy_token_hash
+        self.policy_resolution = policy_resolution
+        self.policy_signer = AttestationSigner._from_generated(policy_signer)
+        self.policy_token_hash = policy_token_hash
 
     @classmethod
-    def _from_generated(cls, generated, token, policyText):
+    def _from_generated(cls, generated, token):
         #type:(GeneratedPolicyResult, AttestationToken, str)->AttestationPolicyResult
         if not token:
             raise ValueError("Token parameter must be provided.")
         # If we have a generated policy result or policy text, return that.
         if generated:
-            return cls(token, generated.policy_resolution, generated.policy_signer, generated.policy_token_hash, None)
-
-        if policyText:
-            return cls(token, None, None, None, policyText)
-            
-        return cls(None, None, None, None, None)
+            return cls(token, generated.policy_resolution, generated.policy_signer, generated.policy_token_hash)
+        return cls(None, None, None, None)
 
 class AttestationResult(object):
     """ An AttestationResult represents the claims returned from the attestation
@@ -452,12 +445,10 @@ class AttestationToken(Generic[T]):
     """ Represents a token returned from the attestation service.
 
     :keyword Any body: The body of the newly created token, if provided.
-    :keyword bytes signing_key: If specified, the PEM encoded key used to sign the
+    :keyword str signing_key: If specified, the PEM encoded key used to sign the
         token.
-    :keyword bytes signing_certificate: If specified, the PEM encoded certificate
+    :keyword str signing_certificate: If specified, the PEM encoded certificate
         used to sign the token.
-    :keyword key: If specified the key to be used to sign the token.
-    :keyword certificate: If specified, the certificate to be used to sign the token.
 
     :keyword str token: If no body or signer is provided, the string representation of the token.
     :keyword Type body_type: The underlying type of the body of the 'token' parameter, used to deserialize the underlying body when parsing the token.
@@ -880,20 +871,7 @@ class AttestationTokenValidationException(ValueError):
         self.message = message
         super(AttestationTokenValidationException, self).__init__(self.message)
         
-class AttestationPolicyResult_NEW(object):
-    """ Represents a response from the :func:`AttestationAdministrationClient::get_policy` API.
-
-    :param token: Attestation Token returned from the service.
-    :type token: azure.security.attestation.AttestationToken
-    :param value: Value of the body of the attestation token.
-    :type value: str
-    """
-    def __init__(self, token, value):
-        # type (AttestationToken, str) -> None
-        self.token = token #type: AttestationToken
-        self.value = value #type: str
-
-class PolicyCertificatesResult(object):
+class AttestationPolicyCertificatesResult(object):
     """ Represents a response from the attestation service.
 
     :param token: Attestation Token returned from the service.

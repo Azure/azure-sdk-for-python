@@ -46,35 +46,35 @@ class PolicyGetSetTests(AzureTestCase):
     @AttestationPreparer()
     def test_shared_get_policy_sgx(self, attestation_location_short_name):
         attest_client = self.shared_admin_client(attestation_location_short_name)
-        policy_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        print('Shared policy: ', policy_response.policy)
-        assert(policy_response.policy.startswith('version'))
-        print('Token: ', policy_response.token)
+        policy, token = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        print('Shared policy: ', policy)
+        assert(policy.startswith('version'))
+        print('Token: ', token)
 
     @AttestationPreparer()
     def test_shared_get_policy_openenclave(self, attestation_location_short_name):
         attest_client = self.shared_admin_client(attestation_location_short_name)
-        policy_response = attest_client.get_policy(AttestationType.OPEN_ENCLAVE)
-        print('Shared policy: ', policy_response.policy)
-        assert(policy_response.policy.startswith('version'))
-        print('Token: ', policy_response.token)
+        policy, token = attest_client.get_policy(AttestationType.OPEN_ENCLAVE)
+        print('Shared policy: ', policy)
+        assert(policy.startswith('version'))
+        print('Token: ', token)
 
 
     @AttestationPreparer()
     def test_isolated_get_policy_sgx(self, attestation_isolated_url):
         attest_client = self.create_admin_client(attestation_isolated_url)
-        policy_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        print('Shared policy: ', policy_response.policy)
-        assert(policy_response.policy.startswith('version'))
-        print('Token: ', policy_response.token)
+        policy, token = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        print('Shared policy: ', policy)
+        assert(policy.startswith('version'))
+        print('Token: ', token)
 
     @AttestationPreparer()
     def test_aad_get_policy_sgx(self, attestation_aad_url):
         attest_client = self.create_admin_client(attestation_aad_url)
-        policy_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        print('Shared policy: ', policy_response.policy)
-        assert(policy_response.policy.startswith('version'))
-        print('Token: ', policy_response.token)
+        policy, token = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        print('Shared policy: ', policy)
+        assert(policy.startswith('version'))
+        print('Token: ', token)
 
     @AttestationPreparer()
     def test_aad_set_policy_sgx_unsecured(self, attestation_aad_url):
@@ -82,8 +82,8 @@ class PolicyGetSetTests(AzureTestCase):
 
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE, attestation_policy)
-        policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert policy_get_response.policy == attestation_policy
+        new_policy = attest_client.get_policy(AttestationType.SGX_ENCLAVE)[0]
+        assert new_policy == attestation_policy
 
         expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy))
         hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
@@ -128,8 +128,8 @@ class PolicyGetSetTests(AzureTestCase):
             attestation_policy,
             signing_key=key,
             signing_certificate=signing_certificate)
-        policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert policy_get_response.policy == attestation_policy
+        policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        assert policy == attestation_policy
 
         expected_policy = AttestationToken(
             body=StoredAttestationPolicy(attestation_policy),
@@ -155,8 +155,8 @@ class PolicyGetSetTests(AzureTestCase):
             attestation_policy,
             signing_key=key,
             signing_certificate=signing_certificate)
-        policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-        assert policy_get_response.policy == attestation_policy
+        new_policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        assert new_policy == attestation_policy
 
         expected_policy = AttestationToken(
             body=StoredAttestationPolicy(attestation_policy), 
