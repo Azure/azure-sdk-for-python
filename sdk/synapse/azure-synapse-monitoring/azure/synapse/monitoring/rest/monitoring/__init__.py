@@ -7,16 +7,13 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import SparkJob
-    from ._models_py3 import SparkJobListViewResponse
-    from ._models_py3 import SqlQueryStringDataModel
+    from ._request_builders_py3 import build_get_spark_job_list_request
+    from ._request_builders_py3 import build_get_sql_job_query_string_request
 except (SyntaxError, ImportError):
-    from ._models import SparkJob  # type: ignore
-    from ._models import SparkJobListViewResponse  # type: ignore
-    from ._models import SqlQueryStringDataModel  # type: ignore
+    from ._request_builders import build_get_spark_job_list_request  # type: ignore
+    from ._request_builders import build_get_sql_job_query_string_request  # type: ignore
 
 __all__ = [
-    'SparkJob',
-    'SparkJobListViewResponse',
-    'SqlQueryStringDataModel',
+    'build_get_spark_job_list_request',
+    'build_get_sql_job_query_string_request',
 ]
