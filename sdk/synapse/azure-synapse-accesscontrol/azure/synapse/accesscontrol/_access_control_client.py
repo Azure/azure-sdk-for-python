@@ -76,7 +76,7 @@ class AccessControlClient(object):
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        if kwargs.pop("stream_response", False):
+        if kwargs.pop("stream", False):
             return _StreamContextManager(
                 client=self._client._pipeline,
                 request=request_copy,
