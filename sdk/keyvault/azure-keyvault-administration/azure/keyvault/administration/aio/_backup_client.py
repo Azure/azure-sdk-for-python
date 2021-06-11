@@ -5,8 +5,6 @@
 import functools
 from typing import TYPE_CHECKING
 
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
-
 from .._internal import AsyncKeyVaultClientBase, parse_folder_url
 from .._internal.async_polling import KeyVaultAsyncBackupClientPollingMethod
 from .._internal.polling import KeyVaultBackupClientPolling
@@ -72,7 +70,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
 
         container_url, folder_name = parse_folder_url(folder_url)
         sas_parameter = self._models.SASTokenParameter(storage_resource_uri=container_url, token=sas_token)
-        polling = AsyncLROBasePolling(
+        polling = KeyVaultAsyncBackupClientPollingMethod(
             lro_algorithms=[KeyVaultBackupClientPolling()], timeout=kwargs.pop("_polling_interval", 5), **kwargs
         )
 

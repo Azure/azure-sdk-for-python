@@ -4,15 +4,7 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from azure.core.polling.base_polling import (
-    BadResponse,
-    BadStatus,
-    HttpResponseError,
-    LROBasePolling,
-    OperationFailed,
-    OperationResourcePolling,
-    _raise_if_bad_http_status_and_method
-)
+from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling
 
 if TYPE_CHECKING:
     from typing import Union
@@ -31,31 +23,6 @@ class KeyVaultBackupClientPolling(OperationResourcePolling):
     def __init__(self):
         super(KeyVaultBackupClientPolling, self).__init__(operation_location_header="azure-asyncoperation")
 
-    def can_poll(self, pipeline_response, **kwargs):
-        """Answer if this polling method could be used.
-        """
-        if kwargs.get("continuation_url"):
-            return True
-        response = pipeline_response.http_response
-        return self._operation_location_header in response.headers
-
-    def set_initial_status(self, pipeline_response, **kwargs):
-        # type: (PipelineResponseType) -> str
-        """Process first response after initiating long running operation.
-
-        :param azure.core.pipeline.PipelineResponse response: initial REST call response.
-        """
-        self._request = pipeline_response.http_response.request
-        response = pipeline_response.http_response
-
-        self._async_url = kwargs.get("continuation_url")
-        if self._async_url is None:
-            self._set_async_url_if_present(response)
-
-        if response.status_code in {200, 201, 202, 204} and self._async_url:
-            return "InProgress"
-        raise OperationFailed("Operation failed or canceled")
-
     def get_final_get_url(self, pipeline_response):
         return None
 
@@ -67,44 +34,23 @@ class KeyVaultBackupClientPollingMethod(LROBasePolling):
         :param initial_response: The initial pipeline response of the poller, or a URL continuation token
         :raises: HttpResponseError if initial status is incorrect LRO state
         """
-        self._client = client
-        self._deserialization_callback = deserialization_callback
         self._continuation_url = None
 
-        continuation_url = type(initial_response) == str
-        if continuation_url:
-            self._continuation_url = initial_response
-            self._operation = self._lro_algorithms[0]
-            self._status = "InProgress"  # assume the operation is ongoing for now
+        if type(initial_response) != str:
+            super(KeyVaultBackupClientPollingMethod, self).initialize(
+                client, initial_response, deserialization_callback
+            )
+
         else:
-            self._pipeline_response = self._initial_response = initial_response
-
-            for operation in self._lro_algorithms:
-                if operation.can_poll(self._initial_response, continuation_url=continuation_url):
-                    self._operation = operation
-                    break
-            else:
-                raise BadResponse("Unable to find status link for polling.")
-
-            try:
-                _raise_if_bad_http_status_and_method(self._initial_response.http_response)
-                self._status = self._operation.set_initial_status(
-                    self._initial_response, continuation_url=initial_response
-                )
-
-            except BadStatus as err:
-                self._status = "Failed"
-                raise HttpResponseError(response=self._initial_response.http_response, error=err)
-            except BadResponse as err:
-                self._status = "Failed"
-                raise HttpResponseError(
-                    response=self._initial_response.http_response, message=str(err), error=err
-                )
-            except OperationFailed as err:
-                raise HttpResponseError(response=self._initial_response.http_response, error=err)
+            self._client = client
+            self._continuation_url = initial_response
+            self._deserialization_callback = deserialization_callback
+            self._operation = self._lro_algorithms[0]
+            self._operation._async_url = initial_response  # pylint: disable=protected-access
+            self._status = "InProgress" # assume the operation is ongoing for now so the actual status gets polled
 
     def get_continuation_token(self):
-        return self._operation.get_polling_url().http_response.headers["azure-asyncoperation"]
+        return self._operation.get_polling_url()
 
     @classmethod
     def from_continuation_token(cls, continuation_token, **kwargs):
@@ -135,16 +81,6 @@ class KeyVaultBackupClientPollingMethod(LROBasePolling):
         if self._continuation_url:
             return 0
         return super(KeyVaultBackupClientPollingMethod, self)._extract_delay()
-
-    def update_status(self):
-        """Update the current status of the LRO.
-        """
-        if self._continuation_url:
-            self._pipeline_response = self.request_status(self._continuation_url)
-        else:
-            self._pipeline_response = self.request_status(self._operation.get_polling_url())
-        _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
-        self._status = self._operation.get_status(self._pipeline_response)
 
     def request_status(self, status_link):
         """Do a simple GET to this status link.

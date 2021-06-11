@@ -3,13 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from azure.core.polling.base_polling import (
-    BadResponse,
-    BadStatus,
-    HttpResponseError,
-    OperationFailed,
-    _raise_if_bad_http_status_and_method
-)
 
 
 class KeyVaultAsyncBackupClientPollingMethod(AsyncLROBasePolling):
@@ -19,44 +12,23 @@ class KeyVaultAsyncBackupClientPollingMethod(AsyncLROBasePolling):
         :param initial_response: The initial pipeline response of the poller, or a URL continuation token
         :raises: HttpResponseError if initial status is incorrect LRO state
         """
-        self._client = client
-        self._deserialization_callback = deserialization_callback
         self._continuation_url = None
 
-        continuation_url = type(initial_response) == str
-        if continuation_url:
-            self._continuation_url = initial_response
-            self._operation = self._lro_algorithms[0]
-            self._status = "InProgress"  # assume the operation is ongoing for now
+        if type(initial_response) != str:
+            super(KeyVaultAsyncBackupClientPollingMethod, self).initialize(
+                client, initial_response, deserialization_callback
+            )
+
         else:
-            self._pipeline_response = self._initial_response = initial_response
-
-            for operation in self._lro_algorithms:
-                if operation.can_poll(self._initial_response, continuation_url=continuation_url):
-                    self._operation = operation
-                    break
-            else:
-                raise BadResponse("Unable to find status link for polling.")
-
-            try:
-                _raise_if_bad_http_status_and_method(self._initial_response.http_response)
-                self._status = self._operation.set_initial_status(
-                    self._initial_response, continuation_url=initial_response
-                )
-
-            except BadStatus as err:
-                self._status = "Failed"
-                raise HttpResponseError(response=self._initial_response.http_response, error=err)
-            except BadResponse as err:
-                self._status = "Failed"
-                raise HttpResponseError(
-                    response=self._initial_response.http_response, message=str(err), error=err
-                )
-            except OperationFailed as err:
-                raise HttpResponseError(response=self._initial_response.http_response, error=err)
+            self._client = client
+            self._continuation_url = initial_response
+            self._deserialization_callback = deserialization_callback
+            self._operation = self._lro_algorithms[0]
+            self._operation._async_url = initial_response  # pylint: disable=protected-access
+            self._status = "InProgress" # assume the operation is ongoing for now, so the actual status gets polled
 
     def get_continuation_token(self):
-        return self._operation.get_polling_url().http_response.headers["azure-asyncoperation"]
+        return self._operation.get_polling_url()
 
     @classmethod
     def from_continuation_token(cls, continuation_token, **kwargs):
@@ -87,16 +59,6 @@ class KeyVaultAsyncBackupClientPollingMethod(AsyncLROBasePolling):
         if self._continuation_url:
             return 0
         return super(KeyVaultAsyncBackupClientPollingMethod, self)._extract_delay()
-
-    async def update_status(self):
-        """Update the current status of the LRO.
-        """
-        if self._continuation_url:
-            self._pipeline_response = await self.request_status(self._continuation_url)
-        else:
-            self._pipeline_response = await self.request_status(self._operation.get_polling_url())
-        _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
-        self._status = self._operation.get_status(self._pipeline_response)
 
     async def request_status(self, status_link):
         """Do a simple GET to this status link.

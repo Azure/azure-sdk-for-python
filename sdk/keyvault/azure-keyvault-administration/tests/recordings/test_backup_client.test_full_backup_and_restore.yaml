@@ -113,7 +113,7 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '294'
+      - '138'
       content-security-policy:
       - default-src 'self'
       content-type:
