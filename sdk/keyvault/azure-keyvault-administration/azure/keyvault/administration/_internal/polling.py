@@ -6,7 +6,14 @@ import base64
 import six
 from typing import TYPE_CHECKING
 
-from azure.core.polling.base_polling import LROBasePolling, OperationFailed, OperationResourcePolling
+from azure.core.exceptions import HttpResponseError
+from azure.core.polling.base_polling import (
+    BadResponse,
+    BadStatus,
+    LROBasePolling,
+    OperationFailed,
+    OperationResourcePolling,
+)
 
 from .helpers import _failed, _get_retry_after, _raise_if_bad_http_status_and_method
 
@@ -67,6 +74,21 @@ class KeyVaultBackupClientPollingMethod(LROBasePolling):
         continuation_url = base64.b64decode(continuation_token.encode()).decode("ascii")
         return client, continuation_url, deserialization_callback
 
+    def run(self):
+        try:
+            self._poll()
+
+        except BadStatus as err:
+            self._status = "Failed"
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
+
+        except BadResponse as err:
+            self._status = "Failed"
+            raise HttpResponseError(response=self._pipeline_response.http_response, message=str(err), error=err)
+
+        except OperationFailed as err:
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
+
     def _poll(self):
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
@@ -112,9 +134,7 @@ class KeyVaultBackupClientPollingMethod(LROBasePolling):
         return self._timeout
 
     def _get_request_id(self):
-        return self._pipeline_response.http_response.request.headers[
-            "x-ms-client-request-id"
-        ]
+        return self._pipeline_response.http_response.request.headers["x-ms-client-request-id"]
 
     def request_status(self, status_link):
         """Do a simple GET to this status link.

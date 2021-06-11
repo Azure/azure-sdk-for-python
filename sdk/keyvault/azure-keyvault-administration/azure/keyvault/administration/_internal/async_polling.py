@@ -4,8 +4,9 @@
 # ------------------------------------
 import base64
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from azure.core.polling.base_polling import OperationFailed
+from azure.core.polling.base_polling import BadResponse, BadStatus, OperationFailed
 
 from .helpers import _failed, _get_retry_after, _raise_if_bad_http_status_and_method
 
@@ -49,6 +50,21 @@ class KeyVaultAsyncBackupClientPollingMethod(AsyncLROBasePolling):
 
         continuation_url = base64.b64decode(continuation_token.encode()).decode("ascii")
         return client, continuation_url, deserialization_callback
+
+    async def run(self):  # pylint:disable=invalid-overridden-method
+        try:
+            await self._poll()
+
+        except BadStatus as err:
+            self._status = "Failed"
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
+
+        except BadResponse as err:
+            self._status = "Failed"
+            raise HttpResponseError(response=self._pipeline_response.http_response, message=str(err), error=err)
+
+        except OperationFailed as err:
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
     async def _poll(self):  # pylint:disable=invalid-overridden-method
         """Poll status of operation so long as operation is incomplete and
@@ -95,9 +111,7 @@ class KeyVaultAsyncBackupClientPollingMethod(AsyncLROBasePolling):
         return self._timeout
 
     def _get_request_id(self):
-        return self._pipeline_response.http_response.request.headers[
-            "x-ms-client-request-id"
-        ]
+        return self._pipeline_response.http_response.request.headers["x-ms-client-request-id"]
 
     async def request_status(self, status_link):
         """Do a simple GET to this status link.
