@@ -25,8 +25,8 @@ from ._authentication._client_utils import (
     parse_connection_str,
     get_authentication_policy,
 )
-from ._authentication._user_credential import (
-    CommunicationTokenCredential,  # pylint: disable=unused-import
+from ._authentication._user_credential import (  # pylint: disable=unused-import
+    CommunicationTokenCredential,
 )
 from ._version import SDK_MONIKER
 
