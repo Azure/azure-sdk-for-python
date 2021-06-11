@@ -3,12 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import base64
-from typing import TYPE_CHECKING
 
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.polling.base_polling import OperationFailed
 
-if TYPE_CHECKING:
-    from typing import Optional
+from .helpers import _failed, _get_retry_after, _raise_if_bad_http_status_and_method
 
 
 class KeyVaultAsyncBackupClientPollingMethod(AsyncLROBasePolling):
@@ -23,7 +22,7 @@ class KeyVaultAsyncBackupClientPollingMethod(AsyncLROBasePolling):
             self._deserialization_callback = deserialization_callback
             self._operation = self._lro_algorithms[0]
             self._operation._async_url = initial_response  # pylint: disable=protected-access
-            self._status = "InProgress" # assume the operation is ongoing for now, so the actual status gets polled
+            self._status = "InProgress"  # assume the operation is ongoing for now, so the actual status gets polled
 
         else:
             super(KeyVaultAsyncBackupClientPollingMethod, self).initialize(
@@ -51,17 +50,54 @@ class KeyVaultAsyncBackupClientPollingMethod(AsyncLROBasePolling):
         continuation_url = base64.b64decode(continuation_token.encode()).decode("ascii")
         return client, continuation_url, deserialization_callback
 
-    def _parse_resource(self, pipeline_response):
-        # type: (PipelineResponseType) -> Optional[Any]
-        """Assuming this response is a resource, use the deserialization callback to parse it.
-        If body is empty, assuming no resource to return.
+    async def _poll(self):  # pylint:disable=invalid-overridden-method
+        """Poll status of operation so long as operation is incomplete and
+        we have an endpoint to query.
+
+        :param callable update_cmd: The function to call to retrieve the
+         latest status of the long running operation.
+        :raises: OperationFailed if operation status 'Failed' or 'Canceled'.
+        :raises: BadStatus if response status invalid.
+        :raises: BadResponse if response invalid.
         """
-        if pipeline_response is None:
+
+        while not self.finished():
+            await self._delay()
+            await self.update_status()
+
+        if _failed(self.status()):
+            raise OperationFailed("Operation failed or canceled")
+
+        final_get_url = self._operation.get_final_get_url(self._pipeline_response)
+        if final_get_url:
+            self._pipeline_response = await self.request_status(final_get_url)
+            _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
+
+    def resource(self):
+        try:
+            return super().resource()
+        except AttributeError:
             return None
-        return super(KeyVaultAsyncBackupClientPollingMethod, self)._parse_resource(pipeline_response)
+
+    async def _delay(self):  # pylint:disable=invalid-overridden-method
+        """Check for a 'retry-after' header to set timeout,
+        otherwise use configured timeout.
+        """
+        delay = self._extract_delay()
+        await self._sleep(delay)
 
     def _extract_delay(self):
-        return super(KeyVaultAsyncBackupClientPollingMethod, self)._extract_delay() or 0
+        if self._pipeline_response is None:
+            return 0
+        delay = _get_retry_after(self._pipeline_response)
+        if delay:
+            return delay
+        return self._timeout
+
+    def _get_request_id(self):
+        return self._pipeline_response.http_response.request.headers[
+            "x-ms-client-request-id"
+        ]
 
     async def request_status(self, status_link):
         """Do a simple GET to this status link.
