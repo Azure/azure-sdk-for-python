@@ -37,7 +37,7 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '235'
+      - '233'
       Content-Type:
       - application/json
       User-Agent:
@@ -100,7 +100,7 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '319'
+      - '317'
       Content-Type:
       - application/json
       User-Agent:
