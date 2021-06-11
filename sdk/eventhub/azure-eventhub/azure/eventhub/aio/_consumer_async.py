@@ -16,7 +16,7 @@ from uamqp import ReceiveClientAsync, Source
 from ._client_base_async import ConsumerProducerMixin
 from .._common import EventData
 from ..exceptions import _error_handler
-from .._utils import create_properties, trace_link_message, event_position_selector
+from .._utils import create_properties, event_position_selector
 from .._constants import CONSUMER_EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_SYMBOL
 
 if TYPE_CHECKING:
