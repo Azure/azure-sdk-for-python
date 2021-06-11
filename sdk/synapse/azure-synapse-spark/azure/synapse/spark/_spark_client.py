@@ -6,31 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
+from azure.synapse.spark.core.rest import _StreamContextManager
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Dict
 
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    from azure.synapse.spark.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import SparkClientConfiguration
-from .operations import SparkBatchOperations
-from .operations import SparkSessionOperations
-from . import models
 
 
 class SparkClient(object):
     """SparkClient.
 
-    :ivar spark_batch: SparkBatchOperations operations
-    :vartype spark_batch: azure.synapse.spark.operations.SparkBatchOperations
-    :ivar spark_session: SparkSessionOperations operations
-    :vartype spark_session: azure.synapse.spark.operations.SparkSessionOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
@@ -54,35 +49,54 @@ class SparkClient(object):
         self._config = SparkClientConfiguration(credential, endpoint, spark_pool_name, livy_api_version, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self._deserialize = Deserializer(client_models)
 
-        self.spark_batch = SparkBatchOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.spark_session = SparkSessionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-
-    def _send_request(self, http_request, **kwargs):
+    def send_request(self, request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        We have helper methods to create requests specific to this service in `azure.synapse.spark.rest`.
+        Use these helper methods to create the request you pass to this method. See our example below:
+
+        >>> from azure.synapse.spark.rest import build_get_spark_batch_jobs_request
+        >>> request = build_get_spark_batch_jobs_request(from_parameter, size, detailed)
+        <HttpRequest [GET], url: '/batches'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        For advanced cases, you can also create your own :class:`~azure.synapse.spark.core.rest.HttpRequest`
+        and pass it in.
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.synapse.spark.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.synapse.spark.core.rest.HttpResponse
         """
+        request_copy = deepcopy(request)
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'livyApiVersion': self._serialize.url("self._config.livy_api_version", self._config.livy_api_version, 'str', skip_quote=True),
             'sparkPoolName': self._serialize.url("self._config.spark_pool_name", self._config.spark_pool_name, 'str', skip_quote=True),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        if kwargs.pop("stream", False):
+            return _StreamContextManager(
+                client=self._client._pipeline,
+                request=request_copy,
+            )
+        pipeline_response = self._client._pipeline.run(request_copy._internal_request, **kwargs)
+        response = HttpResponse(
+            status_code=pipeline_response.http_response.status_code,
+            request=request_copy,
+            _internal_response=pipeline_response.http_response
+        )
+        response.read()
+        return response
 
     def close(self):
         # type: () -> None
