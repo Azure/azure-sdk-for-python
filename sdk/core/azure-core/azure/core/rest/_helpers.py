@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import os
 import codecs
 from enum import Enum
 from inspect import isgenerator
@@ -40,6 +41,7 @@ from typing import (
     Dict,
     Iterable,
     Iterator,
+    cast,
 )
 import xml.etree.ElementTree as ET
 import six
@@ -237,11 +239,35 @@ def _verify_data_object(name, value):
         )
     if value is not None and not isinstance(value, (str, bytes, int, float)):
         raise TypeError(
-            f"Invalid type for value. Expected primitive type, got {type(value)}: {value!r}"
+            "Invalid type for value. Expected primitive type, got {}: {}".format(
+                type(name), name
+            )
         )
 
+def _format_data(data):
+    # type: (Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]
+    """Format field data according to whether it is a stream or
+    a string for a form-data request.
+
+    :param data: The request field data.
+    :type data: str or file-like object.
+    """
+    if hasattr(data, "read"):
+        data = cast(IO, data)
+        data_name = None
+        try:
+            if data.name[0] != "<" and data.name[-1] != ">":
+                data_name = os.path.basename(data.name)
+        except (AttributeError, TypeError):
+            pass
+        return (data_name, data, "application/octet-stream")
+    return (None, cast(str, data))
+
 def set_multipart_body(data, files):
-    return {}, MultipartHolder(data=data, files=files)
+    formatted_files = {
+        f: _format_data(d) for f, d in files.items() if d is not None
+    }
+    return {}, MultipartHolder(data=data, files=formatted_files)
 
 def set_urlencoded_body(data):
     body = {}

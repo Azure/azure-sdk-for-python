@@ -187,10 +187,7 @@ class PipelineClient(PipelineClientBase):
         pipeline_response = self._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         if return_pipeline_response:
             return pipeline_response
-        response = HttpResponse(
-            request=request,
-            _internal_response=pipeline_response.http_response,
-        )
+        response = pipeline_response.http_response
         if not stream:
             response.read()
         return response

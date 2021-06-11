@@ -11,7 +11,7 @@ def _assert_stream_state(response, open):
     # if open is true, check the stream is open.
     # if false, check if everything is closed
     checks = [
-        response._internal_response.internal_response._content_consumed,
+        response.internal_response._content_consumed,
         response.is_closed,
         response.is_stream_consumed
     ]
@@ -25,8 +25,14 @@ def test_iter_raw(client):
     with client.send_request(request, stream=True) as response:
         raw = b""
         for part in response.iter_raw():
+            assert not response.internal_response._content_consumed
+            assert not response.is_closed
+            assert response.is_stream_consumed  # we follow httpx behavior here
             raw += part
         assert raw == b"Hello, world!"
+    assert response.internal_response._content_consumed
+    assert response.is_closed
+    assert response.is_stream_consumed
 
 def test_iter_raw_on_iterable(client):
     request = HttpRequest("GET", "http://localhost:5000/streams/iterable")
@@ -86,9 +92,13 @@ def test_iter_bytes(client):
     with client.send_request(request, stream=True) as response:
         raw = b""
         for chunk in response.iter_bytes():
-            _assert_stream_state(response, open=True)
+            assert not response.internal_response._content_consumed
+            assert not response.is_closed
+            assert response.is_stream_consumed  # we follow httpx behavior here
             raw += chunk
-        _assert_stream_state(response, open=False)
+        assert response.internal_response._content_consumed
+        assert response.is_closed
+        assert response.is_stream_consumed
         assert raw == b"Hello, world!"
 
 def test_iter_bytes_with_chunk_size(client):
@@ -159,6 +169,8 @@ def test_cannot_read_after_stream_consumed(client):
         content = b""
         for part in response.iter_bytes():
             content += part
+
+        assert content == b"Hello, world!"
 
         with pytest.raises(StreamConsumedError) as ex:
             response.read()

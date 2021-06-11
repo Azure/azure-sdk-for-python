@@ -562,7 +562,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         :returns: A dict or XML tree, depending of the mime-type
         """
         # Try to use content-type from headers if available
-        if response.content_type:
+        if hasattr(response, "content_type") and response.content_type:
             mime_type = response.content_type.split(";")[0].strip().lower()
         # Ouch, this server did not declare what it sent...
         # Let's guess it's JSON...
@@ -606,14 +606,13 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         if response.context.options.get("stream", True):
             return
 
-        response_encoding = request.context.get('response_encoding')
+        # response_encoding = request.context.get('response_encoding')
 
-        deserialized = self.deserialize_from_http_generics(
-            response.http_response,
-            response_encoding
-        )
-        response.context[self.CONTEXT_NAME] = deserialized
-        response.http_response._json = deserialized
+        # deserialized = self.deserialize_from_http_generics(
+        #     response.http_response,
+        #     response_encoding
+        # )
+        # response.context[self.CONTEXT_NAME] = deserialized
 
 
 class ProxyPolicy(SansIOHTTPPolicy):

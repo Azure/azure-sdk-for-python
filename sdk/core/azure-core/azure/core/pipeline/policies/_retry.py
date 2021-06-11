@@ -258,19 +258,19 @@ class RetryPolicyBase(object):
         if self.is_exhausted(settings):
             return False
 
-        if response.http_request.body and hasattr(response.http_request.body, 'read'):
+        if response.http_request.content and hasattr(response.http_request.content, 'read'):
             if 'body_position' not in settings:
                 return False
             try:
                 # attempt to rewind the body to the initial position
-                response.http_request.body.seek(settings['body_position'], SEEK_SET)
+                response.http_request.content.seek(settings['body_position'], SEEK_SET)
             except (UnsupportedOperation, ValueError, AttributeError):
                 # if body is not seekable, then retry would not work
                 return False
         file_positions = settings.get('file_positions')
-        if response.http_request.files and file_positions:
+        if response.http_request._files and file_positions:
             try:
-                for value in response.http_request.files.values():
+                for value in response.http_request._files.values():
                     file_name, body = value[0], value[1]
                     if file_name in file_positions:
                         position = file_positions[file_name]
@@ -316,7 +316,7 @@ class RetryPolicyBase(object):
     def _configure_positions(self, request, retry_settings):
         body_position = None
         file_positions = None
-        if request.http_request._content and hasattr(request.http_request.body, 'read'):
+        if request.http_request._content and hasattr(request.http_request._content, 'read'):
             try:
                 body_position = request.http_request.body.tell()
             except (AttributeError, UnsupportedOperation):

@@ -216,7 +216,7 @@ class HttpRequest:
     #         _internal_request=self._internal_request.__deepcopy__(memo)
     #     )
 
-class _HttpResponseBase:
+class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
     """Base class for HttpResponse and AsyncHttpResponse.
 
     :keyword request: The request that resulted in this response.
@@ -244,51 +244,25 @@ class _HttpResponseBase:
         self,
         *,
         request: HttpRequest,
-        **kwargs
+        internal_response,
+        **kwargs  # pylint: disable=unused-argument
     ):
-        self._internal_response = kwargs.pop("_internal_response")  # type: _PipelineTransportHttpResponseBase
-        self._request = request
+        self.request = request
+        self.internal_response = internal_response
+        self.status_code = None
+        self.headers = {}
+        self.reason = None
         self.is_closed = False
         self.is_stream_consumed = False
         self._num_bytes_downloaded = 0
         self._content: Optional[bytes] = None
-
-    @property
-    def status_code(self) -> int:
-        """Returns the status code of the response"""
-        # only reason it's optional in Pipeline Transport
-        # HttpResponse is because we initialize it as None
-
-        # throwing to satisfy mypy
-        if self._internal_response.status_code is not None:
-            return self._internal_response.status_code
-        raise ValueError("status_code can not be None")
-
-    @status_code.setter
-    def status_code(self, val: int) -> None:
-        """Set the status code of the response"""
-        self._internal_response.status_code = val
-
-    @property
-    def headers(self) -> HeadersType:
-        """Returns the response headers"""
-        return self._internal_response.headers
-
-    @property
-    def reason(self) -> str:
-        """Returns the reason phrase for the response"""
-        # only reason it's optional in Pipeline Transport
-        # HtttpResponse is because we initialize it as None
-
-        # throwing to satisfy mypy
-        if self._internal_response.reason is not None:
-            return self._internal_response.reason
-        raise ValueError("status_code can not be None")
+        self._read_content = False
+        self.content_type = None
 
     @property
     def url(self) -> str:
         """Returns the URL that resulted in this response"""
-        return self._internal_response.request.url
+        return self.request.url
 
     def _get_charset_encoding(self) -> Optional[str]:
         content_type = self.headers.get("Content-Type")
@@ -321,24 +295,7 @@ class _HttpResponseBase:
         """Returns the response body as a string"""
         if not self._content:
             raise ResponseNotReadError()
-        return self._internal_response.text(encoding=self.encoding)
-
-    @property
-    def request(self) -> HttpRequest:
-        if self._request:
-            return self._request
-        raise RuntimeError(
-            "You are trying to access the 'request', but there is no request associated with this HttpResponse"
-        )
-
-    @request.setter
-    def request(self, val: HttpRequest) -> None:
-        self._request = val
-
-    @property
-    def content_type(self) -> Optional[str]:
-        """Content Type of the response"""
-        return self._internal_response.content_type or self.headers.get("Content-Type")
+        return self.internal_response.text
 
     @property
     def num_bytes_downloaded(self) -> int:
@@ -365,7 +322,7 @@ class _HttpResponseBase:
     @property
     def content(self) -> bytes:
         """Return the response's content in bytes."""
-        if not self._content:
+        if not self._read_content:
             raise ResponseNotReadError()
         return self._content
 
@@ -390,38 +347,25 @@ class HttpResponse(_HttpResponseBase):
 
     def close(self) -> None:
         self.is_closed = True
-        self._internal_response.internal_response.close()
+        self.internal_response.close()
 
     def __exit__(self, *args) -> None:
         self.is_closed = True
-        self._internal_response.internal_response.__exit__(*args)
+        self.internal_response.__exit__(*args)
 
     def read(self) -> bytes:
         """
         Read the response's bytes.
 
         """
-        if not self._content:
-            self._validate_streaming_access()
-            self._content: bytes = (
-                self._internal_response.body() or
-                b"".join(self.iter_raw())
-            )
-            self._close_stream()
-            return self._content
+        if not self._read_content:
+            self._content = b"".join(self.iter_bytes())
+            self._read_content = True
         return self._content
 
     def iter_bytes(self, chunk_size: int = None) -> Iterator[bytes]:
         """Iterate over the bytes in the response stream
         """
-        if self._content:
-            chunk_size = len(self._content) if chunk_size is None else chunk_size
-            for i in range(0, len(self._content), chunk_size):
-                yield self._content[i: i + chunk_size]
-
-        else:
-            for raw_bytes in self.iter_raw(chunk_size=chunk_size):
-                yield raw_bytes
 
     def iter_text(self, chunk_size: int = None) -> Iterator[str]:
         """Iterate over the response text
@@ -443,16 +387,6 @@ class HttpResponse(_HttpResponseBase):
     def iter_raw(self, chunk_size: int = None) -> Iterator[bytes]:
         """Iterate over the raw response bytes
         """
-        self._validate_streaming_access()
-        stream_download = self._internal_response.stream_download(  # type: ignore
-            None, chunk_size=chunk_size
-        )
-        for raw_bytes in stream_download:
-            self._num_bytes_downloaded += len(raw_bytes)
-            yield raw_bytes
-
-        self._close_stream()
-
 
 class AsyncHttpResponse(_HttpResponseBase):
 
@@ -467,8 +401,8 @@ class AsyncHttpResponse(_HttpResponseBase):
         """
         if not self._content:
             self._validate_streaming_access()
-            await self._internal_response.load_body()  # type: ignore
-            self._content = self._internal_response.body()
+            await self.internal_response.load_body()  # type: ignore
+            self._content = self.internal_response.body()
             await self._close_stream()
             return self._content
         return self._content
@@ -476,13 +410,6 @@ class AsyncHttpResponse(_HttpResponseBase):
     async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
         """Iterate over the bytes in the response stream
         """
-        if self._content:
-            chunk_size = len(self._content) if chunk_size is None else chunk_size
-            for i in range(0, len(self._content), chunk_size):
-                yield self._content[i: i + chunk_size]
-        else:
-            async for raw_bytes in self.iter_raw(chunk_size=chunk_size):
-                yield raw_bytes
 
     async def iter_text(self, chunk_size: int = None) -> AsyncIterator[str]:
         """Iterate over the response text
@@ -500,21 +427,12 @@ class AsyncHttpResponse(_HttpResponseBase):
     async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
         """Iterate over the raw response bytes
         """
-        self._validate_streaming_access()
-        stream_download = self._internal_response.stream_download(  # type: ignore
-            None, chunk_size=chunk_size
-        )
-        async for raw_bytes in stream_download:
-            self._num_bytes_downloaded += len(raw_bytes)
-            yield raw_bytes
-
-        await self._close_stream()
 
     async def close(self) -> None:
         self.is_closed = True
-        self._internal_response.internal_response.close()
+        self.internal_response.internal_response.close()
         await asyncio.sleep(0)
 
     async def __aexit__(self, *args) -> None:
         self.is_closed = True
-        await self._internal_response.internal_response.__aexit__(*args)
+        await self.internal_response.internal_response.__aexit__(*args)

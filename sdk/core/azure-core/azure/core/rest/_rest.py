@@ -180,7 +180,7 @@ class HttpRequest(object):
     #         _internal_request=self._internal_request.__deepcopy__(memo)
     #     )
 
-class HttpResponse(object):
+class HttpResponse(object):  # pylint: disable=too-many-instance-attributes
     """Class for HttpResponse.
 
     :keyword request: The request that resulted in this response.
@@ -202,56 +202,23 @@ class HttpResponse(object):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        self._internal_response = kwargs.pop("_internal_response")  # type: _PipelineTransportHttpResponse
-        self._request = kwargs.pop("request")
+        self.request = kwargs.pop("request")
+        self.internal_response = kwargs.pop("internal_response")
+        self.status_code = None
+        self.headers = {}
+        self.reason = None
         self.is_closed = False
         self.is_stream_consumed = False
         self._num_bytes_downloaded = 0
         self._content = None  # type: Optional[bytes]
-
-    @property
-    def status_code(self):
-        # type: (...) -> int
-        """Returns the status code of the response"""
-        if self._internal_response.status_code is not None:
-            return self._internal_response.status_code
-        raise ValueError("status code can not be None")
-
-    @status_code.setter
-    def status_code(self, val):
-        # type: (int) -> None
-        """Set the status code of the response"""
-        self._internal_response.status_code = val
-
-    @property
-    def headers(self):
-        # type: (...) -> HeadersType
-        """Returns the response headers"""
-        return self._internal_response.headers
-
-    @property
-    def reason(self):
-        # type: (...) -> str
-        """Returns the reason phrase for the response"""
-        if self._internal_response.reason is not None:
-            return self._internal_response.reason
-        raise ValueError("reason can not be None")
-
-
-    @property
-    def content(self):
-        # type: (...) -> bytes
-        """Returns the response content in bytes"""
-        if not self._content:
-            raise ResponseNotReadError()
-        return self._content
-
+        self._read_content = False
+        self.content_type = None
 
     @property
     def url(self):
         # type: (...) -> str
         """Returns the URL that resulted in this response"""
-        return self._internal_response.request.url
+        return self.request.url
 
     def _get_charset_encoding(self):
         content_type = self.headers.get("Content-Type")
@@ -288,42 +255,13 @@ class HttpResponse(object):
         """Returns the response body as a string"""
         if not self._content:
             raise ResponseNotReadError()
-        return self._internal_response.text(encoding=self.encoding)
-
-    @property
-    def request(self):
-        # type: (...) -> HttpRequest
-        if self._request:
-            return self._request
-        raise RuntimeError(
-            "You are trying to access the 'request', but there is no request associated with this HttpResponse"
-        )
-
-    @request.setter
-    def request(self, val):
-        # type: (HttpRequest) -> None
-        self._request = val
-
-    @property
-    def content_type(self):
-        # type: (...) -> Optional[str]
-        """Content Type of the response"""
-        return self._internal_response.content_type or self.headers.get("Content-Type")
+        return self.internal_response.text
 
     @property
     def num_bytes_downloaded(self):
         # type: (...) -> int
         """See how many bytes of your stream response have been downloaded"""
         return self._num_bytes_downloaded
-
-    @property
-    def is_error(self):
-        # type: (...) -> bool
-        """See whether your HttpResponse is an error.
-
-        Use .raise_for_status() if you want to raise if this response is an error.
-        """
-        return self.status_code < 400
 
     def json(self):
         # type: (...) -> Any
@@ -343,6 +281,15 @@ class HttpResponse(object):
         """
         if self.status_code >= 400:
             raise HttpResponseError(response=self)
+
+    @property
+    def content(self):
+        # type: (...) -> bytes
+        """Return the response's content in bytes."""
+        if not self._read_content:
+            raise ResponseNotReadError()
+        return self._content
+
 
     def __repr__(self):
         # type: (...) -> str
@@ -367,7 +314,7 @@ class HttpResponse(object):
     def close(self):
         # type: (...) -> None
         self.is_closed = True
-        self._internal_response.internal_response.close()
+        self.internal_response.close()
 
     def __exit__(self, *args):
         # type: (...) -> None
@@ -379,27 +326,15 @@ class HttpResponse(object):
         Read the response's bytes.
 
         """
-        if not self._content:
-            self._validate_streaming_access()
-            self._content = (
-                self._internal_response.body() or
-                b"".join(self.iter_raw())
-            )
-            self._close_stream()
-            return self._content
+        if not self._read_content:
+            self._content = b"".join(self.iter_bytes())
+            self._read_content = True
         return self._content
 
     def iter_bytes(self, chunk_size=None):
         # type: (int) -> Iterator[bytes]
         """Iterate over the bytes in the response stream
         """
-        if self._content:
-            chunk_size = len(self._content) if chunk_size is None else chunk_size
-            for i in range(0, len(self._content), chunk_size):
-                yield self._content[i: i + chunk_size]
-        else:
-            for raw_bytes in self.iter_raw(chunk_size=chunk_size):
-                yield raw_bytes
 
     def iter_text(self, chunk_size=None):
         # type: (int) -> Iterator[str]
@@ -425,10 +360,3 @@ class HttpResponse(object):
         # type: (int) -> Iterator[bytes]
         """Iterate over the raw response bytes
         """
-        self._validate_streaming_access()
-        stream_download = self._internal_response.stream_download(None, chunk_size=chunk_size)
-        for raw_bytes in stream_download:
-            self._num_bytes_downloaded += len(raw_bytes)
-            yield raw_bytes
-
-        self._close_stream()

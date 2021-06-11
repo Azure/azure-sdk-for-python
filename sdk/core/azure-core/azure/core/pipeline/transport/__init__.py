@@ -26,14 +26,13 @@
 
 import sys
 from ._base import HttpTransport, HttpRequest, HttpResponse
-from ._requests_basic import RequestsTransport, RequestsTransportResponse
+from ._requests_basic import RequestsTransport
 
 __all__ = [
     'HttpTransport',
     'HttpRequest',
     'HttpResponse',
     'RequestsTransport',
-    'RequestsTransportResponse',
 ]
 
 # pylint: disable=unused-import, redefined-outer-name

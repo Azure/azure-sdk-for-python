@@ -40,6 +40,7 @@ except (SyntaxError, ImportError):
         HttpRequest,
         HttpResponse,
     )
+from ._requests_basic import RequestsTransportResponse
 
 __all__ = [
     "HttpRequest",
@@ -48,6 +49,7 @@ __all__ = [
     "ResponseNotReadError",
     "ResponseClosedError",
     "RequestNotReadError",
+    "RequestsTransportResponse",
 ]
 
 try:

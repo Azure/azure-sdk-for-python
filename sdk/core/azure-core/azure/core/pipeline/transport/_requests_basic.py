@@ -127,8 +127,7 @@ class StreamDownloadGenerator(object):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        chunk_size = kwargs.pop("chunk_size", None)
-        self.block_size = response.block_size if chunk_size is None else chunk_size
+        self.block_size = kwargs.pop("chunk_size", None)
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
@@ -162,13 +161,13 @@ class StreamDownloadGenerator(object):
     next = __next__  # Python 2 compatibility.
 
 
-class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
-    """Streaming of data from the response.
-    """
-    def stream_download(self, pipeline, **kwargs):
-        # type: (PipelineType, **Any) -> Iterator[bytes]
-        """Generator for streaming request body data."""
-        return StreamDownloadGenerator(pipeline, self, **kwargs)
+# class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
+#     """Streaming of data from the response.
+#     """
+#     def stream_download(self, pipeline, **kwargs):
+#         # type: (PipelineType, **Any) -> Iterator[bytes]
+#         """Generator for streaming request body data."""
+#         return StreamDownloadGenerator(pipeline, self, **kwargs)
 
 
 class RequestsTransport(HttpTransport):
@@ -290,4 +289,10 @@ class RequestsTransport(HttpTransport):
 
         if error:
             raise error
-        return RequestsTransportResponse(request, response, self.connection_config.data_block_size)
+
+        from azure.core.rest import RequestsTransportResponse
+        return RequestsTransportResponse(
+            request=request,
+            internal_response=response,
+            # self.connection_config.data_block_size
+        )
