@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import base64
-import six
 from typing import TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
@@ -14,6 +13,7 @@ from azure.core.polling.base_polling import (
     OperationFailed,
     OperationResourcePolling,
 )
+import six
 
 from .helpers import _failed, _get_retry_after, _raise_if_bad_http_status_and_method
 
