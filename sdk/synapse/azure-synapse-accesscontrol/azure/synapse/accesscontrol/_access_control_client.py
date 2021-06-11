@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
@@ -13,24 +14,17 @@ from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Dict
 
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    from azure.synapse.accesscontrol.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import AccessControlClientConfiguration
-from .operations import RoleAssignmentsOperations
-from .operations import RoleDefinitionsOperations
-from . import models
 
 
 class AccessControlClient(object):
     """AccessControlClient.
 
-    :ivar role_assignments: RoleAssignmentsOperations operations
-    :vartype role_assignments: azure.synapse.accesscontrol.operations.RoleAssignmentsOperations
-    :ivar role_definitions: RoleDefinitionsOperations operations
-    :vartype role_definitions: azure.synapse.accesscontrol.operations.RoleDefinitionsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
@@ -48,33 +42,40 @@ class AccessControlClient(object):
         self._config = AccessControlClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self._deserialize = Deserializer(client_models)
 
-        self.role_assignments = RoleAssignmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.role_definitions = RoleDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-
-    def _send_request(self, http_request, **kwargs):
+    def send_request(self, request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        We have helper methods to create requests specific to this service in `azure.synapse.accesscontrol.rest`.
+        Use these helper methods to create the request you pass to this method. See our example below:
+
+        >>> from azure.synapse.accesscontrol.rest import build_check_principal_access_request
+        >>> request = build_check_principal_access_request(json, content)
+        <HttpRequest [POST], url: '/checkAccessSynapseRbac'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        For advanced cases, you can also create your own :class:`~azure.synapse.accesscontrol.core.rest.HttpRequest`
+        and pass it in.
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.synapse.accesscontrol.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.synapse.accesscontrol.core.rest.HttpResponse
         """
+        request_copy = deepcopy(request)
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None
