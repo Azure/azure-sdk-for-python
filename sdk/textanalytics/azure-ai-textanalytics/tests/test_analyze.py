@@ -27,6 +27,7 @@ from azure.ai.textanalytics import (
     VERSION,
     TextAnalyticsApiVersion,
     AnalyzeActionsType,
+    PiiEntityCategoryType
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -698,3 +699,36 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
             raw_response_hook=callback,
         ).result()
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_pii_action_categories_filter(self, client):
+
+        docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
+                {"id": "2",
+                 "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
+                {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
+
+        actions = [
+            RecognizePiiEntitiesAction(
+                categories_filter=[
+                    PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER,
+                    PiiEntityCategoryType.ABA_ROUTING_NUMBER,
+                    PiiEntityCategoryType.BRCPF_NUMBER
+                ]
+            ),
+        ]
+
+        result = client.begin_analyze_actions(documents=docs, actions=actions, polling_interval=self._interval()).result()
+        action_results = list(result)
+        assert len(action_results) == 1
+        action_result = action_results[0]
+        assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
+        assert len(action_result.document_results) == len(docs)
+
+        assert action_result.document_results[0].entities[0].text == "859-98-0987"
+        assert action_result.document_results[0].entities[0].category == PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER
+        assert action_result.document_results[1].entities[0].text == "111000025"
+        assert action_result.document_results[1].entities[0].category == PiiEntityCategoryType.ABA_ROUTING_NUMBER
+        assert action_result.document_results[2].entities[0].text == "998.214.865-68"
+        assert action_result.document_results[2].entities[0].category == PiiEntityCategoryType.BRCPF_NUMBER
