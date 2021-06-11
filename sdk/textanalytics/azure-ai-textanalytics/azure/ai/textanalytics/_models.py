@@ -11,7 +11,7 @@ from ._generated.models import (
 )
 
 from ._generated.v3_0 import models as _v3_0_models
-from ._generated.v3_1 import models as _latest_preview_models
+from ._generated.v3_1 import models as _v3_1_models
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
@@ -1466,8 +1466,8 @@ class RecognizeEntitiesAction(DictMixin):
             .format(self.model_version, self.string_index_type, self.disable_service_logs)[:1024]
 
     def to_generated(self):
-        return _latest_preview_models.EntitiesTask(
-            parameters=_latest_preview_models.EntitiesTaskParameters(
+        return _v3_1_models.EntitiesTask(
+            parameters=_v3_1_models.EntitiesTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
@@ -1537,8 +1537,8 @@ class AnalyzeSentimentAction(DictMixin):
         )[:1024]
 
     def to_generated(self):
-        return _latest_preview_models.SentimentAnalysisTask(
-            parameters=_latest_preview_models.SentimentAnalysisTaskParameters(
+        return _v3_1_models.SentimentAnalysisTask(
+            parameters=_v3_1_models.SentimentAnalysisTaskParameters(
                 model_version=self.model_version,
                 opinion_mining=self.show_opinion_mining,
                 string_index_type=self.string_index_type,
@@ -1558,6 +1558,11 @@ class RecognizePiiEntitiesAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
+    :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
+        the specific PII entity categories you want to filter out. For example, if you only want to filter out
+        U.S. social security numbers in a document, you can pass in
+        `[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
+    :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
@@ -1590,23 +1595,26 @@ class RecognizePiiEntitiesAction(DictMixin):
     def __init__(self, **kwargs):
         self.model_version = kwargs.get("model_version", "latest")
         self.domain_filter = kwargs.get("domain_filter", None)
+        self.categories_filter = kwargs.get("categories_filter", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
         self.disable_service_logs = kwargs.get("disable_service_logs", False)
 
     def __repr__(self, **kwargs):
-        return "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, string_index_type={}, "\
-            "disable_service_logs={}".format(
+        return "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, categories_filter={}, "\
+               "string_index_type={}, disable_service_logs={}".format(
             self.model_version,
             self.domain_filter,
+            self.categories_filter,
             self.string_index_type,
             self.disable_service_logs,
         )[:1024]
 
     def to_generated(self):
-        return _latest_preview_models.PiiTask(
-            parameters=_latest_preview_models.PiiTaskParameters(
+        return _v3_1_models.PiiTask(
+            parameters=_v3_1_models.PiiTaskParameters(
                 model_version=self.model_version,
                 domain=self.domain_filter,
+                pii_categories=self.categories_filter,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs
             )
@@ -1650,8 +1658,8 @@ class ExtractKeyPhrasesAction(DictMixin):
             .format(self.model_version, self.disable_service_logs)[:1024]
 
     def to_generated(self):
-        return _latest_preview_models.KeyPhrasesTask(
-            parameters=_latest_preview_models.KeyPhrasesTaskParameters(
+        return _v3_1_models.KeyPhrasesTask(
+            parameters=_v3_1_models.KeyPhrasesTaskParameters(
                 model_version=self.model_version,
                 logging_opt_out=self.disable_service_logs,
             )
@@ -1706,8 +1714,8 @@ class RecognizeLinkedEntitiesAction(DictMixin):
             )[:1024]
 
     def to_generated(self):
-        return _latest_preview_models.EntityLinkingTask(
-            parameters=_latest_preview_models.EntityLinkingTaskParameters(
+        return _v3_1_models.EntityLinkingTask(
+            parameters=_v3_1_models.EntityLinkingTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
