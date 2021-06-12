@@ -40,9 +40,6 @@ from typing import (
 
 from azure.core.exceptions import HttpResponseError
 
-from azure.core.pipeline.transport._base import (
-    _HttpResponseBase as _PipelineTransportHttpResponseBase
-)
 from .._utils import _case_insensitive_dict
 
 from ._helpers import (
@@ -258,6 +255,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         self._content: Optional[bytes] = None
         self._read_content = False
         self.content_type = None
+        self._connection_data_block_size = None
 
     @property
     def url(self) -> str:
@@ -399,13 +397,17 @@ class AsyncHttpResponse(_HttpResponseBase):
         Read the response's bytes.
 
         """
-        if not self._content:
-            self._validate_streaming_access()
-            await self.internal_response.load_body()  # type: ignore
-            self._content = self.internal_response.body()
-            await self._close_stream()
-            return self._content
+        if not self._read_content:
+            parts = []
+            async for part in self.iter_bytes():
+                parts.append(part)
+            self._content = b"".join(parts)
+            self._read_content = True
         return self._content
+
+    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
+        """Iterate over the raw response bytes
+        """
 
     async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
         """Iterate over the bytes in the response stream
@@ -424,15 +426,11 @@ class AsyncHttpResponse(_HttpResponseBase):
             for line in lines:
                 yield line
 
-    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
-        """Iterate over the raw response bytes
-        """
-
     async def close(self) -> None:
         self.is_closed = True
-        self.internal_response.internal_response.close()
+        self.internal_response.close()
         await asyncio.sleep(0)
 
     async def __aexit__(self, *args) -> None:
         self.is_closed = True
-        await self.internal_response.internal_response.__aexit__(*args)
+        await self.internal_response.__aexit__(*args)

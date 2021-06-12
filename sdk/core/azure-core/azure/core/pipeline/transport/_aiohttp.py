@@ -122,16 +122,16 @@ class AioHttpTransport(AsyncHttpTransport):
         return verify
 
     def _get_request_data(self, request): #pylint: disable=no-self-use
-        if request.files:
+        if request._files:
             form_data = aiohttp.FormData()
-            for form_file, data in request.files.items():
+            for form_file, data in request._files.items():
                 content_type = data[2] if len(data) > 2 else None
                 try:
                     form_data.add_field(form_file, data[1], filename=data[0], content_type=content_type)
                 except IndexError:
                     raise ValueError("Invalid formdata formatting: {}".format(data))
             return form_data
-        return request.data
+        return request._data
 
     async def send(self, request: HttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
         """Send the request using this HTTP sender.
@@ -174,7 +174,7 @@ class AioHttpTransport(AsyncHttpTransport):
         # If we know for sure there is not body, disable "auto content type"
         # Otherwise, aiohttp will send "application/octect-stream" even for empty POST request
         # and that break services like storage signature
-        if not request.data and not request.files:
+        if not request._data and not request._files:
             config['skip_auto_headers'] = ['Content-Type']
         try:
             stream_response = config.pop("stream", False)
@@ -190,11 +190,11 @@ class AioHttpTransport(AsyncHttpTransport):
                 allow_redirects=False,
                 **config
             )
-            response = AioHttpTransportResponse(request, result,
-                                                self.connection_config.data_block_size,
-                                                decompress=not auto_decompress)
+            from azure.core.rest import AioHttpTransportResponse
+            response = AioHttpTransportResponse(request=request, internal_response=result)
+            response._connection_data_block_size = self.connection_config.data_block_size
             if not stream_response:
-                await response.load_body()
+                await response.read()
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
@@ -217,7 +217,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = chunk_size if chunk_size is not None else response.block_size
+        self.block_size = chunk_size or response._connection_data_block_size
         self._decompress = decompress
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
         self._decompressor = None
@@ -253,110 +253,110 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             self.response.internal_response.close()
             raise
 
-class AioHttpTransportResponse(AsyncHttpResponse):
-    """Methods for accessing response body data.
+# class AioHttpTransportResponse(AsyncHttpResponse):
+#     """Methods for accessing response body data.
 
-    :param request: The HttpRequest object
-    :type request: ~azure.core.pipeline.transport.HttpRequest
-    :param aiohttp_response: Returned from ClientSession.request().
-    :type aiohttp_response: aiohttp.ClientResponse object
-    :param block_size: block size of data sent over connection.
-    :type block_size: int
-    :param bool decompress: If True which is default, will attempt to decode the body based
-            on the *content-encoding* header.
-    """
-    def __init__(self, request: HttpRequest,
-                 aiohttp_response: aiohttp.ClientResponse,
-                 block_size=None, *, decompress=True) -> None:
-        super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
-        # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
-        self.status_code = aiohttp_response.status
-        self.headers = CIMultiDict(aiohttp_response.headers)
-        self.reason = aiohttp_response.reason
-        self.content_type = aiohttp_response.headers.get('content-type')
-        self._body = None
-        self._decompressed_body = None
-        self._decompress = decompress
+#     :param request: The HttpRequest object
+#     :type request: ~azure.core.pipeline.transport.HttpRequest
+#     :param aiohttp_response: Returned from ClientSession.request().
+#     :type aiohttp_response: aiohttp.ClientResponse object
+#     :param block_size: block size of data sent over connection.
+#     :type block_size: int
+#     :param bool decompress: If True which is default, will attempt to decode the body based
+#             on the *content-encoding* header.
+#     """
+#     def __init__(self, request: HttpRequest,
+#                  aiohttp_response: aiohttp.ClientResponse,
+#                  block_size=None, *, decompress=True) -> None:
+#         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
+#         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
+#         self.status_code = aiohttp_response.status
+#         self.headers = CIMultiDict(aiohttp_response.headers)
+#         self.reason = aiohttp_response.reason
+#         self.content_type = aiohttp_response.headers.get('content-type')
+#         self._body = None
+#         self._decompressed_body = None
+#         self._decompress = decompress
 
-    def body(self) -> bytes:
-        """Return the whole body as bytes in memory.
-        """
-        if self._body is None:
-            raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
-        if not self._decompress:
-            return self._body
-        enc = self.headers.get('Content-Encoding')
-        if not enc:
-            return self._body
-        enc = enc.lower()
-        if enc in ("gzip", "deflate"):
-            if self._decompressed_body:
-                return self._decompressed_body
-            import zlib
-            zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
-            decompressor = zlib.decompressobj(wbits=zlib_mode)
-            self._decompressed_body = decompressor.decompress(self._body)
-            return self._decompressed_body
-        return self._body
+#     def body(self) -> bytes:
+#         """Return the whole body as bytes in memory.
+#         """
+#         if self._body is None:
+#             raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
+#         if not self._decompress:
+#             return self._body
+#         enc = self.headers.get('Content-Encoding')
+#         if not enc:
+#             return self._body
+#         enc = enc.lower()
+#         if enc in ("gzip", "deflate"):
+#             if self._decompressed_body:
+#                 return self._decompressed_body
+#             import zlib
+#             zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
+#             decompressor = zlib.decompressobj(wbits=zlib_mode)
+#             self._decompressed_body = decompressor.decompress(self._body)
+#             return self._decompressed_body
+#         return self._body
 
-    def text(self, encoding: Optional[str] = None) -> str:
-        """Return the whole body as a string.
+#     def text(self, encoding: Optional[str] = None) -> str:
+#         """Return the whole body as a string.
 
-        If encoding is not provided, rely on aiohttp auto-detection.
+#         If encoding is not provided, rely on aiohttp auto-detection.
 
-        :param str encoding: The encoding to apply.
-        """
-        # super().text detects charset based on self._body() which is compressed
-        # implement the decoding explicitly here
-        body = self.body()
+#         :param str encoding: The encoding to apply.
+#         """
+#         # super().text detects charset based on self._body() which is compressed
+#         # implement the decoding explicitly here
+#         body = self.body()
 
-        ctype = self.headers.get(aiohttp.hdrs.CONTENT_TYPE, "").lower()
-        mimetype = aiohttp.helpers.parse_mimetype(ctype)
+#         ctype = self.headers.get(aiohttp.hdrs.CONTENT_TYPE, "").lower()
+#         mimetype = aiohttp.helpers.parse_mimetype(ctype)
 
-        encoding = mimetype.parameters.get("charset")
-        if encoding:
-            try:
-                codecs.lookup(encoding)
-            except LookupError:
-                encoding = None
-        if not encoding:
-            if mimetype.type == "application" and (
-                    mimetype.subtype == "json" or mimetype.subtype == "rdap"
-            ):
-                # RFC 7159 states that the default encoding is UTF-8.
-                # RFC 7483 defines application/rdap+json
-                encoding = "utf-8"
-            elif body is None:
-                raise RuntimeError(
-                    "Cannot guess the encoding of a not yet read body"
-                )
-            else:
-                encoding = chardet.detect(body)["encoding"]
-        if not encoding:
-            encoding = "utf-8-sig"
+#         encoding = mimetype.parameters.get("charset")
+#         if encoding:
+#             try:
+#                 codecs.lookup(encoding)
+#             except LookupError:
+#                 encoding = None
+#         if not encoding:
+#             if mimetype.type == "application" and (
+#                     mimetype.subtype == "json" or mimetype.subtype == "rdap"
+#             ):
+#                 # RFC 7159 states that the default encoding is UTF-8.
+#                 # RFC 7483 defines application/rdap+json
+#                 encoding = "utf-8"
+#             elif body is None:
+#                 raise RuntimeError(
+#                     "Cannot guess the encoding of a not yet read body"
+#                 )
+#             else:
+#                 encoding = chardet.detect(body)["encoding"]
+#         if not encoding:
+#             encoding = "utf-8-sig"
 
-        return body.decode(encoding)
+#         return body.decode(encoding)
 
-    async def load_body(self) -> None:
-        """Load in memory the body, so it could be accessible from sync methods."""
-        self._body = await self.internal_response.read()
+#     async def load_body(self) -> None:
+#         """Load in memory the body, so it could be accessible from sync methods."""
+#         self._body = await self.internal_response.read()
 
-    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
-        """Generator for streaming response body data.
+#     def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
+#         """Generator for streaming response body data.
 
-        :param pipeline: The pipeline object
-        :type pipeline: azure.core.pipeline.Pipeline
-        :keyword bool decompress: If True which is default, will attempt to decode the body based
-            on the *content-encoding* header.
-        """
-        return AioHttpStreamDownloadGenerator(pipeline, self, **kwargs)
+#         :param pipeline: The pipeline object
+#         :type pipeline: azure.core.pipeline.Pipeline
+#         :keyword bool decompress: If True which is default, will attempt to decode the body based
+#             on the *content-encoding* header.
+#         """
+#         return AioHttpStreamDownloadGenerator(pipeline, self, **kwargs)
 
-    def __getstate__(self):
-        # Be sure body is loaded in memory, otherwise not pickable and let it throw
-        self.body()
+#     def __getstate__(self):
+#         # Be sure body is loaded in memory, otherwise not pickable and let it throw
+#         self.body()
 
-        state = self.__dict__.copy()
-        # Remove the unpicklable entries.
-        state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
-        state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
-        return state
+#         state = self.__dict__.copy()
+#         # Remove the unpicklable entries.
+#         state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
+#         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
+#         return state

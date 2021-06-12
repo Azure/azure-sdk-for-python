@@ -291,8 +291,11 @@ class RequestsTransport(HttpTransport):
             raise error
 
         from azure.core.rest import RequestsTransportResponse
-        return RequestsTransportResponse(
+        response = RequestsTransportResponse(
             request=request,
             internal_response=response,
             # self.connection_config.data_block_size
         )
+        if not kwargs.get("stream", False):
+            response.read()
+        return response

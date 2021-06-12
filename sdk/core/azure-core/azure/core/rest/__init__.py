@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+import sys
 from ._helpers import (
     RequestNotReadError,
     ResponseNotReadError,
@@ -57,11 +57,25 @@ try:
         AsyncHttpResponse,
         _AsyncContextManager,
     )
-
     __all__.extend([
         "AsyncHttpResponse",
         "_AsyncContextManager",
     ])
+
+    if sys.version_info >= (3, 7):
+        __all__.extend([
+            'AioHttpTransportResponse',
+        ])
+
+        def __getattr__(name):
+            if name == "AioHttpTransportResponse":
+                try:
+                    from ._aiohttp import AioHttpTransportResponse
+                    return AioHttpTransportResponse
+                except ImportError:
+                    raise ImportError("aiohttp package is not installed")
+            return name
+
 except (SyntaxError, ImportError):
     pass
 

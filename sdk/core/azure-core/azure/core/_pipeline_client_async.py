@@ -181,10 +181,7 @@ class AsyncPipelineClient(PipelineClientBase):
         )
         if return_pipeline_response:
             return pipeline_response
-        return AsyncHttpResponse(
-            request=request,
-            _internal_response=pipeline_response.http_response,
-        )
+        return pipeline_response.http_response
 
     def send_request(
         self,

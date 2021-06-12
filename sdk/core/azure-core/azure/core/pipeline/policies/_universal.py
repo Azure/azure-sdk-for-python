@@ -570,9 +570,10 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         # need that test as well....
         else:
             mime_type = "application/json"
-
+        if encoding:
+            response.encoding = encoding
         # Rely on transport implementation to give me "text()" decoded correctly
-        return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
+        return cls.deserialize_from_text(response.text, mime_type, response=response)
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -606,13 +607,13 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         if response.context.options.get("stream", True):
             return
 
-        # response_encoding = request.context.get('response_encoding')
+        response_encoding = request.context.get('response_encoding')
 
-        # deserialized = self.deserialize_from_http_generics(
-        #     response.http_response,
-        #     response_encoding
-        # )
-        # response.context[self.CONTEXT_NAME] = deserialized
+        deserialized = self.deserialize_from_http_generics(
+            response.http_response,
+            response_encoding
+        )
+        response.context[self.CONTEXT_NAME] = deserialized
 
 
 class ProxyPolicy(SansIOHTTPPolicy):

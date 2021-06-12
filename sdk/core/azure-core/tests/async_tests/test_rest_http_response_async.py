@@ -20,14 +20,13 @@ def send_request(client):
     return _send_request
 
 @pytest.mark.asyncio
-async def test_response(client):
-    response = await client.send_request(
+async def test_response(send_request):
+    response = await send_request(
         HttpRequest("GET", "http://localhost:5000/basic/string"),
     )
     assert response.status_code == 200
     assert response.reason == "OK"
-    content = await response.read()
-    assert content == b"Hello, world!"
+    assert response.content == b"Hello, world!"
     assert response.text == "Hello, world!"
     assert response.request.method == "GET"
     assert response.request.url == "http://localhost:5000/basic/string"
@@ -94,7 +93,7 @@ async def test_response_repr(send_request):
     response = await send_request(
         HttpRequest("GET", "http://localhost:5000/basic/string")
     )
-    assert repr(response) == "<AsyncHttpResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
+    assert repr(response) == "<AioHttpTransportResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
 
 @pytest.mark.asyncio
 async def test_response_content_type_encoding(send_request):
@@ -242,43 +241,29 @@ async def test_multipart_files_content(send_request):
     )
     await send_request(request)
 
+@pytest.mark.asyncio
+async def test_multipart_encode_non_seekable_filelike(send_request):
+    """
+    Test that special readable but non-seekable filelike objects are supported,
+    at the cost of reading them into memory at most once.
+    """
 
-# IN AIOHTTP WE CAN'T SEND BOTH DATA AND FILES
-# THERE IS NO SEPARATE KWARG FOR FILES, SO CURRENTLY WE'RE
-# PUTTING THE FILES INFO INTO DATA
-# @pytest.mark.asyncio
-# async def test_multipart_data_and_files_content(send_request):
-#     request = HttpRequest(
-#         "POST",
-#         "http://localhost:5000/multipart/data-and-files",
-#         data={"message": "Hello, world!"},
-#         files={"fileContent": io.BytesIO(b"<file content>")},
-#     )
-#     await send_request(request)
+    class IteratorIO(io.IOBase):
+        def __init__(self, iterator):
+            self._iterator = iterator
 
-# @pytest.mark.asyncio
-# async def test_multipart_encode_non_seekable_filelike(send_request):
-#     """
-#     Test that special readable but non-seekable filelike objects are supported,
-#     at the cost of reading them into memory at most once.
-#     """
+        def read(self, *args):
+            return b"".join(self._iterator)
 
-#     class IteratorIO(io.IOBase):
-#         def __init__(self, iterator):
-#             self._iterator = iterator
+    def data():
+        yield b"Hello"
+        yield b"World"
 
-#         def read(self, *args):
-#             return b"".join(self._iterator)
-
-#     def data():
-#         yield b"Hello"
-#         yield b"World"
-
-#     fileobj = IteratorIO(data())
-#     files = {"file": fileobj}
-#     request = HttpRequest(
-#         "POST",
-#         "http://localhost:5000/multipart/non-seekable-filelike",
-#         files=files,
-#     )
-#     await send_request(request)
+    fileobj = IteratorIO(data())
+    files = {"file": fileobj}
+    request = HttpRequest(
+        "POST",
+        "http://localhost:5000/multipart/non-seekable-filelike",
+        files=files,
+    )
+    await send_request(request)

@@ -17,7 +17,5 @@ if sys.version_info < (3, 5):
     collect_ignore_glob.append("async_tests")
 
 @pytest.fixture
-@async_generator
-async def client():
-    async with AsyncTestRestClient() as client:
-        await yield_(client)
+def client():
+    return AsyncTestRestClient()

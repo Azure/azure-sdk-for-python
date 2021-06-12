@@ -10,18 +10,6 @@ import json
 import pytest
 from azure.core.rest import StreamConsumedError, HttpRequest, ResponseClosedError, StreamConsumedError
 
-def _assert_stream_state(response, open):
-    # if open is true, check the stream is open.
-    # if false, check if everything is closed
-    checks = [
-        response.is_closed,
-        response.is_stream_consumed
-    ]
-    if open:
-        assert not any(checks)
-    else:
-        assert all(checks)
-
 @pytest.mark.asyncio
 async def test_iter_raw(client):
     request = HttpRequest("GET", "http://localhost:5000/streams/basic")
@@ -105,9 +93,11 @@ async def test_iter_bytes(client):
     async with client.send_request(request, stream=True) as response:
         raw = b""
         async for chunk in response.iter_bytes():
-            _assert_stream_state(response, open=True)
+            assert response.is_stream_consumed
+            assert not response.is_closed
             raw += chunk
-        _assert_stream_state(response, open=False)
+        assert response.is_stream_consumed
+        assert response.is_closed
         assert raw == b"Hello, world!"
 
 @pytest.mark.asyncio
