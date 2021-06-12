@@ -4,8 +4,8 @@
 # ------------------------------------
 import datetime
 import email.utils
-from requests.structures import CaseInsensitiveDict
 from typing import TYPE_CHECKING
+from requests.structures import CaseInsensitiveDict
 
 from azure.core.polling.base_polling import BadStatus
 
