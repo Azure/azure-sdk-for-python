@@ -38,6 +38,8 @@ class InteractiveBrowserCredential(InteractiveCredential):
           authenticate work or school accounts.
     :keyword str client_id: Client ID of the Azure Active Directory application users will sign in to. If
           unspecified, users will authenticate to an Azure development application.
+    :keyword str login_hint: a username suggestion to pre-fill the login page's username/email address field. A user
+        may still log in with a different username.
     :keyword str redirect_uri: a redirect URI for the application identified by `client_id` as configured in Azure
           Active Directory, for example "http://localhost:8400". This is only required when passing a value for
           `client_id`, and must match a redirect URI in the application's registration. The credential must be able to
@@ -62,6 +64,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         else:
             self._parsed_url = None
 
+        self._login_hint = kwargs.pop("login_hint", None)
         self._timeout = kwargs.pop("timeout", 300)
         self._server_class = kwargs.pop("_server_class", AuthCodeRedirectServer)
         client_id = kwargs.pop("client_id", DEVELOPER_SIGN_ON_CLIENT_ID)
@@ -96,7 +99,11 @@ class InteractiveBrowserCredential(InteractiveCredential):
         claims = kwargs.get("claims")
         app = self._get_app()
         flow = app.initiate_auth_code_flow(
-            scopes, redirect_uri=redirect_uri, prompt="select_account", claims_challenge=claims
+            scopes,
+            redirect_uri=redirect_uri,
+            prompt="select_account",
+            claims_challenge=claims,
+            login_hint=self._login_hint,
         )
         if "auth_uri" not in flow:
             raise CredentialUnavailableError("Failed to begin authentication flow")
