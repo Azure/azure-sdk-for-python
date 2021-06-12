@@ -39,12 +39,34 @@ class AttestationClient(object):
     """An AttestationClient object enables access to the Attestation family of APIs provided
       by the attestation service.
 
+
+
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
     :param str endpoint: The attestation instance base URI, for example https://mytenant.attest.azure.net.
+    :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
+    :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
+        if the token is invalid, the `validation_callback` function should throw 
+        an exception.
+    :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
+    :keyword bool validate_signature: if True, validate the signature of the token being validated.
+    :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
+    :keyword str issuer: Expected issuer, used if validate_issuer is true.
+    :keyword float validation_slack: Slack time for validation - tolerance applied 
+        to help account for clock drift between the issuer and the current machine.
+    :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
+    :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
+
     :keyword ~azure.core.pipeline.AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
     :keyword ~azure.core.pipeline.transport.AsyncHttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[~azure.core.pipeline.policies.AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
+
+    .. tip::
+        The `validate_token`, `validation_callback`, `validate_signature`, 
+        `validate_expiration`, `validate_not_before_time`, `validate_issuer`, and
+        `issuer` keyword arguments are default values applied to each API call within
+        the :py:class:`AttestationClient` class. These values can be
+        overridden on individual API calls as needed.
 
     For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
 
@@ -69,7 +91,14 @@ class AttestationClient(object):
         ): #type: (...) -> Any
         """ Retrieves the OpenID metadata configuration document for this attestation instance.
 
-        :return: OpenId Metadata document for the attestation service instance.
+        The metadata configuration document is defined in the `OpenID Connect Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>` specification.
+
+        The attestation service currently returns the following fields:
+        * issuer
+        * jwks_uri
+        * claims_supported
+
+        :return: OpenID metadata configuration
         :rtype: Any
         """
         return await self._client.metadata_configuration.get(**kwargs)
@@ -124,7 +153,7 @@ class AttestationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw 
             an exception.
-        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], None]
+        :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -133,12 +162,22 @@ class AttestationClient(object):
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
 
-        :return: Attestation service response encapsulating an :class:`AttestationResult` and an :class:`AttestationToken`
+
+        :return: :class:`AttestationResult` containing the claims in the returned attestation token.
         :rtype: azure.security.attestation.AttestationResult
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_attest_enclave.py
+                :start-after: [START attest_sgx_enclave_shared]
+                :end-before: [END attest_sgx_enclave_shared]
+                :language: python
+                :dedent: 8
+                :caption: Attesting an SGX Enclave
+        
         For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
         """
@@ -212,18 +251,17 @@ class AttestationClient(object):
             report was created.
         :param bytes runtime_json: Data presented at the time that the open_enclave 
             report was created. JSON Encoded.
-        :keyword draft_policy: "draft" or "experimental" policy to be used with
+        :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
 
-        :paramtype draft_policy: str
         :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
-    :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
-        if the token is invalid, the `validation_callback` function should throw 
-        an exception.
-        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], None]
+        :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
+            if the token is invalid, the `validation_callback` function should throw 
+            an exception.
+        :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -231,8 +269,29 @@ class AttestationClient(object):
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
-        :return: Attestation service response encapsulating an :class:`AttestationResult`.
+        :return: :class:`AttestationResult` containing the claims in the returned attestation token.
+
         :rtype: azure.security.attestation.AttestationResult
+
+        .. admonition:: Example: Simple OpenEnclave attestation.
+
+            .. literalinclude:: ../samples/sample_attest_enclave.py
+                :start-after: [START attest_open_enclave_shared]
+                :end-before: [END attest_open_enclave_shared]
+                :language: python
+                :dedent: 8
+                :caption: Attesting an open_enclave report for an SGX enclave.
+
+        .. admonition:: Example: Simple OpenEnclave attestation with draft attestation policy.
+        
+            
+            .. literalinclude:: ../samples/sample_attest_enclave.py
+                :start-after: [START attest_open_enclave_shared_draft]
+                :end-before: [END attest_open_enclave_shared_draft]
+                :language: python
+                :dedent: 8
+                :caption: Attesting using a draft attestation policy.
+
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
@@ -301,8 +360,7 @@ class AttestationClient(object):
 
         See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
 
-        :param request: Incoming request to send to the TPM attestation service.
-        :type request: str
+        :param str request: Incoming request to send to the TPM attestation service.
         :returns: A structure containing the response from the TPM attestation.
         :rtype: str
         """

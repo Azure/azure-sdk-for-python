@@ -43,6 +43,9 @@ from threading import Lock
 class AttestationAdministrationClient(object):
     """Provides administrative APIs for managing an instance of the Attestation Service.
 
+    The :class:`~AttestationAdministrationClient` object implements the policy 
+    management and policy certificate management functions.
+
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
     :param str endpoint: The attestation instance base URI, for example https://mytenant.attest.azure.net.
@@ -50,9 +53,45 @@ class AttestationAdministrationClient(object):
         operations.
     :keyword str signing_certificate: PEM encoded X.509 certificate to be used for all
         operations.
-    :keyword AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
-    :keyword AsyncHttpTransport transport: If omitted, the standard pipeline is used.
-    :keyword list[AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
+
+    :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
+    :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
+        if the token is invalid, the `validation_callback` function should throw 
+        an exception.
+    :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
+    :keyword bool validate_signature: if True, validate the signature of the token being validated.
+    :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
+    :keyword str issuer: Expected issuer, used if validate_issuer is true.
+    :keyword float validation_slack: Slack time for validation - tolerance applied 
+        to help account for clock drift between the issuer and the current machine.
+    :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
+    :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
+
+    :keyword ~azure.core.pipeline.Pipeline pipeline: If omitted, the standard pipeline is used.
+    :keyword ~azure.core.pipeline.transport.HttpTransport transport: If omitted, the standard pipeline is used.
+    :keyword list[~azure.core.pipeline.policies.HTTPPolicy] policies: If omitted, the standard pipeline is used.
+
+    If the `signing_key` and `signing_certificate` parameters
+    are provided, they will be applied to the following APIs:
+
+    * :py:func:`set_policy`
+    * :py:func:`reset_policy`
+    * :py:func:`add_policy_management_certificate`
+    * :py:func:`remove_policy_management_certificate`
+
+    .. note:: 
+        The `signing_key` and `signing_certificate` parameters are a pair. If one 
+        is present, the other must also be provided. In addition, the public key
+        in the `signing_key` and the public key in the `signing_certificate` must
+        match to ensure that the `signing_certificate` can be used to validate an
+        object signed by `signing_key`.
+
+    .. tip::
+        The `validate_token`, `validation_callback`, `validate_signature`, 
+        `validate_expiration`, `validate_not_before_time`, `validate_issuer`, and
+        `issuer` keyword arguments are default values applied to each API call within
+        the :py:class:`AttestationAdministrationClient` class. These values can be
+        overridden on individual API calls as needed.
 
     For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
 
@@ -94,7 +133,7 @@ class AttestationAdministrationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw 
             an exception.
-        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], None]
+        :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -102,9 +141,26 @@ class AttestationAdministrationClient(object):
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
-        :return: Attestation service response encapsulating a string attestation policy.
-        :rtype: Tuple[str, AttestationToken]
+
+        :return: A tuple containing the attestation policy and the token returned 
+            by the service..
+
+        :rtype: ~typing.Tuple[str, AttestationToken]
+
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
+
+        .. note::
+            The Azure Attestation Policy language is defined `here <https://docs.microsoft.com/azure/attestation/author-sign-policy>`_
+
+        .. admonition:: Example: Retrieving the current policy on an attestation instance.
+        
+            
+            .. literalinclude:: ../samples/sample_get_set_policy.py
+                :start-after: [BEGIN get_policy]
+                :end-before: [END get_policy]
+                :language: python
+                :dedent: 8
+                :caption: Getting the current policy document.
 
         """
 
@@ -147,7 +203,7 @@ class AttestationAdministrationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw 
             an exception.
-        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], None]
+        :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -156,8 +212,32 @@ class AttestationAdministrationClient(object):
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
         :return: Attestation service response encapsulating a :class:`PolicyResult`.
-        :rtype: azure.security.attestation.AttestationPolicyResult
-        :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
+
+        :return: Result of set policy operation.
+
+        :rtype: ~azure.security.attestation.AttestationPolicyResult
+
+        :raises ~azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
+
+        .. admonition:: Example: Setting the attestation policy on an AAD mode
+            attestation instance (no signing key required). 
+
+            .. literalinclude:: ../samples/sample_get_set_policy.py
+                :start-after: [BEGIN set_policy_unsecured]
+                :end-before: [END set_policy_unsecured]
+                :language: python
+                :dedent: 0
+                :caption: Setting a security policy without a signing key.
+
+        .. admonition:: Example: Setting the attestation policy and verifying 
+            that the policy was recieved by the service. 
+
+            .. literalinclude:: ../samples/sample_get_set_policy.py
+                :start-after: [START validate_policy_hash]
+                :end-before: [END validate_policy_hash]
+                :language: python
+                :dedent: 0
+                :caption: Setting the attestation policy with hash verification.
 
         .. note::
             If the attestation instance is in *Isolated* mode, then the 
@@ -207,7 +287,6 @@ class AttestationAdministrationClient(object):
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to set the policy.
         :type attestation_type: azure.security.attestation.AttestationType
-        :param str attestation_policy: Attestation policy to be reset.
         :keyword str signing_key: PEM encoded signing key to be
             used to sign the policy before sending it to the service.
         :keyword str signing_certificate: PEM encoded X509 certificate sent to the 
@@ -216,7 +295,7 @@ class AttestationAdministrationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw 
             an exception.
-        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], None]
+        :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -225,7 +304,7 @@ class AttestationAdministrationClient(object):
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
 
-        :return: Attestation service response encapsulating a :class:`PolicyResult`.
+        :return: An :class:`AttestationPolicyResult` object expressing the result of the removal.
         :rtype: azure.security.attestation.AttestationPolicyResult
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
@@ -269,24 +348,41 @@ class AttestationAdministrationClient(object):
         ): #type: (...) -> Tuple[list[list[str]], AttestationToken]
         """ Retrieves the set of policy management certificates for the instance.
 
-        The list of policy management certificates will only be non-empty if the
+        The list of policy management certificates will only have values if the
         attestation service instance is in Isolated mode.
 
-        :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
-        :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
-            if the token is invalid, the `validation_callback` function should throw 
-            an exception.
-        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], None]
-        :keyword bool validate_signature: if True, validate the signature of the token being validated.
-        :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
+        :keyword bool validate_token: if True, validate the token, otherwise
+            return the token unvalidated.
+        :keyword validation_callback: Function callback to allow clients to
+            perform custom validation of the token. If the token is invalid, 
+            the `validation_callback` function should throw an exception to cause
+            the API call to fail.
+        :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
+        :keyword bool validate_signature: if True, validate the signature of the
+            token being validated.
+        :keyword bool validate_expiration: If True, validate the expiration time
+            of the token being validated.
+        :keyword float validation_slack: Slack time for validation - tolerance 
+            applied to help account for clock drift between the issuer and 
+            the current machine.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
-        :keyword float validation_slack: Slack time for validation - tolerance applied 
-            to help account for clock drift between the issuer and the current machine.
-        :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
-        :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
+        :keyword bool validate_issuer: If True, validate that the issuer of the
+            token matches the expected issuer.
+        :keyword bool validate_not_before_time: If true, validate the 
+            "Not Before" time in the token.
 
-        :return: A list of PEM encoded X.509 certificate chains and an attestation token.
+        :return: A tuple containing the list of PEM encoded X.509 certificate chains and an attestation token.
         :rtype: Tuple[list[list[string]], AttestationToken]
+
+        .. admonition:: Example: Retrieving the set of policy management certificates
+            for an isolated attestation instance.
+
+            .. literalinclude:: ../samples/sample_get_set_policy.py
+                :start-after: [BEGIN get_policy_management_certificate]
+                :end-before: [END get_policy_management_certificate]
+                :language: python
+                :dedent: 8
+                :caption: Retrieving the policy management certificates.
         """
 
         # Merge our existing config options with the options for this API call. 
@@ -321,34 +417,29 @@ class AttestationAdministrationClient(object):
 
         :param str certificate_to_add: PEM encoded X.509 certificate to add to 
             the list of attestation policy management certificates.
-        :param azure.security.attestation.AttestationSigningKey signing_key: 
-            Signing Key representing one of the *existing* attestation signing 
-            certificates.
-        :keyword str signing_key: PEM encoded signing key to be
-            used to sign the policy before sending it to the service.
-        :keyword str signing_certificate: PEM encoded X509 certificate sent to the 
-            attestation service to validate the attestation policy.
-        :keyword bool validate_token: if True, validate the token, otherwise 
-            return the token unvalidated.
-        :keyword validation_callback: Function callback to allow clients to 
-            perform custom validation of the token.
+        :keyword  str signing_key: PEM encoded signing Key representing the key 
+            associated with one of the *existing* attestation signing certificates.
+        :keyword str signing_certificate: PEM encoded signing certificate which is one of 
+            the *existing* attestation signing certificates.
+        :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
+        :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw 
             an exception.
-        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], None]
-        :keyword bool validate_signature: if True, validate the signature of the
-            token being validated.
-        :keyword bool validate_expiration: If True, validate the expiration time
-            of the token being validated.
+        :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
+        :keyword bool validate_signature: if True, validate the signature of the token being validated.
+        :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
         :keyword float validation_slack: Slack time for validation - tolerance applied 
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
-        :return: The result of the policy management certificate addition.
+
+        :return: Attestation service response 
+            encapsulating the status of the add request.
 
         :rtype: azure.security.attestation.AttestationPolicyCertificateResult
 
-        The :class:`AttestationPolicyCertificateResult` response to the 
+        The :class:`AttestationPolicyCertificatesResult` response to the 
         :meth:`add_policy_management_certificate` API contains two attributes
         of interest. 
         
@@ -360,6 +451,16 @@ class AttestationAdministrationClient(object):
         The second is the `thumbprint` of the certificate added. The `thumbprint`
         for the certificate is the SHA1 hash of the DER encoding of the
         certificate.
+
+        .. admonition:: Example: Generating and adding a new policy management
+            certificates for an isolated attestation instance.
+                    
+            .. literalinclude:: ../samples/sample_get_set_policy.py
+                :start-after: [BEGIN add_policy_management_certificate]
+                :end-before: [END add_policy_management_certificate]
+                :language: python
+                :dedent: 12
+                :caption: Adding a policy management certificate.
 
         """
         signing_key = kwargs.pop('signing_key', None)
@@ -405,17 +506,17 @@ class AttestationAdministrationClient(object):
         ): #type: (...) -> AttestationPolicyCertificateResult
         """ Removes a policy management certificate from the set of policy management certificates for the instance.
 
-        :param bytes certificate_to_remove: PEM encoded X.509 certificate to remove from
+       :param bytes certificate_to_remove: PEM encoded X.509 certificate to remove from 
             the list of attestation policy management certificates.
-        :keyword str signing_key: PEM encoded signing key to be
-            used to sign the policy before sending it to the service.
-        :keyword str signing_certificate: PEM encoded X509 certificate sent to the 
-            attestation service to validate the attestation policy.
+        :keyword  str signing_key: PEM encoded signing Key representing the key 
+            associated with one of the *existing* attestation signing certificates.
+        :keyword str signing_certificate: PEM encoded signing certificate which is one of 
+            the *existing* attestation signing certificates.
         :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw 
             an exception.
-        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], None]
+        :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -423,8 +524,8 @@ class AttestationAdministrationClient(object):
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
-        :return: The result of the policy management certificate removal.
-        :rtype: AttestationPolicyCertificateResult
+        :return: Result describing the outcome of the certificate removal.
+        :rtype: ~azure.security.attestation.AttestationPolicyCertificateResult
 
         The :class:`AttestationPolicyCertificateResult` response to the 
         :meth:`remove_policy_management_certificate` API contains two attributes
@@ -438,7 +539,16 @@ class AttestationAdministrationClient(object):
         The second is the `thumbprint` of the certificate added. The `thumbprint`
         for the certificate is the SHA1 hash of the DER encoding of the
         certificate.
-        
+
+        .. admonition:: Example: Removing an added policy management
+            certificate for an isolated attestation instance.
+                    
+            .. literalinclude:: ../samples/sample_get_set_policy.py
+                :start-after: [BEGIN remove_policy_management_certificate]
+                :end-before: [END remove_policy_management_certificate]
+                :language: python
+                :dedent: 8
+                :caption: Removing a policy management certificate.
         """
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)

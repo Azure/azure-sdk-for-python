@@ -43,12 +43,30 @@ class AttestationClient(object):
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: :class:`~azure.core.credentials.TokenCredential`
     :param str endpoint: The attestation instance base URI, for example https://mytenant.attest.azure.net.
-    :keyword pipeline: If omitted, the standard pipeline is used.
-    :paramtype pipeline: Pipeline
-    :keyword policies: If omitted, the standard pipeline is used.
-    :paramtype policies: list[HTTPPolicy]
-    :keyword HttpTransport transport: If omitted, the standard pipeline is used.
-    :paramtype transport: HttpTransport
+    :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
+    :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
+        if the token is invalid, the `validation_callback` function should throw 
+        an exception.
+    :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
+    :keyword bool validate_signature: if True, validate the signature of the token being validated.
+    :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
+    :keyword str issuer: Expected issuer, used if validate_issuer is true.
+    :keyword float validation_slack: Slack time for validation - tolerance applied 
+        to help account for clock drift between the issuer and the current machine.
+    :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
+    :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
+
+    :keyword ~azure.core.pipeline.Pipeline pipeline: If omitted, the standard pipeline is used.
+    :keyword ~azure.core.pipeline.transport.HttpTransport transport: If omitted, the standard pipeline is used.
+    :keyword list[~azure.core.pipeline.policies.HTTPPolicy] policies: If omitted, the standard pipeline is used.
+
+    .. tip::
+        The `validate_token`, `validation_callback`, `validate_signature`, 
+        `validate_expiration`, `validate_not_before_time`, `validate_issuer`, and
+        `issuer` keyword arguments are default values applied to each API call within
+        the :py:class:`AttestationClient` class. These values can be
+        overridden on individual API calls as needed.
+
 
     For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
 
@@ -113,7 +131,7 @@ class AttestationClient(object):
         runtime_json=None, #type: bytes
         runtime_data=None, #type: bytes
         **kwargs #type: Dict[str, Any]
-        ): #type: (...) -> Tuple[AttestationResult, AttestationToken]
+        ): #type: (...) -> AttestationResult
         """ Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
@@ -130,12 +148,24 @@ class AttestationClient(object):
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API
-
         :paramtype draft_policy: str
+        :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
+        :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
+            if the token is invalid, the `validation_callback` function should throw 
+            an exception.
+        :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
+        :keyword bool validate_signature: if True, validate the signature of the token being validated.
+        :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
+        :keyword str issuer: Expected issuer, used if validate_issuer is true.
+        :keyword float validation_slack: Slack time for validation - tolerance applied 
+            to help account for clock drift between the issuer and the current machine.
+        :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
+        :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
+
 
         :return: :class:`AttestationResult` containing the claims in the returned attestation token.
 
-        :rtype: Tuple[azure.security.attestation.AttestationResult, azure.security.attestation.AttestationToken]
+        :rtype: azure.security.attestation.AttestationResult
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
@@ -228,9 +258,22 @@ class AttestationClient(object):
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
 
+        :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
+        :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
+            if the token is invalid, the `validation_callback` function should throw 
+            an exception.
+        :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
+        :keyword bool validate_signature: if True, validate the signature of the token being validated.
+        :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
+        :keyword str issuer: Expected issuer, used if validate_issuer is true.
+        :keyword float validation_slack: Slack time for validation - tolerance applied 
+            to help account for clock drift between the issuer and the current machine.
+        :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
+        :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
+
         :return: :class:`AttestationResult` containing the claims in the returned attestation token.
 
-        :rtype: Tuple[azure.security.attestation.AttestationResult, azure.security.attestation.AttestationToken]
+        :rtype: azure.security.attestation.AttestationResult
 
         .. admonition:: Example: Simple OpenEnclave attestation.
 

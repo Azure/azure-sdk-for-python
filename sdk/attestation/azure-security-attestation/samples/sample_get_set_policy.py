@@ -69,9 +69,7 @@ from sample_utils import create_rsa_key, create_x509_certificate, write_banner, 
 class AttestationClientPolicySamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.aad_url = os.environ.get("ATTESTATION_AAD_URL")
-        self.isolated_url = os.environ.get("ATTESTATION_ISOLATED_URL")
-        if self.isolated_url:
+        if os.environ.get("ATTESTATION_ISOLATED_URL"):
             self.isolated_certificate = pem_from_base64(os.getenv("ATTESTATION_ISOLATED_SIGNING_CERTIFICATE"), 'CERTIFICATE')
             self.isolated_key = pem_from_base64(os.getenv("ATTESTATION_ISOLATED_SIGNING_KEY"), 'PRIVATE KEY')
     def close(self):
@@ -84,9 +82,14 @@ class AttestationClientPolicySamples(object):
         """
         write_banner("get_policy_aad")
         print("Retrieve an unsecured Policy on an AAD mode attestation instance.")
-        with self._create_admin_client(self.aad_url) as admin_client:
+
+        # [BEGIN get_policy]
+        with AttestationAdministrationClient(
+                DefaultAzureCredential(), 
+                os.environ.get("ATTESTATION_AAD_URL")) as admin_client:
             policy, _ = admin_client.get_policy(AttestationType.SGX_ENCLAVE)
-            print("SGX Policy is: ", policy)
+            print("Current instance SGX Policy is: ", policy)
+        # [END get_policy]
 
     def set_policy_aad_unsecured(self):
         """
@@ -96,7 +99,10 @@ class AttestationClientPolicySamples(object):
 
         write_banner("set_policy_aad_unsecured")
         print("Set an unsecured Policy on an AAD mode attestation instance.")
-        with self._create_admin_client(self.aad_url) as admin_client:
+        # [BEGIN set_policy_unsecured]
+        with AttestationAdministrationClient(
+                DefaultAzureCredential(), 
+                os.environ.get("ATTESTATION_AAD_URL")) as admin_client:
             new_policy="""
 version= 1.0;
 authorizationrules
@@ -114,12 +120,14 @@ issuancerules {
 
             set_result = admin_client.set_policy(AttestationType.OPEN_ENCLAVE, new_policy)
             print("Policy Set result: ", set_result.policy_resolution)
+        # [END set_policy_unsecured]
 
             get_result, _ = admin_client.get_policy(AttestationType.OPEN_ENCLAVE)
             if new_policy != get_result:
                 print("Policy does not match set policy.")
+
             # Attest an OpenEnclave using the new policy.
-            self._attest_open_enclave(self.aad_url)
+            self._attest_open_enclave(os.environ.get("ATTESTATION_AAD_URL"))
 
         
     def reset_policy_aad_unsecured(self):
@@ -127,10 +135,12 @@ issuancerules {
         Demonstrates reset the attestation policy on an AAD mode instance to the
         default value.
         """
+        #[BEGIN reset_aad_policy]
         print("Reset an unsecured Policy on an AAD mode attestation instance.")
-        with self._create_admin_client(self.aad_url) as admin_client:
+        with AttestationAdministrationClient(DefaultAzureCredential(), os.environ.get("ATTESTATION_AAD_URL")) as admin_client:
             set_result = admin_client.reset_policy(AttestationType.OPEN_ENCLAVE)
             print("Policy reset result: ", set_result.policy_resolution)
+        #[END reset_aad_policy]
 
     def set_policy_aad_secured(self):
         """
@@ -140,8 +150,8 @@ issuancerules {
 
         write_banner("set_policy_aad_secured")
         print("Set Secured Policy on an AAD mode attestation instance.")
-        with self._create_admin_client(self.aad_url) as admin_client:
-            # [START set_secured_policy]
+        # [START set_secured_policy]
+        with AttestationAdministrationClient(DefaultAzureCredential(), os.environ.get("ATTESTATION_AAD_URL")) as admin_client:
             # Create an RSA Key and wrap an X.509 certificate around
             # the public key for that certificate.
             rsa_key = create_rsa_key()
@@ -156,7 +166,7 @@ issuancerules {
             print("Resulting policy signer should match the input certificate:")
             print("Policy Signer: ", set_result.policy_signer.certificates[0])
             print("Certificate:   ", cert)
-            # [END set_secured_policy]
+        # [END set_secured_policy]
 
             # Reset the policy now that we're done.
             admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
@@ -167,15 +177,17 @@ issuancerules {
         policy hash after the `set_policy` API returns.
         """
 
+        # [START validate_policy_hash]
         write_banner("set_policy_aad_secured")
         print("Set Secured Policy on an AAD mode attestation instance.")
-        with self._create_admin_client(self.aad_url) as admin_client:
+        with AttestationAdministrationClient(
+            DefaultAzureCredential(), 
+            os.environ.get("ATTESTATION_AAD_URL")) as admin_client:
             # Create an RSA Key and wrap an X.509 certificate around
             # the public key for that certificate.
             rsa_key = create_rsa_key()
             cert = create_x509_certificate(rsa_key, u'TestCertificate')
 
-            # [START validate_policy_hash]
             # Set a minimal policy.
             policy_to_set="""
 version= 1.0;
@@ -207,25 +219,28 @@ issuancerules {};
             print("Expected hash: ", expected_hash)
             print("Returned hash: ", set_result.policy_token_hash)
 
-            # [END validate_policy_hash]
+        # [END validate_policy_hash]
 
             # Reset the policy now that we're done.
             admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
 
             
 
-    def reset_policy_aad_secured(self):
+    def reset_policy_isolated(self):
         """ Set a secured attestation policy on an AAD mode instance"""
-        write_banner("reset_policy_aad_secured")
-        print("Set Secured Policy on an AAD mode attestation instance.")
-        with self._create_admin_client(self.aad_url) as admin_client:
-            rsa_key = create_rsa_key()
-            cert = create_x509_certificate(rsa_key, u'TestCertificate')
+        write_banner("reset_policy_isolated")
+        isolated_certificate = pem_from_base64(os.getenv("ATTESTATION_ISOLATED_SIGNING_CERTIFICATE"), 'CERTIFICATE')
+        isolated_key = pem_from_base64(os.getenv("ATTESTATION_ISOLATED_SIGNING_KEY"), 'PRIVATE KEY')
 
+        # [BEGIN reset_isolated_policy]
+        print("Set Secured Policy on an Isolated mode attestation instance.")
+        # < Load the PEM encoded isolated signing certificate and  key >
+        with AttestationAdministrationClient(DefaultAzureCredential(), os.environ.get("ATTESTATION_ISOLATED_URL")) as admin_client:
             set_result=admin_client.reset_policy(AttestationType.SGX_ENCLAVE, 
-                signing_key=rsa_key,
-                signing_certificate=cert)
+                signing_key=isolated_key,
+                signing_certificate=isolated_certificate)
             print("Policy Set Resolution: ", set_result.policy_resolution)
+        # [END reset_isolated_policy]
 
     def get_policy_isolated(self):
         """
@@ -233,10 +248,11 @@ issuancerules {};
         """
         write_banner("get_policy_isolated")
         print("Retrieve an unsecured Policy on an Isolated mode attestation instance.")
-        with self._create_admin_client(self.isolated_url) as admin_client:
+        endpoint = os.environ.get("ATTESTATION_ISOLATED_URL")
+        with AttestationAdministrationClient(DefaultAzureCredential(), endpoint) as admin_client:
             get_result, _ = admin_client.get_policy(AttestationType.SGX_ENCLAVE,
             validate_issuer=True,
-            issuer=self.isolated_url)
+            issuer=endpoint)
             print("SGX Policy is: ", get_result)
 
     def set_policy_isolated_secured(self):
@@ -252,7 +268,9 @@ issuancerules {};
         """
         write_banner("set_policy_isolated_secured")
         print("Set Secured Policy on an AAD mode attestation instance.")
-        with self._create_admin_client(self.isolated_url, 
+        endpoint = os.environ.get("ATTESTATION_ISOLATED_URL")
+        with AttestationAdministrationClient(DefaultAzureCredential(), 
+                endpoint,
                 signing_key=self.isolated_key,
                 signing_certificate=self.isolated_certificate) as admin_client:
             set_result=admin_client.set_policy(AttestationType.SGX_ENCLAVE, 
@@ -275,21 +293,26 @@ issuancerules {};
         current set of attestation signing certificates.
         """
         write_banner("get_policy_management_certificates_isolated")
+
+        # [BEGIN get_policy_management_certificate]
         print("Get the policy management certificates for a isolated instance.")
 
-        with self._create_admin_client(self.isolated_url) as admin_client:
+        endpoint = os.environ.get("ATTESTATION_ISOLATED_URL")
+        with AttestationAdministrationClient(DefaultAzureCredential(), endpoint) as admin_client:
             certificates, _ =admin_client.get_policy_management_certificates(validation_slack=1.0)
             print("Isolated instance has", len(certificates), "certificates")
 
-            # The signing certificate for the isolated instance should be
-            # the configured isolated_signing_certificate.
-            #
             # Note that the certificate list returned is an array of certificate chains.
-            actual_cert = certificates[0][0]
-            isolated_cert = self.isolated_certificate
-            print("Actual Cert:   ", actual_cert)
-            print("Isolated Cert: ", isolated_cert)
-            assert actual_cert == isolated_cert
+            for cert_chain in certificates:
+                print("Certificate chain has ", len(cert_chain), " elements.")
+                i = 1
+                for cert in cert_chain:
+                    # load_pem_x509_certifcate takes a bytes, not str, so convert.
+                    certificate = load_pem_x509_certificate(cert.encode('ascii'))
+                    print("    Certificate",i,"subject:", certificate.subject)
+                    i += 1
+
+            # [END get_policy_management_certificate]
 
     def add_remove_policy_management_certificate(self):
         """
@@ -299,7 +322,8 @@ issuancerules {};
         """
         write_banner("add_remove_policy_management_certificate")
         print("Get and set the policy management certificates for a isolated instance.")
-        with self._create_admin_client(self.isolated_url) as admin_client:
+        endpoint = os.environ.get("ATTESTATION_ISOLATED_URL")
+        with AttestationAdministrationClient(DefaultAzureCredential(), endpoint) as admin_client:
             # [BEGIN add_policy_management_certificate]
             new_key = create_rsa_key()
             new_certificate = create_x509_certificate(new_key, u'NewCertificateName')
@@ -343,9 +367,10 @@ issuancerules {};
             if not found_cert:
                 raise Exception("Could not find new certificate!")
 
+        # [BEGIN remove_policy_management_certificate]
+        with AttestationAdministrationClient(DefaultAzureCredential(), endpoint) as admin_client:
             # Now remove the certificate we just added.
             print("Remove the newly added certificate.")
-            # [BEGIN remove_policy_management_certificate]
             remove_result = admin_client.remove_policy_management_certificate(
                 new_certificate,
                 signing_key=self.isolated_key, 
@@ -353,24 +378,16 @@ issuancerules {};
 
             if remove_result.certificate_resolution != CertificateModification.IS_ABSENT:
                 raise Exception("Certificate was not removed!")
-            # [END remove_policy_management_certificate]
+        # [END remove_policy_management_certificate]
 
     def _attest_open_enclave(self, client_uri):
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
         print('Attest open enclave using ', client_uri)
-        with self._create_client(client_uri) as attest_client:
+        with AttestationClient(DefaultAzureCredential(), client_uri) as attest_client:
             attest_client.attest_open_enclave(
                 oe_report, runtime_data=runtime_data)
             print("Successfully attested enclave.")
-
-    def _create_admin_client(self, base_url, **kwargs):
-        #type:(str, Dict[str, Any]) -> AttestationAdministrationClient
-        return AttestationAdministrationClient(DefaultAzureCredential(), base_url, **kwargs)
-
-    def _create_client(self, base_url, **kwargs):
-        #type:(str, Dict[str, Any]) -> AttestationClient
-        return AttestationClient(DefaultAzureCredential(), base_url, **kwargs)
 
     def __enter__(self):
         return self
@@ -385,7 +402,7 @@ if __name__ == "__main__":
         sample.reset_policy_aad_unsecured()
         sample.set_policy_aad_secured()
         sample.set_policy_validate_hash()
-        sample.reset_policy_aad_secured()
+        sample.reset_policy_isolated()
         sample.set_policy_isolated_secured()
         sample.get_policy_management_certificates()
         sample.add_remove_policy_management_certificate()

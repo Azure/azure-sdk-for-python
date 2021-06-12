@@ -33,8 +33,8 @@ pip install --pre azure-security-attestation
 
 ### Authenticate the client
 
-In order to interact with the Microsoft Azure Attestation service, you'll need to create an instance of the [Attestation Client][attestation_client] or [Attestation Administration Client][attestation_admin_client] class. You need a **attestation instance url**, which you may see as "DNS Name" in the portal,
- and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object.
+In order to interact with the Microsoft Azure Attestation service, you'll need to create an instance of the [Attestation Client][attestation_client] or [Attestation Administration Client][attestation_admin_client] class. You need an **attestation endpoint**, which you may see as "DNS Name" in the portal,
+and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object.
 
 Client secret credential authentication is being used in this getting started section but you can find more ways to authenticate with [Azure identity][azure_identity]. To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below,
 or other credential providers provided with the Azure SDK, you should install the Azure.Identity package:
@@ -119,8 +119,6 @@ This token will be signed by a signing certificate issued by the MAA service for
 If the MAA service instance is running in a region where the service runs in an SGX enclave, then
 the certificate issued by the server can be verified using the [oe_verify_attestation_certificate API](https://openenclave.github.io/openenclave/api/enclave_8h_a3b75c5638360adca181a0d945b45ad86.html).
 
-The [`AttestationResponse`][attestation_response] object contains two main attributes: `token` and `value`. The `token` attribute contains the complete token returned by the attestation service, the `value` attribute contains the body of the JSON Web Token response.
-
 ### Policy Management
 
 Each attestation service instance has a policy applied to it which defines additional criteria which the customer has defined.
@@ -143,7 +141,7 @@ Each Microsoft Azure Attestation service instance operates in either "AAD" mode 
 The Microsoft Azure Attestation service supports attesting different types of evidence depending on the environment.
 Currently, MAA supports the following Trusted Execution environments:
 
-* OpenEnclave - An Intel(tm) Processor running code in an SGX Enclave where the attestation evidence was collected using the OpenEnclave [`oe_get_report`](https://openenclave.io/apidocs/v0.14/enclave_8h_aefcb89c91a9078d595e255bd7901ac71.html#aefcb89c91a9078d595e255bd7901ac71) or [`oe_get_evidence`](https://openenclave.io/apidocs/v0.14/attester_8h_a7d197e42468636e95a6ab97b8e74c451.html#a7d197e42468636e95a6ab97b8e74c451) API.
+* OpenEnclave - An Intel(tm) Processor running code in an SGX Enclave where the attestation evidence was collected using the OpenEnclave [oe_get_report](https://openenclave.io/apidocs/v0.14/enclave_8h_aefcb89c91a9078d595e255bd7901ac71.html#aefcb89c91a9078d595e255bd7901ac71) or [oe_get_evidence](https://openenclave.io/apidocs/v0.14/attester_8h_a7d197e42468636e95a6ab97b8e74c451.html#a7d197e42468636e95a6ab97b8e74c451) API.
 * SgxEnclave - An Intel(tm) Processor running code in an SGX Enclave where the attestation evidence was collected using the Intel SGX SDK.
 * Tpm - A Virtualization Based Security environment where the Trusted Platform Module of the processor is used to provide the attestation evidence.
 
@@ -216,8 +214,8 @@ Clients need to be able to verify that the attestation policy document was not m
 
 There are two properties provided in the [PolicyResult][attestation_policy_result] that can be used to verify that the service received the policy document:
 
-* [`policy_signer`][attestation_policy_result_parameters] - if the `set_policy` call included a signing certificate, this will be the certificate provided at the time of the `set_policy` call. If no policy signer was set, this will be null.
-* [`policy_token_hash`][attestation_policy_result_parameters] - this is the hash of the [JSON Web Token][json_web_token] sent to the service.
+* [policy_signer][attestation_policy_result_parameters] - if the `set_policy` call included a signing certificate, this will be the certificate provided at the time of the `set_policy` call. If no policy signer was set, this will be null.
+* [policy_token_hash][attestation_policy_result_parameters] - this is the hash of the [JSON Web Token][json_web_token] sent to the service.
 
 To verify the hash, clients can generate an attestation token and verify the hash generated from that token:
 
@@ -242,7 +240,7 @@ assert expected_hash == policy_set_response.policy_token_hash
 
 ### Attest SGX Enclave
 
-Use the [`attest_sgx`][attest_sgx] method to attest an SGX enclave.
+Use the [attest_sgx_enclave][attest_sgx] method to attest an SGX enclave.
 
 One of the core challenges customers have interacting with encrypted environments is how to ensure that you can securely communicate with the code running in the environment ("enclave code").
 
@@ -349,7 +347,6 @@ section of the project.
 [attestation_policy_result]:https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.policyresult?view=azure-python-preview
 [attestation_client]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.attestationclient?view=azure-python-preview
 [attestation_admin_client]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.attestationadministrationclient?view=azure-python-preview
-[attestation_response]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.attestationresponse?view=azure-python-preview
 [attestation_policy_result_parameters]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.policyresult?view=azure-python-preview#parameters
 [attest_sgx]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.attestationclient?view=azure-python-preview#attest-sgx-enclave-quote--inittime-data-none--runtime-data-none--draft-policy-none----kwargs-
 [attestation_pypi]: https://aka.ms/azsdk/python/azure-security-attestation

@@ -89,7 +89,6 @@ class AttestationPolicyCertificateResult(object):
 
 class AttestationPolicyResult(object):
     """ AttestationPolicyResult represents the result of a 
-    :meth:`azure.security.attestation.AttestationAdministrationClient.get_policy`,
     :meth:`azure.security.attestation.AttestationAdministrationClient.set_policy` 
     or :meth:`azure.security.attestation.AttestationAdministrationClient.reset_policy`
     API call.
@@ -98,8 +97,7 @@ class AttestationPolicyResult(object):
     the attestation service. It can be used to ensure that the attestation service
     received the policy object sent from the client without alteration.
     
-    :param policy_resolution: The result of the policy set or
-        reset call.
+    :param policy_resolution: The result of the policy set or reset call.
     :type policy_resolution: azure.security.attestation.PolicyModification
     :param policy_signer: If the call to `set_policy` or `reset_policy`
         had a `signing_certificate` parameter, this will be the certificate
@@ -107,7 +105,6 @@ class AttestationPolicyResult(object):
     :type policy_signer: azure.security.attestation.AttestationSigner
     :param str policy_token_hash: The hash of the complete JSON Web Signature
         presented to the `set_policy` or `reset_policy` API.
-    :param str policy: Attestation policy for :meth:`azure.security.attestation.AttestationAdministrationClient.get_policy` results.
     :param token: Attestation Token returned from the attestation service.
     :type token: AttestationToken
 
@@ -235,13 +232,13 @@ class AttestationResult(object):
         #type:() -> str
         """ Returns the issuer of the attestation token.
 
-        The issuer for the token MUST be the same as the `instance_uri` associated
+        The issuer for the token MUST be the same as the `endpoint` associated
         with the :class:`azure.security.attestation.AttestationClient` object.
         If it is not, then the token should be rejected.
-        
+
         See `RFC 7519 Section 4.1.1 <https://www.rfc-editor.org/rfc/rfc7519.html#section-4.1.1>`_ for details.
 
-        :rtype: str or None
+        :rtype: str
 
         """
         return self._issuer
@@ -284,14 +281,15 @@ class AttestationResult(object):
         #type:() -> Union[Dict[str, Any], None]
         """ Returns the runtime claims in the token.
 
-        This value will match the input `runtime_data` property to the 
+        This value will match the input `runtime_json` property to the 
         :meth:`azure.security.attestation.AttestationClient.attest_sgx` or
         :meth:`azure.security.attestation.AttestationClient.attest_open_enclave` API.
 
         :rtype: dict[str, Any] or None
 
         .. note:: The `runtime_claims` property will only be populated if the
-            `runtime_data` parameter to the `Attest` API is marked as being JSON.
+            `runtime_json` parameter to the `Attest` API is specified. It will 
+            not be populated if the `runtime_data` parameter is specified.
 
         """
         return self._runtime_claims
@@ -301,14 +299,16 @@ class AttestationResult(object):
         #type:() -> Union[Dict[str, Any], None]
         """ Returns the inittime claims in the token.
 
-        This value will match the input `inittime_data` property to the 
+        This value will match the input `inittime_json` property to the 
         :meth:`azure.security.attestation.AttestationClient.attest_sgx` or
         :meth:`azure.security.attestation.AttestationClient.attest_open_enclave` API.
 
         :rtype: dict[str, Any] or None
 
         .. note:: The `inittime_claims` property will only be populated if the
-            `inittime_data` parameter to the `Attest` API is marked as being JSON.
+            `inittime_json` parameter to the `Attest` API is specified. It will 
+            not be populated if the `inittime_data` parameter is specified.
+
 
         """
         return self._inittime_claims
