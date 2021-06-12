@@ -185,8 +185,8 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                     sensitivity=50,
                     anomaly_detector_direction="Both",
                     suppress_condition=SuppressCondition(
-                        min_number=50,
-                        min_ratio=50
+                        min_number=5,
+                        min_ratio=5
                     )
                 )
             )
@@ -306,8 +306,8 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                     sensitivity=50,
                     anomaly_detector_direction="Both",
                     suppress_condition=SuppressCondition(
-                        min_number=50,
-                        min_ratio=50
+                        min_number=5,
+                        min_ratio=5
                     )
                 ),
                 hard_threshold_condition=HardThresholdCondition(
