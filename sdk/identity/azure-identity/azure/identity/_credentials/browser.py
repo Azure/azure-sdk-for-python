@@ -32,23 +32,23 @@ class InteractiveBrowserCredential(InteractiveCredential):
     there with the authorization code flow, using PKCE (Proof Key for Code Exchange) internally to protect the code.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
-          defines authorities for other clouds.
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
+        defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Defaults to the 'organizations' tenant, which can
-          authenticate work or school accounts.
+        authenticate work or school accounts.
     :keyword str client_id: Client ID of the Azure Active Directory application users will sign in to. If
-          unspecified, users will authenticate to an Azure development application.
+        unspecified, users will authenticate to an Azure development application.
     :keyword str login_hint: a username suggestion to pre-fill the login page's username/email address field. A user
         may still log in with a different username.
     :keyword str redirect_uri: a redirect URI for the application identified by `client_id` as configured in Azure
-          Active Directory, for example "http://localhost:8400". This is only required when passing a value for
-          `client_id`, and must match a redirect URI in the application's registration. The credential must be able to
-          bind a socket to this URI.
+        Active Directory, for example "http://localhost:8400". This is only required when passing a value for
+        `client_id`, and must match a redirect URI in the application's registration. The credential must be able to
+        bind a socket to this URI.
     :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
     :keyword bool disable_automatic_authentication: if True, :func:`get_token` will raise
-          :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
+        :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
-          will cache tokens in memory.
+        will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
     :raises ValueError: invalid `redirect_uri`
