@@ -398,7 +398,7 @@ class AttestationAdministrationClient(object):
             "Not Before" time in the token.
 
         :return: A tuple containing the list of PEM encoded X.509 certificate chains and an attestation token.
-        :rtype: Tuple[list[list[string]], AttestationToken]
+        :rtype: Tuple[list[list[str]], AttestationToken]
 
         .. admonition:: Example: Retrieving the set of policy management certificates
             for an isolated attestation instance.
