@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/query
   response:
@@ -584,16 +584,16 @@ interactions:
         Handbags & Sunglasses"}},"property":{"maxSeverity":"High","incidentStatus":"Active","valueOfRootNode":28743826.8,"expectedValueOfRootNode":29403418.48476088}},{"incidentId":"5c537a979fd369fcb94011243d9b8c63-174b31c2400","startTime":"2020-09-22T00:00:00Z","lastTime":"2020-09-22T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Los
         Angeles","category":"Shoes Handbags & Sunglasses"}},"property":{"maxSeverity":"High","incidentStatus":"Active","valueOfRootNode":5537234.0,"expectedValueOfRootNode":5030769.276739401}}]}'
     headers:
-      apim-request-id: e8d4a71e-d6af-4c2d-8105-ca22034dcb14
+      apim-request-id: 919b4f06-1282-4500-9ed5-f25bfc31ce43
       content-length: '229296'
       content-type: application/json; charset=utf-8
-      date: Fri, 21 May 2021 22:03:29 GMT
+      date: Sat, 12 Jun 2021 00:27:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '371'
-      x-request-id: e8d4a71e-d6af-4c2d-8105-ca22034dcb14
+      x-envoy-upstream-service-time: '306'
+      x-request-id: 919b4f06-1282-4500-9ed5-f25bfc31ce43
     status:
       code: 200
       message: OK
-    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/query
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/fb5a6ed6-2b9e-4b72-8b0c-0046ead1c15c/incidents/query
 version: 1
