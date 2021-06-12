@@ -141,7 +141,12 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         self.client.add_feedback(period_feedback)
 
     def test_list_feedback(self):
-        results = list(self.client.list_feedback(metric_id=self.metric_id))
+        results = list(self.client.list_feedback(
+            metric_id=self.metric_id,
+            start_time=datetime.datetime(2021, 6, 1),
+            end_time=datetime.datetime(2021, 6, 3),
+            time_mode="FeedbackCreatedTime"
+        ))
         assert len(results) > 0
 
     def test_get_feedback(self):
