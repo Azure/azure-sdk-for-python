@@ -132,7 +132,8 @@ class ChatThreadClientSamplesAsync(object):
                 # Scenario 1: Send message without specifying chat_message_type
                 send_message_result = await chat_thread_client.send_message(
                     "Hello! My name is Fred Flinstone",
-                    sender_display_name="Fred Flinstone")
+                    sender_display_name="Fred Flinstone",
+                    metadata={"tags": "tags"})
                 send_message_result_id = send_message_result.id
 
                 # Scenario 2: Send message specifying chat_message_type

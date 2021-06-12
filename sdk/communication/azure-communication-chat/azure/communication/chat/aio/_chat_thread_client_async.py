@@ -303,11 +303,13 @@ class ChatThreadClient(object):
                 "chat_message_type: {message_type} can be only 'text' or 'html'".format(message_type=chat_message_type))
 
         sender_display_name = kwargs.pop("sender_display_name", None)
+        metadata = kwargs.pop("metadata", None)
 
         create_message_request = SendChatMessageRequest(
             content=content,
             type=chat_message_type,
-            sender_display_name=sender_display_name
+            sender_display_name=sender_display_name,
+            metadata=metadata
         )
         send_chat_message_result = await self._client.chat_thread.send_chat_message(
             chat_thread_id=self._thread_id,
@@ -382,6 +384,7 @@ class ChatThreadClient(object):
             self,
             message_id: str,
             content: str = None,
+            metadata: dict[str, str] = None,
             **kwargs
     ) -> None:
         """Updates a message.
@@ -406,7 +409,7 @@ class ChatThreadClient(object):
         if not message_id:
             raise ValueError("message_id cannot be None.")
 
-        update_message_request = UpdateChatMessageRequest(content=content)
+        update_message_request = UpdateChatMessageRequest(content=content, metadata=metadata)
 
         return await self._client.chat_thread.update_chat_message(
             chat_thread_id=self._thread_id,

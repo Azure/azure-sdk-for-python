@@ -105,6 +105,7 @@ class ChatMessage(object):
         self.sender = kwargs['sender']
         self.deleted_on = kwargs['deleted_on']
         self.edited_on = kwargs['edited_on']
+        self.metadata = kwargs['metadata']
 
     @classmethod
     def _get_message_type(cls, chat_message_type):
@@ -131,7 +132,8 @@ class ChatMessage(object):
             created_on=chat_message.created_on,
             sender=sender_communication_identifier,
             deleted_on=chat_message.deleted_on,
-            edited_on=chat_message.edited_on
+            edited_on=chat_message.edited_on,
+            metadata=chat_message.metadata
         )
 
 

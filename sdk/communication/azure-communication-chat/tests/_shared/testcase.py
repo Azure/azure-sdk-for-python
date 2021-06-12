@@ -71,11 +71,16 @@ class CommunicationTestCase(AzureTestCase):
 
     def setUp(self):
         super(CommunicationTestCase, self).setUp()
+        print(111111)
 
         if self.is_playback():
+            print(2222222222)
             self.connection_str = "endpoint=https://sanitized/;accesskey=fake==="
         else:
             self.connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
+            # COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING="endpoint=https://chat-sdktester-e2e.dev.communication.azure.net/;accesskey=hd4ZcQf0XHF2EghqbFwnCxu7bEvrSBBQX0wkHE+aaoqNC+zaK0VSvHKkwOYMLMWixol3K9LFBKlD6XACrYDVEg=="
+            # print(self.connection_str)
             endpoint, _ = parse_connection_str(self.connection_str)
             self._resource_name = endpoint.split(".")[0]
+            # print(self._resource_name)
             self.scrubber.register_name_pair(self._resource_name, "sanitized")
