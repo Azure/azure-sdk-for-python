@@ -9,7 +9,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 import logging
-from xml.dom.minidom import Element
+from xml.etree.ElementTree import Element
 
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import (
@@ -89,9 +89,11 @@ def process_storage_error(storage_error):
     serialized = False
     # If it is one of those three then it has been serialized prior by the generated layer.
     if isinstance(storage_error, (PartialBatchErrorException,
-                                  ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError)):
+                                  ClientAuthenticationError,
+                                  ResourceNotFoundError,
+                                  ResourceExistsError)) or storage_error.response.status_code in [200, 204]:
         serialized = True
-        if not storage_error.response:
+        if not storage_error.response or storage_error.response.status_code in [200, 204]:
             raise storage_error
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
@@ -173,6 +175,8 @@ def process_storage_error(storage_error):
     # Ensure these properties are stored in the error instance as well (not just the error message)
     error.error_code = error_code
     error.additional_info = additional_data
+    # error.args is what's surfaced on the traceback - show error message in all cases
+    error.args = (error.message,)
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
         exec("raise error from None")

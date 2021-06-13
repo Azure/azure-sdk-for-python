@@ -9,7 +9,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 import logging
-from xml.dom.minidom import Element
+from xml.etree.ElementTree import Element
 
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import (
@@ -173,6 +173,8 @@ def process_storage_error(storage_error):
     # Ensure these properties are stored in the error instance as well (not just the error message)
     error.error_code = error_code
     error.additional_info = additional_data
+    # error.args is what's surfaced on the traceback - show error message in all cases
+    error.args = (error.message,)
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
         exec("raise error from None")
