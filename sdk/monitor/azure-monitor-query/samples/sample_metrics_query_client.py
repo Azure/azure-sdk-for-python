@@ -9,6 +9,7 @@ from azure.identity import ClientSecretCredential
 
 urllib3.disable_warnings()
 
+# [START metrics_client_auth_with_token_cred]
 credential  = ClientSecretCredential(
         client_id = os.environ['AZURE_CLIENT_ID'],
         client_secret = os.environ['AZURE_CLIENT_SECRET'],
@@ -16,7 +17,9 @@ credential  = ClientSecretCredential(
     )
 
 client = MetricsQueryClient(credential)
+# [END metrics_client_auth_with_token_cred]
 
+# [START send_metrics_query]
 metrics_uri = os.environ['METRICS_RESOURCE_URI']
 response = client.query(
     metrics_uri,
@@ -30,4 +33,4 @@ for metric in response.metrics:
     for time_series_element in metric.timeseries:
         for metric_value in time_series_element.data:
             print(metric_value.time_stamp)
- 
+# [END send_metrics_query]

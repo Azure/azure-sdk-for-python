@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/query
   response:
@@ -835,18 +835,18 @@ interactions:
         Accessories"},"property":{"anomalySeverity":"Low","value":1.6,"expectedValue":0.03576766187030564}},{"timestamp":"2020-09-28T00:00:00Z","dimension":{"dimension_name":"Moscow","category":"Handmade"},"property":{"anomalySeverity":"Medium","value":43221.0,"expectedValue":51011.52344781247}},{"timestamp":"2020-09-28T00:00:00Z","dimension":{"dimension_name":"Madrid","category":"Office
         Products"},"property":{"anomalySeverity":"Medium","value":13872.4,"expectedValue":8507.249981917847}},{"timestamp":"2020-09-28T00:00:00Z","dimension":{"dimension_name":"Guangzhou","category":"Handmade"},"property":{"anomalySeverity":"Low","value":3805.6,"expectedValue":4325.101385321185}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/query?$maxpagesize=1000&$skip=1000"}'
     headers:
-      apim-request-id: 204b9e9a-0644-4c2e-b2c1-02a8383d408f
+      apim-request-id: 02ede7b5-5103-48c1-b626-0a5f3333c8d9
       content-length: '185372'
       content-type: application/json; charset=utf-8
-      date: Fri, 21 May 2021 22:06:28 GMT
+      date: Sat, 12 Jun 2021 00:28:20 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '198'
-      x-request-id: 204b9e9a-0644-4c2e-b2c1-02a8383d408f
+      x-envoy-upstream-service-time: '185'
+      x-request-id: 02ede7b5-5103-48c1-b626-0a5f3333c8d9
     status:
       code: 200
       message: OK
-    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/query
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/fb5a6ed6-2b9e-4b72-8b0c-0046ead1c15c/anomalies/query
 - request:
     body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-10-21T00:00:00.000Z"}'
     headers:
@@ -857,7 +857,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/query?$maxpagesize=1000&$skip=1000
   response:
@@ -1112,16 +1112,16 @@ interactions:
         Angeles","category":"Shoes Handbags & Sunglasses"},"property":{"anomalySeverity":"High","value":5537234.0,"expectedValue":5030769.276739401}},{"timestamp":"2020-09-22T00:00:00Z","dimension":{"dimension_name":"Karachi","category":"Shoes
         Handbags & Sunglasses"},"property":{"anomalySeverity":"High","value":28743826.8,"expectedValue":29403418.48476088}}]}'
     headers:
-      apim-request-id: 4b1bb2cc-403c-4ca8-8dc5-875435e5ce9b
+      apim-request-id: ba735c0c-5c3d-43d6-9a83-a120c424bbcc
       content-length: '52985'
       content-type: application/json; charset=utf-8
-      date: Fri, 21 May 2021 22:06:28 GMT
+      date: Sat, 12 Jun 2021 00:28:21 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '172'
-      x-request-id: 4b1bb2cc-403c-4ca8-8dc5-875435e5ce9b
+      x-envoy-upstream-service-time: '152'
+      x-request-id: ba735c0c-5c3d-43d6-9a83-a120c424bbcc
     status:
       code: 200
       message: OK
-    url: https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/query?$maxpagesize=1000&$skip=1000
+    url: https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/fb5a6ed6-2b9e-4b72-8b0c-0046ead1c15c/anomalies/query?$maxpagesize=1000&$skip=1000
 version: 1

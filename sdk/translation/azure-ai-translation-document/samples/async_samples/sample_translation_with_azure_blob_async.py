@@ -68,11 +68,11 @@ class SampleTranslationWithAzureBlobAsync(object):
 
         source_container = await self.create_container(
             blob_service_client,
-            container_name=self.storage_source_container_name or "translation-source-container",
+            container_name=self.storage_source_container_name or "translation-source-container-async",
         )
         target_container = await self.create_container(
             blob_service_client,
-            container_name=self.storage_target_container_name or "translation-target-container"
+            container_name=self.storage_target_container_name or "translation-target-container-async"
         )
 
         if self.document_name:

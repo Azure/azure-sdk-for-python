@@ -12,8 +12,6 @@ from ._models import (
     KeyVaultRoleAssignment,
     KeyVaultRoleAssignmentProperties,
     KeyVaultRoleDefinition,
-    KeyVaultRestoreOperation,
-    KeyVaultSelectiveKeyRestoreOperation,
 )
 
 
@@ -28,6 +26,4 @@ __all__ = [
     "KeyVaultRoleAssignmentProperties",
     "KeyVaultRoleDefinition",
     "KeyVaultRoleScope",
-    "KeyVaultRestoreOperation",
-    "KeyVaultSelectiveKeyRestoreOperation",
 ]

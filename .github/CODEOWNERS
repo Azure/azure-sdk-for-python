@@ -49,6 +49,9 @@
 # PRLabel: %Monitor - Exporter
 /sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen
 
+# PRLabel: %Monitor - Log
+/sdk/monitor/azure-monitor-query                                     @rakshith91
+
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
 

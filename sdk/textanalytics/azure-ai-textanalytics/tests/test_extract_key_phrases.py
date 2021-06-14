@@ -444,19 +444,6 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_document_warnings(self, client):
-        docs = [
-            {"id": "1", "text": "Thisisaveryveryverylongtextwhichgoesonforalongtimeandwhichalmostdoesn'tseemtostopatanygivenpointintime.ThereasonforthistestistotryandseewhathappenswhenwesubmitaveryveryverylongtexttoLanguage.Thisshouldworkjustfinebutjustincaseitisalwaysgoodtohaveatestcase.ThisallowsustotestwhathappensifitisnotOK.Ofcourseitisgoingtobeokbutthenagainitisalsobettertobesure!"},
-        ]
-
-        result = client.extract_key_phrases(docs)
-        for doc in result:
-            doc_warnings = doc.warnings
-            self.assertEqual(doc_warnings[0].code, "LongWordsInDocument")
-            self.assertIsNotNone(doc_warnings[0].message)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
     def test_not_passing_list_for_docs(self, client):
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
