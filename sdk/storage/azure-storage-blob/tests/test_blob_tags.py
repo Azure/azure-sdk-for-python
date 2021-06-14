@@ -25,6 +25,8 @@ from azure.storage.blob import (
     BlobBlock, generate_account_sas, ResourceTypes, AccountSasPermissions, generate_container_sas,
     ContainerSasPermissions, BlobClient, generate_blob_sas, BlobSasPermissions)
 
+from devtools_testutils.storage import StorageTestCase
+
 #------------------------------------------------------------------------------
 
 TEST_CONTAINER_PREFIX = 'container'
