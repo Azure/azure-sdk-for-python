@@ -103,13 +103,17 @@ def merge_validation_args(existing_options, kwargs):
     # type(Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
     options = existing_options.copy()
     options.update(**kwargs)
-    kwargs.pop("validate_token", True)
+
+    # There are elements in the core pipelines that expect that there are no
+    # keyword arguments passed in that aren't those they expect, so remove
+    # the validation keyword arguments now to make the downstream code happy.
+    kwargs.pop("validate_token", None)
     kwargs.pop("validation_callback", None)
-    kwargs.pop("validate_signature", True)
-    kwargs.pop("validate_expiration", True)
-    kwargs.pop("validate_not_before", True)
-    kwargs.pop("validate_issuer", False)
+    kwargs.pop("validate_signature", None)
+    kwargs.pop("validate_expiration", None)
+    kwargs.pop("validate_not_before", None)
+    kwargs.pop("validate_issuer", None)
     kwargs.pop("issuer", None)
-    kwargs.pop("validation_slack", 0.5)
+    kwargs.pop("validation_slack", None)
 
     return options
