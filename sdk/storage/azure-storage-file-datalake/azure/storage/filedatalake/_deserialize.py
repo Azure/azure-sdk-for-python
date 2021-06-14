@@ -113,7 +113,7 @@ def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argu
     return {k[10:]: v for k, v in raw_metadata.items()}
 
 
-def process_storage_error(storage_error):
+def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False
     # If it is one of those three then it has been serialized prior by the generated layer.
@@ -138,8 +138,7 @@ def process_storage_error(storage_error):
             error_dict = error_body.get('error', {})
         elif not error_code:
             _LOGGER.warning(
-                'Unexpected return type {} from ContentDecodePolicy.deserialize_from_http_generics.'.format(
-                    type(error_body)))
+                'Unexpected return type % from ContentDecodePolicy.deserialize_from_http_generics.', type(error_body))
             error_dict = {'message': str(error_body)}
 
         # If we extracted from a Json or XML response
@@ -210,6 +209,6 @@ def process_storage_error(storage_error):
     error.args = (error.message,)
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
-        exec("raise error from None")
+        exec("raise error from None")   # pylint: disable=exec-used
     except SyntaxError:
         raise error
