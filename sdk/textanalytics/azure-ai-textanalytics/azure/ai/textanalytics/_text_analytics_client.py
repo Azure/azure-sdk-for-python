@@ -19,6 +19,7 @@ from ._base_client import TextAnalyticsClientBase
 from ._request_handlers import (
     _validate_input,
     _determine_action_type,
+    _determine_task_type,
     _check_string_index_type_arg
 )
 from ._response_handlers import (
@@ -882,32 +883,26 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         continuation_token = kwargs.pop("continuation_token", None)
 
         doc_id_order = [doc.get("id") for doc in docs.documents]
-        task_order = [_determine_action_type(action) for action in actions]
+        generated_tasks = [action.to_generated(str(idx)) for idx, action in enumerate(actions)]
+        task_order = [(_determine_task_type(a), a.task_name) for a in generated_tasks]
 
         try:
             analyze_tasks = self._client.models(api_version='v3.1').JobManifestTasks(
                 entity_recognition_tasks=[
-                    t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_ENTITIES]
+                    a for a in generated_tasks if _determine_task_type(a) == AnalyzeActionsType.RECOGNIZE_ENTITIES
                 ],
                 entity_recognition_pii_tasks=[
-                    t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES]
+                    a for a in generated_tasks if _determine_task_type(a) == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
                 ],
                 key_phrase_extraction_tasks=[
-                    t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.EXTRACT_KEY_PHRASES]
+                    a for a in generated_tasks if _determine_task_type(a) == AnalyzeActionsType.EXTRACT_KEY_PHRASES
                 ],
                 entity_linking_tasks=[
-                    t.to_generated() for t in
-                    [
-                        a for a in actions
-                        if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
-                    ]
+                    a for a in generated_tasks
+                    if _determine_task_type(a) == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
                 ],
                 sentiment_analysis_tasks=[
-                    t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.ANALYZE_SENTIMENT]
+                    a for a in generated_tasks if _determine_task_type(a) == AnalyzeActionsType.ANALYZE_SENTIMENT
                 ]
             )
             analyze_body = self._client.models(api_version='v3.1').AnalyzeBatchInput(

@@ -698,3 +698,23 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
             raw_response_hook=callback,
         ).result()
+
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_partial(self, client):  # TODO: verify behavior of service
+        docs = [{"id": "1", "language": "tr", "text": "I did not like the hotel we stayed at."},{"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
+
+
+        response = client.begin_analyze_actions(
+                docs,
+                actions=[
+                    AnalyzeSentimentAction(),
+                    RecognizePiiEntitiesAction(),
+                    # RecognizePiiEntitiesAction(domain_filter="phi"),
+                ],
+                polling_interval=self._interval(),
+            ).result()
+
+        action_results = list(response)
+        print(action_results)

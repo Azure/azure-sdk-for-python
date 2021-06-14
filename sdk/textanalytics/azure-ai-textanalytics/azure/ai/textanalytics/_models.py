@@ -1465,13 +1465,14 @@ class RecognizeEntitiesAction(DictMixin):
         return "RecognizeEntitiesAction(model_version={}, string_index_type={}, disable_service_logs={})" \
             .format(self.model_version, self.string_index_type, self.disable_service_logs)[:1024]
 
-    def to_generated(self):
+    def to_generated(self, task_id):
         return _latest_preview_models.EntitiesTask(
             parameters=_latest_preview_models.EntitiesTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -1536,14 +1537,15 @@ class AnalyzeSentimentAction(DictMixin):
             self.disable_service_logs,
         )[:1024]
 
-    def to_generated(self):
+    def to_generated(self, task_id):
         return _latest_preview_models.SentimentAnalysisTask(
             parameters=_latest_preview_models.SentimentAnalysisTaskParameters(
                 model_version=self.model_version,
                 opinion_mining=self.show_opinion_mining,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -1602,14 +1604,15 @@ class RecognizePiiEntitiesAction(DictMixin):
             self.disable_service_logs,
         )[:1024]
 
-    def to_generated(self):
+    def to_generated(self, task_id):
         return _latest_preview_models.PiiTask(
             parameters=_latest_preview_models.PiiTaskParameters(
                 model_version=self.model_version,
                 domain=self.domain_filter,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -1649,12 +1652,13 @@ class ExtractKeyPhrasesAction(DictMixin):
         return "ExtractKeyPhrasesAction(model_version={}, disable_service_logs={})" \
             .format(self.model_version, self.disable_service_logs)[:1024]
 
-    def to_generated(self):
+    def to_generated(self, task_id):
         return _latest_preview_models.KeyPhrasesTask(
             parameters=_latest_preview_models.KeyPhrasesTaskParameters(
                 model_version=self.model_version,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )
 
 
@@ -1705,11 +1709,12 @@ class RecognizeLinkedEntitiesAction(DictMixin):
                 self.model_version, self.string_index_type, self.disable_service_logs
             )[:1024]
 
-    def to_generated(self):
+    def to_generated(self, task_id):
         return _latest_preview_models.EntityLinkingTask(
             parameters=_latest_preview_models.EntityLinkingTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
+            task_name=task_id
         )

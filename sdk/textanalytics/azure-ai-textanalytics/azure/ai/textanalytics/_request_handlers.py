@@ -6,7 +6,7 @@
 
 
 import six
-
+from ._generated.models import EntitiesTask, PiiTask, EntityLinkingTask, SentimentAnalysisTask
 from ._models import (
     DetectLanguageInput,
     TextDocumentInput,
@@ -77,6 +77,17 @@ def _determine_action_type(action):
     if isinstance(action, RecognizeLinkedEntitiesAction):
         return AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
     if isinstance(action, AnalyzeSentimentAction):
+        return AnalyzeActionsType.ANALYZE_SENTIMENT
+    return AnalyzeActionsType.EXTRACT_KEY_PHRASES
+
+def _determine_task_type(action):
+    if isinstance(action, EntitiesTask):
+        return AnalyzeActionsType.RECOGNIZE_ENTITIES
+    if isinstance(action, PiiTask):
+        return AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
+    if isinstance(action, EntityLinkingTask):
+        return AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+    if isinstance(action, SentimentAnalysisTask):
         return AnalyzeActionsType.ANALYZE_SENTIMENT
     return AnalyzeActionsType.EXTRACT_KEY_PHRASES
 
