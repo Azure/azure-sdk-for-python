@@ -1,8 +1,8 @@
-# Guide for migrating to `azure-data-tables` from `azure-cosmos`
+# Guide for migrating to `azure-data-tables` from `azure-cosmosdb-table`
 
-This guide is intended to assist in the migration to `azure-data-tables` from `azure-cosmos`. It will focus on side-by-side comparisons for similar operations between the two packages.
+This guide is intended to assist in the migration to `azure-data-tables` from `azure-cosmosdb-table`. It will focus on side-by-side comparisons for similar operations between the two packages.
 
-We assume that you are familiar with `azure-cosmos`. If not, please refer to the README for `azure-cosmos` rather than this guide.
+We assume that you are familiar with `azure-cosmosdb-table`. If not, please refer to the README for `azure-cosmosdb-table` rather than this guide.
 
 ## Table of contents
 
@@ -34,7 +34,7 @@ We have a variety of new features available in the new library:
 
 ### Package names and namespaces
 
-The package name has been changed from `azure-cosmos` to `azure-data-tables`. This package can target either CosmosDB or Azure Storage Tables accounts.
+The package name has been changed from `azure-cosmosdb-table` to `azure-data-tables`. This package can target either CosmosDB or Azure Storage Tables accounts.
 
 ### Client hierarchy and constructors
 
@@ -42,12 +42,12 @@ In the interest of simplicity, there are only two clients, `TableServiceClient` 
 
 ### Authenticating Clients
 
-In `azure-cosmos`:
+In `azure-cosmosdb-table`:
 ```python
 import os
-from azure.cosmos import CosmosClient
+from azure.cosmosdb.table import TableService
 
-client = CosmosClient(os.environ["ACCOUNT_URI"], credential=os.environ["ACCOUNT_KEY"])
+client = TableService(account_name=os.environ["ACCOUNT_URI"], account_key=os.environ["ACCOUNT_KEY"])
 ```
 
 In `azure-data-tables`:
@@ -72,12 +72,18 @@ table_service_client = TableServiceClient(account_url, credential=credential)
 
 #### Create and Delete
 
-In `azure-cosmos`:
+In `azure-cosmosdb-table`:
 ```python
-from azure.cosmos import CosmosClient
-client = CosmosClient(...)
-database_name = "tableName"
-client.CreateDatabase({"id": database_name})
+from azure.cosmosdb.table import TableService
+client = TableService(...)
+table_name = "tableName"
+created = client.create_table(table_name)
+# create_table returns True if a new table was created, False if the table already exists
+
+# Delete
+table_name = "deleteTableName"
+client.delete_table(table_name)
+# delete_table returns True if a table was deleted, False if the table does not exist
 ```
 
 In `azure-data-tables`:
@@ -97,9 +103,15 @@ table_client.delete_table()
 
 #### List and Query
 
-In `azure-cosmos`:
+In `azure-cosmosdb-table`:
 ```python
+from azure.cosmosdb.table import TableService
+client = TableService(...)
 
+# In the azure-cosmosdb-table library, there is no query table method
+tables = list(service.list_tables())
+for table in tables:
+    print(table.name)
 ```
 
 In `azure-data-tables`:
@@ -125,20 +137,24 @@ for table in service_client.query_tables(query_filter, parameters=parameters):
 
 #### Insert and Delete
 
-In `azure-cosmos`:
+In `azure-cosmosdb-table`:
 ```python
-
-from azure.cosmos import CosmosClient
-client = CosmosClient(...)
-database = client.get_database_client("databaseName")
-container = database.get_container_client("products")
-
-item = {
+from azure.cosmosdb.table import TableService
+client = TableService(...)
+table_name = "tableName"
+entity = {
     "PartitionKey": "pk0001",
     "RowKey": "rk0001",
-    "Value": 1
+    "StringProperty": "stringystring",
+    "BooleanProperty": False,
+    "IntegerProperty": 31,
+    "FloatProperty": 3.14159,
+    "BinaryProperty": b"binary",
+    "GuidProperty": uuid.uuid4(),
+    "DatetimeProperty": datetime.datetime.now(),
 }
-container.upsert_item(item)
+
+etag = client.insert_entity(table_name, entity)
 ```
 
 In `azure-data-tables`:
@@ -182,9 +198,15 @@ table_client.delete_entity(pk, rk)
 
 #### Update and Upsert
 
-In `azure-cosmos`:
+In `azure-cosmosdb-table`:
 ```python
+from azure.cosmosdb.table import TableService
+client = TableService(...)
 
+my_entity["Value"] += 5
+my_table = "tableName"
+
+etag = client.update_entity(my_table, my_entity)
 ```
 
 In `azure-data-tables`:
@@ -200,9 +222,15 @@ table_client.upsert_entity(my_entity, mode=UpdateMode.MERGE)
 
 #### Queries with OData
 
-In `azure-cosmos`:
+In `azure-cosmosdb-table`:
 ```python
+from azure.cosmosdb.table import TableService
+client = TableService(...)
+query_filter = "PartitionKey eq 'pk001' or RowKey eq 'rk001' or Value gt '5'"
+table_name = "tableName"
 
+for entity in list(client.query_entities(table_name, filter=query_filter)):
+    print(entity.RowKey)
 ```
 
 In `azure-data-tables`:
@@ -226,9 +254,16 @@ for entity in table_client.query_entities(query_filter, parameters=parameters):
 
 #### Batch Operations
 
-In `azure-cosmos`:
+In `azure-cosmosdb-table`:
 ```python
+from azure.cosmosdb.table import TableService
+client = TableService(...)
 
+table_name = "tableName"
+with client.batch(table_name) as batch:
+    for i in range(0, 5):
+        entity["RowKey"] = "context_{}".format(i)
+        batch.insert_entity(entity)
 ```
 
 In `azure-data-tables`:
