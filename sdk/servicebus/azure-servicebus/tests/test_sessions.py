@@ -64,8 +64,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 for i in range(3):
                     message = ServiceBusMessage("Handler message no. {}".format(i))
 
-                    with pytest.raises(ValueError):
-                        message.partition_key = 'pkey'
+                    message.partition_key = 'pkey'
 
                     message.session_id = session_id
                     message.partition_key = session_id
