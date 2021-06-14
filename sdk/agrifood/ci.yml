@@ -33,3 +33,5 @@ extends:
     Artifacts:
     - name: azure-agrifood-farming
       safeName: azureagrifoodfarming
+    - name: azure-mgmt-agrifood
+      safeName: azuremgmtagrifood

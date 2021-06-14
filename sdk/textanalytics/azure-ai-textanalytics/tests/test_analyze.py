@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from collections import defaultdict
 import os
 import pytest
 import platform
@@ -26,7 +27,12 @@ from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,
-    AnalyzeActionsType,
+    _AnalyzeActionsType,
+    ExtractKeyPhrasesResult,
+    AnalyzeSentimentResult,
+    RecognizeLinkedEntitiesResult,
+    RecognizeEntitiesResult,
+    RecognizePiiEntitiesResult,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -57,19 +63,17 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result()
 
-        action_results = list(response)
+        document_results = list(response)
 
-        assert len(action_results) == 1
-        action_result = action_results[0]
-
-        assert action_result.action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
-        assert len(action_result.document_results) == len(docs)
-
-        for doc in action_result.document_results:
-            self.assertIn("Paul Allen", doc.key_phrases)
-            self.assertIn("Bill Gates", doc.key_phrases)
-            self.assertIn("Microsoft", doc.key_phrases)
-            self.assertIsNotNone(doc.id)
+        assert len(document_results) == 2
+        for document_result in document_results:
+            assert len(document_result) == 1
+            for document_result in document_result:
+                assert isinstance(document_result, ExtractKeyPhrasesResult)
+                assert "Paul Allen" in document_result.key_phrases
+                assert "Bill Gates" in document_result.key_phrases
+                assert "Microsoft" in document_result.key_phrases
+                assert document_result.id is not None
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -85,33 +89,31 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result()
 
-        action_results = list(response)
+        pages = list(response)
 
-        assert len(action_results) == 1
-        action_result = action_results[0]
-
-        assert action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
-        assert len(action_result.document_results) == len(docs)
-
-        self.assertEqual(action_result.document_results[0].sentiment, "neutral")
-        self.assertEqual(action_result.document_results[1].sentiment, "negative")
-        self.assertEqual(action_result.document_results[2].sentiment, "positive")
-
-        for doc in action_result.document_results:
-            self.assertIsNotNone(doc.id)
-            self.assertIsNotNone(doc.statistics)
-            self.validateConfidenceScores(doc.confidence_scores)
-            self.assertIsNotNone(doc.sentences)
-
-        self.assertEqual(len(action_result.document_results[0].sentences), 1)
-        self.assertEqual(action_result.document_results[0].sentences[0].text, "Microsoft was founded by Bill Gates and Paul Allen.")
-        self.assertEqual(len(action_result.document_results[1].sentences), 2)
-        self.assertEqual(action_result.document_results[1].sentences[0].text, "I did not like the hotel we stayed at.")
-        self.assertEqual(action_result.document_results[1].sentences[1].text, "It was too expensive.")
-        self.assertEqual(len(action_result.document_results[2].sentences), 2)
-        self.assertEqual(action_result.document_results[2].sentences[0].text, "The restaurant had really good food.")
-        self.assertEqual(action_result.document_results[2].sentences[1].text, "I recommend you try it.")
-
+        assert len(pages) == len(docs)
+        for idx, document_results in enumerate(pages):
+            assert len(document_results) == 1
+            document_result = document_results[0]
+            assert isinstance(document_result, AnalyzeSentimentResult)
+            assert document_result.id is not None
+            assert document_result.statistics is not None
+            self.validateConfidenceScores(document_result.confidence_scores)
+            assert document_result.sentences is not None
+            if idx == 0:
+                assert document_result.sentiment == "neutral"
+                assert len(document_result.sentences) == 1
+                assert document_result.sentences[0].text == "Microsoft was founded by Bill Gates and Paul Allen."
+            elif idx == 1:
+                assert document_result.sentiment == "negative"
+                assert len(document_result.sentences) == 2
+                assert document_result.sentences[0].text == "I did not like the hotel we stayed at."
+                assert document_result.sentences[1].text == "It was too expensive."
+            else:
+                assert document_result.sentiment == "positive"
+                assert len(document_result.sentences) == 2
+                assert document_result.sentences[0].text == "The restaurant had really good food."
+                assert document_result.sentences[1].text == "I recommend you try it."
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -128,16 +130,14 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result()
 
-        action_results = list(response)
+        pages = list(response)
 
-        assert len(action_results) == 1
-        action_result = action_results[0]
-
-        assert action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
-        assert len(action_result.document_results) == len(documents)
-
-        for idx, doc in enumerate(action_result.document_results):
-            for sentence in doc.sentences:
+        assert len(pages) == len(documents)
+        for idx, document_results in enumerate(pages):
+            assert len(document_results) == 1
+            document_result = document_results[0]
+            assert isinstance(document_result, AnalyzeSentimentResult)
+            for sentence in document_result.sentences:
                 if idx == 0:
                     for mined_opinion in sentence.mined_opinions:
                         target = mined_opinion.target
@@ -206,19 +206,20 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result()
 
-        action_results = list(response)
+        pages = list(response)
+        assert len(pages) == len(docs)
 
-        assert len(action_results) == 1
-        action_result = action_results[0]
-
-        assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
-        assert len(action_result.document_results) == len(docs)
-
-        for doc in action_result.document_results:
-            self.assertEqual(len(doc.entities), 4)
-            self.assertIsNotNone(doc.id)
-            for entity in doc.entities:
-                self.assertIsNotNone(entity.text)
+        for document_results in pages:
+            assert len(document_results) == 1
+            document_result = document_results[0]
+            assert isinstance(document_result, RecognizeEntitiesResult)
+            assert len(document_result.entities) == 4
+            assert document_result.id is not None
+            for entity in document_result.entities:
+                assert entity.text is not None
+                assert entity.category is not None
+                assert entity.offset is not None
+                assert entity.confidence_score is not None
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.confidence_score)
@@ -239,29 +240,23 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result()
 
-        action_results = list(response)
+        pages = list(response)
+        assert len(pages) == len(docs)
 
-        assert len(action_results) == 1
-        action_result = action_results[0]
-
-        assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
-        assert len(action_result.document_results) == len(docs)
-
-        self.assertEqual(action_result.document_results[0].entities[0].text, "859-98-0987")
-        self.assertEqual(action_result.document_results[0].entities[0].category, "USSocialSecurityNumber")
-        self.assertEqual(action_result.document_results[1].entities[0].text, "111000025")
-        # self.assertEqual(results[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumber here
-
-        # commenting out brazil cpf, currently service is not returning it
-        # self.assertEqual(action_result.document_results[2].entities[0].text, "998.214.865-68")
-        # self.assertEqual(action_result.document_results[2].entities[0].category, "Brazil CPF Number")
-        for doc in action_result.document_results:
-            self.assertIsNotNone(doc.id)
-            for entity in doc.entities:
-                self.assertIsNotNone(entity.text)
-                self.assertIsNotNone(entity.category)
-                self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.confidence_score)
+        for idx, document_results in enumerate(pages):
+            assert len(document_results) == 1
+            document_result = document_results[0]
+            assert isinstance(document_result, RecognizePiiEntitiesResult)
+            if idx == 0:
+                assert document_result.entities[0].text == "859-98-0987"
+                assert document_result.entities[0].category == "USSocialSecurityNumber"
+            elif idx == 1:
+                assert document_result.entities[0].text == "111000025"
+            for entity in document_result.entities:
+                assert entity.text is not None
+                assert entity.category is not None
+                assert entity.offset is not None
+                assert entity.confidence_score is not None
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -331,23 +326,22 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result()
 
-        action_results = list(response)
-        assert len(action_results) == 5
+        results = list(response)
+        assert len(results) == len(docs)
 
-        assert action_results[0].action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
-        assert action_results[1].action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
-        assert action_results[2].action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
-        assert action_results[3].action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
-        assert action_results[4].action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
-
-        action_results = [r for r in action_results if not r.is_error]
-        assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
-
-        in_order = ["56", "0", "19", "1"]
-
-        for action_result in action_results:
-            for idx, resp in enumerate(action_result.document_results):
-                self.assertEqual(resp.id, in_order[idx])
+        document_order = ["56", "0", "19", "1"]
+        action_order = [
+            _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+            _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+            _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+        ]
+        for doc_idx, document_results in enumerate(results):
+            assert len(document_results) == 5
+            for action_idx, document_result in enumerate(document_results):
+                self.assertEqual(document_result.id, document_order[doc_idx])
+                self.assertEqual(self.document_result_to_action_type(document_result), action_order[action_idx])
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -393,20 +387,21 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = poller.result()
 
-        action_results = list(response)
-        assert len(action_results) == 5
-        assert action_results[0].action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
-        assert action_results[1].action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
-        assert action_results[2].action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
-        assert action_results[3].action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
-        assert action_results[4].action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
-
-        assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
-
-        for action_result in action_results:
-            assert not hasattr(action_result, "statistics")
-            for doc in action_result.document_results:
-                assert doc.statistics
+        pages = list(response)
+        assert len(pages) == len(docs)
+        action_order = [
+            _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+            _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+            _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+        ]
+        for document_results in pages:
+            assert len(document_results) == len(action_order)
+            for document_result in document_results:
+                assert document_result.statistics
+                assert document_result.statistics.character_count
+                assert document_result.statistics.transaction_count
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -422,7 +417,7 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         )
 
-        response = poller.result()
+        poller.result()
 
         assert isinstance(poller.created_on, datetime.datetime)
         poller._polling_method.display_name
@@ -463,8 +458,8 @@ class TestAnalyze(TextAnalyticsTest):
     #         raw_response_hook=callback
     #     ).result())
 
-    #     for action_result in response:
-    #         for doc in action_result.document_results:
+    #     for document_result in response:
+    #         for doc in document_result.document_results:
     #             self.assertFalse(doc.is_error)
 
     # @GlobalTextAnalyticsAccountPreparer()
@@ -498,8 +493,8 @@ class TestAnalyze(TextAnalyticsTest):
     #         polling_interval=self._interval(),
     #     ).result())
 
-    #     for action_result in response:
-    #         for doc in action_result.document_results:
+    #     for document_result in response:
+    #         for doc in document_result.document_results:
     #             assert not doc.is_error
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -518,8 +513,8 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result())
 
-        for action_result in response:
-            for doc in action_result.document_results:
+        for document_results in response:
+            for doc in document_results:
                 assert doc.is_error
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -528,7 +523,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         with pytest.raises(HttpResponseError):
-            response = client.begin_analyze_actions(
+            client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="latest"),
@@ -546,7 +541,7 @@ class TestAnalyze(TextAnalyticsTest):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         with self.assertRaises(HttpResponseError):
-            response = client.begin_analyze_actions(
+            client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="bad"),
@@ -617,41 +612,27 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         ).result()
 
-        recognize_entities_results = []
-        extract_key_phrases_results = []
-        recognize_pii_entities_results = []
-        recognize_linked_entities_results = []
-        analyze_sentiment_results = []
+        pages = list(result)
+        assert len(pages) == len(docs)
+        action_order = [
+            _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+            _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+            _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+        ]
+        action_type_to_document_results = defaultdict(list)
 
-        action_results = list(result)
+        for doc_idx, page in enumerate(pages):
+            for action_idx, document_result in enumerate(page):
+                self.assertEqual(document_result.id, str(doc_idx))
+                action_type = self.document_result_to_action_type(document_result)
+                self.assertEqual(action_type, action_order[action_idx])
+                action_type_to_document_results[action_type].append(document_result)
 
-        # do 2 pages of 5 task results
-        for idx, action_result in enumerate(action_results):
-            if idx % 5 == 0:
-                assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
-                recognize_entities_results.append(action_result)
-            elif idx % 5 == 1:
-                assert action_result.action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
-                extract_key_phrases_results.append(action_result)
-            elif idx % 5 == 2:
-                assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
-                recognize_pii_entities_results.append(action_result)
-            elif idx % 5 == 3:
-                assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
-                recognize_linked_entities_results.append(action_result)
-            else:
-                assert action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
-                analyze_sentiment_results.append(action_result)
-            if idx < 5:  # first page of task results
-                assert len(action_result.document_results) == 20
-            else:
-                assert len(action_result.document_results) == 5
-
-        assert all([action_result for action_result in recognize_entities_results if len(action_result.document_results) == len(docs)])
-        assert all([action_result for action_result in extract_key_phrases_results if len(action_result.document_results) == len(docs)])
-        assert all([action_result for action_result in recognize_pii_entities_results if len(action_result.document_results) == len(docs)])
-        assert all([action_result for action_result in recognize_linked_entities_results if len(action_result.document_results) == len(docs)])
-        assert all([action_result for action_result in analyze_sentiment_results if len(action_result.document_results) == len(docs)])
+        assert len(action_type_to_document_results) == len(action_order)
+        for document_results in action_type_to_document_results.values():
+            assert len(document_results) == len(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

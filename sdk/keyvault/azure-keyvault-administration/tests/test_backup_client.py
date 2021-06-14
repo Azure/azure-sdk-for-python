@@ -10,6 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ResourceExistsError
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
+from azure.keyvault.administration._internal import HttpChallengeCache
 from azure.keyvault.administration import KeyVaultBackupClient, KeyVaultBackupOperation
 from azure.keyvault.administration._internal import parse_folder_url
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -33,6 +34,11 @@ class BackupClientTests(KeyVaultTestCase):
             self.scrubber.register_name_pair(real.netloc, playback.netloc)
         super(BackupClientTests, self).setUp(*args, **kwargs)
 
+    def tearDown(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        super(KeyVaultTestCase, self).tearDown()
+
     @property
     def credential(self):
         if self.is_live:
@@ -46,27 +52,11 @@ class BackupClientTests(KeyVaultTestCase):
         # backup the vault
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
         backup_poller = backup_client.begin_backup(container_uri, sas_token)
-
-        # check backup status and result
-        job_id = backup_poller.polling_method().resource().job_id
-        backup_status = backup_client.get_backup_status(job_id)
-        assert_in_progress_operation(backup_status)
         backup_operation = backup_poller.result()
-        assert_successful_operation(backup_operation)
-        backup_status = backup_client.get_backup_status(job_id)
-        assert_successful_operation(backup_status)
 
         # restore the backup
-        restore_poller = backup_client.begin_restore(backup_status.folder_url, sas_token)
-
-        # check restore status and result
-        job_id = restore_poller.polling_method().resource().job_id
-        restore_status = backup_client.get_restore_status(job_id)
-        assert_in_progress_operation(restore_status)
-        restore_operation = restore_poller.result()
-        assert_successful_operation(restore_operation)
-        restore_status = backup_client.get_restore_status(job_id)
-        assert_successful_operation(restore_status)
+        restore_poller = backup_client.begin_restore(backup_operation.folder_url, sas_token)
+        restore_poller.wait()
 
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
     @StorageAccountPreparer(random_name_enabled=True)
@@ -80,27 +70,11 @@ class BackupClientTests(KeyVaultTestCase):
         # backup the vault
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
         backup_poller = backup_client.begin_backup(container_uri, sas_token)
-
-        # check backup status and result
-        job_id = backup_poller.polling_method().resource().job_id
-        backup_status = backup_client.get_backup_status(job_id)
-        assert_in_progress_operation(backup_status)
         backup_operation = backup_poller.result()
-        assert_successful_operation(backup_operation)
-        backup_status = backup_client.get_backup_status(job_id)
-        assert_successful_operation(backup_status)
 
         # restore the key
-        restore_poller = backup_client.begin_selective_key_restore(key_name, backup_status.folder_url, sas_token)
-
-        # check restore status and result
-        job_id = restore_poller.polling_method().resource().job_id
-        restore_status = backup_client.get_restore_status(job_id)
-        assert_in_progress_operation(restore_status)
-        restore_operation = restore_poller.result()
-        assert_successful_operation(restore_operation)
-        restore_status = backup_client.get_restore_status(job_id)
-        assert_successful_operation(restore_status)
+        restore_poller = backup_client.begin_restore(backup_operation.folder_url, sas_token, key_name=key_name)
+        restore_poller.wait()
 
         # delete the key
         delete_function = partial(key_client.begin_delete_key, key_name)
@@ -119,29 +93,13 @@ def test_continuation_token():
     backup_client._client = mock_generated_client
     backup_client.begin_restore("storage uri", "sas", continuation_token=expected_token)
     backup_client.begin_backup("storage uri", "sas", continuation_token=expected_token)
-    backup_client.begin_selective_key_restore("storage uri", "sas", "key", continuation_token=expected_token)
+    backup_client.begin_restore("storage uri", "sas", key_name="key", continuation_token=expected_token)
 
     for method in ("begin_full_backup", "begin_full_restore_operation", "begin_selective_key_restore_operation"):
         mock_method = getattr(mock_generated_client, method)
         assert mock_method.call_count == 1
         _, kwargs = mock_method.call_args
         assert kwargs["continuation_token"] == expected_token
-
-
-def assert_in_progress_operation(operation):
-    if isinstance(operation, KeyVaultBackupOperation):
-        assert operation.folder_url is None
-    assert operation.status == "InProgress"
-    assert operation.end_time is None
-    assert isinstance(operation.start_time, datetime)
-
-
-def assert_successful_operation(operation):
-    if isinstance(operation, KeyVaultBackupOperation):
-        assert operation.folder_url
-    assert operation.status == "Succeeded"
-    assert isinstance(operation.end_time, datetime)
-    assert operation.start_time < operation.end_time
 
 
 @pytest.mark.parametrize(

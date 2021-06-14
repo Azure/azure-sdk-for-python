@@ -46,13 +46,90 @@
             "defaultValue": ".cognitiveservices.azure.com/",
             "type": "string"
         },
-        "storageEndpointSuffix": {
-            "defaultValue": ".blob.core.windows.net/",
-            "type": "string"
-        },
         "blobStorageAccount": {
             "type": "string",
             "defaultValue": "[concat(parameters('baseName'), 'prim')]"
+        },
+        "sourceStorageAccount": {
+            "type": "string",
+            "defaultValue": "krpraticstorageacc"
+        },
+        "sourceResourceId": {
+            "type": "string",
+            "defaultValue": "[resourceId('faa080af-c1d8-40ad-9cce-e1a450ca5b57', 'krpratic-rg', 'Microsoft.Storage/storageAccounts', parameters('sourceStorageAccount'))]"
+        },
+        "sourceContainerName": {
+            "type": "string",
+            "defaultValue": "testingtranslation"
+        },
+        "glossaryFileName": {
+            "type": "string",
+            "defaultValue": "glosario.tsv"
+        },
+        "sourceContainerSasProperties": {
+            "type": "object",
+            "defaultValue": {
+                "canonicalizedResource": "[concat('/blob/', parameters('sourceStorageAccount'), '/', parameters('sourceContainerName'))]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
+                "signedPermission": "rl",
+                "signedResource": "c"
+            }
+        },
+        "targetResourceId": {
+            "type": "string",
+            "defaultValue": "[resourceId('Microsoft.Storage/storageAccounts', parameters('blobStorageAccount'))]"
+        },
+        "targetContainerName_1": {
+            "type": "string",
+            "defaultValue": "testingcontainer1"
+        },
+        "targetContainerSasProperties_1": {
+            "type": "object",
+            "defaultValue": {
+                "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('targetContainerName_1'))]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
+                "signedPermission": "wl",
+                "signedResource": "c"
+            }
+        },
+        "targetContainerName_2": {
+            "type": "string",
+            "defaultValue": "testingcontainer2"
+        },
+        "targetContainerSasProperties_2": {
+            "type": "object",
+            "defaultValue": {
+                "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('targetContainerName_2'))]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
+                "signedPermission": "wl",
+                "signedResource": "c"
+            }
+        },
+        "targetContainerName_3": {
+            "type": "string",
+            "defaultValue": "testingcontainer3"
+        },
+        "targetContainerSasProperties_3": {
+            "type": "object",
+            "defaultValue": {
+                "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('targetContainerName_3'))]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
+                "signedPermission": "wl",
+                "signedResource": "c"
+            }
+        },
+        "targetContainerName_4": {
+            "type": "string",
+            "defaultValue": "testingcontainer4"
+        },
+        "targetContainerSasProperties_4": {
+            "type": "object",
+            "defaultValue": {
+                "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('targetContainerName_4'))]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
+                "signedPermission": "wl",
+                "signedResource": "c"
+            }
         }
     },
     "variables": {
@@ -63,6 +140,7 @@
         "storageAccountName": "[concat(parameters('baseName'), 'prim')]",
         "location": "[resourceGroup().location]",
         "azureDocTranslationUrl": "[concat('https://', variables('docTranslationBaseName'), parameters('docTranslationEndpointSuffix'))]",
+        "azureStorageEndpoint": "[concat('https://', parameters('blobStorageAccount'), '.blob.core.windows.net/')]",
         "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "encryption": {
             "services": {
@@ -120,7 +198,41 @@
                 "supportsHttpsTrafficOnly": true,
                 "encryption": "[variables('encryption')]",
                 "accessTier": "Cool"
-            }
+            },
+            "resources": [
+                {
+                  "type": "blobServices/containers",
+                  "apiVersion": "[variables('storageMgmtApiVersion')]",
+                  "name": "[concat('default/', parameters('targetContainerName_1'))]",
+                  "dependsOn": [
+                    "[parameters('blobStorageAccount')]"
+                  ]
+                },
+                {
+                  "type": "blobServices/containers",
+                  "apiVersion": "[variables('storageMgmtApiVersion')]",
+                  "name": "[concat('default/', parameters('targetContainerName_2'))]",
+                  "dependsOn": [
+                    "[parameters('blobStorageAccount')]"
+                  ]
+                },
+                {
+                  "type": "blobServices/containers",
+                  "apiVersion": "[variables('storageMgmtApiVersion')]",
+                  "name": "[concat('default/', parameters('targetContainerName_3'))]",
+                  "dependsOn": [
+                    "[parameters('blobStorageAccount')]"
+                  ]
+                },
+                {
+                  "type": "blobServices/containers",
+                  "apiVersion": "[variables('storageMgmtApiVersion')]",
+                  "name": "[concat('default/', parameters('targetContainerName_4'))]",
+                  "dependsOn": [
+                    "[parameters('blobStorageAccount')]"
+                  ]
+                }
+            ]
         }
     ],
     "outputs": {
@@ -155,6 +267,58 @@
         "TRANSLATION_DOCUMENT_STORAGE_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageMgmtApiVersion')).keys[0].value]"
+        },
+        "AZURE_DOCUMENT_TRANSLATION_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('docTranslationBaseName')), variables('docTranslationApiVersion')).key1]"
+        },
+        "AZURE_DOCUMENT_TRANSLATION_ENDPOINT": {
+            "type": "string",
+            "value": "[variables('azureDocTranslationUrl')]"
+        },
+        "AZURE_STORAGE_ACCOUNT_NAME": {
+            "type": "string",
+            "value": "[parameters('blobStorageAccount')]"
+        },
+        "AZURE_STORAGE_SOURCE_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageMgmtApiVersion')).keys[0].value]"
+        },
+        "AZURE_STORAGE_SOURCE_ENDPOINT": {
+            "type": "string",
+            "value": "[variables('azureStorageEndpoint')]"
+        },
+        "AZURE_SOURCE_CONTAINER_URL": {
+            "type": "string",
+            "value": "[concat(reference(parameters('sourceResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('sourceResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
+        },
+        "AZURE_SOURCE_CONTAINER_URL_1": {
+            "type": "string",
+            "value": "[concat(reference(parameters('sourceResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('sourceResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
+        },
+        "AZURE_SOURCE_CONTAINER_URL_2": {
+            "type": "string",
+            "value": "[concat(reference(parameters('sourceResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('sourceResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
+        },
+        "AZURE_TRANSLATION_GLOSSARY_URL": {
+            "type": "string",
+            "value": "[concat(reference(parameters('sourceResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '/', parameters('glossaryFileName'), '?', listServiceSas(parameters('sourceResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
+        },
+        "AZURE_TARGET_CONTAINER_URL": {
+            "type": "string",
+            "value": "[concat(reference(parameters('targetResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_1'), '?', listServiceSas(parameters('targetResourceId'), '2019-06-01', parameters('targetContainerSasProperties_1')).serviceSasToken)]"
+        },
+        "AZURE_TARGET_CONTAINER_URL_FR": {
+            "type": "string",
+            "value": "[concat(reference(parameters('targetResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_2'), '?', listServiceSas(parameters('targetResourceId'), '2019-06-01', parameters('targetContainerSasProperties_2')).serviceSasToken)]"
+        },
+        "AZURE_TARGET_CONTAINER_URL_AR": {
+            "type": "string",
+            "value": "[concat(reference(parameters('targetResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_3'), '?', listServiceSas(parameters('targetResourceId'), '2019-06-01', parameters('targetContainerSasProperties_3')).serviceSasToken)]"
+        },
+        "AZURE_TARGET_CONTAINER_URL_ES": {
+            "type": "string",
+            "value": "[concat(reference(parameters('targetResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_4'), '?', listServiceSas(parameters('targetResourceId'), '2019-06-01', parameters('targetContainerSasProperties_4')).serviceSasToken)]"
         }
     }
 }

@@ -32,10 +32,7 @@ from ._models import (
     RecognizePiiEntitiesResult,
     PiiEntity,
     AnalyzeHealthcareEntitiesResult,
-    AnalyzeActionsResult,
-    AnalyzeActionsType,
-    AnalyzeActionsError,
-    _get_indices,
+    _AnalyzeActionsType,
 )
 
 class CSODataV4Format(ODataV4Format):
@@ -86,26 +83,11 @@ def order_lro_results(doc_id_order, combined):
 
 def prepare_result(func):
     def choose_wrapper(*args, **kwargs):
-        def wrapper(response, obj, response_headers):  # pylint: disable=unused-argument
+        def wrapper(response, obj, response_headers, ordering_function):  # pylint: disable=unused-argument
             if obj.errors:
                 combined = obj.documents + obj.errors
-                results = order_results(response, combined)
+                results = ordering_function(response, combined)
 
-            else:
-                results = obj.documents
-
-            for idx, item in enumerate(results):
-                if hasattr(item, "error"):
-                    results[idx] = DocumentError(id=item.id, error=TextAnalyticsError._from_generated(item.error))  # pylint: disable=protected-access
-                else:
-                    results[idx] = func(item, results)
-            return results
-
-        def lro_wrapper(doc_id_order, obj, response_headers):  # pylint: disable=unused-argument
-            if obj.errors:
-                combined = obj.documents + obj.errors
-
-                results = order_lro_results(doc_id_order, combined)
             else:
                 results = obj.documents
 
@@ -119,9 +101,8 @@ def prepare_result(func):
         lro = kwargs.get("lro", False)
 
         if lro:
-            return lro_wrapper(*args)
-
-        return wrapper(*args)
+            return wrapper(*args, ordering_function=order_lro_results)
+        return wrapper(*args, ordering_function=order_results)
 
     return choose_wrapper
 
@@ -198,62 +179,30 @@ def healthcare_extract_page_data(doc_id_order, obj, response_headers, health_job
         healthcare_result(doc_id_order, health_job_state.results, response_headers, lro=True))
 
 def _get_deserialization_callback_from_task_type(task_type):
-    if task_type == AnalyzeActionsType.RECOGNIZE_ENTITIES:
+    if task_type == _AnalyzeActionsType.RECOGNIZE_ENTITIES:
         return entities_result
-    if task_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
+    if task_type == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
         return pii_entities_result
-    if task_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES:
+    if task_type == _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES:
         return linked_entities_result
-    if task_type == AnalyzeActionsType.ANALYZE_SENTIMENT:
+    if task_type == _AnalyzeActionsType.ANALYZE_SENTIMENT:
         return sentiment_result
     return key_phrases_result
 
 def _get_property_name_from_task_type(task_type):
-    if task_type == AnalyzeActionsType.RECOGNIZE_ENTITIES:
+    if task_type == _AnalyzeActionsType.RECOGNIZE_ENTITIES:
         return "entity_recognition_tasks"
-    if task_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
+    if task_type == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
         return "entity_recognition_pii_tasks"
-    if task_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES:
+    if task_type == _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES:
         return "entity_linking_tasks"
-    if task_type == AnalyzeActionsType.ANALYZE_SENTIMENT:
+    if task_type == _AnalyzeActionsType.ANALYZE_SENTIMENT:
         return "sentiment_analysis_tasks"
     return "key_phrase_extraction_tasks"
 
-def _num_tasks_in_current_page(returned_tasks_object):
-    return (
-        len(returned_tasks_object.entity_recognition_tasks or []) +
-        len(returned_tasks_object.entity_recognition_pii_tasks or []) +
-        len(returned_tasks_object.key_phrase_extraction_tasks or []) +
-        len(returned_tasks_object.entity_linking_tasks or []) +
-        len(returned_tasks_object.sentiment_analysis_tasks or [])
-    )
-
-def _get_task_type_from_error(error):
-    if "pii" in error.target.lower():
-        return AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
-    if "entityrecognition" in error.target.lower():
-        return AnalyzeActionsType.RECOGNIZE_ENTITIES
-    if "entitylinking" in error.target.lower():
-        return AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
-    if "sentiment" in error.target.lower():
-        return AnalyzeActionsType.ANALYZE_SENTIMENT
-    return AnalyzeActionsType.EXTRACT_KEY_PHRASES
-
-def _get_mapped_errors(analyze_job_state):
-    """
-    """
-    mapped_errors = defaultdict(list)
-    if not analyze_job_state.errors:
-        return mapped_errors
-    for error in analyze_job_state.errors:
-        mapped_errors[_get_task_type_from_error(error)].append((_get_error_index(error), error))
-    return mapped_errors
-
-def _get_error_index(error):
-    return _get_indices(error.target)[-1]
-
 def _get_good_result(task, doc_id_order, response_headers, returned_tasks_object):
     current_task_type, task_name = task[0], task[1]
+    deserialization_callback = _get_deserialization_callback_from_task_type(current_task_type)
     property_name = _get_property_name_from_task_type(current_task_type)
     response_task_to_deserialize = [task for task in getattr(returned_tasks_object, property_name) if task.task_name == task_name][0]
     return deserialization_callback(

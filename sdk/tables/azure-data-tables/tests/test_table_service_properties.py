@@ -41,7 +41,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         # Assert
         assert resp is None
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         self._assert_properties_default(tsc.get_service_properties())
 
     # --Test cases per feature ---------------------------------------
@@ -57,7 +57,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         # Assert
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         received_props = tsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
@@ -73,7 +73,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         # Assert
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         received_props = tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
@@ -90,7 +90,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         # Assert
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         received_props = tsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
@@ -118,7 +118,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         # Assert
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         received_props = tsc.get_service_properties()
         self._assert_cors_equal(received_props['cors'], cors)
 
