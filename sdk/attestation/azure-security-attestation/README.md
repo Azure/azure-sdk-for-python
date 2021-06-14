@@ -194,7 +194,7 @@ Under the covers, the SetPolicy APIs create a [JSON Web Token][json_web_token] b
 policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,
     attestation_policy,
     signing_key=key,
-    signing_certificate=signing_certificate))
+    signing_certificate=signing_certificate)
 new_policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
 assert new_policy == attestation_policy
 ```
@@ -207,7 +207,7 @@ policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,
     attestation_policy)
 # Now retrieve the policy which was just set.
 new_policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-assert new_policy == attestation_policy
+
 ```
 
 Clients need to be able to verify that the attestation policy document was not modified before the policy document was received by the attestation service's enclave.

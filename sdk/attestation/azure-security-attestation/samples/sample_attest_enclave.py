@@ -38,7 +38,7 @@ additional token validations as a part of the `attest_sgx_enclave` API call.
 
 from logging import fatal
 from typing import Any, ByteString, Dict
-from azure.identity._credentials.default import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 from cryptography.hazmat.backends import default_backend
 from cryptography import x509
 from  cryptography.x509 import NameOID
@@ -49,6 +49,7 @@ import base64
 import os
 from dotenv import find_dotenv, load_dotenv
 import base64
+import json
 
 from azure.security.attestation import (
     AttestationClient)
@@ -64,7 +65,6 @@ class AttestationClientAttestationSamples(object):
 
         
     def close(self):
-        # self._credentials.close()
         pass
 
     def attest_sgx_enclave_shared(self):
@@ -78,13 +78,13 @@ class AttestationClientAttestationSamples(object):
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
 
         # [START attest_sgx_enclave_shared]
-        print()
-        print('Attest SGX enclave using ', self.shared_url)
+        print('\nAttest SGX enclave using {}'.format(self.shared_url))
         with AttestationClient(DefaultAzureCredential(), self.shared_url) as attest_client:
             response = attest_client.attest_sgx_enclave(
-                quote, runtime_data=runtime_data)
+                quote,
+                runtime_data=runtime_data)
 
-            print("Issuer of token is: ", response.issuer)
+        print("Issuer of token is: ", response.issuer)
         # [END attest_sgx_enclave_shared]
 
     def attest_open_enclave_shared(self):
@@ -96,14 +96,34 @@ class AttestationClientAttestationSamples(object):
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
 
         # [START attest_open_enclave_shared]
-        print()
         print('Attest Open enclave using ', self.shared_url)
         with AttestationClient(DefaultAzureCredential(), self.shared_url) as attest_client:
             response = attest_client.attest_open_enclave(
-                oe_report, runtime_json=runtime_data)
+                oe_report,
+                runtime_json=runtime_data)
 
             print("Issuer of token is: ", response.issuer)
         # [END attest_open_enclave_shared]
+
+    def attest_open_enclave_json_data(self):
+        """
+        Demonstrates attesting an OpenEnclave report, reporting back the issuer of the token.
+        """
+        write_banner("attest_open_enclave_shared")
+        oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
+        runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
+
+        # [START attest_open_enclave_shared_json]
+        print('Attest Open enclave using ', self.shared_url)
+        with AttestationClient(DefaultAzureCredential(), self.shared_url) as attest_client:
+            response = attest_client.attest_open_enclave(
+                oe_report,
+                runtime_json=runtime_data)
+
+        print("Issuer of token is: ", response.issuer)
+        print("Response JSON value is:", json.dumps(response.runtime_claims))
+
+        # [END attest_open_enclave_shared_json]
 
     def attest_open_enclave_with_draft_policy(self):
         """
@@ -135,7 +155,8 @@ class AttestationClientAttestationSamples(object):
         print('Using draft policy:', draft_policy)
         with AttestationClient(DefaultAzureCredential(), self.shared_url) as attest_client:
             response = attest_client.attest_open_enclave(
-                oe_report, runtime_data=runtime_data,
+                oe_report,
+                runtime_data=runtime_data,
                 draft_policy=draft_policy)
 
             print("Token algorithm", response.token.algorithm)
@@ -144,8 +165,8 @@ class AttestationClientAttestationSamples(object):
 
     def attest_open_enclave_with_draft_failing_policy(self):
         """
-        Set a policy which is guaranteed to fail attestation to show
-        how to manage attestation failures.
+        Sets a draft policy which is guaranteed to fail attestation with the
+        sample test collateral to show how to manage attestation failures.
         """
         write_banner("attest_open_enclave_with_draft_failing_policy")
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
@@ -210,7 +231,7 @@ issuancerules {
             print("     Token was issued at: ", token.issuance_time)
             print("     Token expires at: ", token.expiration_time)
             if token.issuer != self.shared_url:
-                print("Token issuer {} does not match expected issuer {}".format(token.issuer, self.shared_url.encode('ascii')))
+                print("Token issuer {} does not match expected issuer {}".format(token.issuer, self.shared_url))
                 return False
 
             # Check the subject of the signing certificate used to validate the token.

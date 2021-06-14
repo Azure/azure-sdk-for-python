@@ -25,12 +25,21 @@ USAGE:
     4) ATTESTATION_TENANT_ID - Tenant Instance for authentication.
     5) ATTESTATION_CLIENT_ID - Client identity for authentication.
     6) ATTESTATION_CLIENT_SECRET - Secret used to identify the client.
+
+Usage:
+python sample_authentication_async.py
+
+This sample demonstrates establishing a connection to the attestation service
+using client secrets stored in environment variables. 
+
+To verify that the connection completed successfully, it also calls the 
+`get_openidmetadata` API on the client to retrieve the OpenID metadata discovery 
+document for the attestation service instance.
 """
 
 
 from datetime import datetime, timedelta
 import os
-from azure.identity._credentials.default import DefaultAzureCredential
 from dotenv import find_dotenv, load_dotenv
 import base64
 from sample_utils import write_banner
@@ -51,14 +60,15 @@ class AttestationClientCreateSamples(object):
         
 
     def create_attestation_client_aad(self):
-        # Instantiate an attestation client using client secrets.
-
+        """
+        Instantiate an attestation client using client secrets.
+        """
         write_banner("create_attestation_client_aad")
         # [START client_create]
 
         # Create azure-identity class
-        from azure.security.attestation import AttestationClient
         from azure.identity import DefaultAzureCredential
+        from azure.security.attestation import AttestationClient
 
         # And now create an AttestationClient.
         with AttestationClient(DefaultAzureCredential(), self.aad_url) as client:
@@ -70,14 +80,17 @@ class AttestationClientCreateSamples(object):
         # [END client_create]
 
     def create_attestation_client_shared(self):
-        # Instantiate an attestation client using client secrets.
+        """
+        Instantiate an attestation client using client secrets to access the shared attestation provider.
+        """
         write_banner("create_attestation_client_shared")
         # [START sharedclient_create]
-        from azure.security.attestation import AttestationClient
         from azure.identity import DefaultAzureCredential
+        from azure.security.attestation import AttestationClient
 
         shared_short_name  = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
-        shared_url = 'https://shared' + shared_short_name + '.' + shared_short_name + '.attest.azure.net'
+        shared_url = 'https://shared' + shared_short_name + '.' + \
+            shared_short_name + '.attest.azure.net'
 
         with AttestationClient(DefaultAzureCredential(), shared_url) as client:
             print("Retrieve OpenID metadata from: ", shared_url)

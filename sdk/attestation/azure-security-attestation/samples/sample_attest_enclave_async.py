@@ -110,7 +110,7 @@ class AttestationClientAttestationSamples(object):
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
 
-        # [START attest_open_enclave_shared]
+        # [START attest_open_enclave_shared_json]
         print('Attest Open enclave using ', self.shared_url)
         async with DefaultAzureCredential() as credential, AttestationClient(credential, self.shared_url) as attest_client:
             response = await attest_client.attest_open_enclave(
@@ -120,7 +120,7 @@ class AttestationClientAttestationSamples(object):
         print("Response JSON value is:", json.dumps(response.runtime_claims))
 
 
-        # [END attest_open_enclave_shared]
+        # [END attest_open_enclave_shared_json]
 
 
     async def attest_open_enclave_with_draft_policy(self):
@@ -153,7 +153,7 @@ class AttestationClientAttestationSamples(object):
         print('Using draft policy:', draft_policy)
         async with DefaultAzureCredential() as credential, AttestationClient(credential, self.shared_url) as attest_client:
             response = await attest_client.attest_open_enclave(
-                oe_report, 
+                oe_report,
                 runtime_data=runtime_data,
                 draft_policy=draft_policy)
 
@@ -164,7 +164,7 @@ class AttestationClientAttestationSamples(object):
     async def attest_open_enclave_with_draft_failing_policy(self):
         """
         Sets a draft policy which is guaranteed to fail attestation with the
-        sample ctest collateral to show how to manage attestation failures.
+        sample test collateral to show how to manage attestation failures.
         """
         write_banner("attest_open_enclave_with_draft_failing_policy")
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
@@ -234,7 +234,7 @@ issuancerules {
 
             # Check the subject of the signing certificate used to validate the token.
             certificate = cryptography.x509.load_pem_x509_certificate(signer.certificates[0].encode('ascii'), backend=default_backend())
-            if certificate.subject != x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, self.shared_url)]):
+            if certificate.subject.rfc4514_string() != "CN="+self.shared_url:
                 print("Certificate subject {} does not match expected subject {}".format(certificate.subject, self.shared_url))
                 return False
 
@@ -246,10 +246,25 @@ issuancerules {
             self.shared_url,
             validation_callback=validate_token) as attest_client:
                 response = await attest_client.attest_open_enclave(
-                    oe_report, 
+                    oe_report,
                     runtime_data=runtime_data)
 
-        print("Issuer of token is: ", response.issuer)
+                print("Issuer of token is: ", response.issuer)
+                print("Expiration time: ", response.token.expiration_time)
+
+        # Repeat the same operation, this time specifying the callback options
+        # on the attest_open_enclave call.
+        async with DefaultAzureCredential() as credential, AttestationClient(
+            credential,
+            self.shared_url) as attest_client:
+            response = await attest_client.attest_open_enclave(
+                oe_report,
+                runtime_data=runtime_data,
+                validation_callback=validate_token)
+
+            print("Issuer of token is: ", response.issuer)
+            print("Expiration time: ", response.token.expiration_time)
+
         # [END attest_open_enclave_shared_with_options]
 
     async def __aenter__(self):

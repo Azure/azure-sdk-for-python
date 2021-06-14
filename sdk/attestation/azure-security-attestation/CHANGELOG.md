@@ -2,8 +2,6 @@
 
 ## 1.0.0b5 (Unreleased)
 
-API Review changes.
-
 ### Features Added
 
 Sample cleanup - instead of using `ClientSecretCredentials`, the samples now use
@@ -13,18 +11,19 @@ DefaultAzureCredential.
 
 * TPM attestation takes a JSON string parameter and returns a JSON string parameter.
   * `TPMAttestationRequest` and `TPMAttestationResponse` type were removed.
-* 'confirmation' attribute removed from `AttestationResult` type.
+* `confirmation` attribute removed from `AttestationResult` type.
 * The `AttestationSigningKey` type was removed, replaced with a `signing_key` and
  `signing_certificate` kwargs parameter.
-* All certificates and keys acceptend and returned by the SDK are now PEM encoded
+* All certificates and keys accepted and returned by the SDK are now PEM encoded
   strings instead of DER encoded arrays of bytes for easier manipulation and
   interoperability.
 * Removed `AttestationResponse` type, token value merged into `AttestationResult`,
   `PolicyResult`, etc.
 * Removed `TokenValidationOptions` type and merged the validation options into
-  keyword arguments on the various APIs which take token parameters.
-* Renamed `instance_url` parameter to the constructors to `endpoint` to be consistent
-  with other APIs.
+  keyword arguments on the APIs which validate returned tokens. Those keyword
+  arguments can also be specified on the Client classes to simplify individual
+  API invocations.
+* Renamed `instance_url` parameter to the constructors to `endpoint`.
 * Many optional fields in `AttestationResult` were made non-optional.
 * `AttestationToken._validate_token` is made internal-only, and now returns `None`.
   * The caller provided `validation_callback` now must throw exceptions on invalid
@@ -55,7 +54,7 @@ policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
 or
 
 ```python
-policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)[0]
+policy = attest_client.get_policy(AttestationType.SGX_ENCLAVE)[0]
 ```
 
 or
@@ -75,9 +74,9 @@ policy = response[0]
 
 ### Features Added
 
-* Added reset_policy API which was missed in the previous API.
-* Added models for all the generated API types.
-* Documentation cleanup for several APIs.
+* Added reset_policy API.
+* Added models.
+* Documentation cleanup.
 
 ### Breaking Changes
 

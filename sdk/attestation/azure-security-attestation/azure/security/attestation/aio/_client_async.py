@@ -31,6 +31,7 @@ from .._models import (
 import base64
 from threading import Lock
 from .._common import merge_validation_args
+from .._common import pem_from_base64, validate_signing_keys, merge_validation_args
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -171,7 +172,7 @@ class AttestationClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_attest_enclave.py
+            .. literalinclude:: ../samples/sample_attest_enclave_async.py
                 :start-after: [START attest_sgx_enclave_shared]
                 :end-before: [END attest_sgx_enclave_shared]
                 :language: python
@@ -275,7 +276,7 @@ class AttestationClient(object):
 
         .. admonition:: Example: Simple OpenEnclave attestation.
 
-            .. literalinclude:: ../samples/sample_attest_enclave.py
+            .. literalinclude:: ../samples/sample_attest_enclave_async.py
                 :start-after: [START attest_open_enclave_shared]
                 :end-before: [END attest_open_enclave_shared]
                 :language: python
@@ -285,7 +286,7 @@ class AttestationClient(object):
         .. admonition:: Example: Simple OpenEnclave attestation with draft attestation policy.
         
             
-            .. literalinclude:: ../samples/sample_attest_enclave.py
+            .. literalinclude:: ../samples/sample_attest_enclave_async.py
                 :start-after: [START attest_open_enclave_shared_draft]
                 :end-before: [END attest_open_enclave_shared_draft]
                 :language: python

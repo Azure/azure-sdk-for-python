@@ -38,9 +38,6 @@ from azure.security.attestation import (
     PolicyModification,
     CertificateModification)
 
-#from dotenv import load_dotenv, find_dotenv
-#load_dotenv(find_dotenv())
-
 class PolicyGetSetTests(AzureTestCase):
 
     @AttestationPreparer()

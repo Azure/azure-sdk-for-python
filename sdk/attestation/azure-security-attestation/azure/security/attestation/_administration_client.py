@@ -37,7 +37,7 @@ from ._models import (
 import base64
 from azure.core.tracing.decorator import distributed_trace
 from threading import Lock, Thread
-from ._common import SigningKeyUtils, PemUtils, merge_validation_args
+from ._common import pem_from_base64, validate_signing_keys, merge_validation_args
 from cryptography.x509 import load_pem_x509_certificate
 
 
@@ -99,7 +99,7 @@ class AttestationAdministrationClient(object):
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        endpoint,
+        endpoint, #type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -116,12 +116,12 @@ class AttestationAdministrationClient(object):
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
         if signing_key or signing_certificate:
-            self._signing_key, self._signing_certificate = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
+            self._signing_key, self._signing_certificate = validate_signing_keys(signing_key, signing_certificate)
 
 
     @distributed_trace
     def get_policy(self, attestation_type, **kwargs): 
-        #type:(AttestationType, **Any) -> Tuple[str, AttestationToken]
+        #type: (AttestationType, **Any) -> Tuple[str, AttestationToken]
         """ Retrieves the attestation policy for a specified attestation type.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
@@ -252,6 +252,9 @@ class AttestationAdministrationClient(object):
         # otherwise use the default values from the service.
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
+        if signing_key or signing_certificate:
+            signing_key, signing_certificate = validate_signing_keys(signing_key, signing_certificate)
+
         if not signing_key:
             signing_key = self._signing_key
         if not signing_certificate:
@@ -343,6 +346,9 @@ class AttestationAdministrationClient(object):
         # otherwise use the default values from the service.
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
+        if signing_key or signing_certificate:
+            signing_key, signing_certificate = validate_signing_keys(signing_key, signing_certificate)
+
         if not signing_key:
             signing_key = self._signing_key
         if not signing_certificate:
@@ -430,7 +436,7 @@ class AttestationAdministrationClient(object):
         cert_list = token.get_body()
 
         for key in cert_list.policy_certificates.keys:
-            key_certs = [PemUtils.pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
+            key_certs = [pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
             certificates.append(key_certs)
         return certificates, token
 
@@ -489,6 +495,8 @@ class AttestationAdministrationClient(object):
         """
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
+        if signing_key or signing_certificate:
+            signing_key, signing_certificate = validate_signing_keys(signing_key, signing_certificate)
         if not signing_key:
             signing_key = self._signing_key
         if not signing_certificate:
@@ -574,6 +582,8 @@ class AttestationAdministrationClient(object):
         """
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
+        if signing_key or signing_certificate:
+            signing_key, signing_certificate = validate_signing_keys(signing_key, signing_certificate)
         if not signing_key:
             signing_key = self._signing_key
         if not signing_certificate:

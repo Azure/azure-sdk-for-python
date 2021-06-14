@@ -15,7 +15,6 @@ if TYPE_CHECKING:
     from typing import Any
     from azure.core._pipeline_client_async import AsyncPipelineClient
     from azure.core.credentials_async import AsyncTokenCredential
-
 from .._generated.aio import AzureAttestationRestClient
 from .._generated.models import (
     AttestationType, 
@@ -34,7 +33,7 @@ from .._models import (
     AttestationPolicyResult,
     AttestationTokenValidationException
 )
-from .._common import SigningKeyUtils, PemUtils, merge_validation_args
+from .._common import pem_from_base64, validate_signing_keys, merge_validation_args
 import base64
 from azure.core.tracing.decorator_async import distributed_trace_async
 from threading import Lock
@@ -100,9 +99,9 @@ class AttestationAdministrationClient(object):
     def __init__(
         self,
         credential, #type: AsyncTokenCredential
-        endpoint,
-        **kwargs #type: Any
-    ): #type: (...) -> None
+        endpoint: str,
+        **kwargs: Any
+    ) -> None:
         if not credential:
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(**kwargs)
@@ -116,13 +115,13 @@ class AttestationAdministrationClient(object):
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
         if signing_key or signing_certificate:
-            self._signing_key, self._signing_certificate = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
+            self._signing_key, self._signing_certificate = validate_signing_keys(signing_key, signing_certificate)
 
 
     @distributed_trace_async
     async def get_policy(
         self,
-        attestation_type, #type: AttestationType
+        attestation_type: AttestationType,
         **kwargs: Any
         ) -> AttestationPolicyResult:
         """ Retrieves the attestation policy for a specified attestation type.
@@ -155,7 +154,7 @@ class AttestationAdministrationClient(object):
         .. admonition:: Example: Retrieving the current policy on an attestation instance.
         
             
-            .. literalinclude:: ../samples/sample_get_set_policy.py
+            .. literalinclude:: ../samples/sample_get_set_policy_async.py
                 :start-after: [BEGIN get_policy]
                 :end-before: [END get_policy]
                 :language: python
@@ -185,10 +184,10 @@ class AttestationAdministrationClient(object):
     @distributed_trace_async
     async def set_policy(
         self, 
-        attestation_type, #type: AttestationType
-        attestation_policy, #type: str
-        **kwargs #type: Any
-        ): #type: (...) -> AttestationPolicyResult
+        attestation_type: AttestationType,
+        attestation_policy: str,
+        **kwargs: Any
+        ) -> AttestationPolicyResult:
         """ Sets the attestation policy for the specified attestation type.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
@@ -222,7 +221,7 @@ class AttestationAdministrationClient(object):
         .. admonition:: Example: Setting the attestation policy on an AAD mode
             attestation instance (no signing key required). 
 
-            .. literalinclude:: ../samples/sample_get_set_policy.py
+            .. literalinclude:: ../samples/sample_get_set_policy_async.py
                 :start-after: [BEGIN set_policy_unsecured]
                 :end-before: [END set_policy_unsecured]
                 :language: python
@@ -232,7 +231,7 @@ class AttestationAdministrationClient(object):
         .. admonition:: Example: Setting the attestation policy and verifying 
             that the policy was recieved by the service. 
 
-            .. literalinclude:: ../samples/sample_get_set_policy.py
+            .. literalinclude:: ../samples/sample_get_set_policy_async.py
                 :start-after: [START validate_policy_hash]
                 :end-before: [END validate_policy_hash]
                 :language: python
@@ -250,6 +249,9 @@ class AttestationAdministrationClient(object):
         """
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
+        if signing_key or signing_certificate:
+            signing_key, signing_certificate = validate_signing_keys(signing_key, signing_certificate)
+
         if not signing_key:
             signing_key = self._signing_key
         if not signing_certificate:
@@ -279,9 +281,9 @@ class AttestationAdministrationClient(object):
     @distributed_trace_async
     async def reset_policy(
         self, 
-        attestation_type, #type: AttestationType
-        **kwargs #type: Any
-        ): #type: (...) -> AttestationPolicyResult
+        attestation_type: AttestationType,
+        **kwargs: Any
+        ) -> AttestationPolicyResult:
         """ Resets the attestation policy for the specified attestation type to the default value.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
@@ -318,6 +320,8 @@ class AttestationAdministrationClient(object):
         """
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
+        if signing_key or signing_certificate:
+            signing_key, signing_certificate = validate_signing_keys(signing_key, signing_certificate)
         if not signing_key:
             signing_key = self._signing_key
         if not signing_certificate:
@@ -344,8 +348,8 @@ class AttestationAdministrationClient(object):
     @distributed_trace_async
     async def get_policy_management_certificates(
         self, 
-        **kwargs #type: Any
-        ): #type: (...) -> Tuple[list[list[str]], AttestationToken]
+        **kwargs: Any
+        ) -> Tuple[list[list[str]], AttestationToken]:
         """ Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only have values if the
@@ -377,7 +381,7 @@ class AttestationAdministrationClient(object):
         .. admonition:: Example: Retrieving the set of policy management certificates
             for an isolated attestation instance.
 
-            .. literalinclude:: ../samples/sample_get_set_policy.py
+            .. literalinclude:: ../samples/sample_get_set_policy_async.py
                 :start-after: [BEGIN get_policy_management_certificate]
                 :end-before: [END get_policy_management_certificate]
                 :language: python
@@ -403,16 +407,16 @@ class AttestationAdministrationClient(object):
         cert_list = token.get_body()
 
         for key in cert_list.policy_certificates.keys:
-            key_certs = [PemUtils.pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
+            key_certs = [pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
             certificates.append(key_certs)
         return certificates, token
 
     @distributed_trace_async
     async def add_policy_management_certificate(
         self, 
-        certificate_to_add, #type: str
-        **kwargs #type: Any
-        ): #type: (...) -> AttestationPolicyCertificateResult
+        certificate_to_add: str,
+        **kwargs: Any
+        ) -> AttestationPolicyCertificateResult:
         """ Adds a new policy management certificate to the set of policy management certificates for the instance.
 
         :param str certificate_to_add: PEM encoded X.509 certificate to add to 
@@ -455,7 +459,7 @@ class AttestationAdministrationClient(object):
         .. admonition:: Example: Generating and adding a new policy management
             certificates for an isolated attestation instance.
                     
-            .. literalinclude:: ../samples/sample_get_set_policy.py
+            .. literalinclude:: ../samples/sample_get_set_policy_async.py
                 :start-after: [BEGIN add_policy_management_certificate]
                 :end-before: [END add_policy_management_certificate]
                 :language: python
@@ -465,6 +469,8 @@ class AttestationAdministrationClient(object):
         """
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
+        if signing_key or signing_certificate:
+            signing_key, signing_certificate = validate_signing_keys(signing_key, signing_certificate)
         if not signing_key:
             signing_key = self._signing_key
         if not signing_certificate:
@@ -501,12 +507,12 @@ class AttestationAdministrationClient(object):
     @distributed_trace_async
     async def remove_policy_management_certificate(
         self, 
-        certificate_to_remove, #type: bytes
-        **kwargs #type: Any
-        ): #type: (...) -> AttestationPolicyCertificateResult
+        certificate_to_remove: str,
+        **kwargs: Any
+        ) -> AttestationPolicyCertificateResult:
         """ Removes a policy management certificate from the set of policy management certificates for the instance.
 
-       :param bytes certificate_to_remove: PEM encoded X.509 certificate to remove from 
+        :param str certificate_to_remove: PEM encoded X.509 certificate to remove from 
             the list of attestation policy management certificates.
         :keyword  str signing_key: PEM encoded signing Key representing the key 
             associated with one of the *existing* attestation signing certificates.
@@ -543,15 +549,18 @@ class AttestationAdministrationClient(object):
         .. admonition:: Example: Removing an added policy management
             certificate for an isolated attestation instance.
                     
-            .. literalinclude:: ../samples/sample_get_set_policy.py
+            .. literalinclude:: ../samples/sample_get_set_policy_async.py
                 :start-after: [BEGIN remove_policy_management_certificate]
                 :end-before: [END remove_policy_management_certificate]
                 :language: python
                 :dedent: 8
                 :caption: Removing a policy management certificate.
+
         """
         signing_key = kwargs.pop('signing_key', None)
         signing_certificate = kwargs.pop('signing_certificate', None)
+        if signing_key or signing_certificate:
+            signing_key, signing_certificate = validate_signing_keys(signing_key, signing_certificate)
         if not signing_key:
             signing_key = self._signing_key
         if not signing_certificate:
@@ -587,7 +596,7 @@ class AttestationAdministrationClient(object):
 
     async def _get_signers(
         self,
-        **kwargs): #type: (Any) -> List[AttestationSigner]
+        **kwargs: Any) -> List[AttestationSigner]:
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
 

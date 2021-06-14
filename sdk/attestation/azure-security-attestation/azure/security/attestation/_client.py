@@ -29,7 +29,7 @@ from ._models import (
     AttestationSigner,
     AttestationToken,
     AttestationResult)
-from ._common import merge_validation_args
+from ._common import pem_from_base64, validate_signing_keys, merge_validation_args
 from json import JSONDecoder
 
 from azure.core.tracing.decorator import distributed_trace

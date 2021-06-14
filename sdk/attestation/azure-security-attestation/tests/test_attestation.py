@@ -139,7 +139,6 @@ class AttestationTest(AzureTestCase):
     @AttestationPreparer()
     @pytest.mark.live_test_only
     def test_shared_getopenidmetadata(self, attestation_location_short_name):
-        print("In getopenidmetadata test")
         attest_client = self.shared_client(attestation_location_short_name)
         open_id_metadata = attest_client.get_openidmetadata()
         assert open_id_metadata["response_types_supported"] is not None

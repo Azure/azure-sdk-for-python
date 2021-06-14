@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives import serialization
 
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.hashes import SHA256
-from ._common import Base64Url, PemUtils, SigningKeyUtils
+from ._common import Base64Url, pem_from_base64, validate_signing_keys, merge_validation_args
 from ._generated.models import (
     PolicyResult as GeneratedPolicyResult, 
     AttestationResult as GeneratedAttestationResult,
@@ -50,7 +50,7 @@ class AttestationSigner(object):
     """
     def __init__(self, certificates, key_id, **kwargs):
         # type: (list[str], str, Any) -> None
-        self.certificates = [PemUtils.pem_from_base64(cert, 'CERTIFICATE') for cert in certificates]
+        self.certificates = [pem_from_base64(cert, 'CERTIFICATE') for cert in certificates]
         self.key_id = key_id
 
     @classmethod
@@ -82,7 +82,7 @@ class AttestationPolicyCertificateResult(object):
 
     @classmethod
     def _from_generated(cls, generated, token):
-        #type: (GeneratedPolicyCertificatesModificationResult, AttestationToken) -> AttestationPolicyCertificatesResult
+        #type: (GeneratedPolicyCertificatesModificationResult, AttestationToken) -> AttestationPolicyCertificateResult
         if not generated:
             return cls
         return cls(generated.certificate_thumbprint, generated.certificate_resolution, token)
@@ -479,7 +479,7 @@ class AttestationToken(object):
             key = None
             if signing_key or signing_certificate:
                 if isinstance(signing_key, string_types) or isinstance(signing_certificate, string_types):
-                    [key, certificate] = SigningKeyUtils.validate_signing_keys(signing_key, signing_certificate)
+                    [key, certificate] = validate_signing_keys(signing_key, signing_certificate)
                 else:
                     if not isinstance(signing_certificate, Certificate):
                         raise ValueError("signing_certificate must be a string or Certificate")

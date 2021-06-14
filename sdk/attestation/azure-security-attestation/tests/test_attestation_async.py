@@ -137,7 +137,6 @@ _runtime_data = ("CiAgICAgICAgewogI" +
 class AsyncAzureAttestationTest(AzureTestCase):
 
     @AttestationPreparer()
-    @AzureTestCase.await_prepared_test
     async def test_shared_getopenidmetadataasync(self, attestation_location_short_name):
         attest_client = self.shared_client(attestation_location_short_name)
         open_id_metadata = (await attest_client.get_openidmetadata())

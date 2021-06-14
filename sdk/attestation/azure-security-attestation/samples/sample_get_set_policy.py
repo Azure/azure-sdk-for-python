@@ -23,7 +23,7 @@ DESCRIPTION:
     6) ATTESTATION_ISOLATED_SIGNING_CERTIFICATE - Base64 encoded X.509 Certificate
         specified when the isolated mode instance is created. 
     7) ATTESTATION_ISOLATED_SIGNING_KEY - Base64 encoded DER encoded RSA Private key
-        associated with the ATTESTATATION_ISOLATED_SIGNING_CERTIFICATE
+        associated with the ATTESTATION_ISOLATED_SIGNING_CERTIFICATE
 
 Usage:
     python sample_get_set_policy.py
@@ -36,20 +36,14 @@ which are used to set attestation policy on isolated mode attestation service in
 
 """
 
-import datetime 
 from logging import fatal
 from typing import Any, ByteString, Dict
-from azure.identity._credentials.default import DefaultAzureCredential
-from cryptography.hazmat.backends import default_backend
-from cryptography import x509
-from cryptography.hazmat.primitives.asymmetric import rsa
-from  cryptography.x509 import BasicConstraints, CertificateBuilder, NameOID, SubjectAlternativeName
-import cryptography
-from cryptography.hazmat.primitives import hashes, serialization
 import base64
 import json
 import os
-from cryptography.x509.base import load_pem_x509_certificate
+from azure.identity import DefaultAzureCredential
+from cryptography.hazmat.backends import default_backend
+from cryptography.x509 import load_pem_x509_certificate
 from dotenv import find_dotenv, load_dotenv
 import base64
 import pprint
@@ -72,8 +66,8 @@ class AttestationClientPolicySamples(object):
         if os.environ.get("ATTESTATION_ISOLATED_URL"):
             self.isolated_certificate = pem_from_base64(os.getenv("ATTESTATION_ISOLATED_SIGNING_CERTIFICATE"), 'CERTIFICATE')
             self.isolated_key = pem_from_base64(os.getenv("ATTESTATION_ISOLATED_SIGNING_KEY"), 'PRIVATE KEY')
+
     def close(self):
-        # self._credentials.close()
         pass
 
     def get_policy_aad(self):
@@ -142,6 +136,29 @@ issuancerules {
             print("Policy reset result: ", set_result.policy_resolution)
         #[END reset_aad_policy]
 
+    def reset_policy_aad_secured(self):
+        """ Set a secured attestation policy on an AAD mode instance, specifying
+        a default signing key and certificate to be used for all policy operations.
+        """
+        write_banner("reset_policy_aad_secured")
+        #[BEGIN reset_aad_policy_secured]
+        print("Set Secured Policy on an AAD mode attestation instance.")
+        rsa_key = create_rsa_key()
+        cert = create_x509_certificate(rsa_key, u'TestCertificate')
+
+        # Create an administrative client, specifying a default key and certificate.
+        # The key and certificate will be used for subsequent policy operations.
+        with AttestationAdministrationClient(
+            DefaultAzureCredential(), 
+            os.environ.get("ATTESTATION_AAD_URL"),
+            signing_key=rsa_key, 
+            signing_certificate=cert) as admin_client:
+
+            set_result=admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
+            print("Policy Set Resolution: ", set_result.policy_resolution)
+        #[END reset_aad_policy_secured]
+
+
     def set_policy_aad_secured(self):
         """
         Sets a minimal attestation policy for SGX enclaves with a customer
@@ -178,6 +195,7 @@ issuancerules {
         """
 
         # [START validate_policy_hash]
+        from cryptography.hazmat.primitives import hashes
         write_banner("set_policy_aad_secured")
         print("Set Secured Policy on an AAD mode attestation instance.")
         with AttestationAdministrationClient(
@@ -247,7 +265,7 @@ issuancerules {};
         Retrieve the SGX policy for an the isolated attestation instance.
         """
         write_banner("get_policy_isolated")
-        print("Retrieve an unsecured Policy on an Isolated mode attestation instance.")
+        print("Retrieve the SGX Policy on an Isolated mode attestation instance, explicitly setting the issuer for validation..")
         endpoint = os.environ.get("ATTESTATION_ISOLATED_URL")
         with AttestationAdministrationClient(DefaultAzureCredential(), endpoint) as admin_client:
             get_result, _ = admin_client.get_policy(AttestationType.SGX_ENCLAVE,
@@ -274,7 +292,8 @@ issuancerules {};
                 signing_key=self.isolated_key,
                 signing_certificate=self.isolated_certificate) as admin_client:
             set_result=admin_client.set_policy(AttestationType.SGX_ENCLAVE, 
-                """version= 1.0;authorizationrules{=> permit();};issuancerules {};""", validation_slack=1.0)
+                """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
+                validation_slack=1.0)
             print("Policy Set Resolution: ", set_result.policy_resolution)
             print("Resulting policy signer should match the input certificate:")
             print("Policy Signer: ", set_result.policy_signer.certificates[0])
@@ -302,6 +321,9 @@ issuancerules {};
             certificates, _ =admin_client.get_policy_management_certificates(validation_slack=1.0)
             print("Isolated instance has", len(certificates), "certificates")
 
+            # An Isolated attestation instance should have at least one signing
+            # certificate which is configured when the instance is created.
+            #
             # Note that the certificate list returned is an array of certificate chains.
             for cert_chain in certificates:
                 print("Certificate chain has ", len(cert_chain), " elements.")
@@ -402,6 +424,7 @@ if __name__ == "__main__":
         sample.reset_policy_aad_unsecured()
         sample.set_policy_aad_secured()
         sample.set_policy_validate_hash()
+        sample.reset_policy_aad_secured()
         sample.reset_policy_isolated()
         sample.set_policy_isolated_secured()
         sample.get_policy_management_certificates()
