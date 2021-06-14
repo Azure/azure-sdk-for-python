@@ -47,6 +47,14 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         :keyword str continuation_token: a continuation token to restart polling from a saved state
         :returns: An AsyncLROPoller. Call `result()` on this object to get a :class:`KeyVaultBackupOperation`.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.administration.KeyVaultBackupOperation]
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration_async.py
+                :start-after: [START begin_backup]
+                :end-before: [END begin_backup]
+                :language: python
+                :caption: Start a vault backup operation
+                :dedent: 8
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
         sas_parameter = self._models.SASTokenParameter(storage_resource_uri=blob_storage_url, token=sas_token)
@@ -80,6 +88,14 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         :keyword str continuation_token: a continuation token to restart polling from a saved state
         :keyword str key_name: name of a single key in the backup. When set, only this key will be restored.
         :rtype: ~azure.core.polling.AsyncLROPoller
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START begin_backup]
+                :end-before: [END begin_backup]
+                :language: python
+                :caption: Start a vault backup operation
+                :dedent: 8
         """
         # AsyncLROBasePolling passes its kwargs to pipeline.run(), so we remove unexpected args before constructing it
         continuation_token = kwargs.pop("continuation_token", None)
